@@ -1,9 +1,8 @@
-# Fabric Example Mod
+<img align="left" alt="logo" width="100" src="https://i.imgur.com/wazC5XA.png">
 
-## Setup
+# Bukkit4Fabric
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+An implementation of the popular Bukkit/Spigot Modding API for FabricMC
+Curseforge: https://www.curseforge.com/minecraft/mc-mods/bukkit
 
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+[![Join discord](https://img.shields.io/badge/Discord-discord.gg%2FQp4a2Nj-7289DA?logo=discord)](https://discord.gg/Qp4a2Nj)
