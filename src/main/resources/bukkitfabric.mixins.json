@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.fungus_soft.bukkitfabric.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "DedicatedServerMixin",
+    "MinecraftServerMixin",
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
