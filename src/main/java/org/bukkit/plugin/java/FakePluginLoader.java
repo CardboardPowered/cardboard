@@ -46,6 +46,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Represents a Java plugin loader, allowing plugins in the form of .jar
  */
 public final class FakePluginLoader implements PluginLoader {
+
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();

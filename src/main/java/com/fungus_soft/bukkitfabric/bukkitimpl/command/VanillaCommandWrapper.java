@@ -2,21 +2,13 @@ package com.fungus_soft.bukkitfabric.bukkitimpl.command;
 
 import com.google.common.base.Joiner;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.Location;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.ProxiedCommandSender;
-import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.CommandMinecart;
 
 public final class VanillaCommandWrapper extends BukkitCommand {
 
@@ -24,7 +16,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
     public final CommandNode vanillaCommand;
 
     public VanillaCommandWrapper(CommandDispatcher dispatcher, CommandNode vanillaCommand) {
-        super(vanillaCommand.getName(), "A Mojang provided command.", vanillaCommand.getUsageText(), Collections.EMPTY_LIST);
+        super(vanillaCommand.getName(), "A Mojang provided command.", vanillaCommand.getUsageText(), Collections.emptyList());
         this.dispatcher = dispatcher;
         this.vanillaCommand = vanillaCommand;
         this.setPermission(getPermission(vanillaCommand));

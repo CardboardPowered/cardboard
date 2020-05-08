@@ -6,6 +6,10 @@
   "mixins": [
     "DedicatedServerMixin",
     "MinecraftServerMixin",
+    "ServerCommandSourceMixin",
+    "CommandOutputMixin",
+    "EntityMixin",
+    "PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

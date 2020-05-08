@@ -68,7 +68,6 @@ public class PluginClassLoader extends URLClassLoader {
                 throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
             }
 
-            //plugin = get(pluginClass);
             plugin = pluginClass.newInstance();
         } catch (IllegalAccessException ex) {
             throw new InvalidPluginException("No public constructor", ex);
@@ -103,8 +102,6 @@ public class PluginClassLoader extends URLClassLoader {
             if (result == null) {
                 result = super.findClass(name);
 
-                //if (result == null) result = Minecarts.getServer().findClass(name); // Allow access to Launchwrapper
-
                 if (result != null) loader.setClass(name, result);
             }
 
@@ -125,17 +122,6 @@ public class PluginClassLoader extends URLClassLoader {
     
     Set<String> getClasses() {
         return classes.keySet();
-    }
-
-    public JavaPlugin get(Class<? extends JavaPlugin> pl) throws InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException {
-        Constructor<?> c = pl.getDeclaredConstructor(PluginLoader.class, PluginDescriptionFile.class, File.class, File.class);
-        c.setAccessible(true);
-        try {
-            return (JavaPlugin) c.newInstance(loader, description, dataFolder, file);
-        } catch (IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     synchronized void initialize(JavaPlugin javaPlugin) {

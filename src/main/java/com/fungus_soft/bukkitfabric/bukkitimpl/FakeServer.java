@@ -3,6 +3,7 @@ package com.fungus_soft.bukkitfabric.bukkitimpl;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -60,6 +62,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
+import org.bukkit.plugin.SimpleServicesManager;
 import org.bukkit.plugin.java.FakePluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -67,28 +70,39 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
 import org.bukkit.util.permissions.DefaultPermissions;
 
+import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeBukkitCommandWrapper;
+import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeCommandMap;
+import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeConsoleCommandSender;
 import com.fungus_soft.bukkitfabric.bukkitimpl.command.VanillaCommandWrapper;
 import com.fungus_soft.bukkitfabric.bukkitimpl.plugin.FakePluginManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Vec3d;
 
 public class FakeServer implements Server {
 
-    public final String NAME = "FabricBukkit";
-    public final String BUKKIT_VERSION = "1.15.2-R0.1";
-    public final String VERSION = "1.15.2";
+    public final String serverName = "Bukkit4Fabric";
+    public final String bukkitVersion = "1.15.2-R0.1";
+    public final String version = "1.15.2";
 
     private final Logger logger = FakeLogger.getLogger();
 
-    private final SimpleCommandMap commandMap = new SimpleCommandMap(this);
-    private final FakePluginManager pluginManager = new FakePluginManager(this, commandMap);
+    private final FakeCommandMap commandMap;
+    private final FakePluginManager pluginManager;
     private final UnsafeValues unsafe = new FakeUnsafe();
+    private final ServicesManager servicesManager = new SimpleServicesManager();
+    private final CraftScheduler scheduler = new CraftScheduler();
+    private final ConsoleCommandSender consoleCommandSender = new FakeConsoleCommandSender();
 
-    public MinecraftDedicatedServer server;
+    public static MinecraftDedicatedServer server;
 
-    public FakeServer() {
+    public FakeServer(MinecraftDedicatedServer nms) {
+        server = nms;
+        commandMap = new FakeCommandMap(this);
+        pluginManager = new FakePluginManager(this, commandMap);
     }
 
     public void loadPlugins() {
@@ -133,6 +147,8 @@ public class FakeServer implements Server {
 
         // Build a list of all Vanilla commands and create wrappers
         for (CommandNode cmd : (Collection<CommandNode>)dispatcher.getRoot().getChildren()) {
+            if (cmd.getCommand() != null && cmd.getCommand() instanceof FakeBukkitCommandWrapper)
+                continue;
             commandMap.register("minecraft", new VanillaCommandWrapper(dispatcher, cmd));
         }
     }
@@ -228,8 +244,7 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public BlockData createBlockData(Material arg0, String arg1)
-            throws IllegalArgumentException {
+    public BlockData createBlockData(Material arg0, String arg1) throws IllegalArgumentException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -307,8 +322,11 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public boolean dispatchCommand(CommandSender arg0, String arg1) throws CommandException {
-        // TODO Auto-generated method stub
+    public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
+        if (commandMap.dispatch(sender, commandLine))
+            return true;
+
+        sender.sendMessage("Unknown command. Type " + (sender instanceof Player ? "\"/help\" for help." : "\"help\" for help."));
         return false;
     }
 
@@ -326,14 +344,12 @@ public class FakeServer implements Server {
 
     @Override
     public boolean getAllowFlight() {
-        // TODO Auto-generated method stub
-        return false;
+        return getServer().getProperties().allowFlight;
     }
 
     @Override
     public boolean getAllowNether() {
-        // TODO Auto-generated method stub
-        return false;
+        return getServer().getProperties().allowNether;
     }
 
     @Override
@@ -374,7 +390,7 @@ public class FakeServer implements Server {
 
     @Override
     public String getBukkitVersion() {
-        return BUKKIT_VERSION;
+        return bukkitVersion;
     }
 
     @Override
@@ -391,8 +407,7 @@ public class FakeServer implements Server {
 
     @Override
     public ConsoleCommandSender getConsoleSender() {
-        // TODO Auto-generated method stub
-        return null;
+        return consoleCommandSender;
     }
 
     @Override
@@ -486,7 +501,7 @@ public class FakeServer implements Server {
 
     @Override
     public String getName() {
-        return NAME;
+        return serverName;
     }
 
     @Override
@@ -544,8 +559,8 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public PluginCommand getPluginCommand(String arg0) {
-        Command command = commandMap.getCommand("name");
+    public PluginCommand getPluginCommand(String name) {
+        Command command = commandMap.getCommand(name);
         return command instanceof PluginCommand ? (PluginCommand) command : null;
     }
 
@@ -567,8 +582,7 @@ public class FakeServer implements Server {
 
     @Override
     public BukkitScheduler getScheduler() {
-        // TODO Auto-generated method stub
-        return null;
+        return scheduler;
     }
 
     @Override
@@ -585,8 +599,7 @@ public class FakeServer implements Server {
 
     @Override
     public ServicesManager getServicesManager() {
-        // TODO Auto-generated method stub
-        return null;
+        return servicesManager;
     }
 
     @Override
@@ -642,14 +655,12 @@ public class FakeServer implements Server {
 
     @Override
     public String getVersion() {
-        // TODO Auto-generated method stub
-        return VERSION;
+        return version;
     }
 
     @Override
     public int getViewDistance() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getServer().getProperties().viewDistance;
     }
 
     @Override
@@ -702,14 +713,12 @@ public class FakeServer implements Server {
 
     @Override
     public boolean hasWhitelist() {
-        // TODO Auto-generated method stub
-        return false;
+        return server.getProperties().enforceWhitelist;
     }
 
     @Override
     public boolean isHardcore() {
-        // TODO Auto-generated method stub
-        return false;
+        return server.getProperties().hardcore;
     }
 
     @Override
@@ -743,7 +752,7 @@ public class FakeServer implements Server {
 
     @Override
     public void reload() {
-        // TODO Auto-generated method stub
+        getLogger().warning("Reloading not supported on Bukkit4Fabric");
     }
 
     @Override
@@ -805,7 +814,6 @@ public class FakeServer implements Server {
     @Override
     public void shutdown() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -842,6 +850,11 @@ public class FakeServer implements Server {
     public boolean removeRecipe(NamespacedKey arg0) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    public List<String> tabComplete(CommandSender bukkitSender, String input, ServerWorld world, Vec3d position, boolean b) {
+        // TODO Auto-generated method stub
+        return Collections.emptyList();
     }
 
 }

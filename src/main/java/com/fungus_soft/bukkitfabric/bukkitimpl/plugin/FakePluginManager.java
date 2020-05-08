@@ -179,7 +179,7 @@ public final class FakePluginManager implements PluginManager {
                 ));
             }
 
-            /*for (String provided : description.getProvides()) {
+            for (String provided : description.getProvides()) {
                 File pluginFile = plugins.get(provided);
                 if (pluginFile != null) {
                     server.getLogger().warning(String.format(
@@ -200,7 +200,7 @@ public final class FakePluginManager implements PluginManager {
                         ));
                     }
                 }
-            }*/
+            }
 
             Collection<String> softDependencySet = description.getSoftDepend();
             if (softDependencySet != null && !softDependencySet.isEmpty()) {
@@ -306,7 +306,7 @@ public final class FakePluginManager implements PluginManager {
                         if (loadedPlugin != null) {
                             result.add(loadedPlugin);
                             loadedPlugins.add(loadedPlugin.getName());
-                            //loadedPlugins.addAll(loadedPlugin.getDescription().getProvides());
+                            loadedPlugins.addAll(loadedPlugin.getDescription().getProvides());
                         } else {
                             server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'");
                         }
@@ -337,7 +337,7 @@ public final class FakePluginManager implements PluginManager {
                             if (loadedPlugin != null) {
                                 result.add(loadedPlugin);
                                 loadedPlugins.add(loadedPlugin.getName());
-                                //loadedPlugins.addAll(loadedPlugin.getDescription().getProvides());
+                                loadedPlugins.addAll(loadedPlugin.getDescription().getProvides());
                             } else {
                                 server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'");
                             }
@@ -401,9 +401,9 @@ public final class FakePluginManager implements PluginManager {
         if (result != null) {
             plugins.add(result);
             lookupNames.put(result.getDescription().getName(), result);
-           // for (String provided : result.getDescription().getProvides()) {
-           //     lookupNames.putIfAbsent(provided, result);
-           // }
+            for (String provided : result.getDescription().getProvides()) {
+                lookupNames.putIfAbsent(provided, result);
+            }
         }
 
         return result;

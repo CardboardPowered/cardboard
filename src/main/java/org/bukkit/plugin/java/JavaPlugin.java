@@ -45,17 +45,17 @@ public abstract class JavaPlugin extends PluginBase {
 
     public JavaPlugin() {
         final ClassLoader classLoader = this.getClass().getClassLoader();
-        if (!(classLoader instanceof PluginClassLoader)) {
+        if (!(classLoader instanceof PluginClassLoader))
             throw new IllegalStateException("JavaPlugin requrires " + PluginClassLoader.class.getName());
-        }
+
         ((PluginClassLoader) classLoader).initialize(this);
     }
 
     protected JavaPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
         final ClassLoader classLoader = this.getClass().getClassLoader();
-        if (classLoader instanceof PluginClassLoader) {
+        if (classLoader instanceof PluginClassLoader)
             throw new IllegalStateException("Cannot use initialization constructor at runtime");
-        }
+
         init(loader, loader.server, description, dataFolder, file, classLoader);
     }
 
@@ -128,9 +128,8 @@ public abstract class JavaPlugin extends PluginBase {
     
     @Override
     public FileConfiguration getConfig() {
-        if (newConfig == null) {
+        if (newConfig == null)
             reloadConfig();
-        }
         return newConfig;
     }
 
@@ -156,9 +155,8 @@ public abstract class JavaPlugin extends PluginBase {
         newConfig = YamlConfiguration.loadConfiguration(configFile);
 
         final InputStream defConfigStream = getResource("config.yml");
-        if (defConfigStream == null) {
+        if (defConfigStream == null)
             return;
-        }
 
         newConfig.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8)));
     }
@@ -174,30 +172,26 @@ public abstract class JavaPlugin extends PluginBase {
 
     @Override
     public void saveDefaultConfig() {
-        if (!configFile.exists()) {
+        if (!configFile.exists())
             saveResource("config.yml", false);
-        }
     }
 
     @Override
     public void saveResource(String resourcePath, boolean replace) {
-        if (resourcePath == null || resourcePath.equals("")) {
+        if (resourcePath == null || resourcePath.equals(""))
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
-        }
 
         resourcePath = resourcePath.replace('\\', '/');
         InputStream in = getResource(resourcePath);
-        if (in == null) {
+        if (in == null)
             throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + file);
-        }
 
         File outFile = new File(dataFolder, resourcePath);
         int lastIndex = resourcePath.lastIndexOf('/');
         File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
 
-        if (!outDir.exists()) {
+        if (!outDir.exists())
             outDir.mkdirs();
-        }
 
         try {
             if (!outFile.exists() || replace) {
@@ -227,9 +221,8 @@ public abstract class JavaPlugin extends PluginBase {
         try {
             URL url = getClassLoader().getResource(filename);
 
-            if (url == null) {
+            if (url == null)
                 return null;
-            }
 
             URLConnection connection = url.openConnection();
             connection.setUseCaches(false);
@@ -311,9 +304,8 @@ public abstract class JavaPlugin extends PluginBase {
 
         if (command != null && command.getPlugin() == this) {
             return command;
-        } else {
+        } else
             return null;
-        }
     }
 
     @Override
