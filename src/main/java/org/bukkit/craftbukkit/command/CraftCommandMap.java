@@ -1,32 +1,29 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.command;
+package org.bukkit.craftbukkit.command;
 
 import java.util.Arrays;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.command.defaults.PluginsCommand;
-import com.fungus_soft.bukkitfabric.bukkitimpl.command.defaults.VersionCommand;
+import com.fungus_soft.bukkitfabric.command.VersionCommand;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.minecraft.server.command.ServerCommandSource;
 
-public class FakeCommandMap extends SimpleCommandMap {
+public class CraftCommandMap extends SimpleCommandMap {
 
     private Server server;
-    public FakeCommandMap(Server server) {
+    public CraftCommandMap(Server server) {
         super(server);
         this.server = server;
 
-        register("plugins", "bukkit", new PluginsCommand("plugins"));
-        register("version", "bukkit", new VersionCommand("version"));
-        register("pl", "bukkit", new PluginsCommand("pl"));
-        register("ver", "bukkit", new VersionCommand("ver"));
+        // Register our own custom version command
+        register("bukkit", new VersionCommand("version"));
     }
 
     @Override
@@ -34,14 +31,16 @@ public class FakeCommandMap extends SimpleCommandMap {
         boolean supe = super.register(label, fallbackPrefix, command);
 
         CommandDispatcher<ServerCommandSource> dispatcher = CraftServer.server.getCommandManager().getDispatcher();
-        BukkitCommandWrapper cmd = new BukkitCommandWrapper((CraftServer)server, command);
-
-        for (String s : command.getAliases()) {
-            cmd.register(dispatcher, s);
-            cmd.register(dispatcher, fallbackPrefix + ":" + s);
-        }
+        BukkitCommandWrapper cmd = new BukkitCommandWrapper((CraftServer)Bukkit.getServer(), command);
         cmd.register(dispatcher, label);
         cmd.register(dispatcher, fallbackPrefix + ":" + label);
+
+        for (String s : command.getAliases()) {
+            cmd = new BukkitCommandWrapper((CraftServer)server, command);
+            cmd.register(dispatcher, s);
+            cmd.register(dispatcher, fallbackPrefix + ":" + s);
+            this.knownCommands.put(label, command);
+        }
 
         this.knownCommands.put(label, command);
 

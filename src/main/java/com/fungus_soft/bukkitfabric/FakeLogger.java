@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl;
+package com.fungus_soft.bukkitfabric;
 
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;

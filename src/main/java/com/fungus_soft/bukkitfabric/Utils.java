@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl;
+package com.fungus_soft.bukkitfabric;
 
 import org.bukkit.Difficulty;
 

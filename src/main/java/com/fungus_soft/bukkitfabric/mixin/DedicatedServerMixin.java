@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeLogger;
+import com.fungus_soft.bukkitfabric.FakeLogger;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 
 import net.minecraft.server.command.CommandOutput;

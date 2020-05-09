@@ -42,13 +42,17 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.MultipleCommandAlias;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
+import org.bukkit.craftbukkit.command.CraftCommandMap;
 import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.help.SimpleHelpMap;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.utils.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
@@ -80,11 +84,9 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
 import org.bukkit.util.permissions.DefaultPermissions;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeBanList;
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeLogger;
-import com.fungus_soft.bukkitfabric.bukkitimpl.Utils;
-import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeCommandMap;
-import com.fungus_soft.bukkitfabric.bukkitimpl.plugin.FakePluginManager;
+import com.fungus_soft.bukkitfabric.FakeLogger;
+import com.fungus_soft.bukkitfabric.Utils;
+import com.fungus_soft.bukkitfabric.FakePluginManager;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -112,7 +114,7 @@ public class CraftServer implements Server {
 
     private final Logger logger = FakeLogger.getLogger();
 
-    private final FakeCommandMap commandMap;
+    private final CraftCommandMap commandMap;
     private final FakePluginManager pluginManager;
     private final CraftMagicNumbers unsafe = new CraftMagicNumbers();
     private final ServicesManager servicesManager = new SimpleServicesManager();
@@ -122,13 +124,14 @@ public class CraftServer implements Server {
     private final List<CraftPlayer> playerView;
     private WarningState warningState = WarningState.DEFAULT;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
+    private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
 
     public static MinecraftDedicatedServer server;
 
     public CraftServer(MinecraftDedicatedServer nms) {
         version = "git-Bukkit4Fabric-" + Utils.getGitHash();
         server = nms;
-        commandMap = new FakeCommandMap(this);
+        commandMap = new CraftCommandMap(this);
         pluginManager = new FakePluginManager(this, commandMap);
 
         this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, CraftPlayer>() {
@@ -425,7 +428,13 @@ public class CraftServer implements Server {
 
     @Override
     public BanList getBanList(Type type) {
-        return new FakeBanList(type);
+        switch (type) {
+            case IP:
+                return new CraftIpBanList();
+            case NAME:
+                return new CraftProfileBanList();
+        }
+        return null;
     }
 
     @Override
@@ -492,8 +501,7 @@ public class CraftServer implements Server {
 
     @Override
     public HelpMap getHelpMap() {
-        // TODO Auto-generated method stub
-        return null;
+        return helpMap;
     }
 
     @Override
@@ -980,6 +988,10 @@ public class CraftServer implements Server {
 
     public MinecraftDedicatedServer getHandle() {
         return getServer();
+    }
+
+    public CraftCommandMap getCommandMap() {
+        return commandMap;
     }
 
 }

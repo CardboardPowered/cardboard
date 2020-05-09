@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeLogger;
+import com.fungus_soft.bukkitfabric.FakeLogger;
 
 /**
  * The PluginLogger class is a modified {@link Logger} that prepends all
@@ -13,7 +13,7 @@ import com.fungus_soft.bukkitfabric.bukkitimpl.FakeLogger;
  *
  * @see Logger
  */
-public class PluginLogger extends FakeLogger {
+public class PluginLogger extends FakeLogger { // Bukkit2Fabric: extend FakeLogger instead of Logger
 
     private String pluginName;
 

@@ -50,7 +50,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import com.fungus_soft.bukkitfabric.bukkitimpl.Utils;
+import com.fungus_soft.bukkitfabric.Utils;
 
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -416,8 +416,7 @@ public class CraftWorld implements World {
 
     @Override
     public int getMaxHeight() {
-        // TODO Auto-generated method stub
-        return 255;
+        return nms.getHeight();
     }
 
     @Override
@@ -428,8 +427,7 @@ public class CraftWorld implements World {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return nms.getLevelProperties().getLevelName();
     }
 
     @Override
@@ -458,8 +456,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean getPVP() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.getServer().isPvpEnabled();
     }
 
     @Override
@@ -640,8 +637,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isHardcore() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.getLevelProperties().isHardcore();
     }
 
     @Override
@@ -798,7 +794,6 @@ public class CraftWorld implements World {
     @Override
     public void removePluginChunkTickets(Plugin arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -825,30 +820,26 @@ public class CraftWorld implements World {
     @Override
     public void setBiome(int arg0, int arg1, Biome arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setBiome(int arg0, int arg1, int arg2, Biome arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setChunkForceLoaded(int arg0, int arg1, boolean arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setDifficulty(Difficulty diff) {
-        // TODO Auto-generated method stub
+        nms.getLevelProperties().setDifficulty(net.minecraft.world.Difficulty.byOrdinal(diff.ordinal()));
     }
 
     @Override
     public void setFullTime(long arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -865,8 +856,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setHardcore(boolean arg0) {
-        // TODO Auto-generated method stub
-
+        nms.getLevelProperties().setHardcore(arg0);
     }
 
     @Override
@@ -883,14 +873,12 @@ public class CraftWorld implements World {
 
     @Override
     public void setPVP(boolean arg0) {
-        // TODO Auto-generated method stub
-
+        nms.getServer().setPvpEnabled(arg0);
     }
 
     @Override
     public void setSpawnFlags(boolean arg0, boolean arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -908,37 +896,31 @@ public class CraftWorld implements World {
     @Override
     public void setStorm(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setThunderDuration(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setThundering(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setTicksPerAmbientSpawns(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setTicksPerAnimalSpawns(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setTicksPerMonsterSpawns(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override

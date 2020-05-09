@@ -1,6 +1,6 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.command.defaults;
+package com.fungus_soft.bukkitfabric.command;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.Utils;
+import com.fungus_soft.bukkitfabric.Utils;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -46,9 +46,8 @@ public class VersionCommand extends Command {
             StringBuilder name = new StringBuilder();
 
             for (String arg : args) {
-                if (name.length() > 0) {
+                if (name.length() > 0)
                     name.append(' ');
-                }
 
                 name.append(arg);
             }

@@ -1,6 +1,6 @@
 package com.fungus_soft.bukkitfabric;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeLogger;
+import com.fungus_soft.bukkitfabric.FakeLogger;
 
 import net.fabricmc.api.ModInitializer;
 

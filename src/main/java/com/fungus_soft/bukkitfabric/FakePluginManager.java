@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.plugin;
+package com.fungus_soft.bukkitfabric;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;

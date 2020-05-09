@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl;
+package org.bukkit.craftbukkit;
 
 import java.util.Date;
 import java.util.Set;
@@ -6,12 +6,7 @@ import java.util.Set;
 import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 
-public class FakeBanList implements BanList {
-
-    public Type type;
-    public FakeBanList(Type type) {
-        this.type = type;
-    }
+public class CraftProfileBanList implements BanList {
 
     @Override
     public BanEntry addBan(String arg0, String arg1, Date arg2, String arg3) {
@@ -26,21 +21,20 @@ public class FakeBanList implements BanList {
     }
 
     @Override
-    public BanEntry getBanEntry(String name) {
+    public BanEntry getBanEntry(String arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public boolean isBanned(String name) {
+    public boolean isBanned(String arg0) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public void pardon(String name) {
+    public void pardon(String arg0) {
         // TODO Auto-generated method stub
-
     }
 
 }
