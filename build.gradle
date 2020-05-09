@@ -3,7 +3,15 @@ plugins {
 	id 'maven-publish'
 	id 'com.github.johnrengelman.shadow' version '5.2.0'
 	id 'java'
+	id "com.peterabeles.gversion" version "1.2.4"
 }
+
+gversion {
+  srcDir = "src/main/java/"
+  classPackage = "com.fungus_soft.bukkitfabric"
+  className = "GitVersion"
+}
+project.compileJava.dependsOn(createVersionFile)
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8

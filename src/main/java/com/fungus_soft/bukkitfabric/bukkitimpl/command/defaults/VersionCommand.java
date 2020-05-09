@@ -1,15 +1,14 @@
 package com.fungus_soft.bukkitfabric.bukkitimpl.command.defaults;
 
-import com.google.common.base.Charsets;
+import com.fungus_soft.bukkitfabric.bukkitimpl.Utils;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.Resources;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,6 +25,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 
 public class VersionCommand extends Command {
+
     public VersionCommand(String name) {
         super(name);
 
@@ -129,11 +129,10 @@ public class VersionCommand extends Command {
         if (args.length == 1) {
             List<String> completions = new ArrayList<String>();
             String toComplete = args[0].toLowerCase(java.util.Locale.ENGLISH);
-            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                if (StringUtil.startsWithIgnoreCase(plugin.getName(), toComplete)) {
+            for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+                if (StringUtil.startsWithIgnoreCase(plugin.getName(), toComplete))
                     completions.add(plugin.getName());
-                }
-            }
+
             return completions;
         }
         return ImmutableList.of();
@@ -182,31 +181,13 @@ public class VersionCommand extends Command {
     private void obtainVersion() {
         String version = Bukkit.getVersion();
         if (version == null) version = "Custom";
-        if (version.startsWith("git-Spigot-")) {
-            String[] parts = version.substring("git-Spigot-".length()).split("-");
-            int cbVersions = getDistance("craftbukkit", parts[1].substring(0, parts[1].indexOf(' ')));
-            int spigotVersions = getDistance("spigot", parts[0]);
-            if (cbVersions == -1 || spigotVersions == -1) {
-                setVersionMessage("Error obtaining version information");
-            } else {
-                if (cbVersions == 0 && spigotVersions == 0) {
-                    setVersionMessage("You are running the latest version");
-                } else {
-                    setVersionMessage("You are " + (cbVersions + spigotVersions) + " version(s) behind");
-                }
-            }
 
-        } else if (version.startsWith("git-Bukkit-")) {
-            version = version.substring("git-Bukkit-".length());
-            int cbVersions = getDistance("craftbukkit", version.substring(0, version.indexOf(' ')));
-            if (cbVersions == -1) {
-                setVersionMessage("Error obtaining version information");
+        if (version.startsWith("git-Bukkit4Fabric-")) {
+            int cbVersions = check();
+            if (cbVersions == 0) {
+                setVersionMessage("You are running the latest version");
             } else {
-                if (cbVersions == 0) {
-                    setVersionMessage("You are running the latest version");
-                } else {
-                    setVersionMessage("You are " + cbVersions + " version(s) behind");
-                }
+                setVersionMessage("You are " + cbVersions + " version(s) behind");
             }
         } else {
             setVersionMessage("Unknown version, custom build?");
@@ -220,33 +201,34 @@ public class VersionCommand extends Command {
         try {
             hasVersion = true;
             versionTaskStarted = false;
-            for (CommandSender sender : versionWaiters) {
+            for (CommandSender sender : versionWaiters)
                 sender.sendMessage(versionMessage);
-            }
             versionWaiters.clear();
         } finally {
             versionLock.unlock();
         }
     }
 
-    private static int getDistance(String repo, String hash) {
+    private  static int check() {
         try {
-            BufferedReader reader = Resources.asCharSource(
-                    new URL("https://hub.spigotmc.org/stash/rest/api/1.0/projects/SPIGOT/repos/" + repo + "/commits?since=" + URLEncoder.encode(hash, "UTF-8") + "&withCounts=true"),
-                    Charsets.UTF_8
-            ).openBufferedStream();
-            try {
-                JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
-                return obj.get("totalCount").getAsInt();
-            } catch (JsonSyntaxException ex) {
-                ex.printStackTrace();
-                return -1;
-            } finally {
-                reader.close();
-            }
+            HttpURLConnection connection = (HttpURLConnection) new URL(
+                    "https://api.github.com/repos/fungus-soft/bukkit4fabric/compare/master..." + Utils.getGitHash()).openConnection();
+            connection.connect();
+
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) return -2; // Unknown commit
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            JsonObject obj = new Gson().fromJson(reader, JsonObject.class);
+            String status = obj.get("status").getAsString();
+
+            if (status.equalsIgnoreCase("identical")) return 0;
+            if (status.equalsIgnoreCase("behind")) return obj.get("behind_by").getAsInt();
+
+            return -1;
         } catch (IOException e) {
             e.printStackTrace();
-            return -1;
+            return -3;
         }
     }
+
 }

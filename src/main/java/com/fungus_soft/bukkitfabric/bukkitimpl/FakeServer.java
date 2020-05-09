@@ -101,7 +101,7 @@ public class FakeServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
     public final String bukkitVersion = "1.15.2-R0.1";
-    public final String version = "1.15.2";
+    public final String version;
 
     private final Logger logger = FakeLogger.getLogger();
 
@@ -119,6 +119,7 @@ public class FakeServer implements Server {
     public static MinecraftDedicatedServer server;
 
     public FakeServer(MinecraftDedicatedServer nms) {
+        version = "git-Bukkit4Fabric-" + Utils.getGitHash();
         server = nms;
         commandMap = new FakeCommandMap(this);
         pluginManager = new FakePluginManager(this, commandMap);

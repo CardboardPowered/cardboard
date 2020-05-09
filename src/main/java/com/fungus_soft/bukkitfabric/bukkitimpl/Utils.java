@@ -6,6 +6,15 @@ import net.minecraft.world.GameMode;
 
 public class Utils {
 
+    public static String getGitHash() {
+        try {
+            Class<?> version = Class.forName("com.fungus_soft.bukkitfabric.GitVersion");
+            return (String) version.getField("GIT_SHA").get(null);
+        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            return "dev";
+        }
+    }
+
     public static GameMode toFabric(org.bukkit.GameMode arg0) {
         switch (arg0) {
             case ADVENTURE:
