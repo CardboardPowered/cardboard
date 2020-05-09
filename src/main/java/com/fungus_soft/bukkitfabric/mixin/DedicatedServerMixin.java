@@ -16,13 +16,14 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 
 import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.text.Text;
 
 @Mixin(MinecraftDedicatedServer.class)
 public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput {
 
-    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z") // TODO keep ordinal updated
+    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
         FakeServer.server = (MinecraftDedicatedServer) (Object) this;
     }
@@ -36,6 +37,7 @@ public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput 
         FakeLogger.getLogger().info(" | |_) || |_| ||   < |   < | || |_  ");
         FakeLogger.getLogger().info(" |____/  \\__,_||_|\\_\\|_|\\_\\|_| \\__| ");
         FakeLogger.getLogger().info("");
+        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this));
         Bukkit.setServer(new FakeServer((MinecraftDedicatedServer) (Object) this));
 
         Bukkit.getLogger().info("Loading Bukkit plugins...");

@@ -42,7 +42,6 @@ public class FakeCommandMap extends SimpleCommandMap {
         cmd.register(dispatcher, label);
         cmd.register(dispatcher, fallbackPrefix + ":" + label);
 
-        System.out.println("DEBUG: adding to known commands! " + label);
         this.knownCommands.put(label, command);
 
         return supe;

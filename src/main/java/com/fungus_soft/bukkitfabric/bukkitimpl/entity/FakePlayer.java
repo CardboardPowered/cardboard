@@ -28,12 +28,13 @@ import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 
-import com.mojang.brigadier.LiteralMessage;
-
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.network.MessageType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Texts;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.PacketByteBuf;
 
 public class FakePlayer extends FakeEntityHuman implements Player {
 
@@ -116,7 +117,7 @@ public class FakePlayer extends FakeEntityHuman implements Player {
 
     @Override
     public void sendMessage(String message) {
-        nms.sendChatMessage(new LiteralText("message = " + message), MessageType.SYSTEM);
+        nms.sendChatMessage(new LiteralText(message), MessageType.SYSTEM);
     }
 
     @Override
@@ -229,8 +230,11 @@ public class FakePlayer extends FakeEntityHuman implements Player {
     }
 
     @Override
-    public void sendPluginMessage(Plugin arg0, String arg1, byte[] arg2) {
-        // TODO Auto-generated method stub
+    public void sendPluginMessage(Plugin source, String channel, byte[] message) {
+        PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+        buffer.writeBytes(message);
+        String[] id = channel.split(":");
+        ClientSidePacketRegistry.INSTANCE.sendToServer(new Identifier(id[0], id[1]), buffer);
     }
 
     @Override
@@ -414,7 +418,7 @@ public class FakePlayer extends FakeEntityHuman implements Player {
     @Override
     public boolean isFlying() {
         // TODO Auto-generated method stub
-        return false;
+        return nms.isFallFlying();
     }
 
     @Override
@@ -437,38 +441,32 @@ public class FakePlayer extends FakeEntityHuman implements Player {
 
     @Override
     public boolean isSneaking() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isSneaking();
     }
 
     @Override
     public boolean isSprinting() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isSprinting();
     }
 
     @Override
     public void kickPlayer(String arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void loadData() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void openBook(ItemStack arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public boolean performCommand(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return getServer().dispatchCommand(this, arg0);
     }
 
     @Override
@@ -486,13 +484,11 @@ public class FakePlayer extends FakeEntityHuman implements Player {
     @Override
     public void playNote(Location arg0, byte arg1, byte arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playNote(Location arg0, Instrument arg1, Note arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -522,37 +518,31 @@ public class FakePlayer extends FakeEntityHuman implements Player {
     @Override
     public void resetPlayerTime() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void resetPlayerWeather() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void resetTitle() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void saveData() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendBlockChange(Location arg0, BlockData arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendBlockChange(Location arg0, Material arg1, byte arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -564,193 +554,161 @@ public class FakePlayer extends FakeEntityHuman implements Player {
     @Override
     public void sendExperienceChange(float arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendExperienceChange(float arg0, int arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendMap(MapView arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendRawMessage(String arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendSignChange(Location arg0, String[] arg1) throws IllegalArgumentException {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendSignChange(Location arg0, String[] arg1, DyeColor arg2) throws IllegalArgumentException {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendTitle(String arg0, String arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void sendTitle(String arg0, String arg1, int arg2, int arg3, int arg4) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setAllowFlight(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setCompassTarget(Location arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setDisplayName(String arg0) {
-        // TODO Auto-generated method stub
-
+        nms.setCustomName(new LiteralText(arg0));
     }
 
     @Override
     public void setExhaustion(float arg0) {
-        // TODO Auto-generated method stub
-
+        nms.addExhaustion(arg0);
     }
 
     @Override
     public void setExp(float arg0) {
-        // TODO Auto-generated method stub
-
+        nms.setExperiencePoints((int) arg0);
     }
 
     @Override
     public void setFlySpeed(float arg0) throws IllegalArgumentException {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setFlying(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setFoodLevel(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setHealthScale(double arg0) throws IllegalArgumentException {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setHealthScaled(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public void setLevel(int arg0) {
-        // TODO Auto-generated method stub
-
+    public void setLevel(int level) {
+        nms.setExperienceLevel(level);
     }
 
     @Override
     public void setPlayerListFooter(String arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setPlayerListHeader(String arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setPlayerListHeaderFooter(String arg0, String arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setPlayerListName(String arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setPlayerTime(long arg0, boolean arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setPlayerWeather(WeatherType arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public void setResourcePack(String arg0) {
-        // TODO Auto-generated method stub
-
+    public void setResourcePack(String url) {
+        nms.sendResourcePackUrl(url, null);
     }
 
     @Override
-    public void setResourcePack(String arg0, byte[] arg1) {
-        // TODO Auto-generated method stub
-
+    public void setResourcePack(String url, byte[] hash) {
+        nms.sendResourcePackUrl(url, new String(hash));
     }
 
     @Override
     public void setSaturation(float arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setScoreboard(Scoreboard arg0) throws IllegalArgumentException, IllegalStateException {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setSleepingIgnored(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setSneaking(boolean arg0) {
-        // TODO Auto-generated method stub
-
+        nms.setSneaking(arg0);
     }
 
     @Override
     public void setSpectatorTarget(Entity arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -761,14 +719,12 @@ public class FakePlayer extends FakeEntityHuman implements Player {
 
     @Override
     public void setTexturePack(String arg0) {
-        // TODO Auto-generated method stub
-
+        setResourcePack(arg0);
     }
 
     @Override
     public void setTotalExperience(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override

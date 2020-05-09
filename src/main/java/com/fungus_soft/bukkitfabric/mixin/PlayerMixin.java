@@ -5,19 +5,16 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import com.fungus_soft.bukkitfabric.bukkitimpl.entity.FakePlayer;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 
 @Mixin(ServerPlayerEntity.class)
-public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCommandOutput {
+public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCommandOutput, IMixinBukkitGetter  {
 
     private FakePlayer bukkit;
 
@@ -48,6 +45,11 @@ public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCom
 
     @Override
     public CommandSender getBukkitSender(ServerCommandSource serverCommandSource) {
+        return bukkit;
+    }
+
+    @Override
+    public FakePlayer getBukkitObject() {
         return bukkit;
     }
 

@@ -2,10 +2,13 @@ package com.fungus_soft.bukkitfabric.bukkitimpl;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,11 +45,11 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.server.BroadcastMessageEvent;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.help.HelpMap;
 import org.bukkit.inventory.Inventory;
@@ -57,6 +60,7 @@ import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoadOrder;
@@ -74,11 +78,22 @@ import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeBukkitCommandWrapper;
 import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeCommandMap;
 import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeConsoleCommandSender;
 import com.fungus_soft.bukkitfabric.bukkitimpl.command.VanillaCommandWrapper;
+import com.fungus_soft.bukkitfabric.bukkitimpl.entity.FakePlayer;
 import com.fungus_soft.bukkitfabric.bukkitimpl.plugin.FakePluginManager;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 
+import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
@@ -96,6 +111,10 @@ public class FakeServer implements Server {
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
     private final ConsoleCommandSender consoleCommandSender = new FakeConsoleCommandSender();
+    private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
+    private final List<FakePlayer> playerView;
+    private WarningState warningState = WarningState.DEFAULT;
+    private final Map<String, World> worlds = new LinkedHashMap<String, World>();
 
     public static MinecraftDedicatedServer server;
 
@@ -103,6 +122,13 @@ public class FakeServer implements Server {
         server = nms;
         commandMap = new FakeCommandMap(this);
         pluginManager = new FakePluginManager(this, commandMap);
+
+        this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, FakePlayer>() {
+            @Override
+            public FakePlayer apply(ServerPlayerEntity player) {
+                return (FakePlayer) ((IMixinBukkitGetter)player).getBukkitObject();
+            }
+        }));
     }
 
     public void loadPlugins() {
@@ -182,13 +208,18 @@ public class FakeServer implements Server {
 
     @Override
     public Set<String> getListeningPluginChannels() {
-        // TODO Auto-generated method stub
-        return null;
+        Set<String> result = new HashSet<String>();
+        for (Player player : getOnlinePlayers())
+            result.addAll(player.getListeningPluginChannels());
+
+        return result;
     }
 
     @Override
-    public void sendPluginMessage(Plugin arg0, String arg1, byte[] arg2) {
-        // TODO Auto-generated method stub
+    public void sendPluginMessage(Plugin source, String channel, byte[] message) {
+        for (Player player : getOnlinePlayers()) {
+            player.sendPluginMessage(source, channel, message);
+        }
     }
 
     @Override
@@ -205,24 +236,38 @@ public class FakeServer implements Server {
 
     @Override
     public void banIP(String arg0) {
-        // TODO Auto-generated method stub
+        getServer().getPlayerManager().getIpBanList().add(new BannedIpEntry(arg0));
     }
 
     @Override
-    public int broadcast(String arg0, String arg1) {
-        // TODO Auto-generated method stub
-        return 0;
+    public int broadcast(String message, String permission) {
+        Set<CommandSender> recipients = new HashSet<>();
+        for (Permissible permissible : getPluginManager().getPermissionSubscriptions(permission))
+            if (permissible instanceof CommandSender && permissible.hasPermission(permission))
+                recipients.add((CommandSender) permissible);
+
+        BroadcastMessageEvent broadcastMessageEvent = new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), message, recipients);
+        getPluginManager().callEvent(broadcastMessageEvent);
+
+        if (broadcastMessageEvent.isCancelled())
+            return 0;
+
+        message = broadcastMessageEvent.getMessage();
+
+        for (CommandSender recipient : recipients)
+            recipient.sendMessage(message);
+
+        return recipients.size();
     }
 
     @Override
-    public int broadcastMessage(String arg0) {
-        // TODO Auto-generated method stub
-        return 0;
+    public int broadcastMessage(String message) {
+        return broadcast(message, BROADCAST_CHANNEL_USERS);
     }
 
     @Override
     public void clearRecipes() {
-        // TODO Auto-generated method stub
+        getServer().getRecipeManager().setRecipes(null);
     }
 
     @Override
@@ -365,14 +410,15 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public BanList getBanList(Type arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public BanList getBanList(Type type) {
+        return new FakeBanList(type);
     }
 
     @Override
     public Set<OfflinePlayer> getBannedPlayers() {
-        // TODO Auto-generated method stub
+        Set<OfflinePlayer> set = Sets.newHashSet();
+        for (String s : getServer().getPlayerManager().getUserBanList().getNames())
+            set.add(getOfflinePlayer(s));
         return null;
     }
 
@@ -395,7 +441,6 @@ public class FakeServer implements Server {
 
     @Override
     public Map<String, String[]> getCommandAliases() {
-        // TODO Auto-generated method stub
         return new HashMap<String, String[]>();
     }
 
@@ -412,8 +457,7 @@ public class FakeServer implements Server {
 
     @Override
     public GameMode getDefaultGameMode() {
-        // TODO Auto-generated method stub
-        return null;
+        return Utils.fromFabric(getServer().getDefaultGameMode());
     }
 
     @Override
@@ -424,8 +468,7 @@ public class FakeServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        // TODO Auto-generated method stub
-        return false;
+        return getServer().shouldGenerateStructures();
     }
 
     @Override
@@ -436,20 +479,20 @@ public class FakeServer implements Server {
 
     @Override
     public Set<String> getIPBans() {
-        // TODO Auto-generated method stub
-        return null;
+        Set<String> set = Sets.newHashSet();
+        for (String name : getServer().getPlayerManager().getIpBanList().getNames())
+            set.add(name);
+        return set;
     }
 
     @Override
     public int getIdleTimeout() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getServer().getProperties().playerIdleTimeout.get();
     }
 
     @Override
     public String getIp() {
-        // TODO Auto-generated method stub
-        return null;
+        return getServer().getProperties().serverIp;
     }
 
     @Override
@@ -477,8 +520,7 @@ public class FakeServer implements Server {
 
     @Override
     public int getMaxPlayers() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getServer().getMaxPlayerCount();
     }
 
     @Override
@@ -495,8 +537,7 @@ public class FakeServer implements Server {
 
     @Override
     public String getMotd() {
-        // TODO Auto-generated method stub
-        return null;
+        return getServer().getMotd();
     }
 
     @Override
@@ -505,57 +546,82 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public OfflinePlayer getOfflinePlayer(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public OfflinePlayer getOfflinePlayer(String name) {
+        OfflinePlayer result = getPlayerExact(name);
+        if (result == null) {
+            // This is potentially blocking :(
+            GameProfile profile = getServer().getUserCache().findByName(name);
+            if (profile == null) {
+                // Make an OfflinePlayer using an offline mode UUID since the name has no profile
+                result = getOfflinePlayer(new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name));
+            } else {
+                // Use the GameProfile even when we get a UUID so we ensure we still have a name
+                result = getOfflinePlayer(profile);
+            }
+        } else offlinePlayers.remove(result.getUniqueId());
+
+        return result;
     }
 
     @Override
-    public OfflinePlayer getOfflinePlayer(UUID arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public OfflinePlayer getOfflinePlayer(UUID id) {
+        OfflinePlayer result = getPlayer(id);
+        if (result == null) {
+            result = offlinePlayers.get(id);
+            if (result == null) {
+                result = new FakeOfflinePlayer(this, new GameProfile(id, null));
+                offlinePlayers.put(id, result);
+            }
+        } else offlinePlayers.remove(id);
+
+        return result;
+    }
+
+    public OfflinePlayer getOfflinePlayer(GameProfile profile) {
+        OfflinePlayer player = new FakeOfflinePlayer(this, profile);
+        offlinePlayers.put(profile.getId(), player);
+        return player;
     }
 
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO Check performance
+        return offlinePlayers.values().toArray(new OfflinePlayer[1]);
     }
 
     @Override
     public boolean getOnlineMode() {
-        // TODO Auto-generated method stub
-        return false;
+        return getServer().isOnlineMode();
     }
 
     @Override
     public Collection<? extends Player> getOnlinePlayers() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.playerView;
     }
 
     @Override
     public Set<OfflinePlayer> getOperators() {
-        // TODO Auto-generated method stub
-        return null;
+        Set<OfflinePlayer> list = Sets.newHashSet();
+        for (String op : getServer().getPlayerManager().getOpList().getNames())
+            list.add(getOfflinePlayer(op));
+        return list;
     }
 
     @Override
-    public Player getPlayer(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public Player getPlayer(String name) {
+        FakePlayer plr = new FakePlayer(getServer().getPlayerManager().getPlayer(name));
+        return plr;
     }
 
     @Override
     public Player getPlayer(UUID arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        FakePlayer plr = new FakePlayer(getServer().getPlayerManager().getPlayer(arg0));
+        return plr;
     }
 
     @Override
     public Player getPlayerExact(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return getPlayer(arg0);
     }
 
     @Override
@@ -649,7 +715,6 @@ public class FakeServer implements Server {
 
     @Override
     public File getUpdateFolderFile() {
-        // TODO Auto-generated method stub
         return new File("update");
     }
 
@@ -665,8 +730,7 @@ public class FakeServer implements Server {
 
     @Override
     public WarningState getWarningState() {
-        // TODO Auto-generated method stub
-        return null;
+        return warningState;
     }
 
     @Override
@@ -677,18 +741,20 @@ public class FakeServer implements Server {
 
     @Override
     public Set<OfflinePlayer> getWhitelistedPlayers() {
+        Set<OfflinePlayer> set = Sets.newHashSet();
+        for (String name : getServer().getPlayerManager().getWhitelist().getNames())
+            set.add(getOfflinePlayer(name));
+        return set;
+    }
+
+    @Override
+    public World getWorld(String name) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public World getWorld(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public World getWorld(UUID arg0) {
+    public World getWorld(UUID uuid) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -739,9 +805,23 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public List<Player> matchPlayer(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Player> matchPlayer(String partialName) {
+        List<Player> matchedPlayers = new ArrayList<>();
+
+        for (Player iterPlayer : this.getOnlinePlayers()) {
+            String iterPlayerName = iterPlayer.getName();
+
+            if (partialName.equalsIgnoreCase(iterPlayerName)) {
+                // Exact match
+                matchedPlayers.clear();
+                matchedPlayers.add(iterPlayer);
+                break;
+            }
+            if (iterPlayerName.toLowerCase(java.util.Locale.ENGLISH).contains(partialName.toLowerCase(java.util.Locale.ENGLISH)))
+                matchedPlayers.add(iterPlayer); // Partial match
+        }
+
+        return matchedPlayers;
     }
 
     @Override
@@ -752,18 +832,17 @@ public class FakeServer implements Server {
 
     @Override
     public void reload() {
-        getLogger().warning("Reloading not supported on Bukkit4Fabric");
+        getServer().reload();
     }
 
     @Override
     public void reloadData() {
-        // TODO Auto-generated method stub
+        getServer().reload();
     }
 
     @Override
     public void reloadWhitelist() {
-        // TODO Auto-generated method stub
-        
+        getServer().getPlayerManager().reloadWhitelist();
     }
 
     @Override
@@ -774,12 +853,12 @@ public class FakeServer implements Server {
 
     @Override
     public void resetRecipes() {
-        // TODO Auto-generated method stub
+        getServer().reload();
     }
 
     @Override
     public void savePlayers() {
-        // TODO Auto-generated method stub
+        getServer().getPlayerManager().saveAllPlayerData();
     }
 
     @Override
@@ -790,36 +869,32 @@ public class FakeServer implements Server {
 
     @Override
     public void setDefaultGameMode(GameMode arg0) {
-        // TODO Auto-generated method stub
+        getServer().setDefaultGameMode(Utils.toFabric(arg0));
     }
 
     @Override
     public void setIdleTimeout(int arg0) {
-        // TODO Auto-generated method stub
-        
+        getServer().setPlayerIdleTimeout(arg0);
     }
 
     @Override
     public void setSpawnRadius(int arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setWhitelist(boolean arg0) {
-        // TODO Auto-generated method stub
-        
+        getServer().setUseWhitelist(arg0);
     }
 
     @Override
     public void shutdown() {
-        // TODO Auto-generated method stub
+        getServer().shutdown();
     }
 
     @Override
     public void unbanIP(String arg0) {
-        // TODO Auto-generated method stub
-        
+        getServer().getPlayerManager().getIpBanList().remove(arg0);
     }
 
     @Override
@@ -855,6 +930,10 @@ public class FakeServer implements Server {
     public List<String> tabComplete(CommandSender bukkitSender, String input, ServerWorld world, Vec3d position, boolean b) {
         // TODO Auto-generated method stub
         return Collections.emptyList();
+    }
+
+    public MinecraftDedicatedServer getHandle() {
+        return getServer();
     }
 
 }
