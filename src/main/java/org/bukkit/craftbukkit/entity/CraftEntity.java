@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.entity;
+package org.bukkit.craftbukkit.entity;
 
 import java.util.List;
 import java.util.Set;
@@ -25,18 +25,17 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import com.mojang.brigadier.Message;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.mojang.brigadier.LiteralMessage;
 
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Texts;
 
-public class FakeEntity implements Entity, CommandSender, IMixinCommandOutput {
+public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     public net.minecraft.entity.Entity nms;
 
-    public FakeEntity(net.minecraft.entity.Entity entity) {
+    public CraftEntity(net.minecraft.entity.Entity entity) {
         this.nms = entity;
     }
 
@@ -55,7 +54,6 @@ public class FakeEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public void removeMetadata(String arg0, Plugin arg1) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

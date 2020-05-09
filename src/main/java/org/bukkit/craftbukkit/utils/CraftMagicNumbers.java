@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl;
+package org.bukkit.craftbukkit.utils;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -10,7 +10,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-public class FakeUnsafe implements UnsafeValues {
+public class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public void checkSupported(PluginDescriptionFile arg0) throws InvalidPluginException {

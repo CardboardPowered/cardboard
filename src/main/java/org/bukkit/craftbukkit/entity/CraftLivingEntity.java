@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.entity;
+package org.bukkit.craftbukkit.entity;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -21,9 +22,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-public class FakeLivingEntity extends FakeEntity implements LivingEntity {
+public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
-    public FakeLivingEntity(net.minecraft.entity.Entity entity) {
+    public CraftLivingEntity(net.minecraft.entity.Entity entity) {
         super(entity);
         // TODO Auto-generated constructor stub
     }

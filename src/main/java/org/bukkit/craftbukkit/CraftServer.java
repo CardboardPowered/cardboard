@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl;
+package org.bukkit.craftbukkit;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -45,11 +45,17 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
+import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
+import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
+import org.bukkit.craftbukkit.utils.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.server.BroadcastMessageEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.help.HelpMap;
 import org.bukkit.inventory.Inventory;
@@ -74,13 +80,14 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
 import org.bukkit.util.permissions.DefaultPermissions;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeBukkitCommandWrapper;
+import com.fungus_soft.bukkitfabric.bukkitimpl.FakeBanList;
+import com.fungus_soft.bukkitfabric.bukkitimpl.FakeLogger;
+import com.fungus_soft.bukkitfabric.bukkitimpl.Utils;
 import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeCommandMap;
-import com.fungus_soft.bukkitfabric.bukkitimpl.command.FakeConsoleCommandSender;
-import com.fungus_soft.bukkitfabric.bukkitimpl.command.VanillaCommandWrapper;
-import com.fungus_soft.bukkitfabric.bukkitimpl.entity.FakePlayer;
 import com.fungus_soft.bukkitfabric.bukkitimpl.plugin.FakePluginManager;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -91,13 +98,13 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.minecraft.server.BannedIpEntry;
-import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.dimension.DimensionType;
 
-public class FakeServer implements Server {
+public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
     public final String bukkitVersion = "1.15.2-R0.1";
@@ -107,29 +114,33 @@ public class FakeServer implements Server {
 
     private final FakeCommandMap commandMap;
     private final FakePluginManager pluginManager;
-    private final UnsafeValues unsafe = new FakeUnsafe();
+    private final CraftMagicNumbers unsafe = new CraftMagicNumbers();
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
-    private final ConsoleCommandSender consoleCommandSender = new FakeConsoleCommandSender();
+    private final ConsoleCommandSender consoleCommandSender = new CraftConsoleCommandSender();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
-    private final List<FakePlayer> playerView;
+    private final List<CraftPlayer> playerView;
     private WarningState warningState = WarningState.DEFAULT;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
 
     public static MinecraftDedicatedServer server;
 
-    public FakeServer(MinecraftDedicatedServer nms) {
+    public CraftServer(MinecraftDedicatedServer nms) {
         version = "git-Bukkit4Fabric-" + Utils.getGitHash();
         server = nms;
         commandMap = new FakeCommandMap(this);
         pluginManager = new FakePluginManager(this, commandMap);
 
-        this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, FakePlayer>() {
+        this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, CraftPlayer>() {
             @Override
-            public FakePlayer apply(ServerPlayerEntity player) {
-                return (FakePlayer) ((IMixinBukkitGetter)player).getBukkitObject();
+            public CraftPlayer apply(ServerPlayerEntity player) {
+                return (CraftPlayer) ((IMixinBukkitGetter)player).getBukkitObject();
             }
         }));
+    }
+
+    public void addWorldToMap(ServerWorld w) {
+        worlds.put(w.getLevelProperties().getLevelName(), new CraftWorld(w));
     }
 
     public void loadPlugins() {
@@ -174,7 +185,7 @@ public class FakeServer implements Server {
 
         // Build a list of all Vanilla commands and create wrappers
         for (CommandNode cmd : (Collection<CommandNode>)dispatcher.getRoot().getChildren()) {
-            if (cmd.getCommand() != null && cmd.getCommand() instanceof FakeBukkitCommandWrapper)
+            if (cmd.getCommand() != null && cmd.getCommand() instanceof BukkitCommandWrapper)
                 continue;
             commandMap.register("minecraft", new VanillaCommandWrapper(dispatcher, cmd));
         }
@@ -272,25 +283,27 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public BlockData createBlockData(Material arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public BlockData createBlockData(Material material) {
+        return createBlockData(material, (String) null);
     }
 
     @Override
-    public BlockData createBlockData(String arg0) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+    public BlockData createBlockData(String data) throws IllegalArgumentException {
+        return createBlockData(null, data);
     }
 
     @Override
-    public BlockData createBlockData(Material arg0, Consumer<BlockData> arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public BlockData createBlockData(Material material, Consumer<BlockData> consumer) {
+        BlockData data = createBlockData(material);
+
+        if (consumer != null)
+            consumer.accept(data);
+
+        return data;
     }
 
     @Override
-    public BlockData createBlockData(Material arg0, String arg1) throws IllegalArgumentException {
+    public BlockData createBlockData(Material material, String data) throws IllegalArgumentException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -362,8 +375,8 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public World createWorld(WorldCreator arg0) {
-        // TODO Auto-generated method stub
+    public World createWorld(WorldCreator creator) {
+        // TODO
         return null;
     }
 
@@ -462,8 +475,13 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public Entity getEntity(UUID arg0) {
-        // TODO Auto-generated method stub
+    public Entity getEntity(UUID uuid) {
+        for (ServerWorld world : getServer().getWorlds()) {
+            net.minecraft.entity.Entity entity = world.getEntity(uuid);
+            if (entity != null)
+                return ((IMixinEntity)entity).getBukkitEntity();
+        }
+
         return null;
     }
 
@@ -570,7 +588,7 @@ public class FakeServer implements Server {
         if (result == null) {
             result = offlinePlayers.get(id);
             if (result == null) {
-                result = new FakeOfflinePlayer(this, new GameProfile(id, null));
+                result = new CraftOfflinePlayer(this, new GameProfile(id, null));
                 offlinePlayers.put(id, result);
             }
         } else offlinePlayers.remove(id);
@@ -579,7 +597,7 @@ public class FakeServer implements Server {
     }
 
     public OfflinePlayer getOfflinePlayer(GameProfile profile) {
-        OfflinePlayer player = new FakeOfflinePlayer(this, profile);
+        OfflinePlayer player = new CraftOfflinePlayer(this, profile);
         offlinePlayers.put(profile.getId(), player);
         return player;
     }
@@ -610,13 +628,13 @@ public class FakeServer implements Server {
 
     @Override
     public Player getPlayer(String name) {
-        FakePlayer plr = new FakePlayer(getServer().getPlayerManager().getPlayer(name));
+        CraftPlayer plr = new CraftPlayer(getServer().getPlayerManager().getPlayer(name));
         return plr;
     }
 
     @Override
     public Player getPlayer(UUID arg0) {
-        FakePlayer plr = new FakePlayer(getServer().getPlayerManager().getPlayer(arg0));
+        CraftPlayer plr = new CraftPlayer(getServer().getPlayerManager().getPlayer(arg0));
         return plr;
     }
 
@@ -750,32 +768,30 @@ public class FakeServer implements Server {
 
     @Override
     public World getWorld(String name) {
-        // TODO Auto-generated method stub
-        return null;
+        return worlds.get(name);
     }
 
     @Override
     public World getWorld(UUID uuid) {
-        // TODO Auto-generated method stub
+        for (World world : worlds.values())
+            if (world.getUID().equals(uuid))
+                return world;
         return null;
     }
 
     @Override
     public File getWorldContainer() {
-        // TODO Auto-generated method stub
-        return null;
+        return new File(".");
     }
 
     @Override
     public String getWorldType() {
-        // TODO Auto-generated method stub
-        return null;
+        return getServer().getProperties().levelType.getName();
     }
 
     @Override
     public List<World> getWorlds() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<World>(worlds.values());
     }
 
     @Override
@@ -899,15 +915,44 @@ public class FakeServer implements Server {
     }
 
     @Override
-    public boolean unloadWorld(String arg0, boolean arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean unloadWorld(String name, boolean save) {
+        return unloadWorld(getWorld(name), save);
     }
 
     @Override
-    public boolean unloadWorld(World arg0, boolean arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean unloadWorld(World world, boolean save) {
+        if (world == null)
+            return false;
+
+        ServerWorld handle = ((CraftWorld) world).getHandle();
+
+        if (!(((IMixinMinecraftServer)getServer()).getWorldMap().containsKey(handle.getWorld().getDimension().getType())))
+            return false;
+
+        if (handle.getWorld().getDimension().getType() == DimensionType.OVERWORLD)
+            return false;
+
+        if (handle.getPlayers().size() > 0)
+            return false;
+
+        WorldUnloadEvent e = new WorldUnloadEvent(world);
+        pluginManager.callEvent(e);
+
+        if (e.isCancelled())
+            return false;
+
+        try {
+            if (save)
+                handle.save(null, true, true);
+
+            handle.getChunkManager().close();
+        } catch (Exception ex) {
+            getLogger().log(Level.SEVERE, null, ex);
+        }
+
+        worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
+        ((IMixinMinecraftServer)getServer()).getWorldMap().remove(handle.getWorld().getDimension().getType());
+        return true;
     }
 
     @Override

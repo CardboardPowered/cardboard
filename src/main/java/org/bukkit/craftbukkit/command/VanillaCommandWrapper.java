@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.command;
+package org.bukkit.craftbukkit.command;
 
 import com.google.common.base.Joiner;
 import com.mojang.brigadier.CommandDispatcher;

@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.entity;
+package org.bukkit.craftbukkit.entity;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -20,6 +20,7 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -36,11 +37,11 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
-public class FakePlayer extends FakeEntityHuman implements Player {
+public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public ServerPlayerEntity nms;
 
-    public FakePlayer(ServerPlayerEntity entity) {
+    public CraftPlayer(ServerPlayerEntity entity) {
         super(entity);
         super.nms = entity;
         this.nms = entity;

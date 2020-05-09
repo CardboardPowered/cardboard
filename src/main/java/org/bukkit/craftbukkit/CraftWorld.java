@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl;
+package org.bukkit.craftbukkit;
 
 import java.io.File;
 import java.util.Collection;
@@ -50,14 +50,17 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import com.fungus_soft.bukkitfabric.bukkitimpl.Utils;
 
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
-public class FakeWorld implements World {
+public class CraftWorld implements World {
+
+    public static final int CUSTOM_DIMENSION_OFFSET = 10;
 
     private ServerWorld nms;
-    public FakeWorld(ServerWorld nms) {
+    public CraftWorld(ServerWorld nms) {
         this.nms = nms;
     }
 
@@ -1137,6 +1140,10 @@ public class FakeWorld implements World {
     public boolean unloadChunkRequest(int arg0, int arg1) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    public ServerWorld getHandle() {
+        return nms;
     }
 
 }

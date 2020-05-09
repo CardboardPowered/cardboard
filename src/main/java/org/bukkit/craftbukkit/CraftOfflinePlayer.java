@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl;
+package org.bukkit.craftbukkit;
 
 import com.mojang.authlib.GameProfile;
 import java.io.File;
@@ -26,12 +26,12 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
 @SerializableAs("Player")
-public class FakeOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
+public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
     private final GameProfile profile;
-    private final FakeServer server;
+    private final CraftServer server;
     private final WorldSaveHandler storage;
 
-    protected FakeOfflinePlayer(FakeServer server, GameProfile profile) {
+    protected CraftOfflinePlayer(CraftServer server, GameProfile profile) {
         this.server = server;
         this.profile = profile;
         this.storage = (WorldSaveHandler) (server.getServer().getWorld(DimensionType.OVERWORLD).getSaveHandler());

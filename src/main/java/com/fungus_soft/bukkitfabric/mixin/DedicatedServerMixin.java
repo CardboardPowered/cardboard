@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.fungus_soft.bukkitfabric.bukkitimpl.FakeLogger;
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeServer;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 
 import net.minecraft.server.command.CommandOutput;
@@ -25,7 +25,7 @@ public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput 
 
     @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
-        FakeServer.server = (MinecraftDedicatedServer) (Object) this;
+        CraftServer.server = (MinecraftDedicatedServer) (Object) this;
     }
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
@@ -38,14 +38,14 @@ public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput 
         FakeLogger.getLogger().info(" |____/  \\__,_||_|\\_\\|_|\\_\\|_| \\__| ");
         FakeLogger.getLogger().info("");
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this));
-        Bukkit.setServer(new FakeServer((MinecraftDedicatedServer) (Object) this));
+        Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
 
         Bukkit.getLogger().info("Loading Bukkit plugins...");
         File pluginsDir = new File("plugins");
         pluginsDir.mkdir();
 
-        FakeServer s = ((FakeServer)Bukkit.getServer());
-        if (FakeServer.server == null) FakeServer.server = (MinecraftDedicatedServer) (Object) this;
+        CraftServer s = ((CraftServer)Bukkit.getServer());
+        if (CraftServer.server == null) CraftServer.server = (MinecraftDedicatedServer) (Object) this;
 
         s.loadPlugins();
         s.enablePlugins(PluginLoadOrder.STARTUP);
@@ -55,7 +55,7 @@ public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput 
 
     @Inject(at = @At(value = "RETURN"), method = "setupServer()Z")
     private void finish(CallbackInfoReturnable<Boolean> callbackInfo) {
-        FakeServer s = ((FakeServer)Bukkit.getServer());
+        CraftServer s = ((CraftServer)Bukkit.getServer());
 
         s.enablePlugins(PluginLoadOrder.POSTWORLD);
     }

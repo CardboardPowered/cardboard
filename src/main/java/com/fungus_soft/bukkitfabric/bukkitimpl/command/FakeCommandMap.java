@@ -7,8 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeServer;
 import com.fungus_soft.bukkitfabric.bukkitimpl.command.defaults.PluginsCommand;
 import com.fungus_soft.bukkitfabric.bukkitimpl.command.defaults.VersionCommand;
 import com.mojang.brigadier.CommandDispatcher;
@@ -32,8 +33,8 @@ public class FakeCommandMap extends SimpleCommandMap {
     public boolean register(String label, String fallbackPrefix, Command command) {
         boolean supe = super.register(label, fallbackPrefix, command);
 
-        CommandDispatcher<ServerCommandSource> dispatcher = FakeServer.server.getCommandManager().getDispatcher();
-        FakeBukkitCommandWrapper cmd = new FakeBukkitCommandWrapper((FakeServer)server, command);
+        CommandDispatcher<ServerCommandSource> dispatcher = CraftServer.server.getCommandManager().getDispatcher();
+        BukkitCommandWrapper cmd = new BukkitCommandWrapper((CraftServer)server, command);
 
         for (String s : command.getAliases()) {
             cmd.register(dispatcher, s);

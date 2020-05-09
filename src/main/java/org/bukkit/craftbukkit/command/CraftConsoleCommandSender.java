@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.command;
+package org.bukkit.craftbukkit.command;
 
 import java.util.Set;
 
@@ -13,7 +13,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
-public class FakeConsoleCommandSender implements ConsoleCommandSender, CommandSender {
+public class CraftConsoleCommandSender implements ConsoleCommandSender, CommandSender {
 
     @Override
     public String getName() {

@@ -1,6 +1,14 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.command;
+package org.bukkit.craftbukkit.command;
 
-import com.fungus_soft.bukkitfabric.bukkitimpl.FakeServer;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
+
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
+
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerCommandSource;
 import com.mojang.brigadier.CommandDispatcher;
@@ -18,21 +26,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
+public class BukkitCommandWrapper implements com.mojang.brigadier.Command<ServerCommandSource>, Predicate<ServerCommandSource>, SuggestionProvider<ServerCommandSource> {
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-
-public class FakeBukkitCommandWrapper implements com.mojang.brigadier.Command<ServerCommandSource>, Predicate<ServerCommandSource>, SuggestionProvider<ServerCommandSource> {
-
-    private final FakeServer server;
+    private final CraftServer server;
     private final Command command;
 
-    public FakeBukkitCommandWrapper(FakeServer server, Command command) {
+    public BukkitCommandWrapper(CraftServer server, Command command) {
         this.server = server;
         this.command = command;
     }

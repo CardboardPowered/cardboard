@@ -1,4 +1,4 @@
-package com.fungus_soft.bukkitfabric.bukkitimpl.entity;
+package org.bukkit.craftbukkit.entity;
 
 import java.util.Collection;
 
@@ -17,9 +17,9 @@ import org.bukkit.inventory.MainHand;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.PlayerInventory;
 
-public class FakeEntityHuman extends FakeLivingEntity implements HumanEntity {
+public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
-    public FakeEntityHuman(net.minecraft.entity.Entity entity) {
+    public CraftHumanEntity(net.minecraft.entity.Entity entity) {
         super(entity);
         // TODO Auto-generated constructor stub
     }
