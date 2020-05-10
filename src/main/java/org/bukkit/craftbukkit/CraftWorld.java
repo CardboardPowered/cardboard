@@ -59,9 +59,9 @@ public class CraftWorld implements World {
 
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
 
-    private ServerWorld nms;
-    public CraftWorld(ServerWorld nms) {
-        this.nms = nms;
+    private net.minecraft.world.World nms;
+    public CraftWorld(net.minecraft.world.World world) {
+        this.nms = world;
     }
 
     @Override
@@ -1124,7 +1124,7 @@ public class CraftWorld implements World {
         return false;
     }
 
-    public ServerWorld getHandle() {
+    public net.minecraft.world.World getHandle() {
         return nms;
     }
 
