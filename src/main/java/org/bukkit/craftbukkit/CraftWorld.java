@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import org.bukkit.BlockChangeDelegate;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Difficulty;
@@ -31,15 +33,23 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
@@ -51,7 +61,14 @@ import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import com.fungus_soft.bukkitfabric.Utils;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 
+import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.thrown.SnowballEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 
@@ -218,15 +235,13 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public Block getBlockAt(Location arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public Block getBlockAt(Location loc) {
+        return getBlockAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
 
     @Override
-    public Block getBlockAt(int arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-        return null;
+    public Block getBlockAt(int x, int y, int z) {
+        return CraftBlock.at(nms, new BlockPos(x, y, z));
     }
 
     @Override
@@ -461,8 +476,13 @@ public class CraftWorld implements World {
 
     @Override
     public List<Player> getPlayers() {
-        // TODO Auto-generated method stub
-        return null;
+        List<Player> list = new ArrayList<Player>(nms.getPlayers().size());
+
+        for (PlayerEntity human : nms.getPlayers())
+            if (human instanceof ServerPlayerEntity)
+                list.add((Player) ((IMixinBukkitGetter)human).getBukkitObject());
+
+        return list;
     }
 
     @Override
@@ -578,14 +598,12 @@ public class CraftWorld implements World {
 
     @Override
     public File getWorldFolder() {
-        // TODO Auto-generated method stub
-        return null;
+        return ((ServerWorld)nms).getSaveHandler().getWorldDir();
     }
 
     @Override
     public WorldType getWorldType() {
-        // TODO Auto-generated method stub
-        return null;
+        return org.bukkit.WorldType.getByName(((ServerWorld)nms).getLevelProperties().getGeneratorType().getName());
     }
 
     @Override
@@ -882,15 +900,24 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public boolean setSpawnLocation(Location arg0) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean setSpawnLocation(Location location) {
+        return equals(location.getWorld()) ? setSpawnLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ()) : false;
     }
 
     @Override
-    public boolean setSpawnLocation(int arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean setSpawnLocation(int x, int y, int z) {
+        try {
+            Location previousLocation = getSpawnLocation();
+            nms.getLevelProperties().setSpawnPos(new BlockPos(x, y, z));
+
+            // Notify anyone who's listening.
+            SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
+            Bukkit.getPluginManager().callEvent(event);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -948,13 +975,33 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public <T extends Entity> T spawn(Location arg0, Class<T> arg1) throws IllegalArgumentException {
+    public <T extends Entity> T spawn(Location location, Class<T> clazz) throws IllegalArgumentException {
+        return spawn(location, clazz, null, SpawnReason.CUSTOM);
+    }
+
+    @Override
+    public <T extends Entity> T spawn(Location location, Class<T> clazz, Consumer<T> function) throws IllegalArgumentException {
+        return spawn(location, clazz, function, SpawnReason.CUSTOM);
+    }
+
+    public <T extends Entity> T spawn(Location location, Class<T> clazz, Consumer<T> function, SpawnReason reason) throws IllegalArgumentException {
+        net.minecraft.entity.Entity entity = createEntity(location, clazz);
+
+        return addEntity(entity, reason, function);
+    }
+
+    public net.minecraft.entity.Entity createEntity(Location location, Class<? extends Entity> clazz) throws IllegalArgumentException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
-    public <T extends Entity> T spawn(Location arg0, Class<T> arg1, Consumer<T> arg2) throws IllegalArgumentException {
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> T addEntity(net.minecraft.entity.Entity entity, SpawnReason reason) throws IllegalArgumentException {
+        return addEntity(entity, reason, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> T addEntity(net.minecraft.entity.Entity entity, SpawnReason reason, Consumer<T> function) throws IllegalArgumentException {
         // TODO Auto-generated method stub
         return null;
     }
@@ -972,9 +1019,8 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public Entity spawnEntity(Location arg0, EntityType arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public Entity spawnEntity(Location loc, EntityType entityType) {
+        return spawn(loc, entityType.getEntityClass());
     }
 
     @Override
