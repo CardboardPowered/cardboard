@@ -52,9 +52,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static Item getItem(Material material, short data) {
-        if (material.isLegacy()) {
+        if (material.isLegacy())
             return CraftLegacy.fromLegacyData(CraftLegacy.toLegacy(material), data);
-        }
 
         return getItem(material);
     }
@@ -70,26 +69,19 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
 
     static {
-        for (Block block : Registry.BLOCK) {
+        for (Block block : Registry.BLOCK)
             BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getId(block).getNamespace().toUpperCase(Locale.ROOT)));
-        }
 
-        for (Item item : Registry.ITEM) {
+        for (Item item : Registry.ITEM)
             ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getId(item).getNamespace().toUpperCase(Locale.ROOT)));
-        }
 
         for (Material material : Material.values()) {
-            if (material.isLegacy()) {
+            if (material.isLegacy())
                 continue;
-            }
 
             Identifier key = key(material);
-            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> {
-                MATERIAL_ITEM.put(material, item);
-            });
-            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> {
-                MATERIAL_BLOCK.put(material, block);
-            });
+            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
+            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
         }
     }
 

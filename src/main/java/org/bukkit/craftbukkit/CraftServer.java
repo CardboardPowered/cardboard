@@ -55,6 +55,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -111,7 +112,7 @@ public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
     public final String bukkitVersion = "1.15.2-R0.1";
-    public final String version;
+    public final String serverVersion;
 
     private final Logger logger = FakeLogger.getLogger();
 
@@ -131,7 +132,7 @@ public class CraftServer implements Server {
     public static MinecraftDedicatedServer server;
 
     public CraftServer(MinecraftDedicatedServer nms) {
-        version = "git-Bukkit4Fabric-" + Utils.getGitHash();
+        serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash();
         server = nms;
         commandMap = new CraftCommandMap(this);
         pluginManager = new SimplePluginManager(this, commandMap);
@@ -179,8 +180,9 @@ public class CraftServer implements Server {
             setVanillaCommands();
             commandMap.registerServerAliases();
             DefaultPermissions.registerCorePermissions();
-            //CraftDefaultPermissions.registerCorePermissions();
-            //loadCustomPermissions();
+            CraftDefaultPermissions.registerCorePermissions();
+            // loadCustomPermissions();
+            helpMap.initializeCommands();
             syncCommands();
         }
     }
@@ -234,9 +236,13 @@ public class CraftServer implements Server {
 
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
-        for (Player player : getOnlinePlayers()) {
+        for (Player player : getOnlinePlayers())
             player.sendPluginMessage(source, channel, message);
-        }
+    }
+
+    @Override
+    public String toString() {
+        return "CraftServer{" + "serverName=" + serverName + ",serverVersion=" + serverVersion + ",minecraftVersion=" + getServer().getVersion() + '}';
     }
 
     @Override
@@ -748,7 +754,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getVersion() {
-        return version;
+        return serverVersion;
     }
 
     @Override
