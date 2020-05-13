@@ -24,6 +24,7 @@ public class CraftCommandMap extends SimpleCommandMap {
 
         // Register our own custom version command
         register("bukkit", new VersionCommand("version"));
+        register("bukkit", new VersionCommand("ver"));
     }
 
     @Override
