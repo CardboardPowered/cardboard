@@ -546,4 +546,10 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
         return this;
     }
 
+    @Override
+    public org.bukkit.entity.Entity.Spigot spigot() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

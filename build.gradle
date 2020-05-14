@@ -50,8 +50,8 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Bukkit API
-	extraLibs group: 'org.bukkit', name: 'bukkit', version: '1.15.2-R0.1-SNAPSHOT'
+	// Spigot API
+	extraLibs group: 'org.spigotmc', name: 'spigot-api', version: '1.15.2-R0.1-SNAPSHOT'
 	configurations.compile.extendsFrom(configurations.extraLibs)
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.

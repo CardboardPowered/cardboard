@@ -60,6 +60,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 
@@ -1172,6 +1173,19 @@ public class CraftWorld implements World {
 
     public net.minecraft.world.World getHandle() {
         return nms;
+    }
+
+    @Override
+    public int getViewDistance() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Spigot spigot() {
+        return new Spigot() {
+            // TODO Auto-generated method stub
+        };
     }
 
 }

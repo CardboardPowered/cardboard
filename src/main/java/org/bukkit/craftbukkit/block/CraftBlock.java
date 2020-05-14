@@ -38,6 +38,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 
 public class CraftBlock implements Block {
+
     private final net.minecraft.world.IWorld world;
     private final BlockPos position;
 
@@ -119,11 +120,7 @@ public class CraftBlock implements Block {
     }
 
     public void setData(final byte data, boolean applyPhysics) {
-        if (applyPhysics) {
-            setData(data, 3);
-        } else {
-            setData(data, 2);
-        }
+        setData(data, applyPhysics ? 3 : 2);
     }
 
     private void setData(final byte data, int flag) {
@@ -165,6 +162,7 @@ public class CraftBlock implements Block {
 
     public boolean setTypeAndData(final BlockState blockData, final boolean applyPhysics) {
         // TODO auto-generated method stub
+        
         return false;
     }
 
@@ -216,11 +214,9 @@ public class CraftBlock implements Block {
     public BlockFace getFace(final Block block) {
         BlockFace[] values = BlockFace.values();
 
-        for (BlockFace face : values) {
-            if ((this.getX() + face.getModX() == block.getX()) && (this.getY() + face.getModY() == block.getY()) && (this.getZ() + face.getModZ() == block.getZ())) {
+        for (BlockFace face : values)
+            if ((this.getX() + face.getModX() == block.getX()) && (this.getY() + face.getModY() == block.getY()) && (this.getZ() + face.getModZ() == block.getZ()))
                 return face;
-            }
-        }
 
         return null;
     }
@@ -286,17 +282,15 @@ public class CraftBlock implements Block {
     }
 
     public static Biome biomeBaseToBiome(net.minecraft.world.biome.Biome base) {
-        if (base == null) {
+        if (base == null)
             return null;
-        }
 
         return Biome.valueOf(Registry.BIOME.getId(base).getNamespace().toUpperCase(java.util.Locale.ENGLISH));
     }
 
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
-        if (bio == null) {
+        if (bio == null)
             return null;
-        }
 
         return Registry.BIOME.get(new Identifier(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
     }
@@ -346,9 +340,8 @@ public class CraftBlock implements Block {
         int power = world.getWorld().getEmittedRedstonePower(position, blockFaceToNotch(face));
 
         Block relative = getRelative(face);
-        if (relative.getType() == Material.REDSTONE_WIRE) {
+        if (relative.getType() == Material.REDSTONE_WIRE)
             return Math.max(power, relative.getData()) > 0;
-        }
 
         return power > 0;
     }
@@ -445,4 +438,5 @@ public class CraftBlock implements Block {
         // TODO auto-generated method stub
         return null;
     }
+
 }

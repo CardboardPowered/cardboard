@@ -42,10 +42,8 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.MultipleCommandAlias;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 import org.bukkit.craftbukkit.command.CraftCommandMap;
@@ -102,6 +100,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -111,7 +110,7 @@ import net.minecraft.world.dimension.DimensionType;
 public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
-    public final String bukkitVersion = "1.15.2-R0.1";
+    public final String bukkitVersion = "1.15.2-R0.1-SNAPSHOT";
     public final String serverVersion;
 
     private final Logger logger = FakeLogger.getLogger();
@@ -187,6 +186,7 @@ public class CraftServer implements Server {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setVanillaCommands() {
         CommandDispatcher dispatcher = server.getCommandManager().getDispatcher();
 
@@ -583,15 +583,8 @@ public class CraftServer implements Server {
     public OfflinePlayer getOfflinePlayer(String name) {
         OfflinePlayer result = getPlayerExact(name);
         if (result == null) {
-            // This is potentially blocking :(
             GameProfile profile = getServer().getUserCache().findByName(name);
-            if (profile == null) {
-                // Make an OfflinePlayer using an offline mode UUID since the name has no profile
-                result = getOfflinePlayer(new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name));
-            } else {
-                // Use the GameProfile even when we get a UUID so we ensure we still have a name
-                result = getOfflinePlayer(profile);
-            }
+            result = getOfflinePlayer(profile == null ? new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name) : profile);
         } else offlinePlayers.remove(result.getUniqueId());
 
         return result;
@@ -999,6 +992,12 @@ public class CraftServer implements Server {
 
     public CraftCommandMap getCommandMap() {
         return commandMap;
+    }
+
+    @Override
+    public Spigot spigot() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

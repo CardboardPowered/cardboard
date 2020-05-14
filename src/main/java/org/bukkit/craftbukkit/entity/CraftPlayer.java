@@ -808,57 +808,54 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5,
             double arg6, double arg7, T arg8) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6,
             double arg7, double arg8) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5,
             double arg6, double arg7, double arg8, T arg9) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void stopSound(Sound arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void stopSound(String arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void stopSound(Sound arg0, SoundCategory arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void stopSound(String arg0, SoundCategory arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void updateCommands() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void updateInventory() {
         // TODO Auto-generated method stub
+    }
 
+    @Override
+    public org.bukkit.entity.Player.Spigot spigot() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

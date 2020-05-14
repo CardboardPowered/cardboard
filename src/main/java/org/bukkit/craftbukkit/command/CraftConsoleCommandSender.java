@@ -127,4 +127,10 @@ public class CraftConsoleCommandSender implements ConsoleCommandSender, CommandS
         Bukkit.getLogger().info(arg0);
     }
 
+    @Override
+    public Spigot spigot() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
