@@ -7,17 +7,18 @@ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
+
 import com.fungus_soft.bukkitfabric.interfaces.IMixinInventory;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.BasicInventory;
 import net.minecraft.item.ItemStack;
 
-@Mixin(Inventory.class)
+@Mixin(BasicInventory.class)
 public class InventoryMixin implements IMixinInventory {
 
-    private Inventory get() {
-        return (Inventory) (Object) this;
+    private BasicInventory get() {
+        return (BasicInventory) (Object) this;
     }
 
     @Override

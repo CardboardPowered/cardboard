@@ -208,10 +208,9 @@ public class VersionCommand extends Command {
         }
     }
 
-    private  static int check() {
+    public static int check() {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(
-                    "https://api.github.com/repos/fungus-soft/bukkit4fabric/compare/master..." + Utils.getGitHash()).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/fungus-soft/bukkit4fabric/compare/master..." + Utils.getGitHash()).openConnection();
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) return -2; // Unknown commit
