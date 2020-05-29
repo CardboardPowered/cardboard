@@ -10,7 +10,8 @@
     "CommandOutputMixin",
     "EntityMixin",
     "PlayerMixin",
-    "ServerWorldMixin"
+    "ServerWorldMixin",
+    "InventoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

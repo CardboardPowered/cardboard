@@ -11,11 +11,7 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.crash.CrashReport;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelGeneratorType;
-import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.LevelProperties;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin implements IMixinMinecraftServer {

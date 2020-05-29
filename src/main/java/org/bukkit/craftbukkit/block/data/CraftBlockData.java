@@ -387,7 +387,7 @@ public class CraftBlockData implements BlockData {
     //
     private static final Map<Class<? extends Block>, Function<BlockState, CraftBlockData>> MAP = new HashMap<>();
 
-    // TODO
+    // TODO Bukkit4Fabric
     static {
         //<editor-fold desc="CraftBlockData Registration" defaultstate="collapsed">
         /*register(net.minecraft.block.AnvilBlock.class, org.bukkit.craftbukkit.block.impl.CraftAnvil::new);

@@ -100,7 +100,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.minecraft.server.BannedIpEntry;
-import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -747,7 +746,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getVersion() {
-        return serverVersion;
+        return serverVersion + "(MC: " + getServer().getVersion() + ")";
     }
 
     @Override
