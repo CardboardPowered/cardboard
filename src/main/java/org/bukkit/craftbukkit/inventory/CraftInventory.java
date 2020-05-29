@@ -258,12 +258,6 @@ public class CraftInventory implements Inventory {
     public HashMap<Integer, ItemStack> addItem(ItemStack... items) {
         HashMap<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
 
-        /* TODO: some optimization
-         *  - Create a 'firstPartial' with a 'fromIndex'
-         *  - Record the lastPartial per Material
-         *  - Cache firstEmpty result
-         */
-
         for (int i = 0; i < items.length; i++) {
             ItemStack item = items[i];
             while (true) {
@@ -272,8 +266,7 @@ public class CraftInventory implements Inventory {
 
                 // Drat! no partial stack
                 if (firstPartial == -1) {
-                    // Find a free spot!
-                    int firstFree = firstEmpty();
+                    int firstFree = firstEmpty(); // Find a free spot!
 
                     if (firstFree == -1) {
                         // No space at all!

@@ -349,7 +349,7 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public Inventory createInventory(InventoryHolder arg0, InventoryType arg1) {
+    public Inventory createInventory(InventoryHolder holder, InventoryType type) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -635,14 +635,12 @@ public class CraftServer implements Server {
 
     @Override
     public Player getPlayer(String name) {
-        CraftPlayer plr = new CraftPlayer(getServer().getPlayerManager().getPlayer(name));
-        return plr;
+        return (Player) ((IMixinBukkitGetter)(Object)getServer().getPlayerManager().getPlayer(name)).getBukkitObject();
     }
 
     @Override
-    public Player getPlayer(UUID arg0) {
-        CraftPlayer plr = new CraftPlayer(getServer().getPlayerManager().getPlayer(arg0));
-        return plr;
+    public Player getPlayer(UUID uuid) {
+        return (Player) ((IMixinBukkitGetter)(Object)getServer().getPlayerManager().getPlayer(uuid)).getBukkitObject();
     }
 
     @Override
@@ -746,7 +744,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getVersion() {
-        return serverVersion + "(MC: " + getServer().getVersion() + ")";
+        return serverVersion + " (MC: " + getServer().getVersion() + ")";
     }
 
     @Override
@@ -993,10 +991,13 @@ public class CraftServer implements Server {
         return commandMap;
     }
 
+    private Spigot spigot = new Server.Spigot() {
+        // TODO Auto-generated method stub
+    };
+
     @Override
     public Spigot spigot() {
-        // TODO Auto-generated method stub
-        return null;
+        return spigot;
     }
 
 }

@@ -5,6 +5,8 @@ import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.event.server.ServerLoadEvent;
+import org.bukkit.event.server.ServerLoadEvent.LoadType;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,6 +24,7 @@ import net.minecraft.text.Text;
 
 @Mixin(MinecraftDedicatedServer.class)
 public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput {
+    
 
     @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
@@ -51,13 +54,6 @@ public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput 
         s.enablePlugins(PluginLoadOrder.STARTUP);
         
         Bukkit.getLogger().info("");
-    }
-
-    @Inject(at = @At(value = "RETURN"), method = "setupServer()Z")
-    private void finish(CallbackInfoReturnable<Boolean> callbackInfo) {
-        CraftServer s = ((CraftServer)Bukkit.getServer());
-
-        s.enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
     @Override
