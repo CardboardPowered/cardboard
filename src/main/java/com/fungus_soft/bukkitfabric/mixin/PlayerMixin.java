@@ -50,6 +50,8 @@ public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCom
 
     @Override
     public CraftPlayer getBukkitObject() {
+        if (null == bukkit)
+            this.bukkit = new CraftPlayer((ServerPlayerEntity) (Object) this);
         return bukkit;
     }
 

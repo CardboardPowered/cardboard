@@ -47,6 +47,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         this.nms = entity;
     }
 
+    public ServerPlayerEntity getHandle() {
+        return nms;
+    }
+
     @Override
     public void abandonConversation(Conversation arg0) {
         // TODO Auto-generated method stub

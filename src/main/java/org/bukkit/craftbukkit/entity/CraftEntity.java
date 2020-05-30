@@ -39,6 +39,10 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
         this.nms = entity;
     }
 
+    public net.minecraft.entity.Entity getHandle() {
+        return nms;
+    }
+
     @Override
     public List<MetadataValue> getMetadata(String arg0) {
         // TODO Auto-generated method stub

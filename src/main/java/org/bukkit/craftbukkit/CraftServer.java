@@ -98,8 +98,13 @@ import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -185,12 +190,11 @@ public class CraftServer implements Server {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setVanillaCommands() {
-        CommandDispatcher dispatcher = server.getCommandManager().getDispatcher();
+        CommandManager dispatcher = server.getCommandManager();
 
         // Build a list of all Vanilla commands and create wrappers
-        for (CommandNode cmd : (Collection<CommandNode>)dispatcher.getRoot().getChildren()) {
+        for (CommandNode<ServerCommandSource> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
             if (cmd.getCommand() != null && cmd.getCommand() instanceof BukkitCommandWrapper)
                 continue;
             commandMap.register("minecraft", new VanillaCommandWrapper(dispatcher, cmd));
@@ -198,7 +202,32 @@ public class CraftServer implements Server {
     }
 
     private void syncCommands() {
-        // TODO
+     // Clear existing commands
+        CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(server instanceof DedicatedServer));
+
+        // Register all commands, vanilla ones will be using the old dispatcher references
+        for (Map.Entry<String, Command> entry : commandMap.getKnownCommands().entrySet()) {
+            String label = entry.getKey();
+            Command command = entry.getValue();
+
+            if (command instanceof VanillaCommandWrapper) {
+                LiteralCommandNode<ServerCommandSource> node = (LiteralCommandNode<ServerCommandSource>) ((VanillaCommandWrapper) command).vanillaCommand;
+                if (!node.getLiteral().equals(label)) {
+                    LiteralCommandNode<ServerCommandSource> clone = new LiteralCommandNode(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
+
+                    for (CommandNode<ServerCommandSource> child : node.getChildren())
+                        clone.addChild(child);
+                    node = clone;
+                }
+
+                dispatcher.getDispatcher().getRoot().addChild(node);
+            } else
+                new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
+        }
+
+        // Refresh commands
+        for (ServerPlayerEntity player : getHandle().getPlayerManager().getPlayerList())
+            dispatcher.sendCommandTree(player);
     }
 
     private void enablePlugin(Plugin plugin) {

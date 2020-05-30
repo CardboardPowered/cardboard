@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -16,5 +17,7 @@ public interface IMixinMinecraftServer {
     public void convertWorld(String name);
 
     public WorldGenerationProgressListenerFactory getWorldGenerationProgressListenerFactory();
+
+    public CommandManager setCommandManager(CommandManager commandManager);
 
 }

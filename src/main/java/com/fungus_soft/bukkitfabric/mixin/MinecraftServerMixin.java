@@ -20,6 +20,7 @@ import com.google.gson.JsonElement;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelGeneratorType;
@@ -36,6 +37,9 @@ public class MinecraftServerMixin implements IMixinMinecraftServer {
     @Shadow
     public void upgradeWorld(String name) {
     }
+
+    @Shadow
+    public CommandManager commandManager;
 
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 
@@ -75,6 +79,11 @@ public class MinecraftServerMixin implements IMixinMinecraftServer {
     @Override
     public Queue<Runnable> getProcessQueue() {
         return processQueue;
+    }
+
+    @Override
+    public CommandManager setCommandManager(CommandManager commandManager) {
+        return (this.commandManager = commandManager);
     }
 
 }
