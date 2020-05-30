@@ -245,7 +245,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void chat(String arg0) {
+    public void chat(String mesage) {
         // TODO Auto-generated method stub
     }
 

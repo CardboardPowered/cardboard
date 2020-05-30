@@ -1,6 +1,7 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
 import java.util.Map;
+import java.util.Queue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
@@ -36,6 +37,8 @@ public class MinecraftServerMixin implements IMixinMinecraftServer {
     public void upgradeWorld(String name) {
     }
 
+    public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
+
     public MinecraftServerMixin() {
         this.worlds = null; // Won't be called
         this.worldGenerationProgressListenerFactory = null;
@@ -67,6 +70,11 @@ public class MinecraftServerMixin implements IMixinMinecraftServer {
     @Override
     public WorldGenerationProgressListenerFactory getWorldGenerationProgressListenerFactory() {
         return worldGenerationProgressListenerFactory;
+    }
+
+    @Override
+    public Queue<Runnable> getProcessQueue() {
+        return processQueue;
     }
 
 }
