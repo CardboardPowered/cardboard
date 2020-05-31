@@ -12,7 +12,8 @@
     "PlayerMixin",
     "ServerWorldMixin",
     "InventoryMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ServerPlayNetworkHandlerMixin",
+    "LecternBlockEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

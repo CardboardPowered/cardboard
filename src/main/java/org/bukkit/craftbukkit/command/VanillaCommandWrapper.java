@@ -1,9 +1,7 @@
 package org.bukkit.craftbukkit.command;
 
 import com.google.common.base.Joiner;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 
 import net.minecraft.server.command.CommandManager;

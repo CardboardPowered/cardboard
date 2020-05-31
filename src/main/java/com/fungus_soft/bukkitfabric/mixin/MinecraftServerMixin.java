@@ -44,17 +44,17 @@ import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 
 @Mixin(value=MinecraftServer.class, priority=999) // priority=999 because Mixin does not like to inject into overwitten methods if both have same priority
-public class MinecraftServerMixin implements IMixinMinecraftServer {
+public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
 
     private static int currentTick = (int) (System.currentTimeMillis() / 50);
     private static final int SAMPLE_INTERVAL = 100;
     public final double[] recentTps = new double[3];
 
     @Shadow
-    private final Map<DimensionType, ServerWorld> worlds;
+    private Map<DimensionType, ServerWorld> worlds;
 
     @Shadow
-    private final WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
+    private WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
 
     @Shadow
     public void upgradeWorld(String name) {
@@ -72,7 +72,7 @@ public class MinecraftServerMixin implements IMixinMinecraftServer {
     private long timeReference = Util.getMeasuringTimeMs();
 
     @Shadow
-    private final ServerMetadata metadata;
+    private ServerMetadata metadata;
 
     @Shadow
     private long field_4557; // lastOverloadTime
@@ -99,7 +99,7 @@ public class MinecraftServerMixin implements IMixinMinecraftServer {
     private long field_19248;
 
     @Shadow
-    private final DisableableProfiler profiler;
+    private DisableableProfiler profiler;
 
     @Shadow
     protected void method_16208() {
@@ -121,12 +121,6 @@ public class MinecraftServerMixin implements IMixinMinecraftServer {
 
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 
-    public MinecraftServerMixin() {
-        this.worlds = null; // Won't be called
-        this.profiler = null;
-        this.metadata = null;
-        this.worldGenerationProgressListenerFactory = null;
-    }
 
     @Inject(at = @At(value = "TAIL"), method = "loadWorld")
     private void finish(String worldName, String serverName, long seed, LevelGeneratorType generatorType, JsonElement generatorSettings, CallbackInfo callbackInfo) {

@@ -49,12 +49,14 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 import org.bukkit.craftbukkit.command.CraftCommandMap;
 import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
+import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
@@ -361,8 +363,7 @@ public class CraftServer implements Server {
 
     @Override
     public BlockData createBlockData(Material material, String data) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftBlockData.newData(material, data);
     }
 
     @Override
@@ -397,26 +398,23 @@ public class CraftServer implements Server {
 
     @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type) {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftInventoryCreator.INSTANCE.createInventory(holder, type);
     }
 
     @Override
     public Inventory createInventory(InventoryHolder arg0, int arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftInventoryCreator.INSTANCE.createInventory(arg0, arg1);
     }
 
     @Override
     public Inventory createInventory(InventoryHolder arg0, InventoryType arg1, String arg2) {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftInventoryCreator.INSTANCE.createInventory(arg0, arg1, arg2);
     }
 
     @Override
     public Inventory createInventory(InventoryHolder arg0, int arg1, String arg2) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+
+        return CraftInventoryCreator.INSTANCE.createInventory(arg0, arg1, arg2);
     }
 
     @Override
