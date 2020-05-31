@@ -80,21 +80,14 @@ public class VersionCommand extends Command {
         PluginDescriptionFile desc = plugin.getDescription();
         sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.WHITE + " version " + ChatColor.GREEN + desc.getVersion());
 
-        if (desc.getDescription() != null) {
+        if (desc.getDescription() != null)
             sender.sendMessage(desc.getDescription());
-        }
 
-        if (desc.getWebsite() != null) {
+        if (desc.getWebsite() != null)
             sender.sendMessage("Website: " + ChatColor.GREEN + desc.getWebsite());
-        }
 
-        if (!desc.getAuthors().isEmpty()) {
-            if (desc.getAuthors().size() == 1) {
-                sender.sendMessage("Author: " + getAuthors(desc));
-            } else {
-                sender.sendMessage("Authors: " + getAuthors(desc));
-            }
-        }
+        if (!desc.getAuthors().isEmpty())
+            sender.sendMessage((desc.getAuthors().size() == 1 ? ("Author: ") : ("Authors: ")) + getAuthors(desc));
     }
 
     private String getAuthors(final PluginDescriptionFile desc) {
@@ -104,12 +97,7 @@ public class VersionCommand extends Command {
         for (int i = 0; i < authors.size(); i++) {
             if (result.length() > 0) {
                 result.append(ChatColor.WHITE);
-
-                if (i < authors.size() - 1) {
-                    result.append(", ");
-                } else {
-                    result.append(" and ");
-                }
+                result.append(i < authors.size() - 1 ? ", " : " and ");
             }
 
             result.append(ChatColor.GREEN);
@@ -164,13 +152,7 @@ public class VersionCommand extends Command {
             sender.sendMessage("Checking version, please wait...");
             if (!versionTaskStarted) {
                 versionTaskStarted = true;
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        obtainVersion();
-                    }
-                }).start();
+                new Thread(() -> obtainVersion()).start();
             }
         } finally {
             versionLock.unlock();
@@ -183,14 +165,9 @@ public class VersionCommand extends Command {
 
         if (version.startsWith("git-Bukkit4Fabric-")) {
             int cbVersions = check();
-            if (cbVersions == 0) {
-                setVersionMessage("You are running the latest version");
-            } else {
-                setVersionMessage("You are " + cbVersions + " version(s) behind");
-            }
-        } else {
+            setVersionMessage(cbVersions == 0 ? "You are running the latest version" : "You are " + cbVersions + " version(s) behind");
+        } else
             setVersionMessage("Unknown version, custom build?");
-        }
     }
 
     private void setVersionMessage(String msg) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -25,9 +26,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
+import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.mojang.brigadier.LiteralMessage;
 
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Texts;
 
@@ -235,14 +238,21 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public Location getLocation() {
-        // TODO Auto-generated method stub
-        return null;
+        return new Location(getWorld(), nms.getX(), nms.getY(), nms.getZ(), nms.yaw, nms.pitch);
     }
 
     @Override
-    public  Location getLocation( Location arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public  Location getLocation(Location loc) {
+        if (loc != null) {
+            loc.setWorld(getWorld());
+            loc.setX(nms.getX());
+            loc.setY(nms.getY());
+            loc.setZ(nms.getZ());
+            loc.setYaw(nms.yaw);
+            loc.setPitch(nms.pitch);
+        }
+
+        return loc;
     }
 
     @Override
@@ -295,8 +305,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public Server getServer() {
-        // TODO Auto-generated method stub
-        return null;
+        return Bukkit.getServer();
     }
 
     @Override
@@ -313,8 +322,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public UUID getUniqueId() {
-        // TODO Auto-generated method stub
-        return null;
+        return nms.getUuid();
     }
 
     @Override
@@ -331,62 +339,55 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public double getWidth() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getWidth();
     }
 
     @Override
     public World getWorld() {
-        // TODO Auto-generated method stub
-        return null;
+        return (World) ((IMixinBukkitGetter)nms.world).getBukkitObject();
     }
 
     @Override
     public boolean hasGravity() {
-        // TODO Auto-generated method stub
-        return false;
+        return !nms.hasNoGravity();
     }
 
     @Override
     public boolean isCustomNameVisible() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isCustomNameVisible();
     }
 
     @Override
     public boolean isDead() {
-        // TODO Auto-generated method stub
-        return false;
+        return !nms.isAlive();
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        return !nms.hasPassengers();
     }
 
     @Override
     public boolean isGlowing() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isGlowing();
     }
 
     @Override
     public boolean isInsideVehicle() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.hasVehicle();
     }
 
     @Override
     public boolean isInvulnerable() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isInvulnerable();
     }
 
     @Override
     public boolean isOnGround() {
-        // TODO Auto-generated method stub
-        return false;
+        if (nms instanceof ProjectileEntity)
+            return ((ProjectileEntity) nms).onGround;
+
+        return nms.onGround;
     }
 
     @Override
@@ -397,8 +398,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public boolean isSilent() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isSilent();
     }
 
     @Override
@@ -409,20 +409,21 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public boolean leaveVehicle() {
-        // TODO Auto-generated method stub
-        return false;
+        if (!isInsideVehicle())
+            return false;
+
+        nms.stopRiding();
+        return true;
     }
 
     @Override
     public void playEffect(EntityEffect arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void remove() {
-        // TODO Auto-generated method stub
-        
+        nms.remove();
     }
 
     @Override
@@ -445,32 +446,27 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void setFallDistance(float arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.fallDistance = arg0;
     }
 
     @Override
     public void setFireTicks(int arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setFireTicks(arg0);
     }
 
     @Override
     public void setGlowing(boolean arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setGlowing(arg0);
     }
 
     @Override
     public void setGravity(boolean arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setNoGravity(!arg0);
     }
 
     @Override
     public void setInvulnerable(boolean arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setInvulnerable(arg0);
     }
 
     @Override
@@ -488,13 +484,11 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public void setPersistent(boolean arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setPortalCooldown(int arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.netherPortalCooldown = arg0;
     }
 
     @Override
@@ -505,32 +499,27 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void setSilent(boolean arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setSilent(arg0);
     }
 
     @Override
     public void setTicksLived(int arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setVelocity(Vector arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public boolean teleport(Location arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return teleport(arg0, TeleportCause.PLUGIN);
     }
 
     @Override
     public boolean teleport(Entity arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return teleport(arg0, TeleportCause.PLUGIN);
     }
 
     @Override

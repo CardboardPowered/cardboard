@@ -2,6 +2,8 @@ package org.bukkit.craftbukkit;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +35,7 @@ import org.bukkit.Tag;
 import org.bukkit.UnsafeValues;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
@@ -58,7 +62,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.server.BroadcastMessageEvent;
+import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.help.HelpMap;
 import org.bukkit.inventory.Inventory;
@@ -88,13 +95,17 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import com.fungus_soft.bukkitfabric.FakeLogger;
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinDimensionType;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
@@ -109,7 +120,14 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.WorldSaveHandler;
+import net.minecraft.world.biome.source.BiomeAccessType;
+import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.level.LevelGeneratorType;
+import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.level.LevelProperties;
 
 public class CraftServer implements Server {
 
@@ -413,9 +431,113 @@ public class CraftServer implements Server {
         return null;
     }
 
+    public World createWorld(String name, World.Environment environment) {
+        return WorldCreator.name(name).environment(environment).createWorld();
+    }
+
+    public World createWorld(String name, World.Environment environment, long seed) {
+        return WorldCreator.name(name).environment(environment).seed(seed).createWorld();
+    }
+
+    public World createWorld(String name, Environment environment, ChunkGenerator generator) {
+        return WorldCreator.name(name).environment(environment).generator(generator).createWorld();
+    }
+
+    public World createWorld(String name, Environment environment, long seed, ChunkGenerator generator) {
+        return WorldCreator.name(name).environment(environment).seed(seed).generator(generator).createWorld();
+    }
+
     @Override
     public World createWorld(WorldCreator creator) {
-        // TODO
+        String name = creator.name();
+        ChunkGenerator generator = creator.generator();
+        File folder = new File(getWorldContainer(), name);
+        World world = getWorld(name);
+        LevelGeneratorType type = LevelGeneratorType.getTypeFromName(creator.type().getName());
+        boolean generateStructures = creator.generateStructures();
+
+        if (world != null)
+            return world;
+
+        if ((folder.exists()) && (!folder.isDirectory()))
+            throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
+
+        if (generator == null)
+            generator = getGenerator(name);
+
+        ((IMixinMinecraftServer)server).convertWorld(name);
+
+        int dimension = CraftWorld.CUSTOM_DIMENSION_OFFSET + ((IMixinMinecraftServer)server).getWorldMap().size();
+        boolean used = false;
+        do {
+            for (ServerWorld server : server.getWorlds()) {
+                used = server.getDimension().getType().getRawId() == dimension;
+                if (used) {
+                    dimension++;
+                    break;
+                }
+            }
+        } while (used);
+        boolean hardcore = creator.hardcore();
+
+        WorldSaveHandler sdm = new WorldSaveHandler(getWorldContainer(), name, server, server.getDataFixer());
+        LevelProperties worlddata = sdm.readProperties();
+        LevelInfo worldSettings;
+
+        if (worlddata == null) {
+            worldSettings = new LevelInfo(creator.seed(), net.minecraft.world.GameMode.byId(getDefaultGameMode().getValue()), generateStructures, hardcore, type);
+            JsonElement parsedSettings = new JsonParser().parse(creator.generatorSettings());
+            if (parsedSettings.isJsonObject())
+                worldSettings.setGeneratorOptions(parsedSettings.getAsJsonObject());
+            worlddata = new LevelProperties(worldSettings, name);
+        } else {
+            worlddata.setLevelName(name);
+            worldSettings = new LevelInfo(worlddata);
+        }
+
+        DimensionType actualDimension = DimensionType.byRawId(creator.environment().getId());
+
+        BiFunction<World,DimensionType,? extends Dimension> bu = new BiFunction<World,DimensionType,Dimension>() {
+
+            @Override
+            public Dimension apply(World w, DimensionType manager) {
+                return ((IMixinDimensionType)actualDimension).getFactory().apply(w, manager);
+            }
+            
+        };
+        DimensionType d = null;
+        try {
+            Constructor<DimensionType> c = DimensionType.class.getDeclaredConstructor(int.class, String.class, String.class, BiFunction.class, boolean.class, BiomeAccessType.class);
+            d = (DimensionType) c.newInstance(dimension, actualDimension.getSuffix(), ((IMixinDimensionType)actualDimension).getFolder(), bu, actualDimension.hasSkyLight(), actualDimension.getBiomeAccessType());
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        DimensionType internalDimension = ((IMixinDimensionType)actualDimension).registerDimension(name.toLowerCase(java.util.Locale.ENGLISH), d);
+        ServerWorld internal = new ServerWorld(server, server.getWorkerExecutor(), sdm, worlddata, internalDimension, server.getProfiler(), ((IMixinMinecraftServer)server).getWorldGenerationProgressListenerFactory().create(11));
+
+        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH))))
+            return null;
+
+        ((IMixinMinecraftServer)server).initWorld(internal, worlddata, worldSettings);
+
+        internal.getLevelProperties().setDifficulty(Difficulty.EASY);
+        internal.setMobSpawnOptions(true, true);
+        ((IMixinMinecraftServer)server).getWorldMap().put(internal.getDimension().getType(), internal);
+
+        pluginManager.callEvent(new WorldInitEvent(((IMixinServerWorld)internal).getCraftWorld()));
+
+        // TODO loadSpawn
+        //getServer().loadSpawn(internal.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, internal);
+
+        pluginManager.callEvent(new WorldLoadEvent(((IMixinServerWorld)internal).getCraftWorld()));
+        return ((IMixinServerWorld)internal).getCraftWorld();
+    }
+
+    private ChunkGenerator getGenerator(String name) {
+        // TODO Auto-generated method stub
         return null;
     }
 

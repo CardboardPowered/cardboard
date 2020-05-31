@@ -7,6 +7,8 @@ import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.level.LevelProperties;
 
 public interface IMixinMinecraftServer {
 
@@ -19,5 +21,7 @@ public interface IMixinMinecraftServer {
     public WorldGenerationProgressListenerFactory getWorldGenerationProgressListenerFactory();
 
     public CommandManager setCommandManager(CommandManager commandManager);
+
+    public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info);
 
 }

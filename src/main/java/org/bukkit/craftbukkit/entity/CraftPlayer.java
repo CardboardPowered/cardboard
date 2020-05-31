@@ -20,6 +20,7 @@ import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -122,7 +123,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendMessage(String message) {
-        nms.sendChatMessage(new LiteralText(message), MessageType.SYSTEM);
+        nms.sendMessage(new LiteralText(message));
     }
 
     @Override
@@ -186,14 +187,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isBanned() {
-        // TODO Auto-generated method stub
-        return false;
+        return getServer().getBanList(org.bukkit.BanList.Type.NAME).isBanned(getName());
     }
 
     @Override
     public boolean isOnline() {
-        // TODO Auto-generated method stub
-        return false;
+        return getServer().getPlayer(getUniqueId()) != null;
     }
 
     @Override

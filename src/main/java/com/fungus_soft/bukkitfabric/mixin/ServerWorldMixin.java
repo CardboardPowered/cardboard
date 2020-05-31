@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -21,7 +22,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelProperties;
 
 @Mixin(ServerWorld.class)
-public class ServerWorldMixin implements IMixinBukkitGetter {
+public class ServerWorldMixin implements IMixinBukkitGetter, IMixinServerWorld {
 
     private CraftWorld bukkit;
 
