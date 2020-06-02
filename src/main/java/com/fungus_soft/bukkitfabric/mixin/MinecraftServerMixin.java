@@ -171,11 +171,6 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
         if (!prop.isInitialized()) {
             try {
                 world.init(info);
-                if (prop.getGeneratorType() == LevelGeneratorType.DEBUG_ALL_BLOCK_STATES) {
-                    // TODO Bukkit4Fabric: we should be fine with not adding this method, as who would run a server with a debug world
-                    // this.a(worlddata);
-                }
-
                 prop.setInitialized(true);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
@@ -185,6 +180,7 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
         }
     }
 
+    @Override
     public MinecraftServer getServer() {
         return (MinecraftServer) (Object) this;
     }
@@ -196,8 +192,6 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
     /**
      * Optimized Tick Loop for Fabric
      * This ports "0044-Highly-Optimized-Tick-Loop.patch"
-     *
-     * @author Bukkit4Fabric - https://curseforge.com/minecraft/mc-mods/bukkit
      */
     @Overwrite
     public void run() {

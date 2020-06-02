@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import java.net.InetSocketAddress;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,9 +31,12 @@ import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 
+import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
+
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.network.MessageType;
+import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
@@ -197,8 +201,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isWhitelisted() {
-        // TODO Auto-generated method stub
-        return false;
+        return CraftServer.server.getPlayerManager().isWhitelisted(nms.getGameProfile());
     }
 
     @Override
@@ -219,6 +222,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public void setWhitelisted(boolean arg0) {
         // TODO Auto-generated method stub
+        if (arg0)
+            nms.getServer().getPlayerManager().getWhitelist().add(new WhitelistEntry(nms.getGameProfile()));
+        else {
+            WhitelistEntry e = nms.getServer().getPlayerManager().getWhitelist().get(nms.getGameProfile());
+            nms.getServer().getPlayerManager().getWhitelist().removeEntry(e);
+        }
     }
 
     @Override
@@ -248,7 +257,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void chat(String mesage) {
+    public void chat(String message) {
         // TODO Auto-generated method stub
     }
 
@@ -266,14 +275,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean getAllowFlight() {
-        // TODO Auto-generated method stub
-        return false;
+        return CraftServer.server.isFlightEnabled();
     }
 
     @Override
     public int getClientViewDistance() {
-        // TODO Auto-generated method stub
-        return 0;
+        // TODO Get Client view distance not server
+        return CraftServer.server.getProperties().viewDistance;
     }
 
     @Override
@@ -295,20 +303,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public float getExp() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.experienceProgress;
     }
 
     @Override
     public float getFlySpeed() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.flyingSpeed;
     }
 
     @Override
     public int getFoodLevel() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getHungerManager().getFoodLevel();
     }
 
     @Override
@@ -319,14 +324,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public int getLevel() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.experienceLevel;
     }
 
     @Override
     public String getLocale() {
         // TODO Auto-generated method stub
-        return null;
+        return Locale.ENGLISH.toString();
     }
 
     @Override
@@ -367,8 +371,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public float getSaturation() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getHungerManager().getSaturationLevel();
     }
 
     @Override
@@ -385,38 +388,32 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public int getTotalExperience() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.totalExperience;
     }
 
     @Override
     public float getWalkSpeed() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.forwardSpeed;
     }
 
     @Override
     public void giveExp(int arg0) {
-        // TODO Auto-generated method stub
-
+        nms.addExperience(arg0);
     }
 
     @Override
     public void giveExpLevels(int arg0) {
-        // TODO Auto-generated method stub
-
+        nms.addExperienceLevels(arg0);
     }
 
     @Override
     public void hidePlayer(Player arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void hidePlayer(Plugin arg0, Player arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -455,7 +452,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void kickPlayer(String arg0) {
-        // TODO Auto-generated method stub
+        nms.networkHandler.disconnect(new LiteralText(arg0));
     }
 
     @Override
@@ -476,13 +473,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public void playEffect(Location arg0, Effect arg1, int arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void playEffect(Location arg0, Effect arg1, T arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -498,25 +493,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public void playSound(Location arg0, Sound arg1, float arg2, float arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playSound(Location arg0, String arg1, float arg2, float arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playSound(Location arg0, Sound arg1, SoundCategory arg2, float arg3, float arg4) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playSound(Location arg0, String arg1, SoundCategory arg2, float arg3, float arg4) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -622,7 +613,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setFlySpeed(float arg0) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+        nms.flyingSpeed = arg0;
     }
 
     @Override
@@ -632,7 +623,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setFoodLevel(int arg0) {
-        // TODO Auto-generated method stub
+        nms.getHungerManager().setFoodLevel(arg0);
     }
 
     @Override
@@ -692,7 +683,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setSaturation(float arg0) {
-        // TODO Auto-generated method stub
+        nms.getHungerManager().setSaturationLevelClient(arg0);
     }
 
     @Override
@@ -717,8 +708,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setSprinting(boolean arg0) {
-        // TODO Auto-generated method stub
-
+        nms.setSprinting(arg0);
     }
 
     @Override
@@ -728,62 +718,52 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setTotalExperience(int arg0) {
-        // TODO Auto-generated method stub
+        nms.totalExperience = arg0;
     }
 
     @Override
     public void setWalkSpeed(float arg0) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-
+        nms.abilities.setWalkSpeed(arg0);
     }
 
     @Override
     public void showPlayer(Player arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void showPlayer(Plugin arg0, Player arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void spawnParticle(Particle arg0, Location arg1, int arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, T arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, T arg5) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5,
-            T arg6) {
+    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, T arg6) {
         // TODO Auto-generated method stub
-
     }
 
     @Override

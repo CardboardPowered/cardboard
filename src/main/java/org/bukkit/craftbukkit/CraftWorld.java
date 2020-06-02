@@ -318,8 +318,7 @@ public class CraftWorld implements World {
 
     @Override
     public long getFullTime() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getTimeOfDay();
     }
 
     @Override

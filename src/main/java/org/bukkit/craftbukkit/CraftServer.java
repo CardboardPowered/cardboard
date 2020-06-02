@@ -413,7 +413,6 @@ public class CraftServer implements Server {
 
     @Override
     public Inventory createInventory(InventoryHolder arg0, int arg1, String arg2) throws IllegalArgumentException {
-
         return CraftInventoryCreator.INSTANCE.createInventory(arg0, arg1, arg2);
     }
 
@@ -508,7 +507,6 @@ public class CraftServer implements Server {
             Constructor<DimensionType> c = DimensionType.class.getDeclaredConstructor(int.class, String.class, String.class, BiFunction.class, boolean.class, BiomeAccessType.class);
             d = (DimensionType) c.newInstance(dimension, actualDimension.getSuffix(), ((IMixinDimensionType)actualDimension).getFolder(), bu, actualDimension.hasSkyLight(), actualDimension.getBiomeAccessType());
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

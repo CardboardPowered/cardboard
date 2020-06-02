@@ -3,6 +3,7 @@ package com.fungus_soft.bukkitfabric.interfaces;
 import java.util.Map;
 import java.util.Queue;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
@@ -23,5 +24,7 @@ public interface IMixinMinecraftServer {
     public CommandManager setCommandManager(CommandManager commandManager);
 
     public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info);
+
+    public MinecraftServer getServer();
 
 }

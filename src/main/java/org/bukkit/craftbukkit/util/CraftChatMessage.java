@@ -23,9 +23,9 @@ public final class CraftChatMessage {
 
     static {
         Builder<Character, Formatting> builder = ImmutableMap.builder();
-        for (Formatting format : Formatting.values()) {
+        for (Formatting format : Formatting.values())
             builder.put(Character.toLowerCase(format.toString().charAt(1)), format);
-        }
+
         formatMap = builder.build();
     }
 
@@ -163,9 +163,8 @@ public final class CraftChatMessage {
         }
 
         private void appendNewComponent(int index) {
-            if (index <= currentIndex) {
+            if (index <= currentIndex)
                 return;
-            }
             Text addition = new LiteralText(message.substring(currentIndex, index)).setStyle(modifier);
             currentIndex = index;
             modifier = modifier.deepCopy();
