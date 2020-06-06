@@ -151,7 +151,7 @@ public class CraftServer implements Server {
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
-    private YamlConfiguration configuration;
+    //private YamlConfiguration configuration;
 
     public static MinecraftDedicatedServer server;
 
