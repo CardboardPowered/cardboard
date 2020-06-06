@@ -1,6 +1,7 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
 import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
@@ -17,28 +18,39 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldSaveHandler;
+import net.minecraft.world.chunk.ChunkManager;
+import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 
 @Mixin(ServerWorld.class)
-public class ServerWorldMixin implements IMixinBukkitGetter, IMixinServerWorld {
+public abstract class ServerWorldMixin extends World implements IMixinBukkitGetter, IMixinServerWorld {
+
+    protected ServerWorldMixin(LevelProperties levelProperties, DimensionType dimensionType,
+            BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Profiler profiler, boolean isClient) {
+        super(levelProperties, dimensionType, chunkManagerProvider, profiler, isClient);
+    }
 
     private CraftWorld bukkit;
 
-    public ServerWorldMixin() {
-        this.bukkit = new CraftWorld((ServerWorld) (Object) this);
-    }
 
-    @Inject(at = @At(value = "RETURN"), method = "<init>")
-    public void addToBukkit(MinecraftServer a, Executor b, WorldSaveHandler c, LevelProperties d, DimensionType e, Profiler f, WorldGenerationProgressListener g, CallbackInfo h) {
-        ((CraftServer)Bukkit.getServer()).addWorldToMap((ServerWorld) (Object) (this));
+    @Inject(at = @At(value = "HEAD"), method = "init")
+    public void addToBukkit(LevelInfo d, CallbackInfo ci){
+        Bukkit.getLogger().info("DEBUG: addToBukkit: " + ((ServerWorld)(Object)this).getLevelProperties().getLevelName());
+
+        ((CraftServer)Bukkit.getServer()).addWorldToMap(getCraftWorld());
     }
 
     @Override
     public CraftWorld getBukkitObject() {
-        if (null == bukkit)
-            this.bukkit = new CraftWorld((ServerWorld) (Object) this);
+        return getCraftWorld();
+    }
+
+    @Override
+    public CraftWorld getCraftWorld() {
         return bukkit;
     }
 

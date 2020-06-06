@@ -18,7 +18,7 @@ public class DimensionTypeMixin implements IMixinDimensionType {
     private final String saveDir;
 
     @Shadow
-    private BiFunction<World,DimensionType,? extends Dimension> factory;
+    private BiFunction<net.minecraft.world.World,DimensionType,? extends Dimension> factory;
 
     @Shadow
     private static DimensionType register(String str, DimensionType type) {
@@ -40,7 +40,7 @@ public class DimensionTypeMixin implements IMixinDimensionType {
     }
 
     @Override
-    public BiFunction<World, DimensionType, ? extends Dimension> getFactory() {
+    public BiFunction<net.minecraft.world.World, DimensionType, ? extends Dimension> getFactory() {
         return factory;
     }
 

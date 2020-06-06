@@ -151,6 +151,7 @@ public class CraftServer implements Server {
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
+    private YamlConfiguration configuration;
 
     public static MinecraftDedicatedServer server;
 
@@ -160,6 +161,10 @@ public class CraftServer implements Server {
         commandMap = new CraftCommandMap(this);
         pluginManager = new SimplePluginManager(this, commandMap);
 
+        //configuration = YamlConfiguration.loadConfiguration(getConfigFile());
+        //configuration.options().copyDefaults(true);
+        //configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
+
         this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, CraftPlayer>() {
             @Override
             public CraftPlayer apply(ServerPlayerEntity player) {
@@ -168,8 +173,8 @@ public class CraftServer implements Server {
         }));
     }
 
-    public void addWorldToMap(ServerWorld w) {
-        worlds.put(w.getLevelProperties().getLevelName(), new CraftWorld(w));
+    public void addWorldToMap(CraftWorld world) {
+        worlds.put(world.getName(), world);
     }
 
     public void loadPlugins() {
@@ -462,9 +467,9 @@ public class CraftServer implements Server {
         if (generator == null)
             generator = getGenerator(name);
 
-        ((IMixinMinecraftServer)server).convertWorld(name);
+        ((IMixinMinecraftServer)(Object)server).convertWorld(name);
 
-        int dimension = CraftWorld.CUSTOM_DIMENSION_OFFSET + ((IMixinMinecraftServer)server).getWorldMap().size();
+        int dimension = CraftWorld.CUSTOM_DIMENSION_OFFSET + ((IMixinMinecraftServer)(Object)server).getWorldMap().size();
         boolean used = false;
         do {
             for (ServerWorld server : server.getWorlds()) {
@@ -494,42 +499,41 @@ public class CraftServer implements Server {
 
         DimensionType actualDimension = DimensionType.byRawId(creator.environment().getId());
 
-        BiFunction<World,DimensionType,? extends Dimension> bu = new BiFunction<World,DimensionType,Dimension>() {
+        BiFunction<net.minecraft.world.World,DimensionType,? extends Dimension> bu = new BiFunction<net.minecraft.world.World,DimensionType,Dimension>() {
 
             @Override
-            public Dimension apply(World w, DimensionType manager) {
-                return ((IMixinDimensionType)actualDimension).getFactory().apply(w, manager);
+            public Dimension apply(net.minecraft.world.World w, DimensionType manager) {
+                return ((IMixinDimensionType)(Object)actualDimension).getFactory().apply(w, manager);
             }
             
         };
         DimensionType d = null;
         try {
             Constructor<DimensionType> c = DimensionType.class.getDeclaredConstructor(int.class, String.class, String.class, BiFunction.class, boolean.class, BiomeAccessType.class);
-            d = (DimensionType) c.newInstance(dimension, actualDimension.getSuffix(), ((IMixinDimensionType)actualDimension).getFolder(), bu, actualDimension.hasSkyLight(), actualDimension.getBiomeAccessType());
+            d = (DimensionType) c.newInstance(dimension, actualDimension.getSuffix(), ((IMixinDimensionType)(Object)actualDimension).getFolder(), bu, actualDimension.hasSkyLight(), actualDimension.getBiomeAccessType());
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
-
-        DimensionType internalDimension = ((IMixinDimensionType)actualDimension).registerDimension(name.toLowerCase(java.util.Locale.ENGLISH), d);
-        ServerWorld internal = new ServerWorld(server, server.getWorkerExecutor(), sdm, worlddata, internalDimension, server.getProfiler(), ((IMixinMinecraftServer)server).getWorldGenerationProgressListenerFactory().create(11));
+        DimensionType internalDimension = ((IMixinDimensionType)(Object)actualDimension).registerDimension(name.toLowerCase(java.util.Locale.ENGLISH), d);
+        ServerWorld internal = new ServerWorld(server, server.getWorkerExecutor(), sdm, worlddata, internalDimension, server.getProfiler(), ((IMixinMinecraftServer)(Object)server).getWorldGenerationProgressListenerFactory().create(11));
 
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH))))
             return null;
 
-        ((IMixinMinecraftServer)server).initWorld(internal, worlddata, worldSettings);
+        ((IMixinMinecraftServer)(Object)server).initWorld(internal, worlddata, worldSettings);
 
         internal.getLevelProperties().setDifficulty(Difficulty.EASY);
         internal.setMobSpawnOptions(true, true);
-        ((IMixinMinecraftServer)server).getWorldMap().put(internal.getDimension().getType(), internal);
+        ((IMixinMinecraftServer)(Object)server).getWorldMap().put(internal.getDimension().getType(), internal);
 
         pluginManager.callEvent(new WorldInitEvent(((IMixinServerWorld)internal).getCraftWorld()));
 
         // TODO loadSpawn
         //getServer().loadSpawn(internal.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, internal);
 
-        pluginManager.callEvent(new WorldLoadEvent(((IMixinServerWorld)internal).getCraftWorld()));
-        return ((IMixinServerWorld)internal).getCraftWorld();
+        pluginManager.callEvent(new WorldLoadEvent(((IMixinServerWorld)(Object)internal).getCraftWorld()));
+        return ((IMixinServerWorld)(Object)internal).getCraftWorld();
     }
 
     private ChunkGenerator getGenerator(String name) {
@@ -1078,7 +1082,7 @@ public class CraftServer implements Server {
 
         ServerWorld handle = (ServerWorld) ((CraftWorld) world).getHandle();
 
-        if (!(((IMixinMinecraftServer)getServer()).getWorldMap().containsKey(handle.getWorld().getDimension().getType())))
+        if (!(((IMixinMinecraftServer)(Object)getServer()).getWorldMap().containsKey(handle.getWorld().getDimension().getType())))
             return false;
 
         if (handle.getWorld().getDimension().getType() == DimensionType.OVERWORLD)
@@ -1103,7 +1107,7 @@ public class CraftServer implements Server {
         }
 
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
-        ((IMixinMinecraftServer)getServer()).getWorldMap().remove(handle.getWorld().getDimension().getType());
+        ((IMixinMinecraftServer)(Object)getServer()).getWorldMap().remove(handle.getWorld().getDimension().getType());
         return true;
     }
 

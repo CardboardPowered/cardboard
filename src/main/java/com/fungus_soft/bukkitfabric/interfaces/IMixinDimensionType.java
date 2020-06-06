@@ -13,6 +13,6 @@ public interface IMixinDimensionType {
 
     public DimensionType registerDimension(String str, DimensionType type);
 
-    public BiFunction<World,DimensionType,? extends Dimension> getFactory();
+    public BiFunction<net.minecraft.world.World,DimensionType,? extends Dimension> getFactory();
 
 }

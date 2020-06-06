@@ -307,7 +307,7 @@ public class CraftWorld implements World {
     @Override
     public Environment getEnvironment() {
         // TODO Auto-generated method stub
-        return null;
+        return Environment.NORMAL;
     }
 
     @Override
