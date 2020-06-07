@@ -16,7 +16,9 @@
     "LecternBlockEntityMixin",
     "DimensionTypeMixin",
     "ItemStackMixin",
-    "WorldMixin"
+    "WorldMixin",
+    "WorldChunkMixin",
+    "BlockEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

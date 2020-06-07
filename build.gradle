@@ -1,9 +1,9 @@
 plugins {
-	id 'fabric-loom' version '0.2.7-SNAPSHOT'
-	id 'maven-publish'
-	id 'com.github.johnrengelman.shadow' version '5.2.0'
-	id 'java'
-	id "com.peterabeles.gversion" version "1.2.4"
+    id 'fabric-loom' version '0.2.7-SNAPSHOT'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'java'
+    id "com.peterabeles.gversion" version "1.2.4"
 }
 
 gversion {
@@ -42,20 +42,21 @@ repositories {
 }
 
 dependencies {
-	//to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    //to change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Spigot API
-	extraLibs group: 'org.spigotmc', name: 'spigot-api', version: '1.15.2-R0.1-SNAPSHOT'
-	configurations.compile.extendsFrom(configurations.extraLibs)
+    // Spigot API
+    extraLibs group: "org.spigotmc", name: "spigot-api", version: "${project.spigot_version}"
+    extraLibs group: "org.jetbrains", name: "annotations", version: "18.0.0"
+    extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
+    configurations.compile.extendsFrom(configurations.extraLibs)
 
     implementation "com.google.code.gson:gson:2.8.0"
-    implementation "com.googlecode.json-simple:json-simple:1.1.1"
     implementation "mysql:mysql-connector-java:5.1.48"
     implementation "org.xerial:sqlite-jdbc:3.30.1"
     implementation "org.yaml:snakeyaml:1.25"
@@ -63,36 +64,36 @@ dependencies {
 }
 
 processResources {
-	inputs.property "version", project.version
+    inputs.property "version", project.version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": project.version
-	}
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": project.version
+    }
 
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
-	}
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
 tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
+    options.encoding = "UTF-8"
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 // if it is present.
 // If you remove this task, sources will not be generated.
 task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
+    classifier = "sources"
+    from sourceSets.main.allSource
 }
 
 jar {
-	from "LICENSE"
-	from {
+    from "LICENSE"
+    from {
         configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
@@ -107,21 +108,21 @@ shadowJar {
 
 // configure the maven publication
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
 
-	// select the repositories you want to publish to
-	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
-	}
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
+    }
 }

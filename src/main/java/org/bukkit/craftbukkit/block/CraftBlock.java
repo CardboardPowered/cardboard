@@ -30,6 +30,9 @@ import org.bukkit.util.Vector;
 import com.google.common.base.Preconditions;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -160,10 +163,22 @@ public class CraftBlock implements Block {
         setTypeAndData(((CraftBlockData) data).getState(), applyPhysics);
     }
 
-    public boolean setTypeAndData(final BlockState blockData, final boolean applyPhysics) {
-        // TODO auto-generated method stub
-        
-        return false;
+    public boolean setTypeAndData(final net.minecraft.block.BlockState blockData, final boolean applyPhysics) {
+        if (!blockData.isAir() && blockData.getBlock() instanceof BlockWithEntity && blockData.getBlock() != getNMSBlock()) {
+            if (world instanceof net.minecraft.world.World)
+                ((net.minecraft.world.World) world).removeBlockEntity(position);
+            else world.setBlockState(position, Blocks.AIR.getDefaultState(), 0);
+        }
+
+        if (applyPhysics)
+            return world.setBlockState(position, blockData, 3);
+        else {
+            net.minecraft.block.BlockState old = world.getBlockState(position);
+            boolean success = world.setBlockState(position, blockData, 2 | 16 | 1024);
+            if (success)
+                world.getWorld().updateListeners(position, old, blockData, 3);
+            return success;
+        }
     }
 
     @Override
@@ -265,10 +280,20 @@ public class CraftBlock implements Block {
         }
     }
 
+    public String[] test() {return null;}
+
+    @SuppressWarnings("unchecked")
     @Override
     public org.bukkit.block.BlockState getState() {
-        // TODO auto-generated method stub
-        return null;
+        Material material = getType();
+        switch (material) {
+            // TODO add materials
+            default:
+                BlockEntity tileEntity = world.getBlockEntity(position);
+                if (tileEntity != null)
+                    return new CraftBlockEntityState<BlockEntity>(this, (Class<BlockEntity>) tileEntity.getClass());
+                else return new CraftBlockState(this);
+        }
     }
 
     @Override

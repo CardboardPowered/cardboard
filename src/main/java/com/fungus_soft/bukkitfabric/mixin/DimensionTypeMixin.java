@@ -2,7 +2,6 @@ package com.fungus_soft.bukkitfabric.mixin;
 
 import java.util.function.BiFunction;
 
-import org.bukkit.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

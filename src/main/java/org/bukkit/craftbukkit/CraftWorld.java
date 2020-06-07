@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,20 +35,16 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Snowball;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.generator.BlockPopulator;
@@ -64,11 +61,7 @@ import org.bukkit.util.Vector;
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 
-import net.minecraft.entity.FallingBlockEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.thrown.SnowballEntity;
-import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -76,6 +69,7 @@ import net.minecraft.util.math.BlockPos;
 public class CraftWorld implements World {
 
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
+    private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
 
     private net.minecraft.world.World nms;
     public CraftWorld(net.minecraft.world.World world) {
@@ -84,13 +78,18 @@ public class CraftWorld implements World {
 
     @Override
     public Set<String> getListeningPluginChannels() {
-        // TODO Auto-generated method stub
-        return null;
+        Set<String> result = new HashSet<String>();
+
+        for (Player player : getPlayers())
+            result.addAll(player.getListeningPluginChannels());
+
+        return result;
     }
 
     @Override
-    public void sendPluginMessage(Plugin arg0, String arg1, byte[] arg2) {
-        // TODO Auto-generated method stub
+    public void sendPluginMessage(Plugin plugin, String channel, byte[] message) {
+        for (Player player : getPlayers())
+            player.sendPluginMessage(plugin, channel, message);
     }
 
     @Override
@@ -123,8 +122,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean canGenerateStructures() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.getLevelProperties().hasStructures();
     }
 
     @Override
@@ -637,14 +635,12 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkLoaded(Chunk arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return isChunkLoaded(arg0.getX(), arg0.getZ());
     }
 
     @Override
-    public boolean isChunkLoaded(int x, int y) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean isChunkLoaded(int x, int z) {
+        return (null != nms.getChunkManager().getWorldChunk(x, z, false));
     }
 
     @Override
@@ -695,54 +691,45 @@ public class CraftWorld implements World {
     @Override
     public void playEffect(Location arg0, Effect arg1, int arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void playEffect(Location arg0, Effect arg1, T arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playEffect(Location arg0, Effect arg1, int arg2, int arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void playEffect(Location arg0, Effect arg1, T arg2, int arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playSound(Location arg0, Sound arg1, float arg2, float arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playSound(Location arg0, String arg1, float arg2, float arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playSound(Location arg0, Sound arg1, SoundCategory arg2, float arg3, float arg4) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void playSound(Location arg0, String arg1, SoundCategory arg2, float arg3, float arg4) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public RayTraceResult rayTrace(Location arg0, Vector arg1, double arg2, FluidCollisionMode arg3, boolean arg4,
-            double arg5, Predicate<Entity> arg6) {
+    public RayTraceResult rayTrace(Location arg0, Vector arg1, double arg2, FluidCollisionMode arg3, boolean arg4, double arg5, Predicate<Entity> arg6) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -760,8 +747,7 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public RayTraceResult rayTraceBlocks(Location arg0, Vector arg1, double arg2, FluidCollisionMode arg3,
-            boolean arg4) {
+    public RayTraceResult rayTraceBlocks(Location arg0, Vector arg1, double arg2, FluidCollisionMode arg3, boolean arg4) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -785,8 +771,7 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public RayTraceResult rayTraceEntities(Location arg0, Vector arg1, double arg2, double arg3,
-            Predicate<Entity> arg4) {
+    public RayTraceResult rayTraceEntities(Location arg0, Vector arg1, double arg2, double arg3, Predicate<Entity> arg4) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -880,13 +865,11 @@ public class CraftWorld implements World {
     @Override
     public void setKeepSpawnInMemory(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setMonsterSpawnLimit(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -1044,94 +1027,72 @@ public class CraftWorld implements World {
     @Override
     public void spawnParticle(Particle arg0, Location arg1, int arg2) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, T arg3) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, T arg5) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5,
-            T arg6) {
+    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, T arg6) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6, T arg7) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, T arg8) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5,
-            double arg6) {
+    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6,
-            double arg7) {
+    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6, T arg7, boolean arg8) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5,
-            double arg6, T arg7) {
+    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8, T arg9) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5,
-            double arg6, double arg7, T arg8) {
+    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8, T arg9, boolean arg10) {
         // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6,
-            double arg7, double arg8) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5,
-            double arg6, T arg7, boolean arg8) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5,
-            double arg6, double arg7, double arg8, T arg9) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5,
-            double arg6, double arg7, double arg8, T arg9, boolean arg10) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -1185,6 +1146,10 @@ public class CraftWorld implements World {
         return new Spigot() {
             // TODO Auto-generated method stub
         };
+    }
+
+    public BlockMetadataStore getBlockMetadata() {
+        return blockMetadata;
     }
 
 }

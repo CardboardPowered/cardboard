@@ -18,10 +18,6 @@ public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCom
 
     private CraftPlayer bukkit;
 
-    public PlayerMixin() {
-        this.bukkit = new CraftPlayer((ServerPlayerEntity) (Object) this);
-    }
-
     @Override
     public boolean sendCommandFeedback() {
         return false;
@@ -50,8 +46,11 @@ public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCom
 
     @Override
     public CraftPlayer getBukkitObject() {
-        if (null == bukkit)
-            this.bukkit = new CraftPlayer((ServerPlayerEntity) (Object) this);
+        return bukkit;
+    }
+
+    @Override
+    public CraftPlayer getBukkitEntity() {
         return bukkit;
     }
 

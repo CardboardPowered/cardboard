@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 import org.bukkit.craftbukkit.command.CraftCommandMap;
@@ -151,7 +153,7 @@ public class CraftServer implements Server {
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
-    //private YamlConfiguration configuration;
+    private YamlConfiguration configuration;
 
     public static MinecraftDedicatedServer server;
 
@@ -161,9 +163,9 @@ public class CraftServer implements Server {
         commandMap = new CraftCommandMap(this);
         pluginManager = new SimplePluginManager(this, commandMap);
 
-        //configuration = YamlConfiguration.loadConfiguration(getConfigFile());
-        //configuration.options().copyDefaults(true);
-        //configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
+        configuration = YamlConfiguration.loadConfiguration(new File("bukkit.yml"));
+        configuration.options().copyDefaults(true);
+        configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
 
         this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, CraftPlayer>() {
             @Override
