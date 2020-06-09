@@ -18,7 +18,11 @@
     "ItemStackMixin",
     "WorldMixin",
     "WorldChunkMixin",
-    "BlockEntityMixin"
+    "BlockEntityMixin",
+    "ThreadedAnvilChunkStorageMixin",
+    "LevelPropertiesMixin",
+    "ServerNetworkIoMixin",
+    "ThreadExecutorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

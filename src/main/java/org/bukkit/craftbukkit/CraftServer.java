@@ -538,7 +538,7 @@ public class CraftServer implements Server {
         return ((IMixinServerWorld)(Object)internal).getCraftWorld();
     }
 
-    private ChunkGenerator getGenerator(String name) {
+    public ChunkGenerator getGenerator(String name) {
         // TODO Auto-generated method stub
         return null;
     }

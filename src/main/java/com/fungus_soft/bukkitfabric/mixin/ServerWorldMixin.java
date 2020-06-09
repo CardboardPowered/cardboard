@@ -34,8 +34,6 @@ public abstract class ServerWorldMixin extends World implements IMixinBukkitGett
         super(levelProperties, dimensionType, chunkManagerProvider, profiler, isClient);
     }
 
-    private CraftWorld bukkit;
-
 
     @Inject(at = @At(value = "HEAD"), method = "init")
     public void addToBukkit(LevelInfo d, CallbackInfo ci){
@@ -47,11 +45,6 @@ public abstract class ServerWorldMixin extends World implements IMixinBukkitGett
     @Override
     public CraftWorld getBukkitObject() {
         return getCraftWorld();
-    }
-
-    @Override
-    public CraftWorld getCraftWorld() {
-        return bukkit;
     }
 
 }

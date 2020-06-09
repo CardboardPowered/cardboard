@@ -1,11 +1,13 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.server.ServerLoadEvent.LoadType;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,21 +26,40 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinNetworkIo;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadExecutor;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 import com.google.gson.JsonElement;
 
+import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.minecraft.SharedConstants;
+import net.minecraft.command.DataCommandStorage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerMetadata;
+import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.world.ChunkTicketType;
+import net.minecraft.server.world.SecondaryServerWorld;
+import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.profiler.DisableableProfiler;
+import net.minecraft.world.ForcedChunkState;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.PersistentStateManager;
+import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelGeneratorType;
 import net.minecraft.world.level.LevelInfo;
@@ -78,7 +100,8 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
     private long field_4557; // lastOverloadTime
 
     @Shadow
-    private static final Logger LOGGER = LogManager.getLogger();
+    @Final
+    private static Logger LOGGER;
 
     @Shadow
     private boolean profilerStartQueued;
@@ -119,16 +142,34 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
     protected void shutdown() {
     }
 
+    @Shadow
+    @Final
+    public Executor workerExecutor;
+
+    @Shadow
+    public void initScoreboard(PersistentStateManager arg0) {}
+
+    @Shadow
+    protected synchronized void setLoadingStage(Text loadingStage) {}
+
+    @Shadow
+    public void loadWorldDataPacks(File worldDir, LevelProperties levelProperties) {}
+
+    @Shadow
+    public DataCommandStorage dataCommandStorage;
+
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 
+    private boolean forceTicks;
 
-    @Inject(at = @At(value = "TAIL"), method = "loadWorld")
-    private void finish(String worldName, String serverName, long seed, LevelGeneratorType generatorType, JsonElement generatorSettings, CallbackInfo callbackInfo) {
-        CraftServer s = ((CraftServer)Bukkit.getServer());
 
-        s.enablePlugins(PluginLoadOrder.POSTWORLD);
-        s.getPluginManager().callEvent(new ServerLoadEvent(LoadType.STARTUP));
-    }
+    //@Inject(at = @At(value = "TAIL"), method = "loadWorld")
+    //private void finish(String worldName, String serverName, long seed, LevelGeneratorType generatorType, JsonElement generatorSettings, CallbackInfo callbackInfo) {
+    //    CraftServer s = ((CraftServer)Bukkit.getServer());
+    //
+    //    s.enablePlugins(PluginLoadOrder.POSTWORLD);
+    //    s.getPluginManager().callEvent(new ServerLoadEvent(LoadType.STARTUP));
+    //}
 
     @Overwrite
     public String getServerModName() {
@@ -164,18 +205,23 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
     public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info) {
         World bukkit = ((IMixinServerWorld)world).getCraftWorld();
         world.getWorldBorder().load(prop);
+        System.out.println("Test #1 = " + (null != bukkit));
 
-        if (bukkit.getGenerator() != null)
+        if (null != bukkit.getGenerator())
             bukkit.getPopulators().addAll(bukkit.getGenerator().getDefaultPopulators(bukkit));
+        System.out.println("Test #2");
 
         if (!prop.isInitialized()) {
+            System.out.println("Test #3");
             try {
                 world.init(info);
+                System.out.println("Test #4");
                 prop.setInitialized(true);
+                System.out.println("Test #5");
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
-
+            System.out.println("Test #6");
             prop.setInitialized(true);
         }
     }
@@ -191,7 +237,6 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
 
     /**
      * Optimized Tick Loop for Fabric
-     * This ports "0044-Highly-Optimized-Tick-Loop.patch"
      */
     @Overwrite
     public void run() {
@@ -210,7 +255,7 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
                     if (i > 5000L && this.timeReference - this.field_4557 >= 30000L) { // CraftBukkit
                         long j = i / 50L;
 
-                        LOGGER.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
+                        LOGGER.warn("Can't keep up! Is the server overloaded? Running " + i + "ms or " + j + " ticks behind");
                         this.timeReference += j * 50L;
                         this.field_4557 = this.timeReference;
                     }
@@ -222,7 +267,6 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
                         recentTps[2] = calcTps(recentTps[2], 0.9945, currentTps);
                         tickSection = curTime;
                     }
-                    // Spigot end
 
                     currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
                     this.timeReference += 50L;
@@ -247,7 +291,7 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
             CrashReport crashReport = getServer().populateCrashReport((throwable instanceof CrashException) ? ((CrashException)throwable).getReport() : new CrashReport("Exception in server tick loop", throwable));
 
             File file = new File(new File(getServer().getRunDirectory(), "crash-reports"), "crash-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
-            LOGGER.error(crashReport.writeToFile(file) ? ("This crash report has been saved to: " + file.getAbsolutePath()) : "We were unable to save this crash report to disk.");
+            LOGGER.error(crashReport.writeToFile(file) ? ("This crash report has been saved to: " + file.getAbsolutePath()) : "We were unable to save this crash report");
             this.setCrashReport(crashReport);
         } finally {
             try {
@@ -257,6 +301,177 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
                 LOGGER.error("Exception stopping the server", throwable);
             } finally {System.exit(1);}
         }
+    }
+
+    @Overwrite
+    public void loadWorld(String s, String s1, long i, LevelGeneratorType worldtype, JsonElement jsonelement) {
+        setLoadingStage(new TranslatableText("menu.loadingLevel", new Object[0]));
+
+        int worldCount = 3;
+        for (int j = 0; j < worldCount; ++j) {
+            ServerWorld world;
+            LevelProperties worlddata;
+            byte dimension = 0;
+
+            if (j == 1) {
+                if (Bukkit.getAllowNether())
+                    dimension = -1;
+                else continue;
+            }
+
+            if (j == 2) {
+                if (Bukkit.getAllowEnd())
+                    dimension = 1;
+                else continue;
+            }
+
+            String worldType = org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
+            String name = (dimension == 0) ? s : s + "_" + worldType;
+            this.convertWorld(name); // Run conversion now
+
+            org.bukkit.generator.ChunkGenerator gen = ((CraftServer)Bukkit.getServer()).getGenerator(name);
+            LevelInfo worldsettings = new LevelInfo(i, getServer().getDefaultGameMode(), getServer().shouldGenerateStructures(), getServer().isHardcore(), worldtype);
+            worldsettings.setGeneratorOptions(jsonelement);
+
+            if (j == 0) {
+                WorldSaveHandler worldnbtstorage = new WorldSaveHandler(Bukkit.getWorldContainer(), s1, getServer(), getServer().getDataFixer());
+                worlddata = worldnbtstorage.readProperties();
+                if (worlddata == null)
+                    worlddata = new LevelProperties(worldsettings, s1);
+
+                ((IMixinLevelProperties)(Object)worlddata).checkName(s1);
+                loadWorldDataPacks(worldnbtstorage.getWorldDir(), worlddata);  
+                WorldGenerationProgressListener worldloadlistener = worldGenerationProgressListenerFactory.create(11);
+
+                world = new ServerWorld(getServer(), workerExecutor, worldnbtstorage, worlddata, DimensionType.OVERWORLD, profiler, worldloadlistener/*, org.bukkit.World.Environment.getEnvironment(dimension), gen*/); // TODO
+
+                PersistentStateManager worldpersistentdata = world.getPersistentStateManager();
+                initScoreboard(worldpersistentdata);
+                // TODO ((CraftServer)Bukkit.getServer()).scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(this, world.getScoreboard());
+                dataCommandStorage = new DataCommandStorage(worldpersistentdata);
+            } else {
+                String dim = "DIM" + dimension;
+
+                File newWorld = new File(new File(name), dim);
+                File oldWorld = new File(new File(s), dim);
+                File oldLevelDat = new File(new File(s), "level.dat");
+
+                if (!newWorld.isDirectory() && oldWorld.isDirectory() && oldLevelDat.isFile()) {
+                    LOGGER.info("---- Migration of old " + worldType + " folder required ----");
+                    LOGGER.info("Unfortunately due to the way that Minecraft implemented multiworld support, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
+                    LOGGER.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
+                    LOGGER.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
+
+                    if (newWorld.exists()) {
+                        LOGGER.warn("A file or folder already exists at " + newWorld + "!");
+                        LOGGER.info("---- Migration of old " + worldType + " folder failed ----");
+                    } else if (newWorld.getParentFile().mkdirs()) {
+                        if (oldWorld.renameTo(newWorld)) {
+                            LOGGER.info("Success! To restore " + worldType + " in the future, simply move " + newWorld + " to " + oldWorld);
+                            // Migrate world data too.
+                            try {
+                                com.google.common.io.Files.copy(oldLevelDat, new File(new File(name), "level.dat"));
+                                org.apache.commons.io.FileUtils.copyDirectory(new File(new File(s), "data"), new File(new File(name), "data"));
+                            } catch (IOException exception) {
+                                LOGGER.warn("Unable to migrate world data.");
+                            }
+                            LOGGER.info("---- Migration of old " + worldType + " folder complete ----");
+                        } else {
+                            LOGGER.warn("Could not move folder " + oldWorld + " to " + newWorld + "!");
+                            LOGGER.info("---- Migration of old " + worldType + " folder failed ----");
+                        }
+                    } else {
+                        LOGGER.warn("Could not create path for " + newWorld + "!");
+                        LOGGER.info("---- Migration of old " + worldType + " folder failed ----");
+                    }
+                }
+
+                WorldSaveHandler worldnbtstorage = new WorldSaveHandler(Bukkit.getWorldContainer(), name, getServer(), getServer().getDataFixer());
+                // world =, b0 to dimension, s1 to name, added Environment and gen
+                worlddata = worldnbtstorage.readProperties();
+                if (worlddata == null)
+                    worlddata = new LevelProperties(worldsettings, name);
+
+               ((IMixinLevelProperties)(Object)worlddata).checkName(name);
+                WorldGenerationProgressListener worldloadlistener = worldGenerationProgressListenerFactory.create(11);
+                // TODO
+                world = new SecondaryServerWorld(worlds.get(DimensionType.OVERWORLD), getServer(), workerExecutor, worldnbtstorage, DimensionType.byRawId(dimension), profiler, worldloadlistener/*, worlddata, org.bukkit.World.Environment.getEnvironment(dimension), gen*/);
+            }
+
+            this.initWorld(world, worlddata, worldsettings);
+            Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinServerWorld)world).getCraftWorld()));
+
+            worlds.put(world.getDimension().getType(), world);
+            getServer().getPlayerManager().setMainWorld(world);
+
+            if (worlddata.getCustomBossEvents() != null)
+                getServer().getBossBarManager().fromTag(worlddata.getCustomBossEvents());
+        }
+        getServer().setDifficulty(getServer().getDefaultDifficulty(), true);
+
+        for (ServerWorld worldserver : getServer().getWorlds()) {
+            prepareStartRegion(((IMixinThreadedAnvilChunkStorage)(Object)worldserver.getChunkManager().threadedAnvilChunkStorage).getWorldGenerationProgressListener(), worldserver);
+            Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinServerWorld)worldserver).getCraftWorld()));
+        }
+
+        CraftServer bukkit = ((CraftServer)Bukkit.getServer());
+
+        bukkit.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
+        bukkit.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
+        ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
+    }
+
+    public void prepareStartRegion(WorldGenerationProgressListener worldloadlistener, ServerWorld worldserver) {
+        if (!(((IMixinServerWorld)worldserver).getCraftWorld()).getKeepSpawnInMemory())
+            return;
+
+        setLoadingStage(new TranslatableText("menu.generatingTerrain", new Object[0]));
+        this.forceTicks = true;
+
+        LOGGER.info("Preparing start region for dimension '{}'/{}", worldserver.getLevelProperties().getLevelName(), worldserver.getDimension().getType()); // CraftBukkit
+        BlockPos blockposition = worldserver.getSpawnPos();
+
+        worldloadlistener.start(new ChunkPos(blockposition));
+        ServerChunkManager chunkproviderserver = worldserver.getChunkManager();
+
+        chunkproviderserver.getLightingProvider().setTaskBatchSize(500);
+        this.timeReference = Util.getMeasuringTimeMs();
+        chunkproviderserver.addTicket(ChunkTicketType.START, new ChunkPos(blockposition), 11, Unit.INSTANCE);
+
+        // TODO Bukkit4Fabric: this never stops looping!
+        while (chunkproviderserver.getTotalChunksLoadedCount() != 441) {
+            //LOGGER.info(chunkproviderserver.getLoadedChunkCount());
+            this.executeModerately();
+        }
+
+        executeModerately();
+
+        if (true) {
+            DimensionType dimensionmanager = worldserver.getDimension().getType();
+            ForcedChunkState forcedchunk = (ForcedChunkState) worldserver.getPersistentStateManager().get(ForcedChunkState::new, "chunks");
+
+            if (forcedchunk != null) {
+                ServerWorld worldserver1 = getServer().getWorld(dimensionmanager);
+                LongIterator longiterator = forcedchunk.getChunks().iterator();
+
+                while (longiterator.hasNext()) {
+                    System.out.println("ABCDEFG ------------");
+                    long i = longiterator.nextLong();
+                    ChunkPos chunkcoordintpair = new ChunkPos(i);
+                    worldserver1.getChunkManager().setChunkForced(chunkcoordintpair, true);
+                }
+            }
+        }
+        this.executeModerately();
+        worldloadlistener.stop();
+        chunkproviderserver.getLightingProvider().setTaskBatchSize(5);
+
+        this.forceTicks = false;
+    }
+
+    private void executeModerately() {
+        ((IMixinThreadExecutor)(Object)this).runTasks();
+        java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
     }
 
 }
