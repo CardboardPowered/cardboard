@@ -34,7 +34,7 @@ public class BlockEntityMixin implements IMixinBlockEntity {
     }
 
     @Inject(at = @At("RETURN"), method = "toTag")
-    public void saveEnd(CompoundTag tag, CallbackInfoReturnable callback) {
+    public void saveEnd(CompoundTag tag, @SuppressWarnings("rawtypes") CallbackInfoReturnable callback) {
         if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty())
             tag.put("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
     }

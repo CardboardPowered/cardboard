@@ -15,7 +15,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import com.fungus_soft.bukkitfabric.FakeLogger;
+import com.fungus_soft.bukkitfabric.BukkitLogger;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 
@@ -23,7 +23,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.SharedConstants;
 import net.minecraft.client.options.ChatVisibility;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
@@ -51,7 +50,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
 
     @Overwrite
     public void executeCommand(String string) {
-        FakeLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
+        BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), string, new LazyPlayerSet(CraftServer.server));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled())
@@ -126,10 +125,8 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
                     for (ServerPlayerEntity recipient : server.getPlayerManager().getPlayerList())
                         for (Text txt : CraftChatMessage.fromString(s))
                             recipient.sendMessage(txt);
-                } else
-                    for (Player recipient : event.getRecipients())
-                        recipient.sendMessage(s);
-
+                } else for (Player recipient : event.getRecipients())
+                    recipient.sendMessage(s);
             }
         }
     }
@@ -154,7 +151,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
             if (isSync)
                 this.executeCommand(s);
             else if (s.isEmpty())
-                FakeLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
+                BukkitLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
             else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) { // Re-add "Command Only" flag check
                 TranslatableText chatmessage = new TranslatableText("chat.cannotSend", new Object[0]);
 

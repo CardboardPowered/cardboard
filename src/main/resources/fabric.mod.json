@@ -6,15 +6,16 @@
   "name": "BukkitFabric",
   "description": "The popular Bukkit modding API implementation for Fabric",
   "authors": [
-    "Me!"
+    "Isaiah"
   ],
   "contact": {
     "homepage": "https://fungus-soft.com/",
     "sources": "https://github.com/fungus-soft/fabricbukkit/"
   },
 
-  "license": "GPLv3",
+  "license": "LGPLv3",
   "icon": "assets/fabricbukkit/icon.png",
+  "accessWidener" : "bukkitfabric.accesswidener",
 
   "environment": "*",
   "entrypoints": {
@@ -27,7 +28,7 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.7.4",
+    "fabricloader": ">=0.8.1",
     "fabric": "*",
     "minecraft": "1.15.x"
   },

@@ -22,7 +22,8 @@
     "ThreadedAnvilChunkStorageMixin",
     "LevelPropertiesMixin",
     "ServerNetworkIoMixin",
-    "ThreadExecutorMixin"
+    "ThreadExecutorMixin",
+    "block.MixinBannerBlockEntity"
   ],
   "injectors": {
     "defaultRequire": 1

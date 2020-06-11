@@ -96,7 +96,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
 import org.bukkit.util.permissions.DefaultPermissions;
 
-import com.fungus_soft.bukkitfabric.FakeLogger;
+import com.fungus_soft.bukkitfabric.BukkitLogger;
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinDimensionType;
@@ -139,7 +139,7 @@ public class CraftServer implements Server {
     public final String bukkitVersion = "1.15.2-R0.1-SNAPSHOT";
     public final String serverVersion;
 
-    private final Logger logger = FakeLogger.getLogger();
+    private final Logger logger = BukkitLogger.getLogger();
 
     private final CraftCommandMap commandMap;
     private final SimplePluginManager pluginManager;
@@ -520,8 +520,10 @@ public class CraftServer implements Server {
         DimensionType internalDimension = ((IMixinDimensionType)(Object)actualDimension).registerDimension(name.toLowerCase(java.util.Locale.ENGLISH), d);
         ServerWorld internal = new ServerWorld(server, server.getWorkerExecutor(), sdm, worlddata, internalDimension, server.getProfiler(), ((IMixinMinecraftServer)(Object)server).getWorldGenerationProgressListenerFactory().create(11));
 
-        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH))))
+        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
+            getLogger().warning("Unable to create world, map does not contain world name!");
             return null;
+        }
 
         ((IMixinMinecraftServer)(Object)server).initWorld(internal, worlddata, worldSettings);
 

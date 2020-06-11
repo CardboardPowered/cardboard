@@ -1,6 +1,5 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
-import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 
 import org.bukkit.Bukkit;
@@ -14,12 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.chunk.ChunkManager;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
@@ -37,8 +33,6 @@ public abstract class ServerWorldMixin extends World implements IMixinBukkitGett
 
     @Inject(at = @At(value = "HEAD"), method = "init")
     public void addToBukkit(LevelInfo d, CallbackInfo ci){
-        Bukkit.getLogger().info("DEBUG: addToBukkit: " + ((ServerWorld)(Object)this).getLevelProperties().getLevelName());
-
         ((CraftServer)Bukkit.getServer()).addWorldToMap(getCraftWorld());
     }
 

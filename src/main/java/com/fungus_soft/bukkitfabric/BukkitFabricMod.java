@@ -3,14 +3,13 @@ package com.fungus_soft.bukkitfabric;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.fungus_soft.bukkitfabric.FakeLogger;
 import com.fungus_soft.bukkitfabric.command.VersionCommand;
 
 import net.fabricmc.api.ModInitializer;
 
 public class BukkitFabricMod implements ModInitializer {
 
-    private Logger LOGGER = FakeLogger.getLogger();
+    private Logger LOGGER = BukkitLogger.getLogger();
 
     @Override
     public void onInitialize() {

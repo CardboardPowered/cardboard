@@ -118,8 +118,7 @@ public class CraftBlockState implements BlockState {
             if ((data.getClass() == mat.getData()) || (data.getClass() == MaterialData.class)) {
                 this.data = CraftMagicNumbers.getBlock(data);
             } else {
-                throw new IllegalArgumentException("Provided data is not of type "
-                        + mat.getData().getName() + ", found " + data.getClass().getName());
+                throw new IllegalArgumentException("Provided data is not of type " + mat.getData().getName() + ", found " + data.getClass().getName());
             }
         }
     }
@@ -134,9 +133,8 @@ public class CraftBlockState implements BlockState {
         Preconditions.checkArgument(type != null, "Material cannot be null");
         Preconditions.checkArgument(type.isBlock(), "Material must be a block!");
 
-        if (this.getType() != type) {
+        if (this.getType() != type)
             this.data = CraftMagicNumbers.getBlock(type).getDefaultState();
-        }
     }
 
     @Override
@@ -175,15 +173,13 @@ public class CraftBlockState implements BlockState {
 
     @Override
     public boolean update(boolean force, boolean applyPhysics) {
-        if (!isPlaced()) {
+        if (!isPlaced())
             return true;
-        }
         CraftBlock block = getBlock();
 
         if (block.getType() != getType()) {
-            if (!force) {
+            if (!force)
                 return false;
-            }
         }
 
         net.minecraft.block.BlockState newBlock = this.data;
@@ -234,22 +230,17 @@ public class CraftBlockState implements BlockState {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+
         final CraftBlockState other = (CraftBlockState) obj;
-        if (this.world != other.world && (this.world == null || !this.world.equals(other.world))) {
+        if (this.world != other.world && (this.world == null || !this.world.equals(other.world)))
             return false;
-        }
-        if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
+        if (this.position != other.position && (this.position == null || !this.position.equals(other.position)))
             return false;
-        }
-        if (this.data != other.data && (this.data == null || !this.data.equals(other.data))) {
+        if (this.data != other.data && (this.data == null || !this.data.equals(other.data)))
             return false;
-        }
+
         return true;
     }
 
@@ -292,9 +283,8 @@ public class CraftBlockState implements BlockState {
     }
 
     protected void requirePlaced() {
-        if (!isPlaced()) {
+        if (!isPlaced())
             throw new IllegalStateException("The blockState must be placed to call this method");
-        }
     }
 
 }

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.fungus_soft.bukkitfabric.FakeLogger;
+import com.fungus_soft.bukkitfabric.BukkitLogger;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 
 import net.minecraft.server.command.CommandOutput;
@@ -30,13 +30,14 @@ public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput 
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
     private void init(CallbackInfoReturnable<Boolean> callbackInfo) {
-        FakeLogger.getLogger().info("  ____          _     _     _  _    ");
-        FakeLogger.getLogger().info(" |  _ \\        | |   | |   (_)| |   ");
-        FakeLogger.getLogger().info(" | |_) | _   _ | | __| | __ _ | |_  ");
-        FakeLogger.getLogger().info(" |  _ < | | | || |/ /| |/ /| || __| ");
-        FakeLogger.getLogger().info(" | |_) || |_| ||   < |   < | || |_  ");
-        FakeLogger.getLogger().info(" |____/  \\__,_||_|\\_\\|_|\\_\\|_| \\__| ");
-        FakeLogger.getLogger().info("");
+        BukkitLogger.getLogger().info("  ____          _     _     _  _    ");
+        BukkitLogger.getLogger().info(" |  _ \\        | |   | |   (_)| |   ");
+        BukkitLogger.getLogger().info(" | |_) | _   _ | | __| | __ _ | |_  ");
+        BukkitLogger.getLogger().info(" |  _ < | | | || |/ /| |/ /| || __| ");
+        BukkitLogger.getLogger().info(" | |_) || |_| ||   < |   < | || |_  ");
+        BukkitLogger.getLogger().info(" |____/  \\__,_||_|\\_\\|_|\\_\\|_| \\__| ");
+        BukkitLogger.getLogger().info("");
+
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
 

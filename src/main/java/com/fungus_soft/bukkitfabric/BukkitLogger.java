@@ -6,22 +6,22 @@ import java.util.logging.Logger;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
-public class FakeLogger extends Logger {
+public class BukkitLogger extends Logger {
 
     private org.apache.logging.log4j.Logger log4j = LogManager.getLogger("Bukkit");
-    private static FakeLogger inst;
+    private static BukkitLogger inst;
 
-    public static FakeLogger getLogger() {
+    public static BukkitLogger getLogger() {
         if (inst == null)
-            new FakeLogger();
+            new BukkitLogger();
         return inst;
     }
 
-    public FakeLogger() {
+    public BukkitLogger() {
         this("Bukkit", null);
     }
 
-    public FakeLogger(String name, String str) {
+    public BukkitLogger(String name, String str) {
         super(name, str);
         inst = this;
     }
