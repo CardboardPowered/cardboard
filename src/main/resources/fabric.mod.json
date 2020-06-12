@@ -3,8 +3,8 @@
   "id": "bukkitfabric",
   "version": "${version}",
 
-  "name": "BukkitFabric",
-  "description": "The popular Bukkit modding API implementation for Fabric",
+  "name": "Bukkit for Fabric",
+  "description": "An implementation of the popular Bukkit API for Fabric",
   "authors": [
     "Isaiah"
   ],
@@ -35,4 +35,5 @@
   "suggests": {
     "flamingo": "*"
   }
+
 }

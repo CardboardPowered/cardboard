@@ -162,15 +162,6 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
 
     private boolean forceTicks;
 
-
-    //@Inject(at = @At(value = "TAIL"), method = "loadWorld")
-    //private void finish(String worldName, String serverName, long seed, LevelGeneratorType generatorType, JsonElement generatorSettings, CallbackInfo callbackInfo) {
-    //    CraftServer s = ((CraftServer)Bukkit.getServer());
-    //
-    //    s.enablePlugins(PluginLoadOrder.POSTWORLD);
-    //    s.getPluginManager().callEvent(new ServerLoadEvent(LoadType.STARTUP));
-    //}
-
     @Overwrite
     public String getServerModName() {
         return "Fabric + Bukkit4Fabric";
@@ -205,23 +196,17 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
     public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info) {
         World bukkit = ((IMixinServerWorld)world).getCraftWorld();
         world.getWorldBorder().load(prop);
-        System.out.println("Test #1 = " + (null != bukkit));
 
         if (null != bukkit.getGenerator())
             bukkit.getPopulators().addAll(bukkit.getGenerator().getDefaultPopulators(bukkit));
-        System.out.println("Test #2");
 
         if (!prop.isInitialized()) {
-            System.out.println("Test #3");
             try {
                 world.init(info);
-                System.out.println("Test #4");
                 prop.setInitialized(true);
-                System.out.println("Test #5");
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
-            System.out.println("Test #6");
             prop.setInitialized(true);
         }
     }

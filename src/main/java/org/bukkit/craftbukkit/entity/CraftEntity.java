@@ -472,7 +472,6 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public void setLastDamageCause( EntityDamageEvent arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -494,7 +493,6 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public void setRotation(float arg0, float arg1) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
