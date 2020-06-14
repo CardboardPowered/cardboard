@@ -10,22 +10,15 @@ import java.util.Queue;
 import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.event.server.ServerLoadEvent.LoadType;
-import org.bukkit.plugin.PluginLoadOrder;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinNetworkIo;
@@ -57,7 +50,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.profiler.DisableableProfiler;
 import net.minecraft.world.ForcedChunkState;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.DimensionType;
@@ -288,6 +280,7 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Overwrite
     public void loadWorld(String s, String s1, long i, LevelGeneratorType worldtype, JsonElement jsonelement) {
         setLoadingStage(new TranslatableText("menu.loadingLevel", new Object[0]));

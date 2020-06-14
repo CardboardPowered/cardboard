@@ -13,7 +13,6 @@ import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin implements IMixinItemStack {
@@ -29,11 +28,11 @@ public class ItemStackMixin implements IMixinItemStack {
         this.item = item;
     }
 
+    @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
     @Override
     public void convertStack(int version) {
         if (0 < version && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
             CompoundTag savedStack = new CompoundTag();
-            ItemStack i = ((ItemStack)(Object)this);
 
             ((ItemStack)(Object)this).toTag(savedStack);
             savedStack = (CompoundTag) CraftServer.server.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic(NbtOps.INSTANCE, savedStack), version, CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();

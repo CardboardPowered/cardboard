@@ -64,13 +64,15 @@ public final class FakePluginLoader implements PluginLoader {
     }
 
     @Override
-    
-    public Plugin loadPlugin(final File file) throws InvalidPluginException {
+    public Plugin loadPlugin(/*final*/ File file) throws InvalidPluginException { // Bukkit4Fabric: remove final
         Validate.notNull(file, "File cannot be null");
 
         if (!file.exists()) {
             throw new InvalidPluginException(new FileNotFoundException(file.getPath() + " does not exist"));
         }
+
+        // Bukkit4Fabric: Remap Jar file
+        com.fungus_soft.bukkitfabric.nms.Remapper.remap(file); // Bukkit4Fabric: Remap Jar file
 
         final PluginDescriptionFile description;
         try {

@@ -23,7 +23,6 @@
     "LevelPropertiesMixin",
     "ServerNetworkIoMixin",
     "ThreadExecutorMixin",
-    "block.MixinBannerBlockEntity"
   ],
   "injectors": {
     "defaultRequire": 1

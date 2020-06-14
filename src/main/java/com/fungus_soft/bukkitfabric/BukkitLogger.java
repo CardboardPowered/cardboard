@@ -23,7 +23,8 @@ public class BukkitLogger extends Logger {
 
     public BukkitLogger(String name, String str) {
         super(name, str);
-        inst = this;
+        if (inst == null)
+            inst = this;
     }
 
     @Override

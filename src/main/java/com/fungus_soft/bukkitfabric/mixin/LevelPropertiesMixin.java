@@ -50,5 +50,4 @@ public class LevelPropertiesMixin implements IMixinLevelProperties {
             p.setLevelName(name);
     }
 
-
 }

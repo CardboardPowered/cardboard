@@ -24,6 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
 public class PluginClassLoader extends URLClassLoader {
+
     private final FakePluginLoader loader;
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
     private final PluginDescriptionFile description;
@@ -41,7 +42,7 @@ public class PluginClassLoader extends URLClassLoader {
         ClassLoader.registerAsParallelCapable();
     }
 
-    PluginClassLoader(final FakePluginLoader loader, final ClassLoader parent,  final PluginDescriptionFile description,  final File dataFolder,  final File file) throws IOException, InvalidPluginException, MalformedURLException {
+    PluginClassLoader(final FakePluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
         super(new URL[] {file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");
 
@@ -92,8 +93,6 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     Class<?> findClass( String name, boolean checkGlobal) throws ClassNotFoundException {
-        if (name.startsWith("org.bukkit.") || name.startsWith("net.minecraft.")) throw new ClassNotFoundException(name);
-
         Class<?> result = classes.get(name);
 
         if (result == null) {
@@ -136,4 +135,5 @@ public class PluginClassLoader extends URLClassLoader {
 
         javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
     }
+
 }

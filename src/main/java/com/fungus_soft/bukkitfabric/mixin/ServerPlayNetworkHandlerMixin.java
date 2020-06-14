@@ -40,6 +40,7 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import static org.bukkit.craftbukkit.CraftServer.server;
 
 @Mixin(ServerPlayNetworkHandler.class)
+@SuppressWarnings("deprecation")
 public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetworkHandler {
 
     @Shadow 

@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.block;
 
-import com.fungus_soft.bukkitfabric.interfaces.block.IMixinBannerBlockEntity;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +33,10 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
 
         base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
         patterns = new ArrayList<Pattern>();
-        IMixinBannerBlockEntity ibanner = ((IMixinBannerBlockEntity)(Object)banner);
 
-        if (ibanner.patternListTag() != null) {
-            for (int i = 0; i < ibanner.patternListTag().size(); i++) {
-                CompoundTag p = (CompoundTag) ibanner.patternListTag().get(i);
+        if (banner.patternListTag != null) {
+            for (int i = 0; i < banner.patternListTag.size(); i++) {
+                CompoundTag p = (CompoundTag) banner.patternListTag.get(i);
                 patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.getInt("Color")), PatternType.getByIdentifier(p.getString("Pattern"))));
             }
         }
@@ -94,7 +92,7 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
     public void applyTo(BannerBlockEntity banner) {
         super.applyTo(banner);
 
-        ((IMixinBannerBlockEntity)(Object)banner).setBaseColor(net.minecraft.util.DyeColor.byId(base.getWoolData()));
+        banner.baseColor = net.minecraft.util.DyeColor.byId(base.getWoolData());
 
         ListTag newPatterns = new ListTag();
 
@@ -104,7 +102,7 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
             compound.putString("Pattern", p.getPattern().getIdentifier());
             newPatterns.add(compound);
         }
-        ((IMixinBannerBlockEntity)(Object)banner).setPatternListTag(newPatterns);
+        banner.patternListTag = newPatterns;
     }
 
 }

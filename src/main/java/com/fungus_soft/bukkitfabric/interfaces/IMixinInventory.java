@@ -21,11 +21,11 @@ public interface IMixinInventory {
 
     org.bukkit.Location getLocation();
 
-    default Recipe getCurrentRecipe() {
+    default Recipe<?> getCurrentRecipe() {
         return null;
     }
 
-    default void setCurrentRecipe(Recipe recipe) {
+    default void setCurrentRecipe(Recipe<?> recipe) {
     }
 
     int MAX_STACK = 64;

@@ -158,7 +158,7 @@ public class CraftServer implements Server {
     public static MinecraftDedicatedServer server;
 
     public CraftServer(MinecraftDedicatedServer nms) {
-        serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash();
+        serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
         server = nms;
         commandMap = new CraftCommandMap(this);
         pluginManager = new SimplePluginManager(this, commandMap);
@@ -248,8 +248,7 @@ public class CraftServer implements Server {
                 }
 
                 dispatcher.getDispatcher().getRoot().addChild(node);
-            } else
-                new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
+            } else new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
         }
 
         // Refresh commands
@@ -313,8 +312,8 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public void banIP(String arg0) {
-        getServer().getPlayerManager().getIpBanList().add(new BannedIpEntry(arg0));
+    public void banIP(String ip) {
+        getServer().getPlayerManager().getIpBanList().add(new BannedIpEntry(ip));
     }
 
     @Override
@@ -324,13 +323,13 @@ public class CraftServer implements Server {
             if (permissible instanceof CommandSender && permissible.hasPermission(permission))
                 recipients.add((CommandSender) permissible);
 
-        BroadcastMessageEvent broadcastMessageEvent = new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), message, recipients);
-        getPluginManager().callEvent(broadcastMessageEvent);
+        BroadcastMessageEvent event = new BroadcastMessageEvent(!Bukkit.isPrimaryThread(), message, recipients);
+        getPluginManager().callEvent(event);
 
-        if (broadcastMessageEvent.isCancelled())
+        if (event.isCancelled())
             return 0;
 
-        message = broadcastMessageEvent.getMessage();
+        message = event.getMessage();
 
         for (CommandSender recipient : recipients)
             recipient.sendMessage(message);

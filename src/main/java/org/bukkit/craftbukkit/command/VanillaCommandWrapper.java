@@ -24,7 +24,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
     public final CommandNode<?> vanillaCommand;
 
     public VanillaCommandWrapper(CommandManager dispatcher, CommandNode<?> vanillaCommand) {
-        super(vanillaCommand.getName(), "A Mojang provided command.", vanillaCommand.getUsageText(), Collections.emptyList());
+        super(vanillaCommand.getName(), "A Minecraft provided command", vanillaCommand.getUsageText(), Collections.emptyList());
         this.dispatcher = dispatcher;
         this.vanillaCommand = vanillaCommand;
         this.setPermission(getPermission(vanillaCommand));
