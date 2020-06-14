@@ -789,12 +789,18 @@ public class CraftServer implements Server {
 
     @Override
     public Player getPlayer(String name) {
-        return (Player) ((IMixinBukkitGetter)(Object)getServer().getPlayerManager().getPlayer(name)).getBukkitObject();
+        ServerPlayerEntity e = getServer().getPlayerManager().getPlayer(name);
+        if (null == e)
+            return null;
+        return (Player) ((IMixinBukkitGetter)(Object)e).getBukkitObject();
     }
 
     @Override
     public Player getPlayer(UUID uuid) {
-        return (Player) ((IMixinBukkitGetter)(Object)getServer().getPlayerManager().getPlayer(uuid)).getBukkitObject();
+        ServerPlayerEntity e = getServer().getPlayerManager().getPlayer(uuid);
+        if (null == e)
+            return null;
+        return (Player) ((IMixinBukkitGetter)(Object)e).getBukkitObject();
     }
 
     @Override
