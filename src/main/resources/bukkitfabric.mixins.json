@@ -22,7 +22,7 @@
     "ThreadedAnvilChunkStorageMixin",
     "LevelPropertiesMixin",
     "ServerNetworkIoMixin",
-    "ThreadExecutorMixin",
+    "ThreadExecutorMixin"
   ],
   "injectors": {
     "defaultRequire": 1
