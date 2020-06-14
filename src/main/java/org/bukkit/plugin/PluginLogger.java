@@ -10,7 +10,7 @@ public class PluginLogger extends BukkitLogger { // Bukkit2Fabric: extend Bukkit
     private String pluginName;
 
     public PluginLogger(Plugin context) {
-        super(context.getClass().getCanonicalName(), null);
+        super("Bukkit", null);
         String prefix = context.getDescription().getPrefix();
         pluginName = prefix != null ? new StringBuilder().append("[").append(prefix).append("] ").toString() : "[" + context.getDescription().getName() + "] ";
         setParent(context.getServer().getLogger());

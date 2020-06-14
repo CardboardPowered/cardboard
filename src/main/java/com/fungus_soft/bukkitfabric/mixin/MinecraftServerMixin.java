@@ -203,7 +203,6 @@ public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
         }
     }
 
-    @Override
     public MinecraftServer getServer() {
         return (MinecraftServer) (Object) this;
     }

@@ -1,1 +1,2 @@
-net/minecraft/server/v1_15_R1/ net/minecraft/server/
+net/minecraft/server/v1_15_R1/ net/minecraft/server
+org/bukkit/craftbukkit/v1_15_R1/ org/bukkit/craftbukkit

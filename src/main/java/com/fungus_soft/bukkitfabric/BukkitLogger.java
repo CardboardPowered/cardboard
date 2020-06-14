@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 
 public class BukkitLogger extends Logger {
 
-    private org.apache.logging.log4j.Logger log4j = LogManager.getLogger("Bukkit");
+    private org.apache.logging.log4j.Logger log4j;
     private static BukkitLogger inst;
 
     public static BukkitLogger getLogger() {
@@ -23,6 +23,7 @@ public class BukkitLogger extends Logger {
 
     public BukkitLogger(String name, String str) {
         super(name, str);
+        this.log4j = LogManager.getLogger(name);
         if (inst == null)
             inst = this;
     }

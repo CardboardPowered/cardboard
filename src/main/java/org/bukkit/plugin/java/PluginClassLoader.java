@@ -93,6 +93,9 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     Class<?> findClass( String name, boolean checkGlobal) throws ClassNotFoundException {
+        if (name.contains(".."))
+            name = name.replace("..", ".");
+
         Class<?> result = classes.get(name);
 
         if (result == null) {

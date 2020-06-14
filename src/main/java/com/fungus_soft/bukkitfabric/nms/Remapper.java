@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fungus_soft.bukkitfabric.BukkitLogger;
 
@@ -14,12 +16,17 @@ import net.md_5.specialsource.SpecialSource;
 
 public class Remapper {
 
+    public static int MAPPINGS_VERSION = 1;
+
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
     public static File configDir = new File(FabricLoader.getInstance().getConfigDirectory(), "bukkit4fabric");
     public static File remappedDir = new File(configDir, "remapped-plugins");
-
+    public static File backup = new File(remappedDir, "backup-plugins");
     public static File versionFix, spigot2inter, inter2obf;
+    public static File md5info = new File(remappedDir, "md5-hashes.dat");
+
+    public static List<String> hashes = new ArrayList<>();
 
     /**
      * Remaps NMS used in plugins<br><br>
@@ -33,22 +40,54 @@ public class Remapper {
         if (versionFix == null) {
             configDir.mkdirs();
             remappedDir.mkdirs();
+            backup.mkdirs();
+            if (md5info.exists()) {
+                try {
+                    hashes.addAll(Files.readAllLines(md5info.toPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                md5info.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             versionFix = new File(configDir, "deversionify-spigot.srg");
             spigot2inter = new File(configDir, "spigot2intermediary.csrg");
             inter2obf = new File(configDir, "intermediary2obf.csrg");
-    
+
             // Export Mappings to File
             exportResource("deversionify-spigot.srg", configDir);
             exportResource("spigot2intermediary.csrg", configDir);
             exportResource("intermediary2obf.csrg", configDir);
         }
+        String md5 = null;
+        try (InputStream is = Files.newInputStream(jarFile.toPath())) {
+            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        File toMap = jarFile;
+        boolean usingBackup = false;
+        if (hashes.size() <= 0 || !hashes.get(0).equals("mappings=" + MAPPINGS_VERSION)) {
+            toMap = new File(backup, jarFile.getName());
+            if (!toMap.exists()) {
+                toMap = jarFile;
+                usingBackup = false;
+            } else usingBackup = true;
+        }
+
+        if (hashes.contains(md5) && hashes.get(0).equals("mappings=" + MAPPINGS_VERSION))
+            return;
 
         String jarName = jarFile.getName().substring(0, jarFile.getName().indexOf(".jar"));
         LOGGER.info("Remapping \"" + jarFile + "\"...");
 
         // net.minecraft.server.v1_XX_R1 -> net.minecraft.server
         File deversionify = new File(remappedDir, jarName + "-deversionify.jar");
-        runSpecialSource(versionFix, jarFile, deversionify);
+        runSpecialSource(versionFix, toMap, deversionify);
 
         // Spigot -> Intermediary
         File intermediary = new File(remappedDir, jarName + "-intermediary.jar");
@@ -62,12 +101,41 @@ public class Remapper {
         deversionify.delete();
         intermediary.delete();
 
+        if (!usingBackup) {
+            try {
+                Files.copy(jarFile.toPath(), new File(backup, jarFile.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
-            Files.move(finalJar.toPath(), jarFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(finalJar.toPath(), jarFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try (InputStream is = Files.newInputStream(jarFile.toPath())) {
+            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
+        } catch (IOException e1) {
+            md5 = null;
+            e1.printStackTrace();
+        }
+        if (null != md5)
+            hashes.add(md5);
         finalJar.delete();
+        saveHashes();
+    }
+
+    public static void saveHashes() {
+        String out = "mappings=" + MAPPINGS_VERSION + "\n";
+        for (String hash : hashes)
+            out += hash + "\n";
+        try {
+            Files.write(md5info.toPath(), out.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void runSpecialSource(File mappingsFile, File inJar, File outJar) {
