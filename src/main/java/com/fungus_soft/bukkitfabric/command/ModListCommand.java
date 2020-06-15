@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
-import org.spongepowered.asm.mixin.Shadow;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -32,9 +31,6 @@ public class ModListCommand extends BukkitCommand {
         sender.sendMessage("Fabric Mods " + modList);
         return true;
     }
-
-    @Shadow
-    private String getPluginList() {return null;}
 
     private String getModList(boolean all) {
         StringBuilder modList = new StringBuilder();
