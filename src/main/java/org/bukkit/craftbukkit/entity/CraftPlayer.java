@@ -35,12 +35,15 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.network.MessageType;
+import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
+import net.minecraft.world.dimension.DimensionType;
 
 public class CraftPlayer extends CraftHumanEntity implements Player {
 
@@ -835,10 +838,71 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         // TODO Auto-generated method stub
     }
 
+    private final Player.Spigot spigot = new Player.Spigot() {
+
+        @Override
+        public InetSocketAddress getRawAddress() {
+            return (InetSocketAddress) getHandle().networkHandler.connection.getAddress();
+        }
+
+        @Override
+        public boolean getCollidesWithEntities() {
+            return CraftPlayer.this.isCollidable();
+        }
+
+        @Override
+        public void setCollidesWithEntities(boolean collides) {
+            CraftPlayer.this.setCollidable(collides);
+        }
+
+        @Override
+        public void respawn() {
+            if (getHealth() <= 0 && isOnline())
+                nms.getServer().getPlayerManager().respawnPlayer( getHandle(), DimensionType.OVERWORLD, false );
+        }
+
+        @Override
+        public Set<Player> getHiddenPlayers() {
+            return java.util.Collections.emptySet();
+        }
+
+        @Override
+        public void sendMessage(BaseComponent component) {
+            sendMessage(new BaseComponent[] { component });
+        }
+
+        @Override
+        public void sendMessage(BaseComponent... components) {
+           if (null == getHandle().networkHandler) return;
+
+            ChatMessageS2CPacket packet = new ChatMessageS2CPacket(null, MessageType.SYSTEM);
+            // TODO add support for components in ChatMessageS2CPacket
+            //packet.components = components;
+            getHandle().networkHandler.sendPacket(packet);
+        }
+
+        @Override
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent component) {
+            sendMessage( position, new BaseComponent[] { component } );
+        }
+
+        @Override
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent... components) {
+            if (null == getHandle().networkHandler) return;
+
+            ChatMessageS2CPacket packet = new ChatMessageS2CPacket(null, MessageType.byId((byte) position.ordinal()));
+            if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR)
+                components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
+
+            // TODO add support for components in ChatMessageS2CPacket
+            //packet.components = components;
+            getHandle().networkHandler.sendPacket(packet);
+        }
+    };
+
     @Override
     public org.bukkit.entity.Player.Spigot spigot() {
-        // TODO Auto-generated method stub
-        return null;
+        return spigot;
     }
 
 }
