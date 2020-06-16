@@ -60,7 +60,10 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
+import org.bukkit.craftbukkit.tag.CraftBlockTag;
+import org.bukkit.craftbukkit.tag.CraftItemTag;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -105,6 +108,8 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
@@ -115,6 +120,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -123,6 +130,8 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.tag.RegistryTagContainer;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.WorldSaveHandler;
@@ -863,16 +872,38 @@ public class CraftServer implements Server {
         return getServer().getSpawnProtectionRadius();
     }
 
-    @Override
-    public <T extends Keyed> Tag<T> getTag(String arg0, NamespacedKey arg1, Class<T> arg2) {
-        // TODO Auto-generated method stub
-        return null;
+    @SuppressWarnings("unchecked")
+    public <T extends Keyed> org.bukkit.Tag<T> getTag(String registry, NamespacedKey tag, Class<T> clazz) {
+        Identifier key = CraftNamespacedKey.toMinecraft(tag);
+
+        switch (registry) {
+            case org.bukkit.Tag.REGISTRY_BLOCKS:
+                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
+                return (org.bukkit.Tag<T>) new CraftBlockTag(server.getTagManager().blocks(), key);
+            case org.bukkit.Tag.REGISTRY_ITEMS:
+                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
+                return (org.bukkit.Tag<T>) new CraftItemTag(server.getTagManager().items(), key);
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     @Override
-    public <T extends Keyed> Iterable<Tag<T>> getTags(String arg0, Class<T> arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    @SuppressWarnings("unchecked")
+    public <T extends Keyed> Iterable<org.bukkit.Tag<T>> getTags(String registry, Class<T> clazz) {
+        switch (registry) {
+            case org.bukkit.Tag.REGISTRY_BLOCKS:
+                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
+                RegistryTagContainer<Block> blockTags = server.getTagManager().blocks();
+                return blockTags.getEntries().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, key)).collect(ImmutableList.toImmutableList());
+            case org.bukkit.Tag.REGISTRY_ITEMS:
+                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
+
+                RegistryTagContainer<Item> itemTags = server.getTagManager().items();
+                return itemTags.getEntries().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     @Override
