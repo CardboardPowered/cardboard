@@ -165,6 +165,7 @@ public class CraftServer implements Server {
     private YamlConfiguration configuration;
 
     public static MinecraftDedicatedServer server;
+    public static CraftServer INSTANCE;
 
     public CraftServer(MinecraftDedicatedServer nms) {
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
@@ -182,6 +183,7 @@ public class CraftServer implements Server {
                 return (CraftPlayer) ((IMixinBukkitGetter)player).getBukkitObject();
             }
         }));
+        INSTANCE = this;
     }
 
     public void addWorldToMap(CraftWorld world) {

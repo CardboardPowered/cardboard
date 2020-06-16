@@ -12,15 +12,19 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.permissions.ServerOperator;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
@@ -36,6 +40,7 @@ import net.minecraft.text.Texts;
 
 public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
+    private static PermissibleBase perm;
     public net.minecraft.entity.Entity nms;
 
     public CraftEntity(net.minecraft.entity.Entity entity) {
@@ -86,79 +91,67 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public PermissionAttachment addAttachment(Plugin arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return getPermissibleBase().addAttachment(arg0);
     }
 
     @Override
     public  PermissionAttachment addAttachment(Plugin arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return null;
+        return getPermissibleBase().addAttachment(arg0, arg1);
     }
 
     @Override
     public PermissionAttachment addAttachment(Plugin arg0, String arg1, boolean arg2) {
-        // TODO Auto-generated method stub
-        return null;
+        return getPermissibleBase().addAttachment(arg0, arg1, arg2);
     }
 
     @Override
     public  PermissionAttachment addAttachment(Plugin arg0, String arg1, boolean arg2, int arg3) {
-        // TODO Auto-generated method stub
-        return null;
+        return getPermissibleBase().addAttachment(arg0, arg1, arg2, arg3);
     }
 
     @Override
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        // TODO Auto-generated method stub
-        return null;
+        return getPermissibleBase().getEffectivePermissions();
     }
 
     @Override
     public boolean hasPermission(String arg0) {
-        // TODO Auto-generated method stub
-        return true; // TODO
+        return getPermissibleBase().hasPermission(arg0);
     }
 
     @Override
     public boolean hasPermission(Permission arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return getPermissibleBase().hasPermission(arg0);
     }
 
     @Override
     public boolean isPermissionSet(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return getPermissibleBase().isPermissionSet(arg0);
     }
 
     @Override
     public boolean isPermissionSet(Permission arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return getPermissibleBase().isPermissionSet(arg0);
     }
 
     @Override
     public void recalculatePermissions() {
-        // TODO Auto-generated method stub
-        
+        getPermissibleBase().recalculatePermissions();
     }
 
     @Override
     public void removeAttachment(PermissionAttachment arg0) {
-        // TODO Auto-generated method stub
-        
+        getPermissibleBase().removeAttachment(arg0);
     }
 
     @Override
     public boolean isOp() {
-        // TODO Auto-generated method stub
-        return false;
+        return getPermissibleBase().isOp();
     }
 
     @Override
     public void setOp(boolean arg0) {
-        // TODO Auto-generated method stub
+        getPermissibleBase().setOp(arg0);
     }
 
     @Override
@@ -203,26 +196,22 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public int getEntityId() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getEntityId();
     }
 
     @Override
     public BlockFace getFacing() {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftBlock.notchToBlockFace(nms.getMovementDirection());
     }
 
     @Override
     public float getFallDistance() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.fallDistance;
     }
 
     @Override
     public int getFireTicks() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.fireTicks;
     }
 
     @Override
@@ -231,7 +220,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public  EntityDamageEvent getLastDamageCause() {
+    public EntityDamageEvent getLastDamageCause() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -257,8 +246,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public int getMaxFireTicks() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getBurningDuration();
     }
 
     @Override
@@ -293,8 +281,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public Pose getPose() {
-        // TODO Auto-generated method stub
-        return null;
+        return Pose.values()[nms.getPose().ordinal()];
     }
 
     @Override
@@ -535,6 +522,23 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public CommandSender getBukkitSender(ServerCommandSource serverCommandSource) {
         return this;
+    }
+
+    private static PermissibleBase getPermissibleBase() {
+        if (perm == null) {
+            perm = new PermissibleBase(new ServerOperator() {
+
+                @Override
+                public boolean isOp() {
+                    return false;
+                }
+
+                @Override
+                public void setOp(boolean value) {
+                }
+            });
+        }
+        return perm;
     }
 
     @Override
