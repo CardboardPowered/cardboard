@@ -864,6 +864,23 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
+    public boolean isOp() {
+        return nms.server.getPlayerManager().isOperator(nms.getGameProfile());
+    }
+
+    @Override
+    public void setOp(boolean value) {
+        if (value == isOp()) return;
+
+        if (value)
+            nms.server.getPlayerManager().addToOperators(nms.getGameProfile());
+        else
+            nms.server.getPlayerManager().removeFromOperators(nms.getGameProfile());
+
+        perm.recalculatePermissions();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof OfflinePlayer))
             return false;

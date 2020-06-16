@@ -12,7 +12,6 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -40,7 +39,7 @@ import net.minecraft.text.Texts;
 
 public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
-    private static PermissibleBase perm;
+    protected static PermissibleBase perm;
     public net.minecraft.entity.Entity nms;
 
     public CraftEntity(net.minecraft.entity.Entity entity) {
