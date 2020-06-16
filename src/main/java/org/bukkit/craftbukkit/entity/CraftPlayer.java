@@ -1,16 +1,19 @@
 package org.bukkit.craftbukkit.entity;
 
 import java.net.InetSocketAddress;
-import java.util.Locale;
+import java.net.SocketAddress;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
+import org.bukkit.GameMode;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Note;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -23,6 +26,7 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -31,13 +35,15 @@ import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.fungus_soft.bukkitfabric.Utils;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -159,7 +165,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public boolean hasPlayedBefore() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -224,19 +230,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setWhitelisted(boolean arg0) {
-        // TODO Auto-generated method stub
         if (arg0)
             nms.getServer().getPlayerManager().getWhitelist().add(new WhitelistEntry(nms.getGameProfile()));
-        else {
-            WhitelistEntry e = nms.getServer().getPlayerManager().getWhitelist().get(nms.getGameProfile());
-            nms.getServer().getPlayerManager().getWhitelist().removeEntry(e);
-        }
+        else nms.getServer().getPlayerManager().getWhitelist().remove(nms.getGameProfile());
     }
 
     @Override
     public Map<String, Object> serialize() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        result.put("name", getName());
+        return result;
     }
 
     @Override
@@ -256,18 +259,20 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public boolean canSee(Player arg0) {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public void chat(String message) {
-        // TODO Auto-generated method stub
+        ((IMixinPlayNetworkHandler)(Object)nms.networkHandler).chat(message, false);
     }
 
     @Override
     public InetSocketAddress getAddress() {
-        // TODO Auto-generated method stub
-        return null;
+        if (nms.networkHandler == null) return null;
+
+        SocketAddress addr = getHandle().networkHandler.connection.getAddress();
+        return addr instanceof InetSocketAddress ? (InetSocketAddress) addr : null;
     }
 
     @Override
@@ -300,8 +305,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public float getExhaustion() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getHungerManager().exhaustion;
     }
 
     @Override
@@ -332,8 +336,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public String getLocale() {
-        // TODO Auto-generated method stub
-        return Locale.ENGLISH.toString();
+        return nms.clientLanguage;
     }
 
     @Override
@@ -421,8 +424,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isFlying() {
-        // TODO Auto-generated method stub
-        return nms.isFallFlying();
+        return nms.abilities.flying;
     }
 
     @Override
@@ -460,7 +462,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void loadData() {
-        // TODO Auto-generated method stub
+        CraftServer.server.playerManager.saveHandler.loadPlayerData(nms);
     }
 
     @Override
@@ -525,12 +527,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void resetTitle() {
-        // TODO Auto-generated method stub
+        nms.networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.RESET, null));
     }
 
     @Override
     public void saveData() {
-        // TODO Auto-generated method stub
+        CraftServer.server.playerManager.saveHandler.savePlayerData(nms);
     }
 
     @Override
@@ -581,17 +583,28 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendTitle(String arg0, String arg1) {
-        // TODO Auto-generated method stub
+        sendTitle(arg0, arg1, 10, 70, 20);
     }
 
     @Override
     public void sendTitle(String arg0, String arg1, int arg2, int arg3, int arg4) {
-        // TODO Auto-generated method stub
+        TitleS2CPacket times = new TitleS2CPacket(arg2, arg3, arg4);
+        nms.networkHandler.sendPacket(times);
+
+        if (arg0 != null)
+            nms.networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, CraftChatMessage.fromStringOrNull(arg0)));
+
+        if (arg1 != null)
+            nms.networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.SUBTITLE, CraftChatMessage.fromStringOrNull(arg1)));
     }
 
     @Override
     public void setAllowFlight(boolean arg0) {
-        // TODO Auto-generated method stub
+        if (isFlying() && !arg0)
+            getHandle().abilities.flying = false;
+
+        getHandle().abilities.allowFlying = arg0;
+        getHandle().sendAbilitiesUpdate();
     }
 
     @Override
@@ -621,7 +634,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setFlying(boolean arg0) {
-        // TODO Auto-generated method stub
+        if (!getAllowFlight() && arg0)
+            throw new IllegalArgumentException("getAllowFlight() is false, cannot set player flying");
+
+        getHandle().abilities.flying = arg0;
+        getHandle().sendAbilitiesUpdate();
     }
 
     @Override
@@ -770,41 +787,32 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5,
-            double arg6) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6,
-            double arg7) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5,
-            double arg6, T arg7) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5,
-            double arg6, double arg7, T arg8) {
+    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6,
-            double arg7, double arg8) {
+    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5,
-            double arg6, double arg7, double arg8, T arg9) {
+    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6, T arg7) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, T arg8) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8, T arg9) {
         // TODO Auto-generated method stub
     }
 
@@ -830,12 +838,47 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void updateCommands() {
-        // TODO Auto-generated method stub
+        if (getHandle().networkHandler == null) return;
+
+        nms.server.getCommandManager().sendCommandTree(nms);
     }
 
     @Override
     public void updateInventory() {
-        // TODO Auto-generated method stub
+        nms.openContainer(nms.container);
+    }
+
+    @Override
+    public GameMode getGameMode() {
+        return Utils.fromFabric(getHandle().interactionManager.getGameMode());
+    }
+
+    @Override
+    public void setGameMode(GameMode mode) {
+        if (getHandle().networkHandler == null) return;
+
+        if (mode == null)
+            throw new IllegalArgumentException("GameMode cannot be null");
+
+        getHandle().setGameMode(Utils.toFabric(mode));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OfflinePlayer))
+            return false;
+
+        OfflinePlayer other = (OfflinePlayer) obj;
+        if ((this.getUniqueId() == null) || (other.getUniqueId() == null))
+            return false;
+
+        boolean uuidEquals = this.getUniqueId().equals(other.getUniqueId());
+        boolean idEquals = true;
+
+        if (other instanceof CraftPlayer)
+            idEquals = this.getEntityId() == ((CraftPlayer) other).getEntityId();
+
+        return uuidEquals && idEquals;
     }
 
     private final Player.Spigot spigot = new Player.Spigot() {

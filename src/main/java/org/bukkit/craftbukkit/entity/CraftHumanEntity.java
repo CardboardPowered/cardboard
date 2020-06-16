@@ -19,6 +19,8 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
+    protected GameMode gm;
+
     public CraftHumanEntity(net.minecraft.entity.Entity entity) {
         super(entity);
         // TODO Auto-generated constructor stub
@@ -27,7 +29,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     @Override
     public void closeInventory() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -80,8 +81,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public GameMode getGameMode() {
-        // TODO Auto-generated method stub
-        return null;
+        return gm;
     }
 
     @Override
@@ -206,8 +206,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public void setGameMode(GameMode arg0) {
-        // TODO Auto-generated method stub
-        
+        this.gm = arg0;
     }
 
     @Override
@@ -261,7 +260,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     @Override
     public void wakeup(boolean arg0) {
         // TODO Auto-generated method stub
-        
     }
 
 }
