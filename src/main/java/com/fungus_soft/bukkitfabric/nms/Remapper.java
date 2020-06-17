@@ -16,7 +16,7 @@ import net.md_5.specialsource.SpecialSource;
 
 public class Remapper {
 
-    public static int MAPPINGS_VERSION = 1;
+    public static int MAPPINGS_VERSION = 2;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
@@ -60,7 +60,6 @@ public class Remapper {
             // Export Mappings to File
             exportResource("deversionify-spigot.srg", configDir);
             exportResource("spigot2intermediary.csrg", configDir);
-            exportResource("intermediary2obf.csrg", configDir);
         }
         String md5 = null;
         try (InputStream is = Files.newInputStream(jarFile.toPath())) {
@@ -90,16 +89,11 @@ public class Remapper {
         runSpecialSource(versionFix, toMap, deversionify);
 
         // Spigot -> Intermediary
-        File intermediary = new File(remappedDir, jarName + "-intermediary.jar");
-        runSpecialSource(spigot2inter, deversionify, intermediary);
-
-        // Intermediary -> Obf
-        File finalJar = new File(remappedDir, jarName + "-obf.jar");
-        runSpecialSource(inter2obf, intermediary, finalJar);
+        File finalJar = new File(remappedDir, jarName + "-intermediary.jar");
+        runSpecialSource(spigot2inter, deversionify, finalJar);
 
         // Cleanup
         deversionify.delete();
-        intermediary.delete();
 
         if (!usingBackup) {
             try {
