@@ -305,7 +305,7 @@ public final class CraftItemStack extends ItemStack {
 
         switch (getType(item)) {
             case WRITTEN_BOOK:
-                // TODO return new CraftMetaBookSigned(item.getTag());
+                return new CraftMetaBookSigned(item.getTag());
             case WRITABLE_BOOK:
                 return new CraftMetaBook(item.getTag());
             case CREEPER_HEAD:
@@ -320,26 +320,27 @@ public final class CraftItemStack extends ItemStack {
             case WITHER_SKELETON_WALL_SKULL:
             case ZOMBIE_HEAD:
             case ZOMBIE_WALL_HEAD:
-                // TODO return new CraftMetaSkull(item.getTag());
+                return new CraftMetaSkull(item.getTag());
             case LEATHER_HELMET:
             case LEATHER_HORSE_ARMOR:
             case LEATHER_CHESTPLATE:
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
-                // TODO return new CraftMetaLeatherArmor(item.getTag());
+                return new CraftMetaLeatherArmor(item.getTag());
             case POTION:
             case SPLASH_POTION:
             case LINGERING_POTION:
             case TIPPED_ARROW:
                 // TODO return new CraftMetaPotion(item.getTag());
+                return null;
             case FILLED_MAP:
-                // TODO return new CraftMetaMap(item.getTag());
+                return new CraftMetaMap(item.getTag());
             case FIREWORK_ROCKET:
-                // TODO return new CraftMetaFirework(item.getTag());
+                return new CraftMetaFirework(item.getTag());
             case FIREWORK_STAR:
-                // TODO return new CraftMetaCharge(item.getTag());
+                new CraftMetaCharge(item.getTag());
             case ENCHANTED_BOOK:
-                // TODO return new CraftMetaEnchantedBook(item.getTag());
+               new CraftMetaEnchantedBook(item.getTag());
             case BLACK_BANNER:
             case BLACK_WALL_BANNER:
             case BLUE_BANNER:
@@ -372,7 +373,7 @@ public final class CraftItemStack extends ItemStack {
             case WHITE_WALL_BANNER:
             case YELLOW_BANNER:
             case YELLOW_WALL_BANNER:
-                // TODO return new CraftMetaBanner(item.getTag());
+                return new CraftMetaBanner(item.getTag());
             case BAT_SPAWN_EGG:
             case BEE_SPAWN_EGG:
             case BLAZE_SPAWN_EGG:
@@ -432,11 +433,11 @@ public final class CraftItemStack extends ItemStack {
             case ZOMBIE_PIGMAN_SPAWN_EGG:
             case ZOMBIE_SPAWN_EGG:
             case ZOMBIE_VILLAGER_SPAWN_EGG:
-                // TODO return new CraftMetaSpawnEgg(item.getTag());
+                return new CraftMetaSpawnEgg(item.getTag());
             case ARMOR_STAND:
                 return new CraftMetaArmorStand(item.getTag());
             case KNOWLEDGE_BOOK:
-                // TODO return new CraftMetaKnowledgeBook(item.getTag());
+                return new CraftMetaKnowledgeBook(item.getTag());
             case FURNACE:
             case CHEST:
             case TRAPPED_CHEST:
@@ -494,13 +495,14 @@ public final class CraftItemStack extends ItemStack {
             case SMOKER:
             case BEEHIVE:
             case BEE_NEST:
-                // TODO return new CraftMetaBlockState(item.getTag(), CraftMagicNumbers.getMaterial(item.getItem()));
+                return new CraftMetaBlockState(item.getTag(), CraftMagicNumbers.getMaterial(item.getItem()));
             case TROPICAL_FISH_BUCKET:
                 // TODO return new CraftMetaTropicalFishBucket(item.getTag());
+                return null;
             case CROSSBOW:
-                // TODO return new CraftMetaCrossbow(item.getTag());
+                return new CraftMetaCrossbow(item.getTag());
             case SUSPICIOUS_STEW:
-                // TODO return new CraftMetaSuspiciousStew(item.getTag());
+                return new CraftMetaSuspiciousStew(item.getTag());
             default:
                 return new CraftMetaItem(item.getTag());
         }
@@ -577,4 +579,5 @@ public final class CraftItemStack extends ItemStack {
     static boolean hasItemMeta(net.minecraft.item.ItemStack item) {
         return !(item == null || item.getTag() == null || item.getTag().isEmpty());
     }
+
 }

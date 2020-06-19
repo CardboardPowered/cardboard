@@ -57,6 +57,7 @@ import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
+import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.tag.CraftBlockTag;
@@ -693,8 +694,7 @@ public class CraftServer implements Server {
 
     @Override
     public ItemFactory getItemFactory() {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftItemFactory.instance();
     }
 
     @Override
