@@ -1,9 +1,13 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -28,19 +32,20 @@ import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Vec3d;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 
 import static org.bukkit.craftbukkit.CraftServer.server;
 
 @Mixin(ServerPlayNetworkHandler.class)
-@SuppressWarnings("deprecation")
 public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetworkHandler {
 
     @Shadow 
@@ -48,6 +53,25 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
 
     @Shadow
     public abstract void sendPacket(Packet<?> packet);
+
+    private static AtomicIntegerFieldUpdater<ServerPlayNetworkHandler> chatSpamField;
+
+    @Shadow
+    public int teleportRequestTick;
+
+    @Shadow
+    public int ticks;
+
+    @Shadow
+    public Vec3d requestedTeleportPos;
+
+    @Shadow
+    public int requestedTeleportId;
+
+    @Override
+    public boolean isDisconnected() {
+    	return false; // TODO
+    }
 
     @Overwrite
     public void executeCommand(String string) {
@@ -70,6 +94,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void chat(String s, boolean async) {
         if (s.isEmpty() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN)
             return;
@@ -81,13 +106,13 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
         } else {
             Player player = this.getPlayer();
             AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(CraftServer.server));
-            Bukkit.getPluginManager().callEvent(event);
+            Bukkit.getServer().getPluginManager().callEvent(event);
 
             if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0) {
                 // Evil plugins still listening to deprecated event
                 final PlayerChatEvent queueEvent = new PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
                 queueEvent.setCancelled(event.isCancelled());
-                Waitable waitable = new WaitableImpl(()-> {
+                Waitable<?> waitable = new WaitableImpl(()-> {
                     Bukkit.getPluginManager().callEvent(queueEvent);
 
                     if (queueEvent.isCancelled())
@@ -123,7 +148,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
                 s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
                 server.sendMessage(new LiteralText(s));
                 if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
-                    for (ServerPlayerEntity recipient : server.getPlayerManager().getPlayerList())
+                    for (ServerPlayerEntity recipient : server.getPlayerManager().players)
                         for (Text txt : CraftChatMessage.fromString(s))
                             recipient.sendMessage(txt);
                 } else for (Player recipient : event.getRecipients())
@@ -141,27 +166,74 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
         if (packetplayinchat.getChatMessage().startsWith("/"))
             NetworkThreadUtils.forceMainThread(packetplayinchat, ((ServerPlayNetworkHandler)(Object)this), this.player.getServerWorld());
 
-        // CraftBukkit end
-        if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) { // CraftBukkit - dead men tell no tales
+        if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
             this.sendPacket(new ChatMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED)));
         } else {
             this.player.updateLastActionTime();
             String s = StringUtils.normalizeSpace( packetplayinchat.getChatMessage() );
 
-            // CraftBukkit start
             if (isSync)
                 this.executeCommand(s);
             else if (s.isEmpty())
                 BukkitLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
-            else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) { // Re-add "Command Only" flag check
+            else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
                 TranslatableText chatmessage = new TranslatableText("chat.cannotSend", new Object[0]);
 
                 chatmessage.getStyle().setColor(Formatting.RED);
                 this.sendPacket(new ChatMessageS2CPacket(chatmessage));
             } else this.chat(s, true);
 
+            if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
+                if (!isSync) {
+                    Waitable<?> waitable = new WaitableImpl(() -> get().disconnect(new TranslatableText("disconnect.spam", new Object[0])));
 
+                    ((IMixinMinecraftServer)(Object)server).getProcessQueue().add(waitable);
+
+                    try {
+                        waitable.get();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else get().disconnect(new TranslatableText("disconnect.spam", new Object[0]));
+
+            }
         }
+    }
+
+    @Override
+    public void teleport(Location location) {
+        double d0 = location.getX();
+        double d1 = location.getY();
+        double d2 = location.getZ();
+        float f = location.getYaw();
+        float f1 = location.getPitch();
+        Set<PlayerPositionLookS2CPacket.Flag> set = Collections.emptySet();
+
+        if (Float.isNaN(f))
+            f = 0;
+
+        if (Float.isNaN(f1))
+            f1 = 0;
+
+        double d3 = set.contains(PlayerPositionLookS2CPacket.Flag.X) ? this.player.getX() : 0.0D;
+        double d4 = set.contains(PlayerPositionLookS2CPacket.Flag.Y) ? this.player.getY() : 0.0D;
+        double d5 = set.contains(PlayerPositionLookS2CPacket.Flag.Z) ? this.player.getZ() : 0.0D;
+        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.yaw : 0.0F;
+        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.pitch : 0.0F;
+
+        this.requestedTeleportPos = new Vec3d(d0, d1, d2);
+        if (++this.requestedTeleportId == Integer.MAX_VALUE)
+            this.requestedTeleportId = 0;
+
+        this.teleportRequestTick = this.ticks;
+        this.player.updatePositionAndAngles(d0, d1, d2, f, f1);
+        this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(d0 - d3, d1 - d4, d2 - d5, f - f2, f1 - f3, set, this.requestedTeleportId));
+    }
+
+    private ServerPlayNetworkHandler get() {
+        return (ServerPlayNetworkHandler) (Object) this;
     }
 
 }

@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -25,11 +26,13 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
@@ -37,6 +40,7 @@ import org.bukkit.scoreboard.Scoreboard;
 
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayerManager;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -46,6 +50,7 @@ import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
@@ -878,6 +883,49 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             nms.server.getPlayerManager().removeFromOperators(nms.getGameProfile());
 
         perm.recalculatePermissions();
+    }
+
+    @Override
+    public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        location.checkFinite();
+        ServerPlayerEntity entity = getHandle();
+
+        if (getHealth() == 0 || entity.removed || entity.networkHandler == null || entity.hasPassengers())
+            return false;
+
+        // From = Players current Location
+        Location from = this.getLocation();
+        // To = Players new Location if Teleport is Successful
+        Location to = location;
+        // Create & Call the Teleport Event.
+        PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
+        Bukkit.getPluginManager().callEvent(event);
+
+        // Return False to inform the Plugin that the Teleport was unsuccessful/cancelled.
+        if (event.isCancelled())
+            return false;
+
+        // If this player is riding another entity, we must dismount before teleporting.
+        entity.stopRiding();
+
+        // Update the From Location
+        from = event.getFrom();
+        // Grab the new To Location dependent on whether the event was cancelled.
+        to = event.getTo();
+        // Grab the To and From World Handles.
+        ServerWorld fromWorld = (ServerWorld) ((CraftWorld) from.getWorld()).getHandle();
+        ServerWorld toWorld = (ServerWorld) ((CraftWorld) to.getWorld()).getHandle();
+
+        // Close any foreign inventory
+        if (getHandle().container != getHandle().playerContainer)
+            getHandle().closeContainer();
+
+        // Check if the fromWorld and toWorld are the same.
+        if (fromWorld == toWorld)
+             ((IMixinPlayNetworkHandler)(Object)entity.networkHandler).teleport(to);
+        else ((IMixinPlayerManager)CraftServer.server.getPlayerManager()).moveToWorld(entity, toWorld.getDimension().getType(), true, to, true);
+
+        return true;
     }
 
     @Override

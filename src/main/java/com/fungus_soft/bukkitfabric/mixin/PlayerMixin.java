@@ -8,13 +8,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.server.command.CommandOutput;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 @Mixin(ServerPlayerEntity.class)
-public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCommandOutput, IMixinBukkitGetter  {
+public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCommandOutput, IMixinBukkitGetter, IMixinServerEntityPlayer  {
 
     private CraftPlayer bukkit;
 
@@ -53,5 +56,16 @@ public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCom
     public CraftPlayer getBukkitEntity() {
         return bukkit;
     }
+
+	@Override
+	public void reset() {
+		// TODO Bukkit4Fabric: Auto-generated method stub
+	}
+
+	@Override
+	public BlockPos getSpawnPoint(World world) {
+		// TODO Bukkit4Fabric: Auto-generated method stub
+		return world.getSpawnPos();
+	}
 
 }

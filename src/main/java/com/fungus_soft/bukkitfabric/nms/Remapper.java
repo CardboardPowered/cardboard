@@ -23,7 +23,7 @@ public class Remapper {
     public static File configDir = new File(FabricLoader.getInstance().getConfigDirectory(), "bukkit4fabric");
     public static File remappedDir = new File(configDir, "remapped-plugins");
     public static File backup = new File(remappedDir, "backup-plugins");
-    public static File versionFix, spigot2inter, inter2obf;
+    public static File versionFix, spigot2inter;
     public static File md5info = new File(remappedDir, "md5-hashes.dat");
 
     public static List<String> hashes = new ArrayList<>();
@@ -55,7 +55,6 @@ public class Remapper {
             }
             versionFix = new File(configDir, "deversionify-spigot.srg");
             spigot2inter = new File(configDir, "spigot2intermediary.csrg");
-            inter2obf = new File(configDir, "intermediary2obf.csrg");
 
             // Export Mappings to File
             exportResource("deversionify-spigot.srg", configDir);

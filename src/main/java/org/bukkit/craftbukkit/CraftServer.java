@@ -811,6 +811,12 @@ public class CraftServer implements Server {
         return (Player) ((IMixinBukkitGetter)(Object)e).getBukkitObject();
     }
 
+    public Player getPlayer(ServerPlayerEntity e) {
+        if (null == e)
+            return null;
+        return (Player) ((IMixinBukkitGetter)(Object)e).getBukkitObject();
+    }
+
     @Override
     public Player getPlayerExact(String arg0) {
         return getPlayer(arg0);

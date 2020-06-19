@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -36,6 +37,7 @@ import com.mojang.brigadier.LiteralMessage;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Texts;
+import net.minecraft.util.math.BlockPos;
 
 public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
@@ -507,15 +509,29 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public boolean teleport(Location arg0, TeleportCause arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean teleport(Location location, TeleportCause arg1) {
+        location.checkFinite();
+
+        if (nms.hasPassengers() || nms.removed)
+            return false;
+
+        nms.stopRiding();
+
+        // TODO: Cross world teleporting
+        //if (!location.getWorld().equals(getWorld())) {
+        //    nms.teleportTo(((CraftWorld) location.getWorld()).getHandle().getDimension().getType(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        //    return true;
+        //}
+
+        nms.updatePositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        nms.setHeadYaw(location.getYaw());
+
+        return true;
     }
 
     @Override
     public boolean teleport(Entity arg0, TeleportCause arg1) {
-        // TODO Auto-generated method stub
-        return false;
+        return teleport(arg0.getLocation(), arg1);
     }
 
     @Override
