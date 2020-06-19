@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import com.fungus_soft.bukkitfabric.command.VersionCommand;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 
 public class BukkitFabricMod implements ModInitializer {
 
@@ -15,7 +16,9 @@ public class BukkitFabricMod implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Copyright \u00A9 2020 Fungus Software");
 
-        if (System.getProperty("IReallyKnowWhatIAmDoingISwear") == null) {
+        boolean debug = FabricLoader.getInstance().isDevelopmentEnvironment();
+
+        if (System.getProperty("IReallyKnowWhatIAmDoingISwear") == null && !debug) {
             int outdated = VersionCommand.check();
             if (outdated > 8) {
                 try {

@@ -23,8 +23,7 @@
     "MixinLevelProperties",
     "MixinServerNetworkIo",
     "MixinThreadExecutor",
-    "MixinRegistryTagContainer",
-	"MixinCommandNode"
+    "MixinRegistryTagContainer"
   ],
   "injectors": {
     "defaultRequire": 1
