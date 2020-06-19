@@ -683,12 +683,12 @@ public class CraftServer implements Server {
 
     @Override
     public int getIdleTimeout() {
-        return getServer().getProperties().playerIdleTimeout.get();
+        return server.getProperties().playerIdleTimeout.get();
     }
 
     @Override
     public String getIp() {
-        return getServer().getProperties().serverIp;
+        return server.getProperties().serverIp;
     }
 
     @Override
@@ -800,7 +800,7 @@ public class CraftServer implements Server {
         ServerPlayerEntity e = getServer().getPlayerManager().getPlayer(name);
         if (null == e)
             return null;
-        return (Player) ((IMixinBukkitGetter)(Object)e).getBukkitObject();
+        return (Player) ((IMixinEntity)(Object)e).getBukkitEntity();
     }
 
     @Override
@@ -814,7 +814,7 @@ public class CraftServer implements Server {
     public Player getPlayer(ServerPlayerEntity e) {
         if (null == e)
             return null;
-        return (Player) ((IMixinBukkitGetter)(Object)e).getBukkitObject();
+        return (Player) ((IMixinEntity)(Object)e).getBukkitEntity();
     }
 
     @Override

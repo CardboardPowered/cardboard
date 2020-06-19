@@ -3,6 +3,7 @@ package com.fungus_soft.bukkitfabric.mixin;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +55,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
     @Shadow
     public abstract void sendPacket(Packet<?> packet);
 
-    private static AtomicIntegerFieldUpdater<ServerPlayNetworkHandler> chatSpamField;
+    private static AtomicInteger chatSpamField = new AtomicInteger();
 
     @Shadow
     public int teleportRequestTick;
@@ -183,7 +184,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements IMixinPlayNetwork
                 this.sendPacket(new ChatMessageS2CPacket(chatmessage));
             } else this.chat(s, true);
 
-            if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
+            if (chatSpamField.addAndGet(20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
                 if (!isSync) {
                     Waitable<?> waitable = new WaitableImpl(() -> get().disconnect(new TranslatableText("disconnect.spam", new Object[0])));
 

@@ -23,7 +23,8 @@
     "LevelPropertiesMixin",
     "ServerNetworkIoMixin",
     "ThreadExecutorMixin",
-    "RegistryTagContainerMixin"
+    "RegistryTagContainerMixin",
+	"CommandNodeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

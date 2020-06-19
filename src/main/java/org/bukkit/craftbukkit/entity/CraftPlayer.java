@@ -41,6 +41,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -868,9 +869,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         getHandle().setGameMode(Utils.toFabric(mode));
     }
 
+    public GameProfile getProfile() {
+        return CraftServer.server.getUserCache().getByUuid(getUniqueId());
+    }
+
     @Override
     public boolean isOp() {
-        return nms.server.getPlayerManager().isOperator(nms.getGameProfile());
+        return CraftServer.server
+                .getPlayerManager()
+                .isOperator(
+                        getProfile());
     }
 
     @Override
