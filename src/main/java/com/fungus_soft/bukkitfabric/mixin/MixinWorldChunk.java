@@ -15,7 +15,7 @@ import net.minecraft.world.Heightmap.Type;
 import net.minecraft.world.chunk.WorldChunk;
 
 @Mixin(WorldChunk.class)
-public class WorldChunkMixin implements IMixinWorldChunk {
+public class MixinWorldChunk implements IMixinWorldChunk {
 
     @Shadow
     @Final

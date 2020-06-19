@@ -21,7 +21,7 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.text.Text;
 
 @Mixin(MinecraftDedicatedServer.class)
-public class DedicatedServerMixin implements CommandOutput, IMixinCommandOutput {
+public class MixinDedicatedServer implements CommandOutput, IMixinCommandOutput {
 
     @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {

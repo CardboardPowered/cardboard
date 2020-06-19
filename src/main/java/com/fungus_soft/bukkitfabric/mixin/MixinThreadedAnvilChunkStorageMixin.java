@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
-public class ThreadedAnvilChunkStorageMixin implements IMixinThreadedAnvilChunkStorage {
+public class MixinThreadedAnvilChunkStorageMixin implements IMixinThreadedAnvilChunkStorage {
 
     @Shadow
     public WorldGenerationProgressListener worldGenerationProgressListener;

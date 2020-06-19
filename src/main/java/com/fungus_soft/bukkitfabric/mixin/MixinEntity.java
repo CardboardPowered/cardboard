@@ -17,11 +17,11 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
 @Mixin(Entity.class)
-public class EntityMixin implements CommandOutput, IMixinCommandOutput, IMixinEntity {
+public class MixinEntity implements CommandOutput, IMixinCommandOutput, IMixinEntity {
 
     private org.bukkit.entity.Entity bukkit;
 
-    public EntityMixin() {
+    public MixinEntity() {
         this.bukkit = new CraftEntity((Entity) (Object) this);
     }
 

@@ -20,7 +20,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelProperties;
 
 @Mixin(World.class)
-public class WorldMixin implements IMixinBukkitGetter, IMixinServerWorld {
+public class MixinWorld implements IMixinBukkitGetter, IMixinServerWorld {
 
     private CraftWorld bukkit;
 

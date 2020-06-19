@@ -11,7 +11,7 @@ import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 
 @Mixin(DimensionType.class)
-public class DimensionTypeMixin implements IMixinDimensionType {
+public class MixinDimensionType implements IMixinDimensionType {
 
     @Shadow
     private final String saveDir;
@@ -24,7 +24,7 @@ public class DimensionTypeMixin implements IMixinDimensionType {
         return null;
     }
 
-    public DimensionTypeMixin() {
+    public MixinDimensionType() {
         this.saveDir = null; // Won't be called
     }
 

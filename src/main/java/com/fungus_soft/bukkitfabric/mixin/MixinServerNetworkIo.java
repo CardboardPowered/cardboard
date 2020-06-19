@@ -12,7 +12,7 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinNetworkIo;
 import io.netty.channel.ChannelFuture;
 
 @Mixin(ServerNetworkIo.class)
-public class ServerNetworkIoMixin implements IMixinNetworkIo {
+public class MixinServerNetworkIo implements IMixinNetworkIo {
 
     @Shadow
     @Final

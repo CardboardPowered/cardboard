@@ -14,7 +14,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
 
 @Mixin(BlockEntity.class)
-public class BlockEntityMixin implements IMixinBlockEntity {
+public class MixinBlockEntity implements IMixinBlockEntity {
 
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
     public CraftPersistentDataContainer persistentDataContainer;

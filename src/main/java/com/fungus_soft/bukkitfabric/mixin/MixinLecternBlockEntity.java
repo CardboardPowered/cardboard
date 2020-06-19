@@ -9,7 +9,7 @@ import net.minecraft.inventory.Inventory;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLecternBlockEntity;
 
 @Mixin(LecternBlockEntity.class)
-public class LecternBlockEntityMixin implements IMixinLecternBlockEntity {
+public class MixinLecternBlockEntity implements IMixinLecternBlockEntity {
 
     @Shadow
     public Inventory inventory;

@@ -8,7 +8,7 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadExecutor;
 import net.minecraft.util.thread.ThreadExecutor;
 
 @Mixin(ThreadExecutor.class)
-public class ThreadExecutorMixin implements IMixinThreadExecutor {
+public class MixinThreadExecutor implements IMixinThreadExecutor {
 
     @Override
     @Shadow

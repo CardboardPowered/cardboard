@@ -9,7 +9,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import net.minecraft.server.command.ServerCommandSource;
 
 @Mixin(CommandNode.class)
-public class CommandNodeMixin {
+public class MixinCommandNode {
 
 	@Overwrite
     public boolean canUse(final ServerCommandSource source) {

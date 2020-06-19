@@ -21,7 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 @Mixin(ServerPlayerEntity.class)
-public class PlayerMixin extends EntityMixin implements CommandOutput, IMixinCommandOutput, IMixinBukkitGetter, IMixinServerEntityPlayer  {
+public class MixinPlayer extends MixinEntity implements CommandOutput, IMixinCommandOutput, IMixinBukkitGetter, IMixinServerEntityPlayer  {
 
     private CraftPlayer bukkit;
 

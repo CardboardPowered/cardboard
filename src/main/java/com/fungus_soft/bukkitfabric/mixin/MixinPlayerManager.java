@@ -41,7 +41,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelProperties;
 
 @Mixin(PlayerManager.class)
-public abstract class PlayerManagerMixin implements IMixinPlayerManager {
+public abstract class MixinPlayerManager implements IMixinPlayerManager {
 
     @Shadow
     public List<ServerPlayerEntity> players;

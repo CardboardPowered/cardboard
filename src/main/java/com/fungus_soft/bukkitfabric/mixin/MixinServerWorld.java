@@ -23,9 +23,9 @@ import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 
 @Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin extends World implements IMixinBukkitGetter, IMixinServerWorld {
+public abstract class MixinServerWorld extends World implements IMixinBukkitGetter, IMixinServerWorld {
 
-    protected ServerWorldMixin(LevelProperties levelProperties, DimensionType dimensionType,
+    protected MixinServerWorld(LevelProperties levelProperties, DimensionType dimensionType,
             BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Profiler profiler, boolean isClient) {
         super(levelProperties, dimensionType, chunkManagerProvider, profiler, isClient);
     }

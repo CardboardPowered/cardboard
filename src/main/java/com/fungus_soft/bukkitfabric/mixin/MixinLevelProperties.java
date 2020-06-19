@@ -13,7 +13,7 @@ import net.minecraft.world.level.LevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 
 @Mixin(LevelProperties.class)
-public class LevelPropertiesMixin implements IMixinLevelProperties {
+public class MixinLevelProperties implements IMixinLevelProperties {
 
     @Inject(at = @At("HEAD"), method = "setThundering")
     public void thunder(boolean flag, CallbackInfo info) {

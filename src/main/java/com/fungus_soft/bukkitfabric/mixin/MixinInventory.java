@@ -15,7 +15,7 @@ import net.minecraft.inventory.BasicInventory;
 import net.minecraft.item.ItemStack;
 
 @Mixin(BasicInventory.class)
-public class InventoryMixin implements IMixinInventory {
+public class MixinInventory implements IMixinInventory {
 
     private BasicInventory get() {
         return (BasicInventory) (Object) this;

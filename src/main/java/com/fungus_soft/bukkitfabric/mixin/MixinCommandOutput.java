@@ -8,7 +8,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 
 @Mixin(CommandOutput.class)
-public interface CommandOutputMixin extends IMixinCommandOutput {
+public interface MixinCommandOutput extends IMixinCommandOutput {
 
     @Override
     public CommandSender getBukkitSender(ServerCommandSource serverCommandSourceMixin);

@@ -58,7 +58,7 @@ import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 
 @Mixin(value=MinecraftServer.class, priority=999) // priority=999 because Mixin does not like to inject into overwitten methods if both have same priority
-public abstract class MinecraftServerMixin implements IMixinMinecraftServer {
+public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
     private static int currentTick = (int) (System.currentTimeMillis() / 50);
     private static final int SAMPLE_INTERVAL = 100;

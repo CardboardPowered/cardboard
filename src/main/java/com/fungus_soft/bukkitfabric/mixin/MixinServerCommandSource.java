@@ -8,7 +8,7 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerCommandSource;
 
 @Mixin(ServerCommandSource.class)
-public class ServerCommandSourceMixin implements IMixinServerCommandSource {
+public class MixinServerCommandSource implements IMixinServerCommandSource {
 
     @Override
     public CommandSender getBukkitSender() {

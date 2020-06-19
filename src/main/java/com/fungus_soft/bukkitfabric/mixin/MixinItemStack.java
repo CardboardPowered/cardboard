@@ -15,12 +15,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
 @Mixin(ItemStack.class)
-public class ItemStackMixin implements IMixinItemStack {
+public class MixinItemStack implements IMixinItemStack {
 
     @Shadow
     private Item item;
 
-    public ItemStackMixin() {
+    public MixinItemStack() {
     }
 
     @Override

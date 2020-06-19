@@ -7,7 +7,7 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinRegistryTagContainer;
 import net.minecraft.tag.RegistryTagContainer;
 
 @Mixin(RegistryTagContainer.class)
-public class RegistryTagContainerMixin implements IMixinRegistryTagContainer {
+public class MixinRegistryTagContainer implements IMixinRegistryTagContainer {
 
     public int version;
 
