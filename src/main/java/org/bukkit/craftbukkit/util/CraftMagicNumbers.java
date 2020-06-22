@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.util;
 
+import com.fungus_soft.bukkitfabric.BukkitLogger;
 import com.google.common.base.Preconditions;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.Dynamic;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -28,6 +31,7 @@ import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
@@ -35,6 +39,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
+
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
 
     private CraftMagicNumbers() {}
@@ -148,9 +153,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
         Preconditions.checkArgument(version <= this.getDataVersion(), "Newer version! Server downgrades are not supported!");
 
         // Fastpath up to date materials
-        if (version == this.getDataVersion()) {
+        if (version == this.getDataVersion())
             return Material.getMaterial(material);
-        }
 
         CompoundTag stack = new CompoundTag();
         stack.putString("id", "minecraft:" + material.toLowerCase(Locale.ROOT));
@@ -161,21 +165,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return Material.matchMaterial(newId);
     }
 
-    /**
-     * This string should be changed if the NMS mappings do.
-     *
-     * It has no meaning and should only be used as an equality check. Plugins
-     * which are sensitive to the NMS mappings may read it and refuse to load if
-     * it cannot be found or is different to the expected value.
-     *
-     * Remember: NMS is not supported API and may break at any time for any
-     * reason irrespective of this. There is often supported API to do the same
-     * thing as many common NMS usages. If not, you are encouraged to open a
-     * feature and/or pull request for consideration, or use a well abstracted
-     * third-party API such as ProtocolLib.
-     *
-     * @return string
-     */
     public String getMappingsVersion() {
         return "5684afcc1835d966e1b6eb0ed3f72edb";
     }
@@ -187,18 +176,17 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public ItemStack modifyItemStack(ItemStack stack, String arguments) {
-        /*net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
+        net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
             nmsStack.setTag((CompoundTag) StringNbtReader.parse(arguments));
         } catch (CommandSyntaxException ex) {
-            Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
+            BukkitLogger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         stack.setItemMeta(CraftItemStack.getItemMeta(nmsStack));
 
-        return stack;*/
-        return null; // TODO add CraftItemStack
+        return stack;
     }
 
     @Override
@@ -276,4 +264,5 @@ public final class CraftMagicNumbers implements UnsafeValues {
         public static final int TAG_INT_ARRAY = 11;
         public static final int TAG_ANY_NUMBER = 99;
     }
+
 }

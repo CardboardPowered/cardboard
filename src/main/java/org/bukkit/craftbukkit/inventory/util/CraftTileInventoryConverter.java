@@ -22,8 +22,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinLecternBlockEntity;
-
 public abstract class CraftTileInventoryConverter implements CraftInventoryCreator.InventoryConverter {
 
     public abstract net.minecraft.inventory.Inventory getTileEntity();
@@ -125,7 +123,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return ((IMixinLecternBlockEntity)(Object)new LecternBlockEntity()).getInventory();
+            return new LecternBlockEntity().inventory;
         }
     }
 

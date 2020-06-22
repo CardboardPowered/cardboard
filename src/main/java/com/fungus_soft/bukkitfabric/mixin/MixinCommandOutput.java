@@ -11,6 +11,6 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 public interface MixinCommandOutput extends IMixinCommandOutput {
 
     @Override
-    public CommandSender getBukkitSender(ServerCommandSource serverCommandSourceMixin);
+    public CommandSender getBukkitSender(ServerCommandSource source);
 
 }

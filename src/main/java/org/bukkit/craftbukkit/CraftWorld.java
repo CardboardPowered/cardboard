@@ -59,7 +59,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import com.fungus_soft.bukkitfabric.Utils;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -478,7 +478,7 @@ public class CraftWorld implements World {
 
         for (PlayerEntity human : nms.getPlayers())
             if (human instanceof ServerPlayerEntity)
-                list.add((Player) ((IMixinBukkitGetter)human).getBukkitObject());
+                list.add((Player) ((IMixinServerEntityPlayer)human).getBukkitEntity());
 
         return list;
     }

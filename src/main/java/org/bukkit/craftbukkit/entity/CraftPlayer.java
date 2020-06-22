@@ -1,8 +1,10 @@
 package org.bukkit.craftbukkit.entity;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -875,10 +877,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isOp() {
-        return CraftServer.server
-                .getPlayerManager()
-                .isOperator(
-                        getProfile());
+        try {
+            return CraftServer.server.getPlayerManager().isOperator(getProfile());
+        } catch (NullPointerException e) {
+            List<String> list = CraftServer.INSTANCE.getOperatorList();
+            for (String s : list) {
+                System.out.println("DEBUG===: " + s + ", " + getUniqueId().toString());
+            }
+            return CraftServer.INSTANCE.getOperatorList().contains(getUniqueId().toString());
+        }
     }
 
     @Override

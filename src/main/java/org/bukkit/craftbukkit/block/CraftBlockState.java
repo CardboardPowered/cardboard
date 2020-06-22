@@ -20,7 +20,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 
 public class CraftBlockState implements BlockState {
 
@@ -55,7 +55,7 @@ public class CraftBlockState implements BlockState {
     }
 
     public static CraftBlockState getBlockState(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, int flag) {
-        return new CraftBlockState(((IMixinServerWorld)(Object)world).getCraftWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag);
+        return new CraftBlockState(((IMixinWorld)(Object)world).getCraftWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag);
     }
 
     @Override

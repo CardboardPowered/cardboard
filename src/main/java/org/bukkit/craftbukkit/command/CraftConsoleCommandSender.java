@@ -13,6 +13,8 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
+import com.fungus_soft.bukkitfabric.BukkitLogger;
+
 public class CraftConsoleCommandSender implements ConsoleCommandSender, CommandSender {
 
     @Override
@@ -27,7 +29,7 @@ public class CraftConsoleCommandSender implements ConsoleCommandSender, CommandS
 
     @Override
     public void sendMessage(String arg0) {
-        System.out.println(arg0);
+        BukkitLogger.getLogger().info(arg0);
     }
 
     @Override

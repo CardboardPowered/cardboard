@@ -13,8 +13,6 @@
     "MixinServerWorld",
     "MixinInventory",
     "MixinServerPlayNetworkHandler",
-    "MixinLecternBlockEntity",
-    "MixinDimensionType",
     "MixinItemStack",
     "MixinWorld",
     "MixinWorldChunk",
@@ -23,7 +21,8 @@
     "MixinLevelProperties",
     "MixinServerNetworkIo",
     "MixinThreadExecutor",
-    "MixinRegistryTagContainer"
+    "MixinRegistryTagContainer",
+	"MixinPlayerInventory"
   ],
   "injectors": {
     "defaultRequire": 1

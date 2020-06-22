@@ -61,7 +61,7 @@ public class ModListCommand extends BukkitCommand {
             }
 
             // TODO detect of mod is enabled
-            modList.append(true ? ChatColor.GREEN : ChatColor.RED);
+            modList.append(ChatColor.GREEN);
             modList.append(mod.getMetadata().getName());
         }
         if (!all) modList.append(", and " + hidden + " more.");

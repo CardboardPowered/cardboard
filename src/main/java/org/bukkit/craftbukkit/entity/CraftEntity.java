@@ -12,7 +12,6 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -30,14 +29,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
 
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Texts;
-import net.minecraft.util.math.BlockPos;
 
 public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
@@ -332,7 +330,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public World getWorld() {
-        return (World) ((IMixinBukkitGetter)nms.world).getBukkitObject();
+        return (World) ((IMixinWorld)nms.world).getCraftWorld();
     }
 
     @Override

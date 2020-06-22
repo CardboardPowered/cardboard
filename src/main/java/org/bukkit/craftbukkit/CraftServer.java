@@ -2,9 +2,11 @@ package org.bukkit.craftbukkit;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +25,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.BanList.Type;
 import org.bukkit.GameMode;
 import org.bukkit.Keyed;
@@ -68,7 +71,9 @@ import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
+import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
@@ -97,15 +102,16 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
+import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 
 import com.fungus_soft.bukkitfabric.BukkitLogger;
 import com.fungus_soft.bukkitfabric.Utils;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinDimensionType;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -119,9 +125,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -178,7 +186,7 @@ public class CraftServer implements Server {
         this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, CraftPlayer>() {
             @Override
             public CraftPlayer apply(ServerPlayerEntity player) {
-                return (CraftPlayer) ((IMixinBukkitGetter)player).getBukkitObject();
+                return (CraftPlayer) ((IMixinServerEntityPlayer)player).getBukkitEntity();
             }
         }));
         INSTANCE = this;
@@ -238,7 +246,7 @@ public class CraftServer implements Server {
     }
 
     private void syncCommands() {
-     // Clear existing commands
+        // Clear existing commands
         CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(server instanceof DedicatedServer));
 
         // Register all commands, vanilla ones will be using the old dispatcher references
@@ -513,19 +521,19 @@ public class CraftServer implements Server {
 
             @Override
             public Dimension apply(net.minecraft.world.World w, DimensionType manager) {
-                return ((IMixinDimensionType)(Object)actualDimension).getFactory().apply(w, manager);
+                return actualDimension.factory.apply(w, manager);
             }
             
         };
         DimensionType d = null;
         try {
             Constructor<DimensionType> c = DimensionType.class.getDeclaredConstructor(int.class, String.class, String.class, BiFunction.class, boolean.class, BiomeAccessType.class);
-            d = (DimensionType) c.newInstance(dimension, actualDimension.getSuffix(), ((IMixinDimensionType)(Object)actualDimension).getFolder(), bu, actualDimension.hasSkyLight(), actualDimension.getBiomeAccessType());
+            d = (DimensionType) c.newInstance(dimension, actualDimension.getSuffix(), actualDimension.saveDir, bu, actualDimension.hasSkyLight(), actualDimension.getBiomeAccessType());
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
-        DimensionType internalDimension = ((IMixinDimensionType)(Object)actualDimension).registerDimension(name.toLowerCase(java.util.Locale.ENGLISH), d);
+        DimensionType internalDimension = actualDimension.register(name.toLowerCase(java.util.Locale.ENGLISH), d);
         ServerWorld internal = new ServerWorld(server, server.getWorkerExecutor(), sdm, worlddata, internalDimension, server.getProfiler(), ((IMixinMinecraftServer)(Object)server).getWorldGenerationProgressListenerFactory().create(11));
 
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
@@ -539,13 +547,13 @@ public class CraftServer implements Server {
         internal.setMobSpawnOptions(true, true);
         ((IMixinMinecraftServer)(Object)server).getWorldMap().put(internal.getDimension().getType(), internal);
 
-        pluginManager.callEvent(new WorldInitEvent(((IMixinServerWorld)internal).getCraftWorld()));
+        pluginManager.callEvent(new WorldInitEvent(((IMixinWorld)internal).getCraftWorld()));
 
         // TODO loadSpawn
         //getServer().loadSpawn(internal.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, internal);
 
-        pluginManager.callEvent(new WorldLoadEvent(((IMixinServerWorld)(Object)internal).getCraftWorld()));
-        return ((IMixinServerWorld)(Object)internal).getCraftWorld();
+        pluginManager.callEvent(new WorldLoadEvent(((IMixinWorld)(Object)internal).getCraftWorld()));
+        return ((IMixinWorld)(Object)internal).getCraftWorld();
     }
 
     public ChunkGenerator getGenerator(String name) {
@@ -808,7 +816,7 @@ public class CraftServer implements Server {
         ServerPlayerEntity e = getServer().getPlayerManager().getPlayer(uuid);
         if (null == e)
             return null;
-        return (Player) ((IMixinBukkitGetter)(Object)e).getBukkitObject();
+        return (Player) ((IMixinServerEntityPlayer)(Object)e).getBukkitEntity();
     }
 
     public Player getPlayer(ServerPlayerEntity e) {
@@ -945,7 +953,7 @@ public class CraftServer implements Server {
 
     @Override
     public int getViewDistance() {
-        return getServer().getProperties().viewDistance;
+        return server.getProperties().viewDistance;
     }
 
     @Override
@@ -987,7 +995,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getWorldType() {
-        return getServer().getProperties().levelType.getName();
+        return server.getProperties().levelType.getName();
     }
 
     @Override
@@ -1007,7 +1015,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean isPrimaryThread() {
-        return getServer().isOnThread();
+        return server.isOnThread();
     }
 
     @Override
@@ -1050,17 +1058,17 @@ public class CraftServer implements Server {
 
     @Override
     public void reload() {
-        getServer().reload();
+        server.reload();
     }
 
     @Override
     public void reloadData() {
-        getServer().reload();
+        server.reload();
     }
 
     @Override
     public void reloadWhitelist() {
-        getServer().getPlayerManager().reloadWhitelist();
+        server.getPlayerManager().reloadWhitelist();
     }
 
     @Override
@@ -1071,12 +1079,12 @@ public class CraftServer implements Server {
 
     @Override
     public void resetRecipes() {
-        getServer().reload();
+        server.reload();
     }
 
     @Override
     public void savePlayers() {
-        getServer().getPlayerManager().saveAllPlayerData();
+        server.getPlayerManager().saveAllPlayerData();
     }
 
     @Override
@@ -1087,12 +1095,12 @@ public class CraftServer implements Server {
 
     @Override
     public void setDefaultGameMode(GameMode arg0) {
-        getServer().setDefaultGameMode(Utils.toFabric(arg0));
+        server.setDefaultGameMode(Utils.toFabric(arg0));
     }
 
     @Override
     public void setIdleTimeout(int arg0) {
-        getServer().setPlayerIdleTimeout(arg0);
+        server.setPlayerIdleTimeout(arg0);
     }
 
     @Override
@@ -1102,17 +1110,17 @@ public class CraftServer implements Server {
 
     @Override
     public void setWhitelist(boolean arg0) {
-        getServer().setUseWhitelist(arg0);
+        server.setUseWhitelist(arg0);
     }
 
     @Override
     public void shutdown() {
-        getServer().shutdown();
+        server.shutdown();
     }
 
     @Override
     public void unbanIP(String arg0) {
-        getServer().getPlayerManager().getIpBanList().remove(arg0);
+        server.getPlayerManager().getIpBanList().remove(arg0);
     }
 
     @Override
@@ -1130,10 +1138,7 @@ public class CraftServer implements Server {
         if (!(((IMixinMinecraftServer)(Object)getServer()).getWorldMap().containsKey(handle.getWorld().getDimension().getType())))
             return false;
 
-        if (handle.getWorld().getDimension().getType() == DimensionType.OVERWORLD)
-            return false;
-
-        if (handle.getPlayers().size() > 0)
+        if (handle.getWorld().getDimension().getType() == DimensionType.OVERWORLD || handle.getPlayers().size() > 0)
             return false;
 
         WorldUnloadEvent e = new WorldUnloadEvent(world);
@@ -1145,7 +1150,6 @@ public class CraftServer implements Server {
         try {
             if (save)
                 handle.save(null, true, true);
-
             handle.getChunkManager().close();
         } catch (Exception ex) {
             getLogger().log(Level.SEVERE, null, ex);
@@ -1174,9 +1178,54 @@ public class CraftServer implements Server {
         return false;
     }
 
-    public List<String> tabComplete(CommandSender bukkitSender, String input, ServerWorld world, Vec3d position, boolean b) {
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
+    public List<String> tabComplete(CommandSender sender, String message, ServerWorld world, Vec3d position, boolean forceCommand) {
+        if (!(sender instanceof Player))
+            return ImmutableList.of();
+
+        Player player = (Player) sender;
+        List<String> offers = (message.startsWith("/") || forceCommand) ? tabCompleteCommand(player, message, world, position) : tabCompleteChat(player, message);
+
+        TabCompleteEvent tabEvent = new TabCompleteEvent(player, message, offers);
+        getPluginManager().callEvent(tabEvent);
+
+        return tabEvent.isCancelled() ? Collections.emptyList() : tabEvent.getCompletions();
+    }
+
+    public List<String> tabCompleteCommand(Player player, String message, ServerWorld world, Vec3d pos) {
+        List<String> completions = null;
+        try {
+            if (message.startsWith("/"))
+                message = message.substring(1);
+
+            completions = (pos == null) ? getCommandMap().tabComplete(player, message) :
+                    getCommandMap().tabComplete(player, message, new Location(((IMixinWorld)(Object)world).getCraftWorld(), pos.x, pos.y, pos.z));
+        } catch (CommandException ex) {
+            player.sendMessage(ChatColor.RED + "An internal error occurred while attempting to tab-complete this command");
+            getLogger().log(Level.SEVERE, "Exception when " + player.getName() + " attempted to tab complete " + message, ex);
+        }
+
+        return completions == null ? ImmutableList.<String>of() : completions;
+    }
+
+    @SuppressWarnings("deprecation")
+    public List<String> tabCompleteChat(Player player, String message) {
+        List<String> completions = new ArrayList<String>();
+        PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
+        String token = event.getLastToken();
+        for (Player p : getOnlinePlayers())
+            if (player.canSee(p) && StringUtil.startsWithIgnoreCase(p.getName(), token))
+                completions.add(p.getName());
+
+        pluginManager.callEvent(event);
+
+        Iterator<?> it = completions.iterator();
+        while (it.hasNext()) {
+            Object current = it.next();
+            if (!(current instanceof String))
+                it.remove();
+        }
+        Collections.sort(completions, String.CASE_INSENSITIVE_ORDER);
+        return completions;
     }
 
     public MinecraftDedicatedServer getHandle() {
@@ -1187,8 +1236,53 @@ public class CraftServer implements Server {
         return commandMap;
     }
 
-    private Spigot spigot = new Server.Spigot() {
-        // TODO Auto-generated method stub
+    // Because PlayerManager is broken
+    public List<String> getOperatorList() {
+        File f = new File(MinecraftServer.USER_CACHE_FILE.getParentFile(), "ops.json");
+        getLogger().info(f.getAbsolutePath() + ", EXISTS? " + f.exists());
+        List<String> content = null;
+        try {
+            content = Files.readAllLines(f.toPath());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        List<String> toreturn = new ArrayList<>();
+        for (String s : content) {
+            s = s.trim();
+            getLogger().info(s + "," + s.startsWith("\"uuid\":"));
+            if (s.startsWith("\"uuid\":")) {
+                s = s.substring(s.indexOf(":")+1).replace('"', ' ').trim();
+                toreturn.add(s);
+            }
+        }
+
+        return toreturn;
+    }
+
+    private final Spigot spigot = new Server.Spigot(){
+
+        @Override
+        public YamlConfiguration getConfig() {
+            return null; // TODO
+        }
+
+        @Override
+        public void restart() {
+            // TODO
+        }
+
+        @Override
+        public void broadcast(BaseComponent component) {
+            for (Player player : getOnlinePlayers())
+                player.spigot().sendMessage(component);
+        }
+
+        @Override
+        public void broadcast(BaseComponent... components) {
+            for (Player player : getOnlinePlayers())
+                player.spigot().sendMessage(components);
+        }
     };
 
     @Override

@@ -35,7 +35,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinWorldChunk;
 
 public class CraftChunk implements Chunk {
@@ -138,7 +138,7 @@ public class CraftChunk implements Chunk {
                 continue;
 
             BlockPos position = (BlockPos) obj;
-            entities[index++] = ((IMixinServerWorld)(Object)worldServer).getCraftWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
+            entities[index++] = ((IMixinWorld)(Object)worldServer).getCraftWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
         }
 
         return entities;

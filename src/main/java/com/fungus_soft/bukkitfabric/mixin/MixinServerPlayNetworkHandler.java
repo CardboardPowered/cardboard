@@ -21,8 +21,9 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.fungus_soft.bukkitfabric.BukkitLogger;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -42,7 +43,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 
 import static org.bukkit.craftbukkit.CraftServer.server;
 
@@ -91,7 +91,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     }
 
     public CraftPlayer getPlayer() {
-        return (CraftPlayer) ((IMixinBukkitGetter)(Object)this.player).getBukkitObject();
+        return (CraftPlayer) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
     }
 
     @Override

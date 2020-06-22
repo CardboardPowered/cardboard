@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinBukkitGetter;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.mojang.authlib.GameProfile;
@@ -21,7 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 @Mixin(ServerPlayerEntity.class)
-public class MixinPlayer extends MixinEntity implements CommandOutput, IMixinCommandOutput, IMixinBukkitGetter, IMixinServerEntityPlayer  {
+public class MixinPlayer extends MixinEntity implements CommandOutput, IMixinCommandOutput, IMixinServerEntityPlayer  {
 
     private CraftPlayer bukkit;
 
@@ -45,19 +44,8 @@ public class MixinPlayer extends MixinEntity implements CommandOutput, IMixinCom
         return false;
     }
 
-    //@Inject(at = @At(value = "HEAD"), method = "tick()V")
-    private void setBukkit(CallbackInfo callbackInfo) {
-        if (null == bukkit)
-            this.bukkit = new CraftPlayer((ServerPlayerEntity) (Object) this);
-    }
-
     @Override
     public CommandSender getBukkitSender(ServerCommandSource serverCommandSource) {
-        return bukkit;
-    }
-
-    @Override
-    public CraftPlayer getBukkitObject() {
         return bukkit;
     }
 

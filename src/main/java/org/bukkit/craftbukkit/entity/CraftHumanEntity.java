@@ -7,6 +7,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Villager;
@@ -23,15 +25,21 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+
 public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
+    private CraftInventoryPlayer inventory;
     protected GameMode gm;
     protected final PermissibleBase perm = new PermissibleBase(this);
     private boolean op;
 
-    public CraftHumanEntity(net.minecraft.entity.Entity entity) {
+    public CraftHumanEntity(PlayerEntity entity) {
         super(entity);
-        // TODO Auto-generated constructor stub
+        this.nms = entity;
+        this.gm = CraftServer.INSTANCE.getDefaultGameMode();
+        this.inventory = new CraftInventoryPlayer(entity.inventory);
     }
 
     @Override
@@ -94,8 +102,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public PlayerInventory getInventory() {
-        // TODO Auto-generated method stub
-        return null;
+        return inventory;
     }
 
     @Override
@@ -220,25 +227,21 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     @Override
     public void setItemInHand( ItemStack arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setItemOnCursor( ItemStack arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setShoulderEntityLeft( Entity arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setShoulderEntityRight( Entity arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

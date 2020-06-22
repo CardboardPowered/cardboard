@@ -332,7 +332,7 @@ public final class CraftItemStack extends ItemStack {
             case LINGERING_POTION:
             case TIPPED_ARROW:
                 // TODO return new CraftMetaPotion(item.getTag());
-                return null;
+                return new CraftMetaItem(item.getTag());
             case FILLED_MAP:
                 return new CraftMetaMap(item.getTag());
             case FIREWORK_ROCKET:
@@ -498,7 +498,7 @@ public final class CraftItemStack extends ItemStack {
                 return new CraftMetaBlockState(item.getTag(), CraftMagicNumbers.getMaterial(item.getItem()));
             case TROPICAL_FISH_BUCKET:
                 // TODO return new CraftMetaTropicalFishBucket(item.getTag());
-                return null;
+                return new CraftMetaItem(item.getTag());
             case CROSSBOW:
                 return new CraftMetaCrossbow(item.getTag());
             case SUSPICIOUS_STEW:
@@ -509,7 +509,9 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static Material getType(net.minecraft.item.ItemStack item) {
-        return item == null ? Material.AIR : CraftMagicNumbers.getMaterial(item.getItem());
+        return item == null ? 
+                Material.AIR :
+                    CraftMagicNumbers.getMaterial(item.getItem());
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 
 public class CraftBlockProjectileSource implements BlockProjectileSource {
 
@@ -18,7 +18,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
 
     @Override
     public Block getBlock() {
-        return ((IMixinServerWorld)(Object)dispenserBlock.getWorld()).getCraftWorld().getBlockAt(dispenserBlock.getPos().getX(), dispenserBlock.getPos().getY(), dispenserBlock.getPos().getZ());
+        return ((IMixinWorld)(Object)dispenserBlock.getWorld()).getCraftWorld().getBlockAt(dispenserBlock.getPos().getX(), dispenserBlock.getPos().getY(), dispenserBlock.getPos().getZ());
     }
 
     @Override

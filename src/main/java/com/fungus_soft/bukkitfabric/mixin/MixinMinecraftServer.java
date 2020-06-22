@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinNetworkIo;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerWorld;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadExecutor;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 import com.google.gson.JsonElement;
@@ -186,7 +186,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
     @Override
     public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info) {
-        World bukkit = ((IMixinServerWorld)world).getCraftWorld();
+        World bukkit = ((IMixinWorld)world).getCraftWorld();
         world.getWorldBorder().load(prop);
 
         if (null != bukkit.getGenerator())
@@ -228,7 +228,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
                 while (getServer().isRunning()) {
                     long i = (curTime = Util.getMeasuringTimeMs()) - this.timeReference;
 
-                    if (i > 5000L && this.timeReference - this.field_4557 >= 30000L) { // CraftBukkit
+                    if (i > 5000L && this.timeReference - this.field_4557 >= 30000L) {
                         long j = i / 50L;
 
                         LOGGER.warn("Can't keep up! Is the server overloaded? Running " + i + "ms or " + j + " ticks behind");
@@ -244,7 +244,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
                         tickSection = curTime;
                     }
 
-                    currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
+                    currentTick = (int) (System.currentTimeMillis() / 50);
                     this.timeReference += 50L;
                     if (this.profilerStartQueued) {
                         this.profilerStartQueued = false;
@@ -376,7 +376,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
             }
 
             this.initWorld(world, worlddata, worldsettings);
-            Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinServerWorld)world).getCraftWorld()));
+            Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)world).getCraftWorld()));
 
             worlds.put(world.getDimension().getType(), world);
             getServer().getPlayerManager().setMainWorld(world);
@@ -388,7 +388,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
         for (ServerWorld worldserver : getServer().getWorlds()) {
             prepareStartRegion(((IMixinThreadedAnvilChunkStorage)(Object)worldserver.getChunkManager().threadedAnvilChunkStorage).getWorldGenerationProgressListener(), worldserver);
-            Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinServerWorld)worldserver).getCraftWorld()));
+            Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getCraftWorld()));
         }
 
         CraftServer bukkit = ((CraftServer)Bukkit.getServer());
@@ -399,7 +399,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     }
 
     public void prepareStartRegion(WorldGenerationProgressListener worldloadlistener, ServerWorld worldserver) {
-        if (!(((IMixinServerWorld)worldserver).getCraftWorld()).getKeepSpawnInMemory())
+        if (!(((IMixinWorld)worldserver).getCraftWorld()).getKeepSpawnInMemory())
             return;
 
         setLoadingStage(new TranslatableText("menu.generatingTerrain", new Object[0]));
