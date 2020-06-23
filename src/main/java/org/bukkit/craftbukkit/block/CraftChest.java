@@ -3,9 +3,8 @@ package org.bukkit.craftbukkit.block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.container.NameableContainerFactory;
 import net.minecraft.inventory.DoubleInventory;
-
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -47,7 +46,7 @@ public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest
         CraftWorld world = (CraftWorld) this.getWorld();
 
         ChestBlock blockChest = (ChestBlock) (this.getType() == Material.CHEST ? Blocks.CHEST : Blocks.TRAPPED_CHEST);
-        NameableContainerFactory nms = blockChest.createContainerFactory(data, world.getHandle(), this.getPosition());
+        NamedScreenHandlerFactory nms = blockChest.createScreenHandlerFactory(data, world.getHandle(), this.getPosition());
 
         if (nms instanceof DoubleInventory)
             inventory = new CraftInventoryDoubleChest((DoubleInventory) nms);

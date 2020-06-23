@@ -32,12 +32,12 @@ public class MixinPlayerInventory implements IMixinInventory {
 
     @Override
     public void onOpen(CraftHumanEntity who) {
-        get().onInvOpen((PlayerEntity) who.nms);
+        get().onOpen((PlayerEntity) who.nms);
     }
 
     @Override
     public void onClose(CraftHumanEntity who) {
-        get().onInvClose((PlayerEntity) who.nms);
+        get().onClose((PlayerEntity) who.nms);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MixinPlayerInventory implements IMixinInventory {
 
     @Override
     public int getMaxStackSize() {
-        return get().getInvMaxStackAmount();
+        return get().getMaxCountPerStack();
     }
 
 }

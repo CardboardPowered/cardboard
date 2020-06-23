@@ -33,7 +33,7 @@ import net.minecraft.client.options.ChatVisibility;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -121,11 +121,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
                     String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
                     for (Text txt : CraftChatMessage.fromString(message))
-                        CraftServer.server.sendMessage(txt);
+                        CraftServer.server.sendSystemMessage(txt);
                     if (((LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
                         for (ServerPlayerEntity plr : CraftServer.server.getPlayerManager().getPlayerList())
                             for (Text txt : CraftChatMessage.fromString(message))
-                                plr.sendMessage(txt);
+                                plr.sendSystemMessage(txt);
                     } else
                         for (Player plr : queueEvent.getRecipients())
                             plr.sendMessage(message);
@@ -147,11 +147,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                     return;
 
                 s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-                server.sendMessage(new LiteralText(s));
+                server.sendSystemMessage(new LiteralText(s));
                 if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
                     for (ServerPlayerEntity recipient : server.getPlayerManager().players)
                         for (Text txt : CraftChatMessage.fromString(s))
-                            recipient.sendMessage(txt);
+                            recipient.sendSystemMessage(txt);
                 } else for (Player recipient : event.getRecipients())
                     recipient.sendMessage(s);
             }
@@ -168,7 +168,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             NetworkThreadUtils.forceMainThread(packetplayinchat, ((ServerPlayNetworkHandler)(Object)this), this.player.getServerWorld());
 
         if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
-            this.sendPacket(new ChatMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED)));
+            this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED)));
         } else {
             this.player.updateLastActionTime();
             String s = StringUtils.normalizeSpace( packetplayinchat.getChatMessage() );
@@ -180,8 +180,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
                 TranslatableText chatmessage = new TranslatableText("chat.cannotSend", new Object[0]);
 
-                chatmessage.getStyle().setColor(Formatting.RED);
-                this.sendPacket(new ChatMessageS2CPacket(chatmessage));
+                chatmessage.getStyle().withColor(Formatting.RED);
+                this.sendPacket(new GameMessageS2CPacket(chatmessage));
             } else this.chat(s, true);
 
             if (chatSpamField.addAndGet(20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {

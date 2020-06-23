@@ -11,14 +11,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinInventory;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.BasicInventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 
-@Mixin(BasicInventory.class)
+@Mixin(SimpleInventory.class)
 public class MixinInventory implements IMixinInventory {
 
-    private BasicInventory get() {
-        return (BasicInventory) (Object) this;
+    private SimpleInventory get() {
+        return (SimpleInventory) (Object) this;
     }
 
     @Override
@@ -29,12 +29,12 @@ public class MixinInventory implements IMixinInventory {
 
     @Override
     public void onOpen(CraftHumanEntity who) {
-        get().onInvOpen((PlayerEntity) who.nms);
+        get().onOpen((PlayerEntity) who.nms);
     }
 
     @Override
     public void onClose(CraftHumanEntity who) {
-        get().onInvClose((PlayerEntity) who.nms);
+        get().onClose((PlayerEntity) who.nms);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MixinInventory implements IMixinInventory {
 
     @Override
     public int getMaxStackSize() {
-        return get().getInvMaxStackAmount();
+        return get().getMaxCountPerStack();
     }
 
 }

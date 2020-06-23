@@ -46,12 +46,12 @@ public class CraftInventory implements Inventory {
 
     @Override
     public int getSize() {
-        return getInventory().getInvSize();
+        return getInventory().size();
     }
 
     @Override
     public ItemStack getItem(int index) {
-        net.minecraft.item.ItemStack item = getInventory().getInvStack(index);
+        net.minecraft.item.ItemStack item = getInventory().getStack(index);
         return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
     }
 
@@ -93,7 +93,7 @@ public class CraftInventory implements Inventory {
 
     @Override
     public void setItem(int index, ItemStack item) {
-        getInventory().setInvStack(index, CraftItemStack.asNMSCopy(item));
+        getInventory().setStack(index, CraftItemStack.asNMSCopy(item));
     }
 
     @Override
@@ -355,7 +355,7 @@ public class CraftInventory implements Inventory {
     }
 
     private int getMaxItemStack() {
-        return getInventory().getInvMaxStackAmount();
+        return getInventory().getMaxCountPerStack();
     }
 
     @Override
@@ -407,7 +407,7 @@ public class CraftInventory implements Inventory {
     public InventoryType getType() {
         // Order is important.
         if (inventory instanceof CraftingInventory) {
-            return inventory.getInvSize() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
+            return inventory.size() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
         } else if (inventory instanceof PlayerInventory) {
             return InventoryType.PLAYER;
         } else if (inventory instanceof DropperBlockEntity) {

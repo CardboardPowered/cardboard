@@ -30,7 +30,7 @@ public class MixinPlayer extends MixinEntity implements CommandOutput, IMixinCom
     }
 
     @Override
-    public boolean sendCommandFeedback() {
+    public boolean shouldReceiveFeedback() {
         return false;
     }
 

@@ -166,7 +166,7 @@ public class CraftChunk implements Chunk {
 
     @Override
     public boolean isSlimeChunk() {
-        return ChunkRandom.create(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
+        return ChunkRandom.getSlimeRandom(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
     }
 
     @Override

@@ -49,14 +49,14 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.network.MessageType;
-import net.minecraft.network.packet.s2c.play.ChatMessageS2CPacket;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 import net.minecraft.world.dimension.DimensionType;
 
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -144,7 +144,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendMessage(String message) {
-        nms.sendMessage(new LiteralText(message));
+        nms.sendSystemMessage(new LiteralText(message));
     }
 
     @Override
@@ -853,7 +853,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void updateInventory() {
-        nms.openContainer(nms.container);
+        nms.openHandledScreen(nms.currentScreenHandler);
     }
 
     @Override
@@ -932,8 +932,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         ServerWorld toWorld = (ServerWorld) ((CraftWorld) to.getWorld()).getHandle();
 
         // Close any foreign inventory
-        if (getHandle().container != getHandle().playerContainer)
-            getHandle().closeContainer();
+        if (getHandle().currentScreenHandler != getHandle().playerScreenHandler)
+            getHandle().closeHandledScreen();
 
         // Check if the fromWorld and toWorld are the same.
         if (fromWorld == toWorld)
@@ -998,7 +998,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         public void sendMessage(BaseComponent... components) {
            if (null == getHandle().networkHandler) return;
 
-            ChatMessageS2CPacket packet = new ChatMessageS2CPacket(null, MessageType.SYSTEM);
+            GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.SYSTEM);
             // TODO add support for components in ChatMessageS2CPacket
             //packet.components = components;
             getHandle().networkHandler.sendPacket(packet);
@@ -1013,7 +1013,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent... components) {
             if (null == getHandle().networkHandler) return;
 
-            ChatMessageS2CPacket packet = new ChatMessageS2CPacket(null, MessageType.byId((byte) position.ordinal()));
+            GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.byId((byte) position.ordinal()));
             if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR)
                 components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
 

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinWorldChunk;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.TypeFilterableList;
+import net.minecraft.util.collection.TypeFilterableList;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.Heightmap.Type;
 import net.minecraft.world.chunk.WorldChunk;

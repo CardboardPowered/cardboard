@@ -60,12 +60,12 @@ public class MixinDedicatedServer implements CommandOutput, IMixinCommandOutput 
     }
 
     @Override
-    public boolean sendCommandFeedback() {
+    public boolean shouldReceiveFeedback() {
         return false;
     }
 
     @Override
-    public void sendMessage(Text message) {
+    public void sendSystemMessage(Text message) {
         Bukkit.getConsoleSender().sendMessage(message.toString());
     }
 

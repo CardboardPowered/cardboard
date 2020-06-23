@@ -21,12 +21,12 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public int getMaxLevel() {
-        return target.getMaximumLevel();
+        return target.getMaxLevel();
     }
 
     @Override
     public int getStartLevel() {
-        return target.getMinimumLevel();
+        return target.getMinLevel();
     }
 
     @Override
@@ -182,7 +182,7 @@ public class CraftEnchantment extends Enchantment {
             return false;
 
         CraftEnchantment ench = (CraftEnchantment) other;
-        return !target.isDifferent(ench.target);
+        return !target.canCombine(ench.target);
     }
 
     public net.minecraft.enchantment.Enchantment getHandle() {

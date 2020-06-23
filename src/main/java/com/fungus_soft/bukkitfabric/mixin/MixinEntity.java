@@ -26,14 +26,14 @@ public class MixinEntity implements CommandOutput, IMixinCommandOutput, IMixinEn
     }
 
     @Override
-    public boolean sendCommandFeedback() {
+    public boolean shouldReceiveFeedback() {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public void sendMessage(Text message) {
-        ((Entity) (Object) this).sendMessage(message);
+    public void sendSystemMessage(Text message) {
+        ((Entity) (Object) this).sendSystemMessage(message);
     }
 
     @Override

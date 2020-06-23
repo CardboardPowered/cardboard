@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
 import net.minecraft.block.ChestBlock;
-import net.minecraft.container.NameableContainerFactory;
 import org.bukkit.Location;
 import org.bukkit.block.DoubleChest;
 import net.minecraft.inventory.DoubleInventory;
@@ -32,8 +31,8 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
 
     @Override
     public void setContents(ItemStack[] items) {
-        if (getInventory().getInvSize() < items.length)
-            throw new IllegalArgumentException("Invalid inventory size: expected <= " + getInventory().getInvSize());
+        if (getInventory().size() < items.length)
+            throw new IllegalArgumentException("Invalid inventory size: expected <= " + getInventory().size());
 
         ItemStack[] leftItems = new ItemStack[left.getSize()], rightItems = new ItemStack[right.getSize()];
         System.arraycopy(items, 0, leftItems, 0, Math.min(left.getSize(), items.length));
