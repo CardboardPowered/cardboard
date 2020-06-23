@@ -132,9 +132,8 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     public static OfflinePlayer deserialize(Map<String, Object> args) {
         // Backwards comparability
-        if (args.get("name") != null) {
+        if (args.get("name") != null)
             return Bukkit.getServer().getOfflinePlayer((String) args.get("name"));
-        }
 
         return Bukkit.getServer().getOfflinePlayer(UUID.fromString((String) args.get("UUID")));
     }
@@ -151,14 +150,12 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof OfflinePlayer)) {
+        if (obj == null || !(obj instanceof OfflinePlayer))
             return false;
-        }
 
         OfflinePlayer other = (OfflinePlayer) obj;
-        if ((this.getUniqueId() == null) || (other.getUniqueId() == null)) {
+        if ((this.getUniqueId() == null) || (other.getUniqueId() == null))
             return false;
-        }
 
         return this.getUniqueId().equals(other.getUniqueId());
     }

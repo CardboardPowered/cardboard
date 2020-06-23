@@ -2,6 +2,8 @@ package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
+
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import org.bukkit.Chunk;
@@ -51,7 +53,7 @@ public class CraftBlockState implements BlockState {
     }
 
     public static CraftBlockState getBlockState(IWorld world, net.minecraft.util.math.BlockPos pos) {
-        return new CraftBlockState(CraftBlock.at(world, pos));
+        return new CraftBlockState(CraftBlock.at((ServerWorld) world, pos));
     }
 
     public static CraftBlockState getBlockState(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, int flag) {
@@ -158,7 +160,7 @@ public class CraftBlockState implements BlockState {
     @Override
     public CraftBlock getBlock() {
         requirePlaced();
-        return CraftBlock.at(world.getHandle(), position);
+        return CraftBlock.at((ServerWorld) world.getHandle(), position);
     }
 
     @Override

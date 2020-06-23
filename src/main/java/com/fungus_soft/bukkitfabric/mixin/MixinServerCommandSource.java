@@ -13,7 +13,7 @@ public class MixinServerCommandSource implements IMixinServerCommandSource {
     @Override
     public CommandSender getBukkitSender() {
         ServerCommandSource s = (ServerCommandSource) (Object) this;
-        return ((IMixinCommandOutput)s.output).getBukkitSender((ServerCommandSource) (Object) this);
+        return ((IMixinCommandOutput)s.output).getBukkitSender(s);
     }
 
 }

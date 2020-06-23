@@ -33,6 +33,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -42,15 +43,15 @@ import net.minecraft.world.LightType;
 
 public class CraftBlock implements Block {
 
-    private final net.minecraft.world.IWorld world;
+    private final ServerWorld world;
     private final BlockPos position;
 
-    public CraftBlock(IWorld world, BlockPos position) {
+    public CraftBlock(ServerWorld world, BlockPos position) {
         this.world = world;
         this.position = position.toImmutable();
     }
 
-    public static CraftBlock at(IWorld world, BlockPos position) {
+    public static CraftBlock at(ServerWorld world, BlockPos position) {
         return new CraftBlock(world, position);
     }
 
@@ -68,7 +69,7 @@ public class CraftBlock implements Block {
 
     @Override
     public World getWorld() {
-        return new CraftWorld(world.getWorld());
+        return new CraftWorld(world);
     }
 
     public CraftWorld getCraftWorld() {

@@ -19,12 +19,11 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinNetworkIo;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadExecutor;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 import com.google.gson.JsonElement;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
@@ -71,16 +70,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     private WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
 
     @Shadow
-    public void upgradeWorld(String name) {
-    }
-
-    @Shadow
     public CommandManager commandManager;
-
-    @Shadow
-    public boolean setupServer() {
-        return false;
-    }
 
     @Shadow
     private long timeReference = Util.getMeasuringTimeMs();
@@ -156,7 +146,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
     @Overwrite
     public String getServerModName() {
-        return "Fabric + Bukkit4Fabric";
+        return "Fabric,Bukkit";
     }
 
     @Override
@@ -166,7 +156,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
     @Override
     public void convertWorld(String name) {
-        upgradeWorld(name);
+        getServer().upgradeWorld(name);
     }
 
     @Override
@@ -217,7 +207,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     @Overwrite
     public void run() {
         try {
-            if (this.setupServer()) {
+            if (getServer().setupServer()) {
                 this.timeReference = Util.getMeasuringTimeMs();
                 this.metadata.setDescription(new LiteralText(getServer().getServerMotd()));
                 this.metadata.setVersion(new ServerMetadata.Version(SharedConstants.getGameVersion().getName(), SharedConstants.getGameVersion().getProtocolVersion()));
@@ -267,7 +257,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
             CrashReport crashReport = getServer().populateCrashReport((throwable instanceof CrashException) ? ((CrashException)throwable).getReport() : new CrashReport("Exception in server tick loop", throwable));
 
             File file = new File(new File(getServer().getRunDirectory(), "crash-reports"), "crash-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
-            LOGGER.error(crashReport.writeToFile(file) ? ("This crash report has been saved to: " + file.getAbsolutePath()) : "We were unable to save this crash report");
+            LOGGER.error(crashReport.writeToFile(file) ? ("This crash report has been saved to: " + file.getAbsolutePath()) : "Unable to save crash report");
             this.setCrashReport(crashReport);
         } finally {
             try {
@@ -387,7 +377,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         getServer().setDifficulty(getServer().getDefaultDifficulty(), true);
 
         for (ServerWorld worldserver : getServer().getWorlds()) {
-            prepareStartRegion(((IMixinThreadedAnvilChunkStorage)(Object)worldserver.getChunkManager().threadedAnvilChunkStorage).getWorldGenerationProgressListener(), worldserver);
+            prepareStartRegion(worldserver.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, worldserver);
             Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getCraftWorld()));
         }
 
@@ -447,7 +437,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     }
 
     private void executeModerately() {
-        ((IMixinThreadExecutor)(Object)this).runTasks();
+        CraftServer.server.runTasks();
         java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
     }
 

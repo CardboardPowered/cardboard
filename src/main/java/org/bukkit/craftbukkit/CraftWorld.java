@@ -60,6 +60,7 @@ import org.bukkit.util.Vector;
 
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -71,8 +72,8 @@ public class CraftWorld implements World {
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
 
-    private net.minecraft.world.World nms;
-    public CraftWorld(net.minecraft.world.World world) {
+    private ServerWorld nms;
+    public CraftWorld(ServerWorld world) {
         this.nms = world;
     }
 
@@ -280,8 +281,20 @@ public class CraftWorld implements World {
 
     @Override
     public List<Entity> getEntities() {
-        // TODO Auto-generated method stub
-        return null;
+        List<Entity> list = new ArrayList<Entity>();
+
+        for (Object object : nms.entitiesById.values()) {
+            if (object instanceof net.minecraft.entity.Entity) {
+                net.minecraft.entity.Entity mc = (net.minecraft.entity.Entity) object;
+                Entity bukkit = ((IMixinEntity)mc).getBukkitEntity();
+
+                // Assuming that bukkitEntity isn't null
+                if (bukkit != null && bukkit.isValid())
+                    list.add(bukkit);
+            }
+        }
+
+        return list;
     }
 
     @Override
@@ -352,13 +365,12 @@ public class CraftWorld implements World {
     @Override
     public Block getHighestBlockAt(Location arg0) {
         // TODO Auto-generated method stub
-        return null;
+        return getHighestBlockAt(arg0.getBlockX(), arg0.getBlockY());
     }
 
     @Override
-    public Block getHighestBlockAt(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public Block getHighestBlockAt(int x, int z) {
+        return getBlockAt(x, getHighestBlockYAt(x, z), z);
     }
 
     @Override
@@ -375,14 +387,12 @@ public class CraftWorld implements World {
 
     @Override
     public int getHighestBlockYAt(Location arg0) {
-        // TODO Auto-generated method stub
-        return 0;
+        return getHighestBlockYAt(arg0.getBlockX(), arg0.getBlockZ());
     }
 
     @Override
     public int getHighestBlockYAt(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return 0;
+        return getHighestBlockYAt(arg0, arg1, HeightMap.MOTION_BLOCKING);
     }
 
     @Override
