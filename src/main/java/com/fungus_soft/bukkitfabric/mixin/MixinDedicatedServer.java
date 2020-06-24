@@ -14,19 +14,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.fungus_soft.bukkitfabric.BukkitLogger;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.WorldSaveHandler;
+import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.level.LevelProperties;
 
 @Mixin(MinecraftDedicatedServer.class)
-public class MixinDedicatedServer {
-
-    @Shadow
-    @Final
-    public RegistryTracker.Modifiable dimensionTracker;
-
-    @Shadow
-    @Final
-    public WorldSaveHandler field_24371;
+public class MixinDedicatedServer extends MixinMinecraftServer {
 
     @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
@@ -58,5 +53,6 @@ public class MixinDedicatedServer {
         
         Bukkit.getLogger().info("");
     }
+
 
 }

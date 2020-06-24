@@ -19,6 +19,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -29,6 +32,7 @@ import com.google.gson.JsonElement;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.minecraft.SharedConstants;
 import net.minecraft.command.DataCommandStorage;
+import net.minecraft.resource.ServerResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerMetadata;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -48,6 +52,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.ForcedChunkState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.WorldSaveHandler;
@@ -63,10 +68,18 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     public final double[] recentTps = new double[3];
 
     @Shadow
+    @Final
+    public RegistryTracker.Modifiable dimensionTracker;
+
+    @Shadow
+    @Final
+    public WorldSaveHandler field_24371;
+
+    @Shadow
     private Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
 
     @Shadow
-    public CommandManager commandManager;
+    public ServerResourceManager serverResourceManager;
 
     @Shadow
     private long timeReference = Util.getMeasuringTimeMs();
@@ -127,11 +140,11 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     @Shadow
     public void initScoreboard(PersistentStateManager arg0) {}
 
-    @Shadow
-    protected synchronized void setLoadingStage(Text loadingStage) {}
+    //@Shadow
+    //protected synchronized void setLoadingStage(Text loadingStage) {}
 
-    @Shadow
-    public void loadWorldDataPacks(File worldDir, LevelProperties levelProperties) {}
+    //@Shadow
+    //public void loadWorldDataPacks(File worldDir, LevelProperties levelProperties) {}
 
     @Shadow
     public DataCommandStorage dataCommandStorage;
@@ -167,7 +180,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
     @Override
     public CommandManager setCommandManager(CommandManager commandManager) {
-        return (this.commandManager = commandManager);
+        return (this.serverResourceManager.commandManager = commandManager);
     }
 
     /*@Override
@@ -370,6 +383,14 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
         this.forceTicks = false;
     }*/
+
+    @Inject(at = { @At("TAIL") }, method = { "loadWorld" })
+    public void afterWorldLoad(CallbackInfo ci) {
+        CraftServer bukkit = ((CraftServer)Bukkit.getServer());
+
+        bukkit.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
+        bukkit.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
+    }
 
     private void executeModerately() {
         CraftServer.server.runTasks();

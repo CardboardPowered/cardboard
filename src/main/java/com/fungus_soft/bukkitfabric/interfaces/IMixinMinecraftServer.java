@@ -26,7 +26,7 @@ public interface IMixinMinecraftServer {
 
     public CommandManager setCommandManager(CommandManager commandManager);
 
-    public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info);
+    // FIXME public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info);
 
     public static MinecraftServer getServer() {
         return CraftServer.server;

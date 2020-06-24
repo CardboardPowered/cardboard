@@ -160,7 +160,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     }
 
     @Overwrite
-    public void onChatMessage(ChatMessageC2SPacket packetplayinchat) {
+    public void onGameMessage(ChatMessageC2SPacket packetplayinchat) {
         if (CraftServer.server.isStopped())
             return;
 

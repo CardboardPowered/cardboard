@@ -2,7 +2,7 @@
 <img align="left" alt="logo" width="100" src="https://i.imgur.com/wazC5XA.png">
 
 # Bukkit for Fabric
-[![Join Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&style=for-the-badge)](https://discord.gg/Qp4a2Nj) [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FFungus-Software%2Fjob%2FBukkit4Fabric&style=for-the-badge)](https://ci.codemc.io/job/Fungus-Software/job/Bukkit4Fabric/) [![Fabric 1.15.2](https://img.shields.io/badge/Fabric-1.15.2-blue?style=for-the-badge)](https://fabricmc.net/use/?page=server)
+[![Join Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&style=for-the-badge)](https://discord.gg/Qp4a2Nj) [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.codemc.io%2Fjob%2FFungus-Software%2Fjob%2FBukkit4Fabric&style=for-the-badge)](https://ci.codemc.io/job/Fungus-Software/job/Bukkit4Fabric/) [![Fabric 1.16](https://img.shields.io/badge/Fabric-1.16-blue?style=for-the-badge)](https://fabricmc.net/use/?page=server)
 
 An implementation of the popular Bukkit/Spigot/Paper Modding API for FabricMC
 

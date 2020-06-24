@@ -24,7 +24,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.arguments.BlockArgumentParser;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.state.AbstractState;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;

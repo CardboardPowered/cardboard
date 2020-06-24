@@ -72,6 +72,7 @@ accessible	field	net/minecraft/entity/ItemEntity	age	I
 accessible	field	net/minecraft/block/entity/StructureBlockBlockEntity	offset	Lnet/minecraft/util/math/BlockPos;
 accessible	field	net/minecraft/entity/boss/dragon/EnderDragonFight	bossBar	Lnet/minecraft/entity/boss/ServerBossBar;
 accessible	field	net/minecraft/world/MobSpawnerLogic	spawnRange	I
+accessible	field	net/minecraft/state/State	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
 accessible	field	net/minecraft/state/AbstractBlockState	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
 accessible	field	net/minecraft/entity/passive/HorseBaseEntity	JUMP_STRENGTH	Lnet/minecraft/entity/attribute/EntityAttribute;
 accessible	field	net/minecraft/container/Container	trackedStacks	Lnet/minecraft/util/DefaultedList;
@@ -10596,8 +10597,8 @@ accessible	field	net/minecraft/server/MinecraftServer	dataPackManager	Lnet/minec
 mutable	field	net/minecraft/server/MinecraftServer	dataPackManager	Lnet/minecraft/resource/ResourcePackManager;
 accessible	field	net/minecraft/server/MinecraftServer	fileDataPackProvider	Lnet/minecraft/resource/FileResourcePackProvider;
 mutable	field	net/minecraft/server/MinecraftServer	fileDataPackProvider	Lnet/minecraft/resource/FileResourcePackProvider;
-accessible	field	net/minecraft/server/MinecraftServer	commandManager	Lnet/minecraft/server/command/CommandManager;
-mutable	field	net/minecraft/server/MinecraftServer	commandManager	Lnet/minecraft/server/command/CommandManager;
+accessible	field	net/minecraft/resource/ServerResourceManager	commandManager	Lnet/minecraft/server/command/CommandManager;
+mutable	field	net/minecraft/resource/ServerResourceManager	commandManager	Lnet/minecraft/server/command/CommandManager;
 accessible	field	net/minecraft/server/MinecraftServer	recipeManager	Lnet/minecraft/recipe/RecipeManager;
 mutable	field	net/minecraft/server/MinecraftServer	recipeManager	Lnet/minecraft/recipe/RecipeManager;
 accessible	field	net/minecraft/server/MinecraftServer	tagManager	Lnet/minecraft/tag/RegistryTagManager;

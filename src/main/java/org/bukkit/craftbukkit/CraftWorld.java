@@ -452,7 +452,7 @@ public class CraftWorld implements World {
     @Override
     public String getName() {
         // FIXME BROKEN!!!!!!!!!!!!!!!!
-        return nms.getDebugString();
+        return nms.toString();
     }
 
     @Override
