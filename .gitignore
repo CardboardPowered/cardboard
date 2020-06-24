@@ -3,10 +3,10 @@
 
 # gradle
 
-.gradle/
-build/
-out/
-classes/
+/.gradle/
+/build/
+/out/
+/classes/
 
 # eclipse
 
@@ -14,19 +14,17 @@ classes/
 
 # idea
 
-.idea/
-*.iml
-*.ipr
-*.iws
+/.idea/
+/*.iml/
+/*.ipr/
+/*.iws/
 
 # vscode
-
 .settings/
 .vscode/
-bin/
+/bin/
 .classpath
 .project
 
 # fabric
-
 run/
