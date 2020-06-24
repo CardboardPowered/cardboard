@@ -5,15 +5,20 @@ import org.bukkit.World;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 
 @Mixin(LevelProperties.class)
 public class MixinLevelProperties implements IMixinLevelProperties {
+
+    @Shadow
+    private LevelInfo field_25030;
 
     @Inject(at = @At("HEAD"), method = "setThundering")
     public void thunder(boolean flag, CallbackInfo info) {
@@ -46,8 +51,9 @@ public class MixinLevelProperties implements IMixinLevelProperties {
     @Override
     public void checkName(String name) {
         LevelProperties p = (LevelProperties)(Object) this;
-        if (!p.getLevelName().equals(name))
-            p.setLevelName(name);
+        // TODO
+        // if (!p.getLevelName().equals(name))
+        //    p.setLevelName(name);
     }
 
 }

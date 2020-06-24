@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.util;
 import com.fungus_soft.bukkitfabric.BukkitLogger;
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Dynamic;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

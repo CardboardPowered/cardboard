@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.server.OperatorEntry;
 import net.minecraft.server.WhitelistEntry;
+import net.minecraft.util.WorldSavePath;
+import net.minecraft.world.SaveProperties;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -29,12 +32,12 @@ import org.bukkit.plugin.Plugin;
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
     private final GameProfile profile;
     private final CraftServer server;
-    private final WorldSaveHandler storage;
+    private final SaveProperties storage;
 
     protected CraftOfflinePlayer(CraftServer server, GameProfile profile) {
         this.server = server;
         this.profile = profile;
-        this.storage = (WorldSaveHandler) (server.getServer().getWorld(DimensionType.OVERWORLD).getSaveHandler());
+        this.storage = (SaveProperties) (server.getServer().getSaveProperties());
     }
 
     public GameProfile getProfile() {
@@ -168,7 +171,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     private File getDataFile() {
-        return new File(storage.getWorldDir(), getUniqueId() + ".dat");
+        return new File(new File(server.getHandle().getSaveProperties().getLevelName(), "playerdata"), getUniqueId() + ".dat");
     }
 
     @Override

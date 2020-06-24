@@ -6,6 +6,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.PalettedContainer;
+
+import java.util.function.Predicate;
+
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -59,8 +62,9 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkArgument(block != null, "Block cannot be null");
 
         BlockState nms = ((CraftBlockData) block).getState();
+        // TODO PREDICATE!!!!!!!!!!!!!!
         for (PalettedContainer<BlockState> palette : blockids)
-            if (palette.method_19526(nms))
+            if (palette.method_19526((Predicate<BlockState>) nms))
                 return true;
 
         return false;

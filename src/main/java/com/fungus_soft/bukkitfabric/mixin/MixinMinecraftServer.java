@@ -35,7 +35,6 @@ import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ChunkTicketType;
-import net.minecraft.server.world.SecondaryServerWorld;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -47,12 +46,12 @@ import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.profiler.DisableableProfiler;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.ForcedChunkState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelGeneratorType;
 import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 
@@ -64,10 +63,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     public final double[] recentTps = new double[3];
 
     @Shadow
-    private Map<DimensionType, ServerWorld> worlds;
-
-    @Shadow
-    private WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
+    private Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
 
     @Shadow
     public CommandManager commandManager;
@@ -103,8 +99,8 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     @Shadow
     private long field_19248;
 
-    @Shadow
-    private DisableableProfiler profiler;
+    //@Shadow
+    //private DisableableProfiler profiler;
 
     @Shadow
     protected void method_16208() {
@@ -150,18 +146,18 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     }
 
     @Override
-    public Map<DimensionType, ServerWorld> getWorldMap() {
+    public Map<RegistryKey<net.minecraft.world.World>, ServerWorld> getWorldMap() {
         return worlds;
     }
 
     @Override
     public void convertWorld(String name) {
-        getServer().upgradeWorld(name);
+        //getServer().upgradeWorld(name);
     }
 
     @Override
     public WorldGenerationProgressListenerFactory getWorldGenerationProgressListenerFactory() {
-        return worldGenerationProgressListenerFactory;
+        return CraftServer.server.worldGenerationProgressListenerFactory;
     }
 
     @Override
@@ -174,8 +170,9 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         return (this.commandManager = commandManager);
     }
 
-    @Override
+    /*@Override
     public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info) {
+
         World bukkit = ((IMixinWorld)world).getCraftWorld();
         world.getWorldBorder().load(prop);
 
@@ -191,7 +188,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
             }
             prop.setInitialized(true);
         }
-    }
+    }*/
 
     public MinecraftServer getServer() {
         return (MinecraftServer) (Object) this;
@@ -201,75 +198,14 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         return (avg * exp) + (tps * (1 - exp));
     }
 
-    /**
-     * Optimized Tick Loop for Fabric
-     */
-    @Overwrite
-    public void run() {
-        try {
-            if (getServer().setupServer()) {
-                this.timeReference = Util.getMeasuringTimeMs();
-                this.metadata.setDescription(new LiteralText(getServer().getServerMotd()));
-                this.metadata.setVersion(new ServerMetadata.Version(SharedConstants.getGameVersion().getName(), SharedConstants.getGameVersion().getProtocolVersion()));
-                getServer().setFavicon(this.metadata);
- 
-                Arrays.fill(recentTps, 20);
-                long curTime, tickSection = Util.getMeasuringTimeMs(), tickCount = 1;
-                while (getServer().isRunning()) {
-                    long i = (curTime = Util.getMeasuringTimeMs()) - this.timeReference;
+    ///**
+    // * Optimized Tick Loop for Fabric
+    // */
+    //@Overwrite
+    //public void run() {
+    //}
 
-                    if (i > 5000L && this.timeReference - this.field_4557 >= 30000L) {
-                        long j = i / 50L;
-
-                        LOGGER.warn("Can't keep up! Is the server overloaded? Running " + i + "ms or " + j + " ticks behind");
-                        this.timeReference += j * 50L;
-                        this.field_4557 = this.timeReference;
-                    }
-
-                    if ( tickCount++ % SAMPLE_INTERVAL == 0 ) {
-                        double currentTps = 1E3 / ( curTime - tickSection ) * SAMPLE_INTERVAL;
-                        recentTps[0] = calcTps(recentTps[0], 0.92, currentTps);
-                        recentTps[1] = calcTps(recentTps[1], 0.9835, currentTps);
-                        recentTps[2] = calcTps(recentTps[2], 0.9945, currentTps);
-                        tickSection = curTime;
-                    }
-
-                    currentTick = (int) (System.currentTimeMillis() / 50);
-                    this.timeReference += 50L;
-                    if (this.profilerStartQueued) {
-                        this.profilerStartQueued = false;
-                        this.profiler.getController().enable();
-                    }
-                    this.profiler.startTick();
-                    this.profiler.push("tick");
-                    this.tick(this::shouldKeepTicking);
-                    this.profiler.swap("nextTickWait");
-                    this.field_19249 = true;
-                    this.field_19248 = Math.max(Util.getMeasuringTimeMs() + 50L, this.timeReference);
-                    this.method_16208();
-                    this.profiler.pop();
-                    this.profiler.endTick();
-                    this.loading = true;
-                }
-            } else this.setCrashReport(null);
-        } catch (Throwable throwable) {
-            LOGGER.error("Encountered an unexpected exception", throwable);
-            CrashReport crashReport = getServer().populateCrashReport((throwable instanceof CrashException) ? ((CrashException)throwable).getReport() : new CrashReport("Exception in server tick loop", throwable));
-
-            File file = new File(new File(getServer().getRunDirectory(), "crash-reports"), "crash-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
-            LOGGER.error(crashReport.writeToFile(file) ? ("This crash report has been saved to: " + file.getAbsolutePath()) : "Unable to save crash report");
-            this.setCrashReport(crashReport);
-        } finally {
-            try {
-                this.stopped = true;
-                this.shutdown();
-            } catch (Throwable throwable) {
-                LOGGER.error("Exception stopping the server", throwable);
-            } finally {System.exit(1);}
-        }
-    }
-
-    @SuppressWarnings("deprecation")
+    /*@SuppressWarnings("deprecation")
     @Overwrite
     public void loadWorld(String s, String s1, long i, LevelGeneratorType worldtype, JsonElement jsonelement) {
         setLoadingStage(new TranslatableText("menu.loadingLevel", new Object[0]));
@@ -308,9 +244,9 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
                 ((IMixinLevelProperties)(Object)worlddata).checkName(s1);
                 loadWorldDataPacks(worldnbtstorage.getWorldDir(), worlddata);  
-                WorldGenerationProgressListener worldloadlistener = worldGenerationProgressListenerFactory.create(11);
+                WorldGenerationProgressListener worldloadlistener = CraftServer.server.worldGenerationProgressListenerFactory.create(11);
 
-                world = new ServerWorld(getServer(), workerExecutor, worldnbtstorage, worlddata, DimensionType.OVERWORLD, profiler, worldloadlistener/*, org.bukkit.World.Environment.getEnvironment(dimension), gen*/); // TODO
+                world = new ServerWorld(getServer(), workerExecutor, worldnbtstorage, worlddata, DimensionType.OVERWORLD, profiler, worldloadlistener/*, org.bukkit.World.Environment.getEnvironment(dimension), gen); // TODO
 
                 PersistentStateManager worldpersistentdata = world.getPersistentStateManager();
                 initScoreboard(worldpersistentdata);
@@ -360,9 +296,9 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
                     worlddata = new LevelProperties(worldsettings, name);
 
                ((IMixinLevelProperties)(Object)worlddata).checkName(name);
-                WorldGenerationProgressListener worldloadlistener = worldGenerationProgressListenerFactory.create(11);
+                WorldGenerationProgressListener worldloadlistener = CraftServer.server.worldGenerationProgressListenerFactory.create(11);
                 // TODO
-                world = new SecondaryServerWorld(worlds.get(DimensionType.OVERWORLD), getServer(), workerExecutor, worldnbtstorage, DimensionType.byRawId(dimension), profiler, worldloadlistener/*, worlddata, org.bukkit.World.Environment.getEnvironment(dimension), gen*/);
+                world = new SecondaryServerWorld(worlds.get(DimensionType.OVERWORLD), getServer(), workerExecutor, worldnbtstorage, DimensionType.byRawId(dimension), profiler, worldloadlistener/*, worlddata, org.bukkit.World.Environment.getEnvironment(dimension), gen);
             }
 
             this.initWorld(world, worlddata, worldsettings);
@@ -395,7 +331,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         setLoadingStage(new TranslatableText("menu.generatingTerrain", new Object[0]));
         this.forceTicks = true;
 
-        LOGGER.info("Preparing start region for dimension '{}'/{}", worldserver.getLevelProperties().getLevelName(), worldserver.getDimension().getType()); // CraftBukkit
+        LOGGER.info("Preparing start region for dimension '{}'/{}", worldserver.getLevelName(), worldserver.getDimension()); // CraftBukkit
         BlockPos blockposition = worldserver.getSpawnPos();
 
         worldloadlistener.start(new ChunkPos(blockposition));
@@ -414,18 +350,17 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         executeModerately();
 
         if (true) {
-            DimensionType dimensionmanager = worldserver.getDimension().getType();
+            DimensionType dimensionmanager = worldserver.getDimension();
             ForcedChunkState forcedchunk = (ForcedChunkState) worldserver.getPersistentStateManager().get(ForcedChunkState::new, "chunks");
 
             if (forcedchunk != null) {
-                ServerWorld worldserver1 = getServer().getWorld(dimensionmanager);
                 LongIterator longiterator = forcedchunk.getChunks().iterator();
 
                 while (longiterator.hasNext()) {
                     System.out.println("ABCDEFG ------------");
                     long i = longiterator.nextLong();
                     ChunkPos chunkcoordintpair = new ChunkPos(i);
-                    worldserver1.getChunkManager().setChunkForced(chunkcoordintpair, true);
+                    worldserver.getChunkManager().setChunkForced(chunkcoordintpair, true);
                 }
             }
         }
@@ -434,7 +369,7 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         chunkproviderserver.getLightingProvider().setTaskBatchSize(5);
 
         this.forceTicks = false;
-    }
+    }*/
 
     private void executeModerately() {
         CraftServer.server.runTasks();

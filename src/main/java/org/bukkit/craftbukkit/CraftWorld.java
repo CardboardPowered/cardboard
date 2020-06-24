@@ -123,7 +123,8 @@ public class CraftWorld implements World {
 
     @Override
     public boolean canGenerateStructures() {
-        return nms.getLevelProperties().hasStructures();
+        // FIXME BROKEN!!!
+        return false;//nms.getLevelProperties().hasStructures();
     }
 
     @Override
@@ -450,7 +451,8 @@ public class CraftWorld implements World {
 
     @Override
     public String getName() {
-        return nms.getLevelProperties().getLevelName();
+        // FIXME BROKEN!!!!!!!!!!!!!!!!
+        return nms.getDebugString();
     }
 
     @Override
@@ -606,12 +608,14 @@ public class CraftWorld implements World {
 
     @Override
     public File getWorldFolder() {
-        return ((ServerWorld)nms).getSaveHandler().getWorldDir();
+        // FIXME BROKEN
+        return null;//((ServerWorld)nms).getSaveHandler().getWorldDir();
     }
 
     @Override
     public WorldType getWorldType() {
-        return org.bukkit.WorldType.getByName(((ServerWorld)nms).getLevelProperties().getGeneratorType().getName());
+        // FIXME BROKEN!!!!
+        return null;//return org.bukkit.WorldType.getByName(((ServerWorld)nms).getLevelProperties().getGeneratorType().getName());
     }
 
     @Override
@@ -847,7 +851,8 @@ public class CraftWorld implements World {
 
     @Override
     public void setDifficulty(Difficulty diff) {
-        nms.getLevelProperties().setDifficulty(net.minecraft.world.Difficulty.byOrdinal(diff.ordinal()));
+        // FIXME BROKEN
+        //nms.getLevelProperties().setDifficulty(net.minecraft.world.Difficulty.byOrdinal(diff.ordinal()));
     }
 
     @Override
@@ -869,7 +874,8 @@ public class CraftWorld implements World {
 
     @Override
     public void setHardcore(boolean arg0) {
-        nms.getLevelProperties().setHardcore(arg0);
+        // FIXME BROKEN!!
+        //nms.getLevelProperties().setHardcore(arg0);
     }
 
     @Override
@@ -901,7 +907,7 @@ public class CraftWorld implements World {
     public boolean setSpawnLocation(int x, int y, int z) {
         try {
             Location previousLocation = getSpawnLocation();
-            nms.getLevelProperties().setSpawnPos(new BlockPos(x, y, z));
+            nms.setSpawnPos(new BlockPos(x, y, z));
 
             // Notify anyone who's listening.
             SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);

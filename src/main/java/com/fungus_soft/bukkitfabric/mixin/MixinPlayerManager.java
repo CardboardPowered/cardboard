@@ -35,6 +35,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.WorldProperties;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelProperties;
 
@@ -64,8 +65,8 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         entityplayer.stopRiding(); // CraftBukkit
         this.players.remove(entityplayer);
         entityplayer.getServerWorld().removePlayer(entityplayer);
-        BlockPos blockposition = entityplayer.getSpawnPosition();
-        boolean flag1 = entityplayer.isSpawnForced();
+        BlockPos blockposition = entityplayer.getSpawnPointPosition();
+        boolean flag1 = entityplayer.isSpawnPointSet();
 
         ServerPlayerEntity entityplayer1 = entityplayer;
         org.bukkit.World fromWorld = ((Player)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).getWorld();
@@ -85,28 +86,10 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         if (location == null) {
             boolean isBedSpawn = false;
 
-            // TODO Bukkit4Fabric: should be spawn world not current world!
+
             CraftWorld cworld = ((IMixinWorld)(Object)entityplayer.world).getCraftWorld();
 
-            if (cworld != null && blockposition != null) {
-                Optional<Vec3d> optional = PlayerEntity.findRespawnPosition(cworld.getHandle(), blockposition, flag1);
-
-                if (optional.isPresent()) {
-                    Vec3d vec3d = (Vec3d) optional.get();
-
-                    isBedSpawn = true;
-                    location = new Location(cworld, vec3d.x, vec3d.y, vec3d.z);
-                } else {
-                    entityplayer1.setPlayerSpawn(null, true, false);
-                    entityplayer1.networkHandler.sendPacket(new GameStateChangeS2CPacket(0, 0.0F));
-                }
-            }
-
-            if (location == null) {
-                cworld = (CraftWorld) CraftServer.INSTANCE.getWorlds().get(0);
-                blockposition = ((IMixinServerEntityPlayer)(Object)entityplayer1).getSpawnPoint(cworld.getHandle());
-                location = new Location(cworld, (float) blockposition.getX() + 0.5F, (double) ((float) blockposition.getY() + 0.1F), (double) ((float) blockposition.getZ() + 0.5F));
-            }
+            entityplayer1.moveToSpawn((ServerWorld) entityplayer.world);
 
             Player respawnPlayer = CraftServer.INSTANCE.getPlayer(entityplayer1);
             PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn);
@@ -114,7 +97,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
 
             location = respawnEvent.getRespawnLocation();
             if (!flag) ((IMixinServerEntityPlayer)(Object)entityplayer).reset(); // SPIGOT-4785
-        } else location.setWorld(((IMixinWorld)(Object)CraftServer.server.getWorld(dimensionmanager)).getCraftWorld());
+        } // TODO else location.setWorld(((IMixinWorld)(Object)CraftServer.server.getWorld(dimensionmanager)).getCraftWorld());
 
         ServerWorld worldserver = (ServerWorld) ((CraftWorld) location.getWorld()).getHandle();
 
@@ -123,11 +106,11 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
 
         // CraftBukkit start - Force the client to refresh their chunk cache
         if (fromWorld.getEnvironment() == ((IMixinWorld)(Object)worldserver).getCraftWorld().getEnvironment())
-            entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver.dimension.getType().getRawId() >= 0 ? DimensionType.THE_NETHER : DimensionType.OVERWORLD, LevelProperties.sha256Hash(worldserver.getLevelProperties().getSeed()), worldserver.getLevelProperties().getGeneratorType(), entityplayer.interactionManager.getGameMode()));
+            entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket());
 
-        LevelProperties worlddata = worldserver.getLevelProperties();
+        WorldProperties worlddata = worldserver.getLevelProperties();
 
-        entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver.dimension.getType(), LevelProperties.sha256Hash(worldserver.getLevelProperties().getSeed()), worldserver.getLevelProperties().getGeneratorType(), entityplayer1.interactionManager.getGameMode()));
+        entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket()); // TODO
         entityplayer1.setWorld(worldserver);
         entityplayer1.removed = false;
         ((IMixinPlayNetworkHandler)(Object)entityplayer1.networkHandler).teleport(new Location(((IMixinWorld)(Object)worldserver).getCraftWorld(), entityplayer1.getX(), entityplayer1.getY(), entityplayer1.getZ(), entityplayer1.yaw, entityplayer1.pitch));

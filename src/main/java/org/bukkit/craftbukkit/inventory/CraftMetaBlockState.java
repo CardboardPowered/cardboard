@@ -293,7 +293,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
                     break;
             }
         }
-        BlockEntity te = (blockEntityTag == null) ? null : BlockEntity.createFromTag(blockEntityTag);
+        BlockEntity te = (blockEntityTag == null) ? null : BlockEntity.createFromTag(null, blockEntityTag);
 
         switch (material) {
         case ACACIA_SIGN:

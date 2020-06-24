@@ -9,20 +9,21 @@ import org.bukkit.attribute.AttributeInstance;
 
 import com.google.common.base.CaseFormat;
 
-import net.minecraft.entity.attribute.AbstractEntityAttributeContainer;
+import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 
 public class CraftAttributeMap implements Attributable {
 
-    private final AbstractEntityAttributeContainer handle;
+    private final AttributeContainer handle;
 
-    public CraftAttributeMap(AbstractEntityAttributeContainer handle) {
+    public CraftAttributeMap(AttributeContainer handle) {
         this.handle = handle;
     }
 
     @Override
     public AttributeInstance getAttribute(Attribute attribute) {
-        EntityAttributeInstance nms = handle.get(toMinecraft(attribute.name()));
+        // FIXME BROKEN
+        EntityAttributeInstance nms = null;//handle.getCustomInstance(toMinecraft(attribute.name()));
 
         return nms == null ? null : new CraftAttributeInstance(nms, attribute);
     }

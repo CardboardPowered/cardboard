@@ -72,7 +72,7 @@ accessible	field	net/minecraft/entity/ItemEntity	age	I
 accessible	field	net/minecraft/block/entity/StructureBlockBlockEntity	offset	Lnet/minecraft/util/math/BlockPos;
 accessible	field	net/minecraft/entity/boss/dragon/EnderDragonFight	bossBar	Lnet/minecraft/entity/boss/ServerBossBar;
 accessible	field	net/minecraft/world/MobSpawnerLogic	spawnRange	I
-accessible	field	net/minecraft/state/AbstractState	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
+accessible	field	net/minecraft/state/AbstractBlockState	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
 accessible	field	net/minecraft/entity/passive/HorseBaseEntity	JUMP_STRENGTH	Lnet/minecraft/entity/attribute/EntityAttribute;
 accessible	field	net/minecraft/container/Container	trackedStacks	Lnet/minecraft/util/DefaultedList;
 mutable	field	net/minecraft/container/Container	trackedStacks	Lnet/minecraft/util/DefaultedList;

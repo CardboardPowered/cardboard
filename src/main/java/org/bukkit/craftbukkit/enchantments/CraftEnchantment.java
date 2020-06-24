@@ -32,8 +32,6 @@ public class CraftEnchantment extends Enchantment {
     @Override
     public EnchantmentTarget getItemTarget() {
         switch (target.type) {
-            case ALL:
-                return EnchantmentTarget.ALL;
             case ARMOR:
                 return EnchantmentTarget.ARMOR;
             case ARMOR_FEET:
@@ -188,4 +186,5 @@ public class CraftEnchantment extends Enchantment {
     public net.minecraft.enchantment.Enchantment getHandle() {
         return target;
     }
+
 }

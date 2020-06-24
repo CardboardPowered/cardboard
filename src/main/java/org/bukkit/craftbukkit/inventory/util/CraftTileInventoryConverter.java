@@ -11,6 +11,7 @@ import net.minecraft.block.entity.LecternBlockEntity;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.block.entity.SmokerBlockEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 import org.bukkit.craftbukkit.CraftServer;
@@ -48,7 +49,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             AbstractFurnaceBlockEntity furnace = new FurnaceBlockEntity();
-            furnace.setLocation(CraftServer.server.getWorld(DimensionType.OVERWORLD), BlockPos.ORIGIN);
+            furnace.setLocation(CraftServer.server.getWorld(World.OVERWORLD), BlockPos.ORIGIN);
             return furnace;
         }
 

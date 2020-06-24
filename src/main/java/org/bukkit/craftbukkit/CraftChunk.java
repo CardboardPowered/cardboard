@@ -1,10 +1,12 @@
 package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundTag;
@@ -215,8 +217,11 @@ public class CraftChunk implements Chunk {
         Preconditions.checkArgument(block != null, "Block cannot be null");
 
         net.minecraft.block.BlockState nms = ((CraftBlockData) block).getState();
+        // TODO Predicate!
+        Predicate<net.minecraft.block.BlockState> pred = (Predicate<net.minecraft.block.BlockState>) nms;
+
         for (ChunkSection section : getHandle().getSectionArray())
-            if (section != null && section.getContainer().method_19526(nms))
+            if (section != null && section.getContainer().method_19526(pred))
                 return true;
 
         return false;

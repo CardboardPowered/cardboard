@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinItemStack;
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Dynamic;
 
 import net.minecraft.datafixer.NbtOps;
 import net.minecraft.datafixer.TypeReferences;

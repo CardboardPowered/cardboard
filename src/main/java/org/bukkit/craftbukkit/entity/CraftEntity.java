@@ -32,7 +32,8 @@ import org.bukkit.util.Vector;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Texts;
 
@@ -78,7 +79,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void sendMessage(String message) {
-        nms.sendSystemMessage(Texts.toText(new LiteralMessage(message)));
+        nms.sendSystemMessage(Texts.toText(new LiteralMessage(message)), getUniqueId());
     }
 
     @Override
@@ -369,10 +370,10 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public boolean isOnGround() {
-        if (nms instanceof PersistentProjectileEntity)
-            return ((PersistentProjectileEntity) nms).onGround;
+        if (nms instanceof ProjectileEntity)
+            return ((ProjectileEntity) nms).isOnGround();
 
-        return nms.onGround;
+        return nms.isOnGround();
     }
 
     @Override

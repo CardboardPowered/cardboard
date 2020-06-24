@@ -45,7 +45,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
             return null;
 
         CompoundTag nbtTagCompound = tileEntity.toTag(new CompoundTag());
-        T snapshot = (T) BlockEntity.createFromTag(nbtTagCompound);
+        T snapshot = (T) BlockEntity.createFromTag(data, nbtTagCompound);
 
         return snapshot;
     }
@@ -53,7 +53,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
     private void copyData(T from, T to) {
         BlockPos pos = to.getPos();
         CompoundTag nbtTagCompound = from.toTag(new CompoundTag());
-        to.fromTag(nbtTagCompound);
+        to.fromTag(data, nbtTagCompound);
 
         to.setPos(pos);
     }

@@ -31,7 +31,7 @@ public class MixinPlayer extends MixinEntity implements CommandOutput, IMixinCom
 
     @Override
     public boolean shouldReceiveFeedback() {
-        return false;
+        return true;
     }
 
     @Override
@@ -61,8 +61,7 @@ public class MixinPlayer extends MixinEntity implements CommandOutput, IMixinCom
 
 	@Override
 	public BlockPos getSpawnPoint(World world) {
-		// TODO Bukkit4Fabric: Auto-generated method stub
-		return world.getSpawnPos();
+		return ((ServerWorld)world).getSpawnPos();
 	}
 
 }

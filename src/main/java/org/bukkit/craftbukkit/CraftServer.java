@@ -131,6 +131,7 @@ import net.minecraft.item.Item;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
@@ -142,9 +143,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.biome.source.BiomeAccessType;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelGeneratorType;
 import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 
@@ -247,7 +246,7 @@ public class CraftServer implements Server {
 
     private void syncCommands() {
         // Clear existing commands
-        CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(server instanceof DedicatedServer));
+        CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(RegistrationEnvironment.ALL));
 
         // Register all commands, vanilla ones will be using the old dispatcher references
         for (Map.Entry<String, Command> entry : commandMap.getKnownCommands().entrySet()) {
@@ -469,11 +468,15 @@ public class CraftServer implements Server {
 
     @Override
     public World createWorld(WorldCreator creator) {
+
+        // TODO Wait till Spigot updates to 1.16
+
+        /*
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
-        LevelGeneratorType type = LevelGeneratorType.getTypeFromName(creator.type().getName());
+        LevelGeneratorType type = LevelGeneratorType.getTypeFromName(creator.type()..type().getName());
         boolean generateStructures = creator.generateStructures();
 
         if (world != null)
@@ -554,6 +557,8 @@ public class CraftServer implements Server {
 
         pluginManager.callEvent(new WorldLoadEvent(((IMixinWorld)(Object)internal).getCraftWorld()));
         return ((IMixinWorld)(Object)internal).getCraftWorld();
+        */
+        return null;
     }
 
     public ChunkGenerator getGenerator(String name) {
@@ -674,7 +679,8 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        return getServer().shouldGenerateStructures();
+        // TODO AUTO GENERATED METHOD STUB return getServer().shouldGenerateStructures();
+        return true;
     }
 
     @Override
@@ -995,7 +1001,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getWorldType() {
-        return server.getProperties().levelType.getName();
+        return server.getProperties().levelName; // TODO
     }
 
     @Override
@@ -1058,12 +1064,12 @@ public class CraftServer implements Server {
 
     @Override
     public void reload() {
-        server.reload();
+     // TODO Auto-generated method stub server.reload();
     }
 
     @Override
     public void reloadData() {
-        server.reload();
+     // TODO Auto-generated method stub server.reload();
     }
 
     @Override
@@ -1079,7 +1085,7 @@ public class CraftServer implements Server {
 
     @Override
     public void resetRecipes() {
-        server.reload();
+     // TODO Auto-generated method stubserver.reload();
     }
 
     @Override
@@ -1135,10 +1141,10 @@ public class CraftServer implements Server {
 
         ServerWorld handle = (ServerWorld) ((CraftWorld) world).getHandle();
 
-        if (!(((IMixinMinecraftServer)(Object)getServer()).getWorldMap().containsKey(handle.getWorld().getDimension().getType())))
+        if (!(((IMixinMinecraftServer)(Object)getServer()).getWorldMap().containsKey(handle.getWorld().getRegistryKey())))
             return false;
 
-        if (handle.getWorld().getDimension().getType() == DimensionType.OVERWORLD || handle.getPlayers().size() > 0)
+        if (handle.getWorld().getDimension() == DimensionType.getOverworldDimensionType() || handle.getPlayers().size() > 0)
             return false;
 
         WorldUnloadEvent e = new WorldUnloadEvent(world);
@@ -1156,7 +1162,7 @@ public class CraftServer implements Server {
         }
 
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
-        ((IMixinMinecraftServer)(Object)getServer()).getWorldMap().remove(handle.getWorld().getDimension().getType());
+        ((IMixinMinecraftServer)(Object)getServer()).getWorldMap().remove(handle.getWorld().getRegistryKey());
         return true;
     }
 

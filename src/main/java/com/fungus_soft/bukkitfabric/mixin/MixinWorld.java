@@ -14,7 +14,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkManager;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelProperties;
 
@@ -24,7 +23,7 @@ public class MixinWorld implements IMixinWorld {
     private CraftWorld bukkit;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void init(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Profiler profiler, boolean client, CallbackInfo ci){
+    public void init(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, DimensionType, ChunkManager> chunkManagerProvider, Profiler profiler, boolean client, CallbackInfo ci){
         this.bukkit = new CraftWorld(((ServerWorld)(Object)this));
     }
 

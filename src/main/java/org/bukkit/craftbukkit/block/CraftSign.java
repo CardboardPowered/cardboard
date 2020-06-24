@@ -26,9 +26,10 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
     public void load(SignBlockEntity sign) {
         super.load(sign);
 
-        lines = new String[sign.text.length];
-        System.arraycopy(revertComponents(sign.text), 0, lines, 0, lines.length);
-        editable = sign.isEditable();
+        // FIXME BROKEN!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //lines = new String[sign.text.length];
+        //System.arraycopy(revertComponents(sign.text), 0, lines, 0, lines.length);
+        //editable = sign.isEditable();
     }
 
     @Override
@@ -71,7 +72,7 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
         super.applyTo(sign);
 
         Text[] newLines = sanitizeLines(lines);
-        System.arraycopy(newLines, 0, sign.text, 0, 4);
+        // FIXME System.arraycopy(newLines, 0, sign.text, 0, 4);
         sign.setEditable(editable);
     }
 

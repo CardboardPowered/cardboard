@@ -110,13 +110,12 @@ public class CraftInventoryCustom extends CraftInventory {
         @Override
         public void setStack(int i, ItemStack itemstack) {
             items.set(i, itemstack);
-            if (itemstack != ItemStack.EMPTY && this.getMaxCountPerStack() > 0 && itemstack.getCount() > this.getMaxCountPerStack()) {
-                itemstack.setCount(this.getMaxCountPerStack());
-            }
+            if (itemstack != ItemStack.EMPTY && this.getMaxStackSize() > 0 && itemstack.getCount() > this.getMaxStackSize())
+                itemstack.setCount(this.getMaxStackSize());
         }
 
         @Override
-        public int getMaxCountPerStack() {
+        public int getMaxStackSize() {
             return maxStack;
         }
 
@@ -207,7 +206,7 @@ public class CraftInventoryCustom extends CraftInventory {
         }
 
         @Override
-        public int getMaxStackSize() {
+        public int getMaxCountPerStack() {
             return maxStack;
         }
 

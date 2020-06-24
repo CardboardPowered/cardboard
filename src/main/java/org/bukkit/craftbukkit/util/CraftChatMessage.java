@@ -89,7 +89,7 @@ public final class CraftChatMessage {
 
         private final List<Text> list = new ArrayList<Text>();
         private Text currentChatComponent = new LiteralText("");
-        private Style modifier = new Style();
+        private Style modifier = Style.EMPTY;
         private final Text[] output;
         private int currentIndex;
         private final String message;
@@ -114,7 +114,7 @@ public final class CraftChatMessage {
                 case 1:
                     Formatting format = formatMap.get(match.toLowerCase(java.util.Locale.ENGLISH).charAt(1));
                     if (format == Formatting.RESET) {
-                        modifier = new Style();
+                        modifier = Style.EMPTY;
                     } else if (format.isModifier()) {
                         switch (format) {
                         case BOLD:
@@ -124,25 +124,25 @@ public final class CraftChatMessage {
                             modifier.withItalic(Boolean.TRUE);
                             break;
                         case STRIKETHROUGH:
-                            modifier.setStrikethrough(Boolean.TRUE);
+                            modifier.strikethrough = (Boolean.TRUE);
                             break;
                         case UNDERLINE:
-                            modifier.setUnderline(Boolean.TRUE);
+                            // FIXME BROKEN!!!
                             break;
                         case OBFUSCATED:
-                            modifier.setObfuscated(Boolean.TRUE);
+                            modifier.obfuscated = Boolean.TRUE;
                             break;
                         default:
                             throw new AssertionError("Unexpected message format");
                         }
-                    } else modifier = new Style().withColor(format); // Color resets formatting
+                    } else modifier = Style.EMPTY.withColor(format); // Color resets formatting
 
                     break;
                 case 2:
-                    if (keepNewlines)
-                        currentChatComponent.append(new LiteralText("\n"));
-                    else
-                        currentChatComponent = null;
+                    //if (keepNewlines)
+                        // FIXME currentChatComponent.append(new LiteralText("\n"));
+                    //else
+                    //    currentChatComponent = null;
 
                     break;
                 case 3:
@@ -167,12 +167,12 @@ public final class CraftChatMessage {
                 return;
             Text addition = new LiteralText(message.substring(currentIndex, index)).setStyle(modifier);
             currentIndex = index;
-            modifier = modifier.deepCopy();
+            modifier = Style.EMPTY; // FIXME: BROKEN!!!
             if (currentChatComponent == null) {
                 currentChatComponent = new LiteralText("");
                 list.add(currentChatComponent);
             }
-            currentChatComponent.append(addition);
+            currentChatComponent.getSiblings().add(addition);
         }
 
         private Text[] getOutput() {
@@ -246,7 +246,7 @@ public final class CraftChatMessage {
             if (matcher.reset(msg).find()) {
                 matcher.reset();
 
-                Style modifier = text.getStyle() != null ? text.getStyle() : new Style();
+                Style modifier = text.getStyle() != null ? text.getStyle() : Style.EMPTY;
                 List<Text> extras = new ArrayList<Text>();
                 List<Text> extrasOld = new ArrayList<Text>(text.getSiblings());
                 component = text = new LiteralText("");
@@ -255,16 +255,15 @@ public final class CraftChatMessage {
                 while (matcher.find()) {
                     String match = matcher.group();
 
-                    if (!(match.startsWith("http://") || match.startsWith("https://"))) {
+                    if (!(match.startsWith("http://") || match.startsWith("https://")))
                         match = "http://" + match;
-                    }
 
                     LiteralText prev = new LiteralText(msg.substring(pos, matcher.start()));
                     prev.setStyle(modifier);
                     extras.add(prev);
 
                     LiteralText link = new LiteralText(matcher.group());
-                    Style linkModi = modifier.deepCopy();
+                    Style linkModi = Style.EMPTY;// FIXME modifier.deepCopy();
                     linkModi.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     link.setStyle(linkModi);
                     extras.add(link);
@@ -285,9 +284,8 @@ public final class CraftChatMessage {
         List<Text> extras = component.getSiblings();
         for (int i = 0; i < extras.size(); i++) {
             Text comp = extras.get(i);
-            if (comp.getStyle() != null && comp.getStyle().getClickEvent() == null) {
+            if (comp.getStyle() != null && comp.getStyle().getClickEvent() == null)
                 extras.set(i, fixComponent(comp, matcher));
-            }
         }
 
         if (component instanceof TranslatableText) {
@@ -296,12 +294,10 @@ public final class CraftChatMessage {
                 Object comp = subs[i];
                 if (comp instanceof Text) {
                     Text c = (Text) comp;
-                    if (c.getStyle() != null && c.getStyle().getClickEvent() == null) {
+                    if (c.getStyle() != null && c.getStyle().getClickEvent() == null)
                         subs[i] = fixComponent(c, matcher);
-                    }
-                } else if (comp instanceof String && matcher.reset((String) comp).find()) {
+                } else if (comp instanceof String && matcher.reset((String) comp).find())
                     subs[i] = fixComponent(new LiteralText((String) comp), matcher);
-                }
             }
         }
 

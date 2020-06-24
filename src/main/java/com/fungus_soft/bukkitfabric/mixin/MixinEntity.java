@@ -1,9 +1,12 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
+import java.util.UUID;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,13 +30,11 @@ public class MixinEntity implements CommandOutput, IMixinCommandOutput, IMixinEn
 
     @Override
     public boolean shouldReceiveFeedback() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
-    @Override
     public void sendSystemMessage(Text message) {
-        ((Entity) (Object) this).sendSystemMessage(message);
+        ((Entity) (Object) this).sendSystemMessage(message, bukkit.getUniqueId());
     }
 
     @Override
@@ -60,6 +61,11 @@ public class MixinEntity implements CommandOutput, IMixinCommandOutput, IMixinEn
     @Override
     public org.bukkit.entity.Entity getBukkitEntity() {
         return bukkit;
+    }
+
+    @Override
+    @Shadow
+    public void sendSystemMessage(Text message, UUID senderUuid) {
     }
 
 }

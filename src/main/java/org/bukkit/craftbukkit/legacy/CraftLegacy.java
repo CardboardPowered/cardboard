@@ -15,7 +15,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
 
 import com.google.common.base.Preconditions;
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Dynamic;
 
 import net.minecraft.Bootstrap;
 import net.minecraft.block.Block;
@@ -259,7 +259,7 @@ public final class CraftLegacy {
 
     static {
         System.err.println("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!");
-        if (((CraftServer)Bukkit.getServer()).getServer() != null && ((CraftServer)Bukkit.getServer()).getServer().isDebuggingEnabled()) {
+        if (((CraftServer)Bukkit.getServer()).getServer() != null && ((CraftServer)Bukkit.getServer()).getServer().isDebugRunning()) {
             new Exception().printStackTrace();
         }
 
@@ -342,7 +342,7 @@ public final class CraftLegacy {
                     BlockState blockData = block.getDefaultState();
                     StateManager states = block.getStateManager();
 
-                    Optional<CompoundTag> propMap = blockTag.getElement("Properties");
+                    Optional<CompoundTag> propMap = blockTag.getElement("Properties").result();
                     if (propMap.isPresent()) {
                         CompoundTag properties = propMap.get();
                         for (String dataKey : properties.getKeys()) {

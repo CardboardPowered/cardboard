@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.block.AbstractBlock.AbstractBlockState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.arguments.BlockArgumentParser;
@@ -229,7 +230,7 @@ public class CraftBlockData implements BlockData {
 
     @Override
     public String getAsString() {
-        return toString(((AbstractState) state).getEntries());
+        return toString(((AbstractBlockState) state).getEntries());
     }
 
     @Override
@@ -257,7 +258,7 @@ public class CraftBlockData implements BlockData {
 
         if (!states.isEmpty()) {
             stateString.append('[');
-            stateString.append(states.entrySet().stream().map(AbstractState.PROPERTY_MAP_PRINTER).collect(Collectors.joining(",")));
+            stateString.append(states.entrySet().stream().map(AbstractBlockState.PROPERTY_MAP_PRINTER).collect(Collectors.joining(",")));
             stateString.append(']');
         }
 
@@ -433,7 +434,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.LeavesBlock.class, org.bukkit.craftbukkit.block.impl.CraftLeaves::new);
         register(net.minecraft.block.LecternBlock.class, org.bukkit.craftbukkit.block.impl.CraftLectern::new);
         register(net.minecraft.block.LeverBlock.class, org.bukkit.craftbukkit.block.impl.CraftLever::new);
-        register(net.minecraft.block.LogBlock.class, org.bukkit.craftbukkit.block.impl.CraftLogAbstract::new);
+        // FIXME register(net.minecraft.block.LogBlock.class, org.bukkit.craftbukkit.block.impl.CraftLogAbstract::new);
         register(net.minecraft.block.LoomBlock.class, org.bukkit.craftbukkit.block.impl.CraftLoom::new);
         register(net.minecraft.block.DetectorRailBlock.class, org.bukkit.craftbukkit.block.impl.CraftMinecartDetector::new);
         register(net.minecraft.block.RailBlock.class, org.bukkit.craftbukkit.block.impl.CraftMinecartTrack::new);

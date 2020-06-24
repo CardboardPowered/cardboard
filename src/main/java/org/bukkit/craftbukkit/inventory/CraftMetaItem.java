@@ -117,22 +117,22 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         static {
             classMap = ImmutableMap.<Class<? extends CraftMetaItem>, String>builder()
                     .put(CraftMetaArmorStand.class, "ARMOR_STAND")
-                    // TODO .put(CraftMetaBanner.class, "BANNER")
-                    // TODO .put(CraftMetaBlockState.class, "TILE_ENTITY")
+                    .put(CraftMetaBanner.class, "BANNER")
+                    .put(CraftMetaBlockState.class, "TILE_ENTITY")
                     .put(CraftMetaBook.class, "BOOK")
                     .put(CraftMetaBookSigned.class, "BOOK_SIGNED")
                     .put(CraftMetaSkull.class, "SKULL")
-                    // TODO .put(CraftMetaLeatherArmor.class, "LEATHER_ARMOR")
-                    // TODO .put(CraftMetaMap.class, "MAP")
+                    .put(CraftMetaLeatherArmor.class, "LEATHER_ARMOR")
+                    .put(CraftMetaMap.class, "MAP")
                     // TODO .put(CraftMetaPotion.class, "POTION")
-                    // TODO .put(CraftMetaSpawnEgg.class, "SPAWN_EGG")
-                    // TODO .put(CraftMetaEnchantedBook.class, "ENCHANTED")
-                    // TODO  .put(CraftMetaFirework.class, "FIREWORK")a
-                    // TODO .put(CraftMetaCharge.class, "FIREWORK_EFFECT")
-                    // TODO .put(CraftMetaKnowledgeBook.class, "KNOWLEDGE_BOOK")
+                    .put(CraftMetaSpawnEgg.class, "SPAWN_EGG")
+                    .put(CraftMetaEnchantedBook.class, "ENCHANTED")
+                    .put(CraftMetaFirework.class, "FIREWORK")
+                    .put(CraftMetaCharge.class, "FIREWORK_EFFECT")
+                    .put(CraftMetaKnowledgeBook.class, "KNOWLEDGE_BOOK")
                     // TODO .put(CraftMetaTropicalFishBucket.class, "TROPICAL_FISH_BUCKET")
-                    // TODO  .put(CraftMetaCrossbow.class, "CROSSBOW")
-                    // TODO .put(CraftMetaSuspiciousStew.class, "SUSPICIOUS_STEW")
+                    .put(CraftMetaCrossbow.class, "CROSSBOW")
+                    .put(CraftMetaSuspiciousStew.class, "SUSPICIOUS_STEW")
                     .put(CraftMetaItem.class, "UNSPECIFIC")
                     .build();
 
@@ -385,7 +385,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 // entry is not an actual CompoundTag. getCompound returns empty CompoundTag in that case
                 continue;
             }
-            net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = EntityAttributes.createFromTag(entry);
+            net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = null; // FIXME EntityAttributes.createFromTag(entry);
             if (nmsModifier == null)
                 continue;
 
@@ -635,7 +635,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 continue;
 
             net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = CraftAttributeInstance.convert(entry.getValue());
-            CompoundTag sub = EntityAttributes.toTag(nmsModifier);
+            CompoundTag sub = null;//FIXME EntityAttributes.toTag(nmsModifier);
             if (sub.isEmpty())
                 continue;
 
