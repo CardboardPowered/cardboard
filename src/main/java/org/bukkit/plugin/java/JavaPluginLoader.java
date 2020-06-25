@@ -45,7 +45,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Represents a Java plugin loader, allowing plugins in the form of .jar
  */
-public final class FakePluginLoader implements PluginLoader {
+public final class JavaPluginLoader implements PluginLoader {
 
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
@@ -58,7 +58,7 @@ public final class FakePluginLoader implements PluginLoader {
      * @param instance the server instance
      */
     @Deprecated
-    public FakePluginLoader(Server instance) {
+    public JavaPluginLoader(Server instance) {
         Validate.notNull(instance, "Server cannot be null");
         server = instance;
     }

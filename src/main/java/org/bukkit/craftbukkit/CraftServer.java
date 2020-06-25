@@ -96,7 +96,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.SimpleServicesManager;
-import org.bukkit.plugin.java.FakePluginLoader;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -196,7 +196,7 @@ public class CraftServer implements Server {
     }
 
     public void loadPlugins() {
-        pluginManager.registerInterface(FakePluginLoader.class);
+        pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = new File("plugins");
         if (pluginFolder.exists()) {
