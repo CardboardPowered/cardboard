@@ -166,7 +166,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
             case WITHER_SKELETON_SPAWN_EGG:
             case WOLF_SPAWN_EGG:
             case ZOMBIE_HORSE_SPAWN_EGG:
-            case ZOMBIE_PIGMAN_SPAWN_EGG:
+           // case ZOMBIE_PIGMAN_SPAWN_EGG:
             case ZOMBIE_SPAWN_EGG:
             case ZOMBIE_VILLAGER_SPAWN_EGG:
                 return true;

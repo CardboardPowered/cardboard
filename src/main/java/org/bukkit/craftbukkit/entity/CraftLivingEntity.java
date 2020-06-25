@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.entity;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -21,6 +22,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
@@ -404,13 +406,17 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void swingMainHand() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void swingOffHand() {
         // TODO Auto-generated method stub
+    }
 
+    @Override
+    public Set<UUID> getCollidableExemptions() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

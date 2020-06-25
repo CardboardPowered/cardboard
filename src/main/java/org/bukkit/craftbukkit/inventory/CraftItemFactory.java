@@ -68,7 +68,7 @@ public final class CraftItemFactory implements ItemFactory {
             case AIR:
                 return null;
             case WRITTEN_BOOK:
-                // TODO return meta instanceof CraftMetaBookSigned ? meta : new CraftMetaBookSigned(meta);
+                return meta instanceof CraftMetaBookSigned ? meta : new CraftMetaBookSigned(meta);
             case WRITABLE_BOOK:
                 return meta != null && meta.getClass().equals(CraftMetaBook.class) ? meta : new CraftMetaBook(meta);
             case CREEPER_HEAD:
@@ -83,26 +83,26 @@ public final class CraftItemFactory implements ItemFactory {
             case WITHER_SKELETON_WALL_SKULL:
             case ZOMBIE_HEAD:
             case ZOMBIE_WALL_HEAD:
-                // TODO return meta instanceof CraftMetaSkull ? meta : new CraftMetaSkull(meta);
+                return meta instanceof CraftMetaSkull ? meta : new CraftMetaSkull(meta);
             case LEATHER_HELMET:
             case LEATHER_HORSE_ARMOR:
             case LEATHER_CHESTPLATE:
             case LEATHER_LEGGINGS:
             case LEATHER_BOOTS:
-                // TODO return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
+                return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
             case POTION:
             case SPLASH_POTION:
             case LINGERING_POTION:
             case TIPPED_ARROW:
                 // TODO return meta instanceof CraftMetaPotion ? meta : new CraftMetaPotion(meta);
             case FILLED_MAP:
-                // TODO return meta instanceof CraftMetaMap ? meta : new CraftMetaMap(meta);
+                return meta instanceof CraftMetaMap ? meta : new CraftMetaMap(meta);
             case FIREWORK_ROCKET:
-                // TODO return meta instanceof CraftMetaFirework ? meta : new CraftMetaFirework(meta);
+                return meta instanceof CraftMetaFirework ? meta : new CraftMetaFirework(meta);
             case FIREWORK_STAR:
-                // TODO return meta instanceof CraftMetaCharge ? meta : new CraftMetaCharge(meta);
+                return meta instanceof CraftMetaCharge ? meta : new CraftMetaCharge(meta);
             case ENCHANTED_BOOK:
-                // TODO return meta instanceof CraftMetaEnchantedBook ? meta : new CraftMetaEnchantedBook(meta);
+                return meta instanceof CraftMetaEnchantedBook ? meta : new CraftMetaEnchantedBook(meta);
             case BLACK_BANNER:
             case BLACK_WALL_BANNER:
             case BLUE_BANNER:
@@ -135,7 +135,7 @@ public final class CraftItemFactory implements ItemFactory {
             case WHITE_WALL_BANNER:
             case YELLOW_BANNER:
             case YELLOW_WALL_BANNER:
-                // TODO return meta instanceof CraftMetaBanner ? meta : new CraftMetaBanner(meta);
+                return meta instanceof CraftMetaBanner ? meta : new CraftMetaBanner(meta);
             case BAT_SPAWN_EGG:
             case BEE_SPAWN_EGG:
             case BLAZE_SPAWN_EGG:
@@ -192,7 +192,7 @@ public final class CraftItemFactory implements ItemFactory {
             case WITHER_SKELETON_SPAWN_EGG:
             case WOLF_SPAWN_EGG:
             case ZOMBIE_HORSE_SPAWN_EGG:
-            case ZOMBIE_PIGMAN_SPAWN_EGG:
+            //case ZOMBIE_PIGMAN_SPAWN_EGG:
             case ZOMBIE_SPAWN_EGG:
             case ZOMBIE_VILLAGER_SPAWN_EGG:
                 // TODO return meta instanceof CraftMetaSpawnEgg ? meta : new CraftMetaSpawnEgg(meta);
@@ -257,7 +257,7 @@ public final class CraftItemFactory implements ItemFactory {
             case SMOKER:
             case BEEHIVE:
             case BEE_NEST:
-                // TODO return new CraftMetaBlockState(meta, material);
+                return new CraftMetaBlockState(meta, material);
             case TROPICAL_FISH_BUCKET:
                 // TODO return meta instanceof CraftMetaTropicalFishBucket ? meta : new CraftMetaTropicalFishBucket(meta);
             case CROSSBOW:

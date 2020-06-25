@@ -72,12 +72,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     @Override
-    public  Location getBedSpawnLocation() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public int getCooldown(Material arg0) {
         // TODO Auto-generated method stub
         return 0;
@@ -199,18 +193,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     public  InventoryView openWorkbench( Location arg0, boolean arg1) {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public void setBedSpawnLocation( Location arg0) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void setBedSpawnLocation( Location arg0, boolean arg1) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override

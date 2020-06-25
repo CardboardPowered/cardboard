@@ -39,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
+import org.jetbrains.annotations.Nullable;
 
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
@@ -1031,6 +1032,22 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public org.bukkit.entity.Player.Spigot spigot() {
         return spigot;
+    }
+
+    @Override
+    public @Nullable Location getBedSpawnLocation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setBedSpawnLocation(Location location) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setBedSpawnLocation(Location location, boolean force) {
     }
 
 }
