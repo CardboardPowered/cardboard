@@ -8,7 +8,7 @@ An implementation of the popular Bukkit/Spigot/Paper Modding API for FabricMC
 
 Curseforge: https://www.curseforge.com/minecraft/mc-mods/bukkit
 
-Prerelease builds: [Jenkins](https://ci.fungus-soft.com:8080/job/Bukkit4Fabric)
+Prerelease builds: [Jenkins](http://ci.fungus-soft.com:8080/job/Bukkit4Fabric)
 
 ## Credits
 * [The Bukkit Project](https://bukkit.org/) for creating the Bukkit API

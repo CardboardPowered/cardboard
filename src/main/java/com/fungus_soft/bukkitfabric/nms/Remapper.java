@@ -16,7 +16,7 @@ import net.md_5.specialsource.SpecialSource;
 
 public class Remapper {
 
-    public static int MAPPINGS_VERSION = 2;
+    public static int MAPPINGS_VERSION = 3;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
