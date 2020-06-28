@@ -1303,4 +1303,10 @@ public class CraftServer implements Server {
         return spigot;
     }
 
+    @Override
+    public int getTicksPerWaterAmbientSpawns() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

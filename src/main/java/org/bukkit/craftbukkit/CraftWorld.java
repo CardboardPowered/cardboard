@@ -57,6 +57,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import com.fungus_soft.bukkitfabric.Utils;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -1170,6 +1171,23 @@ public class CraftWorld implements World {
 
     public BlockMetadataStore getBlockMetadata() {
         return blockMetadata;
+    }
+
+    @Override
+    public long getTicksPerWaterAmbientSpawns() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getWaterAmbientSpawnLimit() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setTicksPerWaterAmbientSpawns(int arg0) {
+        // TODO Auto-generated method stub
     }
 
 }
