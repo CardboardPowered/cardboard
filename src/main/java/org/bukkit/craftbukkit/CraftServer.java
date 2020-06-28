@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -385,6 +386,8 @@ public class CraftServer implements Server {
 
     @Override
     public BlockData createBlockData(Material material, String data) throws IllegalArgumentException {
+        Validate.isTrue(material != null, "Must provide material");
+
         return CraftBlockData.newData(material, data);
     }
 

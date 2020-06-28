@@ -387,6 +387,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.CampfireBlock.class, org.bukkit.craftbukkit.block.impl.CraftCampfire::new);
         register(net.minecraft.block.CarrotsBlock.class, org.bukkit.craftbukkit.block.impl.CraftCarrots::new);
         register(net.minecraft.block.CauldronBlock.class, org.bukkit.craftbukkit.block.impl.CraftCauldron::new);
+        register(net.minecraft.block.ChainBlock.class, org.bukkit.craftbukkit.block.impl.CraftChain::new);
         register(net.minecraft.block.ChestBlock.class, org.bukkit.craftbukkit.block.impl.CraftChest::new);
         register(net.minecraft.block.TrappedChestBlock.class, org.bukkit.craftbukkit.block.impl.CraftChestTrapped::new);
         register(net.minecraft.block.ChorusFlowerBlock.class, org.bukkit.craftbukkit.block.impl.CraftChorusFlower::new);
@@ -433,7 +434,6 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.LeavesBlock.class, org.bukkit.craftbukkit.block.impl.CraftLeaves::new);
         register(net.minecraft.block.LecternBlock.class, org.bukkit.craftbukkit.block.impl.CraftLectern::new);
         register(net.minecraft.block.LeverBlock.class, org.bukkit.craftbukkit.block.impl.CraftLever::new);
-        // FIXME register(net.minecraft.block.LogBlock.class, org.bukkit.craftbukkit.block.impl.CraftLogAbstract::new);
         register(net.minecraft.block.LoomBlock.class, org.bukkit.craftbukkit.block.impl.CraftLoom::new);
         register(net.minecraft.block.DetectorRailBlock.class, org.bukkit.craftbukkit.block.impl.CraftMinecartDetector::new);
         register(net.minecraft.block.RailBlock.class, org.bukkit.craftbukkit.block.impl.CraftMinecartTrack::new);
@@ -458,6 +458,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.RedstoneWireBlock.class, org.bukkit.craftbukkit.block.impl.CraftRedstoneWire::new);
         register(net.minecraft.block.SugarCaneBlock.class, org.bukkit.craftbukkit.block.impl.CraftReed::new);
         register(net.minecraft.block.RepeaterBlock.class, org.bukkit.craftbukkit.block.impl.CraftRepeater::new);
+        register(net.minecraft.block.RespawnAnchorBlock.class, org.bukkit.craftbukkit.block.impl.CraftRespawnAnchor::new);
         register(net.minecraft.block.PillarBlock.class, org.bukkit.craftbukkit.block.impl.CraftRotatable::new);
         register(net.minecraft.block.SaplingBlock.class, org.bukkit.craftbukkit.block.impl.CraftSapling::new);
         register(net.minecraft.block.ScaffoldingBlock.class, org.bukkit.craftbukkit.block.impl.CraftScaffolding::new);
@@ -483,13 +484,16 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.TallPlantBlock.class, org.bukkit.craftbukkit.block.impl.CraftTallPlant::new);
         register(net.minecraft.block.TallFlowerBlock.class, org.bukkit.craftbukkit.block.impl.CraftTallPlantFlower::new);
         register(net.minecraft.block.TallSeagrassBlock.class, org.bukkit.craftbukkit.block.impl.CraftTallSeaGrass::new);
+        register(net.minecraft.block.TargetBlock.class, org.bukkit.craftbukkit.block.impl.CraftTarget::new);
         register(net.minecraft.block.WallTorchBlock.class, org.bukkit.craftbukkit.block.impl.CraftTorchWall::new);
         register(net.minecraft.block.TrapdoorBlock.class, org.bukkit.craftbukkit.block.impl.CraftTrapdoor::new);
         register(net.minecraft.block.TripwireBlock.class, org.bukkit.craftbukkit.block.impl.CraftTripwire::new);
         register(net.minecraft.block.TripwireHookBlock.class, org.bukkit.craftbukkit.block.impl.CraftTripwireHook::new);
         register(net.minecraft.block.TurtleEggBlock.class, org.bukkit.craftbukkit.block.impl.CraftTurtleEgg::new);
+        register(net.minecraft.block.TwistingVinesBlock.class, org.bukkit.craftbukkit.block.impl.CraftTwistingVines::new);
         register(net.minecraft.block.VineBlock.class, org.bukkit.craftbukkit.block.impl.CraftVine::new);
         register(net.minecraft.block.WallSignBlock.class, org.bukkit.craftbukkit.block.impl.CraftWallSign::new);
+        register(net.minecraft.block.WeepingVinesBlock.class, org.bukkit.craftbukkit.block.impl.CraftWeepingVines::new);
         register(net.minecraft.block.WitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkull::new);
         register(net.minecraft.block.WallWitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkullWall::new);
         register(net.minecraft.block.WoodButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftWoodButton::new);
@@ -504,6 +508,7 @@ public class CraftBlockData implements BlockData {
 
         BlockState blockData;
         Block block = CraftMagicNumbers.getBlock(material);
+
         Map<Property<?>, Comparable<?>> parsed = null;
 
         // Data provided, use it
@@ -522,7 +527,7 @@ public class CraftBlockData implements BlockData {
             } catch (CommandSyntaxException ex) {
                 throw new IllegalArgumentException("Could not parse data: " + data, ex);
             }
-        } else blockData = block.getDefaultState();;
+        } else blockData = block.getDefaultState();
 
         CraftBlockData craft = fromData(blockData);
         craft.parsedStates = parsed;

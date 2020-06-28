@@ -66,6 +66,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.ServerWorldProperties;
 
 public class CraftWorld implements World {
 
@@ -451,8 +452,7 @@ public class CraftWorld implements World {
 
     @Override
     public String getName() {
-        // FIXME BROKEN!!!!!!!!!!!!!!!!
-        return nms.toString();
+        return ((ServerWorldProperties) nms.getLevelProperties()).getLevelName();
     }
 
     @Override
@@ -609,7 +609,7 @@ public class CraftWorld implements World {
     @Override
     public File getWorldFolder() {
         // FIXME BROKEN
-        return null;//((ServerWorld)nms).getSaveHandler().getWorldDir();
+        return new File(getName());//((ServerWorld)nms).getSaveHandler().getWorldDir();
     }
 
     @Override
