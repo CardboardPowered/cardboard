@@ -1269,6 +1269,10 @@ public class CraftServer implements Server {
         return toreturn;
     }
 
+    public int getWaterAmbientSpawnLimit() {
+        return 0; // TODO
+    }
+
     private final Spigot spigot = new Server.Spigot(){
 
         @Override

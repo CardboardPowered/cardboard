@@ -1157,6 +1157,10 @@ public class CraftWorld implements World {
         return 0;
     }
 
+    public void setWaterAmbientSpawnLimit(int i) {
+        // TODO Auto-generated method stub
+    }
+
     @Override
     public Spigot spigot() {
         return new Spigot() {

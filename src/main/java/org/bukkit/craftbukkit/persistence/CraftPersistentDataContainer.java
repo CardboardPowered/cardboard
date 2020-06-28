@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
 import org.apache.commons.lang.Validate;
@@ -123,6 +125,10 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
 
     public Map<String, Object> serialize() {
         return (Map<String, Object>) CraftNBTTagConfigSerializer.serialize(toTagCompound());
+    }
+
+    public Set<NamespacedKey> getKeys() {
+        return null; // TODO
     }
 
 }
