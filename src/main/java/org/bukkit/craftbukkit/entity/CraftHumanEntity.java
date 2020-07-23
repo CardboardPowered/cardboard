@@ -321,4 +321,16 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         return perm.getEffectivePermissions();
     }
 
+    @Override
+    public Set<NamespacedKey> getDiscoveredRecipes() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasDiscoveredRecipe(NamespacedKey arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -147,7 +148,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendMessage(String message) {
-        nms.sendSystemMessage(new LiteralText(message), getUniqueId());
+        nms.sendSystemMessage(new LiteralText(message), UUID.randomUUID());
     }
 
     @Override
@@ -858,8 +859,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void updateInventory() {
-        // FIXME
-        // nms.openHandledScreen(nms.inventory);
+        nms.openHandledScreen(nms.currentScreenHandler);
     }
 
     @Override
@@ -886,10 +886,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         try {
             return CraftServer.server.getPlayerManager().isOperator(getProfile());
         } catch (NullPointerException e) {
-            List<String> list = CraftServer.INSTANCE.getOperatorList();
-            for (String s : list) {
-                System.out.println("DEBUG===: " + s + ", " + getUniqueId().toString());
-            }
             return CraftServer.INSTANCE.getOperatorList().contains(getUniqueId().toString());
         }
     }

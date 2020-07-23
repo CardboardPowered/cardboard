@@ -10,9 +10,6 @@ import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.LevelProperties;
 
 public interface IMixinMinecraftServer {
 

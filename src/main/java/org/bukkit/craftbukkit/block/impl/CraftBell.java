@@ -45,4 +45,16 @@ public final class CraftBell extends org.bukkit.craftbukkit.block.data.CraftBloc
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
         return getValues(FACING, org.bukkit.block.BlockFace.class);
     }
+
+    @Override
+    public boolean isPowered() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setPowered(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
 }

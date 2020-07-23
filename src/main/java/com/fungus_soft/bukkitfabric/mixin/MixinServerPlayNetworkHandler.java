@@ -1,10 +1,11 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
+import static org.bukkit.craftbukkit.CraftServer.server;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -19,15 +20,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-
-import com.fungus_soft.bukkitfabric.BukkitLogger;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import com.fungus_soft.bukkitfabric.BukkitLogger;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.client.options.ChatVisibility;
 import net.minecraft.network.MessageType;
@@ -44,9 +44,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 
-
-import static org.bukkit.craftbukkit.CraftServer.server;
-
+@SuppressWarnings("deprecation")
 @Mixin(ServerPlayNetworkHandler.class)
 public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetworkHandler {
 
@@ -96,7 +94,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public void chat(String s, boolean async) {
         if (s.isEmpty() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN)
             return;
@@ -127,15 +124,13 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                         for (ServerPlayerEntity plr : CraftServer.server.getPlayerManager().getPlayerList())
                             for (Text txt : CraftChatMessage.fromString(message))
                                 plr.sendMessage(txt, false);
-                    } else
-                        for (Player plr : queueEvent.getRecipients())
-                            plr.sendMessage(message);
+                    } else for (Player plr : queueEvent.getRecipients())
+                        plr.sendMessage(message);
                 });
 
                 if (async)
                     ((IMixinMinecraftServer)CraftServer.server).getProcessQueue().add(waitable);
-                else
-                    waitable.run();
+                else waitable.run();
                 try {
                     waitable.get();
                 } catch (InterruptedException e) {
@@ -144,8 +139,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                     throw new RuntimeException("Exception processing chat event", e.getCause());
                 }
             } else {
-                if (event.isCancelled())
-                    return;
+                if (event.isCancelled()) return;
 
                 s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
                 server.sendSystemMessage(new LiteralText(s), player.getUniqueId());

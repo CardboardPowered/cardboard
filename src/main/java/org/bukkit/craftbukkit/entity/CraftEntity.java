@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -30,12 +31,15 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
+import net.minecraft.util.math.BlockPos;
 
 public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
@@ -79,7 +83,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void sendMessage(String message) {
-        nms.sendSystemMessage(Texts.toText(new LiteralMessage(message)), getUniqueId());
+        nms.sendSystemMessage(new LiteralText(message), UUID.randomUUID());
     }
 
     @Override
@@ -517,7 +521,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
         // TODO: Cross world teleporting
         //if (!location.getWorld().equals(getWorld())) {
-        //    nms.teleportTo(((CraftWorld) location.getWorld()).getHandle().getDimension().getType(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        //    nms.teleportTo(((CraftWorld) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
         //    return true;
         //}
 

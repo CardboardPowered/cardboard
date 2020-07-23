@@ -166,7 +166,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public String getMappingsVersion() {
-        return "5684afcc1835d966e1b6eb0ed3f72edb";
+        return "25afc67716a170ea965092c1067ff439";
     }
 
     @Override
@@ -197,11 +197,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public boolean removeAdvancement(NamespacedKey key) {
-     // TODO Auto-generated method stub
+        // TODO Auto-generated method stub
         return false;
     }
 
-    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15");
+    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16");
 
     @Override
     public void checkSupported(PluginDescriptionFile pdf) throws InvalidPluginException {

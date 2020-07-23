@@ -4,9 +4,7 @@ import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.PluginLoadOrder;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -14,11 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.fungus_soft.bukkitfabric.BukkitLogger;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryTracker;
-import net.minecraft.world.WorldSaveHandler;
-import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.LevelProperties;
 
 @Mixin(MinecraftDedicatedServer.class)
 public class MixinDedicatedServer extends MixinMinecraftServer {

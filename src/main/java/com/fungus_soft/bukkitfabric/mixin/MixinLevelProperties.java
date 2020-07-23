@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
+
 import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 
 @Mixin(LevelProperties.class)
@@ -50,10 +51,6 @@ public class MixinLevelProperties implements IMixinLevelProperties {
 
     @Override
     public void checkName(String name) {
-        LevelProperties p = (LevelProperties)(Object) this;
-        // TODO
-        // if (!p.getLevelName().equals(name))
-        //    p.setLevelName(name);
     }
 
 }

@@ -89,4 +89,10 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         ((JukeboxBlock) Blocks.JUKEBOX).removeRecord(world.getHandle(), getPosition());
         return result;
     }
+
+    @Override
+    public void stopPlaying() {
+        // TODO Auto-generated method stub
+    }
+
 }

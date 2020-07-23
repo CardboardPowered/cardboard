@@ -1,18 +1,10 @@
 package com.fungus_soft.bukkitfabric.mixin;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.Executor;
-import java.util.function.BooleanSupplier;
-
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.spongepowered.asm.mixin.Final;
@@ -23,49 +15,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinNetworkIo;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
-import com.google.gson.JsonElement;
-
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import net.minecraft.SharedConstants;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.resource.ServerResourceManager;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerMetadata;
-import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.world.ChunkTicketType;
-import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Unit;
-import net.minecraft.util.Util;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.RegistryTracker;
-import net.minecraft.world.ForcedChunkState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.WorldSaveHandler;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.LevelProperties;
 
-@Mixin(value=MinecraftServer.class, priority=999) // priority=999 because Mixin does not like to inject into overwitten methods if both have same priority
+@Mixin(value=MinecraftServer.class)
 public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
-
-    private static int currentTick = (int) (System.currentTimeMillis() / 50);
-    private static final int SAMPLE_INTERVAL = 100;
-    public final double[] recentTps = new double[3];
 
     @Shadow
     @Final
@@ -82,56 +45,8 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     public ServerResourceManager serverResourceManager;
 
     @Shadow
-    private long timeReference = Util.getMeasuringTimeMs();
-
-    @Shadow
-    private ServerMetadata metadata;
-
-    @Shadow
-    private long field_4557; // lastOverloadTime
-
-    @Shadow
     @Final
     private static Logger LOGGER;
-
-    @Shadow
-    private boolean profilerStartQueued;
-
-    @Shadow
-    protected void tick(BooleanSupplier shouldKeepTicking) {
-    }
-
-    @Shadow
-    private boolean shouldKeepTicking() {
-        return false;
-    }
-
-    @Shadow
-    private boolean field_19249;
-
-    @Shadow
-    private long field_19248;
-
-    //@Shadow
-    //private DisableableProfiler profiler;
-
-    @Shadow
-    protected void method_16208() {
-    }
-
-    @Shadow
-    protected void setCrashReport(CrashReport crashReport) {
-    }
-
-    @Shadow
-    private volatile boolean loading;
-
-    @Shadow
-    private boolean stopped;
-
-    @Shadow
-    protected void shutdown() {
-    }
 
     @Shadow
     @Final
@@ -140,18 +55,10 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
     @Shadow
     public void initScoreboard(PersistentStateManager arg0) {}
 
-    //@Shadow
-    //protected synchronized void setLoadingStage(Text loadingStage) {}
-
-    //@Shadow
-    //public void loadWorldDataPacks(File worldDir, LevelProperties levelProperties) {}
-
     @Shadow
     public DataCommandStorage dataCommandStorage;
 
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
-
-    private boolean forceTicks;
 
     @Overwrite
     public String getServerModName() {
@@ -207,16 +114,6 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         return (MinecraftServer) (Object) this;
     }
 
-    private static double calcTps(double avg, double exp, double tps) {
-        return (avg * exp) + (tps * (1 - exp));
-    }
-
-    ///**
-    // * Optimized Tick Loop for Fabric
-    // */
-    //@Overwrite
-    //public void run() {
-    //}
 
     /*@SuppressWarnings("deprecation")
     @Overwrite
@@ -230,14 +127,12 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
             byte dimension = 0;
 
             if (j == 1) {
-                if (Bukkit.getAllowNether())
-                    dimension = -1;
+                if (Bukkit.getAllowNether()) dimension = -1;
                 else continue;
             }
 
             if (j == 2) {
-                if (Bukkit.getAllowEnd())
-                    dimension = 1;
+                if (Bukkit.getAllowEnd()) dimension = 1;
                 else continue;
             }
 
@@ -384,17 +279,12 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
         this.forceTicks = false;
     }*/
 
-    @Inject(at = { @At("TAIL") }, method = { "loadWorld" })
+    @Inject(at = @At("TAIL"), method = "loadWorld")
     public void afterWorldLoad(CallbackInfo ci) {
         CraftServer bukkit = ((CraftServer)Bukkit.getServer());
 
         bukkit.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
         bukkit.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
-    }
-
-    private void executeModerately() {
-        CraftServer.server.runTasks();
-        java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
     }
 
 }

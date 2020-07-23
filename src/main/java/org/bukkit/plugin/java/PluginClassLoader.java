@@ -2,8 +2,6 @@ package org.bukkit.plugin.java;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -17,8 +15,6 @@ import java.util.jar.Manifest;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
@@ -75,6 +71,14 @@ public class PluginClassLoader extends URLClassLoader {
         } catch (InstantiationException ex) {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        if (name.startsWith("org.bukkit.craftbukkit.v")) {
+            System.out.println("=============== \n Name = " + name);
+        }
+        return super.loadClass(name);
     }
 
     @Override

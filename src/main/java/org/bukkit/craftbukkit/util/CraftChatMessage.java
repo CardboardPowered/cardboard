@@ -14,6 +14,8 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
+
 import org.bukkit.ChatColor;
 
 public final class CraftChatMessage {
@@ -85,13 +87,16 @@ public final class CraftChatMessage {
     }
 
     private static final class StringMessage {
-        private static final Pattern INCREMENTAL_PATTERN = Pattern.compile("(" + String.valueOf(org.bukkit.ChatColor.COLOR_CHAR) + "[0-9a-fk-or])|(\\n)|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(org.bukkit.ChatColor.COLOR_CHAR) + " \\n]|$))))", Pattern.CASE_INSENSITIVE);
+        private static final Pattern INCREMENTAL_PATTERN = Pattern.compile("(" + String.valueOf(org.bukkit.ChatColor.COLOR_CHAR) + "[0-9a-fk-orx])|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(org.bukkit.ChatColor.COLOR_CHAR) + " \\n]|$))))|(\\n)", Pattern.CASE_INSENSITIVE);
+        private static final Pattern INCREMENTAL_PATTERN_KEEP_NEWLINES = Pattern.compile("(" + String.valueOf(org.bukkit.ChatColor.COLOR_CHAR) + "[0-9a-fk-orx])|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(org.bukkit.ChatColor.COLOR_CHAR) + " ]|$))))", Pattern.CASE_INSENSITIVE);
+        private static final Style RESET = Style.EMPTY;
 
         private final List<Text> list = new ArrayList<Text>();
         private Text currentChatComponent = new LiteralText("");
         private Style modifier = Style.EMPTY;
         private final Text[] output;
         private int currentIndex;
+        private StringBuilder hex;
         private final String message;
 
         private StringMessage(String message, boolean keepNewlines) {
@@ -102,32 +107,46 @@ public final class CraftChatMessage {
             }
             list.add(currentChatComponent);
 
-            Matcher matcher = INCREMENTAL_PATTERN.matcher(message);
+            Matcher matcher = (keepNewlines ? INCREMENTAL_PATTERN_KEEP_NEWLINES : INCREMENTAL_PATTERN).matcher(message);
             String match = null;
+            boolean needsAdd = false;
             while (matcher.find()) {
                 int groupId = 0;
                 while ((match = matcher.group(++groupId)) == null) {
                     // NOOP
                 }
-                appendNewComponent(matcher.start(groupId));
+                int index = matcher.start(groupId);
+                if (index > currentIndex) {
+                    needsAdd = false;
+                    appendNewComponent(index);
+                }
                 switch (groupId) {
                 case 1:
-                    Formatting format = formatMap.get(match.toLowerCase(java.util.Locale.ENGLISH).charAt(1));
-                    if (format == Formatting.RESET) {
-                        modifier = Style.EMPTY;
-                    } else if (format.isModifier()) {
+                    char c = match.toLowerCase(java.util.Locale.ENGLISH).charAt(1);
+                    Formatting format = formatMap.get(c);
+
+                    if (c == 'x') {
+                        hex = new StringBuilder("#");
+                    } else if (hex != null) {
+                        hex.append(c);
+
+                        if (hex.length() == 7) {
+                            modifier = RESET.withColor(TextColor.parse(hex.toString()));
+                            hex = null;
+                        }
+                    } else if (format.isModifier() && format != Formatting.RESET) {
                         switch (format) {
                         case BOLD:
-                            modifier.withBold(Boolean.TRUE);
+                            modifier = modifier.withBold(Boolean.TRUE);
                             break;
                         case ITALIC:
-                            modifier.withItalic(Boolean.TRUE);
+                            modifier = modifier.withItalic(Boolean.TRUE);
                             break;
                         case STRIKETHROUGH:
-                            modifier.strikethrough = (Boolean.TRUE);
+                            modifier.strikethrough = Boolean.TRUE;
                             break;
                         case UNDERLINE:
-                            // FIXME BROKEN!!!
+                            // TODO BROKEN
                             break;
                         case OBFUSCATED:
                             modifier.obfuscated = Boolean.TRUE;
@@ -135,39 +154,39 @@ public final class CraftChatMessage {
                         default:
                             throw new AssertionError("Unexpected message format");
                         }
-                    } else modifier = Style.EMPTY.withColor(format); // Color resets formatting
-
+                    } else { // Color resets formatting
+                        modifier = RESET.withColor(format);
+                    }
+                    needsAdd = true;
                     break;
                 case 2:
-                    //if (keepNewlines)
-                        // FIXME currentChatComponent.append(new LiteralText("\n"));
-                    //else
-                    //    currentChatComponent = null;
-
+                    if (!(match.startsWith("http://") || match.startsWith("https://"))) {
+                        match = "http://" + match;
+                    }
+                    modifier = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
+                    appendNewComponent(matcher.end(groupId));
+                    modifier = modifier.withClickEvent((ClickEvent) null);
                     break;
                 case 3:
-                    if (!(match.startsWith("http://") || match.startsWith("https://")))
-                        match = "http://" + match;
-
-                    modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
-                    appendNewComponent(matcher.end(groupId));
-                    modifier.withClickEvent((ClickEvent) null);
+                    if (needsAdd) {
+                        appendNewComponent(index);
+                    }
+                    currentChatComponent = null;
+                    break;
                 }
                 currentIndex = matcher.end(groupId);
             }
 
-            if (currentIndex < message.length())
+            if (currentIndex < message.length() || needsAdd) {
                 appendNewComponent(message.length());
+            }
 
             output = list.toArray(new Text[list.size()]);
         }
 
         private void appendNewComponent(int index) {
-            if (index <= currentIndex)
-                return;
             Text addition = new LiteralText(message.substring(currentIndex, index)).setStyle(modifier);
             currentIndex = index;
-            modifier = Style.EMPTY; // FIXME: BROKEN!!!
             if (currentChatComponent == null) {
                 currentChatComponent = new LiteralText("");
                 list.add(currentChatComponent);
@@ -216,7 +235,7 @@ public final class CraftChatMessage {
         if (component == null) return "";
         StringBuilder out = new StringBuilder();
 
-        for (Text c : (Iterable<Text>) component) {
+        for (Text c : component.getSiblings()) {
             Style modi = c.getStyle();
             out.append(modi.getColor() == null ? defaultColor : modi.getColor());
             if (modi.isBold())
@@ -263,8 +282,7 @@ public final class CraftChatMessage {
                     extras.add(prev);
 
                     LiteralText link = new LiteralText(matcher.group());
-                    Style linkModi = Style.EMPTY;// FIXME modifier.deepCopy();
-                    linkModi.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
+                    Style linkModi = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     link.setStyle(linkModi);
                     extras.add(link);
 

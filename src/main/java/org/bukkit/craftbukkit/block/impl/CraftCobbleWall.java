@@ -40,4 +40,15 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
         set(WATERLOGGED, waterlogged);
     }
 
+    @Override
+    public boolean isUp() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setUp(boolean arg0) {
+        // TODO Auto-generated method stub
+    }
+
 }

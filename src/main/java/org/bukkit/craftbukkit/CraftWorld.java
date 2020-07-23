@@ -615,14 +615,12 @@ public class CraftWorld implements World {
 
     @Override
     public WorldType getWorldType() {
-        // FIXME BROKEN!!!!
-        return null;//return org.bukkit.WorldType.getByName(((ServerWorld)nms).getLevelProperties().getGeneratorType().getName());
+        return nms.isFlat() ? WorldType.FLAT : WorldType.NORMAL;
     }
 
     @Override
     public boolean hasStorm() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.getLevelProperties().isRaining();
     }
 
     @Override
@@ -953,25 +951,21 @@ public class CraftWorld implements World {
     @Override
     public void setTicksPerWaterSpawns(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setTime(long arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setWaterAnimalSpawnLimit(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setWeatherDuration(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override

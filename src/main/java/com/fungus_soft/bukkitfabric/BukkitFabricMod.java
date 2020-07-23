@@ -14,7 +14,7 @@ public class BukkitFabricMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Copyright \u00A9 2020 Fungus Software");
+        LOGGER.info("Copyright \u00A9 2020");
 
         boolean debug = FabricLoader.getInstance().isDevelopmentEnvironment();
 

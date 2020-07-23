@@ -186,12 +186,7 @@ public class CraftBlockState implements BlockState {
 
         net.minecraft.block.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
-        world.getHandle().updateListeners(
-                position,
-                block.getNMS(),
-                newBlock,
-                3
-        );
+        world.getHandle().updateListeners(position, block.getNMS(), newBlock, 3);
 
         // Update levers etc
         if (false && applyPhysics && getData() instanceof Attachable) { // Call does not map to new API

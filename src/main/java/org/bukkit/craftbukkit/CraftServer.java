@@ -125,9 +125,11 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.mojang.serialization.DynamicOps;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
+import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.Item;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.MinecraftServer;
@@ -140,18 +142,23 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.RegistryTagContainer;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.biome.source.BiomeAccessType;
+import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
+import net.minecraft.world.level.storage.LevelStorage;
 
 public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
-    public final String bukkitVersion = "1.15.2-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.16.1-R0.1-SNAPSHOT";
     public final String serverVersion;
 
     private final Logger logger = BukkitLogger.getLogger();
@@ -471,96 +478,7 @@ public class CraftServer implements Server {
 
     @Override
     public World createWorld(WorldCreator creator) {
-
-        // TODO Wait till Spigot updates to 1.16
-
-        /*
-        String name = creator.name();
-        ChunkGenerator generator = creator.generator();
-        File folder = new File(getWorldContainer(), name);
-        World world = getWorld(name);
-        LevelGeneratorType type = LevelGeneratorType.getTypeFromName(creator.type()..type().getName());
-        boolean generateStructures = creator.generateStructures();
-
-        if (world != null)
-            return world;
-
-        if ((folder.exists()) && (!folder.isDirectory()))
-            throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
-
-        if (generator == null)
-            generator = getGenerator(name);
-
-        ((IMixinMinecraftServer)(Object)server).convertWorld(name);
-
-        int dimension = CraftWorld.CUSTOM_DIMENSION_OFFSET + ((IMixinMinecraftServer)(Object)server).getWorldMap().size();
-        boolean used = false;
-        do {
-            for (ServerWorld server : server.getWorlds()) {
-                used = server.getDimension().getType().getRawId() == dimension;
-                if (used) {
-                    dimension++;
-                    break;
-                }
-            }
-        } while (used);
-        boolean hardcore = creator.hardcore();
-
-        WorldSaveHandler sdm = new WorldSaveHandler(getWorldContainer(), name, server, server.getDataFixer());
-        LevelProperties worlddata = sdm.readProperties();
-        LevelInfo worldSettings;
-
-        if (worlddata == null) {
-            worldSettings = new LevelInfo(creator.seed(), net.minecraft.world.GameMode.byId(getDefaultGameMode().getValue()), generateStructures, hardcore, type);
-            JsonElement parsedSettings = new JsonParser().parse(creator.generatorSettings());
-            if (parsedSettings.isJsonObject())
-                worldSettings.setGeneratorOptions(parsedSettings.getAsJsonObject());
-            worlddata = new LevelProperties(worldSettings, name);
-        } else {
-            worlddata.setLevelName(name);
-            worldSettings = new LevelInfo(worlddata);
-        }
-
-        DimensionType actualDimension = DimensionType.byRawId(creator.environment().getId());
-
-        BiFunction<net.minecraft.world.World,DimensionType,? extends Dimension> bu = new BiFunction<net.minecraft.world.World,DimensionType,Dimension>() {
-
-            @Override
-            public Dimension apply(net.minecraft.world.World w, DimensionType manager) {
-                return actualDimension.factory.apply(w, manager);
-            }
-            
-        };
-        DimensionType d = null;
-        try {
-            Constructor<DimensionType> c = DimensionType.class.getDeclaredConstructor(int.class, String.class, String.class, BiFunction.class, boolean.class, BiomeAccessType.class);
-            d = (DimensionType) c.newInstance(dimension, actualDimension.getSuffix(), actualDimension.saveDir, bu, actualDimension.hasSkyLight(), actualDimension.getBiomeAccessType());
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-        DimensionType internalDimension = actualDimension.register(name.toLowerCase(java.util.Locale.ENGLISH), d);
-        ServerWorld internal = new ServerWorld(server, server.getWorkerExecutor(), sdm, worlddata, internalDimension, server.getProfiler(), ((IMixinMinecraftServer)(Object)server).getWorldGenerationProgressListenerFactory().create(11));
-
-        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
-            getLogger().warning("Unable to create world, map does not contain world name!");
-            return null;
-        }
-
-        ((IMixinMinecraftServer)(Object)server).initWorld(internal, worlddata, worldSettings);
-
-        internal.getLevelProperties().setDifficulty(Difficulty.EASY);
-        internal.setMobSpawnOptions(true, true);
-        ((IMixinMinecraftServer)(Object)server).getWorldMap().put(internal.getDimension().getType(), internal);
-
-        pluginManager.callEvent(new WorldInitEvent(((IMixinWorld)internal).getCraftWorld()));
-
-        // TODO loadSpawn
-        //getServer().loadSpawn(internal.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, internal);
-
-        pluginManager.callEvent(new WorldLoadEvent(((IMixinWorld)(Object)internal).getCraftWorld()));
-        return ((IMixinWorld)(Object)internal).getCraftWorld();
-        */
+        // TODO 1.16
         return null;
     }
 
@@ -682,8 +600,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        // TODO AUTO GENERATED METHOD STUB return getServer().shouldGenerateStructures();
-        return true;
+        return server.getProperties().field_24623.shouldGenerateStructures();
     }
 
     @Override
@@ -1088,7 +1005,7 @@ public class CraftServer implements Server {
 
     @Override
     public void resetRecipes() {
-     // TODO Auto-generated method stubserver.reload();
+        // TODO Auto-generated method stubserver.reload();
     }
 
     @Override
@@ -1307,6 +1224,12 @@ public class CraftServer implements Server {
     public int getTicksPerWaterAmbientSpawns() {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public Recipe getRecipe(NamespacedKey arg0) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

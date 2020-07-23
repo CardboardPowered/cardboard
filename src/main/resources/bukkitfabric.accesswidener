@@ -1067,8 +1067,6 @@ accessible	field	net/minecraft/entity/Entity	inLava	Z
 mutable	field	net/minecraft/entity/Entity	inLava	Z
 accessible	field	net/minecraft/entity/Entity	firstUpdate	Z
 mutable	field	net/minecraft/entity/Entity	firstUpdate	Z
-accessible	field	net/minecraft/entity/Entity	dataTracker	Lnet/minecraft/entity/data/DataTracker;
-mutable	field	net/minecraft/entity/Entity	dataTracker	Lnet/minecraft/entity/data/DataTracker;
 accessible	field	net/minecraft/entity/Entity	FLAGS	Lnet/minecraft/entity/data/TrackedData;
 mutable	field	net/minecraft/entity/Entity	FLAGS	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/Entity	AIR	Lnet/minecraft/entity/data/TrackedData;

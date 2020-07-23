@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
@@ -61,10 +63,9 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     public boolean contains(BlockData block) {
         Preconditions.checkArgument(block != null, "Block cannot be null");
 
-        BlockState nms = ((CraftBlockData) block).getState();
-        // TODO PREDICATE!!!!!!!!!!!!!!
+        Predicate<BlockState> nms = Predicates.equalTo(((CraftBlockData) block).getState());
         for (PalettedContainer<BlockState> palette : blockids)
-            if (palette.method_19526((Predicate<BlockState>) nms))
+            if (palette.method_19526(nms))
                 return true;
 
         return false;

@@ -11,19 +11,17 @@ import org.bukkit.material.MaterialData;
 public final class CraftLegacy {
 
     private CraftLegacy() {
-        //
     }
 
     public static Material fromLegacy(Material material) {
-        if (material == null || !material.isLegacy()) {
+        if (material == null || !material.isLegacy())
             return material;
-        }
 
-        return null; // TODO return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(material);
+        return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(material);
     }
 
     public static Material fromLegacy(MaterialData materialData) {
-        return null;// TODO return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(materialData);
+        return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(materialData);
     }
 
     public static Material[] modern_values() {

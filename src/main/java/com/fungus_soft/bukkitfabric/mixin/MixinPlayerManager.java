@@ -1,10 +1,8 @@
-
 package com.fungus_soft.bukkitfabric.mixin;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -23,21 +21,17 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.DifficultyS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityStatusEffectS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnPositionS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldProperties;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelProperties;
 
 @Mixin(PlayerManager.class)
 public abstract class MixinPlayerManager implements IMixinPlayerManager {
@@ -55,7 +49,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
     public abstract void savePlayerData(ServerPlayerEntity player);
 
     @Shadow
-    public abstract void method_14594(ServerPlayerEntity player);
+    public abstract void sendPlayerStatus(ServerPlayerEntity player);
 
     @Shadow
     public Map<UUID, ServerPlayerEntity> playerMap;
@@ -85,7 +79,6 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         // CraftBukkit start - fire PlayerRespawnEvent
         if (location == null) {
             boolean isBedSpawn = false;
-
 
             CraftWorld cworld = ((IMixinWorld)(Object)entityplayer.world).getCraftWorld();
 
@@ -129,7 +122,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         }
         entityplayer1.setHealth(entityplayer1.getHealth());
 
-        method_14594(entityplayer);
+        sendPlayerStatus(entityplayer);
         entityplayer.sendAbilitiesUpdate();
         for (Object o1 : entityplayer.getStatusEffects()) {
             StatusEffectInstance mobEffect = (StatusEffectInstance) o1;

@@ -364,7 +364,7 @@ public class CraftBlockData implements BlockData {
      * @return the maximum value allowed
      */
     protected static int getMax(IntProperty state) {
-        return 0; // TODO auto-generated method stub
+        return Integer.MAX_VALUE; // TODO auto-generated method stub
     }
 
     private static final Map<Class<? extends Block>, Function<BlockState, CraftBlockData>> MAP = new HashMap<>();
