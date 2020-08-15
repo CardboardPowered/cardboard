@@ -31,7 +31,7 @@ public class MixinDedicatedServer extends MixinMinecraftServer {
         BukkitLogger.getLogger().info(" |____/  \\__,_||_|\\_\\|_|\\_\\|_| \\__| ");
         BukkitLogger.getLogger().info("");
 
-        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, dimensionTracker, field_24371));
+        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
 
         Bukkit.getLogger().info("Loading Bukkit plugins...");

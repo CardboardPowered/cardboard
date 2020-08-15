@@ -5,6 +5,7 @@ import com.google.common.base.Predicates;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.PalettedContainer;
@@ -121,12 +122,20 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         return getBiome(x, 0, z);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public final Biome getBiome(int x, int y, int z) {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return CraftBlock.biomeBaseToBiome(biome.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2));
+        // Access Widener is broken
+        Registry<net.minecraft.world.biome.Biome> reg = null;
+        try {
+            reg = (Registry<net.minecraft.world.biome.Biome>) biome.getClass().getField("field_25831").get(biome);
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+        }
+        return CraftBlock.biomeBaseToBiome(reg, biome.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2));
     }
 
     @Override

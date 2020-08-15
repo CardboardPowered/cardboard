@@ -110,7 +110,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         entityplayer1.setSneaking(false);
         BlockPos blockposition1 = worldserver.getSpawnPos();
 
-        entityplayer1.networkHandler.sendPacket(new PlayerSpawnPositionS2CPacket(blockposition1));
+        entityplayer1.networkHandler.sendPacket(new PlayerSpawnPositionS2CPacket(blockposition1, 0));
         entityplayer1.networkHandler.sendPacket(new DifficultyS2CPacket(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
         entityplayer1.networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(entityplayer1.experienceProgress, entityplayer1.totalExperience, entityplayer1.experienceLevel));
         this.sendWorldInfo(entityplayer1, worldserver);
@@ -129,7 +129,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
             entityplayer.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(entityplayer.getEntityId(), mobEffect));
         }
 
-        entityplayer.dimensionChanged((ServerWorld) ((CraftWorld) fromWorld).getHandle());
+        // TODO BUKKITFABRIC 1.16.2 entityplayer.worldChanged((ServerWorld) ((CraftWorld) fromWorld).getHandle());
 
         if (fromWorld != location.getWorld())
             CraftServer.INSTANCE.getPluginManager().callEvent(new PlayerChangedWorldEvent((Player) ((IMixinEntity)(Object)entityplayer).getBukkitEntity(), fromWorld));

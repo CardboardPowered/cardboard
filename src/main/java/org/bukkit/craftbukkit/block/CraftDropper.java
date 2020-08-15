@@ -3,6 +3,8 @@ package org.bukkit.craftbukkit.block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DropperBlock;
 import net.minecraft.block.entity.DropperBlockEntity;
+import net.minecraft.server.world.ServerWorld;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
@@ -42,7 +44,7 @@ public class CraftDropper extends CraftLootable<DropperBlockEntity> implements D
             CraftWorld world = (CraftWorld) this.getWorld();
             DropperBlock drop = (DropperBlock) Blocks.DROPPER;
 
-            drop.dispense(world.getHandle(), this.getPosition());
+            drop.dispense((ServerWorld) world.getHandle(), this.getPosition());
         }
     }
 }

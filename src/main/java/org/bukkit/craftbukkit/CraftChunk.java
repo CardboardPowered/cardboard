@@ -12,10 +12,12 @@ import java.util.function.Predicate;
 import net.minecraft.block.Blocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.source.BiomeArray;
@@ -60,7 +62,7 @@ public class CraftChunk implements Chunk {
 
     @Override
     public World getWorld() {
-        return (World) worldServer.getWorld();
+        return (World) worldServer.toServerWorld();
     }
 
     public CraftWorld getCraftWorld() {
@@ -256,14 +258,14 @@ public class CraftChunk implements Chunk {
                 sectionBlockIDs[i] = blockids;
 
                 LightingProvider lightengine = chunk.world.getChunkManager().getLightingProvider();
-                ChunkNibbleArray skyLightArray = lightengine.get(LightType.SKY).getLightArray(ChunkSectionPos.from(x, i, z));
+                ChunkNibbleArray skyLightArray = lightengine.get(LightType.SKY).getLightSection(ChunkSectionPos.from(x, i, z));
                 if (skyLightArray == null)
                     sectionSkyLights[i] = emptyLight;
                 else {
                     sectionSkyLights[i] = new byte[2048];
                     System.arraycopy(skyLightArray.asByteArray(), 0, sectionSkyLights[i], 0, 2048);
                 }
-                ChunkNibbleArray emitLightArray = lightengine.get(LightType.BLOCK).getLightArray(ChunkSectionPos.from(x, i, z));
+                ChunkNibbleArray emitLightArray = lightengine.get(LightType.BLOCK).getLightSection(ChunkSectionPos.from(x, i, z));
                 if (emitLightArray == null)
                     sectionEmitLights[i] = emptyLight;
                 else {
@@ -282,7 +284,7 @@ public class CraftChunk implements Chunk {
 
         BiomeArray biome = null;
         if (includeBiome || includeBiomeTempRain)
-            biome = chunk.getBiomeArray().copy();
+            biome = chunk.getBiomeArray();
 
         World world = getWorld();
         return new CraftChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
@@ -304,7 +306,7 @@ public class CraftChunk implements Chunk {
         BiomeArray biome = null;
 
         if (includeBiome || includeBiomeTempRain)
-            biome = new BiomeArray(new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
+            biome = new BiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
 
         /* Fill with empty data */
         int hSection = world.getMaxHeight() >> 4;

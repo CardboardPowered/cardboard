@@ -40,4 +40,14 @@ public class CraftShulkerBox extends CraftLootable<ShulkerBoxBlockEntity> implem
         return DyeColor.getByWoolData((byte) ((ShulkerBoxBlock) block).getColor().getId());
     }
 
+    @Override
+    public void open() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+    }
+
 }

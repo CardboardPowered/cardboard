@@ -3,6 +3,8 @@ package org.bukkit.craftbukkit.block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.entity.DispenserBlockEntity;
+import net.minecraft.server.world.ServerWorld;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
@@ -53,7 +55,7 @@ public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implemen
             CraftWorld world = (CraftWorld) this.getWorld();
             DispenserBlock dispense = (DispenserBlock) Blocks.DISPENSER;
 
-            dispense.dispense(world.getHandle(), this.getPosition());
+            dispense.dispense((ServerWorld)world.getHandle(), this.getPosition());
             return true;
         } else return false;
     }

@@ -54,4 +54,14 @@ public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest
         return inventory;
     }
 
+    @Override
+    public void open() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+    }
+
 }

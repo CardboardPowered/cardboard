@@ -73,6 +73,10 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     	return false; // TODO
     }
 
+    /**
+     * @reason Bukkit
+     * @author Bukkit4Fabric
+     */
     @Overwrite
     public void executeCommand(String string) {
         BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
@@ -153,6 +157,10 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         }
     }
 
+    /**
+     * @reason Bukkit
+     * @author Bukkit4Fabric
+     */
     @Overwrite
     public void onGameMessage(ChatMessageC2SPacket packetplayinchat) {
         if (CraftServer.server.isStopped())

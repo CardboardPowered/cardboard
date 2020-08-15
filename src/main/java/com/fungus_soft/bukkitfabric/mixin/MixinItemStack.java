@@ -7,12 +7,11 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinItemStack;
 import com.mojang.serialization.Dynamic;
-
-import net.minecraft.datafixer.NbtOps;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 
 @Mixin(ItemStack.class)
 public class MixinItemStack implements IMixinItemStack {

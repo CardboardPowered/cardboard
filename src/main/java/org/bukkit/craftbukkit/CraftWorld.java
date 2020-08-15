@@ -906,7 +906,7 @@ public class CraftWorld implements World {
     public boolean setSpawnLocation(int x, int y, int z) {
         try {
             Location previousLocation = getSpawnLocation();
-            nms.setSpawnPos(new BlockPos(x, y, z));
+            nms.setSpawnPos(new BlockPos(x, y, z), 0);
 
             // Notify anyone who's listening.
             SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);

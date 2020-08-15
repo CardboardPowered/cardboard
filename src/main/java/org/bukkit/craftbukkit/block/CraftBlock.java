@@ -18,6 +18,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
@@ -35,6 +36,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.IndexedIterable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
@@ -176,7 +178,7 @@ public class CraftBlock implements Block {
             net.minecraft.block.BlockState old = world.getBlockState(position);
             boolean success = world.setBlockState(position, blockData, 2 | 16 | 1024);
             if (success)
-                world.getWorld().updateListeners(position, old, blockData, 3);
+                world.toServerWorld().updateListeners(position, old, blockData, 3);
             return success;
         }
     }
@@ -188,7 +190,7 @@ public class CraftBlock implements Block {
 
     @Override
     public byte getLightLevel() {
-        return (byte) world.getWorld().getLightLevel(position);
+        return (byte) world.toServerWorld().getLightLevel(position);
     }
 
     @Override
@@ -420,7 +422,15 @@ public class CraftBlock implements Block {
         getWorld().setBiome(getX(), getY(), getZ(), bio);
     }
 
-    public static Biome biomeBaseToBiome(net.minecraft.world.biome.Biome base) {
+    public static Biome biomeBaseToBiome(Registry<net.minecraft.world.biome.Biome> registry, net.minecraft.world.biome.Biome biome) {
+        if (biome == null)
+            return null;
+
+        return org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(biome).get().getValue()));
+    }
+
+
+    /*(public static Biome biomeBaseToBiome(net.minecraft.world.biome.Biome base) {
         if (base == null)
             return null;
         return Biome.valueOf(Registry.BIOME.getId(base).getNamespace().toUpperCase(java.util.Locale.ENGLISH));
@@ -429,8 +439,8 @@ public class CraftBlock implements Block {
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
         if (bio == null)
             return null;
-        return Registry.BIOME.get(new Identifier(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
-    }
+        return Registry.BIOME_KEY..get(new Identifier(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
+    }*/
 
     @Override
     public double getTemperature() {
@@ -444,13 +454,13 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isBlockPowered() {
-        return world.getWorld().getReceivedRedstonePower(position) > 0;
+        return world.toServerWorld().getReceivedRedstonePower(position) > 0;
     }
 
     @Override
     public boolean isBlockIndirectlyPowered() {
         // TODO auto-generated method stub
-        return world.getWorld().isReceivingRedstonePower(position);
+        return world.toServerWorld().isReceivingRedstonePower(position);
     }
 
     @Override
@@ -469,12 +479,12 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isBlockFacePowered(BlockFace face) {
-        return world.getWorld().isEmittingRedstonePower(position, blockFaceToNotch(face));
+        return world.toServerWorld().isEmittingRedstonePower(position, blockFaceToNotch(face));
     }
 
     @Override
     public boolean isBlockFaceIndirectlyPowered(BlockFace face) {
-        int power = world.getWorld().getEmittedRedstonePower(position, blockFaceToNotch(face));
+        int power = world.toServerWorld().getEmittedRedstonePower(position, blockFaceToNotch(face));
 
         Block relative = getRelative(face);
         if (relative.getType() == Material.REDSTONE_WIRE)

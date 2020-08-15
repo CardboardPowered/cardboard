@@ -30,4 +30,14 @@ public class CraftBarrel extends CraftLootable<BarrelBlockEntity> implements Bar
         return new CraftInventory(getTileEntity());
     }
 
+    @Override
+    public void open() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+    }
+
 }

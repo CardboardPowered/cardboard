@@ -22,7 +22,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.AbstractBlock.AbstractBlockState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.command.arguments.BlockArgumentParser;
+import net.minecraft.command.argument.BlockArgumentParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
@@ -496,7 +496,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.WeepingVinesBlock.class, org.bukkit.craftbukkit.block.impl.CraftWeepingVines::new);
         register(net.minecraft.block.WitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkull::new);
         register(net.minecraft.block.WallWitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkullWall::new);
-        register(net.minecraft.block.WoodButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftWoodButton::new);
+        register(net.minecraft.block.WoodenButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftWoodButton::new);
     }
 
     private static void register(Class<? extends Block> nms, Function<BlockState, CraftBlockData> bukkit) {

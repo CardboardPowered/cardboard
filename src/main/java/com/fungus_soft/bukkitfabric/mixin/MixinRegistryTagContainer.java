@@ -4,9 +4,9 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import com.fungus_soft.bukkitfabric.interfaces.IMixinRegistryTagContainer;
 
-import net.minecraft.tag.RegistryTagContainer;
+import net.minecraft.tag.TagGroup;
 
-@Mixin(RegistryTagContainer.class)
+@Mixin(TagGroup.class)
 public class MixinRegistryTagContainer implements IMixinRegistryTagContainer {
 
     public int version;

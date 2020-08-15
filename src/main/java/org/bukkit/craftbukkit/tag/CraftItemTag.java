@@ -4,14 +4,14 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.item.Item;
-import net.minecraft.tag.RegistryTagContainer;
+import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 
 public class CraftItemTag extends CraftTag<Item, Material> {
 
-    public CraftItemTag(RegistryTagContainer<Item> registry, Identifier tag) {
+    public CraftItemTag(TagGroup<Item> registry, Identifier tag) {
         super(registry, tag);
     }
 

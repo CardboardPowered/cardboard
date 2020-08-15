@@ -15,7 +15,7 @@ public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.type.CraftSwitch
 
-    private static final net.minecraft.state.property.EnumProperty<?> FACE = getEnum(net.minecraft.block.WoodButtonBlock.class, "face");
+    private static final net.minecraft.state.property.EnumProperty<?> FACE = getEnum(net.minecraft.block.WoodenButtonBlock.class, "face");
 
     @Override
     public Face getFace() {
@@ -29,7 +29,7 @@ public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.property.EnumProperty<?> FACING = getEnum(net.minecraft.block.WoodButtonBlock.class, "facing");
+    private static final net.minecraft.state.property.EnumProperty<?> FACING = getEnum(net.minecraft.block.WoodenButtonBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.CraftFaceAttachable
 
-    private static final net.minecraft.state.property.EnumProperty<?> ATTACH_FACE = getEnum(net.minecraft.block.WoodButtonBlock.class, "face");
+    private static final net.minecraft.state.property.EnumProperty<?> ATTACH_FACE = getEnum(net.minecraft.block.WoodenButtonBlock.class, "face");
 
     @Override
     public AttachedFace getAttachedFace() {
@@ -62,7 +62,7 @@ public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.state.property.BooleanProperty POWERED = getBoolean(net.minecraft.block.WoodButtonBlock.class, "powered");
+    private static final net.minecraft.state.property.BooleanProperty POWERED = getBoolean(net.minecraft.block.WoodenButtonBlock.class, "powered");
 
     @Override
     public boolean isPowered() {

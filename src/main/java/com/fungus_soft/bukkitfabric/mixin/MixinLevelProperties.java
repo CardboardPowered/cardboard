@@ -19,7 +19,7 @@ import com.fungus_soft.bukkitfabric.interfaces.IMixinLevelProperties;
 public class MixinLevelProperties implements IMixinLevelProperties {
 
     @Shadow
-    private LevelInfo field_25030;
+    private LevelInfo levelInfo;
 
     @Inject(at = @At("HEAD"), method = "setThundering")
     public void thunder(boolean flag, CallbackInfo info) {

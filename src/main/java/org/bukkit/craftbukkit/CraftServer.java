@@ -4,8 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,8 +72,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.bukkit.event.world.WorldInitEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
@@ -120,40 +115,23 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import com.mojang.serialization.DynamicOps;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
-import net.minecraft.datafixer.NbtOps;
 import net.minecraft.item.Item;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.RegistryTagContainer;
+import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.RegistryTracker;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.WorldSaveHandler;
-import net.minecraft.world.biome.source.BiomeAccessType;
-import net.minecraft.world.dimension.DimensionOptions;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.LevelProperties;
-import net.minecraft.world.level.storage.LevelStorage;
 
 public class CraftServer implements Server {
 
@@ -600,7 +578,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        return server.getProperties().field_24623.shouldGenerateStructures();
+        return server.getProperties().generatorOptions.shouldGenerateStructures();
     }
 
     @Override
@@ -818,10 +796,10 @@ public class CraftServer implements Server {
         switch (registry) {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-                return (org.bukkit.Tag<T>) new CraftBlockTag(server.getTagManager().blocks(), key);
+                return (org.bukkit.Tag<T>) new CraftBlockTag(server.getTagManager().getBlocks(), key);
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
-                return (org.bukkit.Tag<T>) new CraftItemTag(server.getTagManager().items(), key);
+                return (org.bukkit.Tag<T>) new CraftItemTag(server.getTagManager().getItems(), key);
             default:
                 throw new IllegalArgumentException();
         }
@@ -833,13 +811,13 @@ public class CraftServer implements Server {
         switch (registry) {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-                RegistryTagContainer<Block> blockTags = server.getTagManager().blocks();
-                return blockTags.getEntries().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, key)).collect(ImmutableList.toImmutableList());
+                TagGroup<Block> blockTags = server.getTagManager().getBlocks();
+                return blockTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
 
-                RegistryTagContainer<Item> itemTags = server.getTagManager().items();
-                return itemTags.getEntries().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
+                TagGroup<Item> itemTags = server.getTagManager().getItems();
+                return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
             default:
                 throw new IllegalArgumentException();
         }
@@ -1061,10 +1039,10 @@ public class CraftServer implements Server {
 
         ServerWorld handle = (ServerWorld) ((CraftWorld) world).getHandle();
 
-        if (!(((IMixinMinecraftServer)(Object)getServer()).getWorldMap().containsKey(handle.getWorld().getRegistryKey())))
+        if (!(((IMixinMinecraftServer)(Object)getServer()).getWorldMap().containsKey(handle.toServerWorld().getRegistryKey())))
             return false;
 
-        if (handle.getWorld().getDimension() == DimensionType.getOverworldDimensionType() || handle.getPlayers().size() > 0)
+        if (handle.toServerWorld().getRegistryKey() == ServerWorld.OVERWORLD || handle.getPlayers().size() > 0)
             return false;
 
         WorldUnloadEvent e = new WorldUnloadEvent(world);
@@ -1082,7 +1060,7 @@ public class CraftServer implements Server {
         }
 
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
-        ((IMixinMinecraftServer)(Object)getServer()).getWorldMap().remove(handle.getWorld().getRegistryKey());
+        ((IMixinMinecraftServer)(Object)getServer()).getWorldMap().remove(handle.toServerWorld().getRegistryKey());
         return true;
     }
 

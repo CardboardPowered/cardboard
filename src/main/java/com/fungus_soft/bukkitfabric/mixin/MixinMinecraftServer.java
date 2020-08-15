@@ -22,8 +22,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.RegistryTracker;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.WorldSaveHandler;
 
@@ -32,11 +32,11 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
     @Shadow
     @Final
-    public RegistryTracker.Modifiable dimensionTracker;
+    public DynamicRegistryManager.Impl registryManager;
 
     @Shadow
     @Final
-    public WorldSaveHandler field_24371;
+    public WorldSaveHandler saveHandler;
 
     @Shadow
     private Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
@@ -60,6 +60,10 @@ public abstract class MixinMinecraftServer implements IMixinMinecraftServer {
 
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 
+    /**
+     * @reason Bukkit
+     * @author Bukkit4Fabric
+     */
     @Overwrite
     public String getServerModName() {
         return "Fabric,Bukkit";

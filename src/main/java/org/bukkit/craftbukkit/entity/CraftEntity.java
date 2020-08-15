@@ -477,7 +477,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void setPortalCooldown(int arg0) {
-        nms.netherPortalCooldown = arg0;
+        //nms.netherPortalCooldown = arg0;
     }
 
     @Override
