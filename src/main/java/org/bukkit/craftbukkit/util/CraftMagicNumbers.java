@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.util;
 
-import com.fungus_soft.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.BukkitLogger;
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;

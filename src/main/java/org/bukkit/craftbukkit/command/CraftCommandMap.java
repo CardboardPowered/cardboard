@@ -6,9 +6,9 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
 
-import com.fungus_soft.bukkitfabric.command.ModListCommand;
-//import com.fungus_soft.bukkitfabric.command.PluginsCommand;
-import com.fungus_soft.bukkitfabric.command.VersionCommand;
+import com.javazilla.bukkitfabric.command.ModListCommand;
+//import com.javazilla.bukkitfabric.command.PluginsCommand;
+import com.javazilla.bukkitfabric.command.VersionCommand;
 
 public class CraftCommandMap extends SimpleCommandMap {
 

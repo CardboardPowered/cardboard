@@ -39,9 +39,9 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinWorldChunk;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 
 public class CraftChunk implements Chunk {
     

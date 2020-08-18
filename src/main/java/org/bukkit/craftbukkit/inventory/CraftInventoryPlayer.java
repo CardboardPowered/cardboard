@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.google.common.base.Preconditions;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;

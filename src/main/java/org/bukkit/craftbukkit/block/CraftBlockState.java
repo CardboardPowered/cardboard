@@ -22,7 +22,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 public class CraftBlockState implements BlockState {
 

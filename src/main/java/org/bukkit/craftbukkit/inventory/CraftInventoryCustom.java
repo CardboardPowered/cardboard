@@ -15,7 +15,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
 public class CraftInventoryCustom extends CraftInventory {
 

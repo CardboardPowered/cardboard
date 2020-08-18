@@ -30,9 +30,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;

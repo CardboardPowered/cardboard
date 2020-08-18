@@ -101,12 +101,12 @@ import org.bukkit.util.CachedServerIcon;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 
-import com.fungus_soft.bukkitfabric.BukkitLogger;
-import com.fungus_soft.bukkitfabric.Utils;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;

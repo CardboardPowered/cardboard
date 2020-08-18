@@ -8,7 +8,7 @@ plugins {
 
 gversion {
   srcDir = "src/main/java/"
-  classPackage = "com.fungus_soft.bukkitfabric"
+  classPackage = "com.javazilla.bukkitfabric"
   className = "GitVersion"
 }
 project.compileJava.dependsOn(createVersionFile)

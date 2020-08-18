@@ -18,7 +18,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinItemStack;
+import com.javazilla.bukkitfabric.interfaces.IMixinItemStack;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {

@@ -30,7 +30,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
 public class CraftInventory implements Inventory {
 

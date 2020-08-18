@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 public class CraftBeacon extends CraftBlockEntityState<BeaconBlockEntity> implements Beacon {
 

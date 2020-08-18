@@ -59,9 +59,9 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import com.fungus_soft.bukkitfabric.Utils;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;

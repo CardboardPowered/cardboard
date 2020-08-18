@@ -42,9 +42,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.Nullable;
 
-import com.fungus_soft.bukkitfabric.Utils;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;

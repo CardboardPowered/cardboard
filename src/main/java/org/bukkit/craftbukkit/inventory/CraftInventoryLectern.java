@@ -4,7 +4,7 @@ import net.minecraft.inventory.Inventory;
 import org.bukkit.block.Lectern;
 import org.bukkit.inventory.LecternInventory;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
 public class CraftInventoryLectern extends CraftInventory implements LecternInventory {
 

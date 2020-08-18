@@ -5,7 +5,7 @@ import org.bukkit.block.BrewingStand;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
 public class CraftInventoryBrewer extends CraftInventory implements BrewerInventory {
 

@@ -3,7 +3,7 @@ package org.bukkit.plugin;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import com.fungus_soft.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.BukkitLogger;
 
 public class PluginLogger extends BukkitLogger { // Bukkit2Fabric: extend BukkitLogger instead of Logger
 

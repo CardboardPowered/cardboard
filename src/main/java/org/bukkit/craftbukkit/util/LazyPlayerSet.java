@@ -6,7 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.bukkit.entity.Player;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 public class LazyPlayerSet extends LazyHashSet<Player> {
 

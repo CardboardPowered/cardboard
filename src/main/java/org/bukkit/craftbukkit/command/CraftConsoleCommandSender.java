@@ -13,7 +13,7 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
-import com.fungus_soft.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.BukkitLogger;
 
 public class CraftConsoleCommandSender implements ConsoleCommandSender, CommandSender {
 

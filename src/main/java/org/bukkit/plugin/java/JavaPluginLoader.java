@@ -72,7 +72,7 @@ public final class JavaPluginLoader implements PluginLoader {
         }
 
         // Bukkit4Fabric: Remap Jar file
-        com.fungus_soft.bukkitfabric.nms.Remapper.remap(file); // Bukkit4Fabric: Remap Jar file
+        com.javazilla.bukkitfabric.nms.Remapper.remap(file); // Bukkit4Fabric: Remap Jar file
 
         final PluginDescriptionFile description;
         try {

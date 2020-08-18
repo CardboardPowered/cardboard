@@ -6,7 +6,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 public class CraftBlockProjectileSource implements BlockProjectileSource {
 

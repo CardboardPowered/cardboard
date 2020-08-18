@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinBlockEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.google.common.base.Preconditions;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;

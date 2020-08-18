@@ -9,8 +9,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 
-import com.fungus_soft.bukkitfabric.interfaces.IMixinCommandOutput;
-import com.fungus_soft.bukkitfabric.interfaces.IMixinServerCommandSource;
+import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerCommandSource;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
