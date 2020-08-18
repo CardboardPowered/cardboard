@@ -27,7 +27,7 @@ public abstract class MixinServerWorld implements IMixinWorld {
 
     @Inject(at = @At(value = "TAIL"), method = "<init>")
     public void addToBukkit(MinecraftServer server, Executor a, LevelStorage.Session b, ServerWorldProperties c,
-            RegistryKey d, RegistryKey e, DimensionType f, WorldGenerationProgressListener g, ChunkGenerator h, boolean bl, long l, List<Spawner> list, boolean bl2, CallbackInfo ci){
+            RegistryKey d, DimensionType f, WorldGenerationProgressListener g, ChunkGenerator h, boolean bl, long l, List<Spawner> list, boolean bl2, CallbackInfo ci){
         ((CraftServer)Bukkit.getServer()).addWorldToMap(getCraftWorld());
     }
 

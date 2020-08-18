@@ -22,7 +22,7 @@ public class MixinWorld implements IMixinWorld {
     private CraftWorld bukkit;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void init(MutableWorldProperties a, RegistryKey b, RegistryKey c, DimensionType d, Supplier<Boolean> e, boolean f, boolean g, long h, CallbackInfo ci){
+    public void init(MutableWorldProperties a, RegistryKey<?> b, DimensionType d, Supplier<Boolean> e, boolean f, boolean g, long h, CallbackInfo ci){
         this.bukkit = new CraftWorld(((ServerWorld)(Object)this));
     }
 
