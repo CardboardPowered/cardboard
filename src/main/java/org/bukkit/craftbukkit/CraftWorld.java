@@ -3,6 +3,8 @@ package org.bukkit.craftbukkit;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
@@ -61,12 +64,18 @@ import org.jetbrains.annotations.NotNull;
 
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.level.ServerWorldProperties;
 
 public class CraftWorld implements World {
@@ -178,15 +187,23 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public Item dropItem(Location arg0, ItemStack arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public Item dropItem(Location loc, ItemStack arg1) {
+        ItemEntity entity = new ItemEntity(nms, loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(arg1));
+        entity.pickupDelay = 10;
+        nms.addEntity(entity);
+        return (org.bukkit.entity.Item) (((IMixinEntity)entity).getBukkitEntity());
     }
 
     @Override
-    public Item dropItemNaturally(Location arg0, ItemStack arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public Item dropItemNaturally(Location loc, ItemStack arg1) {
+        double xs = (nms.random.nextFloat() * 0.5F) + 0.25D;
+        double ys = (nms.random.nextFloat() * 0.5F) + 0.25D;
+        double zs = (nms.random.nextFloat() * 0.5F) + 0.25D;
+        loc = loc.clone();
+        loc.setX(loc.getX() + xs);
+        loc.setY(loc.getY() + ys);
+        loc.setZ(loc.getZ() + zs);
+        return dropItem(loc, arg1);
     }
 
     @Override
@@ -227,14 +244,12 @@ public class CraftWorld implements World {
 
     @Override
     public Biome getBiome(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return null;
+        return getBiome(arg0, 0, arg1);
     }
 
     @Override
     public Biome getBiome(int arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(Registry.BIOME_KEY), nms.getBiomeForNoiseGen(arg0 >> 2, arg1 >> 2, arg2 >> 2));
     }
 
     @Override
@@ -249,20 +264,17 @@ public class CraftWorld implements World {
 
     @Override
     public Chunk getChunkAt(Location arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return getChunkAt(arg0.getBlockX() >> 4, arg0.getBlockZ() >> 4);
     }
 
     @Override
     public Chunk getChunkAt(Block arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return getChunkAt(arg0.getX() >> 4, arg0.getZ() >> 4);
     }
 
     @Override
-    public Chunk getChunkAt(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public Chunk getChunkAt(int x, int z) {
+        return ((IMixinWorldChunk)nms.getChunkManager().getWorldChunk(x, z, true)).getBukkitChunk();
     }
 
     @Override
@@ -272,8 +284,7 @@ public class CraftWorld implements World {
 
     @Override
     public ChunkSnapshot getEmptyChunkSnapshot(int arg0, int arg1, boolean arg2, boolean arg3) {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftChunk.getEmptyChunkSnapshot(arg0, arg1, this, arg2, arg3);
     }
 
     @Override
@@ -300,22 +311,58 @@ public class CraftWorld implements World {
         return list;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T>... arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return (Collection<T>) getEntitiesByClasses(arg0);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T> arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        Collection<T> list = new ArrayList<T>();
+
+        for (Object entity: nms.entitiesById.values()) {
+            if (entity instanceof net.minecraft.entity.Entity) {
+                Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
+
+                if (bukkitEntity == null)
+                    continue;
+
+                Class<?> bukkitClass = bukkitEntity.getClass();
+
+                if (arg0.isAssignableFrom(bukkitClass) && bukkitEntity.isValid())
+                    list.add((T) bukkitEntity);
+            }
+        }
+
+        return list;
     }
 
     @Override
     public Collection<Entity> getEntitiesByClasses(Class<?>... arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        Collection<Entity> list = new ArrayList<Entity>();
+
+        for (Object entity: nms.entitiesById.values()) {
+            if (entity instanceof net.minecraft.entity.Entity) {
+                Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
+
+                if (bukkitEntity == null)
+                    continue;
+
+                Class<?> bukkitClass = bukkitEntity.getClass();
+
+                for (Class<?> clazz : arg0) {
+                    if (clazz.isAssignableFrom(bukkitClass)) {
+                        if (bukkitEntity.isValid())
+                            list.add(bukkitEntity);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return list;
     }
 
     @Override
@@ -326,8 +373,12 @@ public class CraftWorld implements World {
 
     @Override
     public Collection<Chunk> getForceLoadedChunks() {
-        // TODO Auto-generated method stub
-        return null;
+        Set<Chunk> chunks = new HashSet<>();
+
+        for (long coord : nms.getForcedChunks())
+            chunks.add(getChunkAt(ChunkPos.getPackedX(coord), ChunkPos.getPackedZ(coord)));
+
+        return Collections.unmodifiableCollection(chunks);
     }
 
     @Override
@@ -337,26 +388,71 @@ public class CraftWorld implements World {
 
     @Override
     public <T> T getGameRuleDefault(GameRule<T> arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return convert(arg0, getGameRuleDefinitions().get(arg0.getName()).createRule());
     }
 
     @Override
     public String getGameRuleValue(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        // In method contract for some reason
+        if (arg0 == null)
+            return null;
+
+        GameRules.Rule<?> value = getHandle().getGameRules().get(getGameRulesNMS().get(arg0));
+        return value != null ? value.toString() : "";
     }
 
     @Override
     public <T> T getGameRuleValue(GameRule<T> arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return convert(arg0, getHandle().getGameRules().get(getGameRulesNMS().get(arg0.getName())));
+    }
+
+    private static Map<String, GameRules.Key<?>> gamerules;
+    public static synchronized Map<String, GameRules.Key<?>> getGameRulesNMS() {
+        if (gamerules != null) {
+            return gamerules;
+        }
+
+        Map<String, GameRules.Key<?>> gamerules = new HashMap<>();
+        GameRules.accept(new GameRules.Visitor() {
+            @Override
+            public <T extends GameRules.Rule<T>> void visit(GameRules.Key<T> gamerules_gamerulekey, GameRules.Type<T> gamerules_gameruledefinition) {
+                gamerules.put(gamerules_gamerulekey.getName(), gamerules_gamerulekey);
+            }
+        });
+
+        return CraftWorld.gamerules = gamerules;
+    }
+
+    private <T> T convert(GameRule<T> rule, GameRules.Rule<?> value) {
+        if (value == null)
+            return null;
+
+        if (value instanceof GameRules.BooleanRule) {
+            return rule.getType().cast(((GameRules.BooleanRule) value).get());
+        } else if (value instanceof GameRules.IntRule) {
+            return rule.getType().cast(value.getCommandResult());
+        } else throw new IllegalArgumentException("Invalid GameRule type (" + value + ") for GameRule " + rule.getName());
+    }
+
+    private static Map<String, GameRules.Type<?>> gameruleDefinitions;
+    public static synchronized Map<String, GameRules.Type<?>> getGameRuleDefinitions() {
+        if (gameruleDefinitions != null)
+            return gameruleDefinitions;
+
+        Map<String, GameRules.Type<?>> gameruleDefinitions = new HashMap<>();
+        GameRules.accept(new GameRules.Visitor() {
+            @Override
+            public <T extends GameRules.Rule<T>> void visit(GameRules.Key<T> gamerules_gamerulekey, GameRules.Type<T> gamerules_gameruledefinition) {
+                gameruleDefinitions.put(gamerules_gamerulekey.getName(), gamerules_gameruledefinition);
+            }
+        });
+
+        return CraftWorld.gameruleDefinitions = gameruleDefinitions;
     }
 
     @Override
     public String[] getGameRules() {
-        // TODO Auto-generated method stub
-        return null;
+        return getGameRulesNMS().keySet().toArray(new String[getGameRulesNMS().size()]);
     }
 
     @Override
@@ -367,7 +463,6 @@ public class CraftWorld implements World {
 
     @Override
     public Block getHighestBlockAt(Location arg0) {
-        // TODO Auto-generated method stub
         return getHighestBlockAt(arg0.getBlockX(), arg0.getBlockY());
     }
 
@@ -411,15 +506,13 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public double getHumidity(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getHumidity(int x, int z) {
+        return getHumidity(x, 0, z);
     }
 
     @Override
-    public double getHumidity(int arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getHumidity(int x, int y, int z) {
+        return nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).getDownfall();
     }
 
     @Override
@@ -430,8 +523,20 @@ public class CraftWorld implements World {
 
     @Override
     public List<LivingEntity> getLivingEntities() {
-        // TODO Auto-generated method stub
-        return null;
+        List<LivingEntity> list = new ArrayList<LivingEntity>();
+
+        for (Object o : nms.entitiesById.values()) {
+            if (o instanceof net.minecraft.entity.Entity) {
+                net.minecraft.entity.Entity mcEnt = (net.minecraft.entity.Entity) o;
+                Entity bukkitEntity = ((IMixinEntity)mcEnt).getBukkitEntity();
+
+                // Assuming that bukkitEntity isn't null
+                if (bukkitEntity != null && bukkitEntity instanceof LivingEntity && bukkitEntity.isValid())
+                    list.add((LivingEntity) bukkitEntity);
+            }
+        }
+
+        return list;
     }
 
     @Override
@@ -457,27 +562,34 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public Collection<Entity> getNearbyEntities(BoundingBox arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public Collection<Entity> getNearbyEntities(Location location, double x, double y, double z) {
+        return this.getNearbyEntities(location, x, y, z, null);
     }
 
     @Override
-    public Collection<Entity> getNearbyEntities(BoundingBox arg0, Predicate<Entity> arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public Collection<Entity> getNearbyEntities(Location location, double x, double y, double z, Predicate<Entity> filter) {
+        BoundingBox aabb = BoundingBox.of(location, x, y, z);
+        return this.getNearbyEntities(aabb, filter);
     }
 
     @Override
-    public Collection<Entity> getNearbyEntities(Location arg0, double arg1, double arg2, double arg3) {
-        // TODO Auto-generated method stub
-        return null;
+    public Collection<Entity> getNearbyEntities(BoundingBox boundingBox) {
+        return this.getNearbyEntities(boundingBox, null);
     }
 
     @Override
-    public Collection<Entity> getNearbyEntities(Location arg0, double arg1, double arg2, double arg3, Predicate<Entity> arg4) {
-        // TODO Auto-generated method stub
-        return null;
+    public Collection<Entity> getNearbyEntities(BoundingBox boundingBox, Predicate<Entity> filter) {
+        Box bb = new Box(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        List<net.minecraft.entity.Entity> entityList = nms.getOtherEntities((net.minecraft.entity.Entity) null, bb, null);
+        List<Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(entityList.size());
+
+        for (net.minecraft.entity.Entity entity : entityList) {
+            Entity bukkitEntity = ((IMixinEntity)entity).getBukkitEntity();
+            if (filter == null || filter.test(bukkitEntity))
+                bukkitEntityList.add(bukkitEntity);
+        }
+
+        return bukkitEntityList;
     }
 
     @Override
@@ -630,8 +742,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkForceLoaded(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.getForcedChunks().contains(ChunkPos.toLong(arg0, arg1));
     }
 
     @Override

@@ -19,7 +19,7 @@ import net.minecraft.text.Text;
 @Mixin(Entity.class)
 public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
-    private org.bukkit.entity.Entity bukkit;
+    public org.bukkit.entity.Entity bukkit;
 
     public MixinEntity() {
         this.bukkit = new CraftEntity((Entity) (Object) this);

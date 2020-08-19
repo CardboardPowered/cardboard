@@ -20,7 +20,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.fungus_soft.bukkitfabric.BukkitFabricMod"
+      "com.javazilla.bukkitfabric.BukkitFabricMod"
     ]
   },
   "mixins": [

@@ -20,7 +20,8 @@
     "MixinLevelProperties",
     "MixinServerNetworkIo",
     "MixinRegistryTagContainer",
-	"MixinPlayerInventory"
+	"MixinPlayerInventory",
+	"MixinItemEntity"
   ],
   "injectors": {
     "defaultRequire": 1
