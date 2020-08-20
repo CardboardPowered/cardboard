@@ -13,7 +13,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-//import org.bukkit.block.BlockState;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -38,8 +37,6 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.IndexedIterable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -557,9 +554,7 @@ public class CraftBlock implements Block {
         if (item == null || !iblockdata.isToolRequired() || nms.isEffectiveOn(iblockdata)) {
             return net.minecraft.block.Block.getDroppedStacks(iblockdata, world, position, world.getBlockEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
-        }
+        } else return Collections.emptyList();
     }
 
     @Override

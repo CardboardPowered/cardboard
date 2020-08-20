@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -150,23 +151,24 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public Material getMaterial(String material, int version) {
+        Preconditions.checkArgument(material != null, "material == null");
         Preconditions.checkArgument(version <= this.getDataVersion(), "Newer version! Server downgrades are not supported!");
 
         // Fastpath up to date materials
-        if (version == this.getDataVersion())
+        if (version == this.getDataVersion()) {
             return Material.getMaterial(material);
+        }
 
-        CompoundTag stack = new CompoundTag();
-        stack.putString("id", "minecraft:" + material.toLowerCase(Locale.ROOT));
+        Dynamic<Tag> name = new Dynamic<>(NbtOps.INSTANCE, StringTag.of("minecraft:" + material.toLowerCase(Locale.ROOT)));
+        Dynamic<Tag> converted = Schemas.getFixer().update(TypeReferences.ITEM_NAME, name, version, this.getDataVersion());
 
-        Dynamic<Tag> converted = Schemas.getFixer().update(TypeReferences.ITEM_STACK, new Dynamic<>(NbtOps.INSTANCE, stack), version, this.getDataVersion());
-        String newId = converted.get("id").asString("");
-
-        return Material.matchMaterial(newId);
+        if (name.equals(converted))
+            converted = Schemas.getFixer().update(TypeReferences.BLOCK_NAME, name, version, this.getDataVersion());
+        return Material.matchMaterial(converted.asString(""));
     }
 
     public String getMappingsVersion() {
-        return "25afc67716a170ea965092c1067ff439";
+        return "c2d5d7871edcc4fb0f81d18959c647af";
     }
 
     @Override

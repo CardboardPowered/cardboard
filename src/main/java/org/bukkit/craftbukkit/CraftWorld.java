@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,6 +40,7 @@ import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
+import org.bukkit.craftbukkit.util.WorldUUID;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -70,12 +72,16 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.ReadOnlyChunk;
 import net.minecraft.world.level.ServerWorldProperties;
 
 public class CraftWorld implements World {
@@ -697,8 +703,7 @@ public class CraftWorld implements World {
 
     @Override
     public UUID getUID() {
-        // TODO Auto-generated method stub
-        return null;
+        return WorldUUID.getUUID(getWorldFolder());
     }
 
     @Override
@@ -746,15 +751,17 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public boolean isChunkGenerated(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean isChunkGenerated(int x, int z) {
+        try {
+            return isChunkLoaded(x, z) || nms.getChunkManager().threadedAnvilChunkStorage.getNbt(new ChunkPos(x, z)) != null;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
     public boolean isChunkInUse(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return false;
+        return isChunkLoaded(arg0, arg1);
     }
 
     @Override
@@ -769,8 +776,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isGameRule(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return getGameRulesNMS().containsKey(arg0);
     }
 
     @Override
@@ -780,23 +786,31 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isThundering() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.getLevelProperties().isThundering();
     }
 
     @Override
     public void loadChunk(Chunk arg0) {
-        // TODO Auto-generated method stub
+        loadChunk(arg0.getX(), arg0.getZ());
     }
 
     @Override
     public void loadChunk(int arg0, int arg1) {
-        // TODO Auto-generated method stub
+        loadChunk(arg0, arg1, true);
     }
 
     @Override
-    public boolean loadChunk(int arg0, int arg1, boolean arg2) {
-        // TODO Auto-generated method stub
+    public boolean loadChunk(int x, int z, boolean generate) {
+        net.minecraft.world.chunk.Chunk chunk = nms.getChunkManager().getChunk(x, z, generate ? ChunkStatus.FULL : ChunkStatus.EMPTY, true);
+
+        if (chunk instanceof ReadOnlyChunk)
+            chunk = nms.getChunkManager().getChunk(x, z, ChunkStatus.FULL, true);
+
+        if (chunk instanceof net.minecraft.world.chunk.WorldChunk) {
+            nms.getChunkManager().addTicket(ChunkTicketType.START, new ChunkPos(x, z), 1, Unit.INSTANCE);
+            return true;
+        }
+
         return false;
     }
 
@@ -925,7 +939,10 @@ public class CraftWorld implements World {
 
     @Override
     public void save() {
-        // TODO Auto-generated method stub
+        boolean oldSave = nms.savingDisabled;
+        nms.savingDisabled = false;
+        nms.save(null, false, false);
+        nms.savingDisabled = oldSave;
     }
 
     @Override
@@ -941,7 +958,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setAutoSave(boolean arg0) {
-        // TODO Auto-generated method stub
+        nms.savingDisabled = !arg0;
     }
 
     @Override
@@ -1260,7 +1277,7 @@ public class CraftWorld implements World {
     @Override
     public int getViewDistance() {
         // TODO Auto-generated method stub
-        return 0;
+        return 8;
     }
 
     public void setWaterAmbientSpawnLimit(int i) {
