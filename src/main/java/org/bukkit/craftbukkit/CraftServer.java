@@ -820,7 +820,6 @@ public class CraftServer implements Server {
 
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
-        // TODO Check performance
         return offlinePlayers.values().toArray(new OfflinePlayer[1]);
     }
 

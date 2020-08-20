@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.block;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
@@ -17,6 +18,8 @@ import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
@@ -38,8 +41,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.IndexedIterable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.LightType;
 
 public class CraftBlock implements Block {
@@ -202,7 +207,6 @@ public class CraftBlock implements Block {
     public byte getLightFromBlocks() {
         return (byte) world.getLightLevel(LightType.BLOCK, position);
     }
-
 
     public Block getFace(final BlockFace face) {
         return getRelative(face, 1);
@@ -425,18 +429,10 @@ public class CraftBlock implements Block {
     public static Biome biomeBaseToBiome(Registry<net.minecraft.world.biome.Biome> registry, net.minecraft.world.biome.Biome biome) {
         if (biome == null)
             return null;
-
         return org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(biome).get().getValue()));
     }
 
-
-    /*(public static Biome biomeBaseToBiome(net.minecraft.world.biome.Biome base) {
-        if (base == null)
-            return null;
-        return Biome.valueOf(Registry.BIOME.getId(base).getNamespace().toUpperCase(java.util.Locale.ENGLISH));
-    }
-
-    public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
+    /*public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
         if (bio == null)
             return null;
         return Registry.BIOME_KEY..get(new Identifier(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
@@ -527,8 +523,19 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean breakNaturally(ItemStack item) {
-        // TODO auto-generated method stub
-        return false;
+        // Order matters here, need to drop before setting to air so skulls can get their data
+        net.minecraft.block.BlockState iblockdata = this.getNMS();
+        net.minecraft.block.Block block = iblockdata.getBlock();
+        net.minecraft.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        boolean result = false;
+
+        // Modeled off EntityHuman#hasBlock
+        if (block != Blocks.AIR && (item == null || !iblockdata.isToolRequired() || nmsItem.isEffectiveOn(iblockdata))) {
+            net.minecraft.block.Block.dropStacks(iblockdata, world, position, world.getBlockEntity(position), null, nmsItem);
+            result = true;
+        }
+
+        return setTypeAndData(Blocks.AIR.getDefaultState(), true) && result;
     }
 
     @Override
@@ -543,8 +550,16 @@ public class CraftBlock implements Block {
 
     @Override
     public Collection<ItemStack> getDrops(ItemStack item, Entity entity) {
-        // TODO auto-generated method stub
-        return Collections.emptyList();
+        net.minecraft.block.BlockState iblockdata = getNMS();
+        net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
+
+        // Modelled off EntityHuman#hasBlock
+        if (item == null || !iblockdata.isToolRequired() || nms.isEffectiveOn(iblockdata)) {
+            return net.minecraft.block.Block.getDroppedStacks(iblockdata, world, position, world.getBlockEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
+                    .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @Override
@@ -582,8 +597,13 @@ public class CraftBlock implements Block {
 
     @Override
     public BoundingBox getBoundingBox() {
-        // TODO auto-generated method stub
-        return null;
+        VoxelShape shape = getNMS().getOutlineShape(world, position);
+
+        if (shape.isEmpty())
+            return new BoundingBox();
+
+        Box aabb = shape.getBoundingBox();
+        return new BoundingBox(getX() + aabb.minX, getY() + aabb.minY, getZ() + aabb.minZ, getX() + aabb.maxX, getY() + aabb.maxY, getZ() + aabb.maxZ);
     }
 
 }
