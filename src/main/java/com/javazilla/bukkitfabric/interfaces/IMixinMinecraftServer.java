@@ -6,10 +6,15 @@ import java.util.Queue;
 import org.bukkit.craftbukkit.CraftServer;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.SaveProperties;
+import net.minecraft.world.gen.GeneratorOptions;
+import net.minecraft.world.level.LevelProperties;
+import net.minecraft.world.level.ServerWorldProperties;
 
 public interface IMixinMinecraftServer {
 
@@ -23,10 +28,12 @@ public interface IMixinMinecraftServer {
 
     public CommandManager setCommandManager(CommandManager commandManager);
 
-    // FIXME public void initWorld(ServerWorld world, LevelProperties prop, LevelInfo info);
-
     public static MinecraftServer getServer() {
         return CraftServer.server;
     }
+
+    public void loadSpawn(WorldGenerationProgressListener worldGenerationProgressListener, ServerWorld internal);
+
+    public void initWorld(ServerWorld worldserver, ServerWorldProperties iworlddataserver, SaveProperties saveData, GeneratorOptions generatorsettings);
 
 }

@@ -10,7 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 
 public class BukkitFabricMod implements ModInitializer {
 
-    private Logger LOGGER = BukkitLogger.getLogger();
+    public static Logger LOGGER = BukkitLogger.getLogger();
 
     @Override
     public void onInitialize() {

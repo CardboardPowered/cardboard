@@ -14,6 +14,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -72,6 +75,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.bukkit.event.server.TabCompleteEvent;
+import org.bukkit.event.world.WorldInitEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
@@ -104,6 +109,7 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -112,15 +118,25 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Lifecycle;
+
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
+import net.minecraft.datafixer.Schemas;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resource.DataPackSettings;
+import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.resource.ServerResourceManager;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -131,7 +147,26 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.village.ZombieSiegeManager;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.WanderingTraderManager;
+import net.minecraft.world.biome.source.BiomeAccess;
+import net.minecraft.world.dimension.DimensionOptions;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.CatSpawner;
+import net.minecraft.world.gen.GeneratorOptions;
+import net.minecraft.world.gen.PhantomSpawner;
+import net.minecraft.world.gen.PillagerSpawner;
+import net.minecraft.world.gen.Spawner;
+import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.level.LevelProperties;
+import net.minecraft.world.level.storage.LevelStorage;
 
 public class CraftServer implements Server {
 
@@ -454,10 +489,110 @@ public class CraftServer implements Server {
         return WorldCreator.name(name).environment(environment).seed(seed).generator(generator).createWorld();
     }
 
+    @SuppressWarnings({ "resource", "unchecked" })
     @Override
     public World createWorld(WorldCreator creator) {
-        // TODO 1.16
-        return null;
+        String name = creator.name();
+        ChunkGenerator generator = creator.generator();
+        File folder = new File(getWorldContainer(), name);
+        World world = getWorld(name);
+
+        if (world != null)
+            return world;
+
+        if ((folder.exists()) && (!folder.isDirectory()))
+            throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
+
+        if (generator == null)
+            generator = getGenerator(name);
+
+        RegistryKey<DimensionOptions> actualDimension;
+        switch (creator.environment()) {
+            case NORMAL:
+                actualDimension = DimensionOptions.OVERWORLD;
+                break;
+            case NETHER:
+                actualDimension = DimensionOptions.NETHER;
+                break;
+            case THE_END:
+                actualDimension = DimensionOptions.END;
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal dimension");
+        }
+
+        LevelStorage.Session worldSession;
+        try {
+            worldSession = LevelStorage.create(getWorldContainer().toPath()).createSession(name);//.c(name, actualDimension);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        MinecraftServer.convertLevel(worldSession); // Run conversion now
+
+        boolean hardcore = creator.hardcore();
+
+        RegistryOps<Tag> registryreadops = RegistryOps.of((DynamicOps) NbtOps.INSTANCE, server.serverResourceManager.getResourceManager(), server.getRegistryManager().create());
+        LevelProperties worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps) registryreadops, method_29735(server.dataPackManager));
+
+        LevelInfo worldSettings;
+        // See MinecraftServer.a(String, String, long, WorldType, JsonElement)
+        if (worlddata == null) {
+            Properties properties = new Properties();
+            properties.put("generator-settings", Objects.toString(creator.generatorSettings()));
+            properties.put("level-seed", Objects.toString(creator.seed()));
+            properties.put("generate-structures", Objects.toString(creator.generateStructures()));
+            properties.put("level-type", Objects.toString(creator.type().getName()));
+
+            GeneratorOptions generatorsettings = GeneratorOptions.fromProperties(server.getRegistryManager(), properties);
+            worldSettings = new LevelInfo(name, net.minecraft.world.GameMode.byId(getDefaultGameMode().getValue()), hardcore, Difficulty.NORMAL, false, new GameRules(), method_29735(server.dataPackManager));
+            worlddata = new LevelProperties(worldSettings, generatorsettings, Lifecycle.stable());
+        }
+        ((IMixinLevelProperties)worlddata).checkName(name);
+        worlddata.addServerBrand(server.getServerModName(), true);
+
+        // TODO Force upgrade option: server.options.has("forceUpgrade")
+
+        long j = BiomeAccess.hashSeed(creator.seed());
+        List<Spawner> list = ImmutableList.of(new PhantomSpawner(), new PillagerSpawner(), new CatSpawner(), new ZombieSiegeManager(), new WanderingTraderManager(worlddata));
+        SimpleRegistry<DimensionOptions> registrymaterials = worlddata.getGeneratorOptions().getDimensions();
+        DimensionOptions worlddimension = (DimensionOptions) registrymaterials.get(actualDimension);
+        DimensionType dimensionmanager;
+        net.minecraft.world.gen.chunk.ChunkGenerator chunkgenerator;
+
+        if (worlddimension == null) {
+            dimensionmanager = (DimensionType) server.getRegistryManager().getDimensionTypes().getOrThrow(DimensionType.OVERWORLD_REGISTRY_KEY);
+            chunkgenerator = GeneratorOptions.createOverworldGenerator(server.getRegistryManager().get(Registry.BIOME_KEY), server.getRegistryManager().get(Registry.NOISE_SETTINGS_WORLDGEN), (new Random()).nextLong());
+        } else {
+            dimensionmanager = worlddimension.getDimensionType();
+            chunkgenerator = worlddimension.getChunkGenerator();
+        }
+
+        RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.of(Registry.DIMENSION, new Identifier(name.toLowerCase(java.util.Locale.ENGLISH)));
+
+        ServerWorld internal = (ServerWorld) new ServerWorld(server, server.workerExecutor, worldSession, worlddata, worldKey, dimensionmanager, getServer().worldGenerationProgressListenerFactory.create(11),
+                chunkgenerator, worlddata.getGeneratorOptions().isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true/*, creator.environment(), generator*/);
+
+        if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH))))
+            return null;
+
+        ((IMixinMinecraftServer)server).initWorld(internal, worlddata, worlddata, worlddata.getGeneratorOptions());
+
+        internal.setMobSpawnOptions(true, true);
+        server.worlds.put(internal.getRegistryKey(), internal);
+
+        pluginManager.callEvent(new WorldInitEvent(((IMixinWorld)internal).getCraftWorld()));
+
+        ((IMixinMinecraftServer)getServer()).loadSpawn(internal.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, internal);
+
+        pluginManager.callEvent(new WorldLoadEvent(((IMixinWorld)internal).getCraftWorld()));
+        return ((IMixinWorld)internal).getCraftWorld();
+    }
+
+    public static DataPackSettings method_29735(ResourcePackManager resourcePackManager) {
+        Collection<String> collection = resourcePackManager.getEnabledNames();
+        ImmutableList<String> list = ImmutableList.copyOf(collection);
+        List<String> list2 = resourcePackManager.getNames().stream().filter(string -> !collection.contains(string)).collect(ImmutableList.toImmutableList());
+        return new DataPackSettings(list, list2);
     }
 
     public ChunkGenerator getGenerator(String name) {

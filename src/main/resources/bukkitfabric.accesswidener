@@ -8907,6 +8907,7 @@ accessible	field	net/minecraft/server/MinecraftServer	workerExecutor	Ljava/util/
 mutable	field	net/minecraft/server/MinecraftServer	workerExecutor	Ljava/util/concurrent/Executor;
 accessible	field	net/minecraft/server/MinecraftServer	serverId	Ljava/lang/String;
 mutable	field	net/minecraft/server/MinecraftServer	serverId	Ljava/lang/String;
+accessible	field	net/minecraft/server/MinecraftServer	serverResourceManager	Lnet/minecraft/resource/ServerResourceManager;
 extendable	method	net/minecraft/server/MinecraftServer	initScoreboard	(Lnet/minecraft/world/PersistentStateManager;)V
 accessible	method	net/minecraft/server/MinecraftServer	initScoreboard	(Lnet/minecraft/world/PersistentStateManager;)V
 extendable	method	net/minecraft/server/MinecraftServer	setupServer	()Z
@@ -8948,6 +8949,7 @@ extendable	method	net/minecraft/server/MinecraftServer	isMonsterSpawningEnabled	
 accessible	method	net/minecraft/server/MinecraftServer	isMonsterSpawningEnabled	()Z
 extendable	method	net/minecraft/server/MinecraftServer	reloadDataPacks	(Lnet/minecraft/world/level/LevelProperties;)V
 accessible	method	net/minecraft/server/MinecraftServer	reloadDataPacks	(Lnet/minecraft/world/level/LevelProperties;)V
+accessible	method	net/minecraft/server/MinecraftServer	method_29735	(Lnet/minecraft/resource/ResourcePackManager;)V
 accessible	field	net/minecraft/server/ServerMetadata$Players	max	I
 mutable	field	net/minecraft/server/ServerMetadata$Players	max	I
 accessible	field	net/minecraft/server/ServerMetadata$Players	online	I
