@@ -62,12 +62,11 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -84,6 +83,7 @@ import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ReadOnlyChunk;
 import net.minecraft.world.level.ServerWorldProperties;
 
+@SuppressWarnings("deprecation")
 public class CraftWorld implements World {
 
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
@@ -962,11 +962,12 @@ public class CraftWorld implements World {
 
     @Override
     public void setBiome(int arg0, int arg1, Biome arg2) {
-        // TODO Auto-generated method stub
+        for (int y = 0; y < getMaxHeight(); y++)
+            setBiome(arg0, y, arg1, arg2);
     }
 
     @Override
-    public void setBiome(int arg0, int arg1, int arg2, Biome arg3) {
+    public void setBiome(int x, int y, int z, Biome bio) {
         // TODO Auto-generated method stub
     }
 
@@ -1116,12 +1117,10 @@ public class CraftWorld implements World {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Entity> T addEntity(net.minecraft.entity.Entity entity, SpawnReason reason) throws IllegalArgumentException {
         return addEntity(entity, reason, null);
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Entity> T addEntity(net.minecraft.entity.Entity entity, SpawnReason reason, Consumer<T> function) throws IllegalArgumentException {
         // TODO Auto-generated method stub
         return null;
@@ -1163,76 +1162,86 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, Location location, int count) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, T arg3) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, double x, double y, double z, int count) {
+        spawnParticle(particle, x, y, z, count, null);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, Location location, int count, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, data);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, T arg5) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, T data) {
+        spawnParticle(particle, x, y, z, count, 0, 0, 0, data);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, T arg6) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, null);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, data);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, 1, data);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6, T arg7) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, T arg8) {
-        // TODO Auto-generated method stub
-
+    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, null);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6, T arg7, boolean arg8) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, data, false);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8, T arg9) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, T data, boolean force) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data, force);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8, T arg9, boolean arg10) {
-        // TODO Auto-generated method stub
-    }
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data, boolean force) {
+        if (data != null && !particle.getDataType().isInstance(data))
+            throw new IllegalArgumentException("data should be " + particle.getDataType() + " got " + data.getClass());
+        // TODO Bukkit4Fabric: method
+        getHandle().addParticle(
+                //null, // Sender
+                CraftParticle.toNMS(particle, data), // Particle
+                x, y, z, // Position
+                (double)count,  // Count
+                offsetX, offsetY//, offsetZ // Random offset
+                //extra // Speed?
+                //force
+        );
 
+    }
     @Override
     public LightningStrike strikeLightning(Location arg0) {
         // TODO Auto-generated method stub

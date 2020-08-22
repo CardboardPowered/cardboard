@@ -26,6 +26,8 @@ import org.bukkit.util.StringUtil;
 
 public class VersionCommand extends Command {
 
+    public static String BRANCH = "master";
+
     public VersionCommand(String name) {
         super(name);
 
@@ -48,7 +50,6 @@ public class VersionCommand extends Command {
             for (String arg : args) {
                 if (name.length() > 0)
                     name.append(' ');
-
                 name.append(arg);
             }
 
@@ -166,8 +167,7 @@ public class VersionCommand extends Command {
         if (version.startsWith("git-Bukkit4Fabric-")) {
             int cbVersions = check();
             setVersionMessage(cbVersions == 0 ? "You are running the latest version" : "You are " + cbVersions + " version(s) behind");
-        } else
-            setVersionMessage("Unknown version, custom build?");
+        } else setVersionMessage("Unknown version, custom build?");
     }
 
     private void setVersionMessage(String msg) {
@@ -187,7 +187,7 @@ public class VersionCommand extends Command {
 
     public static int check() {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/fungus-soft/bukkit4fabric/compare/master..." + Utils.getGitHash()).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/bukkitfabric/bukkit4fabric/compare/" + BRANCH + "..." + Utils.getGitHash()).openConnection();
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) return -2; // Unknown commit

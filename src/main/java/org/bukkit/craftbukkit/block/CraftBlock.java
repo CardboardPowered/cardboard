@@ -441,11 +441,12 @@ public class CraftBlock implements Block {
         return org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(biome).get().getValue()));
     }
 
-    /*public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
+    public static net.minecraft.world.biome.Biome biomeToBiomeBase(net.minecraft.util.registry.Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {
         if (bio == null)
             return null;
-        return Registry.BIOME_KEY..get(new Identifier(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
-    }*/
+
+        return registry.get(CraftNamespacedKey.toMinecraft(bio.getKey()));
+    }
 
     @Override
     public double getTemperature() {

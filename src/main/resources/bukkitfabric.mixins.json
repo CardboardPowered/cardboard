@@ -20,7 +20,9 @@
     "MixinLevelProperties",
     "MixinServerNetworkIo",
 	"MixinPlayerInventory",
-	"MixinItemEntity"
+	"MixinItemEntity",
+	"MixinGameMessageS2CPacket",
+	"MixinHandshakeC2SPacket"
   ],
   "injectors": {
     "defaultRequire": 1

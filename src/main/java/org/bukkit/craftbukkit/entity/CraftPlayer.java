@@ -1,10 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -30,7 +28,6 @@ import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -43,6 +40,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.Nullable;
 
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinGameMessagePacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.mojang.authlib.GameProfile;
@@ -61,7 +59,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.world.dimension.DimensionType;
 
 public class CraftPlayer extends CraftHumanEntity implements Player {
 
@@ -1001,8 +998,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
            if (null == getHandle().networkHandler) return;
 
             GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.SYSTEM, nms.getUuid());
-            // TODO add support for components in ChatMessageS2CPacket
-            //packet.components = components;
+            ((IMixinGameMessagePacket)packet).setBungeeComponents(components);
             getHandle().networkHandler.sendPacket(packet);
         }
 
@@ -1019,8 +1015,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR)
                 components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
 
-            // TODO add support for components in ChatMessageS2CPacket
-            //packet.components = components;
+            ((IMixinGameMessagePacket)packet).setBungeeComponents(components);
             getHandle().networkHandler.sendPacket(packet);
         }
     };
@@ -1039,7 +1034,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public void setBedSpawnLocation(Location location) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
