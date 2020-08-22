@@ -485,4 +485,10 @@ public class CraftInventory implements Inventory {
         return ((IMixinInventory)inventory).getLocation();
     }
 
+    @Override
+    public boolean isEmpty() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

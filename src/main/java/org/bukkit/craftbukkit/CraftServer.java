@@ -165,6 +165,7 @@ import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 
+@SuppressWarnings("deprecation")
 public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";

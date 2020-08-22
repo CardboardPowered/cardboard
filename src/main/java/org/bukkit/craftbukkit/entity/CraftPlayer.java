@@ -625,6 +625,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setDisplayName(String arg0) {
+        nms.setCustomNameVisible(true);
         nms.setCustomName(new LiteralText(arg0));
     }
 

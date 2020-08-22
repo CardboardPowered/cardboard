@@ -333,4 +333,10 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         return false;
     }
 
+    @Override
+    public boolean dropItem(boolean dropAll) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

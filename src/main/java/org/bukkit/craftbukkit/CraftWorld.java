@@ -1320,4 +1320,19 @@ public class CraftWorld implements World {
         // TODO Auto-generated method stub
     }
 
+    @Override
+    public boolean setSpawnLocation(int x, int y, int z, float angle) {
+        try {
+            Location previousLocation = getSpawnLocation();
+            nms.setSpawnPos(new BlockPos(x, y, z), angle);
+
+            SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

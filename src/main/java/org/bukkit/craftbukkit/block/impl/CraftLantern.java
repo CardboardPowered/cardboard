@@ -26,4 +26,16 @@ public final class CraftLantern extends org.bukkit.craftbukkit.block.data.CraftB
     public void setHanging(boolean hanging) {
         set(HANGING, hanging);
     }
+
+    @Override
+    public boolean isWaterlogged() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setWaterlogged(boolean waterlogged) {
+        // TODO Auto-generated method stub
+        
+    }
 }
