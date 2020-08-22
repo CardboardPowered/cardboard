@@ -6,6 +6,6 @@ import net.minecraft.server.command.ServerCommandSource;
 
 public interface IMixinCommandOutput {
 
-    CommandSender getBukkitSender(ServerCommandSource serverCommandSource);
+    public CommandSender getBukkitSender(ServerCommandSource serverCommandSource);
 
 }

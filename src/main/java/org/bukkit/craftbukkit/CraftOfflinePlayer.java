@@ -8,12 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.server.OperatorEntry;
 import net.minecraft.server.WhitelistEntry;
-import net.minecraft.util.WorldSavePath;
 import net.minecraft.world.SaveProperties;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldSaveHandler;
-import net.minecraft.world.dimension.DimensionType;
-
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,6 +25,7 @@ import org.bukkit.plugin.Plugin;
 
 @SerializableAs("Player")
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
+
     private final GameProfile profile;
     private final CraftServer server;
     private final SaveProperties storage;
@@ -221,7 +217,6 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     public void removeMetadata(String metadataKey, Plugin plugin) {
         // TODO auto-generated method stub
     }
-
 
     @Override
     public void incrementStatistic(Statistic statistic) {

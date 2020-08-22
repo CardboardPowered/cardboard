@@ -54,13 +54,12 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
     @Shadow
     public Map<UUID, ServerPlayerEntity> playerMap;
 
+    @SuppressWarnings("deprecation")
     @Override
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity entityplayer, DimensionType dimensionmanager, boolean flag, Location location, boolean avoidSuffocation) {
         entityplayer.stopRiding(); // CraftBukkit
         this.players.remove(entityplayer);
         entityplayer.getServerWorld().removePlayer(entityplayer);
-        BlockPos blockposition = entityplayer.getSpawnPointPosition();
-        boolean flag1 = entityplayer.isSpawnPointSet();
 
         ServerPlayerEntity entityplayer1 = entityplayer;
         org.bukkit.World fromWorld = ((Player)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).getWorld();
@@ -79,8 +78,6 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         // CraftBukkit start - fire PlayerRespawnEvent
         if (location == null) {
             boolean isBedSpawn = false;
-
-            CraftWorld cworld = ((IMixinWorld)(Object)entityplayer.world).getCraftWorld();
 
             entityplayer1.moveToSpawn((ServerWorld) entityplayer.world);
 

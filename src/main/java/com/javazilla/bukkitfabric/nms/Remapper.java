@@ -20,6 +20,7 @@ public class Remapper {
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
+    @SuppressWarnings("deprecation")
     public static File configDir = new File(FabricLoader.getInstance().getConfigDirectory(), "bukkit4fabric");
     public static File remappedDir = new File(configDir, "remapped-plugins");
     public static File backup = new File(remappedDir, "backup-plugins");

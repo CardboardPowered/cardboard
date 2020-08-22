@@ -19,7 +19,6 @@
     "MixinBlockEntity",
     "MixinLevelProperties",
     "MixinServerNetworkIo",
-    "MixinRegistryTagContainer",
 	"MixinPlayerInventory",
 	"MixinItemEntity"
   ],

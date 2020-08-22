@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -37,7 +36,6 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.Palette;
 import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.gen.ChunkRandom;
@@ -231,6 +229,7 @@ public class CraftChunk implements Chunk {
         return getChunkSnapshot(true, false, false);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public ChunkSnapshot getChunkSnapshot(boolean includeMaxBlockY, boolean includeBiome, boolean includeBiomeTempRain) {
         net.minecraft.world.chunk.WorldChunk chunk = getHandle();
@@ -251,7 +250,7 @@ public class CraftChunk implements Chunk {
                 CompoundTag data = new CompoundTag();
                 cs[i].getContainer().write(data, "Palette", "BlockStates");
 
-                PalettedContainer blockids = new PalettedContainer<>(ChunkSection.palette, net.minecraft.block.Block.STATE_IDS, NbtHelper::toBlockState, NbtHelper::fromBlockState, Blocks.AIR.getDefaultState()); // TODO: snapshot whole ChunkSection
+                PalettedContainer<net.minecraft.block.BlockState> blockids = new PalettedContainer<>(ChunkSection.palette, net.minecraft.block.Block.STATE_IDS, NbtHelper::toBlockState, NbtHelper::fromBlockState, Blocks.AIR.getDefaultState()); // TODO: snapshot whole ChunkSection
                 blockids.read(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
 
                 sectionBlockIDs[i] = blockids;
@@ -289,18 +288,7 @@ public class CraftChunk implements Chunk {
         return new CraftChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
     }
 
-    @SuppressWarnings("unchecked")
-    private static Palette<net.minecraft.block.BlockState> getPallette() {
-        try {
-            Field f = ChunkSection.class.getDeclaredField("palette");
-            f.setAccessible(true);
-            return (Palette<net.minecraft.block.BlockState>) f.get(null);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, CraftWorld world, boolean includeBiome, boolean includeBiomeTempRain) {
         BiomeArray biome = null;
 

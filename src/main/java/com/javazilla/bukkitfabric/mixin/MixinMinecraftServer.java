@@ -149,6 +149,7 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
      * @reason Bukkit's Custom Multiworld handling
      * @author Bukkit4Fabric
      */
+    @SuppressWarnings({ "deprecation", "resource", "unchecked", "rawtypes", "unused" })
     @Overwrite
     public void loadWorld() {
         int worldCount = 3;
@@ -300,14 +301,6 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
         CraftServer.INSTANCE.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
         ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
     }
-
-    /*@Inject(at = @At("TAIL"), method = "loadWorld")
-    public void afterWorldLoad(CallbackInfo ci) {
-        CraftServer bukkit = ((CraftServer)Bukkit.getServer());
-
-        bukkit.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
-        bukkit.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
-    }*/
 
     @Override
     public void loadSpawn(WorldGenerationProgressListener worldloadlistener, ServerWorld worldserver) {

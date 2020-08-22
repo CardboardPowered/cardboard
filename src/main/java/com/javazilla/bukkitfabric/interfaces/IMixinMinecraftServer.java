@@ -13,7 +13,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.gen.GeneratorOptions;
-import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.ServerWorldProperties;
 
 public interface IMixinMinecraftServer {

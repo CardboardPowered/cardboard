@@ -25,6 +25,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 @Mixin(ServerWorld.class)
 public abstract class MixinServerWorld implements IMixinWorld {
 
+    @SuppressWarnings("rawtypes")
     @Inject(at = @At(value = "TAIL"), method = "<init>")
     public void addToBukkit(MinecraftServer server, Executor a, LevelStorage.Session b, ServerWorldProperties c,
             RegistryKey d, DimensionType f, WorldGenerationProgressListener g, ChunkGenerator h, boolean bl, long l, List<Spawner> list, boolean bl2, CallbackInfo ci){
