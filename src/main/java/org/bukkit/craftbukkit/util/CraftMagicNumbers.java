@@ -76,10 +76,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     static {
         for (Block block : Registry.BLOCK)
-            BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getId(block).getNamespace().toUpperCase(Locale.ROOT)));
+            BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getId(block).getPath().toUpperCase(Locale.ROOT)));
 
         for (Item item : Registry.ITEM)
-            ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getId(item).getNamespace().toUpperCase(Locale.ROOT)));
+            ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getId(item).getPath().toUpperCase(Locale.ROOT)));
 
         for (Material material : Material.values()) {
             if (material.isLegacy())

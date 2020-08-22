@@ -35,6 +35,7 @@ import com.google.common.base.Preconditions;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -256,11 +257,15 @@ public class CraftBlock implements Block {
     @SuppressWarnings("unchecked")
     @Override
     public org.bukkit.block.BlockState getState() {
-        switch (getType()) {
+        Material material = getType();
+
+        switch (material) {
             case ACACIA_SIGN:
             case ACACIA_WALL_SIGN:
             case BIRCH_SIGN:
             case BIRCH_WALL_SIGN:
+            case CRIMSON_SIGN:
+            case CRIMSON_WALL_SIGN:
             case DARK_OAK_SIGN:
             case DARK_OAK_WALL_SIGN:
             case JUNGLE_SIGN:
@@ -269,6 +274,8 @@ public class CraftBlock implements Block {
             case OAK_WALL_SIGN:
             case SPRUCE_SIGN:
             case SPRUCE_WALL_SIGN:
+            case WARPED_SIGN:
+            case WARPED_WALL_SIGN:
                 return new CraftSign(this);
             case CHEST:
             case TRAPPED_CHEST:
@@ -395,6 +402,7 @@ public class CraftBlock implements Block {
             case BLAST_FURNACE:
                 return new CraftBlastFurnace(this);
             case CAMPFIRE:
+            case SOUL_CAMPFIRE:
                 return new CraftCampfire(this);
             case JIGSAW:
                 return new CraftJigsaw(this);
@@ -407,9 +415,13 @@ public class CraftBlock implements Block {
                 return new CraftBeehive(this);
             default:
                 BlockEntity tileEntity = world.getBlockEntity(position);
-                if (tileEntity != null)
+                if (tileEntity != null) {
+                    // block with unhandled TileEntity:
                     return new CraftBlockEntityState<BlockEntity>(this, (Class<BlockEntity>) tileEntity.getClass());
-                else return new CraftBlockState(this);
+                } else {
+                    // Block without TileEntity:
+                    return new CraftBlockState(this);
+                }
         }
     }
 
@@ -452,7 +464,6 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isBlockIndirectlyPowered() {
-        // TODO auto-generated method stub
         return world.toServerWorld().isReceivingRedstonePower(position);
     }
 
@@ -489,8 +500,26 @@ public class CraftBlock implements Block {
     @Override
     public int getBlockPower(BlockFace face) {
         int power = 0;
-        // TODO auto-generated method stub
+        net.minecraft.world.World world = this.world;
+        int x = getX();
+        int y = getY();
+        int z = getZ();
+        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isEmittingRedstonePower(new BlockPos(x, y - 1, z), Direction.DOWN)) power = getPower(power, world.getBlockState(new BlockPos(x, y - 1, z)));
+        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isEmittingRedstonePower(new BlockPos(x, y + 1, z), Direction.UP)) power = getPower(power, world.getBlockState(new BlockPos(x, y + 1, z)));
+        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isEmittingRedstonePower(new BlockPos(x + 1, y, z), Direction.EAST)) power = getPower(power, world.getBlockState(new BlockPos(x + 1, y, z)));
+        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isEmittingRedstonePower(new BlockPos(x - 1, y, z), Direction.WEST)) power = getPower(power, world.getBlockState(new BlockPos(x - 1, y, z)));
+        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isEmittingRedstonePower(new BlockPos(x, y, z - 1), Direction.NORTH)) power = getPower(power, world.getBlockState(new BlockPos(x, y, z - 1)));
+        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isEmittingRedstonePower(new BlockPos(x, y, z + 1), Direction.SOUTH)) power = getPower(power, world.getBlockState(new BlockPos(x, y, z + 1)));
         return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
+    }
+
+    private static int getPower(int i, net.minecraft.block.BlockState iblockdata) {
+        if (!iblockdata.getBlock().is(Blocks.REDSTONE_WIRE)) {
+            return i;
+        } else {
+            int j = iblockdata.get(RedstoneWireBlock.POWER);
+            return j > i ? j : i;
+        }
     }
 
     @Override

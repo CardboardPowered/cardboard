@@ -49,6 +49,7 @@ dependencies {
 
 	// NMS Remapping
 	extraLibs group: "net.md-5", name: "SpecialSource", version: "1.8.6"
+	
 
     configurations.compile.extendsFrom(configurations.extraLibs)
 

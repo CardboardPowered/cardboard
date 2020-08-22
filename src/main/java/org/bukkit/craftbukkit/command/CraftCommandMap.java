@@ -7,7 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
 
 import com.javazilla.bukkitfabric.command.ModListCommand;
-//import com.javazilla.bukkitfabric.command.PluginsCommand;
+import com.javazilla.bukkitfabric.command.PluginsCommand;
 import com.javazilla.bukkitfabric.command.VersionCommand;
 
 public class CraftCommandMap extends SimpleCommandMap {
@@ -19,6 +19,8 @@ public class CraftCommandMap extends SimpleCommandMap {
         for (String s : new String[] {"version", "ver", "about"})
             register("bukkit", new VersionCommand(s));
         register("bukkit", new ModListCommand("fabricmods"));
+        for (String s : new String[] {"plugins", "pl"})
+            register("bukkit", new PluginsCommand(s));
     }
 
     public Map<String, Command> getKnownCommands() {

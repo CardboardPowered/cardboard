@@ -953,7 +953,6 @@ public class CraftWorld implements World {
     @Override
     public void setAnimalSpawnLimit(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -1048,7 +1047,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setStorm(boolean arg0) {
-        // TODO Auto-generated method stub
+        nms.getLevelProperties().setRaining(arg0);
     }
 
     @Override
@@ -1083,7 +1082,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setTime(long arg0) {
-        // TODO Auto-generated method stub
+        nms.setTimeOfDay(arg0);
     }
 
     @Override
