@@ -12,7 +12,6 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -31,15 +30,12 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
-import net.minecraft.util.math.BlockPos;
 
 public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
@@ -307,7 +303,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public EntityType getType() {
         // TODO Auto-generated method stub
-        return null;
+        return EntityType.UNKNOWN;
     }
 
     @Override
@@ -524,6 +520,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
         //    nms.teleportTo(((CraftWorld) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
         //    return true;
         //}
+        nms.teleport(location.getX(), location.getY(), location.getZ());
 
         nms.updatePositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         nms.setHeadYaw(location.getYaw());

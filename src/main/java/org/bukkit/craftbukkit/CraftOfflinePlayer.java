@@ -1,14 +1,20 @@
 package org.bukkit.craftbukkit;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorldSaveHandler;
 import com.mojang.authlib.GameProfile;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.OperatorEntry;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.world.SaveProperties;
+import net.minecraft.world.WorldSaveHandler;
+
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,12 +34,12 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     private final GameProfile profile;
     private final CraftServer server;
-    private final SaveProperties storage;
+    private final WorldSaveHandler storage;
 
     protected CraftOfflinePlayer(CraftServer server, GameProfile profile) {
         this.server = server;
         this.profile = profile;
-        this.storage = (SaveProperties) (server.getServer().getSaveProperties());
+        this.storage = ((IMixinMinecraftServer)server.getServer()).getSaveHandler_BF();
     }
 
     public GameProfile getProfile() {
@@ -42,6 +48,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public boolean isOnline() {
+        System.out.println("isOnline: " + profile.toString() + ", " + (getPlayer() != null));
         return getPlayer() != null;
     }
 
@@ -54,8 +61,14 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         // This might not match lastKnownName but if not it should be more correct
         if (profile.getName() != null)
             return profile.getName();
- 
-        // TODO auto-generated method stub
+
+        CompoundTag data = getBukkitData();
+
+        if (data != null) {
+            if (data.contains("lastKnownName"))
+                return data.getString("lastKnownName");
+        }
+
         return null;
     }
 
@@ -70,18 +83,19 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public boolean isOp() {
-        return server.getHandle().getPlayerManager().getOpList().isOp(profile);
+        return server.getHandle().getPlayerManager().isOperator(profile);
     }
 
     @Override
     public void setOp(boolean value) {
-        if (value == isOp())
+        if (value == isOp()) {
             return;
+        }
 
         if (value) {
-            server.getHandle().getPlayerManager().getOpList().add(new OperatorEntry(profile, 4, false));
+            server.getHandle().getPlayerManager().addToOperators(profile);
         } else {
-            server.getHandle().getPlayerManager().getOpList().remove(profile);
+            server.getHandle().getPlayerManager().removeFromOperators(profile);
         }
     }
 
@@ -108,7 +122,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public boolean isWhitelisted() {
-        return server.getHandle().getPlayerManager().isWhitelisted(profile);
+        return server.getHandle().getPlayerManager().getWhitelist().isAllowed(profile);
     }
 
     @Override
@@ -131,8 +145,9 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     public static OfflinePlayer deserialize(Map<String, Object> args) {
         // Backwards comparability
-        if (args.get("name") != null)
+        if (args.get("name") != null) {
             return Bukkit.getServer().getOfflinePlayer((String) args.get("name"));
+        }
 
         return Bukkit.getServer().getOfflinePlayer(UUID.fromString((String) args.get("UUID")));
     }
@@ -149,12 +164,14 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof OfflinePlayer))
+        if (obj == null || !(obj instanceof OfflinePlayer)) {
             return false;
+        }
 
         OfflinePlayer other = (OfflinePlayer) obj;
-        if ((this.getUniqueId() == null) || (other.getUniqueId() == null))
+        if ((this.getUniqueId() == null) || (other.getUniqueId() == null)) {
             return false;
+        }
 
         return this.getUniqueId().equals(other.getUniqueId());
     }
@@ -166,8 +183,25 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         return hash;
     }
 
+    private CompoundTag getData() {
+        return ((IMixinWorldSaveHandler)storage).getPlayerData(getUniqueId().toString());
+    }
+
+    private CompoundTag getBukkitData() {
+        CompoundTag result = getData();
+
+        if (result != null) {
+            if (!result.contains("bukkit")) {
+                result.put("bukkit", new CompoundTag());
+            }
+            result = result.getCompound("bukkit");
+        }
+
+        return result;
+    }
+
     private File getDataFile() {
-        return new File(new File(server.getHandle().getSaveProperties().getLevelName(), "playerdata"), getUniqueId() + ".dat");
+        return new File(storage.playerDataDir, getUniqueId() + ".dat");
     }
 
     @Override
@@ -175,8 +209,18 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         Player player = getPlayer();
         if (player != null) return player.getFirstPlayed();
 
-        // TODO auto-generated method stub
-        return 0;
+        CompoundTag data = getBukkitData();
+
+        if (data != null) {
+            if (data.contains("firstPlayed")) {
+                return data.getLong("firstPlayed");
+            } else {
+                File file = getDataFile();
+                return file.lastModified();
+            }
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -184,19 +228,37 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         Player player = getPlayer();
         if (player != null) return player.getLastPlayed();
 
-        // TODO auto-generated method stub
-        return 0;
+        CompoundTag data = getBukkitData();
+
+        if (data != null) {
+            if (data.contains("lastPlayed")) {
+                return data.getLong("lastPlayed");
+            } else {
+                File file = getDataFile();
+                return file.lastModified();
+            }
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public boolean hasPlayedBefore() {
-        // TODO auto-generated method stub
-        return false;
+        return getData() != null;
     }
 
     @Override
     public Location getBedSpawnLocation() {
-        // TODO auto-generated method stub
+        CompoundTag data = getData();
+        if (data == null) return null;
+
+        if (data.contains("SpawnX") && data.contains("SpawnY") && data.contains("SpawnZ")) {
+            String spawnWorld = data.getString("SpawnWorld");
+            if (spawnWorld.equals("")) {
+                spawnWorld = server.getWorlds().get(0).getName();
+            }
+            return new Location(server.getWorld(spawnWorld), data.getInt("SpawnX"), data.getInt("SpawnY"), data.getInt("SpawnZ"));
+        }
         return null;
     }
 

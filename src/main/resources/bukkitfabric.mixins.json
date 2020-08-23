@@ -22,7 +22,9 @@
 	"MixinPlayerInventory",
 	"MixinItemEntity",
 	"MixinGameMessageS2CPacket",
-	"MixinHandshakeC2SPacket"
+	"MixinHandshakeC2SPacket",
+	"MixinWorldSaveHandler",
+	"MixinServerLoginNetworkHandler"
   ],
   "injectors": {
     "defaultRequire": 1

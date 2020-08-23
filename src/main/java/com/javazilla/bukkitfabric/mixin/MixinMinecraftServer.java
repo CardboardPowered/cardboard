@@ -107,6 +107,11 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
 
     private boolean forceTicks;
 
+    @Override
+    public WorldSaveHandler getSaveHandler_BF() {
+        return saveHandler;
+    }
+
     /**
      * @reason Bukkit
      * @author Bukkit4Fabric

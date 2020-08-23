@@ -12,6 +12,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.SaveProperties;
+import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.ServerWorldProperties;
 
@@ -34,5 +35,7 @@ public interface IMixinMinecraftServer {
     public void loadSpawn(WorldGenerationProgressListener worldGenerationProgressListener, ServerWorld internal);
 
     public void initWorld(ServerWorld worldserver, ServerWorldProperties iworlddataserver, SaveProperties saveData, GeneratorOptions generatorsettings);
+
+    public WorldSaveHandler getSaveHandler_BF();
 
 }

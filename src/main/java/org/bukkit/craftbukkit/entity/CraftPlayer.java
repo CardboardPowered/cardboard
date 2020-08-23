@@ -48,6 +48,7 @@ import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 //import net.minecraft.network.PacketByteBuf;
@@ -70,9 +71,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         this.nms = entity;
     }
 
+    @Override
     public ServerPlayerEntity getHandle() {
         return nms;
     }
+
+    @Override
+    public UUID getUniqueId() {
+        return super.getUniqueId();
+    }
+
 
     @Override
     public void abandonConversation(Conversation arg0) {
@@ -210,6 +218,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public boolean isBanned() {
         return getServer().getBanList(org.bukkit.BanList.Type.NAME).isBanned(getName());
+    }
+
+    @Override
+    public String getName() {
+        return nms.getEntityName();
     }
 
     @Override
@@ -1039,6 +1052,10 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setBedSpawnLocation(Location location, boolean force) {
+    }
+
+    public void setFirstPlayed(long modified) {
+        // TODO Auto-generated method stub
     }
 
 }

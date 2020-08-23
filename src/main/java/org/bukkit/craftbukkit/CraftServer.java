@@ -68,6 +68,7 @@ import org.bukkit.craftbukkit.tag.CraftBlockTag;
 import org.bukkit.craftbukkit.tag.CraftItemTag;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.util.DatFileFilter;
 import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -153,6 +154,7 @@ import net.minecraft.village.ZombieSiegeManager;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.WanderingTraderManager;
+import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
@@ -169,7 +171,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
-    public final String bukkitVersion = "1.16.1-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.16.2-R0.1-SNAPSHOT";
     public final String serverVersion;
 
     private final Logger logger = BukkitLogger.getLogger();
@@ -181,7 +183,7 @@ public class CraftServer implements Server {
     private final CraftScheduler scheduler = new CraftScheduler();
     private final ConsoleCommandSender consoleCommandSender = new CraftConsoleCommandSender();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
-    private final List<CraftPlayer> playerView;
+    public final List<CraftPlayer> playerView;
     private WarningState warningState = WarningState.DEFAULT;
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
@@ -192,6 +194,7 @@ public class CraftServer implements Server {
     public static CraftServer INSTANCE;
 
     public CraftServer(MinecraftDedicatedServer nms) {
+        INSTANCE = this;
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
         server = nms;
         commandMap = new CraftCommandMap(this);
@@ -201,13 +204,8 @@ public class CraftServer implements Server {
         configuration.options().copyDefaults(true);
         configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
 
-        this.playerView = Collections.unmodifiableList(Lists.transform(nms.getPlayerManager().getPlayerList(), new Function<ServerPlayerEntity, CraftPlayer>() {
-            @Override
-            public CraftPlayer apply(ServerPlayerEntity player) {
-                return (CraftPlayer) ((IMixinServerEntityPlayer)player).getBukkitEntity();
-            }
-        }));
-        INSTANCE = this;
+        System.out.println("SETTING UP PLAYERVIEW");
+        this.playerView = new ArrayList<>();
     }
 
     public void addWorldToMap(CraftWorld world) {
@@ -789,8 +787,11 @@ public class CraftServer implements Server {
     public OfflinePlayer getOfflinePlayer(String name) {
         OfflinePlayer result = getPlayerExact(name);
         if (result == null) {
-            GameProfile profile = getServer().getUserCache().findByName(name);
-            result = getOfflinePlayer(profile == null ? new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name) : profile);
+            GameProfile profile = server.getUserCache().findByName(name);
+            if (profile == null) {
+                // Make an OfflinePlayer using an offline mode UUID since the name has no profile
+                result = getOfflinePlayer(new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name));
+            } else result = getOfflinePlayer(profile);// Use the GameProfile even when we get a UUID so we ensure we still have a name
         } else offlinePlayers.remove(result.getUniqueId());
 
         return result;
@@ -798,6 +799,7 @@ public class CraftServer implements Server {
 
     @Override
     public OfflinePlayer getOfflinePlayer(UUID id) {
+        System.out.println("OFFLINE UUID: " + id.toString());
         OfflinePlayer result = getPlayer(id);
         if (result == null) {
             result = offlinePlayers.get(id);
@@ -818,7 +820,22 @@ public class CraftServer implements Server {
 
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
-        return offlinePlayers.values().toArray(new OfflinePlayer[1]);
+        WorldSaveHandler storage = ((IMixinMinecraftServer)server).getSaveHandler_BF();
+        String[] files = storage.playerDataDir.list(new DatFileFilter());
+        Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
+
+        for (String file : files) {
+            try {
+                players.add(getOfflinePlayer(UUID.fromString(file.substring(0, file.length() - 4))));
+            } catch (IllegalArgumentException ex) {
+                // Who knows what is in this directory, just ignore invalid files
+            }
+        }
+
+        players.addAll(getOnlinePlayers());
+
+        return players.toArray(new OfflinePlayer[players.size()]);
+        //return offlinePlayers.values().toArray(new OfflinePlayer[1]);
     }
 
     @Override
@@ -841,24 +858,18 @@ public class CraftServer implements Server {
 
     @Override
     public Player getPlayer(String name) {
-        ServerPlayerEntity e = getServer().getPlayerManager().getPlayer(name);
-        if (null == e)
-            return null;
-        return (Player) ((IMixinEntity)(Object)e).getBukkitEntity();
+        return getPlayer(getServer().getPlayerManager().getPlayer(name));
     }
 
     @Override
     public Player getPlayer(UUID uuid) {
-        ServerPlayerEntity e = getServer().getPlayerManager().getPlayer(uuid);
-        if (null == e)
-            return null;
-        return (Player) ((IMixinServerEntityPlayer)(Object)e).getBukkitEntity();
+        return getPlayer(getServer().getPlayerManager().getPlayer(uuid));
     }
 
     public Player getPlayer(ServerPlayerEntity e) {
         if (null == e)
             return null;
-        return (Player) ((IMixinEntity)(Object)e).getBukkitEntity();
+        return (Player) ((IMixinServerEntityPlayer)(Object)e).getBukkitEntity();
     }
 
     @Override
@@ -1280,13 +1291,11 @@ public class CraftServer implements Server {
         try {
             content = Files.readAllLines(f.toPath());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         List<String> toreturn = new ArrayList<>();
         for (String s : content) {
             s = s.trim();
-            getLogger().info(s + "," + s.startsWith("\"uuid\":"));
             if (s.startsWith("\"uuid\":")) {
                 s = s.substring(s.indexOf(":")+1).replace('"', ' ').trim();
                 toreturn.add(s);
