@@ -24,7 +24,8 @@
 	"MixinGameMessageS2CPacket",
 	"MixinHandshakeC2SPacket",
 	"MixinWorldSaveHandler",
-	"MixinServerLoginNetworkHandler"
+	"MixinServerLoginNetworkHandler",
+	"MixinServerPlayerInteractionManager"
   ],
   "injectors": {
     "defaultRequire": 1
