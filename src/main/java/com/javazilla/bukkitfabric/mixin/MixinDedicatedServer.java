@@ -62,7 +62,6 @@ public class MixinDedicatedServer extends MixinMinecraftServer {
     @Inject(at = @At("TAIL"), method = "exit")
     public void killProcess(CallbackInfo ci) {
         BukkitLogger.getLogger().info("Goodbye!");
-        System.exit(0); // CraftBukkit
     }
 
     @Overwrite

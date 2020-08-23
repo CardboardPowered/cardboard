@@ -8,9 +8,12 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.Executor;
+import java.util.function.BooleanSupplier;
+
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,6 +21,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableList;
@@ -96,12 +100,12 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
     @Shadow private long timeReference;
     @Shadow public DataCommandStorage dataCommandStorage;
     @Shadow public SaveProperties saveProperties;
+    @Shadow private int ticks;
 
     @Shadow public void initScoreboard(PersistentStateManager arg0) {}
     @Shadow private void method_27731() {}
     @Shadow public void updateMobSpawnOptions() {}
     @Shadow public void setToDebugWorldProperties(SaveProperties saveProperties2) {}
-
 
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 
@@ -360,6 +364,19 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
             ci.setReturnValue(this.forceTicks);
     }
 
+    @Inject(at = @At("HEAD"), method = "tickWorlds")
+    public void doBukkitRunnables(BooleanSupplier b, CallbackInfo ci) {
+        ((CraftScheduler)CraftServer.INSTANCE.getScheduler()).mainThreadHeartbeat(ticks);
+        while (!processQueue.isEmpty())
+            processQueue.remove().run();
+    }
+
+    @Inject(at = @At("HEAD"), method = "shutdown")
+    public void doStop(CallbackInfo ci) {
+        if (null != CraftServer.INSTANCE)
+            CraftServer.INSTANCE.getPluginManager().disablePlugins();
+    }
+
     public void initWorld(ServerWorld worldserver, ServerWorldProperties worldProperties, SaveProperties saveData, GeneratorOptions generatorsettings) {
         boolean flag = generatorsettings.isDebugWorld();
         // TODO Bukkit generators
@@ -414,10 +431,7 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
             }
 
             worldProperties.setSpawnPos(chunkcoordintpair.getCenterBlockPos().add(8, chunkgenerator.getSpawnHeight(), 8), 0.0F);
-            int i = 0;
-            int j = 0;
-            int k = 0;
-            int l = -1;
+            int i = 0, j = 0, k = 0, l = -1;
 
             for (int i1 = 0; i1 < 1024; ++i1) {
                 if (i > -16 && i <= 16 && j > -16 && j <= 16) {
@@ -430,10 +444,8 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
                 }
 
                 if (i == j || i < 0 && i == -j || i > 0 && i == 1 - j) {
-                    int j1 = k;
-
                     k = -l;
-                    l = j1;
+                    l = k;
                 }
 
                 i += k;

@@ -902,7 +902,7 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public BukkitScheduler getScheduler() {
+    public CraftScheduler getScheduler() {
         return scheduler;
     }
 
