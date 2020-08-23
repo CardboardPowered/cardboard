@@ -54,6 +54,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 import org.bukkit.craftbukkit.command.CraftCommandMap;
@@ -141,6 +142,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.dedicated.PendingServerCommand;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.TagGroup;
@@ -1333,6 +1335,7 @@ public class CraftServer implements Server {
                 player.spigot().sendMessage(components);
         }
     };
+    public boolean playerCommandState;
 
     @Override
     public Spigot spigot() {
@@ -1349,6 +1352,26 @@ public class CraftServer implements Server {
     public Recipe getRecipe(NamespacedKey arg0) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public boolean dispatchServerCommand(CommandSender sender, PendingServerCommand serverCommand) {
+        if (sender instanceof Conversable) {
+            Conversable conversable = (Conversable) sender;
+
+            if (conversable.isConversing()) {
+                conversable.acceptConversationInput(serverCommand.command);
+                return true;
+            }
+        }
+        try {
+            this.playerCommandState = true;
+            return dispatchCommand(sender, serverCommand.command);
+        } catch (Exception ex) {
+            getLogger().log(Level.WARNING, "Unexpected exception while parsing console command \"" + serverCommand.command + '"', ex);
+            return false;
+        } finally {
+            this.playerCommandState = false;
+        }
     }
 
 }
