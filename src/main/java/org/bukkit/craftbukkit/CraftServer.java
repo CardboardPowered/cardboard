@@ -4,8 +4,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +25,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
@@ -67,6 +72,7 @@ import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.tag.CraftBlockTag;
 import org.bukkit.craftbukkit.tag.CraftItemTag;
+import org.bukkit.craftbukkit.util.CraftIconCache;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.util.DatFileFilter;
@@ -102,9 +108,7 @@ import org.bukkit.plugin.SimpleServicesManager;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.util.CachedServerIcon;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 
@@ -117,10 +121,8 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
@@ -129,6 +131,9 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -191,6 +196,7 @@ public class CraftServer implements Server {
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private YamlConfiguration configuration;
+    private CraftIconCache icon;
 
     public static MinecraftDedicatedServer server;
     public static CraftServer INSTANCE;
@@ -206,8 +212,50 @@ public class CraftServer implements Server {
         configuration.options().copyDefaults(true);
         configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
 
-        System.out.println("SETTING UP PLAYERVIEW");
         this.playerView = new ArrayList<>();
+        loadIcon();
+    }
+
+    private void loadIcon() {
+        icon = new CraftIconCache(null);
+        try {
+            final File file = new File(new File("."), "server-icon.png");
+            if (file.isFile()) {
+                icon = loadServerIcon0(file);
+            }
+        } catch (Exception ex) {
+            getLogger().log(Level.WARNING, "Couldn't load server icon", ex);
+        }
+    }
+
+    @Override
+    public CraftIconCache loadServerIcon(File file) throws Exception {
+        Validate.notNull(file, "File cannot be null");
+        if (!file.isFile()) {
+            throw new IllegalArgumentException(file + " is not a file");
+        }
+        return loadServerIcon0(file);
+    }
+
+    static CraftIconCache loadServerIcon0(File file) throws Exception {
+        return loadServerIcon0(ImageIO.read(file));
+    }
+
+    @Override
+    public CraftIconCache loadServerIcon(BufferedImage image) throws Exception {
+        Validate.notNull(image, "Image cannot be null");
+        return loadServerIcon0(image);
+    }
+
+    static CraftIconCache loadServerIcon0(BufferedImage image) throws Exception {
+        ByteBuf bytebuf = Unpooled.buffer();
+
+        Validate.isTrue(image.getWidth() == 64, "Must be 64 pixels wide");
+        Validate.isTrue(image.getHeight() == 64, "Must be 64 pixels high");
+        ImageIO.write(image, "PNG", new ByteBufOutputStream(bytebuf));
+        ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
+
+        return new CraftIconCache("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
     }
 
     public void addWorldToMap(CraftWorld world) {
@@ -913,9 +961,8 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public CachedServerIcon getServerIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    public CraftIconCache getServerIcon() {
+        return icon;
     }
 
     @Override
@@ -1065,18 +1112,6 @@ public class CraftServer implements Server {
     @Override
     public boolean isPrimaryThread() {
         return server.isOnThread();
-    }
-
-    @Override
-    public CachedServerIcon loadServerIcon(File arg0) throws IllegalArgumentException, Exception {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public CachedServerIcon loadServerIcon(BufferedImage arg0) throws IllegalArgumentException, Exception {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override

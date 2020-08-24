@@ -25,7 +25,9 @@
 	"MixinHandshakeC2SPacket",
 	"MixinWorldSaveHandler",
 	"MixinServerLoginNetworkHandler",
-	"MixinServerPlayerInteractionManager"
+	"MixinServerPlayerInteractionManager",
+	"MixinServerQueryNetworkHandler",
+	"MixinLegacyQueryHandler"
   ],
   "injectors": {
     "defaultRequire": 1
