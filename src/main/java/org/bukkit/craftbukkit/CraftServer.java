@@ -824,7 +824,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getMotd() {
-        return getServer().getMotd();
+        return getServer().getServerMotd();
     }
 
     @Override
