@@ -231,9 +231,8 @@ public class CraftServer implements Server {
     @Override
     public CraftIconCache loadServerIcon(File file) throws Exception {
         Validate.notNull(file, "File cannot be null");
-        if (!file.isFile()) {
+        if (!file.isFile())
             throw new IllegalArgumentException(file + " is not a file");
-        }
         return loadServerIcon0(file);
     }
 
