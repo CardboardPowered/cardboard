@@ -38,6 +38,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
 import org.bukkit.craftbukkit.util.WorldUUID;
@@ -52,6 +53,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.world.SpawnChangeEvent;
+import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
@@ -70,6 +72,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
@@ -983,8 +986,20 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public void setFullTime(long arg0) {
-        // TODO Auto-generated method stub
+    public void setFullTime(long time) {
+        TimeSkipEvent event = new TimeSkipEvent(this, TimeSkipEvent.SkipReason.CUSTOM, time - nms.getTimeOfDay());
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
+
+        nms.setTimeOfDay(nms.getTimeOfDay() + event.getSkipAmount());
+
+        for (Player p : getPlayers()) {
+            CraftPlayer cp = (CraftPlayer) p;
+            if (cp.getHandle().networkHandler == null) continue;
+
+            cp.getHandle().networkHandler.sendPacket(new WorldTimeUpdateS2CPacket(cp.getHandle().world.getTime(), cp.getHandle().getServerWorld().getTime(), cp.getHandle().world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));
+        }
     }
 
     @Override
