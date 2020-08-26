@@ -27,7 +27,8 @@
 	"MixinServerLoginNetworkHandler",
 	"MixinServerPlayerInteractionManager",
 	"MixinServerQueryNetworkHandler",
-	"MixinLegacyQueryHandler"
+	"MixinLegacyQueryHandler",
+	"MixinBlockItem"
   ],
   "injectors": {
     "defaultRequire": 1

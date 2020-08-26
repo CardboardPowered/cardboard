@@ -37,8 +37,6 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
 
             class ServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
 
-                CraftIconCache icon = CraftServer.INSTANCE.getServerIcon();
-
                 ServerListPingEvent() {
                     super(((InetSocketAddress) connection.getAddress()).getAddress(), server.getServerMotd(), server.getPlayerManager().getCurrentPlayerCount(), server.getPlayerManager().getMaxPlayerCount());
                 }
@@ -47,7 +45,6 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
                 public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
                     if (!(icon instanceof CraftIconCache))
                         throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.CraftServer.class);
-                    this.icon = (CraftIconCache) icon;
                 }
 
             }
@@ -56,7 +53,6 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
             ServerMetadata ping = new ServerMetadata();
-            ping.setFavicon(event.icon.value);
             ping.setDescription(CraftChatMessage.fromString(event.getMotd(), true)[0]);
 
             ping.setPlayers(server.getServerMetadata().players);
