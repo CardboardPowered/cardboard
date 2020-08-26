@@ -20,9 +20,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -34,6 +39,7 @@ import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -234,6 +240,32 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         this.teleportRequestTick = this.ticks;
         this.player.updatePositionAndAngles(d0, d1, d2, f, f1);
         this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(d0 - d3, d1 - d4, d2 - d5, f - f2, f1 - f3, set, this.requestedTeleportId));
+    }
+
+    @Inject(at = @At("HEAD"), method = "onClientCommand", cancellable = true)
+    public void onClientCommand(ClientCommandC2SPacket packetplayinentityaction, CallbackInfo ci) {
+        NetworkThreadUtils.forceMainThread(packetplayinentityaction, get(), this.player.getServerWorld());
+        if (this.player.removed) return;
+        switch (packetplayinentityaction.getMode()) {
+            case PRESS_SHIFT_KEY:
+            case RELEASE_SHIFT_KEY:
+                PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayer(), packetplayinentityaction.getMode() == ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY);
+                CraftServer.INSTANCE.getPluginManager().callEvent(event);
+
+                if (event.isCancelled())
+                    ci.cancel();
+                break;
+            case START_SPRINTING:
+            case STOP_SPRINTING:
+                PlayerToggleSprintEvent e2 = new PlayerToggleSprintEvent(this.getPlayer(), packetplayinentityaction.getMode() == ClientCommandC2SPacket.Mode.START_SPRINTING);
+                CraftServer.INSTANCE.getPluginManager().callEvent(e2);
+
+                if (e2.isCancelled())
+                    ci.cancel();
+                break;
+            default:
+                break;
+        }
     }
 
     private ServerPlayNetworkHandler get() {
