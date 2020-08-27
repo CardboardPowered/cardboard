@@ -7,7 +7,12 @@ import org.bukkit.event.block.BlockCanBuildEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.advancement.criterion.Criteria;
@@ -26,7 +31,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-@Mixin(BlockItem.class)
+@Mixin(value = BlockItem.class, priority = 999) // Priority 999 to allow Carpet Mod
 public class MixinBlockItem {
 
     @Shadow public BlockState getPlacementState(ItemPlacementContext blockactioncontext) {return null;}
@@ -37,18 +42,22 @@ public class MixinBlockItem {
     @Shadow protected boolean checkStatePlacement() {return false;}
 
     /**
+     * We basically @Overwrite the whole method but
+     * we use @Inject to allow other mods to not crash when injecting code
+     * (ex. Carpet Mod)
+     * 
      * @author BukkitFabric
      * @reason Bukkit Overwrite
      */
-    @Overwrite
-    public ActionResult place(ItemPlacementContext blockactioncontext) {
+    @Inject(at = @At("HEAD"), method = "place", cancellable = true)
+    public void place(ItemPlacementContext blockactioncontext, CallbackInfoReturnable<ActionResult> ci) {
         if (!blockactioncontext.canPlace()) {
-            return ActionResult.FAIL;
+            ci.setReturnValue(ActionResult.FAIL);
         } else {
             ItemPlacementContext blockactioncontext1 = this.getPlacementContext(blockactioncontext);
 
             if (blockactioncontext1 == null) {
-                return ActionResult.FAIL;
+                ci.setReturnValue(ActionResult.FAIL);
             } else {
                 BlockState iblockdata = this.getPlacementState(blockactioncontext1);
                 org.bukkit.block.BlockState blockstate = null;
@@ -56,9 +65,9 @@ public class MixinBlockItem {
                     blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(blockactioncontext1.getWorld(), blockactioncontext1.getBlockPos());
 
                 if (iblockdata == null) {
-                    return ActionResult.FAIL;
+                    ci.setReturnValue(ActionResult.FAIL);
                 } else if (!this.place(blockactioncontext1, iblockdata)) {
-                    return ActionResult.FAIL;
+                    ci.setReturnValue(ActionResult.FAIL);
                 } else {
                     BlockPos blockposition = blockactioncontext1.getBlockPos();
                     World world = blockactioncontext1.getWorld();
@@ -76,7 +85,7 @@ public class MixinBlockItem {
                             org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent((ServerWorld) world, entityhuman, blockactioncontext1.getHand(), blockstate, blockposition.getX(), blockposition.getY(), blockposition.getZ());
                             if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
                                 blockstate.update(true, false);
-                                return ActionResult.FAIL;
+                                ci.setReturnValue(ActionResult.FAIL);
                             }
                         }
                         if (entityhuman instanceof ServerPlayerEntity)
@@ -85,7 +94,7 @@ public class MixinBlockItem {
                     if ((entityhuman == null || !entityhuman.abilities.creativeMode) && itemstack != ItemStack.EMPTY)
                         itemstack.decrement(1);
 
-                    return ActionResult.success(world.isClient);
+                    ci.setReturnValue(ActionResult.success(world.isClient));
                 }
             }
         }
