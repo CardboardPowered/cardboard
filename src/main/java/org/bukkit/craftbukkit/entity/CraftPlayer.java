@@ -39,6 +39,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.interfaces.IMixinGameMessagePacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
@@ -48,12 +49,10 @@ import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
-//import net.minecraft.network.PacketByteBuf;
-//import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -915,43 +914,36 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        Preconditions.checkArgument(location != null, "location");
+        Preconditions.checkArgument(location.getWorld() != null, "location.world");
         location.checkFinite();
         ServerPlayerEntity entity = getHandle();
 
         if (getHealth() == 0 || entity.removed || entity.networkHandler == null || entity.hasPassengers())
             return false;
 
-        // From = Players current Location
         Location from = this.getLocation();
-        // To = Players new Location if Teleport is Successful
         Location to = location;
-        // Create & Call the Teleport Event.
+
         PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
         Bukkit.getPluginManager().callEvent(event);
 
-        // Return False to inform the Plugin that the Teleport was unsuccessful/cancelled.
         if (event.isCancelled())
             return false;
 
-        // If this player is riding another entity, we must dismount before teleporting.
         entity.stopRiding();
 
-        // Update the From Location
         from = event.getFrom();
-        // Grab the new To Location dependent on whether the event was cancelled.
         to = event.getTo();
-        // Grab the To and From World Handles.
-        ServerWorld fromWorld = (ServerWorld) ((CraftWorld) from.getWorld()).getHandle();
+
         ServerWorld toWorld = (ServerWorld) ((CraftWorld) to.getWorld()).getHandle();
 
-        // Close any foreign inventory
         if (getHandle().inventory != getHandle().inventory)
             getHandle().closeCurrentScreen();
 
-        // Check if the fromWorld and toWorld are the same.
-        if (fromWorld == toWorld)
+        if (from.getWorld().equals(to.getWorld()))
              ((IMixinPlayNetworkHandler)(Object)entity.networkHandler).teleport(to);
-        else ((IMixinPlayerManager)CraftServer.server.getPlayerManager()).moveToWorld(entity, toWorld.getDimension(), true, to, true);
+        else ((IMixinPlayerManager)(PlayerManager)CraftServer.server.getPlayerManager()).moveToWorld(entity, toWorld, true, to, true);
 
         return true;
     }

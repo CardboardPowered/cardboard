@@ -29,6 +29,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
@@ -509,6 +510,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public boolean teleport(Location location, TeleportCause arg1) {
         location.checkFinite();
+        BukkitFabricMod.LOGGER.info("ENTITY TELEPORT DEBUG!!!");
 
         if (nms.hasPassengers() || nms.removed)
             return false;

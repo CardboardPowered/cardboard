@@ -710,6 +710,18 @@ public class CraftWorld implements World {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+
+        final CraftWorld other = (CraftWorld) obj;
+
+        return this.getName().equals(other.getName());
+    }
+
+    @Override
     public int getWaterAnimalSpawnLimit() {
         // TODO Auto-generated method stub
         return 0;

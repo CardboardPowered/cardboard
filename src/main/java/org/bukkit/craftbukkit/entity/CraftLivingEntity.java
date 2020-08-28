@@ -24,10 +24,15 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.entity.damage.DamageSource;
+
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+
+    public net.minecraft.entity.LivingEntity nms;
 
     public CraftLivingEntity(net.minecraft.entity.Entity entity) {
         super(entity);
+        this.nms = (net.minecraft.entity.LivingEntity) entity;
         // TODO Auto-generated constructor stub
     }
 
@@ -39,14 +44,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public void damage(double arg0) {
-        // TODO Auto-generated method stub
-
+        nms.damage(DamageSource.MAGIC, (float)arg0);
     }
 
     @Override
     public void damage(double arg0, Entity arg1) {
-        // TODO Auto-generated method stub
-
+        nms.damage(DamageSource.mob((net.minecraft.entity.LivingEntity) arg1), (float) arg0);
     }
 
     @Override
@@ -57,38 +60,34 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public double getHealth() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getHealth();
     }
 
     @Override
     public double getMaxHealth() {
         // TODO Auto-generated method stub
-        return 0;
+        return nms.getMaxHealth();
     }
 
     @Override
     public void resetMaxHealth() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setAbsorptionAmount(double arg0) {
-        // TODO Auto-generated method stub
-
+        nms.setAbsorptionAmount((float)arg0);
     }
 
     @Override
     public void setHealth(double arg0) {
-        // TODO Auto-generated method stub
-
+        nms.setHealth((float) arg0);
     }
 
     @Override
     public void setMaxHealth(double arg0) {
-        // TODO Auto-generated method stub
-
+        // TODO Max health
+        nms.setHealth((float) arg0);
     }
 
     @Override
@@ -328,7 +327,6 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void setAI(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
