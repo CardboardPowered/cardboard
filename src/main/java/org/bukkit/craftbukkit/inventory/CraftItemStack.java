@@ -1,15 +1,15 @@
 package org.bukkit.craftbukkit.inventory;
 
-import static org.bukkit.craftbukkit.inventory.CraftMetaItem.*;
-import com.google.common.collect.ImmutableMap;
+import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS;
+import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_ID;
+import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
+
 import java.util.Map;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.util.CraftLegacy;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -18,7 +18,16 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
-import com.javazilla.bukkitfabric.interfaces.IMixinItemStack;
+
+import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Dynamic;
+
+import net.minecraft.datafixer.TypeReferences;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.Item;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
@@ -122,7 +131,7 @@ public final class CraftItemStack extends ItemStack {
         } else if (handle == null) {
             handle = new net.minecraft.item.ItemStack(CraftMagicNumbers.getItem(type), 1);
         } else {
-            ((IMixinItemStack)(Object)handle).setItem(CraftMagicNumbers.getItem(type));
+            handle.item = CraftMagicNumbers.getItem(type);
             if (hasItemMeta()) {
                 // This will create the appropriate item meta, which will contain all the data we intend to keep
                 setItemMeta(handle, getItemMeta(handle));
@@ -536,18 +545,29 @@ public final class CraftItemStack extends ItemStack {
         Item oldItem = item.getItem();
         Item newItem = CraftMagicNumbers.getItem(CraftItemFactory.instance().updateMaterial(itemMeta, CraftMagicNumbers.getMaterial(oldItem)));
         if (oldItem != newItem)
-            ((IMixinItemStack)(Object)item).setItem(newItem);
+            item.item = newItem;
 
         CompoundTag tag = new CompoundTag();
         item.setTag(tag);
 
         ((CraftMetaItem) itemMeta).applyToItem(tag);
-        ((IMixinItemStack)(Object)item).convertStack(((CraftMetaItem) itemMeta).getVersion());
+        convertStack_BF(item, ((CraftMetaItem) itemMeta).getVersion());
 
         if (item.getItem() != null && item.getItem().isDamageable()) // SpigotCraft#463 
             item.setDamage(item.getDamage());
 
         return true;
+    }
+
+    @SuppressWarnings({ "unchecked", "deprecation", "rawtypes" })
+    public static void convertStack_BF(net.minecraft.item.ItemStack item, int version) {
+        if (0 < version && version < CraftMagicNumbers.INSTANCE.getDataVersion()) {
+            CompoundTag savedStack = new CompoundTag();
+
+            item.toTag(savedStack);
+            savedStack = (CompoundTag) CraftServer.server.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic(NbtOps.INSTANCE, savedStack), version, CraftMagicNumbers.INSTANCE.getDataVersion()).getValue();
+            item.setTag(savedStack);
+        }
     }
 
     @Override

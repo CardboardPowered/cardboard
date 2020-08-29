@@ -3,15 +3,23 @@ package org.bukkit.craftbukkit.event;
 import java.net.InetAddress;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
@@ -21,10 +29,12 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
@@ -87,4 +97,58 @@ public class CraftEventFactory {
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
         return event;
     }
+
+    public static PlayerInteractEvent callPlayerInteractEvent(ServerPlayerEntity who, Action action, BlockPos position, Direction direction, ItemStack itemstack, Hand hand) {
+        return callPlayerInteractEvent(who, action, position, direction, itemstack, false, hand);
+    }
+
+    public static PlayerInteractEvent callPlayerInteractEvent(ServerPlayerEntity who, Action action, BlockPos position, Direction direction, ItemStack itemstack, boolean cancelledBlock, Hand hand) {
+        Player player = (who == null) ? null : (Player) ((IMixinServerEntityPlayer)who).getBukkitEntity();
+        CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
+
+        CraftWorld craftWorld = (CraftWorld) player.getWorld();
+        CraftServer craftServer = (CraftServer) player.getServer();
+
+        Block blockClicked = null;
+        if (position != null) {
+            blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
+        } else {
+            switch (action) {
+                case LEFT_CLICK_BLOCK:
+                    action = Action.LEFT_CLICK_AIR;
+                    break;
+                case RIGHT_CLICK_BLOCK:
+                    action = Action.RIGHT_CLICK_AIR;
+                    break;
+                default:
+                    break;
+            }
+        }
+        BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
+        if (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0)
+            itemInHand = null;
+
+        PlayerInteractEvent event = new PlayerInteractEvent(player, action, itemInHand, blockClicked, blockFace, (hand == null) ? null : ((hand == Hand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND));
+        if (cancelledBlock)
+            event.setUseInteractedBlock(Event.Result.DENY);
+        craftServer.getPluginManager().callEvent(event);
+
+        return event;
+    }
+
+    public static BlockDamageEvent callBlockDamageEvent(ServerPlayerEntity who, int x, int y, int z, ItemStack itemstack, boolean instaBreak) {
+        Player player = (who == null) ? null : (Player) ((IMixinServerEntityPlayer)who).getBukkitEntity();
+        CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
+
+        CraftWorld craftWorld = (CraftWorld) player.getWorld();
+        CraftServer craftServer = (CraftServer) player.getServer();
+
+        Block blockClicked = craftWorld.getBlockAt(x, y, z);
+
+        BlockDamageEvent event = new BlockDamageEvent(player, blockClicked, itemInHand, instaBreak);
+        craftServer.getPluginManager().callEvent(event);
+
+        return event;
+    }
+
 }
