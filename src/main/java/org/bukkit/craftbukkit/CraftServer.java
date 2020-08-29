@@ -1318,7 +1318,7 @@ public class CraftServer implements Server {
         Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
 
         Identifier mcKey = CraftNamespacedKey.toMinecraft(recipeKey);
-        for (Object2ObjectLinkedOpenHashMap<Identifier, net.minecraft.recipe.Recipe<?>> recipes : ((IMixinRecipeManager)getServer().getRecipeManager()).getRecipes().values())
+        for (Map<Identifier, net.minecraft.recipe.Recipe<?>> recipes : ((IMixinRecipeManager)getServer().getRecipeManager()).getRecipes().values())
             if (recipes.remove(mcKey) != null)
                 return true;
 

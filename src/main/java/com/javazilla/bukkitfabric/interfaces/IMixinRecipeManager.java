@@ -10,7 +10,7 @@ public interface IMixinRecipeManager {
 
     public void addRecipe(Recipe<?> irecipe);
 
-    public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>>> getRecipes();
+    public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes();
 
     public void clearRecipes();
 

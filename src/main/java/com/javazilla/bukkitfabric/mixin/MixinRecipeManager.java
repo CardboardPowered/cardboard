@@ -37,16 +37,19 @@ public class MixinRecipeManager implements IMixinRecipeManager {
     @Shadow public boolean errored;
     @Shadow public static Recipe<?> deserialize(Identifier minecraftkey, JsonObject jsonobject) {return null;}
 
-    public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>>> recipes = ImmutableMap.of(); // CraftBukkit
+   // public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>>> recipes_BF = ImmutableMap.of(); // CraftBukkit
+
+    @Shadow public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes = ImmutableMap.of();
 
     @Override
     public void addRecipe(Recipe<?> irecipe) {
-        Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>> map = this.recipes.get(irecipe.getType()); // CraftBukkit
+        Map<Identifier, Recipe<?>> map = this.recipes.get(irecipe.getType()); // CraftBukkit
 
         if (map.containsKey(irecipe.getId())) {
             throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.getId());
         } else {
-            map.putAndMoveToFirst(irecipe.getId(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
+            map.put(irecipe.getId(), irecipe);
+            //map.putAndMoveToFirst(irecipe.getId(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
         }
     }
 
@@ -107,7 +110,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
     }
 
     @Override
-    public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>>> getRecipes() {
+    public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes() {
         return recipes;
     }
 

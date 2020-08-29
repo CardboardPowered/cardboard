@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.inventory;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.inventory.Recipe;
 
@@ -9,13 +10,12 @@ import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 
 public class RecipeIterator implements Iterator<Recipe> {
 
-    private final Iterator<Map.Entry<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, net.minecraft.recipe.Recipe<?>>>> recipes;
+    private final Iterator<Entry<RecipeType<?>, Map<Identifier, net.minecraft.recipe.Recipe<?>>>> recipes;
     private Iterator<net.minecraft.recipe.Recipe<?>> current;
 
     public RecipeIterator() {
