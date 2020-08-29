@@ -13,4 +13,5 @@ public class CraftFurnaceFurnace extends CraftFurnace {
     public CraftFurnaceFurnace(Material material, FurnaceBlockEntity te) {
         super(material, te);
     }
+
 }

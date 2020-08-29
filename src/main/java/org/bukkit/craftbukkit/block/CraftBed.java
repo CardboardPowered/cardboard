@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Bed;
 import org.bukkit.block.Block;
 
+@SuppressWarnings("deprecation")
 public class CraftBed extends CraftBlockEntityState<BedBlockEntity> implements Bed {
 
     public CraftBed(Block block) {
@@ -60,4 +61,5 @@ public class CraftBed extends CraftBlockEntityState<BedBlockEntity> implements B
     public void setColor(DyeColor color) {
         throw new UnsupportedOperationException("Must set block type to appropriate bed colour");
     }
+
 }

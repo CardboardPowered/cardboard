@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 
+@SuppressWarnings("deprecation")
 public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerBlockEntity> implements CreatureSpawner {
 
     public CraftCreatureSpawner(final Block block) {
@@ -26,9 +27,8 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerBlockE
 
     @Override
     public void setSpawnedType(EntityType entityType) {
-        if (entityType == null || entityType.getName() == null) {
+        if (entityType == null || entityType.getName() == null)
             throw new IllegalArgumentException("Can't spawn EntityType " + entityType + " from mobspawners!");
-        }
 
         this.getSnapshot().getLogic().setEntityId(net.minecraft.entity.EntityType.get(entityType.getName()).get());
     }
@@ -42,9 +42,8 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerBlockE
     public void setCreatureTypeByName(String creatureType) {
         // Verify input
         EntityType type = EntityType.fromName(creatureType);
-        if (type == null) {
+        if (type == null)
             return;
-        }
         setSpawnedType(type);
     }
 
@@ -120,4 +119,5 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerBlockE
     public void setSpawnRange(int spawnRange) {
         this.getSnapshot().getLogic().spawnRange = spawnRange;
     }
+
 }

@@ -487,6 +487,7 @@ public class CraftBlock implements Block {
         return world.toServerWorld().isEmittingRedstonePower(position, blockFaceToNotch(face));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isBlockFaceIndirectlyPowered(BlockFace face) {
         int power = world.toServerWorld().getEmittedRedstonePower(position, blockFaceToNotch(face));
@@ -538,6 +539,7 @@ public class CraftBlock implements Block {
         return getNMS().getMaterial().isLiquid();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public PistonMoveReaction getPistonMoveReaction() {
         return PistonMoveReaction.getById(getNMS().getPistonBehavior().ordinal());

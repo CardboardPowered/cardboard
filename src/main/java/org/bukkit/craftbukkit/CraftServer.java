@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
@@ -67,7 +68,17 @@ import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.help.SimpleHelpMap;
+import org.bukkit.craftbukkit.inventory.CraftBlastingRecipe;
+import org.bukkit.craftbukkit.inventory.CraftCampfireRecipe;
+import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.inventory.CraftRecipe;
+import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
+import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
+import org.bukkit.craftbukkit.inventory.CraftSmithingRecipe;
+import org.bukkit.craftbukkit.inventory.CraftSmokingRecipe;
+import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
+import org.bukkit.craftbukkit.inventory.RecipeIterator;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.tag.CraftBlockTag;
@@ -89,12 +100,21 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.help.HelpMap;
+import org.bukkit.inventory.BlastingRecipe;
+import org.bukkit.inventory.CampfireRecipe;
+import org.bukkit.inventory.ComplexRecipe;
+import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.SmithingRecipe;
+import org.bukkit.inventory.SmokingRecipe;
+import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.Permissible;
@@ -117,6 +137,8 @@ import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
@@ -134,6 +156,7 @@ import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -382,9 +405,35 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public boolean addRecipe(Recipe arg0) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean addRecipe(Recipe recipe) {
+        CraftRecipe toAdd;
+        if (recipe instanceof CraftRecipe) {
+            toAdd = (CraftRecipe) recipe;
+        } else {
+            if (recipe instanceof ShapedRecipe) {
+                toAdd = CraftShapedRecipe.fromBukkitRecipe((ShapedRecipe) recipe);
+            } else if (recipe instanceof ShapelessRecipe) {
+                toAdd = CraftShapelessRecipe.fromBukkitRecipe((ShapelessRecipe) recipe);
+            } else if (recipe instanceof FurnaceRecipe) {
+                toAdd = CraftFurnaceRecipe.fromBukkitRecipe((FurnaceRecipe) recipe);
+            } else if (recipe instanceof BlastingRecipe) {
+                toAdd = CraftBlastingRecipe.fromBukkitRecipe((BlastingRecipe) recipe);
+            } else if (recipe instanceof CampfireRecipe) {
+                toAdd = CraftCampfireRecipe.fromBukkitRecipe((CampfireRecipe) recipe);
+            } else if (recipe instanceof SmokingRecipe) {
+                toAdd = CraftSmokingRecipe.fromBukkitRecipe((SmokingRecipe) recipe);
+            } else if (recipe instanceof StonecuttingRecipe) {
+                toAdd = CraftStonecuttingRecipe.fromBukkitRecipe((StonecuttingRecipe) recipe);
+            } else if (recipe instanceof SmithingRecipe) {
+                toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingRecipe) recipe);
+            } else if (recipe instanceof ComplexRecipe) {
+                throw new UnsupportedOperationException("Cannot add custom complex recipe");
+            } else {
+                return false;
+            }
+        }
+        toAdd.addToCraftingManager();
+        return true;
     }
 
     @Override
@@ -426,7 +475,7 @@ public class CraftServer implements Server {
 
     @Override
     public void clearRecipes() {
-        getServer().getRecipeManager().setRecipes(null);
+        ((IMixinRecipeManager)getServer().getRecipeManager()).clearRecipes();
     }
 
     @Override
@@ -663,17 +712,17 @@ public class CraftServer implements Server {
     @Override
     public boolean getAllowEnd() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public boolean getAllowFlight() {
-        return getServer().getProperties().allowFlight;
+        return server.getProperties().allowFlight;
     }
 
     @Override
     public boolean getAllowNether() {
-        return getServer().getProperties().allowNether;
+        return server.getProperties().allowNether;
     }
 
     @Override
@@ -745,6 +794,7 @@ public class CraftServer implements Server {
         return Utils.fromFabric(getServer().getDefaultGameMode());
     }
 
+    @SuppressWarnings("resource")
     @Override
     public Entity getEntity(UUID uuid) {
         for (ServerWorld world : getServer().getWorlds()) {
@@ -876,15 +926,12 @@ public class CraftServer implements Server {
         for (String file : files) {
             try {
                 players.add(getOfflinePlayer(UUID.fromString(file.substring(0, file.length() - 4))));
-            } catch (IllegalArgumentException ex) {
-                // Who knows what is in this directory, just ignore invalid files
-            }
+            } catch (IllegalArgumentException ex) {/* Who knows what is in this directory, just ignore invalid files*/}
         }
 
         players.addAll(getOnlinePlayers());
 
         return players.toArray(new OfflinePlayer[players.size()]);
-        //return offlinePlayers.values().toArray(new OfflinePlayer[1]);
     }
 
     @Override
@@ -943,9 +990,20 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public List<Recipe> getRecipesFor(ItemStack arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Recipe> getRecipesFor(ItemStack result) {
+        Validate.notNull(result, "Result cannot be null");
+
+        List<Recipe> results = new ArrayList<Recipe>();
+        Iterator<Recipe> iter = recipeIterator();
+        while (iter.hasNext()) {
+            Recipe recipe = iter.next();
+            ItemStack stack = recipe.getResult();
+            if (stack.getType() != result.getType())
+                continue;
+            if (result.getDurability() == -1 || result.getDurability() == stack.getDurability())
+                results.add(recipe);
+        }
+        return results;
     }
 
     @Override
@@ -1090,7 +1148,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getWorldType() {
-        return server.getProperties().levelName; // TODO
+        return server.getProperties().properties.getProperty("level-type");
     }
 
     @Override
@@ -1135,18 +1193,17 @@ public class CraftServer implements Server {
 
     @Override
     public Iterator<Recipe> recipeIterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return new RecipeIterator();
     }
 
     @Override
     public void reload() {
-     // TODO Auto-generated method stub server.reload();
+        // TODO Auto-generated method stub server.reload();
     }
 
     @Override
     public void reloadData() {
-     // TODO Auto-generated method stub server.reload();
+        // TODO Auto-generated method stub server.reload();
     }
 
     @Override
@@ -1162,7 +1219,7 @@ public class CraftServer implements Server {
 
     @Override
     public void resetRecipes() {
-        // TODO Auto-generated method stubserver.reload();
+        reloadData();
     }
 
     @Override
@@ -1255,9 +1312,16 @@ public class CraftServer implements Server {
         return 0;
     }
 
+    @SuppressWarnings("resource")
     @Override
-    public boolean removeRecipe(NamespacedKey arg0) {
-        // TODO Auto-generated method stub
+    public boolean removeRecipe(NamespacedKey recipeKey) {
+        Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
+
+        Identifier mcKey = CraftNamespacedKey.toMinecraft(recipeKey);
+        for (Object2ObjectLinkedOpenHashMap<Identifier, net.minecraft.recipe.Recipe<?>> recipes : ((IMixinRecipeManager)getServer().getRecipeManager()).getRecipes().values())
+            if (recipes.remove(mcKey) != null)
+                return true;
+
         return false;
     }
 
@@ -1290,7 +1354,6 @@ public class CraftServer implements Server {
         return completions == null ? ImmutableList.<String>of() : completions;
     }
 
-    @SuppressWarnings("deprecation")
     public List<String> tabCompleteChat(Player player, String message) {
         List<String> completions = new ArrayList<String>();
         PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
@@ -1383,9 +1446,11 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public Recipe getRecipe(NamespacedKey arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public Recipe getRecipe(NamespacedKey recipeKey) {
+        Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
+        Optional<? extends net.minecraft.recipe.Recipe<?>> opt = getServer().getRecipeManager().get(CraftNamespacedKey.toMinecraft(recipeKey));
+
+        return !opt.isPresent() ? null : ((IMixinRecipe)opt.get()).toBukkitRecipe();
     }
 
     public boolean dispatchServerCommand(CommandSender sender, PendingServerCommand serverCommand) {

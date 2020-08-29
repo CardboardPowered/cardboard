@@ -1,11 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
-import com.google.common.base.Preconditions;
 import java.util.List;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldAccess;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,13 +13,18 @@ import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
-import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
+import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldAccess;
+
+@SuppressWarnings("deprecation")
 public class CraftBlockState implements BlockState {
 
     protected final CraftWorld world;
@@ -179,19 +180,13 @@ public class CraftBlockState implements BlockState {
             return true;
         CraftBlock block = getBlock();
 
-        if (block.getType() != getType()) {
+        if (block.getType() != getType())
             if (!force)
                 return false;
-        }
 
         net.minecraft.block.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
         world.getHandle().updateListeners(position, block.getNMS(), newBlock, 3);
-
-        // Update levers etc
-        if (false && applyPhysics && getData() instanceof Attachable) { // Call does not map to new API
-            world.getHandle().updateNeighborsAlways(position.offset(CraftBlock.blockFaceToNotch(((Attachable) getData()).getAttachedFace())), newBlock.getBlock());
-        }
 
         return true;
     }

@@ -30,6 +30,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         this.load(snapshot);
     }
 
+    @SuppressWarnings("unchecked")
     public CraftBlockEntityState(Material material, T tileEntity) {
         super(material);
 
@@ -40,6 +41,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         this.load(snapshot);
     }
 
+    @SuppressWarnings("unchecked")
     private T createSnapshot(T tileEntity) {
         if (tileEntity == null)
             return null;

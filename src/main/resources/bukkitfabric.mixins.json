@@ -30,7 +30,18 @@
 	"MixinLegacyQueryHandler",
 	"MixinBlockItem",
 	"MixinExplosion",
-	"MixinPlayerManager"
+	"MixinPlayerManager",
+	"MixinRecipeManager",
+	"MixinIngredient",
+	"MixinShapedRecipe",
+	"MixinShapelessRecipe",
+	"MixinSmeltingRecipe",
+	"MixinSmithingRecipe",
+	"MixinSmokingRecipe",
+	"MixinSpecialCraftingRecipe",
+	"MixinStonecuttingRecipe",
+	"MixinCampfireCookingRecipe",
+	"MixinBlastingRecipe"
   ],
   "injectors": {
     "defaultRequire": 1

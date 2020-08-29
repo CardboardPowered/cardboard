@@ -1,11 +1,8 @@
 package org.bukkit.craftbukkit.block;
 
-import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.block.entity.BeehiveBlockEntity;
-import net.minecraft.block.entity.BeehiveBlockEntity.BeeState;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import org.bukkit.Location;
 import org.bukkit.Material;

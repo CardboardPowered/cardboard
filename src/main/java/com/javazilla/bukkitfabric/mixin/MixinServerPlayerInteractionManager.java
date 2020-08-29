@@ -61,6 +61,7 @@ public class MixinServerPlayerInteractionManager {
     @Shadow private int failedStartMiningTime;
     @Shadow private int blockBreakingProgress;
 
+    @SuppressWarnings("deprecation")
     @Overwrite
     public void processBlockBreakingAction(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, Direction enumdirection, int i) {
         double d0 = this.player.getX() - ((double) blockposition.getX() + 0.5D);
@@ -82,26 +83,21 @@ public class MixinServerPlayerInteractionManager {
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "may not interact"));
                     // Update any tile entity data for this block
                     BlockEntity tileentity = world.getBlockEntity(blockposition);
-                    if (tileentity != null) {
+                    if (tileentity != null)
                         this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
-                    }
-                    // CraftBukkit end
                     return;
                 }
 
-                // CraftBukkit start
                 PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
                 if (event.isCancelled()) {
                     // Let the client know the block still exists
                     this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
                     // Update any tile entity data for this block
                     BlockEntity tileentity = this.world.getBlockEntity(blockposition);
-                    if (tileentity != null) {
+                    if (tileentity != null)
                         this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
-                    }
                     return;
                 }
-                // CraftBukkit end
 
                 if (this.gameMode.isCreative()) {
                     this.finishMining(blockposition, packetplayinblockdig_enumplayerdigtype, "creative destroy");
@@ -136,9 +132,8 @@ public class MixinServerPlayerInteractionManager {
 
                 if (event.useItemInHand() == Event.Result.DENY) {
                     // If we 'insta destroyed' then the client needs to be informed.
-                    if (f > 1.0f) {
+                    if (f > 1.0f)
                         this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
-                    }
                     return;
                 }
                 org.bukkit.event.block.BlockDamageEvent blockEvent = CraftEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.inventory.getMainHandStack(), f >= 1.0f);
@@ -149,17 +144,14 @@ public class MixinServerPlayerInteractionManager {
                     return;
                 }
 
-                if (blockEvent.getInstaBreak()) {
+                if (blockEvent.getInstaBreak())
                     f = 2.0f;
-                }
-                // CraftBukkit end
 
                 if (!iblockdata.isAir() && f >= 1.0F) {
                     this.finishMining(blockposition, packetplayinblockdig_enumplayerdigtype, "insta mine");
                 } else {
-                    if (this.mining) {
+                    if (this.mining)
                         this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(this.miningPos, this.world.getBlockState(this.miningPos), PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, false, "abort destroying since another started (client insta mine, server disagreed)"));
-                    }
 
                     this.mining = true;
                     this.miningPos = blockposition.toImmutable();
@@ -245,7 +237,7 @@ public class MixinServerPlayerInteractionManager {
         }
     }
 
- // CraftBukkit start - whole method
+
     public boolean interactResult = false;
     public boolean firedInteract = false;
 
@@ -284,9 +276,7 @@ public class MixinServerPlayerInteractionManager {
             if (itileinventory != null) {
                 entityplayer.openHandledScreen(itileinventory);
                 return ActionResult.SUCCESS;
-            } else {
-                return ActionResult.PASS;
-            }
+            } else return ActionResult.PASS;
         } else {
             boolean flag = !entityplayer.getMainHandStack().isEmpty() || !entityplayer.getOffHandStack().isEmpty();
             boolean flag1 = entityplayer.shouldCancelInteraction() && flag;
@@ -318,7 +308,6 @@ public class MixinServerPlayerInteractionManager {
             }
         }
         return enuminteractionresult;
-        // CraftBukkit end
     }
 
 }
