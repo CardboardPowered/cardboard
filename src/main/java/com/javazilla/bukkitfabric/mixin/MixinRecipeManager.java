@@ -1,5 +1,6 @@
 package com.javazilla.bukkitfabric.mixin;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -36,9 +37,6 @@ public class MixinRecipeManager implements IMixinRecipeManager {
 
     @Shadow public boolean errored;
     @Shadow public static Recipe<?> deserialize(Identifier minecraftkey, JsonObject jsonobject) {return null;}
-
-   // public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>>> recipes_BF = ImmutableMap.of(); // CraftBukkit
-
     @Shadow public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes = ImmutableMap.of();
 
     @Override
@@ -49,7 +47,6 @@ public class MixinRecipeManager implements IMixinRecipeManager {
             throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.getId());
         } else {
             map.put(irecipe.getId(), irecipe);
-            //map.putAndMoveToFirst(irecipe.getId(), irecipe); // CraftBukkit - SPIGOT-4638: last recipe gets priority
         }
     }
 
@@ -62,13 +59,21 @@ public class MixinRecipeManager implements IMixinRecipeManager {
         return recipe;
     }
 
-    @Overwrite
+    /*@Overwrite
     public void apply(Map<Identifier, JsonElement> map, ResourceManager iresourcemanager, Profiler gameprofilerfiller) {
         this.errored = false;
         // CraftBukkit start - SPIGOT-5667 make sure all types are populated and mutable
-        Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>>> map1 = Maps.newHashMap();
-        for (RecipeType<?> recipeType : Registry.RECIPE_TYPE)
-            map1.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
+        HashMap<RecipeType<?>, Map<Identifier, Recipe<?>>>  map1 = Maps.newHashMap();
+        for (Map.Entry<Identifier, JsonElement> entry2 : map.entrySet()) {
+            Identifier identifier = entry2.getKey();
+            try {
+                Recipe<?> recipe = RecipeManager.deserialize(identifier, JsonHelper.asObject(entry2.getValue(), "top element"));
+                map1.computeIfAbsent(recipe.getType(), recipeType -> new ImmutableMap.Builder<RecipeType<?>, Map<Identifier, Recipe<?>>>().build()).put(identifier, recipe);
+            }
+            catch (JsonParseException | IllegalArgumentException runtimeException) {
+              //  LOGGER.error("Parsing error loading recipe {}", (Object)identifier, (Object)runtimeException);
+            }
+        }
 
         // CraftBukkit end
         Iterator iterator = map.entrySet().iterator();
@@ -83,7 +88,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
                 // CraftBukkit start - SPIGOT-4638: last recipe gets priority
                 (map1.computeIfAbsent(irecipe.getType(), (recipes) -> {
                     return new Object2ObjectLinkedOpenHashMap<>();
-                })).putAndMoveToFirst(minecraftkey, irecipe);
+                })).put(minecraftkey, irecipe);
                 // CraftBukkit end
             } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
                 BukkitFabricMod.LOGGER.info("Parsing error loading recipe " + minecraftkey + " " +  jsonparseexception);
@@ -94,7 +99,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
             return (entry1.getValue()); // CraftBukkit
         }));
         BukkitFabricMod.LOGGER.info("Loaded " +  map1.size() + " recipes.");
-    }
+    }*/
 
     @Overwrite
     public <C extends Inventory, T extends Recipe<C>> Map<Identifier, Recipe<C>> getAllOfType(RecipeType<T> recipes) {
