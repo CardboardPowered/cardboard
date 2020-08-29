@@ -39,7 +39,6 @@ public class MixinRecipeManager implements IMixinRecipeManager {
 
     public Map<RecipeType<?>, Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>>> recipes = ImmutableMap.of(); // CraftBukkit
 
-    @Overwrite
     @Override
     public void addRecipe(Recipe<?> irecipe) {
         Object2ObjectLinkedOpenHashMap<Identifier, Recipe<?>> map = this.recipes.get(irecipe.getType()); // CraftBukkit
