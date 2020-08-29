@@ -11,8 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityCategory;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -22,9 +22,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.util.Hand;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
@@ -122,8 +121,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public void attack(Entity arg0) {
-        // TODO Auto-generated method stub
-
+        nms.attackLivingEntity(((CraftLivingEntity)arg0).nms);
     }
 
     @Override
@@ -255,7 +253,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public boolean hasAI() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -290,20 +288,17 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean isRiptiding() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isUsingRiptide();
     }
 
     @Override
     public boolean isSleeping() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isSleeping();
     }
 
     @Override
     public boolean isSwimming() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isSwimming();
     }
 
     @Override
@@ -321,7 +316,6 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void removePotionEffect(PotionEffectType arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -332,25 +326,21 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void setCanPickupItems(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setCollidable(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setGliding(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setLastDamage(double arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -362,59 +352,58 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public void setMaximumAir(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setMaximumNoDamageTicks(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public <T> void setMemory(MemoryKey<T> arg0, T arg1) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setNoDamageTicks(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setRemainingAir(int arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setRemoveWhenFarAway(boolean arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void setSwimming(boolean arg0) {
-        // TODO Auto-generated method stub
-
+        nms.setSwimming(arg0);
     }
 
     @Override
     public void swingMainHand() {
-        // TODO Auto-generated method stub
+        nms.swingHand(Hand.MAIN_HAND);
     }
 
     @Override
     public void swingOffHand() {
-        // TODO Auto-generated method stub
+        nms.swingHand(Hand.OFF_HAND);
     }
 
     @Override
     public Set<UUID> getCollidableExemptions() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public EntityCategory getCategory() {
+        // TODO Auto-generated method stub
+        return EntityCategory.NONE;
     }
 
 }

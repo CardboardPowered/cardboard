@@ -8,9 +8,9 @@ public class GitVersion {
 	public static final String MAVEN_GROUP = "com.fungus_soft";
 	public static final String MAVEN_NAME = "BukkitFabric";
 	public static final String VERSION = "1.16.2";
-	public static final int GIT_REVISION = 86;
-	public static final String GIT_SHA = "869e12f8c9d3d9a2fa9fe746728aebe501f0adab";
-	public static final String GIT_DATE = "2020-08-26T21:45:39Z";
-	public static final String BUILD_DATE = "2020-08-27T01:09:16Z";
-	public static final long BUILD_UNIX_TIME = 1598490556920L;
+	public static final int GIT_REVISION = 93;
+	public static final String GIT_SHA = "516a1c40656b4d94b1c7a18b37bcb6f38e39901a";
+	public static final String GIT_DATE = "2020-08-29T21:35:55Z";
+	public static final String BUILD_DATE = "2020-08-29T22:09:51Z";
+	public static final long BUILD_UNIX_TIME = 1598738991111L;
 }

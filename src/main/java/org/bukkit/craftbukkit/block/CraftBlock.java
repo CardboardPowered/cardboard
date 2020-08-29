@@ -633,4 +633,10 @@ public class CraftBlock implements Block {
         return new BoundingBox(getX() + aabb.minX, getY() + aabb.minY, getZ() + aabb.minZ, getX() + aabb.maxX, getY() + aabb.maxY, getZ() + aabb.maxZ);
     }
 
+    @Override
+    public boolean applyBoneMeal(BlockFace face) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
