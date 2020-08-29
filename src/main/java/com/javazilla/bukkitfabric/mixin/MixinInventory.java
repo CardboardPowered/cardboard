@@ -6,16 +6,25 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.DefaultedList;
 
 @Mixin(SimpleInventory.class)
 public class MixinInventory implements IMixinInventory {
+
+    @Shadow
+    @Final
+    public DefaultedList<ItemStack> stacks;
+
+    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 
     private SimpleInventory get() {
         return (SimpleInventory) (Object) this;
@@ -23,24 +32,24 @@ public class MixinInventory implements IMixinInventory {
 
     @Override
     public List<ItemStack> getContents() {
-        // TODO Auto-generated method stub
-        return null;
+        return stacks;
     }
 
     @Override
     public void onOpen(CraftHumanEntity who) {
+        transaction.add(who);
         get().onOpen((PlayerEntity) who.nms);
     }
 
     @Override
     public void onClose(CraftHumanEntity who) {
+        transaction.remove(who);
         get().onClose((PlayerEntity) who.nms);
     }
 
     @Override
     public List<HumanEntity> getViewers() {
-        // TODO Auto-generated method stub
-        return null;
+        return transaction;
     }
 
     @Override
@@ -56,7 +65,6 @@ public class MixinInventory implements IMixinInventory {
 
     @Override
     public Location getLocation() {
-        // TODO Auto-generated method stub
         return null;
     }
 
