@@ -45,7 +45,7 @@
     "recipe.MixinCampfireCookingRecipe",
     "recipe.MixinBlastingRecipe",
 
-    "inventory.CraftingInventory",
+    "inventory.MixinCraftingInventory",
     "inventory.MixinInventory",
     "inventory.MixinPlayerInventory",
     "inventory.MixinSimpleInventory",
