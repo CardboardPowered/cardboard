@@ -8,9 +8,7 @@
     "MixinMinecraftServer",
     "MixinServerCommandSource",
     "MixinCommandOutput",
-    "MixinInventory",
     "MixinItemStack",
-    "MixinPlayerInventory",
     "MixinBlockItem",
     "MixinExplosion",
     "MixinPlayerManager",
@@ -45,7 +43,14 @@
     "recipe.MixinSpecialCraftingRecipe",
     "recipe.MixinStonecuttingRecipe",
     "recipe.MixinCampfireCookingRecipe",
-    "recipe.MixinBlastingRecipe"
+    "recipe.MixinBlastingRecipe",
+
+    "inventory.CraftingInventory",
+    "inventory.MixinInventory",
+    "inventory.MixinPlayerInventory",
+    "inventory.MixinSimpleInventory",
+    "inventory.MixinCraftingResultInventory",
+    "inventory.MixinEnderChestInventory"
   ],
   "injectors": {
     "defaultRequire": 1

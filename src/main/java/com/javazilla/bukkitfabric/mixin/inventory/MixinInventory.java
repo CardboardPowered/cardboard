@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.inventory;
 
 import java.util.List;
 
