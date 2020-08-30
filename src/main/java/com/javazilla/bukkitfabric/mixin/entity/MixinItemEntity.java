@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.entity;
 
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftItem;

@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.recipe;
 
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.CraftRecipe;

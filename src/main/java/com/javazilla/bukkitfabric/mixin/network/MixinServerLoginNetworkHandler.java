@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.network;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -120,7 +120,6 @@ public class MixinServerLoginNetworkHandler {
     }
 
     // Spigot start
-        @SuppressWarnings("deprecation")
         public void fireEvents() throws Exception {
             String playerName = profile.getName();
             java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getAddress()).getAddress();

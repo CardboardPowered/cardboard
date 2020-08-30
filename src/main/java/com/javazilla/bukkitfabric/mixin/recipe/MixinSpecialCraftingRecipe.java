@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.recipe;
 
 import org.spongepowered.asm.mixin.Mixin;
 

@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.world;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.world;
 
 import java.util.List;
 import java.util.concurrent.Executor;

@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.network;
 
 import static org.bukkit.craftbukkit.CraftServer.server;
 

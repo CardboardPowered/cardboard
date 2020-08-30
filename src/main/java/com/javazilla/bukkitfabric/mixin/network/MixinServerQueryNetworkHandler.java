@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.network;
 
 import java.net.InetSocketAddress;
 import org.bukkit.craftbukkit.CraftServer;
