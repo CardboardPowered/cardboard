@@ -781,7 +781,11 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkLoaded(Chunk arg0) {
-        return isChunkLoaded(arg0.getX(), arg0.getZ());
+        return isChunkLoaded(
+                arg0
+                    .getX(),
+                arg0
+                    .getZ());
     }
 
     @Override

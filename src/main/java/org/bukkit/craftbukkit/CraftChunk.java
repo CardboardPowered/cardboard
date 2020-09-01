@@ -73,7 +73,6 @@ public class CraftChunk implements Chunk {
             c = worldServer.getChunk(x, z);
             weakChunk = new WeakReference<>(c);
         }
-
         return c;
     }
 
@@ -83,12 +82,12 @@ public class CraftChunk implements Chunk {
 
     @Override
     public int getX() {
-        return x;
+        return getHandle().getPos().x;
     }
 
     @Override
     public int getZ() {
-        return z;
+        return getHandle().getPos().z;
     }
 
     @Override
