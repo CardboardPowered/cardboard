@@ -24,6 +24,8 @@
     "entity.MixinPlayer",
     "entity.MixinBlockEntity",
     "entity.MixinItemEntity",
+    "entity.MixinBannerBlockEntity",
+    "entity.MixinBarrelBlockEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
@@ -44,6 +46,7 @@
     "recipe.MixinStonecuttingRecipe",
     "recipe.MixinCampfireCookingRecipe",
     "recipe.MixinBlastingRecipe",
+    "recipe.MixinTradeOffer",
 
     "inventory.MixinCraftingInventory",
     "inventory.MixinInventory",
