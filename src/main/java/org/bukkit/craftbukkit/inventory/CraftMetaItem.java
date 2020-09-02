@@ -1,16 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
-import com.google.gson.JsonParseException;
+import static org.spigotmc.ValidateUtils.limit;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,17 +26,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.Formatting;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.text.Text;
-import net.minecraft.item.BlockItem;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
@@ -61,7 +41,6 @@ import org.bukkit.craftbukkit.Overridden;
 import org.bukkit.craftbukkit.attribute.CraftAttributeInstance;
 import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific;
 import org.bukkit.craftbukkit.inventory.tags.DeprecatedCustomTagContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
@@ -71,7 +50,6 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNBTTagConfigSerializer;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
-//import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.BlockDataMeta;
 import org.bukkit.inventory.meta.Damageable;
@@ -80,8 +58,35 @@ import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
 
-import static org.spigotmc.ValidateUtils.limit;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonParseException;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.item.BlockItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.Property;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+
+@SuppressWarnings({"deprecation", "rawtypes"})
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
@@ -124,7 +129,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                     .put(CraftMetaSkull.class, "SKULL")
                     .put(CraftMetaLeatherArmor.class, "LEATHER_ARMOR")
                     .put(CraftMetaMap.class, "MAP")
-                    // TODO .put(CraftMetaPotion.class, "POTION")
+                    .put(CraftMetaPotion.class, "POTION")
                     .put(CraftMetaSpawnEgg.class, "SPAWN_EGG")
                     .put(CraftMetaEnchantedBook.class, "ENCHANTED")
                     .put(CraftMetaFirework.class, "FIREWORK")
@@ -140,9 +145,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             for (Map.Entry<Class<? extends CraftMetaItem>, String> mapping : classMap.entrySet()) {
                 try {
                     classConstructorBuilder.put(mapping.getValue(), mapping.getKey().getDeclaredConstructor(Map.class));
-                } catch (NoSuchMethodException e) {
-                    throw new AssertionError(e);
-                }
+                } catch (NoSuchMethodException e) {throw new AssertionError(e);}
             }
             constructorMap = classConstructorBuilder.build();
         }
@@ -191,7 +194,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (object == null) {
                 if (!nullable)
                     throw new NoSuchElementException(map + " does not contain " + field);
-
                 return null;
             }
             throw new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz);
@@ -381,25 +383,22 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         for (int i = 0; i < size; i++) {
             CompoundTag entry = mods.getCompound(i);
-            if (entry.isEmpty()) {
-                // entry is not an actual CompoundTag. getCompound returns empty CompoundTag in that case
-                continue;
-            }
-            net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = null; // FIXME EntityAttributes.createFromTag(entry);
+            if (entry.isEmpty())
+                continue; // entry is not an actual CompoundTag. getCompound returns empty CompoundTag in that case
+
+            EntityAttributeModifier nmsModifier = EntityAttributeModifier.fromTag(entry);
             if (nmsModifier == null)
                 continue;
 
             AttributeModifier attribMod = CraftAttributeInstance.convert(nmsModifier);
 
             String attributeName = entry.getString(ATTRIBUTES_IDENTIFIER.NBT);
-            if (attributeName == null || attributeName.isEmpty()) {
+            if (attributeName == null || attributeName.isEmpty())
                 continue;
-            }
 
             Attribute attribute = CraftAttributeMap.fromMinecraft(attributeName);
-            if (attribute == null) {
+            if (attribute == null)
                 continue;
-            }
 
             if (entry.contains(ATTRIBUTES_SLOT.NBT, CraftMagicNumbers.NBT.TAG_STRING)) {
                 String slotName = entry.getString(ATTRIBUTES_SLOT.NBT);
@@ -635,7 +634,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 continue;
 
             net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = CraftAttributeInstance.convert(entry.getValue());
-            CompoundTag sub = null;//FIXME EntityAttributes.toTag(nmsModifier);
+            CompoundTag sub = nmsModifier.toTag();
             if (sub.isEmpty())
                 continue;
 
@@ -746,12 +745,10 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public boolean removeEnchant(Enchantment ench) {
-        // Spigot start
         boolean b = hasEnchants() && enchantments.remove(ench) != null;
         if ( enchantments != null && enchantments.isEmpty() )
             this.enchantments = null;
         return b;
-        // Spigot end
     }
 
     @Override
@@ -783,7 +780,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         for (ItemFlag f : ItemFlag.values())
             if (hasItemFlag(f))
                 currentFlags.add(f);
-
         return currentFlags;
     }
 
@@ -839,8 +835,29 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public BlockData getBlockData(Material material) {
-        // TODO Bukkit4Fabric: Get block data.
-        return null;
+        return  CraftBlockData.fromData(getBlockState(CraftMagicNumbers.getBlock(material).getDefaultState(), blockData));
+    }
+
+    /**
+     * Ported functionality from ItemBlock.patch
+     */
+    public static BlockState getBlockState(BlockState iblockdata, CompoundTag nbttagcompound1) {
+        BlockState iblockdata1 = iblockdata;
+        {
+            StateManager<Block, BlockState> blockstatelist = iblockdata.getBlock().getStateManager();
+            Iterator<String> iterator = nbttagcompound1.getKeys().iterator();
+
+            while (iterator.hasNext()) {
+                String s = (String) iterator.next();
+                Property<?> iblockstate = blockstatelist.getProperty(s);
+
+                if (iblockstate != null) {
+                    String s1 = nbttagcompound1.get(s).asString();
+                    iblockdata1 = BlockItem.with(iblockdata1, iblockstate, s1);
+                }
+            }
+        }
+        return iblockdata1;
     }
 
     @Override
@@ -1289,29 +1306,29 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                         ATTRIBUTES_UUID_HIGH.NBT,
                         ATTRIBUTES_UUID_LOW.NBT,
                         ATTRIBUTES_SLOT.NBT,
-                        // TODO CraftMetaMap.MAP_SCALING.NBT,
-                        // TODO CraftMetaMap.MAP_ID.NBT,
-                        // TODO CraftMetaPotion.POTION_EFFECTS.NBT,
-                        // TODO CraftMetaPotion.DEFAULT_POTION.NBT,
-                        // TODO CraftMetaPotion.POTION_COLOR.NBT,
-                        // TODO CraftMetaSkull.SKULL_OWNER.NBT,
-                        // TODO CraftMetaSkull.SKULL_PROFILE.NBT,
-                        // TODO CraftMetaSpawnEgg.ENTITY_TAG.NBT,
-                        // TODO CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
+                        CraftMetaMap.MAP_SCALING.NBT,
+                        CraftMetaMap.MAP_ID.NBT,
+                        CraftMetaPotion.POTION_EFFECTS.NBT,
+                        CraftMetaPotion.DEFAULT_POTION.NBT,
+                        CraftMetaPotion.POTION_COLOR.NBT,
+                        CraftMetaSkull.SKULL_OWNER.NBT,
+                        CraftMetaSkull.SKULL_PROFILE.NBT,
+                        CraftMetaSpawnEgg.ENTITY_TAG.NBT,
+                        CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
                         CraftMetaBook.BOOK_TITLE.NBT,
                         CraftMetaBook.BOOK_AUTHOR.NBT,
                         CraftMetaBook.BOOK_PAGES.NBT,
                         CraftMetaBook.RESOLVED.NBT,
-                        CraftMetaBook.GENERATION.NBT  // TODO ,
-                        // TODO CraftMetaFirework.FIREWORKS.NBT,
-                        // TODO CraftMetaEnchantedBook.STORED_ENCHANTMENTS.NBT,
-                        // TODO CraftMetaCharge.EXPLOSION.NBT,
-                        // TODO CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
-                        // TODO CraftMetaKnowledgeBook.BOOK_RECIPES.NBT,
+                        CraftMetaBook.GENERATION.NBT,
+                        CraftMetaFirework.FIREWORKS.NBT,
+                        CraftMetaEnchantedBook.STORED_ENCHANTMENTS.NBT,
+                        CraftMetaCharge.EXPLOSION.NBT,
+                        CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
+                        CraftMetaKnowledgeBook.BOOK_RECIPES.NBT,
                         // TODO CraftMetaTropicalFishBucket.VARIANT.NBT,
                         // TODO CraftMetaCrossbow.CHARGED.NBT,
                         // TODO CraftMetaCrossbow.CHARGED_PROJECTILES.NBT,
-                        // TODO CraftMetaSuspiciousStew.EFFECTS.NBT
+                        CraftMetaSuspiciousStew.EFFECTS.NBT
                 ));
             }
             return HANDLED_TAGS;
