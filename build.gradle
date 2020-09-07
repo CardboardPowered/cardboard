@@ -32,6 +32,7 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    maven { url = 'https://maven.dblsaiko.net/' }
 }
 
 dependencies {
@@ -39,8 +40,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric API
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // Fabric APIs
+    // modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // modImplementation "net.gudenau.minecraft:gudasm:${project.gudasm_version}"
 
     // Spigot API
     extraLibs group: "org.spigotmc", name: "spigot-api", version: "${project.spigot_version}"
@@ -48,9 +50,8 @@ dependencies {
     extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
     extraLibs group: 'org.xerial', name: 'sqlite-jdbc', version: '3.32.3'
 
-	// NMS Remapping
-	extraLibs group: "net.md-5", name: "SpecialSource", version: "1.8.6"
-	
+    // NMS Remapping
+    extraLibs group: "net.md-5", name: "SpecialSource", version: "1.8.6"
 
     configurations.compile.extendsFrom(configurations.extraLibs)
 
@@ -91,6 +92,7 @@ shadowJar {
   configurations = [project.configurations.compile]
   dependencies {
       exclude(dependency('com.mojang:minecraft:*'))
-      exclude(dependency('net.fabricmc.fabric-api:*'))
+     // exclude(dependency('net.fabricmc.fabric-api:*'))
+      exclude(dependency('net.gudenu.minecraft:gudasm:*'))
    }
 }

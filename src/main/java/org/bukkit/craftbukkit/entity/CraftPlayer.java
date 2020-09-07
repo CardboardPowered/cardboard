@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,9 +48,9 @@ import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.network.MessageType;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.PlayerManager;
@@ -271,10 +272,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
-        PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
-        buffer.writeBytes(message);
-        String[] id = channel.split(":");
-        ClientSidePacketRegistry.INSTANCE.sendToServer(new Identifier(id[0], id[1]), buffer);
+        StandardMessenger.validatePluginMessage(Bukkit.getMessenger(), source, channel, message);
+        if (getHandle().networkHandler == null) return;
+
+        //if (channels.contains(channel)) {
+            channel = StandardMessenger.validateAndCorrectChannel(channel);
+            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(new Identifier(channel), new PacketByteBuf(Unpooled.wrappedBuffer(message)));
+            getHandle().networkHandler.sendPacket(packet);
+        //}
     }
 
     @Override

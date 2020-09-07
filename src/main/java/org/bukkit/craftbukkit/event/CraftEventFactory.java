@@ -151,4 +151,8 @@ public class CraftEventFactory {
         return event;
     }
 
+    public static void callRedstoneChange(World world, BlockPos pos, int oldPower, int newPower) {
+        // TODO Auto-generated method stub
+    }
+
 }

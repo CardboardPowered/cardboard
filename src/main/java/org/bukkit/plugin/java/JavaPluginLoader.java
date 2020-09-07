@@ -40,7 +40,6 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
-import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Represents a Java plugin loader, allowing plugins in the form of .jar

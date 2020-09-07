@@ -18,7 +18,8 @@ import net.minecraft.util.collection.DefaultedList;
 @Mixin(SimpleInventory.class)
 public class MixinSimpleInventory implements IMixinInventory {
 
-    @Shadow public DefaultedList<ItemStack> stacks;
+    @Shadow
+    public DefaultedList<ItemStack> stacks;
 
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     public int maxStack_BF = MAX_STACK;

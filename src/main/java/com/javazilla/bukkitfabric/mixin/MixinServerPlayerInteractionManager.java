@@ -237,12 +237,12 @@ public class MixinServerPlayerInteractionManager {
         }
     }
 
-
     public boolean interactResult = false;
     public boolean firedInteract = false;
 
-    @Overwrite
-    public ActionResult interactBlock(ServerPlayerEntity entityplayer, World world, ItemStack itemstack, Hand enumhand, BlockHitResult movingobjectpositionblock) {
+    @Inject(at = @At("HEAD"), method = "interactBlock", cancellable = true)
+    public void interactBlock(ServerPlayerEntity entityplayer, World world, ItemStack itemstack, Hand enumhand, BlockHitResult movingobjectpositionblock,
+            CallbackInfoReturnable<ActionResult> ci) {
         BlockPos blockposition = movingobjectpositionblock.getBlockPos();
         BlockState iblockdata = world.getBlockState(blockposition);
         ActionResult enuminteractionresult = ActionResult.PASS;
@@ -275,8 +275,8 @@ public class MixinServerPlayerInteractionManager {
 
             if (itileinventory != null) {
                 entityplayer.openHandledScreen(itileinventory);
-                return ActionResult.SUCCESS;
-            } else return ActionResult.PASS;
+                ci.setReturnValue(ActionResult.SUCCESS);
+            } else ci.setReturnValue(ActionResult.PASS);
         } else {
             boolean flag = !entityplayer.getMainHandStack().isEmpty() || !entityplayer.getOffHandStack().isEmpty();
             boolean flag1 = entityplayer.shouldCancelInteraction() && flag;
@@ -287,7 +287,7 @@ public class MixinServerPlayerInteractionManager {
 
                 if (enuminteractionresult.isAccepted()) {
                     Criteria.ITEM_USED_ON_BLOCK.test(entityplayer, blockposition, itemstack1);
-                    return enuminteractionresult;
+                    ci.setReturnValue(enuminteractionresult);
                 }
             }
 
@@ -304,10 +304,10 @@ public class MixinServerPlayerInteractionManager {
                 if (enuminteractionresult1.isAccepted())
                     Criteria.ITEM_USED_ON_BLOCK.test(entityplayer, blockposition, itemstack1);
 
-                return enuminteractionresult1;
+                ci.setReturnValue(enuminteractionresult1);
             }
         }
-        return enuminteractionresult;
+        ci.setReturnValue(enuminteractionresult);
     }
 
 }

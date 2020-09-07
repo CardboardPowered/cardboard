@@ -406,4 +406,15 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         return EntityCategory.NONE;
     }
 
+    public void setArrowsInBody(int i) {
+        // TODO
+    }
+
+    public int getArrowsInBody() {
+        return -1; // TODO
+    }
+
+    public void setArrowCooldown(int i) {}
+    public int getArrowCooldown() { return -1; }
+
 }

@@ -13,7 +13,7 @@
     "MixinExplosion",
     "MixinPlayerManager",
     "MixinServerPlayerInteractionManager",
-  
+
     "world.MixinServerWorld",
     "world.MixinWorld",
     "world.MixinWorldChunk",
