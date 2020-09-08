@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin.entity;
+package com.javazilla.bukkitfabric.mixin.entity.block;
 
 import java.util.List;
 

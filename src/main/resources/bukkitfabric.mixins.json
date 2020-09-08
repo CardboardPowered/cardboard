@@ -22,10 +22,16 @@
 
     "entity.MixinEntity",
     "entity.MixinPlayer",
-    "entity.MixinBlockEntity",
     "entity.MixinItemEntity",
-    "entity.MixinBannerBlockEntity",
-    "entity.MixinBarrelBlockEntity",
+
+    "entity.block.MixinBlockEntity",
+    "entity.block.MixinBannerBlockEntity",
+    "entity.block.MixinBarrelBlockEntity",
+    "entity.block.MixinChestBlockEntity",
+    "entity.block.MixinLockableContainerBlockEntity",
+    "entity.block.MixinDispenserBlockEntity",
+    "entity.block.MixinCampfireBlockEntity",
+    "entity.block.MixinBrewingStandBlockEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
@@ -49,7 +55,6 @@
     "recipe.MixinTradeOffer",
 
     "inventory.MixinCraftingInventory",
-    "inventory.MixinInventory",
     "inventory.MixinPlayerInventory",
     "inventory.MixinSimpleInventory",
     "inventory.MixinCraftingResultInventory",

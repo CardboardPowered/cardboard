@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin.entity;
+package com.javazilla.bukkitfabric.mixin.entity.block;
 
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
