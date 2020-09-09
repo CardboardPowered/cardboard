@@ -31,6 +31,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Preconditions;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -73,7 +74,7 @@ public class CraftBlock implements Block {
 
     @Override
     public World getWorld() {
-        return new CraftWorld(world);
+        return ((IMixinWorld)world).getCraftWorld();
     }
 
     public CraftWorld getCraftWorld() {

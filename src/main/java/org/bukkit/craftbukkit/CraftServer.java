@@ -213,7 +213,7 @@ public class CraftServer implements Server {
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
     public final List<CraftPlayer> playerView;
     private WarningState warningState = WarningState.DEFAULT;
-    private final Map<String, World> worlds = new LinkedHashMap<String, World>();
+    public final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private YamlConfiguration configuration;

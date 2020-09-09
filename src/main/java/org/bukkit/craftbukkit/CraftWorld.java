@@ -93,8 +93,15 @@ public class CraftWorld implements World {
     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
 
     private ServerWorld nms;
-    public CraftWorld(ServerWorld world) {
+    private String name;
+
+    public CraftWorld(String name, ServerWorld world) {
         this.nms = world;
+        this.name = name;
+    }
+
+    public CraftWorld(ServerWorld world) {
+        this(((ServerWorldProperties) world.getLevelProperties()).getLevelName(), world);
     }
 
     @Override
@@ -567,7 +574,7 @@ public class CraftWorld implements World {
 
     @Override
     public String getName() {
-        return ((ServerWorldProperties) nms.getLevelProperties()).getLevelName();
+        return name;
     }
 
     @Override
