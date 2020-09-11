@@ -20,3 +20,7 @@ The project is licenced under LGPL. The package ``org.bukkit.craftbukkit`` is no
 ## NMS Support
 Currently we do not support CraftBukkit's ``net.minecraft.server`` classes.
 This is planned to change at a future date. 
+
+# Apex Hosting 
+Thanks to Apex Hosting for sponoring this project, Get a Minecraft server by clicking on the banner below:
+[![Apex Hosting](https://apexminecrafthosting.com/images/apex-hosting-mobile.png)](https://billing.apexminecrafthosting.com/aff.php?aff=3548)
