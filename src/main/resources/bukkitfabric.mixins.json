@@ -13,6 +13,7 @@
     "MixinExplosion",
     "MixinPlayerManager",
     "MixinServerPlayerInteractionManager",
+    "MixinStatusEffects",
 
     "world.MixinServerWorld",
     "world.MixinWorld",
@@ -23,6 +24,7 @@
     "entity.MixinEntity",
     "entity.MixinPlayer",
     "entity.MixinItemEntity",
+    "entity.MixinProjectileEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
@@ -53,6 +55,7 @@
     "recipe.MixinCampfireCookingRecipe",
     "recipe.MixinBlastingRecipe",
     "recipe.MixinTradeOffer",
+    "recipe.MixinServerRecipeBook",
 
     "inventory.MixinCraftingInventory",
     "inventory.MixinPlayerInventory",
