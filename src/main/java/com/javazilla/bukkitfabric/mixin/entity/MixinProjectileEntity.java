@@ -20,7 +20,7 @@ public class MixinProjectileEntity extends MixinEntity {
         this.projectileSource = (entity != null && ((IMixinEntity)entity).getBukkitEntity() instanceof ProjectileSource) ? (ProjectileSource) ((IMixinEntity)entity).getBukkitEntity() : null;
     }
 
-    @Inject(at = @At("HEAD"), method = "setOwner")
+    @Inject(at = @At("HEAD"), method = "onCollision")
     public void fireProjectileHitEvent(HitResult hitResult, CallbackInfo ci) {
         org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent((ProjectileEntity)(Object)this, hitResult);
     }

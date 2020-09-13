@@ -430,7 +430,8 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
                 }
             }
 
-            worldProperties.setSpawnPos(chunkcoordintpair.getStartPos().add(8, chunkgenerator.getSpawnHeight(), 8), 0.0F);
+            BlockPos start = new BlockPos(chunkcoordintpair.getStartX(), 1, chunkcoordintpair.getStartZ());
+            worldProperties.setSpawnPos(start.add(8, chunkgenerator.getSpawnHeight(), 8), 0.0F);
             int i = 0, j = 0, k = 0, l = -1;
 
             for (int i1 = 0; i1 < 1024; ++i1) {

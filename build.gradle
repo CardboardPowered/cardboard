@@ -1,9 +1,9 @@
 plugins {
-    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
     id 'java'
-    id "com.peterabeles.gversion" version "1.2.4"
+    id "com.peterabeles.gversion" version "1.8.3"
 }
 
 gversion {
@@ -20,9 +20,7 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-configurations {
-    extraLibs
-}
+configurations { extraLibs }
 
 minecraft {
     accessWidener = file("src/main/resources/bukkitfabric.accesswidener")
@@ -40,8 +38,7 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric APIs
-    // modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // GudASM
     // modImplementation "net.gudenau.minecraft:gudasm:${project.gudasm_version}"
 
     // Spigot API
@@ -74,25 +71,17 @@ processResources {
     }
 }
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
+tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 
 jar {
     from "LICENSE"
-    from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+    from { configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 shadowJar {
-  configurations = [project.configurations.compile]
-  dependencies {
+    configurations = [project.configurations.compile]
+    dependencies {
       exclude(dependency('com.mojang:minecraft:*'))
-     // exclude(dependency('net.fabricmc.fabric-api:*'))
       exclude(dependency('net.gudenu.minecraft:gudasm:*'))
-   }
+    }
 }

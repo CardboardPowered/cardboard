@@ -1,16 +1,12 @@
 # This is the main configuration file for Bukkit.
 # As you can see, there's actually not that much to configure without any plugins.
 # For a reference for any variable inside this file, check out the Bukkit Wiki at
-# https://www.spigotmc.org/go/bukkit-yml
+# https://spigotmc.org/go/bukkit-yml
 # 
-# If you need help on this file, feel free to join us on irc or leave a message
-# on the forums asking for advice.
-# 
-# IRC: #spigot @ irc.spi.gt
-#    (If this means nothing to you, just go to https://www.spigotmc.org/go/irc )
-# Forums: https://www.spigotmc.org/
+# If you need help on this file, feel free to leave a message on the forums asking for advice.
+#
+# Forums: https://spigotmc.org/
 # Bug tracker: https://www.spigotmc.org/go/bugs
-
 
 settings:
     allow-end: true
@@ -36,4 +32,3 @@ ticks-per:
     water-spawns: 1
     ambient-spawns: 1
     autosave: 6000
-aliases: now-in-commands.yml
