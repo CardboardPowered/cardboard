@@ -34,6 +34,7 @@
     "entity.block.MixinDispenserBlockEntity",
     "entity.block.MixinCampfireBlockEntity",
     "entity.block.MixinBrewingStandBlockEntity",
+    "entity.block.MixinAbstractFurnaceBlockEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
