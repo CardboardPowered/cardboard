@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,13 +36,16 @@ import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.client.options.ChatVisibility;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -77,6 +81,27 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     @Override
     public boolean isDisconnected() {
     	return false; // TODO
+    }
+
+    @Overwrite
+    public void disconnect(String s) {
+        String leaveMessage = Formatting.YELLOW + this.player.getEntityName() + " left the game.";
+
+        PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), s, leaveMessage);
+
+        if (CraftServer.INSTANCE.getServer().isRunning())
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+
+        if (event.isCancelled())
+            return;
+
+        s = event.getReason();
+        final Text ichatbasecomponent = CraftChatMessage.fromString(s, true)[0];
+
+        get().connection.send(new DisconnectS2CPacket(ichatbasecomponent), (future) -> get().connection.disconnect(ichatbasecomponent));
+        get().onDisconnected(ichatbasecomponent);
+        get().connection.disableAutoRead();
+        get().connection.getClass();
     }
 
     /**
