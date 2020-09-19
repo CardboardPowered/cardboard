@@ -42,12 +42,16 @@ public class MixinRecipeManager implements IMixinRecipeManager {
         }
     }
 
+    /**
+     * @author BukkitFabric
+     * @reason Clear when no recipe is found
+     */
     @Overwrite
     public <C extends Inventory, T extends Recipe<C>> Optional<T> getFirstMatch(RecipeType<T> recipes, C c0, World world) {
         Optional<T> recipe = this.getAllOfType(recipes).values().stream().flatMap((irecipe) -> {
             return Util.stream(recipes.get(irecipe, world, c0));
         }).findFirst();
-        ((IMixinInventory)c0).setCurrentRecipe(recipe.orElse(null)); // CraftBukkit - Clear recipe when no recipe is found
+        ((IMixinInventory)c0).setCurrentRecipe(recipe.orElse(null)); // Clear recipe when no recipe is found
         return recipe;
     }
 

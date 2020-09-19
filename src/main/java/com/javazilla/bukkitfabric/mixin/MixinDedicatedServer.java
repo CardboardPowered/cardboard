@@ -82,6 +82,10 @@ public class MixinDedicatedServer extends MixinMinecraftServer {
         BukkitLogger.getLogger().info("Goodbye!");
     }
 
+    /**
+     * @author BukkitFabric
+     * @reason ServerCommandEvent
+     */
     @Overwrite
     public void executeQueuedCommands() {
         while (!this.commandQueue.isEmpty()) {

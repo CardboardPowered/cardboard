@@ -98,6 +98,10 @@ public class MixinExplosion {
 
     public boolean wasCanceled = false; // Added by Bukkit
 
+    /**
+     * @author BukkitFabric
+     * @reason Explosion Events
+     */
     @Overwrite
     public void affectWorld(boolean flag) {
         if (this.world.isClient)
@@ -204,6 +208,10 @@ public class MixinExplosion {
 
     }
 
+    /**
+     * @author BukkitFabric
+     * @reason Explosion Events
+     */
     @Overwrite
     public void collectBlocksAndDamageEntities() {
         if (this.power < 0.1F)

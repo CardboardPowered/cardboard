@@ -12,16 +12,19 @@ import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
 @Mixin(HandshakeC2SPacket.class)
 public class MixinHandshakeC2SPacket {
 
-
     @Shadow private int protocolVersion;
     @Shadow private String address;
     @Shadow private int port;
     @Shadow private NetworkState intendedState;
 
+    /**
+     * @author BukkitFabric
+     * @reason 256 -> Short.MAX_VALUE
+     */
     @Overwrite
     public void read(PacketByteBuf buf) throws IOException {
         this.protocolVersion = buf.readVarInt();
-        this.address = buf.readString(Short.MAX_VALUE); // SPIGOT - 256 -> Short.MAX_VALUE
+        this.address = buf.readString(Short.MAX_VALUE);
         this.port = buf.readUnsignedShort();
         this.intendedState = NetworkState.byId(buf.readVarInt());
     }

@@ -63,6 +63,10 @@ public class MixinBrewingStandBlockEntity implements IMixinInventory {
         maxStack = size;
     }
 
+    /**
+     * @author BukkitFabric
+     * @reason BrewingStandFuelEvent
+     */
     @Overwrite
     public void tick() {
         BrewingStandBlockEntity nms = (BrewingStandBlockEntity)(Object)this;

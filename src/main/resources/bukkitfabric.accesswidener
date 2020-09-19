@@ -4,16 +4,11 @@ accessible	field	net/minecraft/server/MinecraftServer	commandManager	Lnet/minecr
 mutable	field	net/minecraft/server/MinecraftServer	commandManager	Lnet/minecraft/server/command/CommandManager;
 accessible	method	net/minecraft/recipe/Ingredient	<init>	(Ljava/util/stream/Stream;)V
 accessible	field	net/minecraft/network/packet/c2s/handshake/HandshakeC2SPacket	address	Ljava/lang/String;
-accessible	field	net/minecraft/container/Container	slots	Ljava/util/List;
-mutable	field	net/minecraft/container/Container	slots	Ljava/util/List;
 accessible	method	net/minecraft/server/ServerConfigEntry	getKey	()Ljava/lang/Object;
 accessible	field	net/minecraft/entity/boss/BossBar	color	Lnet/minecraft/entity/boss/BossBar$Color;
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	cookTime	I
 accessible	method	net/minecraft/entity/decoration/AbstractDecorationEntity	setFacing	(Lnet/minecraft/util/math/Direction;)V
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	cookTimeTotal	I
-accessible	field	net/minecraft/entity/boss/dragon/EnderDragonFight	bossBar	Lnet/minecraft/entity/boss/ServerBossBar;
-accessible	field	net/minecraft/state/State	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
-accessible	field	net/minecraft/state/AbstractBlockState	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
 accessible	field	net/minecraft/entity/FireworkEntity	ITEM	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	burnTime	I
 accessible	field	net/minecraft/advancement/AdvancementManager	advancements	Ljava/util/Map;
@@ -60,8 +55,6 @@ accessible	field	net/minecraft/network/ClientConnection	channel	Lio/netty/channe
 accessible	field	net/minecraft/entity/projectile/FishingBobberEntity	owner	Lnet/minecraft/entity/player/PlayerEntity;
 mutable	field	net/minecraft/entity/projectile/FishingBobberEntity	owner	Lnet/minecraft/entity/player/PlayerEntity;
 accessible	field	net/minecraft/server/world/ChunkTicket	argument	Ljava/lang/Object;
-accessible	field	net/minecraft/server/dedicated/ServerCommandOutput	buffer	Ljava/lang/StringBuffer;
-mutable	field	net/minecraft/server/dedicated/ServerCommandOutput	buffer	Ljava/lang/StringBuffer;
 accessible	field	net/minecraft/server/dedicated/ServerCommandOutput	server	Lnet/minecraft/server/MinecraftServer;
 mutable	field	net/minecraft/server/dedicated/ServerCommandOutput	server	Lnet/minecraft/server/MinecraftServer;
 accessible	field	net/minecraft/tag/RegistryTagContainer	registry	Lnet/minecraft/util/registry/Registry;
@@ -162,8 +155,6 @@ accessible	field	net/minecraft/entity/damage/EntityDamageSource	source	Lnet/mine
 mutable	field	net/minecraft/entity/damage/EntityDamageSource	source	Lnet/minecraft/entity/Entity;
 accessible	field	net/minecraft/entity/damage/ProjectileDamageSource	attacker	Lnet/minecraft/entity/Entity;
 mutable	field	net/minecraft/entity/damage/ProjectileDamageSource	attacker	Lnet/minecraft/entity/Entity;
-accessible	field	net/minecraft/entity/passive/PassiveEntity	CHILD	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/PassiveEntity	CHILD	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/passive/PassiveEntity	breedingAge	I
 mutable	field	net/minecraft/entity/passive/PassiveEntity	breedingAge	I
 accessible	field	net/minecraft/entity/passive/PassiveEntity	forcedAge	I
@@ -212,8 +203,6 @@ accessible	field	net/minecraft/entity/Entity	inLava	Z
 mutable	field	net/minecraft/entity/Entity	inLava	Z
 accessible	field	net/minecraft/entity/Entity	firstUpdate	Z
 mutable	field	net/minecraft/entity/Entity	firstUpdate	Z
-accessible	field	net/minecraft/entity/Entity	FLAGS	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/Entity	FLAGS	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/Entity	AIR	Lnet/minecraft/entity/data/TrackedData;
 mutable	field	net/minecraft/entity/Entity	AIR	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/Entity	CUSTOM_NAME	Lnet/minecraft/entity/data/TrackedData;
@@ -2293,7 +2282,6 @@ accessible	class	net/minecraft/server/dedicated/MinecraftDedicatedServer$2
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	commandQueue	Ljava/util/List;
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	propertiesLoader	Lnet/minecraft/server/dedicated/ServerPropertiesLoader;
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	defaultGameMode	Lnet/minecraft/world/GameMode;
-accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	gui	Lnet/minecraft/server/dedicated/gui/DedicatedServerGui;
 accessible	method	net/minecraft/server/dedicated/MinecraftDedicatedServer	convertData	()Z
 accessible	method	net/minecraft/server/dedicated/ServerPropertiesHandler	create	(Ljava/util/Properties;)Lnet/minecraft/server/dedicated/ServerPropertiesHandler;
 accessible	field	net/minecraft/server/dedicated/ServerPropertiesLoader	path	Ljava/nio/file/Path;
@@ -2305,28 +2293,6 @@ accessible	field	net/minecraft/server/world/ThreadedAnvilChunkStorage	worldGener
 accessible	method	net/minecraft/server/world/ThreadedAnvilChunkStorage	save	(Lnet/minecraft/world/chunk/Chunk;)Z
 accessible	method	net/minecraft/server/world/ThreadedAnvilChunkStorage	setViewDistance	(I)V
 accessible	method	net/minecraft/server/world/SecondaryServerWorld	tickTime	()V
-extendable	class	net/minecraft/server/world/PlayerChunkWatchingManager
-accessible	field	net/minecraft/server/world/PlayerChunkWatchingManager	watchingPlayers	Lit/unimi/dsi/fastutil/objects/Object2BooleanMap;
-accessible	field	net/minecraft/server/world/ServerChunkManager	ticketManager	Lnet/minecraft/server/world/ChunkTicketManager;
-accessible	field	net/minecraft/server/world/ServerChunkManager	chunkGenerator	Lnet/minecraft/world/gen/chunk/ChunkGenerator;
-accessible	field	net/minecraft/server/world/ServerChunkManager	world	Lnet/minecraft/server/world/ServerWorld;
-accessible	field	net/minecraft/server/world/ServerChunkManager	serverThread	Ljava/lang/Thread;
-accessible	field	net/minecraft/server/world/ServerChunkManager	lightProvider	Lnet/minecraft/server/world/ServerLightingProvider;
-accessible	field	net/minecraft/server/world/ServerChunkManager	mainThreadExecutor	Lnet/minecraft/server/world/ServerChunkManager$MainThreadExecutor;
-accessible	field	net/minecraft/server/world/ServerChunkManager	persistentStateManager	Lnet/minecraft/world/PersistentStateManager;
-accessible	field	net/minecraft/server/world/ServerChunkManager	lastMobSpawningTime	J
-accessible	field	net/minecraft/server/world/ServerChunkManager	spawnMonsters	Z
-accessible	field	net/minecraft/server/world/ServerChunkManager	spawnAnimals	Z
-accessible	field	net/minecraft/server/world/ServerChunkManager	chunkPosCache	[J
-accessible	field	net/minecraft/server/world/ServerChunkManager	chunkStatusCache	[Lnet/minecraft/world/chunk/ChunkStatus;
-accessible	field	net/minecraft/server/world/ServerChunkManager	chunkCache	[Lnet/minecraft/world/chunk/Chunk;
-accessible	method	net/minecraft/server/world/ServerChunkManager	getChunkHolder	(J)Lnet/minecraft/server/world/ChunkHolder;
-accessible	method	net/minecraft/server/world/ServerChunkManager	method_21738	(JLnet/minecraft/world/chunk/Chunk;Lnet/minecraft/world/chunk/ChunkStatus;)V
-accessible	method	net/minecraft/server/world/ServerChunkManager	initChunkCaches	()V
-accessible	method	net/minecraft/server/world/ServerChunkManager	getChunkFuture	(IILnet/minecraft/world/chunk/ChunkStatus;Z)Ljava/util/concurrent/CompletableFuture;
-accessible	method	net/minecraft/server/world/ServerChunkManager	isMissingForLevel	(Lnet/minecraft/server/world/ChunkHolder;I)Z
-accessible	method	net/minecraft/server/world/ServerChunkManager	tick	()Z
-accessible	method	net/minecraft/server/world/ServerChunkManager	tickChunks	()V
 accessible	field	net/minecraft/server/world/ServerWorld	globalEntities	Ljava/util/List;
 accessible	field	net/minecraft/server/world/ServerWorld	entitiesById	Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
 accessible	field	net/minecraft/server/world/ServerWorld	entitiesByUuid	Ljava/util/Map;
@@ -2339,8 +2305,6 @@ accessible	field	net/minecraft/server/world/ServerWorld	idleTimeout	I
 accessible	field	net/minecraft/server/world/ServerWorld	entityNavigations	Ljava/util/Set;
 accessible	field	net/minecraft/server/world/ServerWorld	pendingBlockActions	Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;
 accessible	field	net/minecraft/server/world/ServerWorld	insideTick	Z
-accessible	method	net/minecraft/server/world/ServerWorld	method_23660	()V
-accessible	method	net/minecraft/server/world/ServerWorld	method_18210	(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/math/BlockPos;
 accessible	method	net/minecraft/server/world/ServerWorld	resetWeather	()V
 accessible	method	net/minecraft/server/world/ServerWorld	saveLevel	()V
 accessible	method	net/minecraft/server/world/ServerWorld	addPlayer	(Lnet/minecraft/server/network/ServerPlayerEntity;)V
@@ -2444,3 +2408,5 @@ accessible	field	net/minecraft/block/entity/EndGatewayBlockEntity	exitPortalPos	
 accessible	field	net/minecraft/block/entity/EndGatewayBlockEntity	exactTeleport	Z
 accessible	field	net/minecraft/block/entity/EndGatewayBlockEntity	age	J
 accessible	field	net/minecraft/network/packet/s2c/play/BlockUpdateS2CPacket	state	Lnet/minecraft/block/BlockState;
+accessible	field	net/minecraft/state/State	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
+accessible	field	net/minecraft/state/AbstractBlockState	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;

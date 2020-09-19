@@ -85,6 +85,10 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
         CraftServer.INSTANCE.playerView.remove(this.bukkit);
     }
 
+    /**
+     * @author BukkitFabric
+     * @reason Bukkit Multiworld Teleport
+     */
     @Overwrite
     public void teleport(ServerWorld worldserver, double d0, double d1, double d2, float f, float f1) {
         this.getBukkitEntity().teleport(new Location(((IMixinWorld)worldserver).getCraftWorld(), d0, d1, d2, f, f1), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);

@@ -23,6 +23,10 @@ public class MixinCampfireBlockEntity {
     @Shadow
     public DefaultedList<ItemStack> itemsBeingCooked;
 
+    /**
+     * @author BukkitFabric
+     * @reason BlockCookEvent
+     */
     @Overwrite
     public void updateItemsBeingCooked() {
         CampfireBlockEntity nms = (CampfireBlockEntity)(Object)this;

@@ -71,6 +71,10 @@ public class MixinChestBlockEntity implements IMixinInventory {
         return new Location(((IMixinWorld)(((ChestBlockEntity)(Object)this).world)).getCraftWorld(), pos.x, pos.y, pos.z);
     }
 
+    /**
+     * @author BukkitFabric
+     * @reason Redstone Events
+     */
     @Overwrite
     public void onOpen(PlayerEntity entityhuman) {
         if (!entityhuman.isSpectator()) {

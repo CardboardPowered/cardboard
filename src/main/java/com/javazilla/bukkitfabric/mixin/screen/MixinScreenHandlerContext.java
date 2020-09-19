@@ -31,6 +31,10 @@ public interface MixinScreenHandlerContext extends IMixinScreenHandlerContext {
         return new org.bukkit.Location(((IMixinWorld)getWorld()).getCraftWorld(), getPosition().getX(), getPosition().getY(), getPosition().getZ());
     }
 
+    /**
+     * @reason Add new methods
+     * @author BukkitFabric
+     */
     @Overwrite
     static ScreenHandlerContext create(final World world, final BlockPos blockposition) {
         return new ScreenHandlerContext() {

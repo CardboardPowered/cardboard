@@ -81,6 +81,10 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     	return false; // TODO
     }
 
+    /**
+     * @author BukkitFabric
+     * @reason PlayerKickEvent
+     */
     @Overwrite
     public void disconnect(Text reason) {
         String leaveMessage = Formatting.YELLOW + this.player.getEntityName() + " left the game.";

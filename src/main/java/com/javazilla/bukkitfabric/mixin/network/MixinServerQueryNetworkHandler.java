@@ -27,6 +27,10 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
     @Shadow @Final private ClientConnection connection;
     @Shadow private boolean responseSent;
 
+    /**
+     * @author BukkitFabric
+     * @reason ServerListPingEvent
+     */
     @Overwrite
     public void onRequest(QueryRequestC2SPacket packetstatusinstart) {
         if (this.responseSent) {

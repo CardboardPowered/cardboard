@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.screen.ScreenHandler;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -10,6 +9,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
+
+import net.minecraft.screen.ScreenHandler;
+
 public class CraftInventoryView extends InventoryView {
 
     private final ScreenHandler container;
@@ -17,7 +20,6 @@ public class CraftInventoryView extends InventoryView {
     private final CraftInventory viewing;
 
     public CraftInventoryView(HumanEntity player, Inventory viewing, ScreenHandler container) {
-        // TODO: Should we make sure it really IS a CraftHumanEntity first? And a CraftInventory?
         this.player = (CraftHumanEntity) player;
         this.viewing = (CraftInventory) viewing;
         this.container = container;
@@ -41,33 +43,30 @@ public class CraftInventoryView extends InventoryView {
     @Override
     public InventoryType getType() {
         InventoryType type = viewing.getType();
-        if (type == InventoryType.CRAFTING && player.getGameMode() == GameMode.CREATIVE) {
+        if (type == InventoryType.CRAFTING && player.getGameMode() == GameMode.CREATIVE)
             return InventoryType.CREATIVE;
-        }
         return type;
     }
 
     @Override
     public void setItem(int slot, ItemStack item) {
         net.minecraft.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
-        if (slot >= 0) {
+        if (slot >= 0)
             container.getSlot(slot).setStack(stack);
-        } else {
+        else
             player.getHandle().dropStack(stack);
-        }
     }
 
     @Override
     public ItemStack getItem(int slot) {
-        if (slot < 0) {
+        if (slot < 0)
             return null;
-        }
         return CraftItemStack.asCraftMirror(container.getSlot(slot).getStack());
     }
 
     @Override
     public String getTitle() {
-        return null; // TODO: CraftChatMessage.fromComponent(container.title);
+        return CraftChatMessage.fromComponent(((IMixinScreenHandler)container).getTitle());
     }
 
     public boolean isInTop(int rawSlot) {
