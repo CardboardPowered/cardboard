@@ -89,10 +89,10 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     }
 
     @Overwrite
-    public void disconnect(String s) {
+    public void disconnect(Text reason) {
         String leaveMessage = Formatting.YELLOW + this.player.getEntityName() + " left the game.";
 
-        PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), s, leaveMessage);
+        PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), reason.asString(), leaveMessage);
 
         if (CraftServer.INSTANCE.getServer().isRunning())
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
@@ -100,11 +100,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         if (event.isCancelled())
             return;
 
-        s = event.getReason();
-        final Text ichatbasecomponent = CraftChatMessage.fromString(s, true)[0];
+        reason = new LiteralText(event.getReason());
+        final Text reason_final = reason;
 
-        get().connection.send(new DisconnectS2CPacket(ichatbasecomponent), (future) -> get().connection.disconnect(ichatbasecomponent));
-        get().onDisconnected(ichatbasecomponent);
+        get().connection.send(new DisconnectS2CPacket(reason), (future) -> get().connection.disconnect(reason_final));
+        get().onDisconnected(reason);
         get().connection.disableAutoRead();
         get().connection.getClass();
     }
