@@ -7,7 +7,10 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerLocaleChangeEvent;
+import org.bukkit.inventory.MainHand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,11 +22,13 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Arm;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -78,6 +83,16 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
         if (event.isCancelled())
             ci.cancel();
+    }
+
+    public String locale = "en_us"; // CraftBukkit - add, lowercase
+
+    @Inject(at = @At("HEAD"), method = "setClientSetting")
+    public void setClientSettings(ClientSettingsC2SPacket packetplayinsettings, CallbackInfo ci) {
+        if (((ServerPlayerEntity) (Object) this).getMainArm() != packetplayinsettings.getMainArm()) {
+            PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent((Player) getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        }
     }
 
 }
