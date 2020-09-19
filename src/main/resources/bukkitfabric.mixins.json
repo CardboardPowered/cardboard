@@ -62,7 +62,14 @@
     "inventory.MixinPlayerInventory",
     "inventory.MixinSimpleInventory",
     "inventory.MixinCraftingResultInventory",
-    "inventory.MixinEnderChestInventory"
+    "inventory.MixinEnderChestInventory",
+
+    "screen.MixinScreenHandler",
+    "screen.MixinScreenHandlerContext",
+    "screen.MixinForgingScreenHandler",
+    "screen.MixinAnvilScreenHandler",
+    "screen.MixinBeaconScreenHandler",
+    "screen.MixinBrewingStandScreenHandler"
   ],
   "injectors": {
     "defaultRequire": 1

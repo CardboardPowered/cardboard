@@ -18,12 +18,20 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.inventory.InventoryView;
 
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.text.Text;
 
-public interface IMixinCommandOutput {
+public interface IMixinScreenHandler {
 
-    public CommandSender getBukkitSender(ServerCommandSource serverCommandSource);
+    public InventoryView getBukkitView();
+
+    public Text getTitle();
+
+    public void setTitle(Text title);
+
+    public void transferTo(ScreenHandler other, CraftHumanEntity player);
 
 }

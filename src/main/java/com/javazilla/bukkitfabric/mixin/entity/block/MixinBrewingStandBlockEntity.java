@@ -22,7 +22,6 @@ import net.minecraft.block.BrewingStandBlock;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.collection.DefaultedList;
 
 @Mixin(BrewingStandBlockEntity.class)
