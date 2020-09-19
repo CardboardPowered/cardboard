@@ -87,7 +87,7 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
 
     public String locale = "en_us"; // CraftBukkit - add, lowercase
 
-    @Inject(at = @At("HEAD"), method = "setClientSetting")
+    @Inject(at = @At("HEAD"), method = "setClientSettings")
     public void setClientSettings(ClientSettingsC2SPacket packetplayinsettings, CallbackInfo ci) {
         if (((ServerPlayerEntity) (Object) this).getMainArm() != packetplayinsettings.getMainArm()) {
             PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent((Player) getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
