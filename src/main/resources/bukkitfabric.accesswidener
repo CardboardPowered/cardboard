@@ -1,6 +1,5 @@
 accessWidener	v1	named
 # Bukkit for Fabric Access Widener
-accessible	field	net/minecraft/network/packet/c2s/play/ClientSettingsC2SPacket	viewDistance	I
 accessible	field	net/minecraft/server/MinecraftServer	commandManager	Lnet/minecraft/server/command/CommandManager;
 mutable	field	net/minecraft/server/MinecraftServer	commandManager	Lnet/minecraft/server/command/CommandManager;
 accessible	method	net/minecraft/recipe/Ingredient	<init>	(Ljava/util/stream/Stream;)V
@@ -10,10 +9,7 @@ mutable	field	net/minecraft/container/Container	slots	Ljava/util/List;
 accessible	method	net/minecraft/server/ServerConfigEntry	getKey	()Ljava/lang/Object;
 accessible	field	net/minecraft/entity/boss/BossBar	color	Lnet/minecraft/entity/boss/BossBar$Color;
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	cookTime	I
-accessible	field	net/minecraft/network/packet/c2s/play/CustomPayloadC2SPacket	data	Lnet/minecraft/util/PacketByteBuf;
-accessible	field	net/minecraft/network/packet/c2s/play/CustomPayloadC2SPacket	channel	Lnet/minecraft/util/Identifier;
 accessible	method	net/minecraft/entity/decoration/AbstractDecorationEntity	setFacing	(Lnet/minecraft/util/math/Direction;)V
-accessible	field	net/minecraft/network/packet/s2c/play/PlayerListHeaderS2CPacket	footer	Lnet/minecraft/text/Text;
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	cookTimeTotal	I
 accessible	field	net/minecraft/entity/boss/dragon/EnderDragonFight	bossBar	Lnet/minecraft/entity/boss/ServerBossBar;
 accessible	field	net/minecraft/state/State	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
@@ -30,7 +26,6 @@ accessible	method	net/minecraft/entity/passive/LlamaEntity	setStrength	(I)V
 accessible	field	net/minecraft/entity/boss/dragon/EnderDragonEntity	parts	[Lnet/minecraft/entity/boss/dragon/EnderDragonPart;
 accessible	field	net/minecraft/network/packet/s2c/play/PlayerSpawnPositionS2CPacket	pos	Lnet/minecraft/util/math/BlockPos;
 accessible	field	net/minecraft/container/Slot	invSlot	I
-accessible	method	net/minecraft/entity/boss/ServerBossBar	sendPacket	(Lnet/minecraft/network/packet/s2c/play/BossBarS2CPacket$Type;)V
 accessible	field	net/minecraft/entity/passive/BeeEntity	hivePos	Lnet/minecraft/util/math/BlockPos;
 accessible	method	net/minecraft/world/dimension/DimensionType	<init>	(ILjava/lang/String;Ljava/lang/String;Ljava/util/function/BiFunction;ZLnet/minecraft/world/biome/source/BiomeAccessType;)V
 accessible	method	net/minecraft/entity/passive/BeeEntity	setAnger	(I)V
@@ -47,8 +42,6 @@ accessible	field	net/minecraft/entity/LivingEntity	defaultMaximumHealth	I
 mutable	field	net/minecraft/entity/LivingEntity	defaultMaximumHealth	I
 accessible	field	net/minecraft/entity/projectile/SpectralArrowEntity	duration	I
 accessible	field	net/minecraft/item/map/MapState	updateTrackersByPlayer	Ljava/util/Map;
-accessible	field	net/minecraft/network/packet/s2c/play/BlockUpdateS2CPacket	state	Lnet/minecraft/block/BlockState;
-accessible	field	net/minecraft/network/packet/c2s/handshake/HandshakeC2SPacket	port	I
 accessible	field	net/minecraft/server/world/ChunkHolder	playersWatchingChunkProvider	Lnet/minecraft/server/world/ChunkHolder$d;
 accessible	method	net/minecraft/entity/passive/BeeEntity	setHasStung	(Z)V
 accessible	method	net/minecraft/entity/passive/MooshroomEntity	setType	(Lnet/minecraft/entity/passive/MooshroomEntity$Type;)V
@@ -67,7 +60,6 @@ accessible	field	net/minecraft/network/ClientConnection	channel	Lio/netty/channe
 accessible	field	net/minecraft/entity/projectile/FishingBobberEntity	owner	Lnet/minecraft/entity/player/PlayerEntity;
 mutable	field	net/minecraft/entity/projectile/FishingBobberEntity	owner	Lnet/minecraft/entity/player/PlayerEntity;
 accessible	field	net/minecraft/server/world/ChunkTicket	argument	Ljava/lang/Object;
-accessible	field	net/minecraft/network/packet/s2c/play/PlayerListHeaderS2CPacket	header	Lnet/minecraft/text/Text;
 accessible	field	net/minecraft/server/dedicated/ServerCommandOutput	buffer	Ljava/lang/StringBuffer;
 mutable	field	net/minecraft/server/dedicated/ServerCommandOutput	buffer	Ljava/lang/StringBuffer;
 accessible	field	net/minecraft/server/dedicated/ServerCommandOutput	server	Lnet/minecraft/server/MinecraftServer;
@@ -275,8 +267,6 @@ accessible	method	net/minecraft/entity/Entity	destroy	()V
 accessible	method	net/minecraft/entity/Entity	doesNotCollide	(Lnet/minecraft/util/math/Box;)Z
 accessible	method	net/minecraft/entity/Entity	getLandingPos	()Lnet/minecraft/util/math/BlockPos;
 accessible	method	net/minecraft/entity/Entity	getVelocityAffectingPos	()Lnet/minecraft/util/math/BlockPos;
-accessible	method	net/minecraft/entity/Entity	adjustMovementForSneaking	(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/entity/MovementType;)Lnet/minecraft/util/math/Vec3d;
-accessible	method	net/minecraft/entity/Entity	adjustMovementForPiston	(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Vec3d;
 accessible	method	net/minecraft/entity/Entity	calculatePistonMovementFactor	(Lnet/minecraft/util/math/Direction$Axis;D)D
 accessible	method	net/minecraft/entity/Entity	adjustMovementForCollisions	(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Vec3d;
 accessible	method	net/minecraft/entity/Entity	calculateNextStepSoundDistance	()F
@@ -326,77 +316,15 @@ accessible	method	net/minecraft/entity/Entity	dealDamage	(Lnet/minecraft/entity/
 accessible	method	net/minecraft/entity/Entity	collectPassengers	(ZLjava/util/Set;)V
 accessible	method	net/minecraft/entity/Entity	getBurningDuration	()I
 accessible	method	net/minecraft/entity/Entity	getPermissionLevel	()I
-accessible	field	net/minecraft/predicate/entity/EntityPredicates$CanPickup	itemstack	Lnet/minecraft/item/ItemStack;
-mutable	field	net/minecraft/predicate/entity/EntityPredicates$CanPickup	itemstack	Lnet/minecraft/item/ItemStack;
-extendable	class	net/minecraft/predicate/entity/EntityPredicates
-accessible	field	net/minecraft/entity/EntityType$Builder	factory	Lnet/minecraft/entity/EntityType$EntityFactory;
-mutable	field	net/minecraft/entity/EntityType$Builder	factory	Lnet/minecraft/entity/EntityType$EntityFactory;
-accessible	field	net/minecraft/entity/EntityType$Builder	category	Lnet/minecraft/entity/EntityCategory;
-mutable	field	net/minecraft/entity/EntityType$Builder	category	Lnet/minecraft/entity/EntityCategory;
-accessible	field	net/minecraft/entity/EntityType$Builder	saveable	Z
-mutable	field	net/minecraft/entity/EntityType$Builder	saveable	Z
-accessible	field	net/minecraft/entity/EntityType$Builder	summonable	Z
-mutable	field	net/minecraft/entity/EntityType$Builder	summonable	Z
-accessible	field	net/minecraft/entity/EntityType$Builder	fireImmune	Z
-mutable	field	net/minecraft/entity/EntityType$Builder	fireImmune	Z
-accessible	field	net/minecraft/entity/EntityType$Builder	spawnableFarFromPlayer	Z
-mutable	field	net/minecraft/entity/EntityType$Builder	spawnableFarFromPlayer	Z
-accessible	field	net/minecraft/entity/EntityType$Builder	size	Lnet/minecraft/entity/EntityDimensions;
-mutable	field	net/minecraft/entity/EntityType$Builder	size	Lnet/minecraft/entity/EntityDimensions;
-accessible	field	net/minecraft/entity/EntityType	factory	Lnet/minecraft/entity/EntityType$EntityFactory;
-mutable	field	net/minecraft/entity/EntityType	factory	Lnet/minecraft/entity/EntityType$EntityFactory;
-accessible	field	net/minecraft/entity/EntityType	category	Lnet/minecraft/entity/EntityCategory;
-mutable	field	net/minecraft/entity/EntityType	category	Lnet/minecraft/entity/EntityCategory;
-accessible	field	net/minecraft/entity/EntityType	saveable	Z
-mutable	field	net/minecraft/entity/EntityType	saveable	Z
-accessible	field	net/minecraft/entity/EntityType	summonable	Z
-mutable	field	net/minecraft/entity/EntityType	summonable	Z
-accessible	field	net/minecraft/entity/EntityType	fireImmune	Z
-mutable	field	net/minecraft/entity/EntityType	fireImmune	Z
-accessible	field	net/minecraft/entity/EntityType	spawnableFarFromPlayer	Z
-mutable	field	net/minecraft/entity/EntityType	spawnableFarFromPlayer	Z
-accessible	field	net/minecraft/entity/EntityType	translationKey	Ljava/lang/String;
-mutable	field	net/minecraft/entity/EntityType	translationKey	Ljava/lang/String;
-accessible	field	net/minecraft/entity/EntityType	name	Lnet/minecraft/text/Text;
-mutable	field	net/minecraft/entity/EntityType	name	Lnet/minecraft/text/Text;
-accessible	field	net/minecraft/entity/EntityType	lootTableId	Lnet/minecraft/util/Identifier;
-mutable	field	net/minecraft/entity/EntityType	lootTableId	Lnet/minecraft/util/Identifier;
-accessible	field	net/minecraft/entity/EntityType	dimensions	Lnet/minecraft/entity/EntityDimensions;
-mutable	field	net/minecraft/entity/EntityType	dimensions	Lnet/minecraft/entity/EntityDimensions;
-accessible	method	net/minecraft/entity/EntityType	register	(Ljava/lang/String;Lnet/minecraft/entity/EntityType$Builder;)Lnet/minecraft/entity/EntityType;
-accessible	method	net/minecraft/entity/EntityType	getOriginY	(Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;ZLnet/minecraft/util/math/Box;)D
-accessible	method	net/minecraft/entity/EntityType	newInstance	(Lnet/minecraft/world/World;Lnet/minecraft/entity/EntityType;)Lnet/minecraft/entity/Entity;
-accessible	method	net/minecraft/entity/EntityType	loadEntityFromTag	(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/world/World;)Ljava/util/Optional;
 extendable	class	net/minecraft/entity/EquipmentSlot$Type
 extendable	class	net/minecraft/entity/EquipmentSlot
-accessible	field	net/minecraft/entity/EquipmentSlot	type	Lnet/minecraft/entity/EquipmentSlot$Type;
-mutable	field	net/minecraft/entity/EquipmentSlot	type	Lnet/minecraft/entity/EquipmentSlot$Type;
-accessible	field	net/minecraft/entity/EquipmentSlot	entityId	I
-mutable	field	net/minecraft/entity/EquipmentSlot	entityId	I
-accessible	field	net/minecraft/entity/EquipmentSlot	armorStandId	I
-mutable	field	net/minecraft/entity/EquipmentSlot	armorStandId	I
 accessible	field	net/minecraft/entity/EquipmentSlot	name	Ljava/lang/String;
 mutable	field	net/minecraft/entity/EquipmentSlot	name	Ljava/lang/String;
-accessible	field	net/minecraft/entity/ExperienceOrbEntity	health	I
-mutable	field	net/minecraft/entity/ExperienceOrbEntity	health	I
-accessible	field	net/minecraft/entity/ExperienceOrbEntity	amount	I
-mutable	field	net/minecraft/entity/ExperienceOrbEntity	amount	I
-accessible	field	net/minecraft/entity/ExperienceOrbEntity	target	Lnet/minecraft/entity/player/PlayerEntity;
-mutable	field	net/minecraft/entity/ExperienceOrbEntity	target	Lnet/minecraft/entity/player/PlayerEntity;
-accessible	field	net/minecraft/entity/ExperienceOrbEntity	lastTargetUpdateTick	I
-mutable	field	net/minecraft/entity/ExperienceOrbEntity	lastTargetUpdateTick	I
-accessible	method	net/minecraft/entity/ExperienceOrbEntity	applyWaterMovement	()V
-accessible	method	net/minecraft/entity/ExperienceOrbEntity	getMendingRepairCost	(I)I
-accessible	method	net/minecraft/entity/ExperienceOrbEntity	getMendingRepairAmount	(I)I
 extendable	class	net/minecraft/util/Arm
 accessible	field	net/minecraft/util/Arm	optionName	Lnet/minecraft/text/Text;
 mutable	field	net/minecraft/util/Arm	optionName	Lnet/minecraft/text/Text;
-accessible	field	net/minecraft/entity/LivingEntity	LIVING_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/LivingEntity	LIVING_FLAGS	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/LivingEntity	HEALTH	Lnet/minecraft/entity/data/TrackedData;
 mutable	field	net/minecraft/entity/LivingEntity	HEALTH	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/LivingEntity	STINGER_COUNT	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/LivingEntity	STINGER_COUNT	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/LivingEntity	attributes	Lnet/minecraft/entity/attribute/AbstractEntityAttributeContainer;
 mutable	field	net/minecraft/entity/LivingEntity	attributes	Lnet/minecraft/entity/attribute/AbstractEntityAttributeContainer;
 accessible	field	net/minecraft/entity/LivingEntity	damageTracker	Lnet/minecraft/entity/damage/DamageTracker;
@@ -503,10 +431,6 @@ accessible	method	net/minecraft/entity/LivingEntity	onKilledBy	(Lnet/minecraft/e
 accessible	method	net/minecraft/entity/LivingEntity	drop	(Lnet/minecraft/entity/damage/DamageSource;)V
 accessible	method	net/minecraft/entity/LivingEntity	dropInventory	()V
 accessible	method	net/minecraft/entity/LivingEntity	dropXp	()V
-accessible	method	net/minecraft/entity/LivingEntity	getHurtSound	(Lnet/minecraft/entity/damage/DamageSource;)Lnet/minecraft/sound/SoundEvent;
-accessible	method	net/minecraft/entity/LivingEntity	getDeathSound	()Lnet/minecraft/sound/SoundEvent;
-accessible	method	net/minecraft/entity/LivingEntity	getFallSound	(I)Lnet/minecraft/sound/SoundEvent;
-accessible	method	net/minecraft/entity/LivingEntity	getDrinkSound	(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/sound/SoundEvent;
 accessible	method	net/minecraft/entity/LivingEntity	canEnterTrapdoor	(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z
 accessible	method	net/minecraft/entity/LivingEntity	computeFallDamage	(FF)I
 accessible	method	net/minecraft/entity/LivingEntity	playBlockFallSound	()V
@@ -518,8 +442,6 @@ accessible	method	net/minecraft/entity/LivingEntity	applyDamage	(Lnet/minecraft/
 accessible	method	net/minecraft/entity/LivingEntity	getHandSwingDuration	()I
 accessible	method	net/minecraft/entity/LivingEntity	destroy	()V
 accessible	method	net/minecraft/entity/LivingEntity	tickHandSwing	()V
-accessible	method	net/minecraft/entity/LivingEntity	getSoundVolume	()F
-accessible	method	net/minecraft/entity/LivingEntity	getSoundPitch	()F
 accessible	method	net/minecraft/entity/LivingEntity	isImmobile	()Z
 accessible	method	net/minecraft/entity/LivingEntity	onDismounted	(Lnet/minecraft/entity/Entity;)V
 accessible	method	net/minecraft/entity/LivingEntity	getJumpVelocity	()F
@@ -546,8 +468,6 @@ accessible	method	net/minecraft/entity/LivingEntity	isSleepingInBed	()Z
 accessible	method	net/minecraft/entity/LivingEntity	getActiveEyeHeight	(Lnet/minecraft/entity/EntityPose;Lnet/minecraft/entity/EntityDimensions;)F
 accessible	method	net/minecraft/entity/LivingEntity	applyFoodEffects	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)V
 accessible	method	net/minecraft/entity/LivingEntity	getEquipmentBreakStatus	(Lnet/minecraft/entity/EquipmentSlot;)B
-accessible	field	net/minecraft/entity/mob/MobEntity	MOB_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/MobEntity	MOB_FLAGS	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/mob/MobEntity	experiencePoints	I
 mutable	field	net/minecraft/entity/mob/MobEntity	experiencePoints	I
 accessible	field	net/minecraft/entity/mob/MobEntity	target	Lnet/minecraft/entity/LivingEntity;
@@ -603,8 +523,6 @@ accessible	method	net/minecraft/entity/mob/MobEntity	deserializeLeashTag	()V
 accessible	method	net/minecraft/entity/mob/MobEntity	isInDaylight	()Z
 accessible	method	net/minecraft/entity/mob/MobEntity	swimUpward	(Lnet/minecraft/tag/Tag;)V
 extendable	class	net/minecraft/entity/EntityCategory
-accessible	field	net/minecraft/entity/EntityCategory	BY_NAME	Ljava/util/Map;
-mutable	field	net/minecraft/entity/EntityCategory	BY_NAME	Ljava/util/Map;
 accessible	field	net/minecraft/entity/EntityCategory	spawnCap	I
 mutable	field	net/minecraft/entity/EntityCategory	spawnCap	I
 accessible	field	net/minecraft/entity/EntityCategory	peaceful	Z
@@ -618,277 +536,7 @@ extendable	class	net/minecraft/entity/MovementType
 accessible	method	net/minecraft/entity/mob/MobEntityWithAi	getRunFromLeashSpeed	()D
 accessible	method	net/minecraft/entity/mob/MobEntityWithAi	updateForLeashLength	(F)V
 extendable	class	net/minecraft/entity/EntityPose
-accessible	class	net/minecraft/entity/SpawnRestriction$Entry
-accessible	field	net/minecraft/entity/SpawnRestriction$Entry	heightmapType	Lnet/minecraft/world/Heightmap$Type;
-accessible	field	net/minecraft/entity/SpawnRestriction$Entry	location	Lnet/minecraft/entity/SpawnRestriction$Location;
-accessible	field	net/minecraft/entity/SpawnRestriction$Entry	predicate	Lnet/minecraft/entity/SpawnRestriction$SpawnPredicate;
-extendable	class	net/minecraft/entity/SpawnRestriction$Location
-accessible	field	net/minecraft/entity/SpawnRestriction	RESTRICTIONS	Ljava/util/Map;
-accessible	method	net/minecraft/entity/SpawnRestriction	register	(Lnet/minecraft/entity/EntityType;Lnet/minecraft/entity/SpawnRestriction$Location;Lnet/minecraft/world/Heightmap$Type;Lnet/minecraft/entity/SpawnRestriction$SpawnPredicate;)V
-accessible	field	net/minecraft/entity/passive/TameableEntity	TAMEABLE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/TameableEntity	TAMEABLE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/passive/TameableEntity	OWNER_UUID	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/TameableEntity	OWNER_UUID	Lnet/minecraft/entity/data/TrackedData;
-accessible	method	net/minecraft/entity/passive/TameableEntity	onTamedChanged	()V
-extendable	class	net/minecraft/entity/attribute/EntityAttributeModifier$Operation
-accessible	field	net/minecraft/entity/attribute/EntityAttributeModifier$Operation	VALUES	[Lnet/minecraft/entity/attribute/EntityAttributeModifier$Operation;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeModifier$Operation	id	I
-accessible	field	net/minecraft/entity/attribute/EntityAttributeModifier	amount	D
-accessible	field	net/minecraft/entity/attribute/EntityAttributeModifier	operation	Lnet/minecraft/entity/attribute/EntityAttributeModifier$Operation;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeModifier	nameGetter	Ljava/util/function/Supplier;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeModifier	uuid	Ljava/util/UUID;
-accessible	field	net/minecraft/entity/attribute/AbstractEntityAttribute	parent	Lnet/minecraft/entity/attribute/EntityAttribute;
-accessible	field	net/minecraft/entity/attribute/AbstractEntityAttribute	id	Ljava/lang/String;
-accessible	field	net/minecraft/entity/attribute/AbstractEntityAttribute	defaultValue	D
-accessible	field	net/minecraft/entity/attribute/AbstractEntityAttribute	tracked	Z
-accessible	field	net/minecraft/entity/attribute/AbstractEntityAttributeContainer	instancesByKey	Ljava/util/Map;
-accessible	field	net/minecraft/entity/attribute/AbstractEntityAttributeContainer	instancesById	Ljava/util/Map;
-accessible	field	net/minecraft/entity/attribute/AbstractEntityAttributeContainer	attributeHierarchy	Lcom/google/common/collect/Multimap;
-accessible	method	net/minecraft/entity/attribute/AbstractEntityAttributeContainer	createInstance	(Lnet/minecraft/entity/attribute/EntityAttribute;)Lnet/minecraft/entity/attribute/EntityAttributeInstance;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	container	Lnet/minecraft/entity/attribute/AbstractEntityAttributeContainer;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	attribute	Lnet/minecraft/entity/attribute/EntityAttribute;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	modifiersByOperation	Ljava/util/Map;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	modifiersByName	Ljava/util/Map;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	modifiersByUuid	Ljava/util/Map;
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	baseValue	D
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	needsRefresh	Z
-accessible	field	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	cachedValue	D
-accessible	method	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	invalidateCache	()V
-accessible	method	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	computeValue	()D
-accessible	method	net/minecraft/entity/attribute/EntityAttributeInstanceImpl	getAllModifiers	(Lnet/minecraft/entity/attribute/EntityAttributeModifier$Operation;)Ljava/util/Collection;
-accessible	field	net/minecraft/util/WeightedList$Entry	item	Ljava/lang/Object;
-mutable	field	net/minecraft/util/WeightedList$Entry	item	Ljava/lang/Object;
-accessible	field	net/minecraft/util/WeightedList$Entry	weight	I
-mutable	field	net/minecraft/util/WeightedList$Entry	weight	I
-accessible	field	net/minecraft/util/WeightedList$Entry	shuffledOrder	D
-mutable	field	net/minecraft/util/WeightedList$Entry	shuffledOrder	D
-accessible	method	net/minecraft/util/WeightedList$Entry	getShuffledOrder	()D
-accessible	method	net/minecraft/util/WeightedList$Entry	setShuffledOrder	(F)V
-accessible	field	net/minecraft/util/WeightedList	entries	Ljava/util/List;
-mutable	field	net/minecraft/util/WeightedList	entries	Ljava/util/List;
-accessible	field	net/minecraft/predicate/DamagePredicate$Builder	dealt	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/DamagePredicate$Builder	dealt	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/DamagePredicate$Builder	taken	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/DamagePredicate$Builder	taken	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/DamagePredicate$Builder	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-mutable	field	net/minecraft/predicate/DamagePredicate$Builder	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-accessible	field	net/minecraft/predicate/DamagePredicate$Builder	blocked	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/DamagePredicate$Builder	blocked	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/DamagePredicate$Builder	type	Lnet/minecraft/predicate/entity/DamageSourcePredicate;
-mutable	field	net/minecraft/predicate/DamagePredicate$Builder	type	Lnet/minecraft/predicate/entity/DamageSourcePredicate;
-accessible	field	net/minecraft/predicate/DamagePredicate	dealt	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/DamagePredicate	dealt	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/DamagePredicate	taken	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/DamagePredicate	taken	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/DamagePredicate	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-mutable	field	net/minecraft/predicate/DamagePredicate	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-accessible	field	net/minecraft/predicate/DamagePredicate	blocked	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/DamagePredicate	blocked	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/DamagePredicate	type	Lnet/minecraft/predicate/entity/DamageSourcePredicate;
-mutable	field	net/minecraft/predicate/DamagePredicate	type	Lnet/minecraft/predicate/entity/DamageSourcePredicate;
-extendable	class	net/minecraft/village/VillageGossipType
-accessible	field	net/minecraft/village/VillageGossipType	BY_KEY	Ljava/util/Map;
-mutable	field	net/minecraft/village/VillageGossipType	BY_KEY	Ljava/util/Map;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isProjectile	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isProjectile	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isExplosion	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isExplosion	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	bypassesArmor	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	bypassesArmor	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	bypassesInvulnerability	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	bypassesInvulnerability	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	bypassesMagic	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	bypassesMagic	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isFire	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isFire	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isMagic	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isMagic	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isLightning	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	isLightning	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	directEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	directEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate$Builder	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	isProjectile	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	isProjectile	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	isExplosion	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	isExplosion	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	bypassesArmor	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	bypassesArmor	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	bypassesInvulnerability	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	bypassesInvulnerability	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	bypassesMagic	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	bypassesMagic	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	isFire	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	isFire	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	isMagic	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	isMagic	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	isLightning	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	isLightning	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	directEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	directEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-accessible	field	net/minecraft/predicate/entity/DamageSourcePredicate	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-mutable	field	net/minecraft/predicate/entity/DamageSourcePredicate	sourceEntity	Lnet/minecraft/predicate/entity/EntityPredicate;
-accessible	method	net/minecraft/predicate/entity/DamageSourcePredicate	getBoolean	(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/Boolean;
-accessible	method	net/minecraft/predicate/entity/DamageSourcePredicate	addProperty	(Lcom/google/gson/JsonObject;Ljava/lang/String;Ljava/lang/Boolean;)V
-accessible	field	net/minecraft/entity/mob/MobVisibilityCache	owner	Lnet/minecraft/entity/mob/MobEntity;
-mutable	field	net/minecraft/entity/mob/MobVisibilityCache	owner	Lnet/minecraft/entity/mob/MobEntity;
-accessible	field	net/minecraft/entity/mob/MobVisibilityCache	visibleEntities	Ljava/util/List;
-mutable	field	net/minecraft/entity/mob/MobVisibilityCache	visibleEntities	Ljava/util/List;
-accessible	field	net/minecraft/entity/mob/MobVisibilityCache	invisibleEntities	Ljava/util/List;
-mutable	field	net/minecraft/entity/mob/MobVisibilityCache	invisibleEntities	Ljava/util/List;
 extendable	class	net/minecraft/entity/EntityInteraction$1
-accessible	field	net/minecraft/entity/passive/BatEntity	hangingPosition	Lnet/minecraft/util/math/BlockPos;
-mutable	field	net/minecraft/entity/passive/BatEntity	hangingPosition	Lnet/minecraft/util/math/BlockPos;
-accessible	field	net/minecraft/entity/passive/FishEntity	FROM_BUCKET	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/FishEntity	FROM_BUCKET	Lnet/minecraft/entity/data/TrackedData;
-accessible	method	net/minecraft/entity/passive/FishEntity	isFromBucket	()Z
-accessible	method	net/minecraft/entity/passive/FishEntity	getFishBucketItem	()Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/entity/passive/AnimalEntity	loveTicks	I
-mutable	field	net/minecraft/entity/passive/AnimalEntity	loveTicks	I
-accessible	field	net/minecraft/entity/passive/AnimalEntity	lovingPlayer	Ljava/util/UUID;
-mutable	field	net/minecraft/entity/passive/AnimalEntity	lovingPlayer	Ljava/util/UUID;
-accessible	method	net/minecraft/entity/passive/AnimalEntity	eat	(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)V
-extendable	class	net/minecraft/entity/passive/ParrotEntity$1
-accessible	field	net/minecraft/entity/passive/ParrotEntity	songPlaying	Z
-accessible	field	net/minecraft/entity/passive/ParrotEntity	songSource	Lnet/minecraft/util/math/BlockPos;
-accessible	method	net/minecraft/entity/passive/ParrotEntity	imitateNearbyMob	(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;)Z
-accessible	method	net/minecraft/entity/passive/ParrotEntity	hasWings	()Z
-accessible	field	net/minecraft/entity/passive/WolfEntity	begAnimationProgress	F
-mutable	field	net/minecraft/entity/passive/WolfEntity	begAnimationProgress	F
-accessible	field	net/minecraft/entity/passive/WolfEntity	lastBegAnimationProgress	F
-mutable	field	net/minecraft/entity/passive/WolfEntity	lastBegAnimationProgress	F
-accessible	field	net/minecraft/entity/passive/WolfEntity	furWet	Z
-mutable	field	net/minecraft/entity/passive/WolfEntity	furWet	Z
-accessible	field	net/minecraft/entity/passive/WolfEntity	canShakeWaterOff	Z
-mutable	field	net/minecraft/entity/passive/WolfEntity	canShakeWaterOff	Z
-accessible	field	net/minecraft/entity/passive/WolfEntity	shakeProgress	F
-mutable	field	net/minecraft/entity/passive/WolfEntity	shakeProgress	F
-accessible	field	net/minecraft/entity/passive/WolfEntity	lastShakeProgress	F
-mutable	field	net/minecraft/entity/passive/WolfEntity	lastShakeProgress	F
-accessible	field	net/minecraft/entity/passive/AbstractDonkeyEntity	CHEST	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/AbstractDonkeyEntity	CHEST	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	IS_BRED_HORSE	Ljava/util/function/Predicate;
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	IS_BRED_HORSE	Ljava/util/function/Predicate;
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	JUMP_STRENGTH	Lnet/minecraft/entity/attribute/EntityAttribute;
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	JUMP_STRENGTH	Lnet/minecraft/entity/attribute/EntityAttribute;
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	HORSE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	HORSE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	OWNER_UUID	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	OWNER_UUID	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	eatingGrassTicks	I
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	eatingGrassTicks	I
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	eatingTicks	I
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	eatingTicks	I
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	angryTicks	I
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	angryTicks	I
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	inAir	Z
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	inAir	Z
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	items	Lnet/minecraft/inventory/BasicInventory;
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	items	Lnet/minecraft/inventory/BasicInventory;
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	temper	I
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	temper	I
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	jumpStrength	F
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	jumpStrength	F
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	jumping	Z
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	jumping	Z
-accessible	field	net/minecraft/entity/passive/HorseBaseEntity	soundTicks	I
-mutable	field	net/minecraft/entity/passive/HorseBaseEntity	soundTicks	I
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	getHorseFlag	(I)Z
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	setHorseFlag	(IZ)V
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	updateForLeashLength	(F)V
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	playEatingAnimation	()V
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	updateSaddle	()V
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	putPlayerOnBack	(Lnet/minecraft/entity/player/PlayerEntity;)V
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	walkToParent	()V
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	canBreed	()Z
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	spawnPlayerReactionParticles	(Z)V
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	getChildHealthBonus	()F
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	getChildJumpStrengthBonus	()D
-accessible	method	net/minecraft/entity/passive/HorseBaseEntity	getChildMovementSpeedBonus	()D
-accessible	field	net/minecraft/entity/passive/HorseEntity	VARIANT	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/HorseEntity	VARIANT	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/passive/HorseEntity	textureLocation	Ljava/lang/String;
-mutable	field	net/minecraft/entity/passive/HorseEntity	textureLocation	Ljava/lang/String;
-accessible	field	net/minecraft/entity/passive/HorseEntity	textureLayers	[Ljava/lang/String;
-mutable	field	net/minecraft/entity/passive/HorseEntity	textureLayers	[Ljava/lang/String;
-accessible	method	net/minecraft/entity/passive/HorseEntity	equipArmor	(Lnet/minecraft/item/ItemStack;)V
-accessible	method	net/minecraft/entity/passive/HorseEntity	clearTextureInfo	()V
-accessible	method	net/minecraft/entity/passive/HorseEntity	initTextureInfo	()V
-accessible	method	net/minecraft/entity/passive/HorseEntity	setArmorTypeFromStack	(Lnet/minecraft/item/ItemStack;)V
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	DEFAULT_HEAD_ROTATION	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	DEFAULT_BODY_ROTATION	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	DEFAULT_LEFT_ARM_ROTATION	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	DEFAULT_RIGHT_ARM_ROTATION	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	DEFAULT_LEFT_LEG_ROTATION	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	DEFAULT_RIGHT_LEG_ROTATION	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	heldItems	Lnet/minecraft/util/DefaultedList;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	heldItems	Lnet/minecraft/util/DefaultedList;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	armorItems	Lnet/minecraft/util/DefaultedList;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	armorItems	Lnet/minecraft/util/DefaultedList;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	disabledSlots	I
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	headRotation	Lnet/minecraft/util/math/EulerAngle;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	headRotation	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	bodyRotation	Lnet/minecraft/util/math/EulerAngle;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	bodyRotation	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	leftArmRotation	Lnet/minecraft/util/math/EulerAngle;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	leftArmRotation	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	rightArmRotation	Lnet/minecraft/util/math/EulerAngle;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	rightArmRotation	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	leftLegRotation	Lnet/minecraft/util/math/EulerAngle;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	leftLegRotation	Lnet/minecraft/util/math/EulerAngle;
-accessible	field	net/minecraft/entity/decoration/ArmorStandEntity	rightLegRotation	Lnet/minecraft/util/math/EulerAngle;
-mutable	field	net/minecraft/entity/decoration/ArmorStandEntity	rightLegRotation	Lnet/minecraft/util/math/EulerAngle;
-extendable	method	net/minecraft/entity/decoration/ArmorStandEntity	deserializePose	(Lnet/minecraft/nbt/CompoundTag;)V
-accessible	method	net/minecraft/entity/decoration/ArmorStandEntity	deserializePose	(Lnet/minecraft/nbt/CompoundTag;)V
-extendable	method	net/minecraft/entity/decoration/ArmorStandEntity	serializePose	()Lnet/minecraft/nbt/CompoundTag;
-accessible	method	net/minecraft/entity/decoration/ArmorStandEntity	serializePose	()Lnet/minecraft/nbt/CompoundTag;
-extendable	method	net/minecraft/entity/decoration/ArmorStandEntity	setSmall	(Z)V
-accessible	method	net/minecraft/entity/decoration/ArmorStandEntity	setSmall	(Z)V
-extendable	method	net/minecraft/entity/decoration/ArmorStandEntity	setShowArms	(Z)V
-accessible	method	net/minecraft/entity/decoration/ArmorStandEntity	setShowArms	(Z)V
-extendable	method	net/minecraft/entity/decoration/ArmorStandEntity	setHideBasePlate	(Z)V
-accessible	method	net/minecraft/entity/decoration/ArmorStandEntity	setHideBasePlate	(Z)V
-accessible	method	net/minecraft/entity/decoration/ArmorStandEntity	setMarker	(Z)V
-accessible	method	net/minecraft/entity/decoration/ArmorStandEntity	setBitField	(BIZ)B
-accessible	field	net/minecraft/entity/decoration/AbstractDecorationEntity	PREDICATE	Ljava/util/function/Predicate;
-mutable	field	net/minecraft/entity/decoration/AbstractDecorationEntity	PREDICATE	Ljava/util/function/Predicate;
-accessible	field	net/minecraft/entity/decoration/AbstractDecorationEntity	obstructionCheckCounter	I
-mutable	field	net/minecraft/entity/decoration/AbstractDecorationEntity	obstructionCheckCounter	I
-accessible	field	net/minecraft/entity/decoration/AbstractDecorationEntity	attachmentPos	Lnet/minecraft/util/math/BlockPos;
-mutable	field	net/minecraft/entity/decoration/AbstractDecorationEntity	attachmentPos	Lnet/minecraft/util/math/BlockPos;
-accessible	field	net/minecraft/entity/decoration/AbstractDecorationEntity	facing	Lnet/minecraft/util/math/Direction;
-mutable	field	net/minecraft/entity/decoration/AbstractDecorationEntity	facing	Lnet/minecraft/util/math/Direction;
-accessible	field	net/minecraft/entity/decoration/ItemFrameEntity	ITEM_STACK	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/decoration/ItemFrameEntity	ITEM_STACK	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/decoration/ItemFrameEntity	ROTATION	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/decoration/ItemFrameEntity	ROTATION	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/decoration/ItemFrameEntity	itemDropChance	F
-mutable	field	net/minecraft/entity/decoration/ItemFrameEntity	itemDropChance	F
-extendable	method	net/minecraft/entity/decoration/ItemFrameEntity	setFacing	(Lnet/minecraft/util/math/Direction;)V
-accessible	method	net/minecraft/entity/decoration/ItemFrameEntity	setFacing	(Lnet/minecraft/util/math/Direction;)V
-extendable	method	net/minecraft/entity/decoration/ItemFrameEntity	dropHeldStack	(Lnet/minecraft/entity/Entity;Z)V
-accessible	method	net/minecraft/entity/decoration/ItemFrameEntity	dropHeldStack	(Lnet/minecraft/entity/Entity;Z)V
-extendable	method	net/minecraft/entity/decoration/ItemFrameEntity	removeFromFrame	(Lnet/minecraft/item/ItemStack;)V
-accessible	method	net/minecraft/entity/decoration/ItemFrameEntity	removeFromFrame	(Lnet/minecraft/item/ItemStack;)V
-extendable	method	net/minecraft/entity/decoration/ItemFrameEntity	setRotation	(IZ)V
-accessible	method	net/minecraft/entity/decoration/ItemFrameEntity	setRotation	(IZ)V
-accessible	field	net/minecraft/entity/LightningEntity	ambientTick	I
-mutable	field	net/minecraft/entity/LightningEntity	ambientTick	I
-accessible	field	net/minecraft/entity/LightningEntity	remainingActions	I
-mutable	field	net/minecraft/entity/LightningEntity	remainingActions	I
-accessible	field	net/minecraft/entity/LightningEntity	cosmetic	Z
-mutable	field	net/minecraft/entity/LightningEntity	cosmetic	Z
-accessible	field	net/minecraft/entity/LightningEntity	channeller	Lnet/minecraft/server/network/ServerPlayerEntity;
-mutable	field	net/minecraft/entity/LightningEntity	channeller	Lnet/minecraft/server/network/ServerPlayerEntity;
-extendable	method	net/minecraft/entity/LightningEntity	spawnFire	(I)V
-accessible	method	net/minecraft/entity/LightningEntity	spawnFire	(I)V
-extendable	method	net/minecraft/entity/LightningEntity	readCustomDataFromTag	(Lnet/minecraft/nbt/CompoundTag;)V
-accessible	method	net/minecraft/entity/LightningEntity	readCustomDataFromTag	(Lnet/minecraft/nbt/CompoundTag;)V
-accessible	field	net/minecraft/predicate/item/EnchantmentPredicate	enchantment	Lnet/minecraft/enchantment/Enchantment;
-mutable	field	net/minecraft/predicate/item/EnchantmentPredicate	enchantment	Lnet/minecraft/enchantment/Enchantment;
-accessible	field	net/minecraft/predicate/item/EnchantmentPredicate	levels	Lnet/minecraft/predicate/NumberRange$IntRange;
-mutable	field	net/minecraft/predicate/item/EnchantmentPredicate	levels	Lnet/minecraft/predicate/NumberRange$IntRange;
 accessible	field	net/minecraft/entity/FallingBlockEntity	block	Lnet/minecraft/block/BlockState;
 mutable	field	net/minecraft/entity/FallingBlockEntity	block	Lnet/minecraft/block/BlockState;
 accessible	field	net/minecraft/entity/FallingBlockEntity	destroyedOnLanding	Z
@@ -919,90 +567,9 @@ accessible	method	net/minecraft/entity/ItemEntity	canMerge	()Z
 accessible	method	net/minecraft/entity/ItemEntity	tryMerge	(Lnet/minecraft/entity/ItemEntity;)V
 accessible	method	net/minecraft/entity/ItemEntity	merge	(Lnet/minecraft/entity/ItemEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)V
 accessible	method	net/minecraft/entity/ItemEntity	merge	(Lnet/minecraft/entity/ItemEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/ItemEntity;Lnet/minecraft/item/ItemStack;)V
-accessible	field	net/minecraft/entity/TntEntity	FUSE	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/TntEntity	causingEntity	Lnet/minecraft/entity/LivingEntity;
-mutable	field	net/minecraft/entity/TntEntity	causingEntity	Lnet/minecraft/entity/LivingEntity;
-accessible	field	net/minecraft/entity/TntEntity	fuseTimer	I
-mutable	field	net/minecraft/entity/TntEntity	fuseTimer	I
-extendable	method	net/minecraft/entity/TntEntity	explode	()V
-accessible	method	net/minecraft/entity/TntEntity	explode	()V
-extendable	class	net/minecraft/entity/mob/IllagerEntity$State
-accessible	class	net/minecraft/entity/mob/AbstractSkeletonEntity$1
-accessible	field	net/minecraft/entity/mob/BlazeEntity	BLAZE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/BlazeEntity	BLAZE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-extendable	method	net/minecraft/entity/mob/BlazeEntity	isFireActive	()Z
-accessible	method	net/minecraft/entity/mob/BlazeEntity	isFireActive	()Z
-extendable	method	net/minecraft/entity/mob/BlazeEntity	setFireActive	(Z)V
-accessible	method	net/minecraft/entity/mob/BlazeEntity	setFireActive	(Z)V
-accessible	field	net/minecraft/entity/mob/CreeperEntity	FUSE_SPEED	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/CreeperEntity	FUSE_SPEED	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/CreeperEntity	CHARGED	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/CreeperEntity	CHARGED	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/CreeperEntity	IGNITED	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/CreeperEntity	IGNITED	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/CreeperEntity	lastFuseTime	I
-mutable	field	net/minecraft/entity/mob/CreeperEntity	lastFuseTime	I
-accessible	field	net/minecraft/entity/mob/CreeperEntity	currentFuseTime	I
-mutable	field	net/minecraft/entity/mob/CreeperEntity	currentFuseTime	I
-accessible	field	net/minecraft/entity/mob/CreeperEntity	fuseTime	I
-mutable	field	net/minecraft/entity/mob/CreeperEntity	fuseTime	I
-accessible	field	net/minecraft/entity/mob/CreeperEntity	explosionRadius	I
-mutable	field	net/minecraft/entity/mob/CreeperEntity	explosionRadius	I
-accessible	field	net/minecraft/entity/mob/CreeperEntity	headsDropped	I
-mutable	field	net/minecraft/entity/mob/CreeperEntity	headsDropped	I
-accessible	method	net/minecraft/entity/mob/CreeperEntity	explode	()V
-accessible	method	net/minecraft/entity/mob/CreeperEntity	spawnEffectsCloud	()V
-accessible	field	net/minecraft/entity/mob/ZombiePigmanEntity	ATTACKING_SPEED_BOOST	Lnet/minecraft/entity/attribute/EntityAttributeModifier;
-mutable	field	net/minecraft/entity/mob/ZombiePigmanEntity	ATTACKING_SPEED_BOOST	Lnet/minecraft/entity/attribute/EntityAttributeModifier;
-accessible	field	net/minecraft/entity/mob/ZombiePigmanEntity	anger	I
-mutable	field	net/minecraft/entity/mob/ZombiePigmanEntity	anger	I
-accessible	field	net/minecraft/entity/mob/ZombiePigmanEntity	angrySoundDelay	I
-mutable	field	net/minecraft/entity/mob/ZombiePigmanEntity	angrySoundDelay	I
-accessible	field	net/minecraft/entity/mob/ZombiePigmanEntity	angerTarget	Ljava/util/UUID;
-mutable	field	net/minecraft/entity/mob/ZombiePigmanEntity	angerTarget	Ljava/util/UUID;
-accessible	method	net/minecraft/entity/mob/ZombiePigmanEntity	isAngry	()Z
-accessible	field	net/minecraft/entity/mob/PillagerEntity	CHARGING	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/PillagerEntity	CHARGING	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/PillagerEntity	inventory	Lnet/minecraft/inventory/BasicInventory;
-mutable	field	net/minecraft/entity/mob/PillagerEntity	inventory	Lnet/minecraft/inventory/BasicInventory;
 accessible	method	net/minecraft/entity/attribute/EntityAttributes	toTag	(Lnet/minecraft/entity/attribute/EntityAttributeInstance;)Lnet/minecraft/nbt/CompoundTag;
 accessible	method	net/minecraft/entity/attribute/EntityAttributes	fromTag	(Lnet/minecraft/entity/attribute/EntityAttributeInstance;Lnet/minecraft/nbt/CompoundTag;)V
-accessible	class	net/minecraft/entity/mob/ShulkerEntity$ShootBulletGoal
-accessible	field	net/minecraft/entity/mob/ShulkerEntity$ShootBulletGoal	counter	I
-mutable	field	net/minecraft/entity/mob/ShulkerEntity$ShootBulletGoal	counter	I
-mutable	field	net/minecraft/entity/mob/ShulkerEntity$PeekGoal	counter	I
-accessible	field	net/minecraft/entity/mob/ShulkerEntity	ATTR_COVERED_ARMOR_BONUS_UUID	Ljava/util/UUID;
-mutable	field	net/minecraft/entity/mob/ShulkerEntity	ATTR_COVERED_ARMOR_BONUS_UUID	Ljava/util/UUID;
-accessible	field	net/minecraft/entity/mob/ShulkerEntity	ATTR_COVERED_ARMOR_BONUS	Lnet/minecraft/entity/attribute/EntityAttributeModifier;
-mutable	field	net/minecraft/entity/mob/ShulkerEntity	ATTR_COVERED_ARMOR_BONUS	Lnet/minecraft/entity/attribute/EntityAttributeModifier;
-accessible	field	net/minecraft/entity/mob/ShulkerEntity	ATTACHED_FACE	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/ShulkerEntity	ATTACHED_FACE	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/ShulkerEntity	ATTACHED_BLOCK	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/ShulkerEntity	ATTACHED_BLOCK	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/ShulkerEntity	PEEK_AMOUNT	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/ShulkerEntity	PEEK_AMOUNT	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/ShulkerEntity	COLOR	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/ShulkerEntity	COLOR	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/SlimeEntity	SLIME_SIZE	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/SlimeEntity	SLIME_SIZE	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/SlimeEntity	onGroundLastTick	Z
-mutable	field	net/minecraft/entity/mob/SlimeEntity	onGroundLastTick	Z
-accessible	method	net/minecraft/entity/mob/SlimeEntity	updateStretch	()V
-accessible	method	net/minecraft/entity/mob/SlimeEntity	getTicksUntilNextJump	()I
-accessible	method	net/minecraft/entity/mob/WitherSkeletonEntity	createArrowProjectile	(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/projectile/ProjectileEntity;
 accessible	class	net/minecraft/entity/mob/ZombieEntity$DestroyEggGoal
-accessible	field	net/minecraft/entity/mob/ZombieEntity	SPAWN_REINFORCEMENTS	Lnet/minecraft/entity/attribute/EntityAttribute;
-mutable	field	net/minecraft/entity/mob/ZombieEntity	SPAWN_REINFORCEMENTS	Lnet/minecraft/entity/attribute/EntityAttribute;
-accessible	field	net/minecraft/entity/mob/ZombieEntity	BABY_SPEED_ID	Ljava/util/UUID;
-mutable	field	net/minecraft/entity/mob/ZombieEntity	BABY_SPEED_ID	Ljava/util/UUID;
-accessible	field	net/minecraft/entity/mob/ZombieEntity	BABY_SPEED_BONUS	Lnet/minecraft/entity/attribute/EntityAttributeModifier;
-mutable	field	net/minecraft/entity/mob/ZombieEntity	BABY_SPEED_BONUS	Lnet/minecraft/entity/attribute/EntityAttributeModifier;
-accessible	field	net/minecraft/entity/mob/ZombieEntity	BABY	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/ZombieEntity	BABY	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/ZombieEntity	CONVERTING_IN_WATER	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/ZombieEntity	CONVERTING_IN_WATER	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/ZombieEntity	DOOR_BREAK_DIFFICULTY_CHECKER	Ljava/util/function/Predicate;
-mutable	field	net/minecraft/entity/mob/ZombieEntity	DOOR_BREAK_DIFFICULTY_CHECKER	Ljava/util/function/Predicate;
 accessible	field	net/minecraft/entity/mob/ZombieEntity	canBreakDoors	Z
 mutable	field	net/minecraft/entity/mob/ZombieEntity	canBreakDoors	Z
 accessible	field	net/minecraft/entity/mob/ZombieEntity	inWaterTime	I
@@ -1016,93 +583,7 @@ accessible	method	net/minecraft/entity/mob/ZombieEntity	convertInWater	()V
 accessible	method	net/minecraft/entity/mob/ZombieEntity	burnsInDaylight	()Z
 accessible	method	net/minecraft/entity/mob/ZombieEntity	applyAttributeModifiers	(F)V
 accessible	method	net/minecraft/entity/mob/ZombieEntity	getSkull	()Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/entity/mob/ZombieVillagerEntity	CONVERTING	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/ZombieVillagerEntity	VILLAGER_DATA	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/mob/ZombieVillagerEntity	VILLAGER_DATA	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/mob/ZombieVillagerEntity	conversionTimer	I
-mutable	field	net/minecraft/entity/mob/ZombieVillagerEntity	conversionTimer	I
-accessible	field	net/minecraft/entity/mob/ZombieVillagerEntity	converter	Ljava/util/UUID;
-mutable	field	net/minecraft/entity/mob/ZombieVillagerEntity	converter	Ljava/util/UUID;
-accessible	field	net/minecraft/entity/mob/ZombieVillagerEntity	field_20299	Lnet/minecraft/nbt/Tag;
-mutable	field	net/minecraft/entity/mob/ZombieVillagerEntity	field_20299	Lnet/minecraft/nbt/Tag;
-accessible	field	net/minecraft/entity/mob/ZombieVillagerEntity	offerData	Lnet/minecraft/nbt/CompoundTag;
-mutable	field	net/minecraft/entity/mob/ZombieVillagerEntity	offerData	Lnet/minecraft/nbt/CompoundTag;
-accessible	field	net/minecraft/entity/mob/ZombieVillagerEntity	xp	I
-mutable	field	net/minecraft/entity/mob/ZombieVillagerEntity	xp	I
-accessible	method	net/minecraft/entity/mob/ZombieVillagerEntity	setConverting	(Ljava/util/UUID;I)V
-accessible	method	net/minecraft/entity/mob/ZombieVillagerEntity	finishConversion	(Lnet/minecraft/server/world/ServerWorld;)V
-accessible	method	net/minecraft/entity/mob/ZombieVillagerEntity	getConversionRate	()I
-accessible	field	net/minecraft/entity/passive/AbstractTraderEntity	HEAD_ROLLING_TIME_LEFT	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/passive/AbstractTraderEntity	HEAD_ROLLING_TIME_LEFT	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/passive/AbstractTraderEntity	customer	Lnet/minecraft/entity/player/PlayerEntity;
-mutable	field	net/minecraft/entity/passive/AbstractTraderEntity	customer	Lnet/minecraft/entity/player/PlayerEntity;
-accessible	field	net/minecraft/entity/passive/AbstractTraderEntity	offers	Lnet/minecraft/village/TraderOfferList;
-mutable	field	net/minecraft/entity/passive/AbstractTraderEntity	offers	Lnet/minecraft/village/TraderOfferList;
-accessible	field	net/minecraft/entity/passive/AbstractTraderEntity	inventory	Lnet/minecraft/inventory/BasicInventory;
-mutable	field	net/minecraft/entity/passive/AbstractTraderEntity	inventory	Lnet/minecraft/inventory/BasicInventory;
-accessible	method	net/minecraft/entity/passive/AbstractTraderEntity	getTradingSound	(Z)Lnet/minecraft/sound/SoundEvent;
-accessible	method	net/minecraft/entity/passive/AbstractTraderEntity	resetCustomer	()V
-accessible	method	net/minecraft/entity/passive/AbstractTraderEntity	produceParticles	(Lnet/minecraft/particle/ParticleEffect;)V
-accessible	method	net/minecraft/entity/passive/AbstractTraderEntity	fillRecipes	()V
-accessible	field	net/minecraft/village/SimpleTrader	traderInventory	Lnet/minecraft/village/TraderInventory;
-mutable	field	net/minecraft/village/SimpleTrader	traderInventory	Lnet/minecraft/village/TraderInventory;
-accessible	field	net/minecraft/village/SimpleTrader	player	Lnet/minecraft/entity/player/PlayerEntity;
-accessible	field	net/minecraft/village/SimpleTrader	recipeList	Lnet/minecraft/village/TraderOfferList;
-accessible	field	net/minecraft/village/SimpleTrader	experience	I
-accessible	field	net/minecraft/entity/passive/VillagerEntity	VILLAGER_DATA	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/passive/VillagerEntity	GATHERABLE_ITEMS	Ljava/util/Set;
-accessible	field	net/minecraft/entity/passive/VillagerEntity	levelUpTimer	I
-accessible	field	net/minecraft/entity/passive/VillagerEntity	levellingUp	Z
-accessible	field	net/minecraft/entity/passive/VillagerEntity	lastCustomer	Lnet/minecraft/entity/player/PlayerEntity;
-accessible	field	net/minecraft/entity/passive/VillagerEntity	foodLevel	B
-accessible	field	net/minecraft/entity/passive/VillagerEntity	gossip	Lnet/minecraft/village/VillagerGossips;
-accessible	field	net/minecraft/entity/passive/VillagerEntity	gossipStartTime	J
-accessible	field	net/minecraft/entity/passive/VillagerEntity	lastGossipDecayTime	J
-accessible	field	net/minecraft/entity/passive/VillagerEntity	experience	I
-accessible	field	net/minecraft/entity/passive/VillagerEntity	lastRestockTime	J
-accessible	field	net/minecraft/entity/passive/VillagerEntity	restocksToday	I
-accessible	field	net/minecraft/entity/passive/VillagerEntity	MEMORY_MODULES	Lcom/google/common/collect/ImmutableList;
-accessible	field	net/minecraft/entity/passive/VillagerEntity	SENSORS	Lcom/google/common/collect/ImmutableList;
-accessible	method	net/minecraft/entity/passive/VillagerEntity	beginTradeWith	(Lnet/minecraft/entity/player/PlayerEntity;)V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	resetCustomer	()V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	clearCurrentBonus	()V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	prepareRecipesFor	(Lnet/minecraft/entity/player/PlayerEntity;)V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	notifyDeath	(Lnet/minecraft/entity/Entity;)V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	lacksFood	()Z
-accessible	method	net/minecraft/entity/passive/VillagerEntity	consumeAvailableFood	()V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	depleteFood	(I)V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	canLevelUp	()Z
-accessible	method	net/minecraft/entity/passive/VillagerEntity	levelUp	()V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	getAvailableFood	()I
-accessible	method	net/minecraft/entity/passive/VillagerEntity	craftBread	()V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	decayGossip	()V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	setGolemLastSeenTime	(J)V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	hasSeenGolemRecently	(J)Z
-accessible	method	net/minecraft/entity/passive/VillagerEntity	spawnIronGolem	()Lnet/minecraft/entity/passive/IronGolemEntity;
-accessible	method	net/minecraft/entity/passive/VillagerEntity	clearDailyRestockCount	()V
-accessible	method	net/minecraft/entity/passive/VillagerEntity	hasRecentlyWorkedAndSlept	(J)Z
-accessible	field	net/minecraft/village/VillagerData	type	Lnet/minecraft/village/VillagerType;
-mutable	field	net/minecraft/village/VillagerData	type	Lnet/minecraft/village/VillagerType;
-accessible	field	net/minecraft/village/VillagerData	profession	Lnet/minecraft/village/VillagerProfession;
-mutable	field	net/minecraft/village/VillagerData	profession	Lnet/minecraft/village/VillagerProfession;
-accessible	field	net/minecraft/village/VillagerData	level	I
-mutable	field	net/minecraft/village/VillagerData	level	I
-accessible	field	net/minecraft/village/VillagerProfession	id	Ljava/lang/String;
-mutable	field	net/minecraft/village/VillagerProfession	id	Ljava/lang/String;
-accessible	field	net/minecraft/village/VillagerProfession	workStation	Lnet/minecraft/world/poi/PointOfInterestType;
-mutable	field	net/minecraft/village/VillagerProfession	workStation	Lnet/minecraft/world/poi/PointOfInterestType;
-accessible	field	net/minecraft/village/VillagerProfession	gatherableItems	Lcom/google/common/collect/ImmutableSet;
-mutable	field	net/minecraft/village/VillagerProfession	gatherableItems	Lcom/google/common/collect/ImmutableSet;
-accessible	field	net/minecraft/village/VillagerProfession	secondaryJobSites	Lcom/google/common/collect/ImmutableSet;
-mutable	field	net/minecraft/village/VillagerProfession	secondaryJobSites	Lcom/google/common/collect/ImmutableSet;
-accessible	field	net/minecraft/village/VillagerProfession	workSound	Lnet/minecraft/sound/SoundEvent;
-mutable	field	net/minecraft/village/VillagerProfession	workSound	Lnet/minecraft/sound/SoundEvent;
-accessible	method	net/minecraft/village/VillagerProfession	register	(Ljava/lang/String;Lnet/minecraft/world/poi/PointOfInterestType;Lnet/minecraft/sound/SoundEvent;)Lnet/minecraft/village/VillagerProfession;
 extendable	class	net/minecraft/village/VillagerType$1
-accessible	field	net/minecraft/entity/player/PlayerAbilities	flySpeed	F
-mutable	field	net/minecraft/entity/player/PlayerAbilities	flySpeed	F
-accessible	field	net/minecraft/entity/player/PlayerAbilities	walkSpeed	F
-mutable	field	net/minecraft/entity/player/PlayerAbilities	walkSpeed	F
 accessible	field	net/minecraft/entity/player/PlayerInventory	combinedInventory	Ljava/util/List;
 mutable	field	net/minecraft/entity/player/PlayerInventory	combinedInventory	Ljava/util/List;
 accessible	field	net/minecraft/entity/player/PlayerInventory	cursorStack	Lnet/minecraft/item/ItemStack;
@@ -1120,8 +601,6 @@ accessible	field	net/minecraft/entity/player/PlayerEntity	POSE_DIMENSIONS	Ljava/
 mutable	field	net/minecraft/entity/player/PlayerEntity	POSE_DIMENSIONS	Ljava/util/Map;
 accessible	field	net/minecraft/entity/player/PlayerEntity	ABSORPTION_AMOUNT	Lnet/minecraft/entity/data/TrackedData;
 mutable	field	net/minecraft/entity/player/PlayerEntity	ABSORPTION_AMOUNT	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/player/PlayerEntity	SCORE	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/player/PlayerEntity	SCORE	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/player/PlayerEntity	PLAYER_MODEL_PARTS	Lnet/minecraft/entity/data/TrackedData;
 mutable	field	net/minecraft/entity/player/PlayerEntity	PLAYER_MODEL_PARTS	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/player/PlayerEntity	MAIN_ARM	Lnet/minecraft/entity/data/TrackedData;
@@ -1162,13 +641,6 @@ accessible	method	net/minecraft/entity/player/PlayerEntity	dropShoulderEntities	
 accessible	method	net/minecraft/entity/player/PlayerEntity	addTellClickEvent	(Lnet/minecraft/text/Text;)Lnet/minecraft/text/Text;
 accessible	method	net/minecraft/entity/player/PlayerEntity	setShoulderEntityLeft	(Lnet/minecraft/nbt/CompoundTag;)V
 accessible	method	net/minecraft/entity/player/PlayerEntity	setShoulderEntityRight	(Lnet/minecraft/nbt/CompoundTag;)V
-extendable	class	net/minecraft/entity/projectile/ProjectileEntity$PickupPermission
-accessible	field	net/minecraft/entity/projectile/ProjectileEntity	PROJECTILE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/projectile/ProjectileEntity	PROJECTILE_FLAGS	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/projectile/ProjectileEntity	OPTIONAL_UUID	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/projectile/ProjectileEntity	OPTIONAL_UUID	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/projectile/ProjectileEntity	PIERCE_LEVEL	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/projectile/ProjectileEntity	PIERCE_LEVEL	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/projectile/ProjectileEntity	inBlockState	Lnet/minecraft/block/BlockState;
 mutable	field	net/minecraft/entity/projectile/ProjectileEntity	inBlockState	Lnet/minecraft/block/BlockState;
 accessible	field	net/minecraft/entity/projectile/ProjectileEntity	inGround	Z
@@ -1183,8 +655,6 @@ accessible	field	net/minecraft/entity/projectile/ProjectileEntity	damage	D
 mutable	field	net/minecraft/entity/projectile/ProjectileEntity	damage	D
 accessible	field	net/minecraft/entity/projectile/ProjectileEntity	punch	I
 mutable	field	net/minecraft/entity/projectile/ProjectileEntity	punch	I
-accessible	field	net/minecraft/entity/projectile/ProjectileEntity	sound	Lnet/minecraft/sound/SoundEvent;
-mutable	field	net/minecraft/entity/projectile/ProjectileEntity	sound	Lnet/minecraft/sound/SoundEvent;
 accessible	field	net/minecraft/entity/projectile/ProjectileEntity	piercedEntities	Lit/unimi/dsi/fastutil/ints/IntOpenHashSet;
 mutable	field	net/minecraft/entity/projectile/ProjectileEntity	piercedEntities	Lit/unimi/dsi/fastutil/ints/IntOpenHashSet;
 accessible	field	net/minecraft/entity/projectile/ProjectileEntity	piercingKilledEntities	Ljava/util/List;
@@ -1198,46 +668,6 @@ accessible	method	net/minecraft/entity/projectile/ProjectileEntity	getEntityColl
 accessible	method	net/minecraft/entity/projectile/ProjectileEntity	asItemStack	()Lnet/minecraft/item/ItemStack;
 accessible	method	net/minecraft/entity/projectile/ProjectileEntity	setProjectileFlag	(IZ)V
 accessible	method	net/minecraft/entity/projectile/ProjectileEntity	getDragInWater	()F
-accessible	field	net/minecraft/entity/projectile/ExplosiveProjectileEntity	life	I
-mutable	field	net/minecraft/entity/projectile/ExplosiveProjectileEntity	life	I
-accessible	field	net/minecraft/entity/projectile/ExplosiveProjectileEntity	ticks	I
-mutable	field	net/minecraft/entity/projectile/ExplosiveProjectileEntity	ticks	I
-accessible	method	net/minecraft/entity/projectile/ExplosiveProjectileEntity	isBurning	()Z;
-accessible	field	net/minecraft/entity/projectile/ArrowEntity	COLOR	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/projectile/ArrowEntity	COLOR	Lnet/minecraft/entity/data/TrackedData;
-accessible	field	net/minecraft/entity/projectile/ArrowEntity	potion	Lnet/minecraft/potion/Potion;
-mutable	field	net/minecraft/entity/projectile/ArrowEntity	potion	Lnet/minecraft/potion/Potion;
-accessible	field	net/minecraft/entity/projectile/ArrowEntity	effects	Ljava/util/Set;
-mutable	field	net/minecraft/entity/projectile/ArrowEntity	effects	Ljava/util/Set;
-accessible	field	net/minecraft/entity/projectile/ArrowEntity	colorSet	Z
-mutable	field	net/minecraft/entity/projectile/ArrowEntity	colorSet	Z
-accessible	method	net/minecraft/entity/projectile/ArrowEntity	spawnParticles	(I)V
-accessible	method	net/minecraft/entity/projectile/ArrowEntity	setColor	(I)V
-accessible	method	net/minecraft/entity/projectile/ArrowEntity	onHit	(Lnet/minecraft/entity/LivingEntity;)V
-accessible	method	net/minecraft/entity/projectile/ArrowEntity	asItemStack	()Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/entity/thrown/ThrownItemEntity	ITEM	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/thrown/ThrownItemEntity	ITEM	Lnet/minecraft/entity/data/TrackedData;
-accessible	method	net/minecraft/entity/thrown/ThrownItemEntity	getDefaultItem	()Lnet/minecraft/item/Item;
-accessible	method	net/minecraft/entity/thrown/ThrownItemEntity	getItem	()Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/entity/thrown/ThrownEntity	blockX	I
-mutable	field	net/minecraft/entity/thrown/ThrownEntity	blockX	I
-accessible	field	net/minecraft/entity/thrown/ThrownEntity	blockY	I
-mutable	field	net/minecraft/entity/thrown/ThrownEntity	blockY	I
-accessible	field	net/minecraft/entity/thrown/ThrownEntity	blockZ	I
-mutable	field	net/minecraft/entity/thrown/ThrownEntity	blockZ	I
-accessible	field	net/minecraft/entity/thrown/ThrownEntity	inGround	Z
-mutable	field	net/minecraft/entity/thrown/ThrownEntity	inGround	Z
-accessible	field	net/minecraft/entity/thrown/ThrownEntity	owner	Lnet/minecraft/entity/LivingEntity;
-mutable	field	net/minecraft/entity/thrown/ThrownEntity	owner	Lnet/minecraft/entity/LivingEntity;
-accessible	field	net/minecraft/entity/thrown/ThrownEntity	ownerUuid	Ljava/util/UUID;
-mutable	field	net/minecraft/entity/thrown/ThrownEntity	ownerUuid	Ljava/util/UUID;
-accessible	field	net/minecraft/entity/thrown/ThrownPotionEntity	ITEM_STACK	Lnet/minecraft/entity/data/TrackedData;
-mutable	field	net/minecraft/entity/thrown/ThrownPotionEntity	ITEM_STACK	Lnet/minecraft/entity/data/TrackedData;
-accessible	method	net/minecraft/entity/thrown/ThrownPotionEntity	applySplashPotion	(Ljava/util/List;Lnet/minecraft/entity/Entity;)V
-accessible	method	net/minecraft/entity/thrown/ThrownPotionEntity	applyLingeringPotion	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/potion/Potion;)V
-accessible	method	net/minecraft/entity/thrown/ThrownPotionEntity	isLingering	()Z
-accessible	method	net/minecraft/entity/thrown/ThrownPotionEntity	extinguishFire	(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)V
-accessible	method	net/minecraft/entity/thrown/ThrownPotionEntity	doesWaterHurt	(Lnet/minecraft/entity/LivingEntity;)Z
 accessible	field	net/minecraft/entity/player/HungerManager	foodLevel	I
 mutable	field	net/minecraft/entity/player/HungerManager	foodLevel	I
 accessible	field	net/minecraft/entity/player/HungerManager	foodSaturationLevel	F
@@ -1252,7 +682,6 @@ accessible	method	net/minecraft/item/FoodComponents	create	(I)Lnet/minecraft/ite
 accessible	field	net/minecraft/container/Container	trackedStacks	Lnet/minecraft/util/DefaultedList;
 mutable	field	net/minecraft/container/Container	trackedStacks	Lnet/minecraft/util/DefaultedList;
 accessible	field	net/minecraft/container/Container	properties	Ljava/util/List;
-mutable	field	net/minecraft/container/Container	properties	Ljava/util/List;
 accessible	field	net/minecraft/container/Container	type	Lnet/minecraft/container/ContainerType;
 mutable	field	net/minecraft/container/Container	type	Lnet/minecraft/container/ContainerType;
 accessible	field	net/minecraft/container/Container	actionId	S
@@ -1288,55 +717,6 @@ extendable	method	net/minecraft/container/AbstractFurnaceContainer	isSmeltable	(
 accessible	method	net/minecraft/container/AbstractFurnaceContainer	isSmeltable	(Lnet/minecraft/item/ItemStack;)Z
 extendable	method	net/minecraft/container/AbstractFurnaceContainer	isFuel	(Lnet/minecraft/item/ItemStack;)Z
 accessible	method	net/minecraft/container/AbstractFurnaceContainer	isFuel	(Lnet/minecraft/item/ItemStack;)Z
-accessible	class	net/minecraft/container/AnvilContainer$1
-accessible	class	net/minecraft/container/AnvilContainer$2
-accessible	field	net/minecraft/container/AnvilContainer	result	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/AnvilContainer	result	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/AnvilContainer	inventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/AnvilContainer	inventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/AnvilContainer	levelCost	Lnet/minecraft/container/Property;
-mutable	field	net/minecraft/container/AnvilContainer	levelCost	Lnet/minecraft/container/Property;
-accessible	field	net/minecraft/container/AnvilContainer	context	Lnet/minecraft/container/BlockContext;
-mutable	field	net/minecraft/container/AnvilContainer	context	Lnet/minecraft/container/BlockContext;
-accessible	field	net/minecraft/container/AnvilContainer	repairItemUsage	I
-mutable	field	net/minecraft/container/AnvilContainer	repairItemUsage	I
-accessible	field	net/minecraft/container/AnvilContainer	newItemName	Ljava/lang/String;
-mutable	field	net/minecraft/container/AnvilContainer	newItemName	Ljava/lang/String;
-accessible	field	net/minecraft/container/AnvilContainer	player	Lnet/minecraft/entity/player/PlayerEntity;
-mutable	field	net/minecraft/container/AnvilContainer	player	Lnet/minecraft/entity/player/PlayerEntity;
-accessible	class	net/minecraft/container/BeaconContainer$1
-accessible	class	net/minecraft/container/BeaconContainer$SlotPayment
-accessible	field	net/minecraft/container/BeaconContainer	paymentInv	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/BeaconContainer	paymentInv	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/BeaconContainer	paymentSlot	Lnet/minecraft/container/BeaconContainer$SlotPayment;
-mutable	field	net/minecraft/container/BeaconContainer	paymentSlot	Lnet/minecraft/container/BeaconContainer$SlotPayment;
-accessible	field	net/minecraft/container/BeaconContainer	context	Lnet/minecraft/container/BlockContext;
-mutable	field	net/minecraft/container/BeaconContainer	context	Lnet/minecraft/container/BlockContext;
-accessible	field	net/minecraft/container/BeaconContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
-mutable	field	net/minecraft/container/BeaconContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
-accessible	class	net/minecraft/container/BrewingStandContainer$SlotFuel
-accessible	class	net/minecraft/container/BrewingStandContainer$SlotIngredient
-accessible	class	net/minecraft/container/BrewingStandContainer$SlotPotion
-accessible	field	net/minecraft/container/BrewingStandContainer	inventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/BrewingStandContainer	inventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/BrewingStandContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
-mutable	field	net/minecraft/container/BrewingStandContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
-accessible	field	net/minecraft/container/BrewingStandContainer	ingredientSlot	Lnet/minecraft/container/Slot;
-mutable	field	net/minecraft/container/BrewingStandContainer	ingredientSlot	Lnet/minecraft/container/Slot;
-accessible	class	net/minecraft/container/CartographyTableContainer$1
-accessible	class	net/minecraft/container/CartographyTableContainer$2
-accessible	class	net/minecraft/container/CartographyTableContainer$3
-accessible	class	net/minecraft/container/CartographyTableContainer$4
-accessible	class	net/minecraft/container/CartographyTableContainer$5
-accessible	field	net/minecraft/container/CartographyTableContainer	context	Lnet/minecraft/container/BlockContext;
-mutable	field	net/minecraft/container/CartographyTableContainer	context	Lnet/minecraft/container/BlockContext;
-accessible	field	net/minecraft/container/CartographyTableContainer	currentlyTakingItem	Z
-mutable	field	net/minecraft/container/CartographyTableContainer	currentlyTakingItem	Z
-accessible	field	net/minecraft/container/CartographyTableContainer	lastTakeResultTime	J
-mutable	field	net/minecraft/container/CartographyTableContainer	lastTakeResultTime	J
-accessible	field	net/minecraft/container/CartographyTableContainer	resultSlot	Lnet/minecraft/inventory/CraftingResultInventory;
-mutable	field	net/minecraft/container/CartographyTableContainer	resultSlot	Lnet/minecraft/inventory/CraftingResultInventory;
-accessible	method	net/minecraft/container/CartographyTableContainer	updateResult	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)V
 accessible	field	net/minecraft/container/GenericContainer	inventory	Lnet/minecraft/inventory/Inventory;
 mutable	field	net/minecraft/container/GenericContainer	inventory	Lnet/minecraft/inventory/Inventory;
 accessible	field	net/minecraft/container/GenericContainer	rows	I
@@ -1352,15 +732,6 @@ accessible	field	net/minecraft/inventory/CraftingInventory	height	I
 mutable	field	net/minecraft/inventory/CraftingInventory	height	I
 accessible	field	net/minecraft/inventory/CraftingInventory	container	Lnet/minecraft/container/Container;
 mutable	field	net/minecraft/inventory/CraftingInventory	container	Lnet/minecraft/container/Container;
-accessible	field	net/minecraft/container/CraftingTableContainer	craftingInv	Lnet/minecraft/inventory/CraftingInventory;
-mutable	field	net/minecraft/container/CraftingTableContainer	craftingInv	Lnet/minecraft/inventory/CraftingInventory;
-accessible	field	net/minecraft/container/CraftingTableContainer	resultInv	Lnet/minecraft/inventory/CraftingResultInventory;
-mutable	field	net/minecraft/container/CraftingTableContainer	resultInv	Lnet/minecraft/inventory/CraftingResultInventory;
-accessible	field	net/minecraft/container/CraftingTableContainer	context	Lnet/minecraft/container/BlockContext;
-mutable	field	net/minecraft/container/CraftingTableContainer	context	Lnet/minecraft/container/BlockContext;
-accessible	field	net/minecraft/container/CraftingTableContainer	player	Lnet/minecraft/entity/player/PlayerEntity;
-mutable	field	net/minecraft/container/CraftingTableContainer	player	Lnet/minecraft/entity/player/PlayerEntity;
-accessible	method	net/minecraft/container/CraftingTableContainer	updateResult	(ILnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/inventory/CraftingInventory;Lnet/minecraft/inventory/CraftingResultInventory;)V
 extendable	class	net/minecraft/container/Property$1
 extendable	class	net/minecraft/container/Property$2
 extendable	class	net/minecraft/container/Property$3
@@ -1386,21 +757,6 @@ accessible	field	net/minecraft/container/FurnaceOutputSlot	player	Lnet/minecraft
 mutable	field	net/minecraft/container/FurnaceOutputSlot	player	Lnet/minecraft/entity/player/PlayerEntity;
 accessible	field	net/minecraft/container/FurnaceOutputSlot	amount	I
 mutable	field	net/minecraft/container/FurnaceOutputSlot	amount	I
-accessible	class	net/minecraft/container/GrindstoneContainer$1
-accessible	class	net/minecraft/container/GrindstoneContainer$2
-accessible	class	net/minecraft/container/GrindstoneContainer$3
-accessible	class	net/minecraft/container/GrindstoneContainer$4
-accessible	method	net/minecraft/container/GrindstoneContainer$4	getExperience	(Lnet/minecraft/world/World;)I
-accessible	method	net/minecraft/container/GrindstoneContainer$4	getExperience	(Lnet/minecraft/item/ItemStack;)I
-accessible	field	net/minecraft/container/GrindstoneContainer	resultInventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/GrindstoneContainer	resultInventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/GrindstoneContainer	craftingInventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/GrindstoneContainer	craftingInventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/GrindstoneContainer	context	Lnet/minecraft/container/BlockContext;
-mutable	field	net/minecraft/container/GrindstoneContainer	context	Lnet/minecraft/container/BlockContext;
-accessible	method	net/minecraft/container/GrindstoneContainer	updateResult	()V
-accessible	method	net/minecraft/container/GrindstoneContainer	transferEnchantments	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;
-accessible	method	net/minecraft/container/GrindstoneContainer	grind	(Lnet/minecraft/item/ItemStack;II)Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/container/HopperContainer	inventory	Lnet/minecraft/inventory/Inventory;
 mutable	field	net/minecraft/container/HopperContainer	inventory	Lnet/minecraft/inventory/Inventory;
 accessible	class	net/minecraft/container/HorseContainer$1
@@ -1411,10 +767,6 @@ accessible	field	net/minecraft/container/HorseContainer	entity	Lnet/minecraft/en
 mutable	field	net/minecraft/container/HorseContainer	entity	Lnet/minecraft/entity/passive/HorseBaseEntity;
 accessible	class	net/minecraft/container/PlayerContainer$1
 accessible	class	net/minecraft/container/PlayerContainer$2
-accessible	field	net/minecraft/container/PlayerContainer	EMPTY_ARMOR_SLOT_TEXTURES	[Lnet/minecraft/util/Identifier;
-mutable	field	net/minecraft/container/PlayerContainer	EMPTY_ARMOR_SLOT_TEXTURES	[Lnet/minecraft/util/Identifier;
-accessible	field	net/minecraft/container/PlayerContainer	EQUIPMENT_SLOT_ORDER	[Lnet/minecraft/entity/EquipmentSlot;
-mutable	field	net/minecraft/container/PlayerContainer	EQUIPMENT_SLOT_ORDER	[Lnet/minecraft/entity/EquipmentSlot;
 accessible	field	net/minecraft/container/PlayerContainer	craftingInventory	Lnet/minecraft/inventory/CraftingInventory;
 mutable	field	net/minecraft/container/PlayerContainer	craftingInventory	Lnet/minecraft/inventory/CraftingInventory;
 accessible	field	net/minecraft/container/PlayerContainer	craftingResultInventory	Lnet/minecraft/inventory/CraftingResultInventory;
@@ -1426,12 +778,6 @@ accessible	field	net/minecraft/container/LecternContainer	inventory	Lnet/minecra
 mutable	field	net/minecraft/container/LecternContainer	inventory	Lnet/minecraft/inventory/Inventory;
 accessible	field	net/minecraft/container/LecternContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
 mutable	field	net/minecraft/container/LecternContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
-accessible	class	net/minecraft/container/LoomContainer$1
-accessible	class	net/minecraft/container/LoomContainer$2
-accessible	class	net/minecraft/container/LoomContainer$3
-accessible	class	net/minecraft/container/LoomContainer$4
-accessible	class	net/minecraft/container/LoomContainer$5
-accessible	class	net/minecraft/container/LoomContainer$6
 accessible	class	net/minecraft/container/ContainerType$Factory
 accessible	field	net/minecraft/container/ContainerType	factory	Lnet/minecraft/container/ContainerType$Factory;
 mutable	field	net/minecraft/container/ContainerType	factory	Lnet/minecraft/container/ContainerType$Factory;
@@ -1451,56 +797,13 @@ accessible	field	net/minecraft/inventory/CraftingResultInventory	stack	Lnet/mine
 mutable	field	net/minecraft/inventory/CraftingResultInventory	stack	Lnet/minecraft/util/DefaultedList;
 accessible	field	net/minecraft/inventory/CraftingResultInventory	lastRecipe	Lnet/minecraft/recipe/Recipe;
 mutable	field	net/minecraft/inventory/CraftingResultInventory	lastRecipe	Lnet/minecraft/recipe/Recipe;
-accessible	field	net/minecraft/container/ShulkerBoxContainer	inventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/ShulkerBoxContainer	inventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/ArrayPropertyDelegate	data	[I
-mutable	field	net/minecraft/container/ArrayPropertyDelegate	data	[I
-extendable	class	net/minecraft/predicate/entity/EntityTypePredicate$1
-accessible	class	net/minecraft/predicate/entity/EntityTypePredicate$Tagged
-accessible	field	net/minecraft/predicate/entity/EntityTypePredicate$Tagged	tag	Lnet/minecraft/tag/Tag;
-mutable	field	net/minecraft/predicate/entity/EntityTypePredicate$Tagged	tag	Lnet/minecraft/tag/Tag;
-accessible	class	net/minecraft/predicate/entity/EntityTypePredicate$Single
-accessible	field	net/minecraft/predicate/entity/EntityTypePredicate$Single	type	Lnet/minecraft/entity/EntityType;
-mutable	field	net/minecraft/predicate/entity/EntityTypePredicate$Single	type	Lnet/minecraft/entity/EntityType;
-accessible	field	net/minecraft/predicate/entity/EntityTypePredicate	COMMA_JOINER	Lcom/google/common/base/Joiner;
-mutable	field	net/minecraft/predicate/entity/EntityTypePredicate	COMMA_JOINER	Lcom/google/common/base/Joiner;
 accessible	field	net/minecraft/item/AirBlockItem	block	Lnet/minecraft/block/Block;
-mutable	field	net/minecraft/item/AirBlockItem	block	Lnet/minecraft/block/Block;
-extendable	class	net/minecraft/item/ArmorItem$1
-accessible	field	net/minecraft/item/ArmorItem	MODIFIERS	[Ljava/util/UUID;
-mutable	field	net/minecraft/item/ArmorItem	MODIFIERS	[Ljava/util/UUID;
-accessible	field	net/minecraft/item/ArmorItem	slot	Lnet/minecraft/entity/EquipmentSlot;
-mutable	field	net/minecraft/item/ArmorItem	slot	Lnet/minecraft/entity/EquipmentSlot;
-accessible	field	net/minecraft/item/ArmorItem	protection	I
-mutable	field	net/minecraft/item/ArmorItem	protection	I
-accessible	field	net/minecraft/item/ArmorItem	toughness	F
-mutable	field	net/minecraft/item/ArmorItem	toughness	F
-accessible	field	net/minecraft/item/ArmorItem	type	Lnet/minecraft/item/ArmorMaterial;
-mutable	field	net/minecraft/item/ArmorItem	type	Lnet/minecraft/item/ArmorMaterial;
-extendable	class	net/minecraft/item/ArmorMaterials
-accessible	field	net/minecraft/item/ArmorMaterials	BASE_DURABILITY	[I
-mutable	field	net/minecraft/item/ArmorMaterials	BASE_DURABILITY	[I
-accessible	field	net/minecraft/item/ArmorMaterials	name	Ljava/lang/String;
-mutable	field	net/minecraft/item/ArmorMaterials	name	Ljava/lang/String;
-accessible	field	net/minecraft/item/ArmorMaterials	durabilityMultiplier	I
-mutable	field	net/minecraft/item/ArmorMaterials	durabilityMultiplier	I
-accessible	field	net/minecraft/item/ArmorMaterials	protectionAmounts	[I
-mutable	field	net/minecraft/item/ArmorMaterials	protectionAmounts	[I
-accessible	field	net/minecraft/item/ArmorMaterials	enchantability	I
-mutable	field	net/minecraft/item/ArmorMaterials	enchantability	I
-accessible	field	net/minecraft/item/ArmorMaterials	equipSound	Lnet/minecraft/sound/SoundEvent;
-mutable	field	net/minecraft/item/ArmorMaterials	equipSound	Lnet/minecraft/sound/SoundEvent;
-accessible	field	net/minecraft/item/ArmorMaterials	toughness	F
-mutable	field	net/minecraft/item/ArmorMaterials	toughness	F
-accessible	field	net/minecraft/item/ArmorMaterials	repairIngredientSupplier	Lnet/minecraft/util/Lazy;
-mutable	field	net/minecraft/item/ArmorMaterials	repairIngredientSupplier	Lnet/minecraft/util/Lazy;
 accessible	method	net/minecraft/item/ArmorStandItem	setRotations	(Lnet/minecraft/entity/decoration/ArmorStandEntity;Ljava/util/Random;)V
 accessible	field	net/minecraft/item/BannerPatternItem	pattern	Lnet/minecraft/block/entity/BannerPattern;
 mutable	field	net/minecraft/item/BannerPatternItem	pattern	Lnet/minecraft/block/entity/BannerPattern;
 accessible	method	net/minecraft/item/BedItem	place	(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z
 accessible	field	net/minecraft/item/BlockItem	block	Lnet/minecraft/block/Block;
 mutable	field	net/minecraft/item/BlockItem	block	Lnet/minecraft/block/Block;
-accessible	method	net/minecraft/item/BlockItem	getPlaceSound	(Lnet/minecraft/block/BlockState;)Lnet/minecraft/sound/SoundEvent;
 accessible	method	net/minecraft/item/BlockItem	postPlacement	(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/block/BlockState;)Z
 accessible	method	net/minecraft/item/BlockItem	getPlacementState	(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/block/BlockState;
 accessible	method	net/minecraft/item/BlockItem	placeFromTag	(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;Lnet/minecraft/block/BlockState;)Lnet/minecraft/block/BlockState;
@@ -1508,72 +811,6 @@ accessible	method	net/minecraft/item/BlockItem	with	(Lnet/minecraft/block/BlockS
 accessible	method	net/minecraft/item/BlockItem	canPlace	(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z
 accessible	method	net/minecraft/item/BlockItem	checkStatePlacement	()Z
 accessible	method	net/minecraft/item/BlockItem	place	(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z
-accessible	field	net/minecraft/item/ItemPlacementContext	placementPos	Lnet/minecraft/util/math/BlockPos;
-mutable	field	net/minecraft/item/ItemPlacementContext	placementPos	Lnet/minecraft/util/math/BlockPos;
-accessible	field	net/minecraft/item/ItemPlacementContext	canReplaceExisting	Z
-mutable	field	net/minecraft/item/ItemPlacementContext	canReplaceExisting	Z
-accessible	field	net/minecraft/item/BoatItem	RIDERS	Ljava/util/function/Predicate;
-mutable	field	net/minecraft/item/BoatItem	RIDERS	Ljava/util/function/Predicate;
-accessible	field	net/minecraft/item/BoatItem	type	Lnet/minecraft/entity/vehicle/BoatEntity$Type;
-mutable	field	net/minecraft/item/BoatItem	type	Lnet/minecraft/entity/vehicle/BoatEntity$Type;
-accessible	method	net/minecraft/item/GlassBottleItem	fill	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/item/BucketItem	fluid	Lnet/minecraft/fluid/Fluid;
-mutable	field	net/minecraft/item/BucketItem	fluid	Lnet/minecraft/fluid/Fluid;
-accessible	method	net/minecraft/item/BucketItem	getEmptiedStack	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/item/ItemStack;
-accessible	method	net/minecraft/item/BucketItem	getFilledStack	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/Item;)Lnet/minecraft/item/ItemStack;
-accessible	method	net/minecraft/item/BucketItem	playEmptyingSound	(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/IWorld;Lnet/minecraft/util/math/BlockPos;)V
-accessible	class	net/minecraft/item/CompassItem$1
-accessible	field	net/minecraft/item/CompassItem$1	angle	D
-mutable	field	net/minecraft/item/CompassItem$1	angle	D
-accessible	field	net/minecraft/item/CompassItem$1	step	D
-mutable	field	net/minecraft/item/CompassItem$1	step	D
-accessible	field	net/minecraft/item/CompassItem$1	lastTick	J
-mutable	field	net/minecraft/item/CompassItem$1	lastTick	J
-accessible	method	net/minecraft/item/CompassItem$1	getAngle	(Lnet/minecraft/world/World;D)D
-accessible	method	net/minecraft/item/CompassItem$1	getYaw	(Lnet/minecraft/entity/decoration/ItemFrameEntity;)D
-accessible	method	net/minecraft/item/CompassItem$1	getAngleToSpawn	(Lnet/minecraft/world/IWorld;Lnet/minecraft/entity/Entity;)D
-extendable	class	net/minecraft/item/ItemGroup$1
-extendable	class	net/minecraft/item/ItemGroup$10
-extendable	class	net/minecraft/item/ItemGroup$11
-extendable	class	net/minecraft/item/ItemGroup$12
-extendable	class	net/minecraft/item/ItemGroup$2
-extendable	class	net/minecraft/item/ItemGroup$3
-extendable	class	net/minecraft/item/ItemGroup$4
-extendable	class	net/minecraft/item/ItemGroup$5
-extendable	class	net/minecraft/item/ItemGroup$6
-extendable	class	net/minecraft/item/ItemGroup$7
-extendable	class	net/minecraft/item/ItemGroup$8
-extendable	class	net/minecraft/item/ItemGroup$9
-accessible	field	net/minecraft/item/ItemGroup	index	I
-mutable	field	net/minecraft/item/ItemGroup	index	I
-accessible	field	net/minecraft/item/ItemGroup	id	Ljava/lang/String;
-accessible	field	net/minecraft/item/ItemGroup	name	Ljava/lang/String;
-accessible	field	net/minecraft/item/ItemGroup	tooltip	Z
-accessible	field	net/minecraft/item/ItemGroup	enchantments	[Lnet/minecraft/enchantment/EnchantmentTarget;
-accessible	field	net/minecraft/item/ItemGroup	icon	Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/item/CrossbowItem	charged	Z
-accessible	field	net/minecraft/item/CrossbowItem	loaded	Z
-mutable	field	net/minecraft/item/CrossbowItem	loaded	Z
-accessible	method	net/minecraft/item/CrossbowItem	loadProjectiles	(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;)Z
-accessible	method	net/minecraft/item/CrossbowItem	loadProjectile	(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;ZZ)Z
-accessible	method	net/minecraft/item/CrossbowItem	putProjectile	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)V
-accessible	method	net/minecraft/item/CrossbowItem	getProjectiles	(Lnet/minecraft/item/ItemStack;)Ljava/util/List;
-accessible	method	net/minecraft/item/CrossbowItem	clearProjectiles	(Lnet/minecraft/item/ItemStack;)V
-accessible	method	net/minecraft/item/CrossbowItem	hasProjectile	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/Item;)Z
-accessible	method	net/minecraft/item/CrossbowItem	shoot	(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;FZFFF)V
-accessible	method	net/minecraft/item/CrossbowItem	createArrow	(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/entity/projectile/ProjectileEntity;
-accessible	method	net/minecraft/item/CrossbowItem	postShoot	(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;)V
-accessible	method	net/minecraft/item/CrossbowItem	getQuickChargeSound	(I)Lnet/minecraft/sound/SoundEvent;
-accessible	method	net/minecraft/item/CrossbowItem	getPullProgress	(ILnet/minecraft/item/ItemStack;)F
-accessible	method	net/minecraft/item/CrossbowItem	getSpeed	(Lnet/minecraft/item/ItemStack;)F
-accessible	field	net/minecraft/item/MiningToolItem	effectiveBlocks	Ljava/util/Set;
-mutable	field	net/minecraft/item/MiningToolItem	effectiveBlocks	Ljava/util/Set;
-accessible	field	net/minecraft/item/MiningToolItem	miningSpeed	F
-mutable	field	net/minecraft/item/MiningToolItem	miningSpeed	F
-accessible	field	net/minecraft/item/MiningToolItem	attackDamage	F
-mutable	field	net/minecraft/item/MiningToolItem	attackDamage	F
-accessible	field	net/minecraft/item/MiningToolItem	attackSpeed	F
-mutable	field	net/minecraft/item/MiningToolItem	attackSpeed	F
 accessible	field	net/minecraft/item/AutomaticItemPlacementContext	facing	Lnet/minecraft/util/math/Direction;
 mutable	field	net/minecraft/item/AutomaticItemPlacementContext	facing	Lnet/minecraft/util/math/Direction;
 extendable	class	net/minecraft/util/DyeColor
@@ -1601,40 +838,6 @@ accessible	field	net/minecraft/item/DyeItem	DYES	Ljava/util/Map;
 mutable	field	net/minecraft/item/DyeItem	DYES	Ljava/util/Map;
 accessible	field	net/minecraft/item/DyeItem	color	Lnet/minecraft/util/DyeColor;
 mutable	field	net/minecraft/item/DyeItem	color	Lnet/minecraft/util/DyeColor;
-accessible	method	net/minecraft/item/FireChargeItem	playUseSound	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V
-extendable	class	net/minecraft/item/FireworkItem$Type
-accessible	field	net/minecraft/item/FireworkItem$Type	TYPES	[Lnet/minecraft/item/FireworkItem$Type;
-mutable	field	net/minecraft/item/FireworkItem$Type	TYPES	[Lnet/minecraft/item/FireworkItem$Type;
-accessible	field	net/minecraft/item/FireworkItem$Type	id	I
-mutable	field	net/minecraft/item/FireworkItem$Type	id	I
-accessible	field	net/minecraft/item/FireworkItem$Type	name	Ljava/lang/String;
-mutable	field	net/minecraft/item/FireworkItem$Type	name	Ljava/lang/String;
-accessible	method	net/minecraft/item/FireworkChargeItem	appendColors	(Lnet/minecraft/text/Text;[I)Lnet/minecraft/text/Text;
-accessible	method	net/minecraft/item/FireworkChargeItem	getColorText	(I)Lnet/minecraft/text/Text;
-accessible	method	net/minecraft/item/CommandBlockItem	getPlacementState	(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/block/BlockState;
-accessible	field	net/minecraft/item/DecorationItem	entityType	Lnet/minecraft/entity/EntityType;
-mutable	field	net/minecraft/item/DecorationItem	entityType	Lnet/minecraft/entity/EntityType;
-accessible	method	net/minecraft/item/DecorationItem	canPlaceOn	(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/Direction;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/BlockPos;)Z
-accessible	field	net/minecraft/item/HoeItem	attackSpeed	F
-mutable	field	net/minecraft/item/HoeItem	attackSpeed	F
-accessible	field	net/minecraft/item/HoeItem	TILLED_BLOCKS	Ljava/util/Map;
-mutable	field	net/minecraft/item/HoeItem	TILLED_BLOCKS	Ljava/util/Map;
-accessible	field	net/minecraft/item/HorseArmorItem	bonus	I
-mutable	field	net/minecraft/item/HorseArmorItem	bonus	I
-accessible	field	net/minecraft/item/HorseArmorItem	entityTexture	Ljava/lang/String;
-mutable	field	net/minecraft/item/HorseArmorItem	entityTexture	Ljava/lang/String;
-accessible	field	net/minecraft/item/Item$Settings	maxCount	I
-mutable	field	net/minecraft/item/Item$Settings	maxCount	I
-accessible	field	net/minecraft/item/Item$Settings	maxDamage	I
-mutable	field	net/minecraft/item/Item$Settings	maxDamage	I
-accessible	field	net/minecraft/item/Item$Settings	recipeRemainder	Lnet/minecraft/item/Item;
-mutable	field	net/minecraft/item/Item$Settings	recipeRemainder	Lnet/minecraft/item/Item;
-accessible	field	net/minecraft/item/Item$Settings	group	Lnet/minecraft/item/ItemGroup;
-mutable	field	net/minecraft/item/Item$Settings	group	Lnet/minecraft/item/ItemGroup;
-accessible	field	net/minecraft/item/Item$Settings	rarity	Lnet/minecraft/util/Rarity;
-mutable	field	net/minecraft/item/Item$Settings	rarity	Lnet/minecraft/util/Rarity;
-accessible	field	net/minecraft/item/Item$Settings	foodComponent	Lnet/minecraft/item/FoodComponent;
-mutable	field	net/minecraft/item/Item$Settings	foodComponent	Lnet/minecraft/item/FoodComponent;
 accessible	field	net/minecraft/item/Item	propertyGetters	Ljava/util/Map;
 mutable	field	net/minecraft/item/Item	propertyGetters	Ljava/util/Map;
 accessible	field	net/minecraft/item/Item	group	Lnet/minecraft/item/ItemGroup;
@@ -1654,15 +857,6 @@ mutable	field	net/minecraft/item/Item	foodComponent	Lnet/minecraft/item/FoodComp
 accessible	method	net/minecraft/item/Item	getOrCreateTranslationKey	()Ljava/lang/String;
 accessible	method	net/minecraft/item/Item	rayTrace	(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/RayTraceContext$FluidHandling;)Lnet/minecraft/util/hit/HitResult;
 accessible	method	net/minecraft/item/Item	isIn	(Lnet/minecraft/item/ItemGroup;)Z
-accessible	class	net/minecraft/entity/player/ItemCooldownManager$Entry
-accessible	field	net/minecraft/entity/player/ItemCooldownManager$Entry	startTick	I
-mutable	field	net/minecraft/entity/player/ItemCooldownManager$Entry	startTick	I
-accessible	field	net/minecraft/entity/player/ItemCooldownManager$Entry	endTick	I
-mutable	field	net/minecraft/entity/player/ItemCooldownManager$Entry	endTick	I
-accessible	field	net/minecraft/entity/player/ItemCooldownManager	entries	Ljava/util/Map;
-mutable	field	net/minecraft/entity/player/ItemCooldownManager	entries	Ljava/util/Map;
-accessible	field	net/minecraft/entity/player/ItemCooldownManager	tick	I
-mutable	field	net/minecraft/entity/player/ItemCooldownManager	tick	I
 extendable	class	net/minecraft/item/ItemStack
 accessible	field	net/minecraft/item/ItemStack	count	I
 mutable	field	net/minecraft/item/ItemStack	count	I
@@ -2047,78 +1241,8 @@ accessible	field	net/minecraft/world/ScheduledTick	object	Ljava/lang/Object;
 mutable	field	net/minecraft/world/ScheduledTick	object	Ljava/lang/Object;
 accessible	field	net/minecraft/world/ScheduledTick	id	J
 mutable	field	net/minecraft/world/ScheduledTick	id	J
-extendable	class	net/minecraft/world/TickPriority
-accessible	field	net/minecraft/world/TickPriority	index	I
-mutable	field	net/minecraft/world/TickPriority	index	I
-extendable	class	net/minecraft/world/biome/BadlandsBiome
-extendable	class	net/minecraft/world/biome/BadlandsPlateauBiome
-extendable	class	net/minecraft/world/biome/BambooJungleHillsBiome
-extendable	class	net/minecraft/world/biome/BeachBiome
-accessible	method	net/minecraft/world/biome/Biomes	register	(ILjava/lang/String;Lnet/minecraft/world/biome/Biome;)Lnet/minecraft/world/biome/Biome;
-extendable	class	net/minecraft/world/biome/BirchForestBiome
-extendable	class	net/minecraft/world/biome/BirchForestHillsBiome
-accessible	field	net/minecraft/world/biome/source/CheckerboardBiomeSourceConfig	biomes	[Lnet/minecraft/world/biome/Biome;
-mutable	field	net/minecraft/world/biome/source/CheckerboardBiomeSourceConfig	biomes	[Lnet/minecraft/world/biome/Biome;
-accessible	field	net/minecraft/world/biome/source/CheckerboardBiomeSourceConfig	size	I
-mutable	field	net/minecraft/world/biome/source/CheckerboardBiomeSourceConfig	size	I
-accessible	field	net/minecraft/world/biome/source/CheckerboardBiomeSource	biomeArray	[Lnet/minecraft/world/biome/Biome;
-mutable	field	net/minecraft/world/biome/source/CheckerboardBiomeSource	biomeArray	[Lnet/minecraft/world/biome/Biome;
-accessible	field	net/minecraft/world/biome/source/CheckerboardBiomeSource	gridSize	I
-mutable	field	net/minecraft/world/biome/source/CheckerboardBiomeSource	gridSize	I
-extendable	class	net/minecraft/world/biome/DarkForestBiome
-extendable	class	net/minecraft/world/biome/DarkForestHillsBiome
-extendable	class	net/minecraft/world/biome/DeepOceanBiome
-extendable	class	net/minecraft/world/biome/DesertBiome
-extendable	class	net/minecraft/world/biome/DesertHillsBiome
-extendable	class	net/minecraft/world/biome/DesertLakesBiome
-extendable	class	net/minecraft/world/biome/ErodedBadlandsBiome
-accessible	field	net/minecraft/world/biome/source/FixedBiomeSource	biome	Lnet/minecraft/world/biome/Biome;
-mutable	field	net/minecraft/world/biome/source/FixedBiomeSource	biome	Lnet/minecraft/world/biome/Biome;
-accessible	field	net/minecraft/world/biome/source/FixedBiomeSourceConfig	biome	Lnet/minecraft/world/biome/Biome;
-mutable	field	net/minecraft/world/biome/source/FixedBiomeSourceConfig	biome	Lnet/minecraft/world/biome/Biome;
-extendable	class	net/minecraft/world/biome/ForestBiome
-extendable	class	net/minecraft/world/biome/IceSpikesBiome
-extendable	class	net/minecraft/world/biome/JungleBiome
-extendable	class	net/minecraft/world/biome/ModifiedBadlandsPlateauBiome
-extendable	class	net/minecraft/world/biome/ModifiedGravellyMountainsBiome
-extendable	class	net/minecraft/world/biome/ModifiedJungleBiome
-extendable	class	net/minecraft/world/biome/MountainsBiome
-extendable	class	net/minecraft/world/biome/MountainEdgeBiome
-extendable	class	net/minecraft/world/biome/NetherBiome
-extendable	class	net/minecraft/world/biome/OceanBiome
-accessible	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSource	biomeSampler	Lnet/minecraft/world/biome/source/BiomeLayerSampler;
-mutable	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSource	biomeSampler	Lnet/minecraft/world/biome/source/BiomeLayerSampler;
-accessible	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSource	BIOMES	Ljava/util/Set;
-mutable	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSource	BIOMES	Ljava/util/Set;
-accessible	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSourceConfig	seed	J
-mutable	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSourceConfig	seed	J
-accessible	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSourceConfig	generatorType	Lnet/minecraft/world/level/LevelGeneratorType;
-mutable	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSourceConfig	generatorType	Lnet/minecraft/world/level/LevelGeneratorType;
-accessible	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSourceConfig	generatorSettings	Lnet/minecraft/world/gen/chunk/OverworldChunkGeneratorConfig;
-mutable	field	net/minecraft/world/biome/source/VanillaLayeredBiomeSourceConfig	generatorSettings	Lnet/minecraft/world/gen/chunk/OverworldChunkGeneratorConfig;
-extendable	class	net/minecraft/world/biome/PlainsBiome
-extendable	class	net/minecraft/world/biome/RiverBiome
-extendable	class	net/minecraft/world/biome/SavannaBiome
-extendable	class	net/minecraft/world/biome/SavannaPlateauBiome
-extendable	class	net/minecraft/world/biome/SnowyBeachBiome
-extendable	class	net/minecraft/world/biome/SnowyMountainsBiome
-extendable	class	net/minecraft/world/biome/SnowyTaigaBiome
-extendable	class	net/minecraft/world/biome/SnowyTaigaHillsBiome
-extendable	class	net/minecraft/world/biome/SnowyTaigaMountainsBiome
-extendable	class	net/minecraft/world/biome/SnowyTundraBiome
-extendable	class	net/minecraft/world/biome/StoneShoreBiome
-extendable	class	net/minecraft/world/biome/SwampHillsBiome
-extendable	class	net/minecraft/world/biome/EndBiome
-accessible	field	net/minecraft/world/biome/source/TheEndBiomeSource	BIOMES	Ljava/util/Set;
-mutable	field	net/minecraft/world/biome/source/TheEndBiomeSource	BIOMES	Ljava/util/Set;
-accessible	field	net/minecraft/world/biome/source/TheEndBiomeSourceConfig	seed	J
-mutable	field	net/minecraft/world/biome/source/TheEndBiomeSourceConfig	seed	J
-extendable	class	net/minecraft/world/biome/VoidBiome
 accessible	field	net/minecraft/predicate/LightPredicate	range	Lnet/minecraft/predicate/NumberRange$IntRange;
 mutable	field	net/minecraft/predicate/LightPredicate	range	Lnet/minecraft/predicate/NumberRange$IntRange;
-extendable	class	net/minecraft/world/biome/WoodedBadlandsPlateauBiome
-extendable	class	net/minecraft/world/biome/WoodedHillsBiome
-extendable	class	net/minecraft/world/biome/WoodedMountainsBiome
 accessible	field	net/minecraft/block/AbstractBannerBlock	color	Lnet/minecraft/util/DyeColor;
 mutable	field	net/minecraft/block/AbstractBannerBlock	color	Lnet/minecraft/util/DyeColor;
 accessible	field	net/minecraft/block/AbstractChestBlock	entityTypeRetriever	Ljava/util/function/Supplier;
@@ -2133,42 +1257,6 @@ accessible	field	net/minecraft/block/BannerBlock	COLORED_BANNERS	Ljava/util/Map;
 mutable	field	net/minecraft/block/BannerBlock	COLORED_BANNERS	Ljava/util/Map;
 accessible	field	net/minecraft/block/DeadCoralWallFanBlock	FACING_TO_SHAPE	Ljava/util/Map;
 mutable	field	net/minecraft/block/DeadCoralWallFanBlock	FACING_TO_SHAPE	Ljava/util/Map;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	x	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	x	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	y	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	y	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	z	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	z	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	biome	Lnet/minecraft/world/biome/Biome;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	biome	Lnet/minecraft/world/biome/Biome;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	feature	Lnet/minecraft/world/gen/feature/StructureFeature;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	feature	Lnet/minecraft/world/gen/feature/StructureFeature;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	dimension	Lnet/minecraft/world/dimension/DimensionType;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	dimension	Lnet/minecraft/world/dimension/DimensionType;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	light	Lnet/minecraft/predicate/LightPredicate;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	light	Lnet/minecraft/predicate/LightPredicate;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	block	Lnet/minecraft/predicate/BlockPredicate;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	block	Lnet/minecraft/predicate/BlockPredicate;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate$Builder	fluid	Lnet/minecraft/predicate/FluidPredicate;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate$Builder	fluid	Lnet/minecraft/predicate/FluidPredicate;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	x	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	x	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	y	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	y	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	z	Lnet/minecraft/predicate/NumberRange$FloatRange;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	z	Lnet/minecraft/predicate/NumberRange$FloatRange;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	biome	Lnet/minecraft/world/biome/Biome;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	biome	Lnet/minecraft/world/biome/Biome;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	feature	Lnet/minecraft/world/gen/feature/StructureFeature;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	feature	Lnet/minecraft/world/gen/feature/StructureFeature;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	dimension	Lnet/minecraft/world/dimension/DimensionType;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	dimension	Lnet/minecraft/world/dimension/DimensionType;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	light	Lnet/minecraft/predicate/LightPredicate;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	light	Lnet/minecraft/predicate/LightPredicate;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	block	Lnet/minecraft/predicate/BlockPredicate;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	block	Lnet/minecraft/predicate/BlockPredicate;
-accessible	field	net/minecraft/predicate/entity/LocationPredicate	fluid	Lnet/minecraft/predicate/FluidPredicate;
-mutable	field	net/minecraft/predicate/entity/LocationPredicate	fluid	Lnet/minecraft/predicate/FluidPredicate;
 extendable	class	net/minecraft/block/Block$1
 extendable	class	net/minecraft/block/Block$2
 accessible	method	net/minecraft/block/Block$2	rehash	(I)V
@@ -2226,55 +1314,11 @@ extendable	method	net/minecraft/block/Block	appendProperties	(Lnet/minecraft/sta
 accessible	method	net/minecraft/block/Block	appendProperties	(Lnet/minecraft/state/StateManager$Builder;)V
 extendable	method	net/minecraft/block/Block	setDefaultState	(Lnet/minecraft/block/BlockState;)V
 accessible	method	net/minecraft/block/Block	setDefaultState	(Lnet/minecraft/block/BlockState;)V
-extendable	method	net/minecraft/block/Blocks	register	(Ljava/lang/String;Lnet/minecraft/block/Block;)Lnet/minecraft/block/Block;
-accessible	method	net/minecraft/block/Blocks	register	(Ljava/lang/String;Lnet/minecraft/block/Block;)Lnet/minecraft/block/Block;
-extendable	method	net/minecraft/block/BubbleColumnBlock	calculateDrag	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-accessible	method	net/minecraft/block/BubbleColumnBlock	calculateDrag	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-extendable	method	net/minecraft/block/PlantBlock	canPlantOnTop	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-accessible	method	net/minecraft/block/PlantBlock	canPlantOnTop	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-accessible	field	net/minecraft/block/AbstractButtonBlock	wooden	Z
-mutable	field	net/minecraft/block/AbstractButtonBlock	wooden	Z
-extendable	method	net/minecraft/block/AbstractButtonBlock	tryPowerWithProjectiles	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V
-accessible	method	net/minecraft/block/AbstractButtonBlock	tryPowerWithProjectiles	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V
-extendable	method	net/minecraft/block/AbstractButtonBlock	updateNeighbors	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V
-accessible	method	net/minecraft/block/AbstractButtonBlock	updateNeighbors	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V
-accessible	field	net/minecraft/block/CartographyTableBlock	CONTAINER_NAME	Lnet/minecraft/text/TranslatableText;
-mutable	field	net/minecraft/block/CartographyTableBlock	CONTAINER_NAME	Lnet/minecraft/text/TranslatableText;
-extendable	class	net/minecraft/block/ChestBlock$1
-accessible	class	net/minecraft/block/ChestBlock$2$1
-extendable	class	net/minecraft/block/ChestBlock$2
-extendable	class	net/minecraft/block/ChestBlock$3
-extendable	method	net/minecraft/block/ChestBlock	getNeighborChestDirection	(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/util/math/Direction;)Lnet/minecraft/util/math/Direction;
-accessible	method	net/minecraft/block/ChestBlock	getNeighborChestDirection	(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/util/math/Direction;)Lnet/minecraft/util/math/Direction;
-extendable	method	net/minecraft/block/ChestBlock	hasBlockOnTop	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-accessible	method	net/minecraft/block/ChestBlock	hasBlockOnTop	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-extendable	method	net/minecraft/block/CommandBlock	execute	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/CommandBlockExecutor;Z)V
-accessible	method	net/minecraft/block/CommandBlock	execute	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/CommandBlockExecutor;Z)V
-accessible	method	net/minecraft/block/CommandBlock	executeCommandChain	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)V
 accessible	method	net/minecraft/block/ComparatorBlock	calculateOutputSignal	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)I
 accessible	method	net/minecraft/block/ComparatorBlock	getAttachedItemFrame	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/Direction;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/entity/decoration/ItemFrameEntity;
 accessible	method	net/minecraft/block/ComparatorBlock	updatePowered	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
 accessible	method	net/minecraft/block/ComparatorBlock	update	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
-accessible	field	net/minecraft/block/CoralBlockBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-mutable	field	net/minecraft/block/CoralBlockBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-extendable	method	net/minecraft/block/CoralBlockBlock	isInWater	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-accessible	method	net/minecraft/block/CoralBlockBlock	isInWater	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
-accessible	field	net/minecraft/block/CoralFanBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-mutable	field	net/minecraft/block/CoralFanBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-accessible	field	net/minecraft/block/CoralBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-mutable	field	net/minecraft/block/CoralBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-accessible	field	net/minecraft/block/CoralWallFanBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-mutable	field	net/minecraft/block/CoralWallFanBlock	deadCoralBlock	Lnet/minecraft/block/Block;
-accessible	field	net/minecraft/block/CraftingTableBlock	CONTAINER_NAME	Lnet/minecraft/text/Text;
-mutable	field	net/minecraft/block/CraftingTableBlock	CONTAINER_NAME	Lnet/minecraft/text/Text;
-accessible	method	net/minecraft/block/CropBlock	getAge	(Lnet/minecraft/block/BlockState;)I
-accessible	method	net/minecraft/block/CropBlock	getGrowthAmount	(Lnet/minecraft/world/World;)I
-accessible	method	net/minecraft/block/CropBlock	getAvailableMoisture	(Lnet/minecraft/block/Block;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F
-accessible	method	net/minecraft/block/CropBlock	getSeedsItem	()Lnet/minecraft/item/ItemConvertible;
 accessible	field	net/minecraft/block/HorizontalConnectingBlock	FACING_PROPERTIES	Ljava/util/Map;
-mutable	field	net/minecraft/block/HorizontalConnectingBlock	FACING_PROPERTIES	Ljava/util/Map;
-accessible	field	net/minecraft/block/HorizontalConnectingBlock	SHAPE_INDEX_CACHE	Lit/unimi/dsi/fastutil/objects/Object2IntMap;
-mutable	field	net/minecraft/block/HorizontalConnectingBlock	SHAPE_INDEX_CACHE	Lit/unimi/dsi/fastutil/objects/Object2IntMap;
 accessible	method	net/minecraft/block/HorizontalConnectingBlock	getDirectionMask	(Lnet/minecraft/util/math/Direction;)I
 accessible	method	net/minecraft/block/HorizontalConnectingBlock	getShapeIndex	(Lnet/minecraft/block/BlockState;)I
 accessible	method	net/minecraft/block/AbstractRedstoneGateBlock	updatePowered	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
@@ -2290,31 +1334,7 @@ extendable	class	net/minecraft/block/DoubleBlockProperties$Type
 extendable	class	net/minecraft/block/DoubleBlockProperties$PropertySource$Pair
 accessible	method	net/minecraft/block/DropperBlock	dispense	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V
 accessible	method	net/minecraft/block/WallMountedBlock	getDirection	(Lnet/minecraft/block/BlockState;)Lnet/minecraft/util/math/Direction;
-accessible	field	net/minecraft/block/FlowerBlock	effectInStew	Lnet/minecraft/entity/effect/StatusEffect;
-mutable	field	net/minecraft/block/FlowerBlock	effectInStew	Lnet/minecraft/entity/effect/StatusEffect;
-accessible	field	net/minecraft/block/FlowerBlock	effectInStewDuration	I
-mutable	field	net/minecraft/block/FlowerBlock	effectInStewDuration	I
-accessible	field	net/minecraft/block/GrindstoneBlock	CONTAINER_NAME	Lnet/minecraft/text/TranslatableText;
-mutable	field	net/minecraft/block/GrindstoneBlock	CONTAINER_NAME	Lnet/minecraft/text/TranslatableText;
-accessible	method	net/minecraft/block/HoneyBlock	hasHoneyBlockEffects	(Lnet/minecraft/entity/Entity;)Z
-accessible	method	net/minecraft/block/HoneyBlock	isSliding	(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;)Z
-accessible	method	net/minecraft/block/HoneyBlock	triggerAdvancement	(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/BlockPos;)V
-accessible	method	net/minecraft/block/HoneyBlock	updateSlidingVelocity	(Lnet/minecraft/entity/Entity;)V
-accessible	method	net/minecraft/block/HoneyBlock	addCollisionEffects	(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;)V
-accessible	method	net/minecraft/block/HoneyBlock	addParticles	(Lnet/minecraft/entity/Entity;I)V
 accessible	method	net/minecraft/block/HopperBlock	updateEnabled	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
-accessible	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	amplifier	Lnet/minecraft/predicate/NumberRange$IntRange;
-mutable	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	amplifier	Lnet/minecraft/predicate/NumberRange$IntRange;
-accessible	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	duration	Lnet/minecraft/predicate/NumberRange$IntRange;
-mutable	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	duration	Lnet/minecraft/predicate/NumberRange$IntRange;
-accessible	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	ambient	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	ambient	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	visible	Ljava/lang/Boolean;
-mutable	field	net/minecraft/predicate/entity/EntityEffectPredicate$EffectData	visible	Ljava/lang/Boolean;
-accessible	field	net/minecraft/predicate/entity/EntityEffectPredicate	effects	Ljava/util/Map;
-mutable	field	net/minecraft/predicate/entity/EntityEffectPredicate	effects	Ljava/util/Map;
-accessible	field	net/minecraft/block/KelpPlantBlock	kelpBlock	Lnet/minecraft/block/KelpBlock;
-mutable	field	net/minecraft/block/KelpPlantBlock	kelpBlock	Lnet/minecraft/block/KelpBlock;
 accessible	method	net/minecraft/block/LadderBlock	canPlaceOn	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)Z
 accessible	method	net/minecraft/block/LanternBlock	attachedDirection	(Lnet/minecraft/block/BlockState;)Lnet/minecraft/util/math/Direction;
 accessible	method	net/minecraft/block/LeavesBlock	updateDistanceFromLogs	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/IWorld;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;
@@ -2337,8 +1357,6 @@ extendable	class	net/minecraft/util/BlockMirror
 accessible	method	net/minecraft/block/NoteBlock	playNote	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V
 accessible	field	net/minecraft/predicate/NbtPredicate	tag	Lnet/minecraft/nbt/CompoundTag;
 mutable	field	net/minecraft/predicate/NbtPredicate	tag	Lnet/minecraft/nbt/CompoundTag;
-accessible	method	net/minecraft/block/ObserverBlock	scheduleTick	(Lnet/minecraft/world/IWorld;Lnet/minecraft/util/math/BlockPos;)V
-accessible	method	net/minecraft/block/ObserverBlock	updateNeighbors	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V
 accessible	method	net/minecraft/block/OreBlock	getExperienceWhenMined	(Ljava/util/Random;)I
 accessible	field	net/minecraft/block/ConnectingBlock	FACINGS	[Lnet/minecraft/util/math/Direction;
 mutable	field	net/minecraft/block/ConnectingBlock	FACINGS	[Lnet/minecraft/util/math/Direction;
@@ -2363,38 +1381,13 @@ accessible	method	net/minecraft/block/RedstoneWireBlock	couldConnectTo	(Lnet/min
 accessible	method	net/minecraft/block/RedstoneWireBlock	connectsTo	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)Z
 accessible	method	net/minecraft/block/RedstoneWireBlock	connectsTo	(Lnet/minecraft/block/BlockState;)Z
 accessible	method	net/minecraft/block/RedstoneWireBlock	connectsTo	(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;)Z
-accessible	field	net/minecraft/block/RedstoneTorchBlock$BurnoutEntry	pos	Lnet/minecraft/util/math/BlockPos;
-mutable	field	net/minecraft/block/RedstoneTorchBlock$BurnoutEntry	pos	Lnet/minecraft/util/math/BlockPos;
-accessible	field	net/minecraft/block/RedstoneTorchBlock$BurnoutEntry	time	J
-mutable	field	net/minecraft/block/RedstoneTorchBlock$BurnoutEntry	time	J
-accessible	field	net/minecraft/block/RedstoneTorchBlock	BURNOUT_MAP	Ljava/util/Map;
-mutable	field	net/minecraft/block/RedstoneTorchBlock	BURNOUT_MAP	Ljava/util/Map;
-accessible	method	net/minecraft/block/RedstoneTorchBlock	shouldUnpower	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z
-accessible	method	net/minecraft/block/RedstoneTorchBlock	isBurnedOut	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Z)Z
-accessible	field	net/minecraft/block/SandBlock	color	I
-mutable	field	net/minecraft/block/SandBlock	color	I
-accessible	field	net/minecraft/block/AbstractSignBlock	type	Lnet/minecraft/util/SignType;
-mutable	field	net/minecraft/block/AbstractSignBlock	type	Lnet/minecraft/util/SignType;
-extendable	class	net/minecraft/block/SkullBlock$Type
-accessible	method	net/minecraft/block/SmokerBlock	openContainer	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)V
 accessible	method	net/minecraft/block/SpreadableBlock	canSurvive	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z
 accessible	method	net/minecraft/block/SpreadableBlock	canSpread	(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/WorldView;Lnet/minecraft/util/math/BlockPos;)Z
 accessible	field	net/minecraft/block/StairsBlock	baseBlock	Lnet/minecraft/block/Block;
 mutable	field	net/minecraft/block/StairsBlock	baseBlock	Lnet/minecraft/block/Block;
 accessible	field	net/minecraft/block/StairsBlock	baseBlockState	Lnet/minecraft/block/BlockState;
 mutable	field	net/minecraft/block/StairsBlock	baseBlockState	Lnet/minecraft/block/BlockState;
-accessible	field	net/minecraft/block/StemBlock	gourdBlock	Lnet/minecraft/block/GourdBlock;
-mutable	field	net/minecraft/block/StemBlock	gourdBlock	Lnet/minecraft/block/GourdBlock;
-accessible	method	net/minecraft/block/StemBlock	getPickItem	()Lnet/minecraft/item/Item;
-accessible	field	net/minecraft/block/WallBannerBlock	FACING_TO_SHAPE	Ljava/util/Map;
-mutable	field	net/minecraft/block/WallBannerBlock	FACING_TO_SHAPE	Ljava/util/Map;
 accessible	method	net/minecraft/block/WallBlock	shouldConnectTo	(Lnet/minecraft/block/BlockState;ZLnet/minecraft/util/math/Direction;)Z
-accessible	field	net/minecraft/block/WallSignBlock	FACING_TO_SHAPE	Ljava/util/Map;
-mutable	field	net/minecraft/block/WallSignBlock	FACING_TO_SHAPE	Ljava/util/Map;
-accessible	field	net/minecraft/block/WallSkullBlock	FACING_TO_SHAPE	Ljava/util/Map;
-mutable	field	net/minecraft/block/WallSkullBlock	FACING_TO_SHAPE	Ljava/util/Map;
-accessible	field	net/minecraft/block/WallTorchBlock	BOUNDING_SHAPES	Ljava/util/Map;
-mutable	field	net/minecraft/block/WallTorchBlock	BOUNDING_SHAPES	Ljava/util/Map;
 accessible	class	net/minecraft/block/entity/AbstractFurnaceBlockEntity$1
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
 mutable	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
@@ -2420,17 +1413,6 @@ accessible	field	net/minecraft/block/entity/BannerBlockEntity	patternListTagRead
 mutable	field	net/minecraft/block/entity/BannerBlockEntity	patternListTagRead	Z
 accessible	field	net/minecraft/block/entity/BannerBlockEntity	patterns	Ljava/util/List;
 mutable	field	net/minecraft/block/entity/BannerBlockEntity	patterns	Ljava/util/List;
-accessible	field	net/minecraft/block/entity/BannerPattern$Patterns	entries	Ljava/util/List;
-mutable	field	net/minecraft/block/entity/BannerPattern$Patterns	entries	Ljava/util/List;
-extendable	class	net/minecraft/block/entity/BannerPattern
-accessible	field	net/minecraft/block/entity/BannerPattern	name	Ljava/lang/String;
-mutable	field	net/minecraft/block/entity/BannerPattern	name	Ljava/lang/String;
-accessible	field	net/minecraft/block/entity/BannerPattern	id	Ljava/lang/String;
-mutable	field	net/minecraft/block/entity/BannerPattern	id	Ljava/lang/String;
-accessible	field	net/minecraft/block/entity/BannerPattern	recipePattern	[Ljava/lang/String;
-mutable	field	net/minecraft/block/entity/BannerPattern	recipePattern	[Ljava/lang/String;
-accessible	field	net/minecraft/block/entity/BannerPattern	baseStack	Lnet/minecraft/item/ItemStack;
-mutable	field	net/minecraft/block/entity/BannerPattern	baseStack	Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/block/entity/BarrelBlockEntity	viewerCount	I
 mutable	field	net/minecraft/block/entity/BarrelBlockEntity	viewerCount	I
 accessible	method	net/minecraft/block/entity/BarrelBlockEntity	scheduleUpdate	()V
@@ -2678,11 +1660,7 @@ accessible	field	net/minecraft/util/SignType	VALUES	Ljava/util/Set;
 mutable	field	net/minecraft/util/SignType	VALUES	Ljava/util/Set;
 accessible	field	net/minecraft/util/SignType	name	Ljava/lang/String;
 mutable	field	net/minecraft/util/SignType	name	Ljava/lang/String;
-accessible	method	net/minecraft/util/SignType	register	(Lnet/minecraft/util/SignType;)Lnet/minecraft/util/SignType;
-accessible	field	net/minecraft/world/biome/source/BiomeArray	HORIZONTAL_SECTION_COUNT	I
-mutable	field	net/minecraft/world/biome/source/BiomeArray	HORIZONTAL_SECTION_COUNT	I
-accessible	field	net/minecraft/world/biome/source/BiomeArray	VERTICAL_SECTION_COUNT	I
-mutable	field	net/minecraft/world/biome/source/BiomeArray	VERTICAL_SECTION_COUNT	I
+accessible	method	net/minecraft/util/SignType	register	(Lnet/minecraft/util/SignType;)Lnet/minecraft/util/SignType;x
 accessible	field	net/minecraft/world/biome/source/BiomeArray	data	[Lnet/minecraft/world/biome/Biome;
 mutable	field	net/minecraft/world/biome/source/BiomeArray	data	[Lnet/minecraft/world/biome/Biome;
 accessible	field	net/minecraft/world/gen/chunk/ChunkGenerator	world	Lnet/minecraft/world/IWorld;
@@ -2781,26 +1759,6 @@ mutable	field	net/minecraft/world/chunk/ChunkSection	nonEmptyFluidCount	S
 accessible	field	net/minecraft/world/chunk/ChunkSection	container	Lnet/minecraft/world/chunk/PalettedContainer;
 mutable	field	net/minecraft/world/chunk/ChunkSection	container	Lnet/minecraft/world/chunk/PalettedContainer;
 accessible	class	net/minecraft/world/chunk/PaletteResizeListener
-accessible	field	net/minecraft/world/chunk/ProtoChunk	pos	Lnet/minecraft/util/math/ChunkPos;
-mutable	field	net/minecraft/world/chunk/ProtoChunk	pos	Lnet/minecraft/util/math/ChunkPos;
-accessible	field	net/minecraft/world/ChunkTickScheduler	shouldExclude	Ljava/util/function/Predicate;
-mutable	field	net/minecraft/world/ChunkTickScheduler	shouldExclude	Ljava/util/function/Predicate;
-accessible	field	net/minecraft/world/ChunkTickScheduler	pos	Lnet/minecraft/util/math/ChunkPos;
-mutable	field	net/minecraft/world/ChunkTickScheduler	pos	Lnet/minecraft/util/math/ChunkPos;
-accessible	field	net/minecraft/world/ChunkTickScheduler	scheduledPositions	[Lit/unimi/dsi/fastutil/shorts/ShortList;
-mutable	field	net/minecraft/world/ChunkTickScheduler	scheduledPositions	[Lit/unimi/dsi/fastutil/shorts/ShortList;
-extendable	method	net/minecraft/world/ChunkSerializer	writeEntities	(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/world/chunk/WorldChunk;)V
-accessible	method	net/minecraft/world/ChunkSerializer	writeEntities	(Lnet/minecraft/nbt/CompoundTag;Lnet/minecraft/world/chunk/WorldChunk;)V
-extendable	method	net/minecraft/world/ChunkSerializer	writeStructures	(Lnet/minecraft/util/math/ChunkPos;Ljava/util/Map;Ljava/util/Map;)Lnet/minecraft/nbt/CompoundTag;
-accessible	method	net/minecraft/world/ChunkSerializer	writeStructures	(Lnet/minecraft/util/math/ChunkPos;Ljava/util/Map;Ljava/util/Map;)Lnet/minecraft/nbt/CompoundTag;
-extendable	method	net/minecraft/world/ChunkSerializer	readStructureReferences	(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/nbt/CompoundTag;)Ljava/util/Map;
-accessible	method	net/minecraft/world/ChunkSerializer	readStructureReferences	(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/nbt/CompoundTag;)Ljava/util/Map;
-accessible	field	net/minecraft/world/storage/VersionedChunkStorage	worker	Lnet/minecraft/world/storage/StorageIoWorker;
-mutable	field	net/minecraft/world/storage/VersionedChunkStorage	worker	Lnet/minecraft/world/storage/StorageIoWorker;
-accessible	field	net/minecraft/world/storage/VersionedChunkStorage	dataFixer	Lcom/mojang/datafixers/DataFixer;
-mutable	field	net/minecraft/world/storage/VersionedChunkStorage	dataFixer	Lcom/mojang/datafixers/DataFixer;
-accessible	field	net/minecraft/world/storage/VersionedChunkStorage	featureUpdater	Lnet/minecraft/world/FeatureUpdater;
-mutable	field	net/minecraft/world/storage/VersionedChunkStorage	featureUpdater	Lnet/minecraft/world/FeatureUpdater;
 accessible	field	net/minecraft/world/dimension/Dimension	world	Lnet/minecraft/world/World;
 mutable	field	net/minecraft/world/dimension/Dimension	world	Lnet/minecraft/world/World;
 accessible	field	net/minecraft/world/dimension/Dimension	type	Lnet/minecraft/world/dimension/DimensionType;
@@ -2882,7 +1840,6 @@ mutable	field	net/minecraft/server/command/ServerCommandSource	simpleName	Ljava/
 accessible	field	net/minecraft/server/command/ServerCommandSource	name	Lnet/minecraft/text/Text;
 mutable	field	net/minecraft/server/command/ServerCommandSource	name	Lnet/minecraft/text/Text;
 accessible	field	net/minecraft/server/command/ServerCommandSource	minecraftServer	Lnet/minecraft/server/MinecraftServer;
-mutable	field	net/minecraft/server/command/ServerCommandSource	minecraftServer	Lnet/minecraft/server/MinecraftServer;
 accessible	field	net/minecraft/server/command/ServerCommandSource	silent	Z
 accessible	field	net/minecraft/server/command/ServerCommandSource	entity	Lnet/minecraft/entity/Entity;
 mutable	field	net/minecraft/server/command/ServerCommandSource	entity	Lnet/minecraft/entity/Entity;
@@ -3048,14 +2005,6 @@ accessible	field	net/minecraft/util/math/Direction	vector	Lnet/minecraft/util/ma
 mutable	field	net/minecraft/util/math/Direction	vector	Lnet/minecraft/util/math/Vec3i;
 accessible	field	net/minecraft/util/math/Direction	VALUES	[Lnet/minecraft/util/math/Direction;
 accessible	field	net/minecraft/util/math/Direction	HORIZONTAL	[Lnet/minecraft/util/math/Direction;
-accessible	field	net/minecraft/util/math/Direction	VECTOR_TO_DIRECTION	Lit/unimi/dsi/fastutil/longs/Long2ObjectMap;
-extendable	class	net/minecraft/util/GlobalPos
-accessible	field	net/minecraft/util/GlobalPos	dimension	Lnet/minecraft/world/dimension/DimensionType;
-accessible	field	net/minecraft/util/GlobalPos	pos	Lnet/minecraft/util/math/BlockPos;
-accessible	field	net/minecraft/util/IdList	nextId	I
-accessible	field	net/minecraft/util/IdList	idMap	Ljava/util/IdentityHashMap;
-accessible	field	net/minecraft/util/IdList	list	Ljava/util/List;
-accessible	field	net/minecraft/util/DefaultedList	delegate	Ljava/util/List;
 accessible	field	net/minecraft/util/DefaultedList	initialElement	Ljava/lang/Object;
 extendable	class	net/minecraft/util/Formatting
 accessible	field	net/minecraft/util/Formatting	BY_NAME	Ljava/util/Map;
@@ -3068,7 +2017,6 @@ accessible	field	net/minecraft/util/Formatting	colorIndex	I
 accessible	field	net/minecraft/util/Formatting	colorValue	Ljava/lang/Integer;
 accessible	method	net/minecraft/util/registry/Registry	create	(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/Registry;
 accessible	method	net/minecraft/util/registry/Registry	create	(Ljava/lang/String;Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/DefaultedRegistry;
-accessible	method	net/minecraft/util/registry/Registry	putDefaultEntry	(Ljava/lang/String;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/MutableRegistry;
 accessible	field	net/minecraft/util/math/Vec3i	x	I
 mutable	field	net/minecraft/util/math/Vec3i	x	I
 accessible	field	net/minecraft/util/math/Vec3i	y	I
@@ -3213,13 +2161,11 @@ mutable	field	net/minecraft/server/MinecraftServer	levelStorage	Lnet/minecraft/w
 accessible	field	net/minecraft/server/MinecraftServer	gameDir	Ljava/io/File;
 mutable	field	net/minecraft/server/MinecraftServer	gameDir	Ljava/io/File;
 accessible	field	net/minecraft/server/MinecraftServer	networkIo	Lnet/minecraft/server/ServerNetworkIo;
-mutable	field	net/minecraft/server/MinecraftServer	networkIo	Lnet/minecraft/server/ServerNetworkIo;
 accessible	field	net/minecraft/server/MinecraftServer	worldGenerationProgressListenerFactory	Lnet/minecraft/server/WorldGenerationProgressListenerFactory;
 mutable	field	net/minecraft/server/MinecraftServer	worldGenerationProgressListenerFactory	Lnet/minecraft/server/WorldGenerationProgressListenerFactory;
 accessible	field	net/minecraft/server/MinecraftServer	metadata	Lnet/minecraft/server/ServerMetadata;
 mutable	field	net/minecraft/server/MinecraftServer	metadata	Lnet/minecraft/server/ServerMetadata;
 accessible	field	net/minecraft/server/MinecraftServer	dataFixer	Lcom/mojang/datafixers/DataFixer;
-mutable	field	net/minecraft/server/MinecraftServer	dataFixer	Lcom/mojang/datafixers/DataFixer;
 accessible	field	net/minecraft/server/MinecraftServer	serverIp	Ljava/lang/String;
 mutable	field	net/minecraft/server/MinecraftServer	serverIp	Ljava/lang/String;
 accessible	field	net/minecraft/server/MinecraftServer	serverPort	I
@@ -3267,8 +2213,6 @@ accessible	field	net/minecraft/server/MinecraftServer	lastPlayerSampleUpdate	J
 accessible	field	net/minecraft/server/MinecraftServer	serverThread	Ljava/lang/Thread;
 accessible	field	net/minecraft/server/MinecraftServer	timeReference	J
 mutable	field	net/minecraft/server/MinecraftServer	timeReference	J
-accessible	field	net/minecraft/server/MinecraftServer	field_19248	J
-accessible	field	net/minecraft/server/MinecraftServer	field_19249	Z
 accessible	field	net/minecraft/server/MinecraftServer	iconFilePresent	Z
 mutable	field	net/minecraft/server/MinecraftServer	iconFilePresent	Z
 accessible	field	net/minecraft/server/MinecraftServer	dataManager	Lnet/minecraft/resource/ReloadableResourceManager;
@@ -3278,19 +2222,13 @@ mutable	field	net/minecraft/server/MinecraftServer	dataPackManager	Lnet/minecraf
 accessible	field	net/minecraft/resource/ServerResourceManager	commandManager	Lnet/minecraft/server/command/CommandManager;
 mutable	field	net/minecraft/resource/ServerResourceManager	commandManager	Lnet/minecraft/server/command/CommandManager;
 accessible	field	net/minecraft/server/MinecraftServer	recipeManager	Lnet/minecraft/recipe/RecipeManager;
-mutable	field	net/minecraft/server/MinecraftServer	recipeManager	Lnet/minecraft/recipe/RecipeManager;
 accessible	field	net/minecraft/server/MinecraftServer	enforceWhitelist	Z
 mutable	field	net/minecraft/server/MinecraftServer	enforceWhitelist	Z
 accessible	field	net/minecraft/server/MinecraftServer	forceWorldUpgrade	Z
-mutable	field	net/minecraft/server/MinecraftServer	forceWorldUpgrade	Z
 accessible	field	net/minecraft/server/MinecraftServer	eraseCache	Z
-mutable	field	net/minecraft/server/MinecraftServer	eraseCache	Z
 accessible	field	net/minecraft/server/MinecraftServer	tickTime	F
-mutable	field	net/minecraft/server/MinecraftServer	tickTime	F
 accessible	field	net/minecraft/server/MinecraftServer	workerExecutor	Ljava/util/concurrent/Executor;
-mutable	field	net/minecraft/server/MinecraftServer	workerExecutor	Ljava/util/concurrent/Executor;
 accessible	field	net/minecraft/server/MinecraftServer	serverId	Ljava/lang/String;
-mutable	field	net/minecraft/server/MinecraftServer	serverId	Ljava/lang/String;
 accessible	field	net/minecraft/server/MinecraftServer	serverResourceManager	Lnet/minecraft/resource/ServerResourceManager;
 accessible	method	net/minecraft/server/MinecraftServer	initScoreboard	(Lnet/minecraft/world/PersistentStateManager;)V
 accessible	method	net/minecraft/server/MinecraftServer	setupServer	()Z
@@ -3337,15 +2275,9 @@ accessible	field	net/minecraft/server/ServerMetadata	version	Lnet/minecraft/serv
 mutable	field	net/minecraft/server/ServerMetadata	version	Lnet/minecraft/server/ServerMetadata$Version;
 accessible	field	net/minecraft/server/ServerMetadata	favicon	Ljava/lang/String;
 mutable	field	net/minecraft/server/ServerMetadata	favicon	Ljava/lang/String;
-accessible	field	net/minecraft/SharedConstants	gameVersion	Lcom/mojang/bridge/game/GameVersion;
-accessible	field	net/minecraft/entity/data/TrackedData	id	I
-accessible	field	net/minecraft/entity/data/TrackedData	dataType	Lnet/minecraft/entity/data/TrackedDataHandler;
-accessible	field	net/minecraft/entity/data/DataTracker$Entry	data	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/util/Identifier	namespace	Ljava/lang/String;
 accessible	field	net/minecraft/util/Identifier	path	Ljava/lang/String;
 accessible	method	net/minecraft/util/Identifier	split	(Ljava/lang/String;C)[Ljava/lang/String;
-accessible	field	net/minecraft/util/Util	SERVER_WORKER_EXECUTOR	Ljava/util/concurrent/ExecutorService;
-accessible	method	net/minecraft/util/Util	createServerWorkerExecutor	()Ljava/util/concurrent/ExecutorService;
 accessible	field	net/minecraft/server/ServerTask	creationTicks	I
 accessible	field	net/minecraft/server/ServerTask	runnable	Ljava/lang/Runnable;
 accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	saveIpBanList	()V
@@ -3359,81 +2291,54 @@ accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	saveWhit
 accessible	class	net/minecraft/server/dedicated/MinecraftDedicatedServer$1
 accessible	class	net/minecraft/server/dedicated/MinecraftDedicatedServer$2
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	commandQueue	Ljava/util/List;
-mutable	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	commandQueue	Ljava/util/List;
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	propertiesLoader	Lnet/minecraft/server/dedicated/ServerPropertiesLoader;
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	defaultGameMode	Lnet/minecraft/world/GameMode;
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	gui	Lnet/minecraft/server/dedicated/gui/DedicatedServerGui;
 accessible	method	net/minecraft/server/dedicated/MinecraftDedicatedServer	convertData	()Z
 accessible	method	net/minecraft/server/dedicated/ServerPropertiesHandler	create	(Ljava/util/Properties;)Lnet/minecraft/server/dedicated/ServerPropertiesHandler;
 accessible	field	net/minecraft/server/dedicated/ServerPropertiesLoader	path	Ljava/nio/file/Path;
-mutable	field	net/minecraft/server/dedicated/ServerPropertiesLoader	path	Ljava/nio/file/Path;
 accessible	field	net/minecraft/server/dedicated/ServerPropertiesLoader	propertiesHandler	Lnet/minecraft/server/dedicated/ServerPropertiesHandler;
 accessible	class	net/minecraft/server/dedicated/DedicatedServerWatchdog$1
 accessible	field	net/minecraft/server/dedicated/DedicatedServerWatchdog	maxTickTime	J
 accessible	method	net/minecraft/server/dedicated/DedicatedServerWatchdog	shutdown	()V
 accessible	field	net/minecraft/server/world/ThreadedAnvilChunkStorage	worldGenerationProgressListener	Lnet/minecraft/server/WorldGenerationProgressListener;
-mutable	field	net/minecraft/server/world/ThreadedAnvilChunkStorage	worldGenerationProgressListener	Lnet/minecraft/server/WorldGenerationProgressListener;
 accessible	method	net/minecraft/server/world/ThreadedAnvilChunkStorage	save	(Lnet/minecraft/world/chunk/Chunk;)Z
 accessible	method	net/minecraft/server/world/ThreadedAnvilChunkStorage	setViewDistance	(I)V
 accessible	method	net/minecraft/server/world/SecondaryServerWorld	tickTime	()V
 extendable	class	net/minecraft/server/world/PlayerChunkWatchingManager
 accessible	field	net/minecraft/server/world/PlayerChunkWatchingManager	watchingPlayers	Lit/unimi/dsi/fastutil/objects/Object2BooleanMap;
-mutable	field	net/minecraft/server/world/PlayerChunkWatchingManager	watchingPlayers	Lit/unimi/dsi/fastutil/objects/Object2BooleanMap;
 accessible	field	net/minecraft/server/world/ServerChunkManager	ticketManager	Lnet/minecraft/server/world/ChunkTicketManager;
-mutable	field	net/minecraft/server/world/ServerChunkManager	ticketManager	Lnet/minecraft/server/world/ChunkTicketManager;
 accessible	field	net/minecraft/server/world/ServerChunkManager	chunkGenerator	Lnet/minecraft/world/gen/chunk/ChunkGenerator;
-mutable	field	net/minecraft/server/world/ServerChunkManager	chunkGenerator	Lnet/minecraft/world/gen/chunk/ChunkGenerator;
 accessible	field	net/minecraft/server/world/ServerChunkManager	world	Lnet/minecraft/server/world/ServerWorld;
-mutable	field	net/minecraft/server/world/ServerChunkManager	world	Lnet/minecraft/server/world/ServerWorld;
 accessible	field	net/minecraft/server/world/ServerChunkManager	serverThread	Ljava/lang/Thread;
-mutable	field	net/minecraft/server/world/ServerChunkManager	serverThread	Ljava/lang/Thread;
 accessible	field	net/minecraft/server/world/ServerChunkManager	lightProvider	Lnet/minecraft/server/world/ServerLightingProvider;
-mutable	field	net/minecraft/server/world/ServerChunkManager	lightProvider	Lnet/minecraft/server/world/ServerLightingProvider;
 accessible	field	net/minecraft/server/world/ServerChunkManager	mainThreadExecutor	Lnet/minecraft/server/world/ServerChunkManager$MainThreadExecutor;
 accessible	field	net/minecraft/server/world/ServerChunkManager	persistentStateManager	Lnet/minecraft/world/PersistentStateManager;
 accessible	field	net/minecraft/server/world/ServerChunkManager	lastMobSpawningTime	J
 accessible	field	net/minecraft/server/world/ServerChunkManager	spawnMonsters	Z
 accessible	field	net/minecraft/server/world/ServerChunkManager	spawnAnimals	Z
 accessible	field	net/minecraft/server/world/ServerChunkManager	chunkPosCache	[J
-mutable	field	net/minecraft/server/world/ServerChunkManager	chunkPosCache	[J
 accessible	field	net/minecraft/server/world/ServerChunkManager	chunkStatusCache	[Lnet/minecraft/world/chunk/ChunkStatus;
-mutable	field	net/minecraft/server/world/ServerChunkManager	chunkStatusCache	[Lnet/minecraft/world/chunk/ChunkStatus;
 accessible	field	net/minecraft/server/world/ServerChunkManager	chunkCache	[Lnet/minecraft/world/chunk/Chunk;
-mutable	field	net/minecraft/server/world/ServerChunkManager	chunkCache	[Lnet/minecraft/world/chunk/Chunk;
 accessible	method	net/minecraft/server/world/ServerChunkManager	getChunkHolder	(J)Lnet/minecraft/server/world/ChunkHolder;
 accessible	method	net/minecraft/server/world/ServerChunkManager	method_21738	(JLnet/minecraft/world/chunk/Chunk;Lnet/minecraft/world/chunk/ChunkStatus;)V
 accessible	method	net/minecraft/server/world/ServerChunkManager	initChunkCaches	()V
 accessible	method	net/minecraft/server/world/ServerChunkManager	getChunkFuture	(IILnet/minecraft/world/chunk/ChunkStatus;Z)Ljava/util/concurrent/CompletableFuture;
 accessible	method	net/minecraft/server/world/ServerChunkManager	isMissingForLevel	(Lnet/minecraft/server/world/ChunkHolder;I)Z
 accessible	method	net/minecraft/server/world/ServerChunkManager	tick	()Z
-accessible	method	net/minecraft/server/world/ServerChunkManager	method_20585	(JLjava/util/function/Function;)Z
 accessible	method	net/minecraft/server/world/ServerChunkManager	tickChunks	()V
 accessible	field	net/minecraft/server/world/ServerWorld	globalEntities	Ljava/util/List;
-mutable	field	net/minecraft/server/world/ServerWorld	globalEntities	Ljava/util/List;
 accessible	field	net/minecraft/server/world/ServerWorld	entitiesById	Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
-mutable	field	net/minecraft/server/world/ServerWorld	entitiesById	Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
 accessible	field	net/minecraft/server/world/ServerWorld	entitiesByUuid	Ljava/util/Map;
-mutable	field	net/minecraft/server/world/ServerWorld	entitiesByUuid	Ljava/util/Map;
 accessible	field	net/minecraft/server/world/ServerWorld	entitiesToLoad	Ljava/util/Queue;
-mutable	field	net/minecraft/server/world/ServerWorld	entitiesToLoad	Ljava/util/Queue;
 accessible	field	net/minecraft/server/world/ServerWorld	players	Ljava/util/List;
-mutable	field	net/minecraft/server/world/ServerWorld	players	Ljava/util/List;
 accessible	field	net/minecraft/server/world/ServerWorld	ticking	Z
-mutable	field	net/minecraft/server/world/ServerWorld	ticking	Z
-accessible	field	net/minecraft/server/world/ServerWorld	server	Lnet/minecraft/server/MinecraftServer;
-mutable	field	net/minecraft/server/world/ServerWorld	server	Lnet/minecraft/server/MinecraftServer;
 accessible	field	net/minecraft/server/world/ServerWorld	worldSaveHandler	Lnet/minecraft/world/WorldSaveHandler;
-mutable	field	net/minecraft/server/world/ServerWorld	worldSaveHandler	Lnet/minecraft/world/WorldSaveHandler;
 accessible	field	net/minecraft/server/world/ServerWorld	allPlayersSleeping	Z
-mutable	field	net/minecraft/server/world/ServerWorld	allPlayersSleeping	Z
 accessible	field	net/minecraft/server/world/ServerWorld	idleTimeout	I
-mutable	field	net/minecraft/server/world/ServerWorld	idleTimeout	I
 accessible	field	net/minecraft/server/world/ServerWorld	entityNavigations	Ljava/util/Set;
-mutable	field	net/minecraft/server/world/ServerWorld	entityNavigations	Ljava/util/Set;
 accessible	field	net/minecraft/server/world/ServerWorld	pendingBlockActions	Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;
-mutable	field	net/minecraft/server/world/ServerWorld	pendingBlockActions	Lit/unimi/dsi/fastutil/objects/ObjectLinkedOpenHashSet;
 accessible	field	net/minecraft/server/world/ServerWorld	insideTick	Z
-mutable	field	net/minecraft/server/world/ServerWorld	insideTick	Z
 accessible	method	net/minecraft/server/world/ServerWorld	method_23660	()V
 accessible	method	net/minecraft/server/world/ServerWorld	method_18210	(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/math/BlockPos;
 accessible	method	net/minecraft/server/world/ServerWorld	resetWeather	()V
@@ -3459,8 +2364,6 @@ accessible	field	net/minecraft/server/network/ServerPlayerEntity	syncedHealth	F
 accessible	field	net/minecraft/server/network/ServerPlayerEntity	syncedFoodLevel	I
 accessible	field	net/minecraft/server/network/ServerPlayerEntity	syncedSaturationIsZero	Z
 accessible	field	net/minecraft/server/network/ServerPlayerEntity	syncedExperience	I
-accessible	field	net/minecraft/server/network/ServerPlayerEntity	field_13998	I
-accessible	field	net/minecraft/server/network/ServerPlayerEntity	field_13971	Z
 accessible	field	net/minecraft/server/network/ServerPlayerEntity	lastActionTime	J
 accessible	field	net/minecraft/server/network/ServerPlayerEntity	inTeleportationState	Z
 accessible	field	net/minecraft/server/network/ServerPlayerEntity	seenCredits	Z
@@ -3476,30 +2379,19 @@ accessible	method	net/minecraft/server/network/ServerPlayerEntity	dimensionChang
 accessible	method	net/minecraft/server/network/ServerPlayerEntity	sendBlockEntityUpdate	(Lnet/minecraft/block/entity/BlockEntity;)V
 accessible	method	net/minecraft/server/network/ServerPlayerEntity	incrementContainerSyncId	()V
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	gameMode	Lnet/minecraft/world/GameMode;
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	gameMode	Lnet/minecraft/world/GameMode;
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	mining	Z
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	mining	Z
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	startMiningTime	I
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	startMiningTime	I
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	miningPos	Lnet/minecraft/util/math/BlockPos;
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	miningPos	Lnet/minecraft/util/math/BlockPos;
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	tickCounter	I
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	tickCounter	I
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	failedToMine	Z
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	failedToMine	Z
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	failedMiningPos	Lnet/minecraft/util/math/BlockPos;
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	failedMiningPos	Lnet/minecraft/util/math/BlockPos;
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	failedStartMiningTime	I
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	failedStartMiningTime	I
 accessible	field	net/minecraft/server/network/ServerPlayerInteractionManager	blockBreakingProgress	I
-mutable	field	net/minecraft/server/network/ServerPlayerInteractionManager	blockBreakingProgress	I
 accessible	method	net/minecraft/server/network/ServerPlayerInteractionManager	continueMining	(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;I)F
 accessible	field	net/minecraft/server/WorldGenerationProgressLogger	totalCount	I
 accessible	field	net/minecraft/server/WorldGenerationProgressLogger	generatedCount	I
 accessible	field	net/minecraft/server/WorldGenerationProgressLogger	startTime	J
 accessible	field	net/minecraft/server/WorldGenerationProgressLogger	nextMessageTime	J
-accessible	field	net/minecraft/server/QueueingWorldGenerationProgressListener	progressListener	Lnet/minecraft/server/WorldGenerationProgressListener;
-accessible	field	net/minecraft/server/QueueingWorldGenerationProgressListener	queue	Lnet/minecraft/util/thread/TaskExecutor;
 accessible	class	net/minecraft/server/ServerNetworkIo$1
 accessible	method	net/minecraft/server/ServerNetworkIo$1	initChannel	(Lio/netty/channel/Channel;)V
 accessible	class	net/minecraft/server/ServerNetworkIo$2
@@ -3551,3 +2443,4 @@ accessible	field	net/minecraft/village/TradeOffer	priceMultiplier	F
 accessible	field	net/minecraft/block/entity/EndGatewayBlockEntity	exitPortalPos	Lnet/minecraft/util/math/BlockPos;
 accessible	field	net/minecraft/block/entity/EndGatewayBlockEntity	exactTeleport	Z
 accessible	field	net/minecraft/block/entity/EndGatewayBlockEntity	age	J
+accessible	field	net/minecraft/network/packet/s2c/play/BlockUpdateS2CPacket	state	Lnet/minecraft/block/BlockState;

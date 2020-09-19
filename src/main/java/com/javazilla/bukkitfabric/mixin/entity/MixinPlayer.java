@@ -1,10 +1,13 @@
 package com.javazilla.bukkitfabric.mixin.entity;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
@@ -63,6 +66,18 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
     @Overwrite
     public void teleport(ServerWorld worldserver, double d0, double d1, double d2, float f, float f1) {
         this.getBukkitEntity().teleport(new Location(((IMixinWorld)worldserver).getCraftWorld(), d0, d1, d2, f, f1), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Inject(at = @At("HEAD"), method = "setGameMode", cancellable = true)
+    public void setGameMode(net.minecraft.world.GameMode gm, CallbackInfo ci) {
+        if (gm == ((ServerPlayerEntity)(Object)this).interactionManager.getGameMode())
+            ci.cancel();
+
+        PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent((Player) getBukkitEntity(), GameMode.getByValue(gm.getId()));
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            ci.cancel();
     }
 
 }
