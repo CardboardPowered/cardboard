@@ -7,7 +7,6 @@ import net.minecraft.block.entity.Hopper;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.village.TraderInventory;
-import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlastFurnaceBlockEntity;
@@ -15,12 +14,10 @@ import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.block.entity.DispenserBlockEntity;
 import net.minecraft.block.entity.DropperBlockEntity;
 import net.minecraft.block.entity.FurnaceBlockEntity;
-import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.LecternBlockEntity;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.block.entity.SmokerBlockEntity;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.util.CraftLegacy;
@@ -32,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
+@SuppressWarnings("deprecation")
 public class CraftInventory implements Inventory {
 
     protected final net.minecraft.inventory.Inventory inventory;
@@ -430,10 +428,10 @@ public class CraftInventory implements Inventory {
             return InventoryType.ENDER_CHEST;
         } else if (inventory instanceof TraderInventory) {
             return InventoryType.MERCHANT;
-         // TODO } else if (this instanceof CraftInventoryBeacon) {
-         // TODO     return InventoryType.BEACON;
-         // TODO } else if (this instanceof CraftInventoryAnvil) {
-         // TODO     return InventoryType.ANVIL;
+        } else if (this instanceof CraftInventoryBeacon) {
+              return InventoryType.BEACON;
+        } else if (this instanceof CraftInventoryAnvil) {
+            return InventoryType.ANVIL;
         } else if (inventory instanceof Hopper) {
             return InventoryType.HOPPER;
         } else if (inventory instanceof ShulkerBoxBlockEntity) {

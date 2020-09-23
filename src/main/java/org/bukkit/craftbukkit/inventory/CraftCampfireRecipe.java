@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.CampfireRecipe;
@@ -16,9 +15,8 @@ public class CraftCampfireRecipe extends CampfireRecipe implements CraftRecipe {
     }
 
     public static CraftCampfireRecipe fromBukkitRecipe(CampfireRecipe recipe) {
-        if (recipe instanceof CraftCampfireRecipe) {
+        if (recipe instanceof CraftCampfireRecipe)
             return (CraftCampfireRecipe) recipe;
-        }
         CraftCampfireRecipe ret = new CraftCampfireRecipe(recipe.getKey(), recipe.getResult(), recipe.getInputChoice(), recipe.getExperience(), recipe.getCookingTime());
         ret.setGroup(recipe.getGroup());
         return ret;
@@ -30,4 +28,5 @@ public class CraftCampfireRecipe extends CampfireRecipe implements CraftRecipe {
 
         ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.CampfireCookingRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), toNMS(this.getInputChoice(), true), CraftItemStack.asNMSCopy(result), getExperience(), getCookingTime()));
     }
+
 }

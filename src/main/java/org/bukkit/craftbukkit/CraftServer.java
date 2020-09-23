@@ -79,6 +79,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
+import org.bukkit.craftbukkit.advancement.CraftAdvancement;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 import org.bukkit.craftbukkit.command.CraftCommandMap;
@@ -151,12 +152,15 @@ import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -454,8 +458,12 @@ public class CraftServer implements Server {
 
     @Override
     public Iterator<Advancement> advancementIterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return Iterators.unmodifiableIterator(Iterators.transform(server.getAdvancementLoader().getAdvancements().iterator(), new Function<net.minecraft.advancement.Advancement, org.bukkit.advancement.Advancement>() {
+            @Override
+            public org.bukkit.advancement.Advancement apply(net.minecraft.advancement.Advancement advancement) {
+                return ((IMixinAdvancement)advancement).getBukkitAdvancement();
+            }
+        }));
     }
 
     @Override
@@ -721,8 +729,8 @@ public class CraftServer implements Server {
 
     @Override
     public Advancement getAdvancement(NamespacedKey arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        net.minecraft.advancement.Advancement advancement = server.getAdvancementLoader().get(CraftNamespacedKey.toMinecraft(arg0));
+        return (advancement == null) ? null : ((IMixinAdvancement)advancement).getBukkitAdvancement();
     }
 
     @Override

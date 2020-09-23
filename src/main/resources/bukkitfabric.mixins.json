@@ -14,6 +14,7 @@
     "MixinPlayerManager",
     "MixinServerPlayerInteractionManager",
     "MixinStatusEffects",
+    "MixinAdvancement",
 
     "world.MixinServerWorld",
     "world.MixinWorld",

@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.BlastingRecipe;
@@ -11,14 +10,14 @@ import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 
 public class CraftBlastingRecipe extends BlastingRecipe implements CraftRecipe {
+
     public CraftBlastingRecipe(NamespacedKey key, ItemStack result, RecipeChoice source, float experience, int cookingTime) {
         super(key, result, source, experience, cookingTime);
     }
 
     public static CraftBlastingRecipe fromBukkitRecipe(BlastingRecipe recipe) {
-        if (recipe instanceof CraftBlastingRecipe) {
+        if (recipe instanceof CraftBlastingRecipe)
             return (CraftBlastingRecipe) recipe;
-        }
         CraftBlastingRecipe ret = new CraftBlastingRecipe(recipe.getKey(), recipe.getResult(), recipe.getInputChoice(), recipe.getExperience(), recipe.getCookingTime());
         ret.setGroup(recipe.getGroup());
         return ret;
@@ -27,7 +26,7 @@ public class CraftBlastingRecipe extends BlastingRecipe implements CraftRecipe {
     @Override
     public void addToCraftingManager() {
         ItemStack result = this.getResult();
-
         ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.BlastingRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), toNMS(this.getInputChoice(), true), CraftItemStack.asNMSCopy(result), getExperience(), getCookingTime()));
     }
+
 }
