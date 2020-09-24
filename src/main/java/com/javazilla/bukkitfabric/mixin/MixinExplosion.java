@@ -212,12 +212,12 @@ public class MixinExplosion {
      * @author BukkitFabric
      * @reason Explosion Events
      */
+    @SuppressWarnings("unused")
     @Overwrite
     public void collectBlocksAndDamageEntities() {
         if (this.power < 0.1F)
             return;
         Set<BlockPos> set = Sets.newHashSet();
-        boolean flag = true;
         int i;int j;
 
         for (int k = 0; k < 16; ++k) {

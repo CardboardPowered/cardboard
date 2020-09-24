@@ -3,7 +3,8 @@ package com.javazilla.bukkitfabric.mixin.entity;
 import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity2;
+import org.bukkit.projectiles.ProjectileSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,7 +24,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public org.bukkit.projectiles.ProjectileSource projectileSource;
 
     public MixinEntity() {
-        this.bukkit = new CraftEntity((Entity) (Object) this);
+        this.bukkit = new CraftEntity2((Entity) (Object) this);
     }
 
     public void sendSystemMessage(Text message) {
@@ -33,7 +34,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
     private void setBukkit(CallbackInfo callbackInfo) {
         if (null == bukkit)
-            this.bukkit = new CraftEntity((Entity) (Object) this);
+            this.bukkit = new CraftEntity2((Entity) (Object) this);
     }
 
     @Override
@@ -44,6 +45,11 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     @Override
     public org.bukkit.entity.Entity getBukkitEntity() {
         return bukkit;
+    }
+
+    @Override
+    public void setProjectileSourceBukkit(ProjectileSource source) {
+        this.projectileSource = source;
     }
 
 }

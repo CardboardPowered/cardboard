@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.scheduler;
 import org.bukkit.plugin.Plugin;
 
 class CraftAsyncDebugger {
+
     private CraftAsyncDebugger next = null;
     private final int expiry;
     private final Plugin plugin;
@@ -28,9 +29,9 @@ class CraftAsyncDebugger {
     }
 
     StringBuilder debugTo(final StringBuilder string) {
-        for (CraftAsyncDebugger next = this; next != null; next = next.next) {
+        for (CraftAsyncDebugger next = this; next != null; next = next.next)
             string.append(next.plugin.getDescription().getName()).append(':').append(next.clazz.getName()).append('@').append(next.expiry).append(',');
-        }
         return string;
     }
+
 }

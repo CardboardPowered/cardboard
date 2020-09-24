@@ -41,7 +41,6 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
-import org.bukkit.craftbukkit.util.WorldUUID;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -713,7 +712,7 @@ public class CraftWorld implements World {
 
     @Override
     public UUID getUID() {
-        return WorldUUID.getUUID(getWorldFolder());
+        return Utils.getWorldUUID(getWorldFolder());
     }
 
     @Override

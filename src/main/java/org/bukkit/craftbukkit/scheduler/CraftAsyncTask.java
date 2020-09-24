@@ -109,4 +109,5 @@ class CraftAsyncTask extends CraftTask {
         }
         return true;
     }
+
 }

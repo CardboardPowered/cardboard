@@ -18,8 +18,22 @@
  */
 package com.javazilla.bukkitfabric;
 
-import org.bukkit.Difficulty;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
 
+import org.bukkit.Difficulty;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.util.Vector;
+
+import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameMode;
 
 public class Utils {
@@ -33,42 +47,65 @@ public class Utils {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static GameMode toFabric(org.bukkit.GameMode arg0) {
-        switch (arg0) {
-            case ADVENTURE:
-                return GameMode.ADVENTURE;
-            case CREATIVE:
-                return GameMode.CREATIVE;
-            case SPECTATOR:
-                return GameMode.SPECTATOR;
-            case SURVIVAL:
-                return GameMode.SURVIVAL;
-            default:
-                break;
-        }
-        return GameMode.NOT_SET;
+        return GameMode.byId(arg0.getValue());
     }
 
+    @SuppressWarnings("deprecation")
     public static org.bukkit.GameMode fromFabric(GameMode gm) {
-        switch (gm) {
-            case ADVENTURE:
-                return org.bukkit.GameMode.ADVENTURE;
-            case CREATIVE:
-                return org.bukkit.GameMode.CREATIVE;
-            case NOT_SET:
-                return org.bukkit.GameMode.SURVIVAL; 
-            case SPECTATOR:
-                return org.bukkit.GameMode.SPECTATOR;
-            case SURVIVAL:
-                return org.bukkit.GameMode.SURVIVAL;
-            default:
-                break;
-        }
-        return org.bukkit.GameMode.SURVIVAL;
+        return org.bukkit.GameMode.getByValue(gm.id);
     }
 
     public static Difficulty fromFabric(net.minecraft.world.Difficulty difficulty) {
         return Difficulty.valueOf(difficulty.name());
+    }
+
+    public static Vector toBukkit(Vec3d nms) {
+        return new Vector(nms.x, nms.y, nms.z);
+    }
+
+    public static Vec3d toMojang(Vector bukkit) {
+        return new Vec3d(bukkit.getX(), bukkit.getY(), bukkit.getZ());
+    }
+
+    public static UUID getWorldUUID(File baseDir) {
+        File file1 = new File(baseDir, "uid.dat");
+        if (file1.exists()) {
+            DataInputStream dis = null;
+            try {
+                dis = new DataInputStream(new FileInputStream(file1));
+                return new UUID(dis.readLong(), dis.readLong());
+            } catch (IOException ex) {
+                BukkitFabricMod.LOGGER.warning("Failed to read " + file1 + ", generating new random UUID. " + ex.getMessage());
+            } finally {
+                if (dis != null)
+                    try { dis.close(); } catch (IOException ex) {/*NOOP*/}
+            }
+        }
+        UUID uuid = UUID.randomUUID();
+        DataOutputStream dos = null;
+        try {
+            dos = new DataOutputStream(new FileOutputStream(file1));
+            dos.writeLong(uuid.getMostSignificantBits());
+            dos.writeLong(uuid.getLeastSignificantBits());
+        } catch (IOException ex) {
+            BukkitFabricMod.LOGGER.warning("Failed to write " + file1 + ", " + ex.getMessage());
+        } finally {
+            if (dos != null)
+                try {dos.close();} catch (IOException ex) {/*NOOP*/}
+        }
+        return uuid;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T, U> MemoryModuleType<U> fromMemoryKey(MemoryKey<T> memoryKey) {
+        return (MemoryModuleType<U>) Registry.MEMORY_MODULE_TYPE.get(CraftNamespacedKey.toMinecraft(memoryKey.getKey()));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T, U> MemoryKey<U> toMemoryKey(MemoryModuleType<T> memoryModuleType) {
+        return MemoryKey.getByKey(CraftNamespacedKey.fromMinecraft(Registry.MEMORY_MODULE_TYPE.getId(memoryModuleType)));
     }
 
 }

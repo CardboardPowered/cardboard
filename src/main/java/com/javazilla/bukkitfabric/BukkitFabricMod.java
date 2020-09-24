@@ -21,7 +21,7 @@ package com.javazilla.bukkitfabric;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.javazilla.bukkitfabric.command.VersionCommand;
+import com.javazilla.bukkitfabric.impl.VersionCommand;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -32,7 +32,7 @@ public class BukkitFabricMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Copyright \u00A9 2020");
+        LOGGER.info("Copyright \u00A9 2020, Javazilla.com");
 
         boolean debug = FabricLoader.getInstance().isDevelopmentEnvironment();
 

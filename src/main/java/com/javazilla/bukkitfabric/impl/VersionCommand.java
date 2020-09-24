@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.command;
+package com.javazilla.bukkitfabric.impl;
 
 import com.javazilla.bukkitfabric.Utils;
 import com.google.common.collect.ImmutableList;

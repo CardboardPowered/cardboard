@@ -14,7 +14,6 @@ import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -29,16 +28,24 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
+
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
+import net.minecraft.util.math.Box;
 
-public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
+public abstract class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     protected static PermissibleBase perm;
     public net.minecraft.entity.Entity nms;
@@ -172,26 +179,25 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public boolean addPassenger(Entity arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return ((CraftEntity) arg0).getHandle().startRiding(getHandle(), true);
     }
 
     @Override
     public boolean addScoreboardTag(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.addScoreboardTag(arg0);
     }
 
     @Override
     public boolean eject() {
-        // TODO Auto-generated method stub
-        return false;
+        if (isEmpty()) return false;
+        nms.removeAllPassengers();
+        return true;
     }
 
     @Override
     public BoundingBox getBoundingBox() {
-        // TODO Auto-generated method stub
-        return null;
+        Box b = nms.getBoundingBox();
+        return new BoundingBox(b.minX, b.minY, b.minZ, b.maxX, b.maxY, b.maxZ);
     }
 
     @Override
@@ -250,27 +256,34 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public List<Entity> getNearbyEntities(double arg0, double arg1, double arg2) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z) {
+        List<net.minecraft.entity.Entity> notchEntityList = nms.world.getOtherEntities(nms, nms.getBoundingBox().expand(x, y, z), null);
+        List<org.bukkit.entity.Entity> bukkitEntityList = new java.util.ArrayList<org.bukkit.entity.Entity>(notchEntityList.size());
+
+        for (net.minecraft.entity.Entity e : notchEntityList)
+            bukkitEntityList.add(((IMixinEntity)e).getBukkitEntity());
+        return bukkitEntityList;
     }
 
     @Override
-    public  Entity getPassenger() {
-        // TODO Auto-generated method stub
-        return null;
+    public Entity getPassenger() {
+        return isEmpty() ? null : ((IMixinEntity)getHandle().passengerList.get(0)).getBukkitEntity();
     }
 
     @Override
     public List<Entity> getPassengers() {
-        // TODO Auto-generated method stub
-        return null;
+        return Lists.newArrayList(Lists.transform(getHandle().passengerList, new Function<net.minecraft.entity.Entity, org.bukkit.entity.Entity>() {
+            @Override
+            public org.bukkit.entity.Entity apply(net.minecraft.entity.Entity input) {
+                return ((IMixinEntity)input).getBukkitEntity();
+            }
+        }));
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public PistonMoveReaction getPistonMoveReaction() {
-        // TODO Auto-generated method stub
-        return null;
+        return PistonMoveReaction.getById(nms.getPistonBehavior().ordinal());
     }
 
     @Override
@@ -286,8 +299,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public Set<String> getScoreboardTags() {
-        // TODO Auto-generated method stub
-        return null;
+        return nms.scoreboardTags;
     }
 
     @Override
@@ -297,14 +309,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public int getTicksLived() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public EntityType getType() {
-        // TODO Auto-generated method stub
-        return EntityType.UNKNOWN;
+        return nms.age;
     }
 
     @Override
@@ -313,15 +318,15 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public  Entity getVehicle() {
-        // TODO Auto-generated method stub
-        return null;
+    public Entity getVehicle() {
+        if (!isInsideVehicle())
+            return null;
+        return ((IMixinEntity)nms.getVehicle()).getBukkitEntity();
     }
 
     @Override
     public Vector getVelocity() {
-        // TODO Auto-generated method stub
-        return null;
+        return Utils.toBukkit(nms.getVelocity());
     }
 
     @Override
@@ -390,22 +395,22 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public boolean isValid() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.isAlive();
     }
 
     @Override
     public boolean leaveVehicle() {
         if (!isInsideVehicle())
             return false;
-
         nms.stopRiding();
         return true;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void playEffect(EntityEffect arg0) {
-        // TODO Auto-generated method stub
+    public void playEffect(EntityEffect type) {
+        if (type.getApplicable().isInstance(this))
+            this.getHandle().world.sendEntityStatus(getHandle(), type.getData());
     }
 
     @Override
@@ -414,21 +419,19 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public boolean removePassenger(Entity arg0) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean removePassenger(Entity passenger) {
+        ((CraftEntity) passenger).getHandle().stopRiding();
+        return true;
     }
 
     @Override
     public boolean removeScoreboardTag(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.removeScoreboardTag(arg0);
     }
 
     @Override
     public void setCustomNameVisible(boolean arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setCustomNameVisible(arg0);
     }
 
     @Override
@@ -457,14 +460,17 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public void setLastDamageCause( EntityDamageEvent arg0) {
+    public void setLastDamageCause(EntityDamageEvent arg0) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public boolean setPassenger(Entity arg0) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean setPassenger(org.bukkit.entity.Entity passenger) {
+        Preconditions.checkArgument(!this.equals(passenger), "Entity cannot ride itself.");
+        if (passenger instanceof CraftEntity) {
+            eject();
+            return ((CraftEntity) passenger).getHandle().startRiding(getHandle());
+        } else return false;
     }
 
     @Override
@@ -478,8 +484,15 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public void setRotation(float arg0, float arg1) {
-        // TODO Auto-generated method stub
+    public void setRotation(float yaw, float pitch) {
+        yaw = Location.normalizeYaw(yaw);
+        pitch = Location.normalizePitch(pitch);
+
+        nms.yaw = yaw;
+        nms.pitch = pitch;
+        nms.prevYaw = yaw;
+        nms.prevPitch = pitch;
+        nms.setHeadYaw(yaw);
     }
 
     @Override
@@ -489,12 +502,13 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void setTicksLived(int arg0) {
-        // TODO Auto-generated method stub
+        nms.age = arg0;
     }
 
     @Override
     public void setVelocity(Vector arg0) {
-        // TODO Auto-generated method stub
+        nms.setVelocity(Utils.toMojang(arg0));
+        nms.velocityModified = true;
     }
 
     @Override
@@ -561,6 +575,15 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     public org.bukkit.entity.Entity.Spigot spigot() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public CompoundTag save() {
+        CompoundTag nbttagcompound = new CompoundTag();
+
+        nbttagcompound.putString("id", getHandle().getSavedEntityId());
+        getHandle().toTag(nbttagcompound);
+
+        return nbttagcompound;
     }
 
 }

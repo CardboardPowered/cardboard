@@ -1,12 +1,12 @@
-package org.bukkit.craftbukkit.util;
+package com.javazilla.bukkitfabric.impl;
 
 import org.bukkit.util.CachedServerIcon;
 
-public class CraftIconCache implements CachedServerIcon {
+public class IconCacheImpl implements CachedServerIcon {
 
     public final String value;
 
-    public CraftIconCache(final String value) {
+    public IconCacheImpl(final String value) {
         this.value = value;
     }
 

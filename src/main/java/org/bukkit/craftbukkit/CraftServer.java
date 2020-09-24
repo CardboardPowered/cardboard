@@ -79,7 +79,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
-import org.bukkit.craftbukkit.advancement.CraftAdvancement;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
 import org.bukkit.craftbukkit.command.CraftCommandMap;
@@ -102,10 +101,8 @@ import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.tag.CraftBlockTag;
 import org.bukkit.craftbukkit.tag.CraftItemTag;
-import org.bukkit.craftbukkit.util.CraftIconCache;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
-import org.bukkit.craftbukkit.util.DatFileFilter;
 import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -160,6 +157,7 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.IconCacheImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
@@ -168,6 +166,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.impl.DotDatFilenameFilter;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -239,7 +238,7 @@ public class CraftServer implements Server {
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private YamlConfiguration configuration;
-    private CraftIconCache icon;
+    private IconCacheImpl icon;
 
     public static MinecraftDedicatedServer server;
     public static CraftServer INSTANCE;
@@ -260,7 +259,7 @@ public class CraftServer implements Server {
     }
 
     private void loadIcon() {
-        icon = new CraftIconCache(null);
+        icon = new IconCacheImpl(null);
         try {
             final File file = new File(new File("."), "server-icon.png");
             if (file.isFile()) {
@@ -272,24 +271,24 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public CraftIconCache loadServerIcon(File file) throws Exception {
+    public IconCacheImpl loadServerIcon(File file) throws Exception {
         Validate.notNull(file, "File cannot be null");
         if (!file.isFile())
             throw new IllegalArgumentException(file + " is not a file");
         return loadServerIcon0(file);
     }
 
-    static CraftIconCache loadServerIcon0(File file) throws Exception {
+    static IconCacheImpl loadServerIcon0(File file) throws Exception {
         return loadServerIcon0(ImageIO.read(file));
     }
 
     @Override
-    public CraftIconCache loadServerIcon(BufferedImage image) throws Exception {
+    public IconCacheImpl loadServerIcon(BufferedImage image) throws Exception {
         Validate.notNull(image, "Image cannot be null");
         return loadServerIcon0(image);
     }
 
-    static CraftIconCache loadServerIcon0(BufferedImage image) throws Exception {
+    static IconCacheImpl loadServerIcon0(BufferedImage image) throws Exception {
         ByteBuf bytebuf = Unpooled.buffer();
 
         Validate.isTrue(image.getWidth() == 64, "Must be 64 pixels wide");
@@ -297,7 +296,7 @@ public class CraftServer implements Server {
         ImageIO.write(image, "PNG", new ByteBufOutputStream(bytebuf));
         ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
 
-        return new CraftIconCache("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
+        return new IconCacheImpl("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
     }
 
     public void addWorldToMap(CraftWorld world) {
@@ -944,7 +943,7 @@ public class CraftServer implements Server {
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
         WorldSaveHandler storage = ((IMixinMinecraftServer)server).getSaveHandler_BF();
-        String[] files = storage.playerDataDir.list(new DatFileFilter());
+        String[] files = storage.playerDataDir.list(new DotDatFilenameFilter());
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
 
         for (String file : files) {
@@ -1042,7 +1041,7 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public CraftIconCache getServerIcon() {
+    public IconCacheImpl getServerIcon() {
         return icon;
     }
 

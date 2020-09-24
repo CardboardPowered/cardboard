@@ -4,9 +4,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
@@ -18,17 +20,21 @@ import org.bukkit.Note;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.advancement.AdvancementProgress;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.advancement.CraftAdvancement;
+import org.bukkit.craftbukkit.advancement.CraftAdvancementProgress;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -38,27 +44,40 @@ import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinGameMessagePacket;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.minecraft.advancement.PlayerAdvancementTracker;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.MessageType;
+import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.network.PacketByteBuf;
 
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -270,6 +289,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void sendPluginMessage(Plugin source, String channel, byte[] message) {
         StandardMessenger.validatePluginMessage(Bukkit.getMessenger(), source, channel, message);
@@ -302,9 +322,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public AdvancementProgress getAdvancementProgress(Advancement arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public org.bukkit.advancement.AdvancementProgress getAdvancementProgress(org.bukkit.advancement.Advancement advancement) {
+        Preconditions.checkArgument(advancement != null, "advancement");
+
+        CraftAdvancement craft = (CraftAdvancement) advancement;
+        PlayerAdvancementTracker data = getHandle().getAdvancementTracker();
+        net.minecraft.advancement.AdvancementProgress progress = data.getProgress(craft.getHandle());
+
+        return new CraftAdvancementProgress(craft, data, progress);
     }
 
     @Override
@@ -314,8 +339,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public int getClientViewDistance() {
-        // TODO Get Client view distance not server
-        return CraftServer.server.getProperties().viewDistance;
+        return CraftServer.server.getProperties().viewDistance; // TODO Get Client view distance not server
     }
 
     @Override
@@ -379,8 +403,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public String getPlayerListName() {
-        // TODO Auto-generated method stub
-        return null;
+        return getHandle().getPlayerListName() == null ? getName() : CraftChatMessage.fromComponent(getHandle().getPlayerListName());
     }
 
     @Override
@@ -414,8 +437,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public Entity getSpectatorTarget() {
-        // TODO Auto-generated method stub
-        return null;
+        net.minecraft.entity.Entity followed = getHandle().getCameraEntity();
+        return followed == getHandle() ? null : ((IMixinEntity)followed).getBukkitEntity();
     }
 
     @Override
@@ -488,13 +511,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void loadData() {
-        // FIXME BROKEN!!!!
-        // CraftServer.server.playerManager.saveHandler.loadPlayerData(nms);
+        ((IMixinMinecraftServer)CraftServer.server).getSaveHandler_BF().loadPlayerData(nms);
     }
 
     @Override
-    public void openBook(ItemStack arg0) {
-        // TODO Auto-generated method stub
+    public void openBook(ItemStack book) {
+        ItemStack hand = getInventory().getItemInMainHand();
+        getInventory().setItemInMainHand(book);
+        getHandle().openEditBookScreen(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(book), net.minecraft.util.Hand.MAIN_HAND);
+        getInventory().setItemInMainHand(hand);
     }
 
     @Override
@@ -513,33 +538,134 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void playNote(Location arg0, byte arg1, byte arg2) {
-        // TODO Auto-generated method stub
+    public void playNote(Location loc, byte instrument, byte note) {
+        if (getHandle().networkHandler == null) return;
+
+        String instrumentName = null;
+        switch (instrument) {
+        case 0:
+            instrumentName = "harp";
+            break;
+        case 1:
+            instrumentName = "basedrum";
+            break;
+        case 2:
+            instrumentName = "snare";
+            break;
+        case 3:
+            instrumentName = "hat";
+            break;
+        case 4:
+            instrumentName = "bass";
+            break;
+        case 5:
+            instrumentName = "flute";
+            break;
+        case 6:
+            instrumentName = "bell";
+            break;
+        case 7:
+            instrumentName = "guitar";
+            break;
+        case 8:
+            instrumentName = "chime";
+            break;
+        case 9:
+            instrumentName = "xylophone";
+            break;
+        }
+
+        float f = (float) Math.pow(2.0D, (note - 12.0D) / 12.0D);
+        getHandle().networkHandler.sendPacket(new PlaySoundS2CPacket(CraftSound.getSoundEffect("block.note_block." + instrumentName), net.minecraft.sound.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void playNote(Location loc, Instrument instrument, Note note) {
+        if (getHandle().networkHandler == null) return;
+
+        String instrumentName = null;
+        switch (instrument.ordinal()) {
+            case 0:
+                instrumentName = "harp";
+                break;
+            case 1:
+                instrumentName = "basedrum";
+                break;
+            case 2:
+                instrumentName = "snare";
+                break;
+            case 3:
+                instrumentName = "hat";
+                break;
+            case 4:
+                instrumentName = "bass";
+                break;
+            case 5:
+                instrumentName = "flute";
+                break;
+            case 6:
+                instrumentName = "bell";
+                break;
+            case 7:
+                instrumentName = "guitar";
+                break;
+            case 8:
+                instrumentName = "chime";
+                break;
+            case 9:
+                instrumentName = "xylophone";
+                break;
+            case 10:
+                instrumentName = "iron_xylophone";
+                break;
+            case 11:
+                instrumentName = "cow_bell";
+                break;
+            case 12:
+                instrumentName = "didgeridoo";
+                break;
+            case 13:
+                instrumentName = "bit";
+                break;
+            case 14:
+                instrumentName = "banjo";
+                break;
+            case 15:
+                instrumentName = "pling";
+                break;
+            case 16:
+                instrumentName = "xylophone";
+                break;
+        }
+        float f = (float) Math.pow(2.0D, (note.getId() - 12.0D) / 12.0D);
+        getHandle().networkHandler.sendPacket(new PlaySoundS2CPacket(CraftSound.getSoundEffect("block.note_block." + instrumentName), net.minecraft.sound.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
     }
 
     @Override
-    public void playNote(Location arg0, Instrument arg1, Note arg2) {
-        // TODO Auto-generated method stub
+    public void playSound(Location loc, Sound sound, float volume, float pitch) {
+        playSound(loc, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
     @Override
-    public void playSound(Location arg0, Sound arg1, float arg2, float arg3) {
-        // TODO Auto-generated method stub
+    public void playSound(Location loc, String sound, float volume, float pitch) {
+        playSound(loc, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
     @Override
-    public void playSound(Location arg0, String arg1, float arg2, float arg3) {
-        // TODO Auto-generated method stub
+    public void playSound(Location loc, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        if (loc == null || sound == null || category == null || getHandle().networkHandler == null) return;
+
+        PlaySoundS2CPacket packet = new PlaySoundS2CPacket(CraftSound.getSoundEffect(CraftSound.getSound(sound)), net.minecraft.sound.SoundCategory.valueOf(category.name()), loc.getX(), loc.getY(), loc.getZ(), volume, pitch);
+        getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
-    public void playSound(Location arg0, Sound arg1, SoundCategory arg2, float arg3, float arg4) {
-        // TODO Auto-generated method stub
-    }
+    public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        if (loc == null || sound == null || category == null || getHandle().networkHandler == null) return;
 
-    @Override
-    public void playSound(Location arg0, String arg1, SoundCategory arg2, float arg3, float arg4) {
-        // TODO Auto-generated method stub
+        PlaySoundIdS2CPacket packet = new PlaySoundIdS2CPacket(new Identifier(sound), net.minecraft.sound.SoundCategory.valueOf(category.name()), new Vec3d(loc.getX(), loc.getY(), loc.getZ()), volume, pitch);
+        getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
@@ -559,34 +685,41 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void saveData() {
-        // FIXME BROKEN
-        //CraftServer.server.playerManager.saveHandler.savePlayerData(nms);
+        ((IMixinMinecraftServer)CraftServer.server).getSaveHandler_BF().savePlayerData(nms);
     }
 
     @Override
-    public void sendBlockChange(Location arg0, BlockData arg1) {
-        // TODO Auto-generated method stub
+    public void sendBlockChange(Location loc, BlockData block) {
+        if (getHandle().networkHandler == null) return;
+
+        BlockUpdateS2CPacket packet = new BlockUpdateS2CPacket(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), ((CraftBlockData) block).getState());
+        getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
-    public void sendBlockChange(Location arg0, Material arg1, byte arg2) {
-        // TODO Auto-generated method stub
+    public void sendBlockChange(Location loc, Material material, byte data) {
+        if (getHandle().networkHandler == null) return;
+
+        BlockUpdateS2CPacket packet = new BlockUpdateS2CPacket(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), CraftMagicNumbers.getBlock(material, data));
+        getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
     public boolean sendChunkChange(Location arg0, int arg1, int arg2, int arg3, byte[] arg4) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException("Also not in Spigot");
     }
 
     @Override
-    public void sendExperienceChange(float arg0) {
-        // TODO Auto-generated method stub
+    public void sendExperienceChange(float progress) {
+        sendExperienceChange(progress, getLevel());
     }
 
     @Override
-    public void sendExperienceChange(float arg0, int arg1) {
-        // TODO Auto-generated method stub
+    public void sendExperienceChange(float progress, int level) {
+        if (getHandle().networkHandler == null) return;
+
+        ExperienceBarUpdateS2CPacket packet = new ExperienceBarUpdateS2CPacket(progress, getTotalExperience(), level);
+        getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
@@ -596,12 +729,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void sendRawMessage(String arg0) {
-        // TODO Auto-generated method stub
+        if (getHandle().networkHandler == null) return;
+
+        for (Text component : CraftChatMessage.fromString(arg0))
+            getHandle().networkHandler.sendPacket(new GameMessageS2CPacket(component, MessageType.CHAT, Util.NIL_UUID));
     }
 
     @Override
-    public void sendSignChange(Location arg0, String[] arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+    public void sendSignChange(Location loc, String[] lines) {
+       sendSignChange(loc, lines, DyeColor.BLACK);
     }
 
     @Override
@@ -786,83 +922,89 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, Location location, int count) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, T arg3) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, double x, double y, double z, int count) {
+        spawnParticle(particle, x, y, z, count, null);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, Location location, int count, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, data);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, T arg5) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, T data) {
+        spawnParticle(particle, x, y, z, count, 0, 0, 0, data);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, T arg6) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, null);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, data);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, 1, data);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, Location arg1, int arg2, double arg3, double arg4, double arg5, double arg6, T arg7) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, T arg8) {
-        // TODO Auto-generated method stub
+    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, null);
     }
 
     @Override
-    public void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data);
     }
 
     @Override
-    public <T> void spawnParticle(Particle arg0, double arg1, double arg2, double arg3, int arg4, double arg5, double arg6, double arg7, double arg8, T arg9) {
-        // TODO Auto-generated method stub
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        if (data != null && !particle.getDataType().isInstance(data))
+            throw new IllegalArgumentException("data should be " + particle.getDataType() + " got " + data.getClass());
+        ParticleS2CPacket packetplayoutworldparticles = new ParticleS2CPacket(CraftParticle.toNMS(particle, data), true, (float) x, (float) y, (float) z, (float) offsetX, (float) offsetY, (float) offsetZ, (float) extra, count);
+        getHandle().networkHandler.sendPacket(packetplayoutworldparticles);
+
     }
 
     @Override
-    public void stopSound(Sound arg0) {
-        // TODO Auto-generated method stub
+    public void stopSound(Sound sound) {
+        stopSound(sound, null);
     }
 
     @Override
-    public void stopSound(String arg0) {
-        // TODO Auto-generated method stub
+    public void stopSound(String sound) {
+        stopSound(sound, null);
     }
 
     @Override
-    public void stopSound(Sound arg0, SoundCategory arg1) {
-        // TODO Auto-generated method stub
+    public void stopSound(Sound sound, org.bukkit.SoundCategory category) {
+        stopSound(CraftSound.getSound(sound), category);
     }
 
     @Override
-    public void stopSound(String arg0, SoundCategory arg1) {
-        // TODO Auto-generated method stub
+    public void stopSound(String sound, org.bukkit.SoundCategory category) {
+        if (getHandle().networkHandler == null) return;
+
+        getHandle().networkHandler.sendPacket(new StopSoundS2CPacket(new Identifier(sound), category == null ? net.minecraft.sound.SoundCategory.MASTER : net.minecraft.sound.SoundCategory.valueOf(category.name())));
     }
 
     @Override
@@ -910,9 +1052,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (value == isOp()) return;
 
         if (value)
-            nms.server.getPlayerManager().addToOperators(nms.getGameProfile());
-        else
-            nms.server.getPlayerManager().removeFromOperators(nms.getGameProfile());
+             nms.server.getPlayerManager().addToOperators(nms.getGameProfile());
+        else nms.server.getPlayerManager().removeFromOperators(nms.getGameProfile());
 
         perm.recalculatePermissions();
     }
@@ -1037,22 +1178,39 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public @Nullable Location getBedSpawnLocation() {
-        // TODO Auto-generated method stub
+    public Location getBedSpawnLocation() {
+        World world = ((IMixinWorld)getHandle().server.getWorld(getHandle().getSpawnPointDimension())).getCraftWorld();
+        BlockPos bed = getHandle().getSpawnPointPosition();
+
+        if (world != null && bed != null) {
+            Optional<Vec3d> spawnLoc = PlayerEntity.findRespawnPosition((ServerWorld) ((CraftWorld) world).getHandle(), bed, getHandle().getSpawnAngle(), getHandle().isSpawnPointSet(), true);
+            if (spawnLoc.isPresent()) {
+                Vec3d vec = spawnLoc.get();
+                return new Location(world, vec.x, vec.y, vec.z);
+            }
+        }
         return null;
     }
 
     @Override
     public void setBedSpawnLocation(Location location) {
-        // TODO Auto-generated method stub
+        setBedSpawnLocation(location, false);
     }
 
     @Override
-    public void setBedSpawnLocation(Location location, boolean force) {
+    public void setBedSpawnLocation(Location location, boolean override) {
+        if (location == null) {
+            getHandle().setSpawnPoint(null, null, 0, override, false);
+        } else getHandle().setSpawnPoint(((CraftWorld) location.getWorld()).getHandle().getRegistryKey(), new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), location.getYaw(), override, false);
     }
 
     public void setFirstPlayed(long modified) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public EntityType getType() {
+        return EntityType.PLAYER;
     }
 
 }

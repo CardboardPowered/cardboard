@@ -37,6 +37,7 @@ class CraftTask implements BukkitTask, Runnable {
         this(null, task, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
     }
 
+    @SuppressWarnings("unchecked")
     CraftTask(final Plugin plugin, final Object task, final int id, final long period) {
         this.plugin = plugin;
         if (task instanceof Runnable) {

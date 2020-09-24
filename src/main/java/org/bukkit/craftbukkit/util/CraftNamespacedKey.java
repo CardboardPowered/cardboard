@@ -25,6 +25,7 @@ public final class CraftNamespacedKey {
         return fromMinecraft(new Identifier(string));
     }
 
+    @SuppressWarnings("deprecation")
     public static NamespacedKey fromMinecraft(Identifier minecraft) {
         return new NamespacedKey(minecraft.getNamespace(), minecraft.getPath());
     }

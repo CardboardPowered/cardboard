@@ -69,7 +69,7 @@ public class Commodore {
                             return;
                         }
 
-                        if ( owner.equals( "org/bukkit/Material" ) ) {
+                        if (owner.equals( "org/bukkit/Material" )) {
                             try {
                                 Material.valueOf( "LEGACY_" + name );
                             } catch ( IllegalArgumentException ex ) {
@@ -80,8 +80,8 @@ public class Commodore {
                             return;
                         }
 
-                        if ( owner.equals( "org/bukkit/Art" ) ) {
-                            switch ( name ) {
+                        if (owner.equals( "org/bukkit/Art" )) {
+                            switch (name) {
                                 case "BURNINGSKULL":
                                     super.visitFieldInsn( opcode, owner, "BURNING_SKULL", desc );
                                     return;
@@ -91,7 +91,7 @@ public class Commodore {
                             }
                         }
 
-                        if ( owner.equals( "org/bukkit/DyeColor" ) ) {
+                        if (owner.equals( "org/bukkit/DyeColor" )) {
                             switch ( name ) {
                                 case "SILVER":
                                     super.visitFieldInsn( opcode, owner, "LIGHT_GRAY", desc );
@@ -99,7 +99,7 @@ public class Commodore {
                             }
                         }
 
-                        if ( owner.equals( "org/bukkit/Particle" ) ) {
+                        if (owner.equals( "org/bukkit/Particle" ) ) {
                             switch ( name ) {
                                 case "BLOCK_CRACK":
                                 case "BLOCK_DUST":

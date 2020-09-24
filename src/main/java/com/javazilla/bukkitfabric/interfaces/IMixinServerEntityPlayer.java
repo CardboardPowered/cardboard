@@ -27,4 +27,8 @@ public interface IMixinServerEntityPlayer extends IMixinEntity {
 
     public BlockPos getSpawnPoint(World world);
 
+    public void closeHandledScreen();
+
+    public int nextContainerCounter();
+
 }

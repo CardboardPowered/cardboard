@@ -1,22 +1,38 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.block.ChestBlock;
 import org.bukkit.Location;
 import org.bukkit.block.DoubleChest;
-import net.minecraft.inventory.DoubleInventory;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import com.javazilla.bukkitfabric.impl.ChestBlockDoubleInventory;
+
+import net.minecraft.inventory.DoubleInventory;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+
 public class CraftInventoryDoubleChest extends CraftInventory implements DoubleChestInventory {
 
+    public NamedScreenHandlerFactory tile;
     private final CraftInventory left;
     private final CraftInventory right;
 
-    public CraftInventoryDoubleChest(DoubleInventory block) {
-        super(block);
-        this.left = new CraftInventory(block.first);
-        this.right = new CraftInventory(block.second);
+    public CraftInventoryDoubleChest(ChestBlockDoubleInventory block) {
+        super(block.inventorylargechest);
+        this.tile = block;
+        this.left = new CraftInventory(block.inventorylargechest.first);
+        this.right = new CraftInventory(block.inventorylargechest.second);
+    }
+
+    public CraftInventoryDoubleChest(DoubleInventory largeChest) {
+        super(largeChest);
+        if (largeChest.first instanceof DoubleInventory)
+             left = new CraftInventoryDoubleChest((DoubleInventory) largeChest.first);
+        else left = new CraftInventory(largeChest.first);
+
+        if (largeChest.second instanceof DoubleInventory)
+             right = new CraftInventoryDoubleChest((DoubleInventory) largeChest.second);
+        else right = new CraftInventory(largeChest.second);
     }
 
     @Override

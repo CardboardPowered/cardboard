@@ -3,11 +3,12 @@ package com.javazilla.bukkitfabric.mixin.network;
 import java.net.InetSocketAddress;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.craftbukkit.util.CraftIconCache;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import com.javazilla.bukkitfabric.impl.IconCacheImpl;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.network.ClientConnection;
@@ -47,8 +48,8 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
 
                 @Override
                 public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
-                    if (!(icon instanceof CraftIconCache))
-                        throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.CraftServer.class);
+                    if (!(icon instanceof IconCacheImpl))
+                        throw new IllegalArgumentException(icon + " was not created by Bukkit");
                 }
 
             }
@@ -61,7 +62,7 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
 
             ping.setPlayers(server.getServerMetadata().players);
             int version = SharedConstants.getGameVersion().getProtocolVersion();
-            ping.setVersion(new ServerMetadata.Version(server.getServerModName() + " " + server.getVersion(), version));
+            ping.setVersion(new ServerMetadata.Version("BukkitModded " + server.getVersion(), version));
 
             this.connection.send(new QueryResponseS2CPacket(ping));
         }

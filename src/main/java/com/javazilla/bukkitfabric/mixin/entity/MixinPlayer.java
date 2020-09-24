@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.inventory.MainHand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -53,6 +54,9 @@ import net.minecraft.world.World;
 public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMixinServerEntityPlayer  {
 
     private CraftPlayer bukkit;
+
+    @Shadow
+    public int screenHandlerSyncId;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
@@ -114,6 +118,16 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
             PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent((Player) getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
         }
+    }
+
+    @Shadow
+    public void closeHandledScreen() {
+    }
+
+    @Override
+    public int nextContainerCounter() {
+        this.screenHandlerSyncId = this.screenHandlerSyncId % 100 + 1;
+        return screenHandlerSyncId; // CraftBukkit
     }
 
 }

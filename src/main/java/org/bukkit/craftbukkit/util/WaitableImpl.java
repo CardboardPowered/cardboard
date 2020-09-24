@@ -1,8 +1,5 @@
 package org.bukkit.craftbukkit.util;
 
-/**
- * Java 8 Waitable
- */
 public class WaitableImpl extends Waitable<Object> {
 
     private Runnable runnable;

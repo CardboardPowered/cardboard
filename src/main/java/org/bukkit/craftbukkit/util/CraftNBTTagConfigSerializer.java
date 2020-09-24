@@ -3,8 +3,6 @@ package org.bukkit.craftbukkit.util;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +34,8 @@ public class CraftNBTTagConfigSerializer {
             return innerMap;
         } else if (base instanceof ListTag) {
             List<Object> baseList = new ArrayList<>();
-            for (int i = 0; i < ((AbstractListTag) base).size(); i++)
-                baseList.add(serialize((Tag) ((AbstractListTag) base).get(i)));
+            for (int i = 0; i < ((AbstractListTag<?>) base).size(); i++)
+                baseList.add(serialize((Tag) ((AbstractListTag<?>) base).get(i)));
 
             return baseList;
         } else if (base instanceof StringTag) {
@@ -49,6 +47,7 @@ public class CraftNBTTagConfigSerializer {
         return base.toString();
     }
 
+    @SuppressWarnings("unchecked")
     public static Tag deserialize(Object object) {
         if (object instanceof Map) {
             CompoundTag compound = new CompoundTag();
@@ -71,11 +70,7 @@ public class CraftNBTTagConfigSerializer {
 
             if (ARRAY.matcher(string).matches()) {
                 try {
-                    //
-                    // TODO: Spigot -> Yarn mappings shows this should be parseTagPrimitiveArray();
-                    // TODO: We should Test this.
-                    //
-                    return new StringNbtReader(new StringReader(string)).parseTag();
+                    return new StringNbtReader(new StringReader(string)).parseTagPrimitiveArray();
                 } catch (CommandSyntaxException e) {
                     throw new RuntimeException("Could not deserialize found list ", e);
                 }
@@ -84,7 +79,7 @@ public class CraftNBTTagConfigSerializer {
             } else if (DOUBLE.matcher(string).matches()) {
                 return DoubleTag.of(Double.parseDouble(string.substring(0, string.length() - 1)));
             } else {
-                Tag Tag = (net.minecraft.nbt.Tag) invokePrivate("parsePrimitive", String.class, string);//MOJANGSON_PARSER.parse(string);
+                Tag Tag = MOJANGSON_PARSER.parsePrimitive(string);
 
                 if (Tag instanceof IntTag) { // If this returns an integer, it did not use our method from above
                     return StringTag.of(Tag.asString()); // It then is a string that was falsely read as an int
@@ -96,19 +91,5 @@ public class CraftNBTTagConfigSerializer {
 
         throw new RuntimeException("Could not deserialize Tag");
     }
-
-    // Bukkit4Fabric
-    private static Object invokePrivate(String name, Class<?> arg1, Object objects) {
-        try {
-            Method m = MOJANGSON_PARSER.getClass().getDeclaredMethod(name, arg1);
-            m.setAccessible(true);
-            return m.invoke(MOJANGSON_PARSER, objects);
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        }
-    }
-    // Bukkit4Fabric
 
 }

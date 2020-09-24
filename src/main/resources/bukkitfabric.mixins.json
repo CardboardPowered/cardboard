@@ -8,7 +8,6 @@
     "MixinMinecraftServer",
     "MixinServerCommandSource",
     "MixinCommandOutput",
-    "MixinItemStack",
     "MixinBlockItem",
     "MixinExplosion",
     "MixinPlayerManager",
@@ -26,6 +25,7 @@
     "entity.MixinPlayer",
     "entity.MixinItemEntity",
     "entity.MixinProjectileEntity",
+    "entity.MixinArrowEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

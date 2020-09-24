@@ -21,9 +21,8 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
 
     @Override
     public synchronized boolean cancel(final boolean mayInterruptIfRunning) {
-        if (getPeriod() != CraftTask.NO_REPEATING) {
+        if (getPeriod() != CraftTask.NO_REPEATING)
             return false;
-        }
         setPeriod(CraftTask.CANCEL);
         return true;
     }
@@ -53,13 +52,11 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
                 this.wait(timeout);
                 period = this.getPeriod();
                 if (period == CraftTask.NO_REPEATING || period == CraftTask.PROCESS_FOR_FUTURE) {
-                    if (timeout == 0L) {
+                    if (timeout == 0L)
                         continue;
-                    }
                     timeout += timestamp - (timestamp = System.currentTimeMillis());
-                    if (timeout > 0) {
+                    if (timeout > 0)
                         continue;
-                    }
                     throw new TimeoutException();
                 }
             }
@@ -67,9 +64,8 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
                 throw new CancellationException();
             }
             if (period == CraftTask.DONE_FOR_FUTURE) {
-                if (exception == null) {
+                if (exception == null)
                     return value;
-                }
                 throw new ExecutionException(exception);
             }
             throw new IllegalStateException("Expected " + CraftTask.NO_REPEATING + " to " + CraftTask.DONE_FOR_FUTURE + ", got " + period);
@@ -79,9 +75,8 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
     @Override
     public void run() {
         synchronized (this) {
-            if (getPeriod() == CraftTask.CANCEL) {
+            if (getPeriod() == CraftTask.CANCEL)
                 return;
-            }
             setPeriod(CraftTask.PROCESS_FOR_FUTURE);
         }
         try {
@@ -98,11 +93,11 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
 
     @Override
     synchronized boolean cancel0() {
-        if (getPeriod() != CraftTask.NO_REPEATING) {
+        if (getPeriod() != CraftTask.NO_REPEATING)
             return false;
-        }
         setPeriod(CraftTask.CANCEL);
         notifyAll();
         return true;
     }
+
 }
