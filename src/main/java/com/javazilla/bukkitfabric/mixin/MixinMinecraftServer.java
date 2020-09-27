@@ -18,7 +18,7 @@
  */
 package com.javazilla.bukkitfabric.mixin;
 
-import java.io.File;
+import java.io.File; 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -46,23 +46,22 @@ import com.google.common.collect.ImmutableList;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.javazilla.bukkitfabric.interfaces.IMixinNetworkIo;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.minecraft.block.Block;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resource.ServerResourceManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerTask;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.server.dedicated.ServerPropertiesHandler;
 import net.minecraft.server.network.SpawnLocating;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerChunkManager;
@@ -79,6 +78,7 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.village.ZombieSiegeManager;
 import net.minecraft.world.ForcedChunkState;
 import net.minecraft.world.GameRules;
@@ -104,7 +104,12 @@ import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 
 @Mixin(value=MinecraftServer.class)
-public class MixinMinecraftServer implements IMixinMinecraftServer {
+public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<ServerTask> implements IMixinMinecraftServer {
+
+    public MixinMinecraftServer(String string) {
+        super(string);
+        // TODO Auto-generated constructor stub
+    }
 
     @Shadow @Final public DynamicRegistryManager.Impl registryManager;
     @Shadow @Final public WorldSaveHandler saveHandler;
@@ -112,7 +117,7 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
     @Shadow @Final public Executor workerExecutor;
     @Shadow @Final public WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
 
-    @Shadow private Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
+    @Shadow public Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
     @Shadow public ServerResourceManager serverResourceManager;
     @Shadow public LevelStorage.Session session;
     @Shadow private long timeReference;
@@ -121,9 +126,13 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
     @Shadow private int ticks;
 
     @Shadow public void initScoreboard(PersistentStateManager arg0) {}
-    @Shadow private void method_27731() {}
+    @Shadow public void method_27731() {}
     @Shadow public void updateMobSpawnOptions() {}
     @Shadow public void setToDebugWorldProperties(SaveProperties saveProperties2) {}
+
+    public void setDataCommandStorage(DataCommandStorage data) {
+        this.dataCommandStorage = data;
+    }
 
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
 
@@ -262,10 +271,10 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
                 LevelInfo worldsettings;
                 GeneratorOptions generatorsettings;
 
-                ServerPropertiesHandler dedicatedserverproperties = ((MinecraftDedicatedServer)(Object) this).getProperties();
+                SaveProperties dedicatedserverproperties = ((MinecraftServer)(Object) this).getSaveProperties();
 
-                worldsettings = new LevelInfo(dedicatedserverproperties.levelName, dedicatedserverproperties.gameMode, dedicatedserverproperties.hardcore, dedicatedserverproperties.difficulty, false, new GameRules(), CraftServer.method_29735(CraftServer.server.dataPackManager));
-                generatorsettings = dedicatedserverproperties.generatorOptions;
+                worldsettings = new LevelInfo(dedicatedserverproperties.getLevelName(), dedicatedserverproperties.getGameMode(), dedicatedserverproperties.isHardcore(), dedicatedserverproperties.getDifficulty(), false, new GameRules(), CraftServer.method_29735(CraftServer.server.dataPackManager));
+                generatorsettings = dedicatedserverproperties.getGeneratorOptions();
 
                 worlddata = new LevelProperties(worldsettings, generatorsettings, Lifecycle.stable());
             }
@@ -294,7 +303,7 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
 
             if (worldId == 0) {
                 this.saveProperties = worlddata;
-                this.saveProperties.setGameMode(((MinecraftDedicatedServer)(Object) this).getProperties().gameMode); // From DedicatedServer.init
+                this.saveProperties.setGameMode(((MinecraftServer)(Object) this).getSaveProperties().getGameMode()); // From DedicatedServer.init
 
                 WorldGenerationProgressListener worldloadlistener = this.worldGenerationProgressListenerFactory.create(11);
 
@@ -326,7 +335,7 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
 
         CraftServer.INSTANCE.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
         CraftServer.INSTANCE.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
-        ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
+       // ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
     }
 
     @Override
@@ -372,14 +381,14 @@ public class MixinMinecraftServer implements IMixinMinecraftServer {
     }
 
     private void executeModerately() {
-        CraftServer.server.runTasks();
+        this.runTasks();
         java.util.concurrent.locks.LockSupport.parkNanos("executing tasks", 1000L);
     }
 
     @Inject(at = @At("HEAD"), method = "shouldKeepTicking", cancellable = true)
     public void shouldKeepTicking_BF(CallbackInfoReturnable<Boolean> ci) {
-        if (this.forceTicks)
-            ci.setReturnValue(this.forceTicks);
+        boolean bl = this.forceTicks;
+        if (bl) ci.setReturnValue(bl);
     }
 
     @Inject(at = @At("HEAD"), method = "tickWorlds")

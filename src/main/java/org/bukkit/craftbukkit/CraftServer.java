@@ -157,6 +157,7 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.DotDatFilenameFilter;
 import com.javazilla.bukkitfabric.impl.IconCacheImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -166,7 +167,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.impl.DotDatFilenameFilter;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -240,10 +240,13 @@ public class CraftServer implements Server {
     private YamlConfiguration configuration;
     private IconCacheImpl icon;
 
-    public static MinecraftDedicatedServer server;
+    public static MinecraftServer server;
     public static CraftServer INSTANCE;
+    private boolean dedicated;
 
-    public CraftServer(MinecraftDedicatedServer nms) {
+    public CraftServer(MinecraftServer nms) {
+        if (nms instanceof MinecraftDedicatedServer)
+            dedicated = true;
         INSTANCE = this;
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
         server = nms;
@@ -257,6 +260,7 @@ public class CraftServer implements Server {
         this.playerView = new ArrayList<>();
         loadIcon();
     }
+
 
     private void loadIcon() {
         icon = new IconCacheImpl(null);
@@ -399,8 +403,12 @@ public class CraftServer implements Server {
         }
     }
 
-    public MinecraftDedicatedServer getServer() {
+    public MinecraftServer getServer() {
         return server;
+    }
+
+    public MinecraftDedicatedServer getDedicated() {
+        return (MinecraftDedicatedServer)server;
     }
 
     @Override
@@ -740,12 +748,15 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getAllowFlight() {
-        return server.getProperties().allowFlight;
+        if (!dedicated)
+            return true;
+        return getDedicated().getProperties().allowFlight;
     }
 
     @Override
     public boolean getAllowNether() {
-        return server.getProperties().allowNether;
+        if (!dedicated) return true;
+        return getDedicated().getProperties().allowNether;
     }
 
     @Override
@@ -831,7 +842,8 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        return server.getProperties().generatorOptions.shouldGenerateStructures();
+        if (!dedicated) return true;
+        return getDedicated().getProperties().generatorOptions.shouldGenerateStructures();
     }
 
     @Override
@@ -849,12 +861,14 @@ public class CraftServer implements Server {
 
     @Override
     public int getIdleTimeout() {
-        return server.getProperties().playerIdleTimeout.get();
+        if (!dedicated) return 0;
+        return getDedicated().getProperties().playerIdleTimeout.get();
     }
 
     @Override
     public String getIp() {
-        return server.getProperties().serverIp;
+        if (!dedicated) return "localhost";
+        return getDedicated().getProperties().serverIp;
     }
 
     @Override
@@ -1009,7 +1023,7 @@ public class CraftServer implements Server {
 
     @Override
     public int getPort() {
-        return getServer().getPort();
+        return getServer().getServerPort();
     }
 
     @Override
@@ -1129,7 +1143,8 @@ public class CraftServer implements Server {
 
     @Override
     public int getViewDistance() {
-        return server.getProperties().viewDistance;
+        if (!dedicated) return 4;
+        return getDedicated().getProperties().viewDistance;
     }
 
     @Override
@@ -1171,7 +1186,8 @@ public class CraftServer implements Server {
 
     @Override
     public String getWorldType() {
-        return server.getProperties().properties.getProperty("level-type");
+        if (!dedicated) return "normal";
+        return getDedicated().getProperties().properties.getProperty("level-type");
     }
 
     @Override
@@ -1181,12 +1197,14 @@ public class CraftServer implements Server {
 
     @Override
     public boolean hasWhitelist() {
-        return server.getProperties().enforceWhitelist;
+        if (!dedicated) return true;
+        return getDedicated().getProperties().enforceWhitelist;
     }
 
     @Override
     public boolean isHardcore() {
-        return server.getProperties().hardcore;
+        if (!dedicated) return true;
+        return getDedicated().getProperties().hardcore;
     }
 
     @Override
@@ -1273,7 +1291,7 @@ public class CraftServer implements Server {
 
     @Override
     public void setWhitelist(boolean arg0) {
-        server.setUseWhitelist(arg0);
+        server.setEnforceWhitelist(arg0);
     }
 
     @Override
@@ -1397,7 +1415,7 @@ public class CraftServer implements Server {
         return completions;
     }
 
-    public MinecraftDedicatedServer getHandle() {
+    public MinecraftServer getHandle() {
         return getServer();
     }
 

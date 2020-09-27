@@ -20,6 +20,8 @@
     "world.MixinWorldChunk",
     "world.MixinLevelProperties",
     "world.MixinWorldSaveHandler",
+    "world.MixinChunkHolder",
+    "world.MixinThreadedAnvilChunkStorage",
 
     "entity.MixinEntity",
     "entity.MixinPlayer",
@@ -71,6 +73,9 @@
     "screen.MixinAnvilScreenHandler",
     "screen.MixinBeaconScreenHandler",
     "screen.MixinBrewingStandScreenHandler"
+  ],
+  "client": [
+    "client.MixinIntegratedServer"
   ],
   "injectors": {
     "defaultRequire": 1

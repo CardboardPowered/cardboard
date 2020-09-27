@@ -2,6 +2,7 @@ package com.javazilla.bukkitfabric.mixin.world;
 
 import java.util.function.Supplier;
 
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,6 +26,11 @@ public class MixinWorld implements IMixinWorld {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(MutableWorldProperties a, RegistryKey<?> b, DimensionType d, Supplier<Boolean> e, boolean f, boolean g, long h, CallbackInfo ci){
+        if (!((Object)this instanceof ServerWorld)) {
+            System.out.println("CLIENT WORLD!");
+            return;
+        }
+
         ServerWorld nms = ((ServerWorld)(Object)this);
         String name = ((ServerWorldProperties) nms.getLevelProperties()).getLevelName();
         if (CraftServer.INSTANCE.worlds.containsKey(name)) {
@@ -32,6 +38,7 @@ public class MixinWorld implements IMixinWorld {
             if (nms.getRegistryKey() == World.END) name = name + "_the_end";
         }
         this.bukkit = new CraftWorld(name, nms);
+        ((CraftServer)Bukkit.getServer()).addWorldToMap(getCraftWorld());
     }
 
     @Override

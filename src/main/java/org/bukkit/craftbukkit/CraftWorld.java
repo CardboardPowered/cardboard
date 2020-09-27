@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -38,9 +41,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
+import org.bukkit.craftbukkit.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -50,6 +57,9 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.TippedArrow;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.event.world.TimeSkipEvent;
@@ -59,31 +69,54 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinChunkHolder;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
+import com.javazilla.bukkitfabric.mixin.world.MixinChunkHolder;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ChorusFlowerBlock;
+import net.minecraft.entity.EntityData;
+import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ChunkHolder;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ReadOnlyChunk;
+import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.level.ServerWorldProperties;
+import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.gen.feature.ConfiguredFeature;
+import net.minecraft.world.gen.feature.ConfiguredFeatures;
 
 @SuppressWarnings("deprecation")
 public class CraftWorld implements World {
@@ -93,6 +126,8 @@ public class CraftWorld implements World {
 
     private ServerWorld nms;
     private String name;
+
+    private static final Random rand = new Random();
 
     public CraftWorld(String name, ServerWorld world) {
         this.nms = world;
@@ -154,51 +189,47 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public boolean createExplosion(Location arg0, float arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(double x, double y, double z, float power) {
+        return createExplosion(x, y, z, power, false, true);
     }
 
     @Override
-    public boolean createExplosion(Location arg0, float arg1, boolean arg2) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(double x, double y, double z, float power, boolean setFire) {
+        return createExplosion(x, y, z, power, setFire, true);
     }
 
     @Override
-    public boolean createExplosion(double arg0, double arg1, double arg2, float arg3) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
+        return createExplosion(x, y, z, power, setFire, breakBlocks, null);
     }
 
     @Override
-    public boolean createExplosion(Location arg0, float arg1, boolean arg2, boolean arg3) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(double x, double y, double z, float power, boolean setFire, boolean breakBlocks, Entity source) {
+        nms.createExplosion(source == null ? null : ((CraftEntity) source).getHandle(), x, y, z, power, setFire, breakBlocks ? Explosion.DestructionType.BREAK : Explosion.DestructionType.NONE);
+        return true; // TODO return wasCanceled
     }
 
     @Override
-    public boolean createExplosion(double arg0, double arg1, double arg2, float arg3, boolean arg4) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(Location loc, float power) {
+        return createExplosion(loc, power, false);
     }
 
     @Override
-    public boolean createExplosion(Location arg0, float arg1, boolean arg2, boolean arg3, Entity arg4) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(Location loc, float power, boolean setFire) {
+        return createExplosion(loc, power, setFire, true);
     }
 
     @Override
-    public boolean createExplosion(double arg0, double arg1, double arg2, float arg3, boolean arg4, boolean arg5) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(Location loc, float power, boolean setFire, boolean breakBlocks) {
+        return createExplosion(loc, power, setFire, breakBlocks, null);
     }
 
     @Override
-    public boolean createExplosion(double arg0, double arg1, double arg2, float arg3, boolean arg4, boolean arg5, Entity arg6) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean createExplosion(Location loc, float power, boolean setFire, boolean breakBlocks, Entity source) {
+        Preconditions.checkArgument(loc != null, "Location is null");
+        Preconditions.checkArgument(this.equals(loc.getWorld()), "Location not in world");
+
+        return createExplosion(loc.getX(), loc.getY(), loc.getZ(), power, setFire, breakBlocks, source);
     }
 
     @Override
@@ -221,10 +252,74 @@ public class CraftWorld implements World {
         return dropItem(loc, arg1);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public boolean generateTree(Location arg0, TreeType arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean generateTree(Location loc, TreeType type) {
+        BlockPos pos = new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+
+        ConfiguredFeature gen;
+        switch (type) {
+            case BIG_TREE:
+                gen = ConfiguredFeatures.FANCY_OAK;
+                break;
+            case BIRCH:
+                gen = ConfiguredFeatures.BIRCH;
+                break;
+            case REDWOOD:
+                gen = ConfiguredFeatures.SPRUCE;
+                break;
+            case TALL_REDWOOD:
+                gen = ConfiguredFeatures.TREES_GIANT_SPRUCE;
+                break;
+            case JUNGLE:
+                gen = ConfiguredFeatures.JUNGLE_TREE;
+                break;
+            case SMALL_JUNGLE:
+                gen = ConfiguredFeatures.JUNGLE_TREE_NO_VINE;
+                break;
+            case COCOA_TREE:
+                gen = ConfiguredFeatures.JUNGLE_TREE;
+                break;
+            case JUNGLE_BUSH:
+                gen = ConfiguredFeatures.JUNGLE_BUSH;
+                break;
+            case RED_MUSHROOM:
+                gen = ConfiguredFeatures.HUGE_RED_MUSHROOM;
+                break;
+            case BROWN_MUSHROOM:
+                gen = ConfiguredFeatures.HUGE_BROWN_MUSHROOM;
+                break;
+            case SWAMP:
+                gen = ConfiguredFeatures.SWAMP_TREE;
+                break;
+            case ACACIA:
+                gen = ConfiguredFeatures.ACACIA;
+                break;
+            case DARK_OAK:
+                gen = ConfiguredFeatures.DARK_OAK;
+                break;
+            case MEGA_REDWOOD:
+                gen = ConfiguredFeatures.MEGA_SPRUCE;
+                break;
+            case TALL_BIRCH:
+                gen = ConfiguredFeatures.BIRCH_TALL;
+                break;
+            case CHORUS_PLANT:
+                ChorusFlowerBlock.generate(nms, pos, rand, 8);
+                return true;
+            case CRIMSON_FUNGUS:
+                gen = ConfiguredFeatures.CRIMSON_FUNGI;
+                break;
+            case WARPED_FUNGUS:
+                gen = ConfiguredFeatures.WARPED_FUNGI;
+                break;
+            case TREE:
+            default:
+                gen = ConfiguredFeatures.OAK;
+                break;
+        }
+
+        return gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
     }
 
     @Override
@@ -236,13 +331,13 @@ public class CraftWorld implements World {
     @Override
     public boolean getAllowAnimals() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public boolean getAllowMonsters() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -554,10 +649,15 @@ public class CraftWorld implements World {
         return list;
     }
 
+    @SuppressWarnings("resource")
     @Override
     public Chunk[] getLoadedChunks() {
-        // TODO Auto-generated method stub
-        return null;
+        Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = ((IMixinThreadedAnvilChunkStorage)(nms.getChunkManager().threadedAnvilChunkStorage)).getChunkHoldersBF();
+        return chunks.values().stream().map(IMixinChunkHolder::getFullChunk).filter(Objects::nonNull).map(CraftWorld::getBukkitChunkForChunk).toArray(Chunk[]::new);
+    }
+
+    private static Chunk getBukkitChunkForChunk(WorldChunk mc) {
+        return ((IMixinWorldChunk)mc).getBukkitChunk();
     }
 
     @Override
@@ -664,15 +764,14 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public double getTemperature(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getTemperature(int x, int z) {
+        return getTemperature(x, 0, z);
     }
 
     @Override
-    public double getTemperature(int arg0, int arg1, int arg2) {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getTemperature(int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
+        return nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).getTemperature(pos);
     }
 
     @Override
@@ -787,11 +886,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkLoaded(Chunk arg0) {
-        return isChunkLoaded(
-                arg0
-                    .getX(),
-                arg0
-                    .getZ());
+        return isChunkLoaded(arg0.getX(), arg0.getZ());
     }
 
     @Override
@@ -872,23 +967,36 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public void playSound(Location arg0, Sound arg1, float arg2, float arg3) {
-        // TODO Auto-generated method stub
+    public void playSound(Location loc, Sound sound, float volume, float pitch) {
+        playSound(loc, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
     @Override
-    public void playSound(Location arg0, String arg1, float arg2, float arg3) {
-        // TODO Auto-generated method stub
+    public void playSound(Location loc, String sound, float volume, float pitch) {
+        playSound(loc, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
     }
 
     @Override
-    public void playSound(Location arg0, Sound arg1, SoundCategory arg2, float arg3, float arg4) {
-        // TODO Auto-generated method stub
+    public void playSound(Location loc, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        if (loc == null || sound == null || category == null) return;
+
+        double x = loc.getX();
+        double y = loc.getY();
+        double z = loc.getZ();
+
+        getHandle().playSound(null, x, y, z, CraftSound.getSoundEffect(CraftSound.getSound(sound)), net.minecraft.sound.SoundCategory.valueOf(category.name()), volume, pitch);
     }
 
     @Override
-    public void playSound(Location arg0, String arg1, SoundCategory arg2, float arg3, float arg4) {
-        // TODO Auto-generated method stub
+    public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
+        if (loc == null || sound == null || category == null) return;
+
+        double x = loc.getX();
+        double y = loc.getY();
+        double z = loc.getZ();
+
+        PlaySoundIdS2CPacket packet = new PlaySoundIdS2CPacket(new Identifier(sound), net.minecraft.sound.SoundCategory.valueOf(category.name()), new Vec3d(x, y, z), volume, pitch);
+        nms.getServer().getPlayerManager().sendToAround(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, nms.getRegistryKey(), packet);
     }
 
     @Override
@@ -1158,21 +1266,46 @@ public class CraftWorld implements World {
         return addEntity(entity, reason, null);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Entity> T addEntity(net.minecraft.entity.Entity entity, SpawnReason reason, Consumer<T> function) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+        Preconditions.checkArgument(entity != null, "Cannot spawn null entity");
+
+        if (entity instanceof MobEntity)
+            ((MobEntity) entity).initialize(nms, getHandle().getLocalDifficulty(entity.getBlockPos()), net.minecraft.entity.SpawnReason.COMMAND, (EntityData) null, null);
+
+        if (function != null)
+            function.accept((T) ((IMixinEntity)entity).getBukkitEntity());
+
+        nms.addEntity(entity); // TODO spawn reason
+        return (T) ((IMixinEntity)entity).getBukkitEntity();
     }
 
     @Override
-    public Arrow spawnArrow(Location arg0, Vector arg1, float arg2, float arg3) {
-        // TODO Auto-generated method stub
-        return null;
+    public Arrow spawnArrow(Location loc, Vector velocity, float speed, float spread) {
+        return spawnArrow(loc, velocity, speed, spread, Arrow.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends AbstractArrow> T spawnArrow(Location arg0, Vector arg1, float arg2, float arg3, Class<T> arg4) {
-        // TODO Auto-generated method stub
-        return null;
+    public <T extends AbstractArrow> T spawnArrow(Location loc, Vector velocity, float speed, float spread, Class<T> clazz) {
+        Validate.notNull(loc, "Cant spawn arrow with a null location");
+        Validate.notNull(velocity, "Cant spawn arrow with a null velocity");
+        Validate.notNull(clazz, "Cant spawn an arrow with no class");
+
+        PersistentProjectileEntity arrow;
+        if (TippedArrow.class.isAssignableFrom(clazz)) {
+            arrow = net.minecraft.entity.EntityType.ARROW.create(nms);
+            ((IMixinArrowEntity) arrow).setType(CraftPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
+        } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
+            arrow = net.minecraft.entity.EntityType.SPECTRAL_ARROW.create(nms);
+        } else if (Trident.class.isAssignableFrom(clazz)) {
+            arrow = net.minecraft.entity.EntityType.TRIDENT.create(nms);
+        } else arrow = net.minecraft.entity.EntityType.ARROW.create(nms);
+
+        arrow.refreshPositionAndAngles(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        arrow.setVelocity(velocity.getX(), velocity.getY(), velocity.getZ(), speed, spread);
+        nms.spawnEntity(arrow);
+        return (T) ((IMixinEntity)arrow).getBukkitEntity();
     }
 
     @Override
@@ -1181,21 +1314,34 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public FallingBlock spawnFallingBlock(Location arg0, MaterialData arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+    public FallingBlock spawnFallingBlock(Location location, MaterialData data) throws IllegalArgumentException {
+        Validate.notNull(data, "MaterialData cannot be null");
+        return spawnFallingBlock(location, data.getItemType(), data.getData());
     }
 
     @Override
-    public FallingBlock spawnFallingBlock(Location arg0, BlockData arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+    public FallingBlock spawnFallingBlock(Location location, BlockData data) throws IllegalArgumentException {
+        Validate.notNull(location, "Location cannot be null");
+        Validate.notNull(data, "Material cannot be null");
+
+        FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), ((CraftBlockData) data).getState());
+        entity.timeFalling = 1;
+
+        nms.addEntity(entity/*, SpawnReason.CUSTOM*/);
+        return (FallingBlock) ((IMixinEntity)entity).getBukkitEntity();
     }
 
     @Override
-    public FallingBlock spawnFallingBlock(Location arg0, Material arg1, byte arg2) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+    public FallingBlock spawnFallingBlock(Location location, org.bukkit.Material material, byte data) throws IllegalArgumentException {
+        Validate.notNull(location, "Location cannot be null");
+        Validate.notNull(material, "Material cannot be null");
+        Validate.isTrue(material.isBlock(), "Material must be a block");
+
+        FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), CraftMagicNumbers.getBlock(material).getDefaultState());
+        entity.timeFalling = 1;
+
+        nms.addEntity(entity/*, SpawnReason.CUSTOM*/);
+        return (FallingBlock) ((IMixinEntity)entity).getBukkitEntity();
     }
 
     @Override
@@ -1277,7 +1423,6 @@ public class CraftWorld implements World {
                 //extra // Speed?
                 //force
         );
-
     }
     @Override
     public LightningStrike strikeLightning(Location arg0) {
@@ -1292,22 +1437,25 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public boolean unloadChunk(Chunk arg0) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean unloadChunk(Chunk chunk) {
+        return unloadChunk(chunk.getX(), chunk.getZ());
     }
 
     @Override
-    public boolean unloadChunk(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean unloadChunk(int x, int z) {
+        return unloadChunk(x, z, true);
     }
 
     @Override
-    public boolean unloadChunk(int arg0, int arg1, boolean arg2) {
-        // TODO Auto-generated method stub
+    public boolean unloadChunk(int x, int z, boolean save) {
+        return unloadChunk0(x, z, save);
+    }
+
+    private boolean unloadChunk0(int x, int z, boolean save) {
+        // TODO
         return false;
     }
+
 
     @Override
     public boolean unloadChunkRequest(int arg0, int arg1) {

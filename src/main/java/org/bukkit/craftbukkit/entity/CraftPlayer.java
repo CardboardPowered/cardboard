@@ -339,7 +339,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public int getClientViewDistance() {
-        return CraftServer.server.getProperties().viewDistance; // TODO Get Client view distance not server
+        return 8; // TODO Get Client view distance not server
     }
 
     @Override

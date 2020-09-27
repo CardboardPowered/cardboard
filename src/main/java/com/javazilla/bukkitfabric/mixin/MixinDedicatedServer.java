@@ -40,7 +40,11 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.PendingServerCommand;
 
 @Mixin(MinecraftDedicatedServer.class)
-public class MixinDedicatedServer extends MixinMinecraftServer {
+public abstract class MixinDedicatedServer extends MixinMinecraftServer {
+
+    public MixinDedicatedServer(String string) {
+        super(string);
+    }
 
     @Shadow
     @Final
@@ -49,6 +53,7 @@ public class MixinDedicatedServer extends MixinMinecraftServer {
     @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
         CraftServer.server = (MinecraftDedicatedServer) (Object) this;
+        Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread((MinecraftDedicatedServer)(Object)this));
     }
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
@@ -80,6 +85,7 @@ public class MixinDedicatedServer extends MixinMinecraftServer {
     @Inject(at = @At("TAIL"), method = "exit")
     public void killProcess(CallbackInfo ci) {
         BukkitLogger.getLogger().info("Goodbye!");
+        System.exit(0);
     }
 
     /**
