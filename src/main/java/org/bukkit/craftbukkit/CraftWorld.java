@@ -155,25 +155,23 @@ public class CraftWorld implements World {
     }
 
     @Override
-    public List<MetadataValue> getMetadata(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+        CraftServer.INSTANCE.getWorldMetadata().setMetadata(this, metadataKey, newMetadataValue);
     }
 
     @Override
-    public boolean hasMetadata(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+    public List<MetadataValue> getMetadata(String metadataKey) {
+        return CraftServer.INSTANCE.getWorldMetadata().getMetadata(this, metadataKey);
     }
 
     @Override
-    public void removeMetadata(String arg0, Plugin arg1) {
-        // TODO Auto-generated method stub
+    public boolean hasMetadata(String metadataKey) {
+        return CraftServer.INSTANCE.getWorldMetadata().hasMetadata(this, metadataKey);
     }
 
     @Override
-    public void setMetadata(String arg0, MetadataValue arg1) {
-        // TODO Auto-generated method stub
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+        CraftServer.INSTANCE.getWorldMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
     @Override

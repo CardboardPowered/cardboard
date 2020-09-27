@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pose;
@@ -50,6 +51,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     protected static PermissibleBase perm;
     public net.minecraft.entity.Entity nms;
 
+    protected final CraftServer server = CraftServer.INSTANCE;
+
     public CraftEntity(net.minecraft.entity.Entity entity) {
         this.nms = entity;
     }
@@ -59,25 +62,23 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
     @Override
-    public List<MetadataValue> getMetadata(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public List<MetadataValue> getMetadata(String metadataKey) {
+        return server.getEntityMetadata().getMetadata(this, metadataKey);
     }
 
     @Override
-    public boolean hasMetadata(String arg0) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean hasMetadata(String metadataKey) {
+        return server.getEntityMetadata().hasMetadata(this, metadataKey);
     }
 
     @Override
-    public void removeMetadata(String arg0, Plugin arg1) {
-        // TODO Auto-generated method stub
+    public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+        server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
 
     @Override
-    public void setMetadata(String arg0, MetadataValue arg1) {
-        // TODO Auto-generated method stub
+    public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+        server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
     }
 
     @Override

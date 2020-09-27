@@ -100,7 +100,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return super.getUniqueId();
     }
 
-
     @Override
     public void abandonConversation(Conversation arg0) {
         // TODO Auto-generated method stub

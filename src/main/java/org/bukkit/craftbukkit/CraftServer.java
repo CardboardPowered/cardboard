@@ -98,6 +98,9 @@ import org.bukkit.craftbukkit.inventory.CraftSmokingRecipe;
 import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
 import org.bukkit.craftbukkit.inventory.RecipeIterator;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
+import org.bukkit.craftbukkit.metadata.EntityMetadataStore;
+import org.bukkit.craftbukkit.metadata.PlayerMetadataStore;
+import org.bukkit.craftbukkit.metadata.WorldMetadataStore;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.tag.CraftBlockTag;
 import org.bukkit.craftbukkit.tag.CraftItemTag;
@@ -243,6 +246,10 @@ public class CraftServer implements Server {
     public static MinecraftServer server;
     public static CraftServer INSTANCE;
     private boolean dedicated;
+
+    private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
+    private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
+    private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
 
     public CraftServer(MinecraftServer nms) {
         if (nms instanceof MinecraftDedicatedServer)
@@ -1512,6 +1519,19 @@ public class CraftServer implements Server {
         } finally {
             this.playerCommandState = false;
         }
+    }
+
+
+    public EntityMetadataStore getEntityMetadata() {
+        return entityMetadata;
+    }
+
+    public PlayerMetadataStore getPlayerMetadata() {
+        return playerMetadata;
+    }
+
+    public WorldMetadataStore getWorldMetadata() {
+        return worldMetadata;
     }
 
 }
