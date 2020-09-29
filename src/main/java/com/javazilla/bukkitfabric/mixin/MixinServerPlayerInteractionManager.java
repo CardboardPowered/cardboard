@@ -3,18 +3,14 @@
  * Copyright (C) 2020 Javazilla Software and contributors
  * 
  * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either 
- * version 3 of the License, or (at your option) any later version.
+ * modify it under the terms of the GNU General Public License 
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
 package com.javazilla.bukkitfabric.mixin;
 
@@ -81,7 +77,7 @@ public class MixinServerPlayerInteractionManager {
 
     /**
      * @author BukkitFabric
-     * @reason Interacton Events
+     * @reason Interaction Events
      */
     @SuppressWarnings("deprecation")
     @Overwrite
@@ -227,16 +223,21 @@ public class MixinServerPlayerInteractionManager {
 
     @Inject(at = @At("HEAD"), method = "tryBreakBlock", cancellable = true)
     public void blockBreak(BlockPos blockposition, CallbackInfoReturnable<Boolean> ci) {
+        System.out.println("TEST a");
         org.bukkit.block.Block bblock = CraftBlock.at(world, blockposition);
 
+        System.out.println("TEST b");
         boolean isSwordNoBreak = !this.player.getMainHandStack().getItem().canMine(this.world.getBlockState(blockposition), this.world, blockposition, this.player);
+        System.out.println("TEST c");
         if (world.getBlockEntity(blockposition) == null && !isSwordNoBreak) {
             BlockUpdateS2CPacket packet = new BlockUpdateS2CPacket(this.world, blockposition);
             packet.state = Blocks.AIR.getDefaultState();
             this.player.networkHandler.sendPacket(packet);
         }
+        System.out.println("TEST d");
         BlockBreakEvent event = new BlockBreakEvent(bblock, (Player) ((IMixinServerEntityPlayer)this.player).getBukkitEntity());
         event.setCancelled(isSwordNoBreak);
+        System.out.println("TEST e");
 
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
 

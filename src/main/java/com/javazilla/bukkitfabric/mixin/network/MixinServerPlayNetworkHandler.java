@@ -17,6 +17,7 @@ import org.bukkit.craftbukkit.util.LazyPlayerSet;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.craftbukkit.util.WaitableImpl;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -34,13 +35,17 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.options.ChatVisibility;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
@@ -293,6 +298,30 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             default:
                 break;
         }
+    }
+
+    @Inject(at = @At("TAIL"), method = "onSignUpdate", cancellable = true)
+    public void fireSignUpdateEvent(UpdateSignC2SPacket packet, CallbackInfo ci) {
+        String[] astring = packet.getText();
+
+        Player player = (Player) ((IMixinServerEntityPlayer)this.player).getBukkitEntity();
+        int x = packet.getPos().getX();
+        int y = packet.getPos().getY();
+        int z = packet.getPos().getZ();
+        String[] lines = new String[4];
+
+        for (int i = 0; i < astring.length; ++i)
+            lines[i] = Formatting.strip(new LiteralText(Formatting.strip(astring[i])).getString());
+
+        SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), player, lines);
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            BlockEntity tileentity = this.player.getServerWorld().getBlockEntity(packet.getPos());
+            SignBlockEntity tileentitysign = (SignBlockEntity) tileentity;
+            System.arraycopy(org.bukkit.craftbukkit.block.CraftSign.sanitizeLines(event.getLines()), 0, ((IMixinSignBlockEntity)tileentitysign).getTextBF(), 0, 4);
+            tileentitysign.editable = false;
+         }
     }
 
     private ServerPlayNetworkHandler get() {

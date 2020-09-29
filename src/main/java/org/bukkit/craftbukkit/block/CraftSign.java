@@ -9,6 +9,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
+
 public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements Sign {
 
     private String[] lines;
@@ -26,10 +28,9 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
     public void load(SignBlockEntity sign) {
         super.load(sign);
 
-        // FIXME BROKEN!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //lines = new String[sign.text.length];
-        //System.arraycopy(revertComponents(sign.text), 0, lines, 0, lines.length);
-        //editable = sign.isEditable();
+        lines = new String[((IMixinSignBlockEntity)sign).getTextBF().length];
+        System.arraycopy(revertComponents(((IMixinSignBlockEntity)sign).getTextBF()), 0, lines, 0, lines.length);
+        editable = sign.editable;
     }
 
     @Override
@@ -57,11 +58,13 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
         this.editable = editable;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public DyeColor getColor() {
         return DyeColor.getByWoolData((byte) getSnapshot().getTextColor().getId());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void setColor(DyeColor color) {
         getSnapshot().setTextColor(net.minecraft.util.DyeColor.byId(color.getWoolData()));
@@ -72,20 +75,14 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
         super.applyTo(sign);
 
         Text[] newLines = sanitizeLines(lines);
-        // FIXME System.arraycopy(newLines, 0, sign.text, 0, 4);
+        System.arraycopy(newLines, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, 4);
         sign.setEditable(editable);
     }
 
     public static Text[] sanitizeLines(String[] lines) {
         Text[] components = new Text[4];
-
-        for (int i = 0; i < 4; i++) {
-            if (i < lines.length && lines[i] != null) {
-                components[i] = CraftChatMessage.fromString(lines[i])[0];
-            } else {
-                components[i] = new LiteralText("");
-            }
-        }
+        for (int i = 0; i < 4; i++)
+            components[i] = (i < lines.length && lines[i] != null) ? CraftChatMessage.fromString(lines[i])[0] : new LiteralText("");
 
         return components;
     }
@@ -93,12 +90,8 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
     public static String[] revertComponents(Text[] components) {
         String[] lines = new String[components.length];
         for (int i = 0; i < lines.length; i++)
-            lines[i] = revertComponent(components[i]);
+            lines[i] = CraftChatMessage.fromComponent(components[i]);
         return lines;
-    }
-
-    private static String revertComponent(Text component) {
-        return CraftChatMessage.fromComponent(component);
     }
 
 }
