@@ -223,21 +223,16 @@ public class MixinServerPlayerInteractionManager {
 
     @Inject(at = @At("HEAD"), method = "tryBreakBlock", cancellable = true)
     public void blockBreak(BlockPos blockposition, CallbackInfoReturnable<Boolean> ci) {
-        System.out.println("TEST a");
         org.bukkit.block.Block bblock = CraftBlock.at(world, blockposition);
 
-        System.out.println("TEST b");
         boolean isSwordNoBreak = !this.player.getMainHandStack().getItem().canMine(this.world.getBlockState(blockposition), this.world, blockposition, this.player);
-        System.out.println("TEST c");
         if (world.getBlockEntity(blockposition) == null && !isSwordNoBreak) {
             BlockUpdateS2CPacket packet = new BlockUpdateS2CPacket(this.world, blockposition);
             packet.state = Blocks.AIR.getDefaultState();
             this.player.networkHandler.sendPacket(packet);
         }
-        System.out.println("TEST d");
         BlockBreakEvent event = new BlockBreakEvent(bblock, (Player) ((IMixinServerEntityPlayer)this.player).getBukkitEntity());
         event.setCancelled(isSwordNoBreak);
-        System.out.println("TEST e");
 
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
