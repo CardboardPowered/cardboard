@@ -7,6 +7,9 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
+
 public class CraftInventoryCrafting extends CraftInventory implements CraftingInventory {
     private final Inventory resultInventory;
 
@@ -30,27 +33,23 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public void setContents(ItemStack[] items) {
-        if (getSize() > items.length) {
+        if (getSize() > items.length)
             throw new IllegalArgumentException("Invalid inventory size; expected " + getSize() + " or less");
-        }
         setContents(items[0], Arrays.copyOfRange(items, 1, items.length));
     }
 
     @Override
     public ItemStack[] getContents() {
         ItemStack[] items = new ItemStack[getSize()];
-        List<net.minecraft.item.ItemStack> mcResultItems = getResultInventory().getContents();
+        List<net.minecraft.item.ItemStack> mcResultItems = ((IMixinInventory)getResultInventory()).getContents();
 
         int i = 0;
-        for (i = 0; i < mcResultItems.size(); i++) {
+        for (i = 0; i < mcResultItems.size(); i++)
             items[i] = CraftItemStack.asCraftMirror(mcResultItems.get(i));
-        }
 
-        List<net.minecraft.item.ItemStack> mcItems = getMatrixInventory().getContents();
-
-        for (int j = 0; j < mcItems.size(); j++) {
+        List<net.minecraft.item.ItemStack> mcItems = ((IMixinInventory)getMatrixInventory()).getContents();
+        for (int j = 0; j < mcItems.size(); j++)
             items[i + j] = CraftItemStack.asCraftMirror(mcItems.get(j));
-        }
 
         return items;
     }
@@ -73,18 +72,15 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public void setItem(int index, ItemStack item) {
-        if (index < getResultInventory().size()) {
+        if (index < getResultInventory().size())
             getResultInventory().setStack(index, CraftItemStack.asNMSCopy(item));
-        } else {
+        else
             getMatrixInventory().setStack((index - getResultInventory().size()), CraftItemStack.asNMSCopy(item));
-        }
     }
 
     @Override
     public ItemStack[] getMatrix() {
-        List<net.minecraft.item.ItemStack> matrix = getMatrixInventory().getContents();
-
-        return asCraftMirror(matrix);
+        return asCraftMirror(((IMixinInventory)getMatrixInventory()).getContents());
     }
 
     @Override
@@ -96,28 +92,26 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
     @Override
     public void setMatrix(ItemStack[] contents) {
-        if (getMatrixInventory().size() > contents.length) {
+        if (getMatrixInventory().size() > contents.length)
             throw new IllegalArgumentException("Invalid inventory size; expected " + getMatrixInventory().size() + " or less");
-        }
 
         for (int i = 0; i < getMatrixInventory().size(); i++) {
-            if (i < contents.length) {
-                getMatrixInventory().setStack(i, CraftItemStack.asNMSCopy(contents[i]));
-            } else {
-                getMatrixInventory().setStack(i, net.minecraft.item.ItemStack.EMPTY);
-            }
+            if (i < contents.length)
+                 getMatrixInventory().setStack(i, CraftItemStack.asNMSCopy(contents[i]));
+            else getMatrixInventory().setStack(i, net.minecraft.item.ItemStack.EMPTY);
         }
     }
 
     @Override
     public void setResult(ItemStack item) {
-        List<net.minecraft.item.ItemStack> contents = getResultInventory().getContents();
+        List<net.minecraft.item.ItemStack> contents = ((IMixinInventory)getResultInventory()).getContents();
         contents.set(0, CraftItemStack.asNMSCopy(item));
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Recipe getRecipe() {
-        net.minecraft.recipe.Recipe recipe = getInventory().getCurrentRecipe();
-        return recipe == null ? null : recipe.toBukkitRecipe();
+        net.minecraft.recipe.Recipe recipe = ((IMixinInventory)getInventory()).getCurrentRecipe();
+        return recipe == null ? null : ((IMixinRecipe)recipe).toBukkitRecipe();
     }
 }
