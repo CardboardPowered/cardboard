@@ -74,7 +74,8 @@
     "screen.MixinAnvilScreenHandler",
     "screen.MixinBeaconScreenHandler",
     "screen.MixinBrewingStandScreenHandler",
-    "screen.MixinGenericContainerScreenHandler"
+    "screen.MixinGenericContainerScreenHandler",
+    "screen.MixinPlayerScreenHandler"
   ],
   "client": [
     "client.MixinIntegratedServer"

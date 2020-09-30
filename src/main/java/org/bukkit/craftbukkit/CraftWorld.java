@@ -126,6 +126,7 @@ public class CraftWorld implements World {
 
     private ServerWorld nms;
     private String name;
+    private WorldBorder worldBorder;
 
     private static final Random rand = new Random();
 
@@ -838,8 +839,10 @@ public class CraftWorld implements World {
 
     @Override
     public WorldBorder getWorldBorder() {
-        // TODO Auto-generated method stub
-        return null;
+        if (this.worldBorder == null)
+            this.worldBorder = new CraftWorldBorder(this);
+
+        return this.worldBorder;
     }
 
     @Override

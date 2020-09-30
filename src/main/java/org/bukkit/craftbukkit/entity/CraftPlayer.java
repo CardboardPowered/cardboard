@@ -175,7 +175,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public Player getPlayer() {
+    public CraftPlayer getPlayer() {
         return this;
     }
 

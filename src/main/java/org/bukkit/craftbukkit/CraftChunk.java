@@ -58,12 +58,8 @@ public class CraftChunk implements Chunk {
     }
 
     @Override
-    public World getWorld() {
-        return (World) worldServer.toServerWorld();
-    }
-
-    public CraftWorld getCraftWorld() {
-        return (CraftWorld) getWorld();
+    public CraftWorld getWorld() {
+        return ((IMixinWorld)worldServer.toServerWorld()).getCraftWorld();
     }
 
     public net.minecraft.world.chunk.WorldChunk getHandle() {
