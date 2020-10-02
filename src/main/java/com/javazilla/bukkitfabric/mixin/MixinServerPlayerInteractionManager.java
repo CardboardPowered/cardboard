@@ -19,7 +19,6 @@ import java.util.Objects;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -32,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.advancement.criterion.Criteria;
@@ -97,7 +97,7 @@ public class MixinServerPlayerInteractionManager {
             if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) {
                 if (!this.world.canPlayerModifyAt((PlayerEntity) this.player, blockposition)) {
                     // CraftBukkit start - fire PlayerInteractEvent
-                    CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
+                    BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "may not interact"));
                     // Update any tile entity data for this block
                     BlockEntity tileentity = world.getBlockEntity(blockposition);
@@ -106,7 +106,7 @@ public class MixinServerPlayerInteractionManager {
                     return;
                 }
 
-                PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
+                PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
                 if (event.isCancelled()) {
                     // Let the client know the block still exists
                     this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
@@ -154,7 +154,7 @@ public class MixinServerPlayerInteractionManager {
                         this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
                     return;
                 }
-                org.bukkit.event.block.BlockDamageEvent blockEvent = CraftEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.inventory.getMainHandStack(), f >= 1.0f);
+                org.bukkit.event.block.BlockDamageEvent blockEvent = BukkitEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.inventory.getMainHandStack(), f >= 1.0f);
 
                 if (blockEvent.isCancelled()) {
                     // Let the client know the block still exists
@@ -274,7 +274,7 @@ public class MixinServerPlayerInteractionManager {
         if (entityplayer.getItemCooldownManager().isCoolingDown(itemstack.getItem()))
             cancelledBlock = true;
 
-        PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(entityplayer, Action.RIGHT_CLICK_BLOCK, blockposition, movingobjectpositionblock.getSide(), itemstack, cancelledBlock, enumhand);
+        PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(entityplayer, Action.RIGHT_CLICK_BLOCK, blockposition, movingobjectpositionblock.getSide(), itemstack, cancelledBlock, enumhand);
         firedInteract = true;
         interactResult = event.useItemInHand() == Event.Result.DENY;
 

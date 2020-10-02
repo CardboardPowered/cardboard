@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.event;
+package com.javazilla.bukkitfabric.impl;
 
 import java.net.InetAddress;
 
@@ -42,7 +42,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
-public class CraftEventFactory {
+public class BukkitEventFactory {
 
     public static Entity entityDamage;
 

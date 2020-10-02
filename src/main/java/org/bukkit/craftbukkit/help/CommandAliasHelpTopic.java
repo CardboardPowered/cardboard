@@ -34,13 +34,8 @@ public class CommandAliasHelpTopic extends HelpTopic {
     public boolean canSee(CommandSender commandSender) {
         if (amendedPermission == null) {
             HelpTopic aliasForTopic = helpMap.getHelpTopic(aliasFor);
-            if (aliasForTopic != null) {
-                return aliasForTopic.canSee(commandSender);
-            } else {
-                return false;
-            }
-        } else {
-            return commandSender.hasPermission(amendedPermission);
-        }
+            return aliasForTopic != null ? aliasForTopic.canSee(commandSender) : false;
+        } else return commandSender.hasPermission(amendedPermission);
     }
+
 }

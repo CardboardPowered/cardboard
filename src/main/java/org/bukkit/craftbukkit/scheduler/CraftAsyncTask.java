@@ -26,13 +26,10 @@ class CraftAsyncTask extends CraftTask {
     public void run() {
         final Thread thread = Thread.currentThread();
         synchronized (workers) {
-            if (getPeriod() == CraftTask.CANCEL) {
-                // Never continue running after cancelled.
-                // Checking this with the lock is important!
-                return;
-            }
-            workers.add(
-                new BukkitWorker() {
+            if (getPeriod() == CraftTask.CANCEL)
+                return; // Never continue running after cancelled. Checking this with the lock is important!
+
+            workers.add(new BukkitWorker() {
                     @Override
                     public Thread getThread() {
                         return thread;
@@ -54,13 +51,8 @@ class CraftAsyncTask extends CraftTask {
             super.run();
         } catch (final Throwable t) {
             thrown = t;
-            getOwner().getLogger().log(
-                    Level.WARNING,
-                    String.format(
-                        "Plugin %s generated an exception while executing task %s",
-                        getOwner().getDescription().getFullName(),
-                        getTaskId()),
-                    thrown);
+            getOwner().getLogger().log(Level.WARNING, String.format( "Plugin %s generated an exception while executing task %s",
+                        getOwner().getDescription().getFullName(), getTaskId()), thrown);
         } finally {
             // Cleanup is important for any async task, otherwise ghost tasks are everywhere
             synchronized (workers) {
@@ -75,13 +67,8 @@ class CraftAsyncTask extends CraftTask {
                         }
                     }
                     if (!removed) {
-                        throw new IllegalStateException(
-                                String.format(
-                                    "Unable to remove worker %s on task %s for %s",
-                                    thread.getName(),
-                                    getTaskId(),
-                                    getOwner().getDescription().getFullName()),
-                                thrown); // We don't want to lose the original exception, if any
+                        throw new IllegalStateException(String.format("Unable to remove worker %s on task %s for %s", thread.getName(), getTaskId(),
+                                    getOwner().getDescription().getFullName()), thrown); // We don't want to lose the original exception, if any
                     }
                 } finally {
                     if (getPeriod() < 0 && workers.isEmpty()) {
@@ -103,9 +90,8 @@ class CraftAsyncTask extends CraftTask {
         synchronized (workers) {
             // Synchronizing here prevents race condition for a completing task
             setPeriod(CraftTask.CANCEL);
-            if (workers.isEmpty()) {
+            if (workers.isEmpty())
                 runners.remove(getTaskId());
-            }
         }
         return true;
     }

@@ -45,9 +45,8 @@ public class SimpleHelpMap implements HelpMap {
         this.yaml = new HelpYamlReader(server);
 
         Predicate indexFilter = Predicates.not(Predicates.instanceOf(CommandAliasHelpTopic.class));
-        if (!yaml.commandTopicsInMasterIndex()) {
+        if (!yaml.commandTopicsInMasterIndex())
             indexFilter = Predicates.and(indexFilter, Predicates.not(new IsCommandTopicPredicate()));
-        }
 
         this.defaultTopic = new IndexHelpTopic("Index", null, null, Collections2.filter(helpTopics.values(), indexFilter), "Use /help [n] to get page n of help.");
 
@@ -56,15 +55,7 @@ public class SimpleHelpMap implements HelpMap {
 
     @Override
     public synchronized HelpTopic getHelpTopic(String topicName) {
-        if (topicName.equals("")) {
-            return defaultTopic;
-        }
-
-        if (helpTopics.containsKey(topicName)) {
-            return helpTopics.get(topicName);
-        }
-
-        return null;
+        return topicName.equals("") ? defaultTopic : (helpTopics.containsKey(topicName) ? helpTopics.get(topicName) : null);
     }
 
     @Override
@@ -75,9 +66,8 @@ public class SimpleHelpMap implements HelpMap {
     @Override
     public synchronized void addTopic(HelpTopic topic) {
         // Existing topics take priority
-        if (!helpTopics.containsKey(topic.getName())) {
+        if (!helpTopics.containsKey(topic.getName()))
             helpTopics.put(topic.getName(), topic);
-        }
     }
 
     @Override
@@ -97,17 +87,14 @@ public class SimpleHelpMap implements HelpMap {
         yaml = new HelpYamlReader(server);
 
         // Initialize general help topics from the help.yml file
-        for (HelpTopic topic : yaml.getGeneralTopics()) {
+        for (HelpTopic topic : yaml.getGeneralTopics())
             addTopic(topic);
-        }
 
         // Initialize index help topics from the help.yml file
         for (HelpTopic topic : yaml.getIndexTopics()) {
-            if (topic.getName().equals("Default")) {
+            if (topic.getName().equals("Default"))
                 defaultTopic = topic;
-            } else {
-                addTopic(topic);
-            }
+            else addTopic(topic);
         }
     }
 
@@ -119,15 +106,13 @@ public class SimpleHelpMap implements HelpMap {
         Set<String> ignoredPlugins = new HashSet<String>(yaml.getIgnoredPlugins());
 
         // Don't load any automatic help topics if All is ignored
-        if (ignoredPlugins.contains("All")) {
+        if (ignoredPlugins.contains("All"))
             return;
-        }
 
         // Initialize help topics from the server's command map
         outer: for (Command command : server.getCommandMap().getCommands()) {
-            if (commandInIgnoredPlugin(command, ignoredPlugins)) {
+            if (commandInIgnoredPlugin(command, ignoredPlugins))
                 continue;
-            }
 
             // Register a topic
             for (Class c : topicFactoryMap.keySet()) {
@@ -147,38 +132,33 @@ public class SimpleHelpMap implements HelpMap {
 
         // Initialize command alias help topics
         for (Command command : server.getCommandMap().getCommands()) {
-            if (commandInIgnoredPlugin(command, ignoredPlugins)) {
+            if (commandInIgnoredPlugin(command, ignoredPlugins))
                 continue;
-            }
             for (String alias : command.getAliases()) {
                 // Only register if this command owns the alias
-                if (server.getCommandMap().getCommand(alias) == command) {
+                if (server.getCommandMap().getCommand(alias) == command)
                     addTopic(new CommandAliasHelpTopic("/" + alias, "/" + command.getLabel(), this));
-                }
             }
         }
 
         // Add alias sub-index
         Collection<HelpTopic> filteredTopics = Collections2.filter(helpTopics.values(), Predicates.instanceOf(CommandAliasHelpTopic.class));
-        if (!filteredTopics.isEmpty()) {
+        if (!filteredTopics.isEmpty())
             addTopic(new IndexHelpTopic("Aliases", "Lists command aliases", null, filteredTopics));
-        }
 
         // Initialize plugin-level sub-topics
         Map<String, Set<HelpTopic>> pluginIndexes = new HashMap<String, Set<HelpTopic>>();
         fillPluginIndexes(pluginIndexes, server.getCommandMap().getCommands());
 
-        for (Map.Entry<String, Set<HelpTopic>> entry : pluginIndexes.entrySet()) {
+        for (Map.Entry<String, Set<HelpTopic>> entry : pluginIndexes.entrySet())
             addTopic(new IndexHelpTopic(entry.getKey(), "All commands for " + entry.getKey(), null, entry.getValue(), "Below is a list of all " + entry.getKey() + " commands:"));
-        }
 
         // Amend help topics from the help.yml file
         for (HelpTopicAmendment amendment : yaml.getTopicAmendments()) {
             if (helpTopics.containsKey(amendment.getTopicName())) {
                 helpTopics.get(amendment.getTopicName()).amendTopic(amendment.getShortText(), amendment.getFullText());
-                if (amendment.getPermission() != null) {
+                if (amendment.getPermission() != null)
                     helpTopics.get(amendment.getTopicName()).amendCanSee(amendment.getPermission());
-                }
             }
         }
     }
@@ -189,9 +169,8 @@ public class SimpleHelpMap implements HelpMap {
             if (pluginName != null) {
                 HelpTopic topic = getHelpTopic("/" + command.getLabel());
                 if (topic != null) {
-                    if (!pluginIndexes.containsKey(pluginName)) {
+                    if (!pluginIndexes.containsKey(pluginName))
                         pluginIndexes.put(pluginName, new TreeSet<HelpTopic>(HelpTopicComparator.helpTopicComparatorInstance())); //keep things in topic order
-                    }
                     pluginIndexes.get(pluginName).add(topic);
                 }
             }
@@ -199,33 +178,20 @@ public class SimpleHelpMap implements HelpMap {
     }
 
     private String getCommandPluginName(Command command) {
-        if (command instanceof VanillaCommandWrapper) {
-            return "Minecraft";
-        }
-        if (command instanceof BukkitCommand) {
-            return "Bukkit";
-        }
-        if (command instanceof PluginIdentifiableCommand) {
-            return ((PluginIdentifiableCommand) command).getPlugin().getName();
-        }
-        return null;
+        if (command instanceof VanillaCommandWrapper) return "Minecraft";
+        if (command instanceof BukkitCommand) return "Bukkit";
+        return (command instanceof PluginIdentifiableCommand) ? ((PluginIdentifiableCommand) command).getPlugin().getName() : null;
     }
 
     private boolean commandInIgnoredPlugin(Command command, Set<String> ignoredPlugins) {
-        if ((command instanceof BukkitCommand) && ignoredPlugins.contains("Bukkit")) {
-            return true;
-        }
-        if (command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName())) {
-            return true;
-        }
-        return false;
+        return ((command instanceof BukkitCommand) && ignoredPlugins.contains("Bukkit")) ||
+                (command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName()));
     }
 
     @Override
     public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {
-        if (!Command.class.isAssignableFrom(commandClass) && !CommandExecutor.class.isAssignableFrom(commandClass)) {
+        if (!Command.class.isAssignableFrom(commandClass) && !CommandExecutor.class.isAssignableFrom(commandClass))
             throw new IllegalArgumentException("commandClass must implement either Command or CommandExecutor!");
-        }
         topicFactoryMap.put(commandClass, factory);
     }
 
@@ -236,4 +202,14 @@ public class SimpleHelpMap implements HelpMap {
             return topic.getName().charAt(0) == '/';
         }
     }
+
+    private class MultipleCommandAliasHelpTopicFactory implements HelpTopicFactory<MultipleCommandAlias> {
+
+        @Override
+        public HelpTopic createTopic(MultipleCommandAlias multipleCommandAlias) {
+            return new MultipleCommandAliasHelpTopic(multipleCommandAlias);
+        }
+
+    }
+
 }

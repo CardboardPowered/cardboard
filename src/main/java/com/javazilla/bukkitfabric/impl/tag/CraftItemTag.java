@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.tag;
+package com.javazilla.bukkitfabric.impl.tag;
 
 import java.util.Collections;
 import java.util.Set;

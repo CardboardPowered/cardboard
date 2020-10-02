@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -42,7 +44,7 @@ public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
             MinecraftServer minecraftserver = CraftServer.server;
             int i = bytebuf.readableBytes();
             String s;
-            org.bukkit.event.server.ServerListPingEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callServerListPingEvent(CraftServer.INSTANCE, inetsocketaddress.getAddress(), minecraftserver.getServerMotd(), minecraftserver.getCurrentPlayerCount(), minecraftserver.getMaxPlayerCount()); // CraftBukkit
+            org.bukkit.event.server.ServerListPingEvent event = BukkitEventFactory.callServerListPingEvent(CraftServer.INSTANCE, inetsocketaddress.getAddress(), minecraftserver.getServerMotd(), minecraftserver.getCurrentPlayerCount(), minecraftserver.getMaxPlayerCount()); // CraftBukkit
 
             switch (i) {
                 case 0:

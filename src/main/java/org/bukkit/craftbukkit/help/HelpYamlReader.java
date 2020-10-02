@@ -114,4 +114,5 @@ public class HelpYamlReader {
     public boolean commandTopicsInMasterIndex() {
         return helpYaml.getBoolean("command-topics-in-master-index", true);
     }
+
 }

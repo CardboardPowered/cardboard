@@ -40,6 +40,7 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
+import org.yaml.snakeyaml.error.YAMLException;
 
 /**
  * Represents a Java plugin loader, allowing plugins in the form of .jar
@@ -48,8 +49,8 @@ public final class JavaPluginLoader implements PluginLoader {
 
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
-    private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
-    private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
+    private final static Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+    private final static List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
 
     /**
      * This class was not meant to be constructed explicitly
@@ -62,15 +63,17 @@ public final class JavaPluginLoader implements PluginLoader {
         server = instance;
     }
 
+    public static Class<?> getByName(String name, boolean disableSystemClassLoaderCheck) throws ClassNotFoundException {
+        return disableSystemClassLoaderCheck ? getClassByName2(name) : getClassByName(name);
+    }
+
     @Override
-    public Plugin loadPlugin(/*final*/ File file) throws InvalidPluginException { // Bukkit4Fabric: remove final
+    @SuppressWarnings("deprecation")
+    public Plugin loadPlugin(File file) throws InvalidPluginException {
         Validate.notNull(file, "File cannot be null");
-
-        if (!file.exists()) {
+        if (!file.exists())
             throw new InvalidPluginException(new FileNotFoundException(file.getPath() + " does not exist"));
-        }
 
-        // Bukkit4Fabric: Remap Jar file
         com.javazilla.bukkitfabric.nms.Remapper.remap(file); // Bukkit4Fabric: Remap Jar file
 
         final PluginDescriptionFile description;
@@ -82,7 +85,6 @@ public final class JavaPluginLoader implements PluginLoader {
 
         final File parentFile = file.getParentFile();
         final File dataFolder = new File(parentFile, description.getName());
-        @SuppressWarnings("deprecation")
         final File oldDataFolder = new File(parentFile, description.getRawName());
 
         // Found old data folder
@@ -90,41 +92,19 @@ public final class JavaPluginLoader implements PluginLoader {
             // They are equal -- nothing needs to be done!
         } else if (dataFolder.isDirectory() && oldDataFolder.isDirectory()) {
             server.getLogger().warning(String.format(
-                "While loading %s (%s) found old-data folder: `%s' next to the new one `%s'",
-                description.getFullName(),
-                file,
-                oldDataFolder,
-                dataFolder
-            ));
+                "While loading %s (%s) found old-data folder: `%s' next to the new one `%s'", description.getFullName(), file, oldDataFolder, dataFolder));
         } else if (oldDataFolder.isDirectory() && !dataFolder.exists()) {
-            if (!oldDataFolder.renameTo(dataFolder)) {
+            if (!oldDataFolder.renameTo(dataFolder))
                 throw new InvalidPluginException("Unable to rename old data folder: `" + oldDataFolder + "' to: `" + dataFolder + "'");
-            }
-            server.getLogger().log(Level.INFO, String.format(
-                "While loading %s (%s) renamed data folder: `%s' to `%s'",
-                description.getFullName(),
-                file,
-                oldDataFolder,
-                dataFolder
-            ));
+            server.getLogger().log(Level.INFO, String.format("While loading %s (%s) renamed data folder: `%s' to `%s'", description.getFullName(), file, oldDataFolder, dataFolder));
         }
 
-        if (dataFolder.exists() && !dataFolder.isDirectory()) {
-            throw new InvalidPluginException(String.format(
-                "Projected datafolder: `%s' for %s (%s) exists and is not a directory",
-                dataFolder,
-                description.getFullName(),
-                file
-            ));
-        }
+        if (dataFolder.exists() && !dataFolder.isDirectory())
+            throw new InvalidPluginException(String.format("Projected datafolder: `%s' for %s (%s) exists and is not a directory", dataFolder, description.getFullName(), file));
 
-        for (final String pluginName : description.getDepend()) {
-            Plugin current = server.getPluginManager().getPlugin(pluginName);
-
-            if (current == null) {
+        for (final String pluginName : description.getDepend())
+            if (server.getPluginManager().getPlugin(pluginName) == null)
                 throw new UnknownDependencyException(pluginName);
-            }
-        }
 
         server.getUnsafe().checkSupported(description);
 
@@ -152,10 +132,8 @@ public final class JavaPluginLoader implements PluginLoader {
         try {
             jar = new JarFile(file);
             JarEntry entry = jar.getJarEntry("plugin.yml");
-
-            if (entry == null) {
+            if (entry == null)
                 throw new InvalidDescriptionException(new FileNotFoundException("Jar does not contain plugin.yml"));
-            }
 
             stream = jar.getInputStream(entry);
 
@@ -163,20 +141,18 @@ public final class JavaPluginLoader implements PluginLoader {
 
         } catch (IOException ex) {
             throw new InvalidDescriptionException(ex);
-        } catch (/*YAML*/Exception ex) {
+        } catch (YAMLException ex) {
             throw new InvalidDescriptionException(ex);
         } finally {
             if (jar != null) {
                 try {
                     jar.close();
-                } catch (IOException e) {
-                }
+                } catch (IOException e) {}
             }
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (IOException e) {
-                }
+                } catch (IOException e) {}
             }
         }
     }
@@ -186,7 +162,7 @@ public final class JavaPluginLoader implements PluginLoader {
         return fileFilters.clone();
     }
 
-    Class<?> getClassByName(final String name) {
+    static Class<?> getClassByName(final String name) {
         Class<?> cachedClass = classes.get(name);
 
         if (cachedClass != null) {
@@ -196,9 +172,29 @@ public final class JavaPluginLoader implements PluginLoader {
                 try {
                     cachedClass = loader.findClass(name, false);
                 } catch (ClassNotFoundException cnfe) {}
-                if (cachedClass != null) {
+                if (cachedClass != null)
                     return cachedClass;
-                }
+            }
+        }
+        try {
+            return Class.forName(name); // Bukkit4Fabric: Check the system class loader
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
+    static Class<?> getClassByName2(final String name) {
+        Class<?> cachedClass = classes.get(name);
+
+        if (cachedClass != null) {
+            return cachedClass;
+        } else {
+            for (PluginClassLoader loader : loaders) {
+                try {
+                    cachedClass = loader.findClass(name, false);
+                } catch (ClassNotFoundException cnfe) {}
+                if (cachedClass != null)
+                    return cachedClass;
             }
         }
         return null;
@@ -208,10 +204,8 @@ public final class JavaPluginLoader implements PluginLoader {
         if (!classes.containsKey(name)) {
             classes.put(name, clazz);
 
-            if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
-                Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
-                ConfigurationSerialization.registerClass(serializable);
-            }
+            if (ConfigurationSerializable.class.isAssignableFrom(clazz))
+                ConfigurationSerialization.registerClass(clazz.asSubclass(ConfigurationSerializable.class));
         }
     }
 
@@ -224,8 +218,7 @@ public final class JavaPluginLoader implements PluginLoader {
                 ConfigurationSerialization.unregisterClass(serializable);
             }
         } catch (NullPointerException ex) {
-            // Boggle!
-            // (Native methods throwing NPEs is not fun when you can't stop it before-hand)
+            // Boggle! (Native methods throwing NPEs is not fun when you can't stop it before-hand)
         }
     }
 
@@ -241,12 +234,8 @@ public final class JavaPluginLoader implements PluginLoader {
             Method[] publicMethods = listener.getClass().getMethods();
             Method[] privateMethods = listener.getClass().getDeclaredMethods();
             methods = new HashSet<Method>(publicMethods.length + privateMethods.length, 1.0f);
-            for (Method method : publicMethods) {
-                methods.add(method);
-            }
-            for (Method method : privateMethods) {
-                methods.add(method);
-            }
+            for (Method method : publicMethods)  methods.add(method);
+            for (Method method : privateMethods) methods.add(method);
         } catch (NoClassDefFoundError e) {
             plugin.getLogger().severe("Plugin " + plugin.getDescription().getFullName() + " has failed to register events for " + listener.getClass() + " because " + e.getMessage() + " does not exist.");
             return ret;
@@ -255,11 +244,10 @@ public final class JavaPluginLoader implements PluginLoader {
         for (final Method method : methods) {
             final EventHandler eh = method.getAnnotation(EventHandler.class);
             if (eh == null) continue;
-            // Do not register bridge or synthetic methods to avoid event duplication
-            // Fixes SPIGOT-893
-            if (method.isBridge() || method.isSynthetic()) {
+            // Do not register bridge or synthetic methods to avoid event duplication Fixes SPIGOT-893
+            if (method.isBridge() || method.isSynthetic())
                 continue;
-            }
+
             final Class<?> checkClass;
             if (method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
                 plugin.getLogger().severe(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
@@ -275,19 +263,15 @@ public final class JavaPluginLoader implements PluginLoader {
 
             for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
                 // This loop checks for extending deprecated events
-                if (clazz.getAnnotation(Deprecated.class) != null) {
+                if (clazz.getAnnotation(Deprecated.class) != null && !clazz.getName().equalsIgnoreCase("org.bukkit.event.entity.EntityCreatePortalEvent")) {
                     Warning warning = clazz.getAnnotation(Warning.class);
                     WarningState warningState = server.getWarningState();
-                    if (!warningState.printFor(warning)) {
+                    if (!warningState.printFor(warning))
                         break;
-                    }
                     plugin.getLogger().log(
                             Level.WARNING,
-                            String.format(
-                                    "\"%s\" has registered a listener for %s on method \"%s\", but the event is Deprecated. \"%s\"; please notify the authors %s.",
-                                    plugin.getDescription().getFullName(),
-                                    clazz.getName(),
-                                    method.toGenericString(),
+                            String.format("\"%s\" has registered a listener for %s on method \"%s\", but the event is Deprecated. \"%s\"; please notify the authors %s.",
+                                    plugin.getDescription().getFullName(), clazz.getName(), method.toGenericString(),
                                     (warning != null && warning.reason().length() != 0) ? warning.reason() : "Server performance will be affected",
                                     Arrays.toString(plugin.getDescription().getAuthors().toArray())),
                             warningState == WarningState.ON ? new AuthorNagException(null) : null);
@@ -299,9 +283,8 @@ public final class JavaPluginLoader implements PluginLoader {
                 @Override
                 public void execute(Listener listener, Event event) throws EventException {
                     try {
-                        if (!eventClass.isAssignableFrom(event.getClass())) {
+                        if (!eventClass.isAssignableFrom(event.getClass()))
                             return;
-                        }
                         method.invoke(listener, event);
                     } catch (InvocationTargetException ex) {
                         throw new EventException(ex.getCause());
@@ -310,11 +293,8 @@ public final class JavaPluginLoader implements PluginLoader {
                     }
                 }
             };
-            if (useTimings) {
-                eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
-            } else {
-                eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
-            }
+            eventSet.add(useTimings ? new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()) :
+                new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
         }
         return ret;
     }
@@ -325,9 +305,7 @@ public final class JavaPluginLoader implements PluginLoader {
 
         if (!plugin.isEnabled()) {
             plugin.getLogger().info("Enabling " + plugin.getDescription().getFullName());
-
             JavaPlugin jPlugin = (JavaPlugin) plugin;
-
             PluginClassLoader pluginLoader = (PluginClassLoader) jPlugin.getClassLoader();
 
             if (!loaders.contains(pluginLoader)) {
@@ -341,8 +319,7 @@ public final class JavaPluginLoader implements PluginLoader {
                 server.getLogger().log(Level.SEVERE, "Error occurred while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
 
-            // Perhaps abort here, rather than continue going, but as it stands,
-            // an abort is not possible the way it's currently written
+            // Perhaps abort here, rather than continue going, but as it stands, an abort is not possible the way it's currently written
             server.getPluginManager().callEvent(new PluginEnableEvent(plugin));
         }
     }
@@ -352,9 +329,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Validate.isTrue(plugin instanceof JavaPlugin, "Plugin is not associated with this PluginLoader");
 
         if (plugin.isEnabled()) {
-            String message = String.format("Disabling %s", plugin.getDescription().getFullName());
-            plugin.getLogger().info(message);
-
+            plugin.getLogger().info("Disabling " + plugin.getDescription().getFullName());
             server.getPluginManager().callEvent(new PluginDisableEvent(plugin));
 
             JavaPlugin jPlugin = (JavaPlugin) plugin;
@@ -369,13 +344,10 @@ public final class JavaPluginLoader implements PluginLoader {
             if (cloader instanceof PluginClassLoader) {
                 PluginClassLoader loader = (PluginClassLoader) cloader;
                 loaders.remove(loader);
-
-                Set<String> names = loader.getClasses();
-
-                for (String name : names) {
+                for (String name : loader.getClasses())
                     removeClass(name);
-                }
             }
         }
     }
+
 }

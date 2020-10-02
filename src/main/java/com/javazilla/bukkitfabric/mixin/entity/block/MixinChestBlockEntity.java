@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
@@ -90,7 +91,7 @@ public class MixinChestBlockEntity implements IMixinInventory {
             if (((ChestBlockEntity)(Object)this).getCachedState().getBlock() == Blocks.TRAPPED_CHEST) {
                 int newPower = Math.max(0, Math.min(15, this.viewerCount));
                 if (oldPower != newPower)
-                    org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(((ChestBlockEntity)(Object)this).world, ((ChestBlockEntity)(Object)this).pos, oldPower, newPower);
+                    BukkitEventFactory.callRedstoneChange(((ChestBlockEntity)(Object)this).world, ((ChestBlockEntity)(Object)this).pos, oldPower, newPower);
             }
             // CraftBukkit end
             ((ChestBlockEntity)(Object)this).onInvOpenOrClose();

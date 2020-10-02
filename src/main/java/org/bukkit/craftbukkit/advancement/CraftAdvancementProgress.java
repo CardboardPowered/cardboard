@@ -56,4 +56,5 @@ public class CraftAdvancementProgress implements AdvancementProgress {
     public Collection<String> getAwardedCriteria() {
         return Collections.unmodifiableCollection(Lists.newArrayList(handle.getObtainedCriteria()));
     }
+
 }

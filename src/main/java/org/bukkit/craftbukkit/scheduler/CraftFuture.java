@@ -60,9 +60,8 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
                     throw new TimeoutException();
                 }
             }
-            if (period == CraftTask.CANCEL) {
+            if (period == CraftTask.CANCEL)
                 throw new CancellationException();
-            }
             if (period == CraftTask.DONE_FOR_FUTURE) {
                 if (exception == null)
                     return value;

@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.craftbukkit.inventory.CraftContainer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
@@ -41,6 +40,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -273,7 +273,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Preconditions.checkArgument(windowType != null, "Unknown windowType");
         ScreenHandler container = new CraftContainer(inventory, this.getHandle(), ((IMixinServerEntityPlayer)player).nextContainerCounter());
 
-        container = CraftEventFactory.callInventoryOpenEvent(player, container);
+        container = BukkitEventFactory.callInventoryOpenEvent(player, container);
         if (container == null) return;
 
         String title = ((IMixinScreenHandler)container).getBukkitView().getTitle();
@@ -298,7 +298,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         } else container = new CraftContainer(inventory, this.getHandle(), ((IMixinServerEntityPlayer)player).nextContainerCounter());
 
         // Trigger an INVENTORY_OPEN event
-        container = CraftEventFactory.callInventoryOpenEvent(player, container);
+        container = BukkitEventFactory.callInventoryOpenEvent(player, container);
         if (container == null)
             return;
 

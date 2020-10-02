@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.tag;
+package com.javazilla.bukkitfabric.impl.tag;
 
 import java.util.Collections;
 import java.util.Set;
@@ -24,4 +24,5 @@ public class CraftBlockTag extends CraftTag<Block, Material> {
     public Set<Material> getValues() {
         return Collections.unmodifiableSet(getHandle().values().stream().map((block) -> CraftMagicNumbers.getMaterial(block)).collect(Collectors.toSet()));
     }
+
 }

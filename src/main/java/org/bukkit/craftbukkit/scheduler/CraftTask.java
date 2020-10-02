@@ -50,9 +50,7 @@ class CraftTask implements BukkitTask, Runnable {
             // Head or Future task
             this.rTask = null;
             this.cTask = null;
-        } else {
-            throw new AssertionError("Illegal task class " + task);
-        }
+        } else throw new AssertionError("Illegal task class " + task);
         this.id = id;
         this.period = period;
     }
@@ -74,11 +72,8 @@ class CraftTask implements BukkitTask, Runnable {
 
     @Override
     public void run() {
-        if (rTask != null) {
-            rTask.run();
-        } else {
-            cTask.accept(this);
-        }
+        if (rTask != null) rTask.run();
+        else cTask.accept(this);
     }
 
     long getPeriod() {
@@ -111,7 +106,7 @@ class CraftTask implements BukkitTask, Runnable {
 
     @Override
     public boolean isCancelled() {
-        return (period == CraftTask.CANCEL);
+        return period == CraftTask.CANCEL;
     }
 
     @Override
@@ -128,4 +123,5 @@ class CraftTask implements BukkitTask, Runnable {
         setPeriod(CraftTask.CANCEL);
         return true;
     }
+
 }

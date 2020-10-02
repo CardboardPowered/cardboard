@@ -12,10 +12,13 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
+
 /**
  * This file is imported from Commodore.
  *
  * @author md_5
+ * @author Bukkit for Fabric Mod
  */
 // CHECKSTYLE:OFF
 public class Commodore {
@@ -33,19 +36,19 @@ public class Commodore {
             "org/bukkit/inventory/ItemStack (I)V setTypeId"
     ) );
 
-    public static byte[] convert(byte[] b, final boolean modern) {
+    public static byte[] convert(byte[] b, final boolean modern, String name) {
         ClassReader cr = new ClassReader( b );
         ClassWriter cw = new ClassWriter( cr, 0 );
 
         cr.accept( new ClassVisitor( Opcodes.ASM7, cw ) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                return new MethodVisitor( api, super.visitMethod( access, name, desc, signature, exceptions ) ) {
+                return new ReflectionMethodVisitor( api, super.visitMethod( access, name, desc, signature, exceptions ), name ) {
 
                     @Override
                     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-                        if ( modern ) {
-                            if ( owner.equals( "org/bukkit/Material" ) ) {
+                        if (modern) {
+                            if (owner.equals( "org/bukkit/Material")) {
                                 switch ( name ) {
                                     case "CACTUS_GREEN":
                                         name = "GREEN_DYE";
@@ -114,6 +117,11 @@ public class Commodore {
 
                     @Override
                     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+                        /*if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;")) {
+                            super.visitMethodInsn( opcode, "org/bukkit/craftbukkit/util/FabricNms", name, desc, itf );
+                            return;
+                        }*/
+
                         // SPIGOT-4496
                         if ( owner.equals( "org/bukkit/map/MapView" ) && name.equals( "getId" ) && desc.equals( "()S" ) ) {
                             // Should be same size on stack so just call other method
@@ -127,15 +135,14 @@ public class Commodore {
                             return;
                         }
 
-                        if ( modern ) {
-                            if ( owner.equals( "org/bukkit/Material" ) ) {
-                                switch ( name )
-                                {
+                        if (modern) {
+                            if (owner.equals( "org/bukkit/Material")) {
+                                switch (name) {
                                     case "values":
-                                        super.visitMethodInsn( opcode, "org/bukkit/craftbukkit/util/CraftLegacy", "modern_" + name, desc, itf );
+                                        super.visitMethodInsn(opcode, "org/bukkit/craftbukkit/util/CraftLegacy", "modern_" + name, desc, itf );
                                         return;
                                     case "ordinal":
-                                        super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacy", "modern_" + name, "(Lorg/bukkit/Material;)I", false );
+                                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacy", "modern_" + name, "(Lorg/bukkit/Material;)I", false );
                                         return;
                                 }
                             }

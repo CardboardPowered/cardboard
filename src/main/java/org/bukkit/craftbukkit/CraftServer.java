@@ -102,8 +102,6 @@ import org.bukkit.craftbukkit.metadata.EntityMetadataStore;
 import org.bukkit.craftbukkit.metadata.PlayerMetadataStore;
 import org.bukkit.craftbukkit.metadata.WorldMetadataStore;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
-import org.bukkit.craftbukkit.tag.CraftBlockTag;
-import org.bukkit.craftbukkit.tag.CraftItemTag;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
@@ -160,8 +158,12 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.tag.CraftBlockTag;
+import com.javazilla.bukkitfabric.impl.tag.CraftItemTag;
 import com.javazilla.bukkitfabric.impl.DotDatFilenameFilter;
 import com.javazilla.bukkitfabric.impl.IconCacheImpl;
+import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
+import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
@@ -223,7 +225,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
-    public final String bukkitVersion = "1.16.2-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.16.3-R0.1-SNAPSHOT";
     public final String serverVersion;
 
     private final Logger logger = BukkitLogger.getLogger();
@@ -273,9 +275,8 @@ public class CraftServer implements Server {
         icon = new IconCacheImpl(null);
         try {
             final File file = new File(new File("."), "server-icon.png");
-            if (file.isFile()) {
+            if (file.isFile())
                 icon = loadServerIcon0(file);
-            }
         } catch (Exception ex) {
             getLogger().log(Level.WARNING, "Couldn't load server icon", ex);
         }
@@ -462,9 +463,7 @@ public class CraftServer implements Server {
                 toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingRecipe) recipe);
             } else if (recipe instanceof ComplexRecipe) {
                 throw new UnsupportedOperationException("Cannot add custom complex recipe");
-            } else {
-                return false;
-            }
+            } else return false;
         }
         toAdd.addToCraftingManager();
         return true;
@@ -782,11 +781,11 @@ public class CraftServer implements Server {
     public BanList getBanList(Type type) {
         switch (type) {
             case IP:
-                return new CraftIpBanList();
+                return new IpBanList(server.playerManager.getIpBanList());
             case NAME:
-                return new CraftProfileBanList();
+            default:
+                return new ProfileBanList(server.playerManager.getUserBanList());
         }
-        return null;
     }
 
     @Override

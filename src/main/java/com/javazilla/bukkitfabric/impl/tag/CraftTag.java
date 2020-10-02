@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.tag;
+package com.javazilla.bukkitfabric.impl.tag;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;

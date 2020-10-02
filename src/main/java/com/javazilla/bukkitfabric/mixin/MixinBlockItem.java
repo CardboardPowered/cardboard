@@ -29,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.advancement.criterion.Criteria;
@@ -98,7 +99,7 @@ public class MixinBlockItem {
                         block.onPlaced(world, blockposition, iblockdata1, entityhuman, itemstack);
 
                         if (blockstate != null) {
-                            org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent((ServerWorld) world, entityhuman, blockactioncontext1.getHand(), blockstate, blockposition.getX(), blockposition.getY(), blockposition.getZ());
+                            org.bukkit.event.block.BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld) world, entityhuman, blockactioncontext1.getHand(), blockstate, blockposition.getX(), blockposition.getY(), blockposition.getZ());
                             if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
                                 blockstate.update(true, false);
                                 ci.setReturnValue(ActionResult.FAIL);
