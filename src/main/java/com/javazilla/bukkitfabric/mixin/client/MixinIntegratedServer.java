@@ -6,23 +6,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
-import java.util.function.BooleanSupplier;
-
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.plugin.PluginLoadOrder;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableList;
-import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -34,7 +28,6 @@ import com.mojang.serialization.Lifecycle;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.DataCommandStorage;
-import net.minecraft.datafixer.Schemas;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resource.ResourcePackManager;
@@ -42,8 +35,6 @@ import net.minecraft.resource.ServerResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
-import net.minecraft.server.dedicated.DedicatedPlayerManager;
-import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.util.UserCache;
 import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -71,7 +62,6 @@ import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelStorage.Session;
-import net.minecraft.server.dedicated.PendingServerCommand;
 import net.minecraft.server.dedicated.ServerPropertiesLoader;
 import net.minecraft.server.integrated.IntegratedPlayerManager;
 import net.minecraft.server.integrated.IntegratedServer;
@@ -80,33 +70,21 @@ import net.minecraft.server.world.ServerWorld;
 @Mixin(IntegratedServer.class)
 public abstract class MixinIntegratedServer extends MixinMinecraftServer {
 
-    //public MinecraftDedicatedServer dedicated;
-
     public MixinIntegratedServer(String string) {
         super(string);
     }
 
     @Inject(at = @At(value = "TAIL"), method = "<init>", cancellable = true)
     private void init(Thread serverThread, MinecraftClient client, Impl registryManager, Session session, ResourcePackManager resourcePackManager, ServerResourceManager serverResourceManager, SaveProperties saveProperties, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, UserCache userCache, WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory, CallbackInfo ci) {
-        System.out.println("TEST TEST TEST TEST TEST TEST TEST TEST TEST");
         Path path = Paths.get("server.properties", new String[0]);
         ServerPropertiesLoader serverPropertiesLoader = new ServerPropertiesLoader(registryManager, path);
         serverPropertiesLoader.store();
-        //dedicated = new MinecraftDedicatedServer(serverThread, registryManager, session, resourcePackManager, serverResourceManager, saveProperties, serverPropertiesLoader, Schemas.getFixer(), minecraftSessionService, gameProfileRepository, userCache, worldGenerationProgressListenerFactory);
         CraftServer.server = (IntegratedServer)(Object)this;
-
-        //dedicated.createGui();
 
         ci.cancel();
     }
 
-
-    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
-    private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
-        //Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread((IntegratedServer)(Object)this));
-    }
-
-    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z", cancellable = true) // TODO keep ordinal updated
+    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z", cancellable = true)
     private void init(CallbackInfoReturnable<Boolean> ci) {
         BukkitLogger.getLogger().info("  ____          _     _     _  _    ");
         BukkitLogger.getLogger().info(" |  _ \\        | |   | |   (_)| |   ");
@@ -130,7 +108,6 @@ public abstract class MixinIntegratedServer extends MixinMinecraftServer {
         s.enablePlugins(PluginLoadOrder.STARTUP);
         
         Bukkit.getLogger().info("");
-        //ci.cancel();
     }
 
     /**
@@ -140,8 +117,7 @@ public abstract class MixinIntegratedServer extends MixinMinecraftServer {
     @SuppressWarnings({ "deprecation", "resource", "unchecked", "rawtypes", "unused" })
     @Override
     public void loadWorld() {
-        System.out.println("TEST TEST@ TEST@ TEST@");
-        int worldCount = 3;
+        int worldCount = 1;
 
         for (int worldId = 0; worldId < worldCount; ++worldId) {
             System.out.println("A");
@@ -163,52 +139,42 @@ public abstract class MixinIntegratedServer extends MixinMinecraftServer {
                     dimensionKey = DimensionOptions.END;
                 } else continue;
             }
-            System.out.println("B");
 
             String worldType = org.bukkit.World.Environment.getEnvironment(dimension).toString().toLowerCase();
             String s = this.session.getDirectoryName();
             String name = (dimension == 0) ? s : s + "_" + worldType;
             LevelStorage.Session worldSession;
-            System.out.println("C");
+
             if (dimension == 0) {
                 worldSession = this.session;
             } else {
                 String dim = "DIM" + dimension;
 
-                System.out.println("D");
                 try {
                     worldSession = LevelStorage.create(CraftServer.INSTANCE.getWorldContainer().toPath()).createSession(name);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                System.out.println("E");
                 MinecraftServer.convertLevel(worldSession); // Run conversion now
-                System.out.println("F");
             }
 
             org.bukkit.generator.ChunkGenerator gen = CraftServer.INSTANCE.getGenerator(name);
 
             DynamicRegistryManager.Impl iregistrycustom_dimension = this.registryManager;
-            System.out.println("G");
             RegistryOps<Tag> registryreadops = RegistryOps.of((DynamicOps) NbtOps.INSTANCE, this.serverResourceManager.getResourceManager(), iregistrycustom_dimension);
             worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps) registryreadops, CraftServer.method_29735(CraftServer.server.dataPackManager));
-            System.out.println("H");
             if (worlddata == null) {
-                System.out.println("I");
                 LevelInfo worldsettings;
                 GeneratorOptions generatorsettings;
 
                 SaveProperties dedicatedserverproperties = ((MinecraftServer)(Object) this).getSaveProperties();
-                System.out.println("J");
 
                 worldsettings = new LevelInfo(dedicatedserverproperties.getLevelName(), dedicatedserverproperties.getGameMode(), dedicatedserverproperties.isHardcore(), dedicatedserverproperties.getDifficulty(), false, new GameRules(), CraftServer.method_29735(CraftServer.server.dataPackManager));
                 generatorsettings = dedicatedserverproperties.getGeneratorOptions();
-                System.out.println("K");
 
                 worlddata = new LevelProperties(worldsettings, generatorsettings, Lifecycle.stable());
-                System.out.println("L");
             }
-            ((IMixinLevelProperties)worlddata).checkName(name); // CraftBukkit - Migration did not rewrite the level.dat; This forces 1.8 to take the last loaded world as respawn (in this case the end)
+            ((IMixinLevelProperties)worlddata).checkName(name);
             System.out.println("M");
             ServerWorldProperties iworlddataserver = worlddata;
             GeneratorOptions generatorsettings = worlddata.getGeneratorOptions();

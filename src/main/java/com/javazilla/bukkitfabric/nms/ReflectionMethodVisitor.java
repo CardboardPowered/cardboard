@@ -43,10 +43,10 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             return;
         }
 
-        if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;")) {
-            super.visitMethodInsn( opcode, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getClassForName", desc, itf );
-            return;
-        }
+        //if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;")) {
+        //    super.visitMethodInsn( opcode, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getClassForName", desc, itf );
+        //    return;
+        //}
 
         if (owner.equalsIgnoreCase("java/lang/Package"))
             System.out.println(owner + "," + name + "," + desc);

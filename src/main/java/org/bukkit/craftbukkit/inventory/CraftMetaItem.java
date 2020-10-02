@@ -41,7 +41,6 @@ import org.bukkit.craftbukkit.Overridden;
 import org.bukkit.craftbukkit.attribute.CraftAttributeInstance;
 import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific;
 import org.bukkit.craftbukkit.inventory.tags.DeprecatedCustomTagContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
@@ -633,19 +632,18 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
             if (entry.getKey() == null || entry.getValue() == null)
                 continue;
-
             net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = CraftAttributeInstance.convert(entry.getValue());
             CompoundTag sub = nmsModifier.toTag();
             if (sub.isEmpty())
                 continue;
 
-            String name = CraftAttributeMap.toMinecraft(entry.getKey());
+            String name = entry.getKey().getKey().toString();
             if (name == null || name.isEmpty())
                 continue;
 
             sub.putString(ATTRIBUTES_IDENTIFIER.NBT, name); // Attribute Name
             if (entry.getValue().getSlot() != null) {
-                EquipmentSlot slot = CraftEquipmentSlot.getNMS(entry.getValue().getSlot());
+                net.minecraft.entity.EquipmentSlot slot = CraftEquipmentSlot.getNMS(entry.getValue().getSlot());
                 if (slot != null)
                     sub.putString(ATTRIBUTES_SLOT.NBT, slot.getName());
             }

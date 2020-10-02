@@ -30,8 +30,6 @@ import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.advancement.CraftAdvancement;
-import org.bukkit.craftbukkit.advancement.CraftAdvancementProgress;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -46,6 +44,8 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
+import com.javazilla.bukkitfabric.impl.advancements.AdvancementProgressImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinGameMessagePacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -324,11 +324,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public org.bukkit.advancement.AdvancementProgress getAdvancementProgress(org.bukkit.advancement.Advancement advancement) {
         Preconditions.checkArgument(advancement != null, "advancement");
 
-        CraftAdvancement craft = (CraftAdvancement) advancement;
+        AdvancementImpl craft = (AdvancementImpl) advancement;
         PlayerAdvancementTracker data = getHandle().getAdvancementTracker();
         net.minecraft.advancement.AdvancementProgress progress = data.getProgress(craft.getHandle());
 
-        return new CraftAdvancementProgress(craft, data, progress);
+        return new AdvancementProgressImpl(craft, data, progress);
     }
 
     @Override

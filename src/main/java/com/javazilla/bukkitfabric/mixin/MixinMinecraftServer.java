@@ -18,7 +18,7 @@
  */
 package com.javazilla.bukkitfabric.mixin;
 
-import java.io.File; 
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +52,6 @@ import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.minecraft.block.Block;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -108,7 +107,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
     public MixinMinecraftServer(String string) {
         super(string);
-        // TODO Auto-generated constructor stub
     }
 
     @Shadow @Final public DynamicRegistryManager.Impl registryManager;
@@ -132,6 +130,11 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
     public void setDataCommandStorage(DataCommandStorage data) {
         this.dataCommandStorage = data;
+    }
+
+    @Override
+    public LevelStorage.Session getSessionBF() {
+        return session;
     }
 
     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();

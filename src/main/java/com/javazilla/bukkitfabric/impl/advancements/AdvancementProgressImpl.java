@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.advancement;
+package com.javazilla.bukkitfabric.impl.advancements;
 
 import com.google.common.collect.Lists;
 import java.util.Collection;
@@ -9,13 +9,13 @@ import net.minecraft.advancement.criterion.CriterionProgress;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 
-public class CraftAdvancementProgress implements AdvancementProgress {
+public class AdvancementProgressImpl implements AdvancementProgress {
 
-    private final CraftAdvancement advancement;
+    private final AdvancementImpl advancement;
     private final PlayerAdvancementTracker playerData;
     private final net.minecraft.advancement.AdvancementProgress handle;
 
-    public CraftAdvancementProgress(CraftAdvancement advancement, PlayerAdvancementTracker player, net.minecraft.advancement.AdvancementProgress handle) {
+    public AdvancementProgressImpl(AdvancementImpl advancement, PlayerAdvancementTracker player, net.minecraft.advancement.AdvancementProgress handle) {
         this.advancement = advancement;
         this.playerData = player;
         this.handle = handle;

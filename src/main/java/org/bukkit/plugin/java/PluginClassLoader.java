@@ -167,6 +167,7 @@ public class PluginClassLoader extends URLClassLoader {
                 if (result != null)
                     loader.setClass(name, result);
 
+                if (result != null)
                 classes.put(name, result);
             }
         }

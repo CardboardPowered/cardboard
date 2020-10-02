@@ -941,7 +941,6 @@ public class CraftServer implements Server {
 
     @Override
     public OfflinePlayer getOfflinePlayer(UUID id) {
-        System.out.println("OFFLINE UUID: " + id.toString());
         OfflinePlayer result = getPlayer(id);
         if (result == null) {
             result = offlinePlayers.get(id);
@@ -1187,7 +1186,7 @@ public class CraftServer implements Server {
 
     @Override
     public File getWorldContainer() {
-        return new File(".");
+        return ((IMixinMinecraftServer)this.getServer()).getSessionBF().getWorldDirectory(net.minecraft.world.World.OVERWORLD).getParentFile();
     }
 
     @Override

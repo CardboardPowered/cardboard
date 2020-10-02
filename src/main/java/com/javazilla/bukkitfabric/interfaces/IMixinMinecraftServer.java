@@ -33,6 +33,7 @@ import net.minecraft.world.SaveProperties;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.ServerWorldProperties;
+import net.minecraft.world.level.storage.LevelStorage.Session;
 
 public interface IMixinMinecraftServer {
 
@@ -55,5 +56,7 @@ public interface IMixinMinecraftServer {
     public void initWorld(ServerWorld worldserver, ServerWorldProperties iworlddataserver, SaveProperties saveData, GeneratorOptions generatorsettings);
 
     public WorldSaveHandler getSaveHandler_BF();
+
+    public Session getSessionBF();
 
 }

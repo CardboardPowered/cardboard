@@ -47,8 +47,7 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public void addModifier(AttributeModifier modifier) {
-        // FIXME BROKEN!!!
-        //handle.addModifier(convert(modifier));
+        handle.addPersistentModifier(convert(modifier));
     }
 
     @Override

@@ -5,7 +5,7 @@ import static org.bukkit.craftbukkit.CraftServer.server;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -67,7 +67,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     @Shadow
     public abstract void sendPacket(Packet<?> packet);
 
-    private static AtomicInteger chatSpamField = new AtomicInteger();
+    private volatile int messageCooldownBukkit;
+    private static final AtomicIntegerFieldUpdater<ServerPlayNetworkHandler> chatSpamField = AtomicIntegerFieldUpdater.newUpdater(ServerPlayNetworkHandler.class, "messageCooldownBukkit");
 
     @Shadow
     public int teleportRequestTick;
@@ -225,7 +226,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 this.sendPacket(new GameMessageS2CPacket(chatmessage, MessageType.CHAT, player.getUuid()));
             } else this.chat(s, true);
 
-            if (chatSpamField.addAndGet(20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
+            if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
                 if (!isSync) {
                     Waitable<?> waitable = new WaitableImpl(() -> get().disconnect(new TranslatableText("disconnect.spam", new Object[0])));
 
@@ -253,11 +254,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         float f1 = location.getPitch();
         Set<PlayerPositionLookS2CPacket.Flag> set = Collections.emptySet();
 
-        if (Float.isNaN(f))
-            f = 0;
-
-        if (Float.isNaN(f1))
-            f1 = 0;
+        if (Float.isNaN(f)) f = 0;
+        if (Float.isNaN(f1)) f1 = 0;
 
         double d3 = set.contains(PlayerPositionLookS2CPacket.Flag.X) ? this.player.getX() : 0.0D;
         double d4 = set.contains(PlayerPositionLookS2CPacket.Flag.Y) ? this.player.getY() : 0.0D;
@@ -322,6 +320,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             System.arraycopy(org.bukkit.craftbukkit.block.CraftSign.sanitizeLines(event.getLines()), 0, ((IMixinSignBlockEntity)tileentitysign).getTextBF(), 0, 4);
             tileentitysign.editable = false;
          }
+    }
+
+    @Inject(at = @At("TAIL"), method = "tick")
+    public void decreaseChatSpamField(CallbackInfo ci) {
+        for (int spam; (spam = this.messageCooldownBukkit) > 0 && !chatSpamField.compareAndSet((ServerPlayNetworkHandler)(Object)this, spam, spam - 1); );
     }
 
     private ServerPlayNetworkHandler get() {

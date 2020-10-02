@@ -1,9 +1,9 @@
 package com.javazilla.bukkitfabric.interfaces;
 
-import org.bukkit.craftbukkit.advancement.CraftAdvancement;
+import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
 
 public interface IMixinAdvancement {
 
-    public CraftAdvancement getBukkitAdvancement();
+    public AdvancementImpl getBukkitAdvancement();
 
 }
