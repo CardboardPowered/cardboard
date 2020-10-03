@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -93,6 +94,10 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         super(entity);
         this.nms = (net.minecraft.entity.LivingEntity) entity;
         // TODO Auto-generated constructor stub
+    }
+
+    public CraftLivingEntity(CraftServer server, net.minecraft.entity.Entity entity) {
+        this(entity);
     }
 
     @Override
