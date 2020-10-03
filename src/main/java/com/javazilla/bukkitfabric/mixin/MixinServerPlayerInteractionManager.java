@@ -33,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
 
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
@@ -61,7 +62,7 @@ import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
 @Mixin(ServerPlayerInteractionManager.class)
-public class MixinServerPlayerInteractionManager {
+public class MixinServerPlayerInteractionManager implements IMixinServerPlayerInteractionManager {
 
     @Shadow public ServerPlayerEntity player;
     @Shadow public ServerWorld world;
@@ -257,6 +258,26 @@ public class MixinServerPlayerInteractionManager {
 
     public boolean interactResult = false;
     public boolean firedInteract = false;
+
+    @Override
+    public boolean getFiredInteractBF() {
+        return firedInteract;
+    }
+
+    @Override
+    public void setFiredInteractBF(boolean b) {
+        this.firedInteract = b;
+    }
+
+    @Override
+    public boolean getOnteractResultBF() {
+        return interactResult;
+    }
+
+    @Override
+    public void setInteractResultBF(boolean b) {
+        this.interactResult = b;
+    }
 
     @Inject(at = @At("HEAD"), method = "interactBlock", cancellable = true)
     public void interactBlock(ServerPlayerEntity entityplayer, World world, ItemStack itemstack, Hand enumhand, BlockHitResult movingobjectpositionblock,

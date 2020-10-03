@@ -32,7 +32,6 @@ public class ReflectionRemapper {
         String name = pkage.getName();
         if (name.startsWith("org.bukkit.craftbukkit"))
             name = name.replace("org.bukkit.craftbukkit", "org.bukkit.craftbukkit." + NMS_VERSION);
-
         return name;
     }
 

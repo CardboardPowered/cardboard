@@ -17,8 +17,10 @@ import org.bukkit.craftbukkit.util.LazyPlayerSet;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.craftbukkit.util.WaitableImpl;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerKickEvent;
@@ -34,9 +36,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 
 import net.minecraft.block.entity.BlockEntity;
@@ -45,11 +49,14 @@ import net.minecraft.client.options.ChatVisibility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
@@ -62,11 +69,17 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.WorldView;
 
 @SuppressWarnings("deprecation")
@@ -439,68 +452,60 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                             if (d8 > -0.5D || d8 < 0.5D) d8 = 0.0D;
                             d9 = d6 - this.player.getZ();
                             d11 = d7 * d7 + d8 * d8 + d9 * d9;
-                            boolean flag1 = false;
-                            if (!this.player.isInTeleportationState() && !this.player.isSleeping() && !this.player.interactionManager.isCreative() && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR)
-                                flag1 = true;
 
                             this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
-                            if (!this.player.noClip && !this.player.isSleeping() && flag1) {
-                                this.requestTeleport(d0, d1, d2, f, f1);
-                            } else {
-                                // Bukkit - fire PlayerMoveEvent
-                                this.player.updatePositionAndAngles(prevX, prevY, prevZ, prevYaw, prevPitch);
 
-                                Player player = this.getPlayer();
-                                Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch);
-                                Location to = player.getLocation().clone();
+                            // Bukkit - fire PlayerMoveEvent
+                            this.player.updatePositionAndAngles(prevX, prevY, prevZ, prevYaw, prevPitch);
 
-                                to.setX(packetplayinflying.getX(to.getX()));
-                                to.setY(packetplayinflying.getY(to.getY()));
-                                to.setZ(packetplayinflying.getZ(to.getZ()));
-                                to.setYaw(packetplayinflying.getYaw(to.getYaw()));
-                                to.setPitch(packetplayinflying.getPitch(to.getPitch()));
+                            Player player = this.getPlayer();
+                            Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch);
+                            Location to = player.getLocation().clone();
 
-                                double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
-                                float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
+                            to.setX(packetplayinflying.getX(to.getX()));
+                            to.setY(packetplayinflying.getY(to.getY()));
+                            to.setZ(packetplayinflying.getZ(to.getZ()));
+                            to.setYaw(packetplayinflying.getYaw(to.getYaw()));
+                            to.setPitch(packetplayinflying.getPitch(to.getPitch()));
 
-                                if ((delta > 1f / 256 || deltaAngle > 10f)) {
-                                    this.lastPosX = to.getX();
-                                    this.lastPosY = to.getY();
-                                    this.lastPosZ = to.getZ();
-                                    this.lastYaw = to.getYaw();
-                                    this.lastPitch = to.getPitch();
+                            double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
+                            float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
 
-                                    if (from.getX() != Double.MAX_VALUE) {
-                                        Location oldTo = to.clone();
-                                        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-                                        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+                            if ((delta > 1f / 256 || deltaAngle > 10f)) {
+                                this.lastPosX = to.getX();
+                                this.lastPosY = to.getY();
+                                this.lastPosZ = to.getZ();
+                                this.lastYaw = to.getYaw();
+                                this.lastPitch = to.getPitch();
 
-                                        if (event.isCancelled()) {
-                                            teleport(from);
-                                            return;
-                                        }
+                                if (from.getX() != Double.MAX_VALUE) {
+                                    Location oldTo = to.clone();
+                                    PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+                                    CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
-                                        if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
-                                            ((IMixinServerEntityPlayer)this.player).getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                                            return;
-                                        }
-
-                                        if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
-                                            this.justTeleported = false;
-                                            return;
-                                        }
+                                    if (event.isCancelled()) {
+                                        teleport(from);
+                                        return;
+                                    }
+                                    if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
+                                        ((IMixinServerEntityPlayer)this.player).getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                                        return;
+                                    }
+                                    if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
+                                        this.justTeleported = false;
+                                        return;
                                     }
                                 }
-                                this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
-                                this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.abilities.allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.method_29780((Entity) this.player) && !this.player.isUsingRiptide();
-                                this.player.getServerWorld().getChunkManager().updateCameraPosition(this.player);
-                                this.player.handleFall(this.player.getY() - d3, packetplayinflying.isOnGround());
-                                if (flag) this.player.fallDistance = 0.0F;
-                                this.player.increaseTravelMotionStats(this.player.getX() - d0, this.player.getY() - d1, this.player.getZ() - d2);
-                                this.updatedX = this.player.getX();
-                                this.updatedY = this.player.getY();
-                                this.updatedZ = this.player.getZ();
                             }
+                            this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
+                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.abilities.allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.method_29780((Entity) this.player) && !this.player.isUsingRiptide();
+                            this.player.getServerWorld().getChunkManager().updateCameraPosition(this.player);
+                            this.player.handleFall(this.player.getY() - d3, packetplayinflying.isOnGround());
+                            if (flag) this.player.fallDistance = 0.0F;
+                            this.player.increaseTravelMotionStats(this.player.getX() - d0, this.player.getY() - d1, this.player.getZ() - d2);
+                            this.updatedX = this.player.getX();
+                            this.updatedY = this.player.getY();
+                            this.updatedZ = this.player.getZ();
                         }
                     }
                 }
@@ -513,5 +518,93 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Shadow
     private boolean method_29780(Entity entity) {return false;}
+
+    /**
+     * @author BukkitFabricMod
+     * @reason Events
+     */
+    @Overwrite
+    public void onHandSwing(HandSwingC2SPacket packetplayinarmanimation) {
+        NetworkThreadUtils.forceMainThread(packetplayinarmanimation, get(), this.player.getServerWorld());
+        this.player.updateLastActionTime();
+        float f1 = this.player.pitch;
+        float f2 = this.player.yaw;
+        double d0 = this.player.getX();
+        double d1 = this.player.getY() + (double) this.player.getStandingEyeHeight();
+        double d2 = this.player.getZ();
+        Vec3d vec3d = new Vec3d(d0, d1, d2);
+
+        float f3 = MathHelper.cos(-f2 * 0.017453292F - 3.1415927F);
+        float f4 = MathHelper.sin(-f2 * 0.017453292F - 3.1415927F);
+        float f5 = -MathHelper.cos(-f1 * 0.017453292F);
+        float f6 = MathHelper.sin(-f1 * 0.017453292F);
+        float f7 = f4 * f5;
+        float f8 = f3 * f5;
+        double d3 = player.interactionManager.getGameMode()== GameMode.CREATIVE ? 5.0D : 4.5D;
+        Vec3d vec3d1 = vec3d.add((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
+        HitResult movingobjectposition = ((ServerWorld)this.player.world).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
+
+        if (movingobjectposition == null || movingobjectposition.getType() != HitResult.Type.BLOCK)
+            BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_AIR, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
+
+        // Arm swing animation
+        PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) return;
+        this.player.swingHand(packetplayinarmanimation.getHand());
+    }
+
+    @Overwrite
+    public void onPlayerInteractItem(PlayerInteractItemC2SPacket packetplayinblockplace) {
+        NetworkThreadUtils.forceMainThread(packetplayinblockplace, get(), this.player.getServerWorld());
+        ServerWorld worldserver = this.player.getServerWorld();
+        Hand enumhand = packetplayinblockplace.getHand();
+        ItemStack itemstack = this.player.getStackInHand(enumhand);
+
+        this.player.updateLastActionTime();
+        if (!itemstack.isEmpty()) {
+            float f1 = this.player.pitch;
+            float f2 = this.player.yaw;
+            double d0 = this.player.getX();
+            double d1 = this.player.getY() + (double) this.player.getStandingEyeHeight();
+            double d2 = this.player.getZ();
+            Vec3d vec3d = new Vec3d(d0, d1, d2);
+
+            float f3 = MathHelper.cos(-f2 * 0.017453292F - 3.1415927F);
+            float f4 = MathHelper.sin(-f2 * 0.017453292F - 3.1415927F);
+            float f5 = -MathHelper.cos(-f1 * 0.017453292F);
+            float f6 = MathHelper.sin(-f1 * 0.017453292F);
+            float f7 = f4 * f5;
+            float f8 = f3 * f5;
+            double d3 = player.interactionManager.getGameMode()== GameMode.CREATIVE ? 5.0D : 4.5D;
+            Vec3d vec3d1 = vec3d.add((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
+            HitResult movingobjectposition = ((ServerWorld)this.player.world).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
+
+            boolean cancelled;
+            if (movingobjectposition == null || movingobjectposition.getType() != HitResult.Type.BLOCK) {
+                org.bukkit.event.player.PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.RIGHT_CLICK_AIR, itemstack, enumhand);
+                cancelled = event.useItemInHand() == org.bukkit.event.Event.Result.DENY;
+            } else {
+                if (((IMixinServerPlayerInteractionManager)player.interactionManager).getFiredInteractBF()) {
+                    ((IMixinServerPlayerInteractionManager)player.interactionManager).setFiredInteractBF(false);
+                    cancelled = ((IMixinServerPlayerInteractionManager)player.interactionManager).getOnteractResultBF();
+                } else {
+                    BlockHitResult movingobjectpositionblock = (BlockHitResult) movingobjectposition;
+                    org.bukkit.event.player.PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getSide(), itemstack, true, enumhand);
+                    cancelled = event.useItemInHand() == org.bukkit.event.Event.Result.DENY;
+                }
+            }
+
+            if (cancelled) {
+                ((Player)((IMixinServerEntityPlayer)this.player).getBukkitEntity()).updateInventory(); // SPIGOT-2524
+                return;
+            }
+            ActionResult enuminteractionresult = this.player.interactionManager.interactItem(this.player, worldserver, itemstack, enumhand);
+            if (enuminteractionresult.shouldSwingHand())
+                this.player.swingHand(enumhand, true);
+
+        }
+    }
 
 }

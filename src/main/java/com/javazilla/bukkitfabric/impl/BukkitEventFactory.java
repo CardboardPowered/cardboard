@@ -107,6 +107,12 @@ public class BukkitEventFactory {
         return event;
     }
 
+    public static PlayerInteractEvent callPlayerInteractEvent(ServerPlayerEntity who, Action action, ItemStack itemstack, Hand hand) {
+        if (action != Action.LEFT_CLICK_AIR && action != Action.RIGHT_CLICK_AIR)
+            throw new AssertionError(String.format("%s performing %s with %s", who, action, itemstack));
+        return callPlayerInteractEvent(who, action, null, Direction.SOUTH, itemstack, hand);
+    }
+
     public static PlayerInteractEvent callPlayerInteractEvent(ServerPlayerEntity who, Action action, BlockPos position, Direction direction, ItemStack itemstack, Hand hand) {
         return callPlayerInteractEvent(who, action, position, direction, itemstack, false, hand);
     }
