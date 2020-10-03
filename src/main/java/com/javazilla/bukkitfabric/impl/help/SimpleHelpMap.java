@@ -1,8 +1,5 @@
-package org.bukkit.craftbukkit.help;
+package com.javazilla.bukkitfabric.impl.help;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,8 +8,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.MultipleCommandAlias;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -26,9 +26,11 @@ import org.bukkit.help.HelpTopicComparator;
 import org.bukkit.help.HelpTopicFactory;
 import org.bukkit.help.IndexHelpTopic;
 
-/**
- * Standard implementation of {@link HelpMap} for CraftBukkit servers.
- */
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+
+@SuppressWarnings("rawtypes")
 public class SimpleHelpMap implements HelpMap {
 
     private HelpTopic defaultTopic;
@@ -46,11 +48,17 @@ public class SimpleHelpMap implements HelpMap {
 
         Predicate indexFilter = Predicates.not(Predicates.instanceOf(CommandAliasHelpTopic.class));
         if (!yaml.commandTopicsInMasterIndex())
-            indexFilter = Predicates.and(indexFilter, Predicates.not(new IsCommandTopicPredicate()));
+            indexFilter = Predicates.and(indexFilter, Predicates.not(new Predicate<HelpTopic>(){
+                @Override public boolean apply(HelpTopic topic){ return topic.getName().charAt(0) == '/'; }}));
 
         this.defaultTopic = new IndexHelpTopic("Index", null, null, Collections2.filter(helpTopics.values(), indexFilter), "Use /help [n] to get page n of help.");
 
-        registerHelpTopicFactory(MultipleCommandAlias.class, new MultipleCommandAliasHelpTopicFactory());
+        registerHelpTopicFactory(MultipleCommandAlias.class, new HelpTopicFactory<MultipleCommandAlias>() {
+            @Override
+            public HelpTopic createTopic(MultipleCommandAlias multipleCommandAlias) {
+                return new MultipleCommandAliasHelpTopic(multipleCommandAlias);
+            }
+        });
     }
 
     @Override
@@ -65,8 +73,7 @@ public class SimpleHelpMap implements HelpMap {
 
     @Override
     public synchronized void addTopic(HelpTopic topic) {
-        // Existing topics take priority
-        if (!helpTopics.containsKey(topic.getName()))
+        if (!helpTopics.containsKey(topic.getName())) // Existing topics take priority
             helpTopics.put(topic.getName(), topic);
     }
 
@@ -115,7 +122,7 @@ public class SimpleHelpMap implements HelpMap {
                 continue;
 
             // Register a topic
-            for (Class c : topicFactoryMap.keySet()) {
+            for (Class<?> c : topicFactoryMap.keySet()) {
                 if (c.isAssignableFrom(command.getClass())) {
                     HelpTopic t = topicFactoryMap.get(c).createTopic(command);
                     if (t != null) addTopic(t);
@@ -154,11 +161,11 @@ public class SimpleHelpMap implements HelpMap {
             addTopic(new IndexHelpTopic(entry.getKey(), "All commands for " + entry.getKey(), null, entry.getValue(), "Below is a list of all " + entry.getKey() + " commands:"));
 
         // Amend help topics from the help.yml file
-        for (HelpTopicAmendment amendment : yaml.getTopicAmendments()) {
-            if (helpTopics.containsKey(amendment.getTopicName())) {
-                helpTopics.get(amendment.getTopicName()).amendTopic(amendment.getShortText(), amendment.getFullText());
-                if (amendment.getPermission() != null)
-                    helpTopics.get(amendment.getTopicName()).amendCanSee(amendment.getPermission());
+        for (HelpYamlReader.HelpTopicAmendment amendment : yaml.getTopicAmendments()) {
+            if (helpTopics.containsKey(amendment.topicName)) {
+                helpTopics.get(amendment.topicName).amendTopic(amendment.shortText, amendment.fullText);
+                if (amendment.permission != null)
+                    helpTopics.get(amendment.topicName).amendCanSee(amendment.permission);
             }
         }
     }
@@ -188,6 +195,7 @@ public class SimpleHelpMap implements HelpMap {
                 (command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName()));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {
         if (!Command.class.isAssignableFrom(commandClass) && !CommandExecutor.class.isAssignableFrom(commandClass))
@@ -195,21 +203,36 @@ public class SimpleHelpMap implements HelpMap {
         topicFactoryMap.put(commandClass, factory);
     }
 
-    private class IsCommandTopicPredicate implements Predicate<HelpTopic> {
+    // Originally in separate class
+    public class CommandAliasHelpTopic extends HelpTopic {
+        private final String aliasFor;
+        private final HelpMap helpMap;
 
-        @Override
-        public boolean apply(HelpTopic topic) {
-            return topic.getName().charAt(0) == '/';
-        }
-    }
-
-    private class MultipleCommandAliasHelpTopicFactory implements HelpTopicFactory<MultipleCommandAlias> {
-
-        @Override
-        public HelpTopic createTopic(MultipleCommandAlias multipleCommandAlias) {
-            return new MultipleCommandAliasHelpTopic(multipleCommandAlias);
+        public CommandAliasHelpTopic(String alias, String aliasFor, HelpMap helpMap) {
+            this.aliasFor = aliasFor.startsWith("/") ? aliasFor : "/" + aliasFor;
+            this.helpMap = helpMap;
+            this.name = alias.startsWith("/") ? alias : "/" + alias;
+            this.shortText = ChatColor.YELLOW + "Alias for " + ChatColor.WHITE + this.aliasFor;
         }
 
+        @Override
+        public String getFullText(CommandSender forWho) {
+            StringBuilder sb = new StringBuilder(shortText);
+            HelpTopic aliasForTopic = helpMap.getHelpTopic(aliasFor);
+            if (aliasForTopic != null) {
+                sb.append("\n");
+                sb.append(aliasForTopic.getFullText(forWho));
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public boolean canSee(CommandSender commandSender) {
+            if (amendedPermission == null) {
+                HelpTopic aliasForTopic = helpMap.getHelpTopic(aliasFor);
+                return aliasForTopic != null ? aliasForTopic.canSee(commandSender) : false;
+            } else return commandSender.hasPermission(amendedPermission);
+        }
     }
 
 }

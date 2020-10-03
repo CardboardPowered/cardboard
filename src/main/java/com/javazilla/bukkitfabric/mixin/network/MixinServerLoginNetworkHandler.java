@@ -23,17 +23,23 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkEncryptionUtils;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
+import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -43,14 +49,16 @@ import net.minecraft.util.logging.UncaughtExceptionLogger;
 @Mixin(ServerLoginNetworkHandler.class)
 public class MixinServerLoginNetworkHandler {
 
-    @Shadow @Final private byte[] nonce = new byte[4];
-    @Shadow @Final private MinecraftServer server;
-    @Shadow @Final  public ClientConnection connection;
+    @Shadow private byte[] nonce = new byte[4];
+    @Shadow private MinecraftServer server;
+    @Shadow public ClientConnection connection;
     @Shadow private ServerLoginNetworkHandler.State state;
     @Shadow private GameProfile profile;
     @Shadow private SecretKey secretKey;
+    @Shadow public ServerPlayerEntity player;
 
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
+    public String hostname = ""; // CraftBukkit - add field
 
     /**
      * @reason Spigot basically overwrites this whole method.
@@ -109,7 +117,6 @@ public class MixinServerLoginNetworkHandler {
                 @Nullable
                 private InetAddress a() {
                     SocketAddress socketaddress = connection.getAddress();
-
                     return server.shouldPreventProxyConnections() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
                 }
             };
@@ -119,43 +126,42 @@ public class MixinServerLoginNetworkHandler {
         }
     }
 
-    // Spigot start
-        public void fireEvents() throws Exception {
-            String playerName = profile.getName();
-            java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getAddress()).getAddress();
-            UUID uniqueId = profile.getId();
-            final org.bukkit.craftbukkit.CraftServer server = CraftServer.INSTANCE;
+    public void fireEvents() throws Exception {
+        String playerName = profile.getName();
+        java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getAddress()).getAddress();
+        UUID uniqueId = profile.getId();
+        final org.bukkit.craftbukkit.CraftServer server = CraftServer.INSTANCE;
 
-            AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
-            server.getPluginManager().callEvent(asyncEvent);
+        AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
+        server.getPluginManager().callEvent(asyncEvent);
 
-            if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
-                final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
-                if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED)
-                    event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
+        if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
+            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
+            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED)
+                event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
 
-                Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
-                    @Override
-                    protected PlayerPreLoginEvent.Result evaluate() {
-                        server.getPluginManager().callEvent(event);
-                        return event.getResult();
-                    }};
+            Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
+                @Override
+                protected PlayerPreLoginEvent.Result evaluate() {
+                    server.getPluginManager().callEvent(event);
+                    return event.getResult();
+                }};
 
                 ((IMixinMinecraftServer)CraftServer.server).getProcessQueue().add(waitable);
                 if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
                     disconnect(event.getKickMessage());
                     return;
                 }
-            } else {
-                if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-                    disconnect(asyncEvent.getKickMessage());
-                    return;
-                }
+        } else {
+            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
+                disconnect(asyncEvent.getKickMessage());
+                return;
             }
-            LOGGER_BF.info("UUID of player {} is {}", profile.getName(), profile.getId());
-            state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
         }
-    // Spigot end
+        LOGGER_BF.info("UUID of player {} is {}", profile.getName(), profile.getId());
+        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+    }
+
 
     public void disconnect(String s) {
         try {
@@ -166,6 +172,31 @@ public class MixinServerLoginNetworkHandler {
         } catch (Exception exception) {
             LOGGER_BF.error("Error whilst disconnecting player", exception);
         }
+    }
+
+    /**
+     * @author BukkitFabricMod
+     * @reason Fire PlayerLoginEvent
+     */
+    @Overwrite
+    public void acceptPlayer() {
+        ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
+
+        if (s != null) {
+            this.state = ServerLoginNetworkHandler.State.ACCEPTED;
+            if (this.server.getNetworkCompressionThreshold() >= 0 && !this.connection.isLocal()) {
+                this.connection.send(new LoginCompressionS2CPacket(this.server.getNetworkCompressionThreshold()), (channelfuture) -> {
+                    this.connection.setCompressionThreshold(this.server.getNetworkCompressionThreshold());
+                });
+            }
+            this.connection.send(new LoginSuccessS2CPacket(this.profile));
+            ServerPlayerEntity entityplayer = this.server.getPlayerManager().getPlayer(this.profile.getId());
+            if (entityplayer != null) {
+                this.state = ServerLoginNetworkHandler.State.DELAY_ACCEPT;
+                this.player = s;
+            } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
+        }
+
     }
 
     @Shadow protected GameProfile toOfflineProfile(GameProfile gameprofile) {return null;}

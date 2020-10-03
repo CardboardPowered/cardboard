@@ -154,32 +154,28 @@ public final class CraftChatMessage {
                         default:
                             throw new AssertionError("Unexpected message format");
                         }
-                    } else { // Color resets formatting
-                        modifier = RESET.withColor(format);
-                    }
+                    } else modifier = RESET.withColor(format);// Color resets formatting
+
                     needsAdd = true;
                     break;
                 case 2:
-                    if (!(match.startsWith("http://") || match.startsWith("https://"))) {
+                    if (!(match.startsWith("http://") || match.startsWith("https://")))
                         match = "http://" + match;
-                    }
                     modifier = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     appendNewComponent(matcher.end(groupId));
                     modifier = modifier.withClickEvent((ClickEvent) null);
                     break;
                 case 3:
-                    if (needsAdd) {
+                    if (needsAdd)
                         appendNewComponent(index);
-                    }
                     currentChatComponent = null;
                     break;
                 }
                 currentIndex = matcher.end(groupId);
             }
 
-            if (currentIndex < message.length() || needsAdd) {
+            if (currentIndex < message.length() || needsAdd)
                 appendNewComponent(message.length());
-            }
 
             output = list.toArray(new Text[list.size()]);
         }
@@ -238,16 +234,11 @@ public final class CraftChatMessage {
         for (Text c : component.getSiblings()) {
             Style modi = c.getStyle();
             out.append(modi.getColor() == null ? defaultColor : modi.getColor());
-            if (modi.isBold())
-                out.append(Formatting.BOLD);
-            if (modi.isItalic())
-                out.append(Formatting.ITALIC);
-            if (modi.isUnderlined())
-                out.append(Formatting.UNDERLINE);
-            if (modi.isStrikethrough())
-                out.append(Formatting.STRIKETHROUGH);
-            if (modi.isObfuscated())
-                out.append(Formatting.OBFUSCATED);
+            if (modi.isBold()) out.append(Formatting.BOLD);
+            if (modi.isItalic()) out.append(Formatting.ITALIC);
+            if (modi.isUnderlined()) out.append(Formatting.UNDERLINE);
+            if (modi.isStrikethrough()) out.append(Formatting.STRIKETHROUGH);
+            if (modi.isObfuscated()) out.append(Formatting.OBFUSCATED);
             out.append(c.asString());
         }
         return out.toString().replaceFirst("^(" + defaultColor + ")*", "");
@@ -273,7 +264,6 @@ public final class CraftChatMessage {
                 int pos = 0;
                 while (matcher.find()) {
                     String match = matcher.group();
-
                     if (!(match.startsWith("http://") || match.startsWith("https://")))
                         match = "http://" + match;
 

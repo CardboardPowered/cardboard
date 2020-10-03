@@ -85,7 +85,6 @@ import org.bukkit.craftbukkit.command.CraftCommandMap;
 import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.craftbukkit.help.SimpleHelpMap;
 import org.bukkit.craftbukkit.inventory.CraftBlastingRecipe;
 import org.bukkit.craftbukkit.inventory.CraftCampfireRecipe;
 import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
@@ -164,6 +163,7 @@ import com.javazilla.bukkitfabric.impl.DotDatFilenameFilter;
 import com.javazilla.bukkitfabric.impl.IconCacheImpl;
 import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
 import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
+import com.javazilla.bukkitfabric.impl.help.SimpleHelpMap;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
@@ -201,6 +201,7 @@ import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -364,6 +365,7 @@ public class CraftServer implements Server {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void syncCommands() {
         // Clear existing commands
         CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(RegistrationEnvironment.ALL));
@@ -376,7 +378,7 @@ public class CraftServer implements Server {
             if (command instanceof VanillaCommandWrapper) {
                 LiteralCommandNode<ServerCommandSource> node = (LiteralCommandNode<ServerCommandSource>) ((VanillaCommandWrapper) command).vanillaCommand;
                 if (!node.getLiteral().equals(label)) {
-                    LiteralCommandNode<ServerCommandSource> clone = new LiteralCommandNode(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
+                    LiteralCommandNode<ServerCommandSource> clone = new LiteralCommandNode<ServerCommandSource>(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
 
                     for (CommandNode<ServerCommandSource> child : node.getChildren())
                         clone.addChild(child);
@@ -620,7 +622,7 @@ public class CraftServer implements Server {
         return WorldCreator.name(name).environment(environment).seed(seed).generator(generator).createWorld();
     }
 
-    @SuppressWarnings({ "resource", "unchecked" })
+    @SuppressWarnings("resource")
     @Override
     public World createWorld(WorldCreator creator) {
         String name = creator.name();
@@ -662,8 +664,9 @@ public class CraftServer implements Server {
 
         boolean hardcore = creator.hardcore();
 
-        RegistryOps<Tag> registryreadops = RegistryOps.of((DynamicOps) NbtOps.INSTANCE, server.serverResourceManager.getResourceManager(), server.getRegistryManager().create());
-        LevelProperties worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps) registryreadops, method_29735(server.dataPackManager));
+        server.getRegistryManager();
+        RegistryOps<Tag> registryreadops = RegistryOps.of((DynamicOps<Tag>) NbtOps.INSTANCE, server.serverResourceManager.getResourceManager(), DynamicRegistryManager.create());
+        LevelProperties worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps<Tag>) registryreadops, method_29735(server.dataPackManager));
 
         LevelInfo worldSettings;
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)

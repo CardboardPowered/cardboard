@@ -1,17 +1,22 @@
-package org.bukkit.craftbukkit.help;
+package com.javazilla.bukkitfabric.impl.help;
 
 import com.google.common.base.Charsets;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
+import org.bukkit.help.IndexHelpTopic;
 
 /**
  * HelpYamlReader is responsible for processing the contents of the help.yml file.
@@ -113,6 +118,68 @@ public class HelpYamlReader {
 
     public boolean commandTopicsInMasterIndex() {
         return helpYaml.getBoolean("command-topics-in-master-index", true);
+    }
+
+    // Originally in separate class
+    public class CustomIndexHelpTopic extends IndexHelpTopic {
+
+        private List<String> futureTopics;
+        private final HelpMap helpMap;
+
+        public CustomIndexHelpTopic(HelpMap helpMap, String name, String shortText, String permission, List<String> futureTopics, String preamble) {
+            super(name, shortText, permission, new HashSet<HelpTopic>(), preamble);
+            this.helpMap = helpMap;
+            this.futureTopics = futureTopics;
+        }
+
+        @Override
+        public String getFullText(CommandSender sender) {
+            if (futureTopics != null) {
+                List<HelpTopic> topics = new LinkedList<HelpTopic>();
+                for (String futureTopic : futureTopics) {
+                    HelpTopic topic = helpMap.getHelpTopic(futureTopic);
+                    if (topic != null)
+                        topics.add(topic);
+                }
+                setTopicsCollection(topics);
+                futureTopics = null;
+            }
+
+            return super.getFullText(sender);
+        }
+
+    }
+
+    // Originally in separate class
+    public class HelpTopicAmendment {
+        public final String topicName;
+        public final String shortText;
+        public final String fullText;
+        public final String permission;
+
+        public HelpTopicAmendment(String topicName, String shortText, String fullText, String permission) {
+            this.fullText = fullText;
+            this.shortText = shortText;
+            this.topicName = topicName;
+            this.permission = permission;
+        }
+    }
+
+    // Originally in separate class
+    public class CustomHelpTopic extends HelpTopic {
+        private final String permissionNode;
+
+        public CustomHelpTopic(String name, String shortText, String fullText, String permissionNode) {
+            this.permissionNode = permissionNode;
+            this.name = name;
+            this.shortText = shortText;
+            this.fullText = shortText + "\n" + fullText;
+        }
+
+        @Override
+        public boolean canSee(CommandSender sender) {
+            return (sender instanceof ConsoleCommandSender) ? true : (!permissionNode.equals("") ? sender.hasPermission(permissionNode) : true);
+        }
     }
 
 }

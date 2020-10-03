@@ -163,7 +163,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
     @Override
-    public  String getCustomName() {
+    public String getCustomName() {
         return nms.getCustomName().asString();
     }
 
@@ -555,7 +555,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         return this;
     }
 
-    private static PermissibleBase getPermissibleBase() {
+    public static PermissibleBase getPermissibleBase() {
         if (perm == null) {
             perm = new PermissibleBase(new ServerOperator() {
 

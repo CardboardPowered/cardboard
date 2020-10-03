@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.help;
+package com.javazilla.bukkitfabric.impl.help;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

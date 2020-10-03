@@ -24,7 +24,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import org.bukkit.craftbukkit.legacy.CraftLegacy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -50,22 +49,22 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static BlockState getBlock(Material material, byte data) {
-        return CraftLegacy.fromLegacyData(CraftLegacy.toLegacy(material), data);
+        return CraftLegacyMaterials.fromLegacyData(CraftLegacyMaterials.toLegacy(material), data);
     }
 
     public static MaterialData getMaterial(BlockState data) {
-        return CraftLegacy.toLegacy(getMaterial(data.getBlock())).getNewData(toLegacyData(data));
+        return CraftLegacyMaterials.toLegacy(getMaterial(data.getBlock())).getNewData(toLegacyData(data));
     }
 
     public static Item getItem(Material material, short data) {
         if (material.isLegacy())
-            return CraftLegacy.fromLegacyData(CraftLegacy.toLegacy(material), data);
+            return CraftLegacyMaterials.fromLegacyData(CraftLegacyMaterials.toLegacy(material), data);
 
         return getItem(material);
     }
 
     public static MaterialData getMaterialData(Item item) {
-        return CraftLegacy.toLegacyData(getMaterial(item));
+        return CraftLegacyMaterials.toLegacyData(getMaterial(item));
     }
 
     // ========================================================================
@@ -101,7 +100,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     public static Item getItem(Material material) {
         if (material != null && material.isLegacy()) {
-            material = CraftLegacy.fromLegacy(material);
+            material = CraftLegacyMaterials.fromLegacy(material);
         }
 
         return MATERIAL_ITEM.get(material);
@@ -109,7 +108,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     public static Block getBlock(Material material) {
         if (material != null && material.isLegacy()) {
-            material = CraftLegacy.fromLegacy(material);
+            material = CraftLegacyMaterials.fromLegacy(material);
         }
 
         return MATERIAL_BLOCK.get(material);
@@ -121,27 +120,27 @@ public final class CraftMagicNumbers implements UnsafeValues {
     // ========================================================================
 
     public static byte toLegacyData(BlockState data) {
-        return CraftLegacy.toLegacyData(data);
+        return CraftLegacyMaterials.toLegacyData(data);
     }
 
     @Override
     public Material toLegacy(Material material) {
-        return CraftLegacy.toLegacy(material);
+        return CraftLegacyMaterials.toLegacy(material);
     }
 
     @Override
     public Material fromLegacy(Material material) {
-        return CraftLegacy.fromLegacy(material);
+        return CraftLegacyMaterials.fromLegacy(material);
     }
 
     @Override
     public Material fromLegacy(MaterialData material) {
-        return CraftLegacy.fromLegacy(material);
+        return CraftLegacyMaterials.fromLegacy(material);
     }
 
     @Override
     public Material fromLegacy(MaterialData material, boolean itemPriority) {
-        return CraftLegacy.fromLegacy(material, itemPriority);
+        return CraftLegacyMaterials.fromLegacy(material, itemPriority);
     }
 
     @Override
@@ -222,7 +221,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
             }
         } else {
             if (minimumIndex == -1) {
-                CraftLegacy.init();
+                CraftLegacyMaterials.init();
                 Bukkit.getLogger().log(Level.WARNING, "Legacy plugin " + pdf.getFullName() + " does not specify an api-version.");
             } else {
                 throw new InvalidPluginException("Plugin API version " + pdf.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");

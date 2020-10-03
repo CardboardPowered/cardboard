@@ -17,11 +17,11 @@ public final class CraftLegacy {
         if (material == null || !material.isLegacy())
             return material;
 
-        return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(material);
+        return CraftLegacyMaterials.fromLegacy(material);
     }
 
     public static Material fromLegacy(MaterialData materialData) {
-        return org.bukkit.craftbukkit.legacy.CraftLegacy.fromLegacy(materialData);
+        return CraftLegacyMaterials.fromLegacy(materialData);
     }
 
     public static Material[] modern_values() {
@@ -30,10 +30,8 @@ public final class CraftLegacy {
     }
 
     public static int modern_ordinal(Material material) {
-        if (material.isLegacy()) {
-            // SPIGOT-4002: Fix for eclipse compiler manually compiling in default statements to lookupswitch
-            throw new NoSuchFieldError("Legacy field ordinal: " + material);
-        }
+        if (material.isLegacy()) // SPIGOT-4002: Fix for eclipse compiler manually compiling in default statements to lookupswitch
+            throw new NoSuchFieldError("Legacy field ordinal: " + material); 
 
         return material.ordinal();
     }

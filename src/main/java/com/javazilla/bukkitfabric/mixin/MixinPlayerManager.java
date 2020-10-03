@@ -18,6 +18,7 @@
  */
 package com.javazilla.bukkitfabric.mixin;
 
+import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +27,19 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -48,13 +53,19 @@ import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnPositionS2CPacket;
+import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.BannedPlayerEntry;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.Tag;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -196,6 +207,69 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
             this.savePlayerData(entityplayer);
 
         return entityplayer;
+    }
+
+    @Override
+    public ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler loginlistener, GameProfile gameprofile, String hostname) {
+        TranslatableText chatmessage;
+
+        // Moved from processLogin
+        UUID uuid = PlayerEntity.getUuidFromProfile(gameprofile);
+        List<ServerPlayerEntity> list = Lists.newArrayList();
+
+        ServerPlayerEntity entityplayer;
+
+        for (int i = 0; i < this.players.size(); ++i) {
+            entityplayer = (ServerPlayerEntity) this.players.get(i);
+            if (entityplayer.getUuid().equals(uuid))
+                list.add(entityplayer);
+        }
+
+        Iterator iterator = list.iterator();
+
+        while (iterator.hasNext()) {
+            entityplayer = (ServerPlayerEntity) iterator.next();
+            savePlayerData(entityplayer); // CraftBukkit - Force the player's inventory to be saved
+            entityplayer.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.duplicate_login", new Object[0]));
+        }
+
+        // Instead of kicking then returning, we need to store the kick reason
+        // in the event, check with plugins to see if it's ok, and THEN kick
+        // depending on the outcome.
+        SocketAddress socketaddress = loginlistener.connection.getAddress();
+
+        ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), gameprofile, new ServerPlayerInteractionManager(CraftServer.server.getWorld(World.OVERWORLD)));
+        Player player = (Player) ((IMixinServerEntityPlayer)entity).getBukkitEntity();
+        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), ((java.net.InetSocketAddress) loginlistener.connection.channel.remoteAddress()).getAddress());
+
+        if (((PlayerManager)(Object)this).getUserBanList().contains(gameprofile) /*&& !((PlayerManager)(Object)this).getUserBanList().get(gameprofile).isInvalid()*/) {
+            chatmessage = new TranslatableText("multiplayer.disconnect.banned.reason", new Object[]{"TODO REASON!"});
+            chatmessage.append(new TranslatableText("multiplayer.disconnect.banned.expiration", new Object[] {"TODO EXPIRE!"}));
+
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
+        } else if (!((PlayerManager)(Object)this).isWhitelisted(gameprofile)) {
+            chatmessage = new TranslatableText("multiplayer.disconnect.not_whitelisted");
+            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "Server whitelisted!");
+        } else if (((PlayerManager)(Object)this).getIpBanList().isBanned(socketaddress) /*&& !((PlayerManager)(Object)this).getIpBanList().get(socketaddress).isInvalid()*/) {
+            BannedIpEntry ipbanentry = ((PlayerManager)(Object)this).getIpBanList().get(socketaddress);
+
+            chatmessage = new TranslatableText("multiplayer.disconnect.banned_ip.reason", new Object[]{ipbanentry.getReason()});
+            if (ipbanentry.getExpiryDate() != null)
+                chatmessage.append(new TranslatableText("multiplayer.disconnect.banned_ip.expiration", new Object[]{ipbanentry.getExpiryDate()}));
+
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
+        } else {
+            // return this.players.size() >= this.maxPlayers && !this.f(gameprofile) ? new ChatMessage("multiplayer.disconnect.server_full") : null;
+            if (this.players.size() >= ((PlayerManager)(Object)this).getMaxPlayerCount() && !((PlayerManager)(Object)this).canBypassPlayerLimit(gameprofile))
+                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "Server is full"); // Spigot
+        }
+
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
+            loginlistener.disconnect(new LiteralText(event.getKickMessage()));
+            return null;
+        }
+        return entity;
     }
 
 }

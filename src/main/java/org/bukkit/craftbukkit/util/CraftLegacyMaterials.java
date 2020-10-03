@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.legacy;
+package org.bukkit.craftbukkit.util;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +10,6 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
 
@@ -46,8 +45,9 @@ import net.minecraft.util.registry.Registry;
  *
  * @deprecated legacy use only
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Deprecated
-public final class CraftLegacy {
+public final class CraftLegacyMaterials {
 
     private static final Map<Byte, Material> SPAWN_EGGS = new HashMap<>();
     private static final Set<String> whitelistedStates = new HashSet<>(Arrays.asList("explode", "check_decay", "decayable", "facing"));
@@ -58,7 +58,7 @@ public final class CraftLegacy {
     private static final Map<MaterialData, Block> materialToBlock = new HashMap<>(4096);
     private static final Map<Block, MaterialData> blockToMaterial = new HashMap<>(1024);
 
-    private CraftLegacy() {
+    private CraftLegacyMaterials() {
         //
     }
 

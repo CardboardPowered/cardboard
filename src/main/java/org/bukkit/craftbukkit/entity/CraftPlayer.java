@@ -24,8 +24,10 @@ import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
+import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
@@ -80,6 +82,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.network.PacketByteBuf;
 
+@DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
 
     public ServerPlayerEntity nms;
