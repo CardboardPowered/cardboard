@@ -11,6 +11,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -19,11 +20,14 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
@@ -31,6 +35,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.GuiCloseC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -169,7 +174,24 @@ public class BukkitEventFactory {
     }
 
     public static ScreenHandler callInventoryOpenEvent(ServerPlayerEntity player, ScreenHandler container) {
-        // TODO Auto-generated method stub
+        return callInventoryOpenEvent(player, container, false);
+    }
+
+    public static ScreenHandler callInventoryOpenEvent(ServerPlayerEntity player, ScreenHandler container, boolean cancelled) {
+        if (player.currentScreenHandler != player.playerScreenHandler)
+            player.networkHandler.onGuiClose(new GuiCloseC2SPacket(player.currentScreenHandler.syncId));
+        CraftPlayer craftPlayer = (CraftPlayer) ((IMixinServerEntityPlayer)player).getBukkitEntity();
+        ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, craftPlayer);
+
+        InventoryOpenEvent event = new InventoryOpenEvent(((IMixinScreenHandler)container).getBukkitView());
+        event.setCancelled(cancelled);
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            ((IMixinScreenHandler)container).transferTo(player.currentScreenHandler, craftPlayer);
+            return null;
+        }
+
         return container;
     }
 

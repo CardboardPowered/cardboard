@@ -18,6 +18,8 @@
  */
 package com.javazilla.bukkitfabric.mixin.entity;
 
+import java.util.OptionalInt;
+
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -35,18 +37,28 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.inventory.DoubleInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Arm;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -128,6 +140,45 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
     public int nextContainerCounter() {
         this.screenHandlerSyncId = this.screenHandlerSyncId % 100 + 1;
         return screenHandlerSyncId; // CraftBukkit
+    }
+
+    /**
+     * @reason Inventory Open Event
+     * @author BukkitFabricMod
+     */
+    @Overwrite
+    public OptionalInt openHandledScreen(NamedScreenHandlerFactory itileinventory) {
+        if (itileinventory == null) {
+            return OptionalInt.empty();
+        } else {
+            if (((ServerPlayerEntity)(Object)this).currentScreenHandler != ((ServerPlayerEntity)(Object)this).playerScreenHandler)
+                this.closeHandledScreen();
+
+            this.nextContainerCounter();
+            ScreenHandler container = itileinventory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));
+
+            if (container != null) {
+                ((IMixinScreenHandler)container).setTitle(itileinventory.getDisplayName());
+
+                boolean cancelled = false;
+                container = BukkitEventFactory.callInventoryOpenEvent((ServerPlayerEntity)(Object)this, container, cancelled);
+                if (container == null && !cancelled) {
+                    if (itileinventory instanceof Inventory) {
+                        ((Inventory) itileinventory).onClose((ServerPlayerEntity)(Object)this);
+                    } else if (itileinventory instanceof DoubleInventory)
+                        ((DoubleInventory) itileinventory).first.onClose((ServerPlayerEntity)(Object)this);
+                    return OptionalInt.empty();
+                }
+            }
+            if (container == null)
+                return OptionalInt.empty();
+            else {
+                ((ServerPlayerEntity)(Object)this).currentScreenHandler = container;
+                ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, container.getType(), ((IMixinScreenHandler)container).getTitle()));
+                container.addListener(((ServerPlayerEntity)(Object)this));
+                return OptionalInt.of(this.screenHandlerSyncId);
+            }
+        }
     }
 
 }
