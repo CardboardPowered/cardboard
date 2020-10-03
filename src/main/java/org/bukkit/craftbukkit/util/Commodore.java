@@ -36,14 +36,14 @@ public class Commodore {
             "org/bukkit/inventory/ItemStack (I)V setTypeId"
     ) );
 
-    public static byte[] convert(byte[] b, final boolean modern, String name) {
+    public static byte[] convert(byte[] b, final boolean modern, String pl) {
         ClassReader cr = new ClassReader( b );
         ClassWriter cw = new ClassWriter( cr, 0 );
 
         cr.accept( new ClassVisitor( Opcodes.ASM7, cw ) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                return new ReflectionMethodVisitor( api, super.visitMethod( access, name, desc, signature, exceptions ), name ) {
+                return new ReflectionMethodVisitor( api, super.visitMethod( access, name, desc, signature, exceptions ), pl ) {
 
                     @Override
                     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
@@ -189,21 +189,21 @@ public class Commodore {
                                 case "valueOf":
                                 case "getMaterial":
                                 case "matchMaterial":
-                                    super.visitMethodInsn( opcode, "org/bukkit/craftbukkit/legacy/CraftLegacy", name, desc, itf );
+                                    super.visitMethodInsn( opcode, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", name, desc, itf );
                                     return;
                                 case "ordinal":
-                                    super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/legacy/CraftLegacy", "ordinal", "(Lorg/bukkit/Material;)I", false );
+                                    super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", "ordinal", "(Lorg/bukkit/Material;)I", false );
                                     return;
                                 case "name":
                                 case "toString":
-                                    super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/legacy/CraftLegacy", name, "(Lorg/bukkit/Material;)Ljava/lang/String;", false );
+                                    super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", name, "(Lorg/bukkit/Material;)Ljava/lang/String;", false );
                                     return;
                             }
                         }
 
                         if ( retType.getSort() == Type.OBJECT && retType.getInternalName().equals( "org/bukkit/Material" ) && owner.startsWith( "org/bukkit" ) ) {
                             super.visitMethodInsn( opcode, owner, name, desc, itf );
-                            super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/legacy/CraftLegacy", "toLegacy", "(Lorg/bukkit/Material;)Lorg/bukkit/Material;", false );
+                            super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", "toLegacy", "(Lorg/bukkit/Material;)Lorg/bukkit/Material;", false );
                             return;
                         }
 

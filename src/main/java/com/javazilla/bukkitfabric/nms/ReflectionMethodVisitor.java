@@ -18,16 +18,23 @@
  */
 package com.javazilla.bukkitfabric.nms;
 
+import java.util.ArrayList;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class ReflectionMethodVisitor extends MethodVisitor {
 
-    private String name;
+    public static ArrayList<String> SKIP = new ArrayList<>();
+    static {
+        SKIP.add("vault");
+        SKIP.add("worldguard");
+    }
+    private String pl;
 
-    public ReflectionMethodVisitor(int api, MethodVisitor visitMethod, String name) {
+    public ReflectionMethodVisitor(int api, MethodVisitor visitMethod, String pl) {
         super(api, visitMethod);
-        this.name = name;
+        this.pl = pl;
     }
 
     @Override
@@ -37,19 +44,19 @@ public class ReflectionMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (this.name.equalsIgnoreCase("Vault")) {
-            // Skip Vault cause weird things happen
-            super.visitMethodInsn( opcode, owner, name, desc, itf );
-            return;
+        for (String str : SKIP) {
+            if (this.pl.equalsIgnoreCase(str) || owner.startsWith("org/bukkit")) {
+                // Skip Vault cause weird things happen
+                super.visitMethodInsn( opcode, owner, name, desc, itf );
+                return;
+            }
         }
 
         //if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;")) {
-        //    super.visitMethodInsn( opcode, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getClassForName", desc, itf );
+        //    super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getClassForName", desc, itf );
         //    return;
         //}
 
-        if (owner.equalsIgnoreCase("java/lang/Package"))
-            System.out.println(owner + "," + name + "," + desc);
         if (owner.equalsIgnoreCase("java/lang/Package") && name.equalsIgnoreCase("getName") && desc.equalsIgnoreCase("()Ljava/lang/String;")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getPackageName", "(Ljava/lang/Package;)Ljava/lang/String;", false);
             return;

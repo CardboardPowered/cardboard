@@ -18,6 +18,7 @@
  */
 package com.javazilla.bukkitfabric.nms;
 
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 public class ReflectionRemapper {
@@ -25,6 +26,19 @@ public class ReflectionRemapper {
     private static final String NMS_VERSION = "v1_16_R2";
 
     public static Class<?> getClassForName(String className) throws ClassNotFoundException {
+        try {
+            return JavaPluginLoader.getByName(className, false);
+        } catch (ClassNotFoundException e) {
+            return CraftServer.INSTANCE.getClass().getClassLoader().loadClass(className);
+            //throw e;
+        }
+    }
+
+    public static Class<?> getClassByName(Class<?> calling, String className) throws ClassNotFoundException {
+        if (className.startsWith("org.bukkit")) {
+            return Class.forName(className);
+        }
+        System.out.println(calling.getName() + " / " + className);
         return JavaPluginLoader.getByName(className, false);
     }
 

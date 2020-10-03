@@ -36,6 +36,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
@@ -55,14 +56,11 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Arm;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(value = ServerPlayerEntity.class, priority = 999)
 public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMixinServerEntityPlayer  {
 
     private CraftPlayer bukkit;
@@ -146,10 +144,10 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
      * @reason Inventory Open Event
      * @author BukkitFabricMod
      */
-    @Overwrite
-    public OptionalInt openHandledScreen(NamedScreenHandlerFactory itileinventory) {
+    @Inject(at = @At("HEAD"), method = "openHandledScreen", cancellable = true)
+    public void openHandledScreen(NamedScreenHandlerFactory itileinventory, CallbackInfoReturnable<OptionalInt> ci) {
         if (itileinventory == null) {
-            return OptionalInt.empty();
+            ci.setReturnValue(OptionalInt.empty());
         } else {
             if (((ServerPlayerEntity)(Object)this).currentScreenHandler != ((ServerPlayerEntity)(Object)this).playerScreenHandler)
                 this.closeHandledScreen();
@@ -167,16 +165,16 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
                         ((Inventory) itileinventory).onClose((ServerPlayerEntity)(Object)this);
                     } else if (itileinventory instanceof DoubleInventory)
                         ((DoubleInventory) itileinventory).first.onClose((ServerPlayerEntity)(Object)this);
-                    return OptionalInt.empty();
+                    ci.setReturnValue(OptionalInt.empty());
                 }
             }
             if (container == null)
-                return OptionalInt.empty();
+                ci.setReturnValue(OptionalInt.empty());
             else {
                 ((ServerPlayerEntity)(Object)this).currentScreenHandler = container;
                 ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, container.getType(), ((IMixinScreenHandler)container).getTitle()));
                 container.addListener(((ServerPlayerEntity)(Object)this));
-                return OptionalInt.of(this.screenHandlerSyncId);
+                ci.setReturnValue(OptionalInt.of(this.screenHandlerSyncId));
             }
         }
     }
