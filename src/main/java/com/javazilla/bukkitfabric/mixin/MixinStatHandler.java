@@ -2,6 +2,7 @@ package com.javazilla.bukkitfabric.mixin;
 
 import org.bukkit.event.Cancellable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;

@@ -30,6 +30,7 @@
     "entity.MixinProjectileEntity",
     "entity.MixinArrowEntity",
     "entity.MixinLoseJobOnSiteLossTask",
+    "entity.MixinSaddledComponent",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
