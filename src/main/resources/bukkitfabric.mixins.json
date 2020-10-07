@@ -40,6 +40,7 @@
     "entity.block.MixinBrewingStandBlockEntity",
     "entity.block.MixinAbstractFurnaceBlockEntity",
     "entity.block.MixinSignBlockEntity",
+    "entity.block.MixinBoatDispenserBehavior",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
