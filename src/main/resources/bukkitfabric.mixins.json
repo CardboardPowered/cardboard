@@ -31,6 +31,7 @@
     "entity.MixinArrowEntity",
     "entity.MixinLoseJobOnSiteLossTask",
     "entity.MixinSaddledComponent",
+    "entity.MixinPiglinBrain",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
