@@ -221,7 +221,7 @@ public abstract class MixinIntegratedServer extends MixinMinecraftServer {
 
             worlddata.addServerBrand(this.getServerModName(), true);
             this.initWorld(world, worlddata, saveProperties, worlddata.getGeneratorOptions());
-            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)world).getCraftWorld()));
+            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)world).getWorldImpl()));
 
             this.worlds.put(world.getRegistryKey(), world);
             ((MinecraftServer)(Object)this).getPlayerManager().setMainWorld(world);
@@ -232,7 +232,7 @@ public abstract class MixinIntegratedServer extends MixinMinecraftServer {
         this.method_27731();
         for (ServerWorld worldserver : ((MinecraftServer)(Object)this).getWorlds()) {
             this.loadSpawn(worldserver.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, worldserver);
-            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getCraftWorld()));
+            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getWorldImpl()));
         }
 
         CraftServer.INSTANCE.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);

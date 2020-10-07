@@ -69,7 +69,7 @@ public class MixinChestBlockEntity implements IMixinInventory {
     @Override
     public Location getLocation() {
         BlockPos pos = ((ChestBlockEntity)(Object)this).pos;
-        return new Location(((IMixinWorld)(((ChestBlockEntity)(Object)this).world)).getCraftWorld(), pos.x, pos.y, pos.z);
+        return new Location(((IMixinWorld)(((ChestBlockEntity)(Object)this).world)).getWorldImpl(), pos.x, pos.y, pos.z);
     }
 
     /**

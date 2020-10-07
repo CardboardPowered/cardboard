@@ -74,7 +74,7 @@ public class MixinBrewingStandBlockEntity implements IMixinInventory {
 
         if (nms.fuel <= 0 && itemstack.getItem() == Items.BLAZE_POWDER) {
             // CraftBukkit start
-            BrewingStandFuelEvent event = new BrewingStandFuelEvent(((IMixinWorld)nms.world).getCraftWorld().getBlockAt(nms.pos.getX(), nms.pos.getY(), nms.pos.getZ()), CraftItemStack.asCraftMirror(itemstack), 20);
+            BrewingStandFuelEvent event = new BrewingStandFuelEvent(((IMixinWorld)nms.world).getWorldImpl().getBlockAt(nms.pos.getX(), nms.pos.getY(), nms.pos.getZ()), CraftItemStack.asCraftMirror(itemstack), 20);
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
             if (event.isCancelled())

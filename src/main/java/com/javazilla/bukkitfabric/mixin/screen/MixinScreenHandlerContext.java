@@ -28,7 +28,7 @@ public interface MixinScreenHandlerContext extends IMixinScreenHandlerContext {
 
     @Override
     default org.bukkit.Location getLocation() {
-        return new org.bukkit.Location(((IMixinWorld)getWorld()).getCraftWorld(), getPosition().getX(), getPosition().getY(), getPosition().getZ());
+        return new org.bukkit.Location(((IMixinWorld)getWorld()).getWorldImpl(), getPosition().getX(), getPosition().getY(), getPosition().getZ());
     }
 
     /**

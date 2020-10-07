@@ -36,7 +36,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.Overridden;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific;
@@ -67,6 +66,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonParseException;
+import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.AttributableImpl;
 import com.javazilla.bukkitfabric.impl.AttributeInstanceImpl;
 
@@ -409,7 +409,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
                 org.bukkit.inventory.EquipmentSlot slot = null;
                 try {
-                    slot = CraftEquipmentSlot.getSlot(EquipmentSlot.byName(slotName.toLowerCase(Locale.ROOT)));
+                    slot = Utils.getSlot(EquipmentSlot.byName(slotName.toLowerCase(Locale.ROOT)));
                 } catch (IllegalArgumentException ex) {
                     // SPIGOT-4551 - Slot is invalid, should really match nothing but this is undefined behavior anyway
                 }
@@ -643,7 +643,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
             sub.putString(ATTRIBUTES_IDENTIFIER.NBT, name); // Attribute Name
             if (entry.getValue().getSlot() != null) {
-                net.minecraft.entity.EquipmentSlot slot = CraftEquipmentSlot.getNMS(entry.getValue().getSlot());
+                net.minecraft.entity.EquipmentSlot slot = Utils.getNMS(entry.getValue().getSlot());
                 if (slot != null)
                     sub.putString(ATTRIBUTES_SLOT.NBT, slot.getName());
             }

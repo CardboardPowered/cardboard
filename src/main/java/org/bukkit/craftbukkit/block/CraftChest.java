@@ -9,10 +9,11 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
 import org.bukkit.inventory.Inventory;
+
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 
 public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest {
 
@@ -44,7 +45,7 @@ public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest
             return inventory;
 
         // The logic here is basically identical to the logic in BlockChest.interact
-        CraftWorld world = (CraftWorld) this.getWorld();
+        WorldImpl world = (WorldImpl) this.getWorld();
 
         ChestBlock blockChest = (ChestBlock) (this.getType() == Material.CHEST ? Blocks.CHEST : Blocks.TRAPPED_CHEST);
         NamedScreenHandlerFactory nms = blockChest.createScreenHandlerFactory(data, world.getHandle(), this.getPosition());

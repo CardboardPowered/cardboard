@@ -18,7 +18,7 @@ public class BlockProjectileSourceImpl implements BlockProjectileSource {
 
     @Override
     public Block getBlock() {
-        return ((IMixinWorld)(Object)dispenserBlock.getWorld()).getCraftWorld().getBlockAt(dispenserBlock.getPos().getX(), dispenserBlock.getPos().getY(), dispenserBlock.getPos().getZ());
+        return ((IMixinWorld)(Object)dispenserBlock.getWorld()).getWorldImpl().getBlockAt(dispenserBlock.getPos().getX(), dispenserBlock.getPos().getY(), dispenserBlock.getPos().getZ());
     }
 
     @Override

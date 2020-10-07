@@ -4,12 +4,13 @@ import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.CraftWorld;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.server.world.ServerWorld;
@@ -22,7 +23,7 @@ import net.minecraft.world.level.ServerWorldProperties;
 @Mixin(World.class)
 public class MixinWorld implements IMixinWorld {
 
-    private CraftWorld bukkit;
+    private WorldImpl bukkit;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(MutableWorldProperties a, RegistryKey<?> b, DimensionType d, Supplier<Boolean> e, boolean f, boolean g, long h, CallbackInfo ci){
@@ -37,12 +38,12 @@ public class MixinWorld implements IMixinWorld {
             if (nms.getRegistryKey() == World.NETHER) name = name + "_nether";
             if (nms.getRegistryKey() == World.END) name = name + "_the_end";
         }
-        this.bukkit = new CraftWorld(name, nms);
-        ((CraftServer)Bukkit.getServer()).addWorldToMap(getCraftWorld());
+        this.bukkit = new WorldImpl(name, nms);
+        ((CraftServer)Bukkit.getServer()).addWorldToMap(getWorldImpl());
     }
 
     @Override
-    public CraftWorld getCraftWorld() {
+    public WorldImpl getWorldImpl() {
         return bukkit;
     }
 

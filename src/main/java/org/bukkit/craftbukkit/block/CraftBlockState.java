@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftChunk;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.material.MaterialData;
@@ -18,6 +17,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import com.google.common.base.Preconditions;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.server.world.ServerWorld;
@@ -27,14 +27,14 @@ import net.minecraft.world.WorldAccess;
 @SuppressWarnings("deprecation")
 public class CraftBlockState implements BlockState {
 
-    protected final CraftWorld world;
+    protected final WorldImpl world;
     private final CraftChunk chunk;
     private final BlockPos position;
     protected net.minecraft.block.BlockState data;
     protected int flag;
 
     public CraftBlockState(final Block block) {
-        this.world = (CraftWorld) block.getWorld();
+        this.world = (WorldImpl) block.getWorld();
         this.position = ((CraftBlock) block).getPosition();
         this.data = ((CraftBlock) block).getNMS();
         this.chunk = (CraftChunk) block.getChunk();
@@ -58,7 +58,7 @@ public class CraftBlockState implements BlockState {
     }
 
     public static CraftBlockState getBlockState(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, int flag) {
-        return new CraftBlockState(((IMixinWorld)(Object)world).getCraftWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag);
+        return new CraftBlockState(((IMixinWorld)(Object)world).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag);
     }
 
     @Override

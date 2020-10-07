@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.google.common.base.Preconditions;
 import net.minecraft.block.entity.BlockEntity;
@@ -8,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.persistence.PersistentDataContainer;
 
 public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockState implements TileState {
@@ -22,7 +22,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
 
         this.tileEntityClass = tileEntityClass;
 
-        CraftWorld world = (CraftWorld) this.getWorld();
+        WorldImpl world = (WorldImpl) this.getWorld();
         this.tileEntity = tileEntityClass.cast(world.getHandle().getBlockEntity(this.getPosition()));
         Preconditions.checkState(this.tileEntity != null, "Tile is null. asynchronous access? " + block);
 
@@ -71,7 +71,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
 
     protected BlockEntity getTileEntityFromWorld() {
         requirePlaced();
-        return ((CraftWorld) getWorld()).getHandle().getBlockEntity(getPosition());
+        return ((WorldImpl) getWorld()).getHandle().getBlockEntity(getPosition());
     }
 
     public CompoundTag getSnapshotNBT() {

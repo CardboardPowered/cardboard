@@ -10,9 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.OperatorEntry;
 import net.minecraft.server.WhitelistEntry;
-import net.minecraft.world.SaveProperties;
 import net.minecraft.world.WorldSaveHandler;
 
 import org.bukkit.BanList;
@@ -63,13 +61,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
             return profile.getName();
 
         CompoundTag data = getBukkitData();
-
-        if (data != null) {
-            if (data.contains("lastKnownName"))
-                return data.getString("lastKnownName");
-        }
-
-        return null;
+        return (data != null && data.contains("lastKnownName")) ? data.getString("lastKnownName") : null;
     }
 
     @Override
@@ -88,24 +80,15 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public void setOp(boolean value) {
-        if (value == isOp()) {
-            return;
-        }
+        if (value == isOp()) return;
 
-        if (value) {
-            server.getHandle().getPlayerManager().addToOperators(profile);
-        } else {
-            server.getHandle().getPlayerManager().removeFromOperators(profile);
-        }
+        if (value) server.getHandle().getPlayerManager().addToOperators(profile);
+        else server.getHandle().getPlayerManager().removeFromOperators(profile);
     }
 
     @Override
     public boolean isBanned() {
-        if (getName() == null) {
-            return false;
-        }
-
-        return server.getBanList(BanList.Type.NAME).isBanned(getName());
+        return (getName() == null) ? false : server.getBanList(BanList.Type.NAME).isBanned(getName());
     }
 
     public void setBanned(boolean value) {
@@ -145,10 +128,8 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     public static OfflinePlayer deserialize(Map<String, Object> args) {
         // Backwards comparability
-        if (args.get("name") != null) {
+        if (args.get("name") != null)
             return Bukkit.getServer().getOfflinePlayer((String) args.get("name"));
-        }
-
         return Bukkit.getServer().getOfflinePlayer(UUID.fromString((String) args.get("UUID")));
     }
 
@@ -191,9 +172,8 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         CompoundTag result = getData();
 
         if (result != null) {
-            if (!result.contains("bukkit")) {
+            if (!result.contains("bukkit"))
                 result.put("bukkit", new CompoundTag());
-            }
             result = result.getCompound("bukkit");
         }
 
@@ -218,9 +198,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
                 File file = getDataFile();
                 return file.lastModified();
             }
-        } else {
-            return 0;
-        }
+        } else return 0;
     }
 
     @Override
@@ -229,17 +207,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         if (player != null) return player.getLastPlayed();
 
         CompoundTag data = getBukkitData();
-
-        if (data != null) {
-            if (data.contains("lastPlayed")) {
-                return data.getLong("lastPlayed");
-            } else {
-                File file = getDataFile();
-                return file.lastModified();
-            }
-        } else {
-            return 0;
-        }
+        return data != null ? ((data.contains("lastPlayed")) ? data.getLong("lastPlayed") : getDataFile().lastModified()) : 0;
     }
 
     @Override
@@ -254,9 +222,8 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
         if (data.contains("SpawnX") && data.contains("SpawnY") && data.contains("SpawnZ")) {
             String spawnWorld = data.getString("SpawnWorld");
-            if (spawnWorld.equals("")) {
+            if (spawnWorld.equals(""))
                 spawnWorld = server.getWorlds().get(0).getName();
-            }
             return new Location(server.getWorld(spawnWorld), data.getInt("SpawnX"), data.getInt("SpawnY"), data.getInt("SpawnZ"));
         }
         return null;

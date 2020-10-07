@@ -20,6 +20,7 @@ package org.bukkit.craftbukkit;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
@@ -154,11 +155,11 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.tag.CraftBlockTag;
 import com.javazilla.bukkitfabric.impl.tag.CraftItemTag;
-import com.javazilla.bukkitfabric.impl.DotDatFilenameFilter;
 import com.javazilla.bukkitfabric.impl.IconCacheImpl;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
 import com.javazilla.bukkitfabric.impl.MinecraftCommandWrapper;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
 import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
 import com.javazilla.bukkitfabric.impl.command.BukkitCommandWrapper;
@@ -313,7 +314,7 @@ public class CraftServer implements Server {
         return new IconCacheImpl("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
     }
 
-    public void addWorldToMap(CraftWorld world) {
+    public void addWorldToMap(WorldImpl world) {
         worlds.put(world.getName(), world);
     }
 
@@ -715,12 +716,12 @@ public class CraftServer implements Server {
         internal.setMobSpawnOptions(true, true);
         server.worlds.put(internal.getRegistryKey(), internal);
 
-        pluginManager.callEvent(new WorldInitEvent(((IMixinWorld)internal).getCraftWorld()));
+        pluginManager.callEvent(new WorldInitEvent(((IMixinWorld)internal).getWorldImpl()));
 
         ((IMixinMinecraftServer)getServer()).loadSpawn(internal.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, internal);
 
-        pluginManager.callEvent(new WorldLoadEvent(((IMixinWorld)internal).getCraftWorld()));
-        return ((IMixinWorld)internal).getCraftWorld();
+        pluginManager.callEvent(new WorldLoadEvent(((IMixinWorld)internal).getWorldImpl()));
+        return ((IMixinWorld)internal).getWorldImpl();
     }
 
     public static DataPackSettings method_29735(ResourcePackManager resourcePackManager) {
@@ -966,7 +967,12 @@ public class CraftServer implements Server {
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
         WorldSaveHandler storage = ((IMixinMinecraftServer)server).getSaveHandler_BF();
-        String[] files = storage.playerDataDir.list(new DotDatFilenameFilter());
+        String[] files = storage.playerDataDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".dat");
+            }
+        });
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
 
         for (String file : files) {
@@ -1323,7 +1329,7 @@ public class CraftServer implements Server {
         if (world == null)
             return false;
 
-        ServerWorld handle = (ServerWorld) ((CraftWorld) world).getHandle();
+        ServerWorld handle = (ServerWorld) ((WorldImpl) world).getHandle();
 
         if (!(((IMixinMinecraftServer)(Object)getServer()).getWorldMap().containsKey(handle.toServerWorld().getRegistryKey())))
             return false;
@@ -1395,7 +1401,7 @@ public class CraftServer implements Server {
                 message = message.substring(1);
 
             completions = (pos == null) ? getCommandMap().tabComplete(player, message) :
-                    getCommandMap().tabComplete(player, message, new Location(((IMixinWorld)(Object)world).getCraftWorld(), pos.x, pos.y, pos.z));
+                    getCommandMap().tabComplete(player, message, new Location(((IMixinWorld)(Object)world).getWorldImpl(), pos.x, pos.y, pos.z));
         } catch (CommandException ex) {
             player.sendMessage(ChatColor.RED + "An internal error occurred while attempting to tab-complete this command");
             getLogger().log(Level.SEVERE, "Exception when " + player.getName() + " attempted to tab complete " + message, ex);

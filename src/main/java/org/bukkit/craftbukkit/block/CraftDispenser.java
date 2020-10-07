@@ -8,12 +8,12 @@ import net.minecraft.server.world.ServerWorld;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.projectiles.BlockProjectileSource;
 
 import com.javazilla.bukkitfabric.impl.BlockProjectileSourceImpl;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 
 public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implements Dispenser {
 
@@ -45,7 +45,7 @@ public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implemen
     public boolean dispense() {
         Block block = getBlock();
         if (block.getType() == Material.DISPENSER) {
-            ((DispenserBlock) Blocks.DISPENSER).dispense((ServerWorld)((CraftWorld) this.getWorld()).getHandle(), this.getPosition());
+            ((DispenserBlock) Blocks.DISPENSER).dispense((ServerWorld)((WorldImpl) this.getWorld()).getHandle(), this.getPosition());
             return true;
         } else return false;
     }

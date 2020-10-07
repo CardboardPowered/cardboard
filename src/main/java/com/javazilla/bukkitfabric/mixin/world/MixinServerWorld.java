@@ -28,13 +28,13 @@ public class MixinServerWorld extends MixinWorld {
     @Inject(at = @At("TAIL"), method = "<init>")
     public void addToBukkit(MinecraftServer server, Executor a, LevelStorage.Session b, ServerWorldProperties c,
             RegistryKey d, DimensionType f, WorldGenerationProgressListener g, ChunkGenerator h, boolean bl, long l, List<Spawner> list, boolean bl2, CallbackInfo ci){
-        ((CraftServer)Bukkit.getServer()).addWorldToMap(getCraftWorld());
+        ((CraftServer)Bukkit.getServer()).addWorldToMap(getWorldImpl());
     }
 
     @Inject(at = @At("HEAD"), method = "save")
     public void doWorldSaveEvent(ProgressListener aa, boolean bb, boolean cc, CallbackInfo ci) {
         if (!cc) {
-            org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getCraftWorld())); // WorldSaveEvent
+            org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getWorldImpl())); // WorldSaveEvent
         }
     }
 

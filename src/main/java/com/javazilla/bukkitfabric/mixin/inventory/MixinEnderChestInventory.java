@@ -21,7 +21,7 @@ public class MixinEnderChestInventory extends MixinSimpleInventory {
 
     @Override
     public Location getLocation() {
-        return new Location(((IMixinWorld)this.activeBlockEntity.getWorld()).getCraftWorld(), this.activeBlockEntity.getPos().getX(), this.activeBlockEntity.getPos().getY(), this.activeBlockEntity.getPos().getZ());
+        return new Location(((IMixinWorld)this.activeBlockEntity.getWorld()).getWorldImpl(), this.activeBlockEntity.getPos().getX(), this.activeBlockEntity.getPos().getY(), this.activeBlockEntity.getPos().getZ());
     }
 
 }

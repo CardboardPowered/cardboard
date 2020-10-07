@@ -60,13 +60,15 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
             ServerMetadata ping = new ServerMetadata();
             ping.setDescription(CraftChatMessage.fromString(event.getMotd(), true)[0]);
 
+            try {
+                ping.setFavicon(server.getServerMetadata().favicon);
+            } catch (Exception e) {}
             ping.setPlayers(server.getServerMetadata().players);
             int version = SharedConstants.getGameVersion().getProtocolVersion();
             ping.setVersion(new ServerMetadata.Version("BukkitModded " + server.getVersion(), version));
 
             this.connection.send(new QueryResponseS2CPacket(ping));
         }
-        // CraftBukkit end
     }
 
     @Shadow public ClientConnection getConnection() {return null;}

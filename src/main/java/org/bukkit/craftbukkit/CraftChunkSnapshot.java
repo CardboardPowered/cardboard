@@ -10,6 +10,7 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.biome.source.BiomeArray;
 import net.minecraft.world.chunk.PalettedContainer;
 
+import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
 import org.bukkit.ChunkSnapshot;
@@ -32,7 +33,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     private final long captureFulltime;
     private final BiomeArray biome;
 
-    CraftChunkSnapshot(int x, int z, String wname, long wtime, PalettedContainer<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeArray biome) {
+    public CraftChunkSnapshot(int x, int z, String wname, long wtime, PalettedContainer<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeArray biome) {
         this.x = x;
         this.z = z;
         this.worldname = wname;
@@ -68,28 +69,24 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         for (PalettedContainer<BlockState> palette : blockids)
             if (palette.hasAny(nms))
                 return true;
-
         return false;
     }
 
     @Override
     public Material getBlockType(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
-
         return CraftMagicNumbers.getMaterial(blockids[y >> 4].get(x, y & 0xF, z).getBlock());
     }
 
     @Override
     public final BlockData getBlockData(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
-
         return CraftBlockData.fromData(blockids[y >> 4].get(x, y & 0xF, z));
     }
 
     @Override
     public final int getData(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
-
         return CraftMagicNumbers.toLegacyData(blockids[y >> 4].get(x, y & 0xF, z));
     }
 
@@ -113,7 +110,6 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     public final int getHighestBlockYAt(int x, int z) {
         Preconditions.checkState(hmap != null, "ChunkSnapshot created without height map. Please call getSnapshot with includeMaxblocky=true");
         CraftChunk.validateChunkCoordinates(x, 0, z);
-
         return hmap.get(x, z);
     }
 
@@ -131,7 +127,9 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         // Access Widener is broken
         Registry<net.minecraft.world.biome.Biome> reg = null;
         try {
-            reg = (Registry<net.minecraft.world.biome.Biome>) biome.getClass().getField("field_25831").get(biome);
+            Field f = biome.getClass().getDeclaredField("field_25831");
+            f.setAccessible(true);
+            reg = (Registry<net.minecraft.world.biome.Biome>) f.get(biome);
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
             e.printStackTrace();
         }
@@ -147,7 +145,6 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     public final double getRawBiomeTemperature(int x, int y, int z) {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         CraftChunk.validateChunkCoordinates(x, y, z);
-
         return biome.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).getTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
     }
 

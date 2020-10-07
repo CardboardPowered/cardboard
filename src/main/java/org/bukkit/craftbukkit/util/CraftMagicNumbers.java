@@ -223,9 +223,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
             if (minimumIndex == -1) {
                 CraftLegacyMaterials.init();
                 Bukkit.getLogger().log(Level.WARNING, "Legacy plugin " + pdf.getFullName() + " does not specify an api-version.");
-            } else {
-                throw new InvalidPluginException("Plugin API version " + pdf.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");
-            }
+            } else throw new InvalidPluginException("Plugin API version " + pdf.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");
         }
     }
 
@@ -240,7 +238,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
         } catch (Exception ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Fatal error trying to convert " + pdf.getFullName() + ":" + path, ex);
         }
-
         return clazz;
     }
 

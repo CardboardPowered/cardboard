@@ -58,7 +58,7 @@ public class MixinBarrelBlockEntity implements IMixinInventory {
     @Override
     public Location getLocation() {
         BlockPos pos = ((BlockEntity)(Object)this).getPos();
-        return new Location(((IMixinWorld)((BlockEntity)(Object)this).getWorld()).getCraftWorld(), pos.x, pos.y, pos.z);
+        return new Location(((IMixinWorld)((BlockEntity)(Object)this).getWorld()).getWorldImpl(), pos.x, pos.y, pos.z);
     }
 
     @Override

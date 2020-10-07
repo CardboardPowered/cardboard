@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit;
+package com.javazilla.bukkitfabric.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +39,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
+import org.bukkit.craftbukkit.CraftChunk;
+import org.bukkit.craftbukkit.CraftParticle;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -118,7 +122,7 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
 
 @SuppressWarnings("deprecation")
-public class CraftWorld implements World {
+public class WorldImpl implements World {
 
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
     private final MetaDataStoreBase<Block> blockMetadata = MetadataStoreImpl.newBlockMetadataStore(this);
@@ -129,12 +133,12 @@ public class CraftWorld implements World {
 
     private static final Random rand = new Random();
 
-    public CraftWorld(String name, ServerWorld world) {
+    public WorldImpl(String name, ServerWorld world) {
         this.nms = world;
         this.name = name;
     }
 
-    public CraftWorld(ServerWorld world) {
+    public WorldImpl(ServerWorld world) {
         this(((ServerWorldProperties) world.getLevelProperties()).getLevelName(), world);
     }
 
@@ -528,7 +532,7 @@ public class CraftWorld implements World {
             }
         });
 
-        return CraftWorld.gamerules = gamerules;
+        return WorldImpl.gamerules = gamerules;
     }
 
     private <T> T convert(GameRule<T> rule, GameRules.Rule<?> value) {
@@ -555,7 +559,7 @@ public class CraftWorld implements World {
             }
         });
 
-        return CraftWorld.gameruleDefinitions = gameruleDefinitions;
+        return WorldImpl.gameruleDefinitions = gameruleDefinitions;
     }
 
     @Override
@@ -651,7 +655,7 @@ public class CraftWorld implements World {
     @Override
     public Chunk[] getLoadedChunks() {
         Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = ((IMixinThreadedAnvilChunkStorage)(nms.getChunkManager().threadedAnvilChunkStorage)).getChunkHoldersBF();
-        return chunks.values().stream().map(IMixinChunkHolder::getFullChunk).filter(Objects::nonNull).map(CraftWorld::getBukkitChunkForChunk).toArray(Chunk[]::new);
+        return chunks.values().stream().map(IMixinChunkHolder::getFullChunk).filter(Objects::nonNull).map(WorldImpl::getBukkitChunkForChunk).toArray(Chunk[]::new);
     }
 
     private static Chunk getBukkitChunkForChunk(WorldChunk mc) {
@@ -814,14 +818,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-
-        final CraftWorld other = (CraftWorld) obj;
-
-        return this.getName().equals(other.getName());
+        return (obj == null || getClass() != obj.getClass()) ? false : this.getName().equals(((WorldImpl)obj).getName());
     }
 
     @Override

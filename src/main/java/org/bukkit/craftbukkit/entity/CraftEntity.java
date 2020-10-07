@@ -337,7 +337,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public World getWorld() {
-        return (World) ((IMixinWorld)nms.world).getCraftWorld();
+        return (World) ((IMixinWorld)nms.world).getWorldImpl();
     }
 
     @Override
@@ -534,7 +534,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
         // TODO: Cross world teleporting
         //if (!location.getWorld().equals(getWorld())) {
-        //    nms.teleportTo(((CraftWorld) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        //    nms.teleportTo(((WorldImpl) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
         //    return true;
         //}
         nms.teleport(location.getX(), location.getY(), location.getZ());

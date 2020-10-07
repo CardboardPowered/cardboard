@@ -112,9 +112,7 @@ public final class CraftChatMessage {
             boolean needsAdd = false;
             while (matcher.find()) {
                 int groupId = 0;
-                while ((match = matcher.group(++groupId)) == null) {
-                    // NOOP
-                }
+                while ((match = matcher.group(++groupId)) == null) {/*NOOP*/}
                 int index = matcher.start(groupId);
                 if (index > currentIndex) {
                     needsAdd = false;

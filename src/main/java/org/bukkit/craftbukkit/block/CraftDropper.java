@@ -8,9 +8,10 @@ import net.minecraft.server.world.ServerWorld;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
+
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 
 public class CraftDropper extends CraftLootable<DropperBlockEntity> implements Dropper {
 
@@ -41,10 +42,11 @@ public class CraftDropper extends CraftLootable<DropperBlockEntity> implements D
         Block block = getBlock();
 
         if (block.getType() == Material.DROPPER) {
-            CraftWorld world = (CraftWorld) this.getWorld();
+            WorldImpl world = (WorldImpl) this.getWorld();
             DropperBlock drop = (DropperBlock) Blocks.DROPPER;
 
             drop.dispense((ServerWorld) world.getHandle(), this.getPosition());
         }
     }
+
 }

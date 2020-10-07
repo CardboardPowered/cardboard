@@ -15,7 +15,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AbstractArrow;
@@ -55,6 +54,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -166,7 +166,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @SuppressWarnings({ "unchecked" })
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector arg1) {
-        net.minecraft.world.World world = ((CraftWorld) getWorld()).getHandle();
+        net.minecraft.world.World world = ((WorldImpl) getWorld()).getHandle();
         net.minecraft.entity.Entity launch = null;
 
         if (Snowball.class.isAssignableFrom(projectile)) {

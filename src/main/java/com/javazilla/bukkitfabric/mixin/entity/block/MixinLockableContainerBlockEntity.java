@@ -16,7 +16,7 @@ public class MixinLockableContainerBlockEntity implements IMixinLockableContaine
     public Location getLocation() {
         LockableContainerBlockEntity lc = (LockableContainerBlockEntity)(Object)this;
         BlockPos pos = lc.getPos();
-        return new Location(((IMixinWorld)lc.world).getCraftWorld(), pos.getX(), pos.getY(), pos.getZ());
+        return new Location(((IMixinWorld)lc.world).getWorldImpl(), pos.getX(), pos.getY(), pos.getZ());
     }
 
 }

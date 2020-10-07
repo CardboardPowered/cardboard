@@ -9,7 +9,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -57,12 +56,12 @@ public class BukkitEventFactory {
     }
 
     public static BlockPlaceEvent callBlockPlaceEvent(ServerWorld world, PlayerEntity who, Hand hand, BlockState replacedBlockState, int x, int y, int z) {
-        CraftWorld craftWorld = ((IMixinWorld)world).getCraftWorld();
+        WorldImpl WorldImpl = ((IMixinWorld)world).getWorldImpl();
         CraftServer craftServer = CraftServer.INSTANCE;
 
         Player player = (Player) ((IMixinServerEntityPlayer)(ServerPlayerEntity)who).getBukkitEntity();
 
-        Block blockClicked = craftWorld.getBlockAt(x, y, z);
+        Block blockClicked = WorldImpl.getBlockAt(x, y, z);
         Block placedBlock = replacedBlockState.getBlock();
 
         boolean canBuild = canBuild(world, player, placedBlock.getX(), placedBlock.getZ());
@@ -98,7 +97,7 @@ public class BukkitEventFactory {
     }
 
     public static BlockIgniteEvent callBlockIgniteEvent(World world, int x, int y, int z, Explosion explosion) {
-        org.bukkit.World bukkitWorld = ((IMixinWorld)(ServerWorld)world).getCraftWorld();
+        org.bukkit.World bukkitWorld = ((IMixinWorld)(ServerWorld)world).getWorldImpl();
         org.bukkit.entity.Entity igniter = explosion.entity == null ? null : ((IMixinEntity)explosion.entity).getBukkitEntity();
 
         BlockIgniteEvent event = new BlockIgniteEvent(bukkitWorld.getBlockAt(x, y, z), IgniteCause.EXPLOSION, igniter);
@@ -120,12 +119,12 @@ public class BukkitEventFactory {
         Player player = (who == null) ? null : (Player) ((IMixinServerEntityPlayer)who).getBukkitEntity();
         CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
 
-        CraftWorld craftWorld = (CraftWorld) player.getWorld();
+        WorldImpl WorldImpl = (WorldImpl) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
 
         Block blockClicked = null;
         if (position != null) {
-            blockClicked = craftWorld.getBlockAt(position.getX(), position.getY(), position.getZ());
+            blockClicked = WorldImpl.getBlockAt(position.getX(), position.getY(), position.getZ());
         } else {
             switch (action) {
                 case LEFT_CLICK_BLOCK:
@@ -154,10 +153,10 @@ public class BukkitEventFactory {
         Player player = (who == null) ? null : (Player) ((IMixinServerEntityPlayer)who).getBukkitEntity();
         CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
 
-        CraftWorld craftWorld = (CraftWorld) player.getWorld();
+        WorldImpl WorldImpl = (WorldImpl) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
 
-        Block blockClicked = craftWorld.getBlockAt(x, y, z);
+        Block blockClicked = WorldImpl.getBlockAt(x, y, z);
 
         BlockDamageEvent event = new BlockDamageEvent(player, blockClicked, itemInHand, instaBreak);
         craftServer.getPluginManager().callEvent(event);

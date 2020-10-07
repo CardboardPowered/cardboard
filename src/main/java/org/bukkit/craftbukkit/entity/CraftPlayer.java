@@ -31,7 +31,6 @@ import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -46,6 +45,7 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementProgressImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -1084,7 +1084,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         from = event.getFrom();
         to = event.getTo();
 
-        ServerWorld toWorld = (ServerWorld) ((CraftWorld) to.getWorld()).getHandle();
+        ServerWorld toWorld = (ServerWorld) ((WorldImpl) to.getWorld()).getHandle();
 
         if (getHandle().inventory != getHandle().inventory)
             getHandle().closeCurrentScreen();
@@ -1181,11 +1181,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public Location getBedSpawnLocation() {
-        World world = ((IMixinWorld)getHandle().server.getWorld(getHandle().getSpawnPointDimension())).getCraftWorld();
+        World world = ((IMixinWorld)getHandle().server.getWorld(getHandle().getSpawnPointDimension())).getWorldImpl();
         BlockPos bed = getHandle().getSpawnPointPosition();
 
         if (world != null && bed != null) {
-            Optional<Vec3d> spawnLoc = PlayerEntity.findRespawnPosition((ServerWorld) ((CraftWorld) world).getHandle(), bed, getHandle().getSpawnAngle(), getHandle().isSpawnPointSet(), true);
+            Optional<Vec3d> spawnLoc = PlayerEntity.findRespawnPosition((ServerWorld) ((WorldImpl) world).getHandle(), bed, getHandle().getSpawnAngle(), getHandle().isSpawnPointSet(), true);
             if (spawnLoc.isPresent()) {
                 Vec3d vec = spawnLoc.get();
                 return new Location(world, vec.x, vec.y, vec.z);
@@ -1203,7 +1203,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void setBedSpawnLocation(Location location, boolean override) {
         if (location == null) {
             getHandle().setSpawnPoint(null, null, 0, override, false);
-        } else getHandle().setSpawnPoint(((CraftWorld) location.getWorld()).getHandle().getRegistryKey(), new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), location.getYaw(), override, false);
+        } else getHandle().setSpawnPoint(((WorldImpl) location.getWorld()).getHandle().getRegistryKey(), new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), location.getYaw(), override, false);
     }
 
     public void setFirstPlayed(long modified) {

@@ -146,7 +146,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
                     entityplayer.setSpawnPoint(worldserver1.getRegistryKey(), blockposition, f, flag1, false);
                     flag2 = !flag && flag3;
                     isBedSpawn = true;
-                    location = new Location(((IMixinWorld)worldserver1).getCraftWorld(), vec3d.x, vec3d.y, vec3d.z);
+                    location = new Location(((IMixinWorld)worldserver1).getWorldImpl(), vec3d.x, vec3d.y, vec3d.z);
                 } else if (blockposition != null)
                     entityplayer.networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.NO_RESPAWN_BLOCK, 0.0F));
             }
@@ -154,7 +154,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
             if (location == null) {
                 worldserver1 = CraftServer.server.getWorld(World.OVERWORLD);
                 blockposition = entityplayer.getSpawnPointPosition();
-                location = new Location(((IMixinWorld)worldserver1).getCraftWorld(), (double) ((float) blockposition.getX() + 0.5F), (double) ((float) blockposition.getY() + 0.1F), (double) ((float) blockposition.getZ() + 0.5F));
+                location = new Location(((IMixinWorld)worldserver1).getWorldImpl(), (double) ((float) blockposition.getX() + 0.5F), (double) ((float) blockposition.getY() + 0.1F), (double) ((float) blockposition.getZ() + 0.5F));
             }
 
             Player respawnPlayer = CraftServer.INSTANCE.getPlayer(entityplayer);
@@ -165,7 +165,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
                 return entityplayer;
 
             location = respawnEvent.getRespawnLocation();
-        } else location.setWorld(((IMixinWorld)worldserver).getCraftWorld());
+        } else location.setWorld(((IMixinWorld)worldserver).getWorldImpl());
 
         while (avoidSuffocation && !worldserver.isSpaceEmpty(entityplayer) && entityplayer.getY() < 256.0D)
             entityplayer.updatePosition(entityplayer.getX(), entityplayer.getY() + 1.0D, entityplayer.getZ());

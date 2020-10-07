@@ -5,14 +5,13 @@ import net.minecraft.util.math.BlockPos;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
-import org.bukkit.craftbukkit.CraftWorld;
 
 public class WorldBorderImpl implements WorldBorder {
 
     private final World world;
     private final net.minecraft.world.border.WorldBorder handle;
 
-    public WorldBorderImpl(CraftWorld world) {
+    public WorldBorderImpl(WorldImpl world) {
         this.world = world;
         this.handle = world.getHandle().getWorldBorder();
     }

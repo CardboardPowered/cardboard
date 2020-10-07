@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
@@ -58,8 +59,8 @@ public class CraftChunk implements Chunk {
     }
 
     @Override
-    public CraftWorld getWorld() {
-        return ((IMixinWorld)worldServer.toServerWorld()).getCraftWorld();
+    public WorldImpl getWorld() {
+        return ((IMixinWorld)worldServer.toServerWorld()).getWorldImpl();
     }
 
     public net.minecraft.world.chunk.WorldChunk getHandle() {
@@ -135,7 +136,7 @@ public class CraftChunk implements Chunk {
                 continue;
 
             BlockPos position = (BlockPos) obj;
-            entities[index++] = ((IMixinWorld)(Object)worldServer).getCraftWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
+            entities[index++] = ((IMixinWorld)(Object)worldServer).getWorldImpl().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
         }
 
         return entities;
@@ -284,7 +285,7 @@ public class CraftChunk implements Chunk {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, CraftWorld world, boolean includeBiome, boolean includeBiomeTempRain) {
+    public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, WorldImpl world, boolean includeBiome, boolean includeBiomeTempRain) {
         BiomeArray biome = null;
 
         if (includeBiome || includeBiomeTempRain)

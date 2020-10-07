@@ -9,9 +9,10 @@ import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 
 public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> implements Jukebox {
 
@@ -28,7 +29,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
         boolean result = super.update(force, applyPhysics);
 
         if (result && this.isPlaced() && this.getType() == Material.JUKEBOX) {
-            CraftWorld world = (CraftWorld) this.getWorld();
+            WorldImpl world = (WorldImpl) this.getWorld();
             Material record = this.getPlaying();
             if (record == Material.AIR) {
                 world.getHandle().setBlockState(this.getPosition(), Blocks.JUKEBOX.getDefaultState().with(JukeboxBlock.HAS_RECORD, false), 3);
@@ -85,7 +86,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
         JukeboxBlockEntity jukebox = (JukeboxBlockEntity) tileEntity;
         boolean result = !jukebox.getRecord().isEmpty();
-        CraftWorld world = (CraftWorld) this.getWorld();
+        WorldImpl world = (WorldImpl) this.getWorld();
         ((JukeboxBlock) Blocks.JUKEBOX).removeRecord(world.getHandle(), getPosition());
         return result;
     }

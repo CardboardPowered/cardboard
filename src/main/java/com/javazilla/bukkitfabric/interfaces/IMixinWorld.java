@@ -18,10 +18,10 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import org.bukkit.craftbukkit.CraftWorld;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 
 public interface IMixinWorld {
 
-    public CraftWorld getCraftWorld();
+    public WorldImpl getWorldImpl();
 
 }

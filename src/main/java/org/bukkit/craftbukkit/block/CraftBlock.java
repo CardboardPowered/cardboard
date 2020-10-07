@@ -15,7 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -31,6 +30,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Preconditions;
+import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.block.BlockState;
@@ -74,11 +74,11 @@ public class CraftBlock implements Block {
 
     @Override
     public World getWorld() {
-        return ((IMixinWorld)world).getCraftWorld();
+        return ((IMixinWorld)world).getWorldImpl();
     }
 
-    public CraftWorld getCraftWorld() {
-        return (CraftWorld) getWorld();
+    public WorldImpl getWorldImpl() {
+        return (WorldImpl) getWorld();
     }
 
     @Override
