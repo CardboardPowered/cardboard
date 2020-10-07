@@ -20,8 +20,12 @@ import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
  * @author md_5
  * @author Bukkit for Fabric Mod
  */
-// CHECKSTYLE:OFF
 public class Commodore {
+
+    // BukkitFabric: define CB classes in fields
+    private static final String EVIL_CLASS = "org/bukkit/craftbukkit/util/CraftEvil";
+    private static final String LEGACY_CLASS = "org/bukkit/craftbukkit/util/CraftLegacy";
+    private static final String LEGACY_MATERIALS_CLASS = "org/bukkit/craftbukkit/util/CraftLegacyMaterials";
 
     private static final Set<String> EVIL = new HashSet<>( Arrays.asList(
             "org/bukkit/World (III)I getBlockTypeIdAt",
@@ -37,10 +41,10 @@ public class Commodore {
     ) );
 
     public static byte[] convert(byte[] b, final boolean modern, String pl) {
-        ClassReader cr = new ClassReader( b );
-        ClassWriter cw = new ClassWriter( cr, 0 );
+        ClassReader cr = new ClassReader(b);
+        ClassWriter cw = new ClassWriter(cr, 0);
 
-        cr.accept( new ClassVisitor( Opcodes.ASM7, cw ) {
+        cr.accept( new ClassVisitor(Opcodes.ASM7, cw) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                 return new ReflectionMethodVisitor( api, super.visitMethod( access, name, desc, signature, exceptions ), pl ) {
@@ -74,9 +78,9 @@ public class Commodore {
 
                         if (owner.equals( "org/bukkit/Material" )) {
                             try {
-                                Material.valueOf( "LEGACY_" + name );
+                                Material.valueOf("LEGACY_" + name);
                             } catch ( IllegalArgumentException ex ) {
-                                throw new AuthorNagException( "No legacy enum constant for " + name + ". Did you forget to define a modern (1.13+) api-version in your plugin.yml?" );
+                                throw new AuthorNagException("No legacy enum constant for " + name + ". Did you forget to define a modern (1.13+) api-version in your plugin.yml?");
                             }
 
                             super.visitFieldInsn( opcode, owner, "LEGACY_" + name, desc );
@@ -117,11 +121,6 @@ public class Commodore {
 
                     @Override
                     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-                        /*if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;")) {
-                            super.visitMethodInsn( opcode, "org/bukkit/craftbukkit/util/FabricNms", name, desc, itf );
-                            return;
-                        }*/
-
                         // SPIGOT-4496
                         if ( owner.equals( "org/bukkit/map/MapView" ) && name.equals( "getId" ) && desc.equals( "()S" ) ) {
                             // Should be same size on stack so just call other method
@@ -139,10 +138,10 @@ public class Commodore {
                             if (owner.equals( "org/bukkit/Material")) {
                                 switch (name) {
                                     case "values":
-                                        super.visitMethodInsn(opcode, "org/bukkit/craftbukkit/util/CraftLegacy", "modern_" + name, desc, itf );
+                                        super.visitMethodInsn(opcode, LEGACY_CLASS, "modern_" + name, desc, itf );
                                         return;
                                     case "ordinal":
-                                        super.visitMethodInsn(Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacy", "modern_" + name, "(Lorg/bukkit/Material;)I", false );
+                                        super.visitMethodInsn(Opcodes.INVOKESTATIC, LEGACY_CLASS, "modern_" + name, "(Lorg/bukkit/Material;)I", false );
                                         return;
                                 }
                             }
@@ -156,54 +155,54 @@ public class Commodore {
                             return;
                         }
 
-                        Type retType = Type.getReturnType( desc );
+                        Type retType = Type.getReturnType(desc);
 
-                        if ( EVIL.contains( owner + " " + desc + " " + name )
+                        if (EVIL.contains(owner + " " + desc + " " + name)
                                 || ( owner.startsWith( "org/bukkit/block/" ) && ( desc + " " + name ).equals( "()I getTypeId" ) )
                                 || ( owner.startsWith( "org/bukkit/block/" ) && ( desc + " " + name ).equals( "(I)Z setTypeId" ) )
                                 || ( owner.startsWith( "org/bukkit/block/" ) && ( desc + " " + name ).equals( "()Lorg/bukkit/Material; getType" ) ) ) {
                             Type[] args = Type.getArgumentTypes( desc );
                             Type[] newArgs = new Type[ args.length + 1 ];
-                            newArgs[0] = Type.getObjectType( owner );
-                            System.arraycopy( args, 0, newArgs, 1, args.length );
+                            newArgs[0] = Type.getObjectType(owner);
+                            System.arraycopy(args, 0, newArgs, 1, args.length);
 
-                            super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftEvil", name, Type.getMethodDescriptor( retType, newArgs ), false );
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC, EVIL_CLASS, name, Type.getMethodDescriptor(retType, newArgs), false);
                             return;
                         }
 
-                        if ( owner.equals( "org/bukkit/DyeColor" ) ) {
-                            if ( name.equals( "valueOf" ) && desc.equals( "(Ljava/lang/String;)Lorg/bukkit/DyeColor;" ) ) {
-                                super.visitMethodInsn( opcode, owner, "legacyValueOf", desc, itf );
+                        if (owner.equals("org/bukkit/DyeColor")) {
+                            if (name.equals("valueOf") && desc.equals("(Ljava/lang/String;)Lorg/bukkit/DyeColor;")) {
+                                super.visitMethodInsn(opcode, owner, "legacyValueOf", desc, itf);
                                 return;
                             }
                         }
 
-                        if ( owner.equals( "org/bukkit/Material" ) ) {
-                            if ( name.equals( "getMaterial" ) && desc.equals( "(I)Lorg/bukkit/Material;" ) ) {
-                                super.visitMethodInsn( opcode, "org/bukkit/craftbukkit/util/CraftEvil", name, desc, itf );
+                        if (owner.equals("org/bukkit/Material")) {
+                            if (name.equals("getMaterial") && desc.equals("(I)Lorg/bukkit/Material;")) {
+                                super.visitMethodInsn( opcode, EVIL_CLASS, name, desc, itf );
                                 return;
                             }
 
-                            switch ( name ) {
+                            switch (name) {
                                 case "values":
                                 case "valueOf":
                                 case "getMaterial":
                                 case "matchMaterial":
-                                    super.visitMethodInsn( opcode, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", name, desc, itf );
+                                    super.visitMethodInsn(opcode, LEGACY_MATERIALS_CLASS, name, desc, itf);
                                     return;
                                 case "ordinal":
-                                    super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", "ordinal", "(Lorg/bukkit/Material;)I", false );
+                                    super.visitMethodInsn(Opcodes.INVOKESTATIC, LEGACY_MATERIALS_CLASS, "ordinal", "(Lorg/bukkit/Material;)I", false);
                                     return;
                                 case "name":
                                 case "toString":
-                                    super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", name, "(Lorg/bukkit/Material;)Ljava/lang/String;", false );
+                                    super.visitMethodInsn(Opcodes.INVOKESTATIC, LEGACY_MATERIALS_CLASS, name, "(Lorg/bukkit/Material;)Ljava/lang/String;", false);
                                     return;
                             }
                         }
 
-                        if ( retType.getSort() == Type.OBJECT && retType.getInternalName().equals( "org/bukkit/Material" ) && owner.startsWith( "org/bukkit" ) ) {
-                            super.visitMethodInsn( opcode, owner, name, desc, itf );
-                            super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/bukkit/craftbukkit/util/CraftLegacyMaterials", "toLegacy", "(Lorg/bukkit/Material;)Lorg/bukkit/Material;", false );
+                        if (retType.getSort() == Type.OBJECT && retType.getInternalName().equals("org/bukkit/Material") && owner.startsWith("org/bukkit")) {
+                            super.visitMethodInsn(opcode, owner, name, desc, itf);
+                            super.visitMethodInsn(Opcodes.INVOKESTATIC, LEGACY_MATERIALS_CLASS, "toLegacy", "(Lorg/bukkit/Material;)Lorg/bukkit/Material;", false);
                             return;
                         }
 

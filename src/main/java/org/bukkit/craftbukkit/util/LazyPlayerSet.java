@@ -18,8 +18,7 @@ public class LazyPlayerSet extends LazyHashSet<Player> {
 
     @Override
     HashSet<Player> makeReference() {
-        if (reference != null)
-            throw new IllegalStateException("Reference already created");
+        if (reference != null) throw new IllegalStateException("Reference already created");
         List<ServerPlayerEntity> players = server.getPlayerManager().getPlayerList();
         HashSet<Player> reference = new HashSet<Player>(players.size());
         for (ServerPlayerEntity player : players)
@@ -27,4 +26,5 @@ public class LazyPlayerSet extends LazyHashSet<Player> {
 
         return reference;
     }
+
 }

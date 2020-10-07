@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,11 +26,9 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameRule;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Raid;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.StructureType;
 import org.bukkit.TreeType;
 import org.bukkit.World;
@@ -47,8 +44,6 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
-import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -58,6 +53,7 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
+import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionData;
@@ -69,17 +65,18 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
+import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
+import com.javazilla.bukkitfabric.impl.WorldBorderImpl;
+import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinChunkHolder;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
-import com.javazilla.bukkitfabric.mixin.world.MixinChunkHolder;
-
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import net.minecraft.block.AbstractRedstoneGateBlock;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.ChorusFlowerBlock;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityData;
@@ -96,7 +93,6 @@ import net.minecraft.entity.mob.EvokerFangsEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
@@ -125,7 +121,7 @@ import net.minecraft.world.gen.feature.ConfiguredFeatures;
 public class CraftWorld implements World {
 
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
-    private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
+    private final MetaDataStoreBase<Block> blockMetadata = MetadataStoreImpl.newBlockMetadataStore(this);
 
     private ServerWorld nms;
     private String name;
@@ -843,7 +839,7 @@ public class CraftWorld implements World {
     @Override
     public WorldBorder getWorldBorder() {
         if (this.worldBorder == null)
-            this.worldBorder = new CraftWorldBorder(this);
+            this.worldBorder = new WorldBorderImpl(this);
 
         return this.worldBorder;
     }
@@ -1559,7 +1555,7 @@ public class CraftWorld implements World {
         PersistentProjectileEntity arrow;
         if (TippedArrow.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.entity.EntityType.ARROW.create(nms);
-            ((IMixinArrowEntity) arrow).setType(CraftPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
+            ((IMixinArrowEntity) arrow).setType(PotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
         } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.entity.EntityType.SPECTRAL_ARROW.create(nms);
         } else if (Trident.class.isAssignableFrom(clazz)) {
@@ -1748,7 +1744,7 @@ public class CraftWorld implements World {
         };
     }
 
-    public BlockMetadataStore getBlockMetadata() {
+    public MetadataStoreBase<Block> getBlockMetadata() {
         return blockMetadata;
     }
 

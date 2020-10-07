@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.persistence;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -62,7 +63,6 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
     @Override
     public void remove(NamespacedKey key) {
         Validate.notNull(key, "The provided key for the custom value was null");
-
         this.customDataTags.remove(key.toString());
     }
 
@@ -123,12 +123,23 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         return hashCode;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Object> serialize() {
         return (Map<String, Object>) CraftNBTTagConfigSerializer.serialize(toTagCompound());
     }
 
+    @SuppressWarnings("deprecation")
+    @Override
     public Set<NamespacedKey> getKeys() {
-        return null; // TODO
+        Set<NamespacedKey> keys = new HashSet<>();
+
+        this.customDataTags.keySet().forEach(key -> {
+            String[] keyData = key.split(":", 2);
+            if (keyData.length == 2)
+                keys.add(new NamespacedKey(keyData[0], keyData[1]));
+        });
+
+        return keys;
     }
 
 }

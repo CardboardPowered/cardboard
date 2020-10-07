@@ -18,7 +18,6 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
@@ -56,6 +55,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
@@ -181,7 +181,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
                 launch = new ArrowEntity(world, getHandle());
-                ((IMixinArrowEntity)(ArrowEntity) launch).setType(CraftPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
+                ((IMixinArrowEntity)(ArrowEntity) launch).setType(PotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
                 launch = new SpectralArrowEntity(world, getHandle());
             } else if (Trident.class.isAssignableFrom(projectile)) {

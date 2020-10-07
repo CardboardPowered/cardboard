@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.command;
+package com.javazilla.bukkitfabric.impl;
 
 import com.google.common.base.Joiner;
 import com.mojang.brigadier.ParseResults;
@@ -18,12 +18,12 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
-public final class VanillaCommandWrapper extends BukkitCommand {
+public final class MinecraftCommandWrapper extends BukkitCommand {
 
     private final CommandManager dispatcher;
     public final CommandNode<?> vanillaCommand;
 
-    public VanillaCommandWrapper(CommandManager dispatcher, CommandNode<?> vanillaCommand) {
+    public MinecraftCommandWrapper(CommandManager dispatcher, CommandNode<?> vanillaCommand) {
         super(vanillaCommand.getName(), "A Minecraft provided command", vanillaCommand.getUsageText(), Collections.emptyList());
         this.dispatcher = dispatcher;
         this.vanillaCommand = vanillaCommand;

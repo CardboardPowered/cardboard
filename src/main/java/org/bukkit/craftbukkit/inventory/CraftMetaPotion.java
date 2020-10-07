@@ -2,6 +2,8 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +16,6 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
-import org.bukkit.craftbukkit.potion.CraftPotionUtil;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
@@ -55,14 +56,12 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     CraftMetaPotion(CompoundTag tag) {
         super(tag);
         if (tag.contains(DEFAULT_POTION.NBT))
-            type = CraftPotionUtil.toBukkit(tag.getString(DEFAULT_POTION.NBT));
+            type = PotionUtil.toBukkit(tag.getString(DEFAULT_POTION.NBT));
 
         if (tag.contains(POTION_COLOR.NBT)) {
             try {
                 color = Color.fromRGB(tag.getInt(POTION_COLOR.NBT));
-            } catch (IllegalArgumentException ex) {
-                // Invalid colour
-            }
+            } catch (IllegalArgumentException ex) {/* Invalid color */ }
         }
         if (tag.contains(POTION_EFFECTS.NBT)) {
             ListTag list = tag.getList(POTION_EFFECTS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
@@ -72,9 +71,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
             for (int i = 0; i < length; i++) {
                 CompoundTag effect = list.getCompound(i);
                 PotionEffectType type = PotionEffectType.getById(effect.getByte(ID.NBT));
-                // SPIGOT-4047: Vanilla just disregards these
-                if (type == null)
-                    continue;
+                if (type == null) continue; // SPIGOT-4047: Vanilla just disregards these
 
                 int amp = effect.getByte(AMPLIFIER.NBT);
                 int duration = effect.getInt(DURATION.NBT);
@@ -88,7 +85,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
 
     CraftMetaPotion(Map<String, Object> map) {
         super(map);
-        type = CraftPotionUtil.toBukkit(SerializableMeta.getString(map, DEFAULT_POTION.BUKKIT, true));
+        type = PotionUtil.toBukkit(SerializableMeta.getString(map, DEFAULT_POTION.BUKKIT, true));
 
         Color color = SerializableMeta.getObject(Color.class, map, POTION_COLOR.BUKKIT, true);
         if (color != null)
@@ -109,7 +106,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     void applyToItem(CompoundTag tag) {
         super.applyToItem(tag);
 
-        tag.putString(DEFAULT_POTION.NBT, CraftPotionUtil.fromBukkit(type));
+        tag.putString(DEFAULT_POTION.NBT, PotionUtil.fromBukkit(type));
 
         if (hasColor())
             tag.putInt(POTION_COLOR.NBT, color.asRGB());
@@ -318,7 +315,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
         if (type.getType() != PotionType.UNCRAFTABLE)
-            builder.put(DEFAULT_POTION.BUKKIT, CraftPotionUtil.fromBukkit(type));
+            builder.put(DEFAULT_POTION.BUKKIT, PotionUtil.fromBukkit(type));
 
         if (hasColor())
             builder.put(POTION_COLOR.BUKKIT, getColor());

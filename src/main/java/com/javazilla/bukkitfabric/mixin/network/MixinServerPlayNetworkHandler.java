@@ -588,7 +588,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             } else {
                 if (((IMixinServerPlayerInteractionManager)player.interactionManager).getFiredInteractBF()) {
                     ((IMixinServerPlayerInteractionManager)player.interactionManager).setFiredInteractBF(false);
-                    cancelled = ((IMixinServerPlayerInteractionManager)player.interactionManager).getOnteractResultBF();
+                    cancelled = ((IMixinServerPlayerInteractionManager)player.interactionManager).getInteractResultBF();
                 } else {
                     BlockHitResult movingobjectpositionblock = (BlockHitResult) movingobjectposition;
                     org.bukkit.event.player.PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getSide(), itemstack, true, enumhand);

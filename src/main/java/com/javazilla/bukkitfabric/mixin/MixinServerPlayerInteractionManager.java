@@ -270,7 +270,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
     }
 
     @Override
-    public boolean getOnteractResultBF() {
+    public boolean getInteractResultBF() {
         return interactResult;
     }
 

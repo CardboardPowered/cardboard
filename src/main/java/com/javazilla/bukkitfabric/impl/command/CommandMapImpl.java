@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.command;
+package com.javazilla.bukkitfabric.impl.command;
 
 import java.util.Map;
 
@@ -8,9 +8,9 @@ import org.bukkit.command.SimpleCommandMap;
 
 import com.javazilla.bukkitfabric.impl.VersionCommand;
 
-public class CraftCommandMap extends SimpleCommandMap {
+public class CommandMapImpl extends SimpleCommandMap {
 
-    public CraftCommandMap(Server server) {
+    public CommandMapImpl(Server server) {
         super(server);
 
         // Register our commands

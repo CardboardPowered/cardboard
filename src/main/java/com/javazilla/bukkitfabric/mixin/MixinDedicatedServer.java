@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.ServerShutdownThread;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.spongepowered.asm.mixin.Final;
@@ -53,7 +54,7 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer {
     @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
         CraftServer.server = (MinecraftDedicatedServer) (Object) this;
-        Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread((MinecraftDedicatedServer)(Object)this));
+        Runtime.getRuntime().addShutdownHook(new ServerShutdownThread());
     }
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.attribute;
+package com.javazilla.bukkitfabric.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,12 +11,12 @@ import org.bukkit.attribute.AttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 
-public class CraftAttributeInstance implements AttributeInstance {
+public class AttributeInstanceImpl implements AttributeInstance {
 
     private final EntityAttributeInstance handle;
     private final Attribute attribute;
 
-    public CraftAttributeInstance(EntityAttributeInstance handle, Attribute attribute) {
+    public AttributeInstanceImpl(EntityAttributeInstance handle, Attribute attribute) {
         this.handle = handle;
         this.attribute = attribute;
     }
@@ -39,9 +39,7 @@ public class CraftAttributeInstance implements AttributeInstance {
     @Override
     public Collection<AttributeModifier> getModifiers() {
         List<AttributeModifier> result = new ArrayList<AttributeModifier>();
-        for (EntityAttributeModifier nms : handle.getModifiers())
-            result.add(convert(nms));
-
+        for (EntityAttributeModifier nms : handle.getModifiers()) result.add(convert(nms));
         return result;
     }
 

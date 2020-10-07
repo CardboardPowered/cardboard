@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.command;
+package com.javazilla.bukkitfabric.impl.command;
 
 import java.util.Set;
 
@@ -15,7 +15,7 @@ import org.bukkit.plugin.Plugin;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 
-public class CraftConsoleCommandSender implements ConsoleCommandSender, CommandSender {
+public class ConsoleCommandSenderImpl implements ConsoleCommandSender, CommandSender {
 
     @Override
     public String getName() {

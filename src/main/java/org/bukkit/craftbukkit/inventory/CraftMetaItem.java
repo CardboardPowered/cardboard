@@ -38,8 +38,6 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.craftbukkit.CraftEquipmentSlot;
 import org.bukkit.craftbukkit.Overridden;
-import org.bukkit.craftbukkit.attribute.CraftAttributeInstance;
-import org.bukkit.craftbukkit.attribute.CraftAttributeMap;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific;
 import org.bukkit.craftbukkit.inventory.tags.DeprecatedCustomTagContainer;
@@ -69,6 +67,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonParseException;
+import com.javazilla.bukkitfabric.impl.AttributableImpl;
+import com.javazilla.bukkitfabric.impl.AttributeInstanceImpl;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -390,13 +390,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (nmsModifier == null)
                 continue;
 
-            AttributeModifier attribMod = CraftAttributeInstance.convert(nmsModifier);
+            AttributeModifier attribMod = AttributeInstanceImpl.convert(nmsModifier);
 
             String attributeName = entry.getString(ATTRIBUTES_IDENTIFIER.NBT);
             if (attributeName == null || attributeName.isEmpty())
                 continue;
 
-            Attribute attribute = CraftAttributeMap.fromMinecraft(attributeName);
+            Attribute attribute = AttributableImpl.fromMinecraft(attributeName);
             if (attribute == null)
                 continue;
 
@@ -632,7 +632,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
             if (entry.getKey() == null || entry.getValue() == null)
                 continue;
-            net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = CraftAttributeInstance.convert(entry.getValue());
+            net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = AttributeInstanceImpl.convert(entry.getValue());
             CompoundTag sub = nmsModifier.toTag();
             if (sub.isEmpty())
                 continue;

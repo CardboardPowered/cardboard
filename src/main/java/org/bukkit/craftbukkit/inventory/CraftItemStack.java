@@ -10,7 +10,6 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.util.CraftLegacy;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -20,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
 import com.google.common.collect.ImmutableMap;
+import com.javazilla.bukkitfabric.impl.enchantments.BukkitEnchantment;
 import com.mojang.serialization.Dynamic;
 
 import net.minecraft.datafixer.TypeReferences;
@@ -219,7 +219,7 @@ public final class CraftItemStack extends ItemStack {
     public int getEnchantmentLevel(Enchantment ench) {
         if (handle == null)
             return 0;
-        return EnchantmentHelper.getLevel(CraftEnchantment.getRaw(ench), handle);
+        return EnchantmentHelper.getLevel(BukkitEnchantment.getRaw(ench), handle);
     }
 
     @Override

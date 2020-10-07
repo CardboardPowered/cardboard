@@ -1,5 +1,6 @@
-package org.bukkit.craftbukkit.attribute;
+package com.javazilla.bukkitfabric.impl;
 
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
@@ -9,20 +10,18 @@ import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 
-import org.bukkit.Registry;
-
-public class CraftAttributeMap implements Attributable {
+public class AttributableImpl implements Attributable {
 
     private final AttributeContainer handle;
 
-    public CraftAttributeMap(AttributeContainer handle) {
+    public AttributableImpl(AttributeContainer handle) {
         this.handle = handle;
     }
 
     @Override
     public AttributeInstance getAttribute(Attribute attribute) {
         EntityAttributeInstance nms = handle.getCustomInstance(toMinecraft(attribute));
-        return (nms == null) ? null : new CraftAttributeInstance(nms, attribute);
+        return (nms == null) ? null : new AttributeInstanceImpl(nms, attribute);
     }
 
     public static EntityAttribute toMinecraft(Attribute attribute) {

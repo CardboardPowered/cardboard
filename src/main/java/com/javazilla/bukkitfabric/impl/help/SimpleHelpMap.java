@@ -18,7 +18,6 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.bukkit.help.GenericCommandHelpTopic;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
@@ -29,6 +28,7 @@ import org.bukkit.help.IndexHelpTopic;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.javazilla.bukkitfabric.impl.MinecraftCommandWrapper;
 
 @SuppressWarnings("rawtypes")
 public class SimpleHelpMap implements HelpMap {
@@ -185,7 +185,7 @@ public class SimpleHelpMap implements HelpMap {
     }
 
     private String getCommandPluginName(Command command) {
-        if (command instanceof VanillaCommandWrapper) return "Minecraft";
+        if (command instanceof MinecraftCommandWrapper) return "Minecraft";
         if (command instanceof BukkitCommand) return "Bukkit";
         return (command instanceof PluginIdentifiableCommand) ? ((PluginIdentifiableCommand) command).getPlugin().getName() : null;
     }

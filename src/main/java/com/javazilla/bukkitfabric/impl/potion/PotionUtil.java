@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.potion;
+package com.javazilla.bukkitfabric.impl.potion;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
@@ -10,7 +10,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-public class CraftPotionUtil {
+@SuppressWarnings("deprecation")
+public class PotionUtil {
 
     private static final BiMap<PotionType, String> regular = ImmutableBiMap.<PotionType, String>builder()
             .put(PotionType.UNCRAFTABLE, "empty")
@@ -35,6 +36,7 @@ public class CraftPotionUtil {
             .put(PotionType.TURTLE_MASTER, "turtle_master")
             .put(PotionType.SLOW_FALLING, "slow_falling")
             .build();
+
     private static final BiMap<PotionType, String> upgradeable = ImmutableBiMap.<PotionType, String>builder()
             .put(PotionType.JUMP, "strong_leaping")
             .put(PotionType.SPEED, "strong_swiftness")
@@ -46,6 +48,7 @@ public class CraftPotionUtil {
             .put(PotionType.SLOWNESS, "strong_slowness")
             .put(PotionType.TURTLE_MASTER, "strong_turtle_master")
             .build();
+
     private static final BiMap<PotionType, String> extendable = ImmutableBiMap.<PotionType, String>builder()
             .put(PotionType.NIGHT_VISION, "long_night_vision")
             .put(PotionType.INVISIBILITY, "long_invisibility")
@@ -63,58 +66,38 @@ public class CraftPotionUtil {
             .build();
 
     public static String fromBukkit(PotionData data) {
-        String type;
-        if (data.isUpgraded()) {
-            type = upgradeable.get(data.getType());
-        } else if (data.isExtended()) {
-            type = extendable.get(data.getType());
-        } else {
-            type = regular.get(data.getType());
-        }
+        String type = data.isUpgraded() ? upgradeable.get(data.getType()) : (data.isExtended() ? extendable.get(data.getType()) : regular.get(data.getType()));
         Preconditions.checkNotNull(type, "Unknown potion type from data " + data);
-
         return "minecraft:" + type;
     }
 
     public static PotionData toBukkit(String type) {
-        if (type == null) {
-            return new PotionData(PotionType.UNCRAFTABLE, false, false);
-        }
-        if (type.startsWith("minecraft:")) {
-            type = type.substring(10);
-        }
+        if (type == null) return new PotionData(PotionType.UNCRAFTABLE, false, false);
+        if (type.startsWith("minecraft:")) type = type.substring(10);
+
         PotionType potionType = null;
-        potionType = extendable.inverse().get(type);
-        if (potionType != null) {
+        if ((potionType = extendable.inverse().get(type)) != null)
             return new PotionData(potionType, true, false);
-        }
-        potionType = upgradeable.inverse().get(type);
-        if (potionType != null) {
+
+        if ((potionType = upgradeable.inverse().get(type)) != null)
             return new PotionData(potionType, false, true);
-        }
-        potionType = regular.inverse().get(type);
-        if (potionType != null) {
+
+        if ((regular.inverse().get(type)) != null)
             return new PotionData(potionType, false, false);
-        }
         return new PotionData(PotionType.UNCRAFTABLE, false, false);
     }
 
     public static StatusEffectInstance fromBukkit(PotionEffect effect) {
-        StatusEffect type = StatusEffect.byRawId(effect.getType().getId());
-        return new StatusEffectInstance(type, effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+        return new StatusEffectInstance(StatusEffect.byRawId(effect.getType().getId()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
     }
 
     public static PotionEffect toBukkit(StatusEffectInstance effect) {
         PotionEffectType type = PotionEffectType.getById(StatusEffect.getRawId(effect.getEffectType()));
-        int amp = effect.getAmplifier();
-        int duration = effect.getDuration();
-        boolean ambient = effect.isAmbient();
-        boolean particles = effect.shouldShowParticles();
-        return new PotionEffect(type, duration, amp, ambient, particles);
+        return new PotionEffect(type, effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.shouldShowParticles());
     }
 
     public static boolean equals(StatusEffect mobEffect, PotionEffectType type) {
-        PotionEffectType typeV = PotionEffectType.getById(StatusEffect.getRawId(mobEffect));
-        return typeV.equals(type);
+        return PotionEffectType.getById(StatusEffect.getRawId(mobEffect)).equals(type);
     }
+
 }

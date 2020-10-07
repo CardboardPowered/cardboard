@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.enchantments;
+package com.javazilla.bukkitfabric.impl.enchantments;
 
 import net.minecraft.enchantment.BindingCurseEnchantment;
 import net.minecraft.enchantment.VanishingCurseEnchantment;
@@ -10,11 +10,11 @@ import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftEnchantment extends Enchantment {
+public class BukkitEnchantment extends Enchantment {
 
     private final net.minecraft.enchantment.Enchantment target;
 
-    public CraftEnchantment(net.minecraft.enchantment.Enchantment target) {
+    public BukkitEnchantment(net.minecraft.enchantment.Enchantment target) {
         super(CraftNamespacedKey.fromMinecraft(Registry.ENCHANTMENT.getId(target)));
         this.target = target;
     }
@@ -80,7 +80,6 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public String getName() {
-        // PAIL: migration paths
         switch (Registry.ENCHANTMENT.getRawId(target)) {
             case 0:
                 return "PROTECTION_ENVIRONMENTAL";
@@ -165,8 +164,8 @@ public class CraftEnchantment extends Enchantment {
         if (enchantment instanceof EnchantmentWrapper)
             enchantment = ((EnchantmentWrapper) enchantment).getEnchantment();
 
-        if (enchantment instanceof CraftEnchantment)
-            return ((CraftEnchantment) enchantment).target;
+        if (enchantment instanceof BukkitEnchantment)
+            return ((BukkitEnchantment) enchantment).target;
 
         return null;
     }
@@ -176,10 +175,10 @@ public class CraftEnchantment extends Enchantment {
         if (other instanceof EnchantmentWrapper)
             other = ((EnchantmentWrapper) other).getEnchantment();
 
-        if (!(other instanceof CraftEnchantment))
+        if (!(other instanceof BukkitEnchantment))
             return false;
 
-        CraftEnchantment ench = (CraftEnchantment) other;
+        BukkitEnchantment ench = (BukkitEnchantment) other;
         return !target.canCombine(ench.target);
     }
 

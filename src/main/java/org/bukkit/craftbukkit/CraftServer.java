@@ -80,10 +80,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.command.BukkitCommandWrapper;
-import org.bukkit.craftbukkit.command.CraftCommandMap;
-import org.bukkit.craftbukkit.command.CraftConsoleCommandSender;
-import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
+
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftBlastingRecipe;
 import org.bukkit.craftbukkit.inventory.CraftCampfireRecipe;
@@ -97,9 +94,6 @@ import org.bukkit.craftbukkit.inventory.CraftSmokingRecipe;
 import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
 import org.bukkit.craftbukkit.inventory.RecipeIterator;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
-import org.bukkit.craftbukkit.metadata.EntityMetadataStore;
-import org.bukkit.craftbukkit.metadata.PlayerMetadataStore;
-import org.bukkit.craftbukkit.metadata.WorldMetadataStore;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -133,6 +127,7 @@ import org.bukkit.inventory.SmokingRecipe;
 import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
+import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
@@ -161,8 +156,14 @@ import com.javazilla.bukkitfabric.impl.tag.CraftBlockTag;
 import com.javazilla.bukkitfabric.impl.tag.CraftItemTag;
 import com.javazilla.bukkitfabric.impl.DotDatFilenameFilter;
 import com.javazilla.bukkitfabric.impl.IconCacheImpl;
+import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
+import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
+import com.javazilla.bukkitfabric.impl.MinecraftCommandWrapper;
 import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
 import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
+import com.javazilla.bukkitfabric.impl.command.BukkitCommandWrapper;
+import com.javazilla.bukkitfabric.impl.command.CommandMapImpl;
+import com.javazilla.bukkitfabric.impl.command.ConsoleCommandSenderImpl;
 import com.javazilla.bukkitfabric.impl.help.SimpleHelpMap;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -231,12 +232,12 @@ public class CraftServer implements Server {
 
     private final Logger logger = BukkitLogger.getLogger();
 
-    private final CraftCommandMap commandMap;
+    private final CommandMapImpl commandMap;
     private final SimplePluginManager pluginManager;
     private final CraftMagicNumbers unsafe = (CraftMagicNumbers) CraftMagicNumbers.INSTANCE;
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
-    private final ConsoleCommandSender consoleCommandSender = new CraftConsoleCommandSender();
+    private final ConsoleCommandSender consoleCommandSender = new ConsoleCommandSenderImpl();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
     public final List<CraftPlayer> playerView;
     private WarningState warningState = WarningState.DEFAULT;
@@ -250,9 +251,9 @@ public class CraftServer implements Server {
     public static CraftServer INSTANCE;
     private boolean dedicated;
 
-    private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
-    private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
-    private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
+    private final MetadataStoreBase<Entity> entityMetadata = MetadataStoreImpl.newEntityMetadataStore();
+    private final MetaDataStoreBase<OfflinePlayer> playerMetadata = MetadataStoreImpl.newPlayerMetadataStore();
+    private final MetaDataStoreBase<World> worldMetadata = MetadataStoreImpl.newWorldMetadataStore();
 
     public CraftServer(MinecraftServer nms) {
         if (nms instanceof MinecraftDedicatedServer)
@@ -260,7 +261,7 @@ public class CraftServer implements Server {
         INSTANCE = this;
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
         server = nms;
-        commandMap = new CraftCommandMap(this);
+        commandMap = new CommandMapImpl(this);
         pluginManager = new SimplePluginManager(this, commandMap);
 
         configuration = YamlConfiguration.loadConfiguration(new File("bukkit.yml"));
@@ -361,7 +362,7 @@ public class CraftServer implements Server {
         for (CommandNode<ServerCommandSource> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
             if (cmd.getCommand() != null && cmd.getCommand() instanceof BukkitCommandWrapper)
                 continue;
-            commandMap.register("minecraft", new VanillaCommandWrapper(dispatcher, cmd));
+            commandMap.register("minecraft", new MinecraftCommandWrapper(dispatcher, cmd));
         }
     }
 
@@ -375,8 +376,8 @@ public class CraftServer implements Server {
             String label = entry.getKey();
             Command command = entry.getValue();
 
-            if (command instanceof VanillaCommandWrapper) {
-                LiteralCommandNode<ServerCommandSource> node = (LiteralCommandNode<ServerCommandSource>) ((VanillaCommandWrapper) command).vanillaCommand;
+            if (command instanceof MinecraftCommandWrapper) {
+                LiteralCommandNode<ServerCommandSource> node = (LiteralCommandNode<ServerCommandSource>) ((MinecraftCommandWrapper) command).vanillaCommand;
                 if (!node.getLiteral().equals(label)) {
                     LiteralCommandNode<ServerCommandSource> clone = new LiteralCommandNode<ServerCommandSource>(label, node.getCommand(), node.getRequirement(), node.getRedirect(), node.getRedirectModifier(), node.isFork());
 
@@ -386,7 +387,7 @@ public class CraftServer implements Server {
                 }
 
                 dispatcher.getDispatcher().getRoot().addChild(node);
-            } else new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
+            } else new BukkitCommandWrapper(entry.getValue()).register(dispatcher.getDispatcher(), label);
         }
 
         // Refresh commands
@@ -1427,7 +1428,7 @@ public class CraftServer implements Server {
         return getServer();
     }
 
-    public CraftCommandMap getCommandMap() {
+    public CommandMapImpl getCommandMap() {
         return commandMap;
     }
 
@@ -1522,16 +1523,15 @@ public class CraftServer implements Server {
         }
     }
 
-
-    public EntityMetadataStore getEntityMetadata() {
+    public MetadataStoreBase<Entity> getEntityMetadata() {
         return entityMetadata;
     }
 
-    public PlayerMetadataStore getPlayerMetadata() {
+    public MetadataStoreBase<OfflinePlayer> getPlayerMetadata() {
         return playerMetadata;
     }
 
-    public WorldMetadataStore getWorldMetadata() {
+    public MetadataStoreBase<World> getWorldMetadata() {
         return worldMetadata;
     }
 

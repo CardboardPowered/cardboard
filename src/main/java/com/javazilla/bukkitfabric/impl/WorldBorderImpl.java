@@ -1,17 +1,18 @@
-package org.bukkit.craftbukkit;
+package com.javazilla.bukkitfabric.impl;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.bukkit.craftbukkit.CraftWorld;
 
-public class CraftWorldBorder implements WorldBorder {
+public class WorldBorderImpl implements WorldBorder {
 
     private final World world;
     private final net.minecraft.world.border.WorldBorder handle;
 
-    public CraftWorldBorder(CraftWorld world) {
+    public WorldBorderImpl(CraftWorld world) {
         this.world = world;
         this.handle = world.getHandle().getWorldBorder();
     }
@@ -103,7 +104,7 @@ public class CraftWorldBorder implements WorldBorder {
 
     @Override
     public boolean isInside(Location location) {
-        Preconditions.checkArgument(location != null, "location");
+        Preconditions.checkArgument(location != null, "Null Location");
         return location.getWorld().equals(this.world) && this.handle.contains(new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
 

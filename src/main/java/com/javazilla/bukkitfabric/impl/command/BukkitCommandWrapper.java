@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.command;
+package com.javazilla.bukkitfabric.impl.command;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -28,11 +28,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 public class BukkitCommandWrapper implements com.mojang.brigadier.Command<ServerCommandSource>, Predicate<ServerCommandSource>, SuggestionProvider<ServerCommandSource> {
 
-    private final CraftServer server;
     private final Command command;
 
-    public BukkitCommandWrapper(CraftServer server, Command command) {
-        this.server = server;
+    public BukkitCommandWrapper(Command command) {
         this.command = command;
     }
 
@@ -45,7 +43,7 @@ public class BukkitCommandWrapper implements com.mojang.brigadier.Command<Server
 
     @Override
     public boolean test(ServerCommandSource wrapper) {
-        return true;//command.testPermissionSilent(getSender(wrapper));
+        return true; // Let Bukkit handle permissions
     }
 
     @Override

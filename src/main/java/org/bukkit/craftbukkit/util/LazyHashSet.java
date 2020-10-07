@@ -93,11 +93,8 @@ public abstract class LazyHashSet<E> implements Set<E> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-
-        if (obj == null || this.getClass() != obj.getClass())
-            return false;
+        if (obj == this) return true;
+        if (obj == null || this.getClass() != obj.getClass()) return false;
 
         LazyHashSet<?> that = (LazyHashSet<?>) obj;
         return (this.isLazy() && that.isLazy()) || this.getReference().equals(that.getReference());

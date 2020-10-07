@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.potion;
+package com.javazilla.bukkitfabric.impl.potion;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -14,7 +14,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
-public class CraftPotionBrewer implements PotionBrewer {
+public class PotionBrewerImpl implements PotionBrewer {
 
     private static final Map<PotionType, Collection<PotionEffect>> cache = Maps.newHashMap();
 
@@ -23,12 +23,10 @@ public class CraftPotionBrewer implements PotionBrewer {
         if (cache.containsKey(damage))
             return cache.get(damage);
 
-        List<StatusEffectInstance> mcEffects = Potion.byId(CraftPotionUtil.fromBukkit(new PotionData(damage, extended, upgraded))).getEffects();
+        List<StatusEffectInstance> mcEffects = Potion.byId(PotionUtil.fromBukkit(new PotionData(damage, extended, upgraded))).getEffects();
 
         ImmutableList.Builder<PotionEffect> builder = new ImmutableList.Builder<PotionEffect>();
-        for (StatusEffectInstance effect : mcEffects) {
-            builder.add(CraftPotionUtil.toBukkit(effect));
-        }
+        for (StatusEffectInstance effect : mcEffects) builder.add(PotionUtil.toBukkit(effect));
 
         cache.put(damage, builder.build());
 
@@ -40,6 +38,7 @@ public class CraftPotionBrewer implements PotionBrewer {
         return new ArrayList<PotionEffect>();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public PotionEffect createEffect(PotionEffectType potion, int duration, int amplifier) {
         return new PotionEffect(potion, potion.isInstant() ? 1 : (int) (duration * potion.getDurationModifier()), amplifier);

@@ -10,9 +10,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.projectiles.BlockProjectileSource;
+
+import com.javazilla.bukkitfabric.impl.BlockProjectileSourceImpl;
 
 public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implements Dispenser {
 
@@ -31,32 +32,22 @@ public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implemen
 
     @Override
     public Inventory getInventory() {
-        if (!this.isPlaced())
-            return this.getSnapshotInventory();
-
-        return new CraftInventory(this.getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CraftInventory(this.getTileEntity());
     }
 
     @Override
     public BlockProjectileSource getBlockProjectileSource() {
-        Block block = getBlock();
-
-        if (block.getType() != Material.DISPENSER)
-            return null;
-
-        return new CraftBlockProjectileSource((DispenserBlockEntity) this.getTileEntityFromWorld());
+        if (getBlock().getType() != Material.DISPENSER) return null;
+        return new BlockProjectileSourceImpl((DispenserBlockEntity) this.getTileEntityFromWorld());
     }
 
     @Override
     public boolean dispense() {
         Block block = getBlock();
-
         if (block.getType() == Material.DISPENSER) {
-            CraftWorld world = (CraftWorld) this.getWorld();
-            DispenserBlock dispense = (DispenserBlock) Blocks.DISPENSER;
-
-            dispense.dispense((ServerWorld)world.getHandle(), this.getPosition());
+            ((DispenserBlock) Blocks.DISPENSER).dispense((ServerWorld)((CraftWorld) this.getWorld()).getHandle(), this.getPosition());
             return true;
         } else return false;
     }
+
 }
