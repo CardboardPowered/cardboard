@@ -28,6 +28,7 @@
     "entity.MixinItemEntity",
     "entity.MixinProjectileEntity",
     "entity.MixinArrowEntity",
+    "entity.MixinLoseJobOnSiteLossTask",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
