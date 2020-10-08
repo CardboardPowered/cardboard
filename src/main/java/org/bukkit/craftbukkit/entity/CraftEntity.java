@@ -45,6 +45,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 
 public abstract class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
@@ -327,7 +328,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Vector getVelocity() {
-        return Utils.toBukkit(nms.getVelocity());
+        Vec3d vec3d = nms.getVelocity();
+        return new Vector(vec3d.x, vec3d.y, vec3d.z);
     }
 
     @Override
@@ -507,8 +509,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
     @Override
-    public void setVelocity(Vector arg0) {
-        nms.setVelocity(Utils.toMojang(arg0));
+    public void setVelocity(Vector vec) {
+        nms.setVelocity(new Vec3d(vec.getX(), vec.getY(), vec.getZ()));
         nms.velocityModified = true;
     }
 

@@ -1,3 +1,21 @@
+/**
+ * The Bukkit for Fabric Project
+ * Copyright (C) 2020 Javazilla Software and contributors
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either 
+ * version 3 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package com.javazilla.bukkitfabric.impl;
 
 import java.net.InetAddress;
@@ -45,16 +63,11 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.mixin.entity.MixinAnimalEntity;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.GuiCloseC2SPacket;
 import net.minecraft.screen.ScreenHandler;
@@ -83,25 +96,22 @@ public class BukkitEventFactory {
     }
 
     public static BlockPlaceEvent callBlockPlaceEvent(ServerWorld world, PlayerEntity who, Hand hand, BlockState replacedBlockState, int x, int y, int z) {
-        WorldImpl WorldImpl = ((IMixinWorld)world).getWorldImpl();
+        WorldImpl worldImpl = ((IMixinWorld)world).getWorldImpl();
         CraftServer craftServer = CraftServer.INSTANCE;
 
         Player player = (Player) ((IMixinServerEntityPlayer)(ServerPlayerEntity)who).getBukkitEntity();
 
-        Block blockClicked = WorldImpl.getBlockAt(x, y, z);
+        Block blockClicked = worldImpl.getBlockAt(x, y, z);
         Block placedBlock = replacedBlockState.getBlock();
 
         boolean canBuild = canBuild(world, player, placedBlock.getX(), placedBlock.getZ());
+        boolean isMainHand = (hand == Hand.MAIN_HAND);
 
         org.bukkit.inventory.ItemStack item;
         EquipmentSlot equipmentSlot;
-        if (hand == Hand.MAIN_HAND) {
-            item = player.getInventory().getItemInMainHand();
-            equipmentSlot = EquipmentSlot.HAND;
-        } else {
-            item = player.getInventory().getItemInOffHand();
-            equipmentSlot = EquipmentSlot.OFF_HAND;
-        }
+
+        item = isMainHand ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+        equipmentSlot = isMainHand ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
 
         BlockPlaceEvent event = new BlockPlaceEvent(placedBlock, replacedBlockState, blockClicked, item, player, canBuild, equipmentSlot);
         craftServer.getPluginManager().callEvent(event);

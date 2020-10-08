@@ -89,7 +89,7 @@ public class CraftChunk implements Chunk {
 
     @Override
     public String toString() {
-        return "CraftChunk{" + "x=" + getX() + "z=" + getZ() + '}';
+        return "BukkitChunk{" + "x=" + getX() + "z=" + getZ() + '}';
     }
 
     @Override
@@ -99,8 +99,7 @@ public class CraftChunk implements Chunk {
 
     @Override
     public Entity[] getEntities() {
-        if (!isLoaded())
-            getWorld().getChunkAt(x, z);
+        if (!isLoaded()) getWorld().getChunkAt(x, z);
         int count = 0, index = 0;
         net.minecraft.world.chunk.WorldChunk chunk = getHandle();
 
@@ -111,20 +110,16 @@ public class CraftChunk implements Chunk {
 
         for (int i = 0; i < 16; i++) {
             for (Object obj : ((IMixinWorldChunk)(Object)chunk).getEntitySections()[i].toArray()) {
-                if (!(obj instanceof net.minecraft.entity.Entity))
-                    continue;
-
+                if (!(obj instanceof net.minecraft.entity.Entity)) continue;
                 entities[index++] = ((IMixinEntity)(Object)((net.minecraft.entity.Entity) obj)).getBukkitEntity();
             }
         }
-
         return entities;
     }
 
     @Override
     public BlockState[] getTileEntities() {
-        if (!isLoaded())
-            getWorld().getChunkAt(x, z);
+        if (!isLoaded()) getWorld().getChunkAt(x, z);
 
         int index = 0;
         net.minecraft.world.chunk.WorldChunk chunk = getHandle();
@@ -132,8 +127,7 @@ public class CraftChunk implements Chunk {
         BlockState[] entities = new BlockState[chunk.getBlockEntities().size()];
 
         for (Object obj : chunk.getBlockEntities().keySet().toArray()) {
-            if (!(obj instanceof BlockPos))
-                continue;
+            if (!(obj instanceof BlockPos)) continue;
 
             BlockPos position = (BlockPos) obj;
             entities[index++] = ((IMixinWorld)(Object)worldServer).getWorldImpl().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
@@ -214,9 +208,7 @@ public class CraftChunk implements Chunk {
 
         Predicate<net.minecraft.block.BlockState> nms = Predicates.equalTo(((CraftBlockData) block).getState());
         for (ChunkSection section : getHandle().getSectionArray())
-            if (section != null && section.getContainer().hasAny(nms))
-                return true;
-
+            if (section != null && section.getContainer().hasAny(nms)) return true;
         return false;
     }
 
@@ -291,7 +283,7 @@ public class CraftChunk implements Chunk {
         if (includeBiome || includeBiomeTempRain)
             biome = new BiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
 
-        /* Fill with empty data */
+        // Fill with empty data
         int hSection = world.getMaxHeight() >> 4;
         PalettedContainer[] blockIDs = new PalettedContainer[hSection];
         byte[][] skyLight = new byte[hSection][];

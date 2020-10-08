@@ -391,7 +391,7 @@ public class WorldImpl implements World {
 
     @Override
     public Difficulty getDifficulty() {
-        return Utils.fromFabric(nms.getDifficulty());
+        return Difficulty.valueOf(nms.getDifficulty().getName());
     }
 
     @Override

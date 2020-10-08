@@ -1,10 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
-import java.util.Collections;
 import java.util.List;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.village.Trader;

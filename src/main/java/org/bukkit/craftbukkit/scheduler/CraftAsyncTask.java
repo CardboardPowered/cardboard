@@ -26,8 +26,7 @@ class CraftAsyncTask extends CraftTask {
     public void run() {
         final Thread thread = Thread.currentThread();
         synchronized (workers) {
-            if (getPeriod() == CraftTask.CANCEL)
-                return; // Never continue running after cancelled. Checking this with the lock is important!
+            if (getPeriod() == CraftTask.CANCEL) return; // Never continue running after cancelled. Checking this with the lock is important!
 
             workers.add(new BukkitWorker() {
                     @Override
@@ -51,8 +50,8 @@ class CraftAsyncTask extends CraftTask {
             super.run();
         } catch (final Throwable t) {
             thrown = t;
-            getOwner().getLogger().log(Level.WARNING, String.format( "Plugin %s generated an exception while executing task %s",
-                        getOwner().getDescription().getFullName(), getTaskId()), thrown);
+            getOwner().getLogger().log(Level.WARNING, "Plugin " + getOwner().getDescription().getFullName() +
+                    " generated an exception while executing task " + getTaskId(), thrown);
         } finally {
             // Cleanup is important for any async task, otherwise ghost tasks are everywhere
             synchronized (workers) {
@@ -66,10 +65,8 @@ class CraftAsyncTask extends CraftTask {
                             break;
                         }
                     }
-                    if (!removed) {
-                        throw new IllegalStateException(String.format("Unable to remove worker %s on task %s for %s", thread.getName(), getTaskId(),
-                                    getOwner().getDescription().getFullName()), thrown); // We don't want to lose the original exception, if any
-                    }
+                    if (!removed) throw new IllegalStateException("Unable to remove worker " + thread.getName() + " on task " + getTaskId() + " for " +
+                                getOwner().getDescription().getFullName(), thrown);
                 } finally {
                     if (getPeriod() < 0 && workers.isEmpty()) {
                         // At this spot, we know we are the final async task being executed!

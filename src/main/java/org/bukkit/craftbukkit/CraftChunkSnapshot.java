@@ -29,7 +29,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     private final byte[][] skylight;
     private final byte[][] emitlight;
     private final boolean[] empty;
-    private final Heightmap hmap; // Height map
+    private final Heightmap hmap;
     private final long captureFulltime;
     private final BiomeArray biome;
 
@@ -63,12 +63,9 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
 
     @Override
     public boolean contains(BlockData block) {
-        Preconditions.checkArgument(block != null, "Block cannot be null");
-
+        Preconditions.checkArgument(block != null, "Block must not be null");
         Predicate<BlockState> nms = Predicates.equalTo(((CraftBlockData) block).getState());
-        for (PalettedContainer<BlockState> palette : blockids)
-            if (palette.hasAny(nms))
-                return true;
+        for (PalettedContainer<BlockState> palette : blockids) if (palette.hasAny(nms)) return true;
         return false;
     }
 
@@ -93,17 +90,13 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     @Override
     public final int getBlockSkyLight(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
-
-        int off = ((y & 0xF) << 7) | (z << 3) | (x >> 1);
-        return (skylight[y >> 4][off] >> ((x & 1) << 2)) & 0xF;
+        return (skylight[y >> 4][(((y & 0xF) << 7) | (z << 3) | (x >> 1))] >> ((x & 1) << 2)) & 0xF;
     }
 
     @Override
     public final int getBlockEmittedLight(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
-
-        int off = ((y & 0xF) << 7) | (z << 3) | (x >> 1);
-        return (emitlight[y >> 4][off] >> ((x & 1) << 2)) & 0xF;
+        return (emitlight[y >> 4][(((y & 0xF) << 7) | (z << 3) | (x >> 1))] >> ((x & 1) << 2)) & 0xF;
     }
 
     @Override
@@ -130,9 +123,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
             Field f = biome.getClass().getDeclaredField("field_25831");
             f.setAccessible(true);
             reg = (Registry<net.minecraft.world.biome.Biome>) f.get(biome);
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-        }
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {e.printStackTrace();}
         return CraftBlock.biomeBaseToBiome(reg, biome.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2));
     }
 

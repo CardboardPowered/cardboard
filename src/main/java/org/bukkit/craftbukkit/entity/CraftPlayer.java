@@ -1021,11 +1021,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         nms.openHandledScreen(nms.currentScreenHandler);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public GameMode getGameMode() {
-        return Utils.fromFabric(getHandle().interactionManager.getGameMode());
+        return GameMode.getByValue(getHandle().interactionManager.getGameMode().getId());
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void setGameMode(GameMode mode) {
         if (getHandle().networkHandler == null) return;
@@ -1033,7 +1035,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (mode == null)
             throw new IllegalArgumentException("GameMode cannot be null");
 
-        getHandle().setGameMode(Utils.toFabric(mode));
+        getHandle().setGameMode(net.minecraft.world.GameMode.byId(mode.getValue()));
     }
 
     public GameProfile getProfile() {

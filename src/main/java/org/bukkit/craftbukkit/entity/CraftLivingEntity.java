@@ -15,7 +15,6 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.DragonFireball;
@@ -93,7 +92,6 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public CraftLivingEntity(net.minecraft.entity.Entity entity) {
         super(entity);
         this.nms = (net.minecraft.entity.LivingEntity) entity;
-        // TODO Auto-generated constructor stub
     }
 
     public CraftLivingEntity(CraftServer server, net.minecraft.entity.Entity entity) {
@@ -370,7 +368,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getMemory(MemoryKey<T> arg0) {
-        return (T) nms.getBrain().getOptionalMemory(Utils.fromMemoryKey(arg0)).map(CraftMemoryMapper::fromNms).orElse(null);
+        return (T) nms.getBrain().getOptionalMemory(Utils.fromMemoryKey(arg0)).map(Utils::fromNmsGlobalPos).orElse(null);
     }
 
     @Override

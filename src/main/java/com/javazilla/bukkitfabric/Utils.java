@@ -26,16 +26,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.bukkit.Difficulty;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.util.Vector;
+
+import com.javazilla.bukkitfabric.impl.WorldImpl;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.GameMode;
 
 public class Utils {
 
@@ -48,28 +51,6 @@ public class Utils {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    public static GameMode toFabric(org.bukkit.GameMode arg0) {
-        return GameMode.byId(arg0.getValue());
-    }
-
-    @SuppressWarnings("deprecation")
-    public static org.bukkit.GameMode fromFabric(GameMode gm) {
-        return org.bukkit.GameMode.getByValue(gm.id);
-    }
-
-    public static Difficulty fromFabric(net.minecraft.world.Difficulty difficulty) {
-        return Difficulty.valueOf(difficulty.name());
-    }
-
-    public static Vector toBukkit(Vec3d nms) {
-        return new Vector(nms.x, nms.y, nms.z);
-    }
-
-    public static Vec3d toMojang(Vector bukkit) {
-        return new Vec3d(bukkit.getX(), bukkit.getY(), bukkit.getZ());
-    }
-
     public static UUID getWorldUUID(File baseDir) {
         File file1 = new File(baseDir, "uid.dat");
         if (file1.exists()) {
@@ -79,10 +60,7 @@ public class Utils {
                 return new UUID(dis.readLong(), dis.readLong());
             } catch (IOException ex) {
                 BukkitFabricMod.LOGGER.warning("Failed to read " + file1 + ", generating new random UUID. " + ex.getMessage());
-            } finally {
-                if (dis != null)
-                    try { dis.close(); } catch (IOException ex) {/*NOOP*/}
-            }
+            } finally { if (dis != null) try { dis.close(); } catch (IOException ex) {/*NOOP*/} }
         }
         UUID uuid = UUID.randomUUID();
         DataOutputStream dos = null;
@@ -92,10 +70,7 @@ public class Utils {
             dos.writeLong(uuid.getLeastSignificantBits());
         } catch (IOException ex) {
             BukkitFabricMod.LOGGER.warning("Failed to write " + file1 + ", " + ex.getMessage());
-        } finally {
-            if (dos != null)
-                try {dos.close();} catch (IOException ex) {/*NOOP*/}
-        }
+        } finally { if (dos != null) try {dos.close();} catch (IOException ex) {/*NOOP*/} }
         return uuid;
     }
 
@@ -109,7 +84,33 @@ public class Utils {
         return MemoryKey.getByKey(CraftNamespacedKey.fromMinecraft(Registry.MEMORY_MODULE_TYPE.getId(memoryModuleType)));
     }
 
-    // Equipment Slots
+    public static Object fromNmsGlobalPos(Object object) {
+        if (object instanceof GlobalPos) return fromNmsGlobalPos((GlobalPos) object);
+        else if (object instanceof Long) return (Long) object;
+        else if (object instanceof UUID) return (UUID) object;
+        else if (object instanceof Boolean) return (Boolean) object;
+
+        throw new UnsupportedOperationException("Do not know how to map " + object);
+    }
+
+    public static Object toNmsGlobalPos(Object object) {
+        if (object == null) return null;
+        else if (object instanceof Location) return toNmsGlobalPos((Location) object);
+        else if (object instanceof Long)     return (Long) object;
+        else if (object instanceof UUID)     return (UUID) object;
+        else if (object instanceof Boolean)  return (Boolean) object;
+
+        throw new UnsupportedOperationException("Do not know how to map " + object);
+    }
+
+    public static Location fromNmsGlobalPos(GlobalPos globalPos) {
+        return new org.bukkit.Location(((IMixinWorld)((CraftServer) CraftServer.INSTANCE).getServer().getWorld(globalPos.getDimension())).getWorldImpl(), globalPos.getPos().getX(), globalPos.getPos().getY(), globalPos.getPos().getZ());
+    }
+
+    public static GlobalPos toNmsGlobalPos(Location location) {
+        return GlobalPos.create(((WorldImpl) location.getWorld()).getHandle().getRegistryKey(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+    }
+
     private static final net.minecraft.entity.EquipmentSlot[] slots = new net.minecraft.entity.EquipmentSlot[EquipmentSlot.values().length];
     private static final EquipmentSlot[] enums = new EquipmentSlot[net.minecraft.entity.EquipmentSlot.values().length];
 

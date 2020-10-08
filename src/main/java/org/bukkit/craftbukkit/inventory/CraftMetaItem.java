@@ -36,7 +36,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.craftbukkit.Overridden;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific;
 import org.bukkit.craftbukkit.inventory.tags.DeprecatedCustomTagContainer;
@@ -549,7 +548,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return result;
     }
 
-    @Overridden
     void applyToItem(CompoundTag itemTag) {
         if (hasDisplayName())
             setDisplayTag(itemTag, NAME.NBT, StringTag.of(CraftChatMessage.toJSON(displayName)));
@@ -661,12 +659,10 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         display.put(key, value);
     }
 
-    @Overridden
     boolean applicableTo(Material type) {
         return type != Material.AIR;
     }
 
-    @Overridden
     boolean isEmpty() {
         return !(hasDisplayName() || hasLocalizedName() || hasEnchants() || hasLore() || hasCustomModelData() || hasBlockData() || hasRepairCost() || !unhandledTags.isEmpty() || !persistentDataContainer.isEmpty() || hideFlag != 0 || isUnbreakable() || hasDamage() || hasAttributeModifiers());
     }
@@ -1059,7 +1055,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
      * Only return false if your common internals are unequal.
      * Checking your own internals is redundant if you are not common, as notUncommon is meant for checking those 'not common' variables.
      */
-    @Overridden
     boolean equalsCommon(CraftMetaItem that) {
         return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
                 && (this.hasLocalizedName() ? that.hasLocalizedName() && this.locName.equals(that.locName) : !that.hasLocalizedName())
@@ -1082,7 +1077,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
      * Return true if you are a common class OR your uncommon parts are empty.
      * Empty uncommon parts implies the NBT data would be equivalent if both were applied to an item
      */
-    @Overridden
     boolean notUncommon(CraftMetaItem meta) {
         return true;
     }
@@ -1092,7 +1086,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return applyHash();
     }
 
-    @Overridden
     int applyHash() {
         int hash = 3;
         hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
@@ -1112,13 +1105,11 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return hash;
     }
 
-    @Overridden
     @Override
     public CraftMetaItem clone() {
         try {
             CraftMetaItem clone = (CraftMetaItem) super.clone();
-            if (this.lore != null)
-                clone.lore = new ArrayList<Text>(this.lore);
+            if (this.lore != null) clone.lore = new ArrayList<Text>(this.lore);
 
             clone.customModelData = this.customModelData;
             clone.blockData = this.blockData;
@@ -1147,7 +1138,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return map.build();
     }
 
-    @Overridden
     ImmutableMap.Builder<String, Object> serialize(ImmutableMap.Builder<String, Object> builder) {
         if (hasDisplayName())
             builder.put(NAME.BUKKIT, CraftChatMessage.fromComponent(displayName));

@@ -836,7 +836,7 @@ public class CraftServer implements Server {
 
     @Override
     public GameMode getDefaultGameMode() {
-        return Utils.fromFabric(getServer().getDefaultGameMode());
+        return GameMode.getByValue(getServer().getDefaultGameMode().getId());
     }
 
     @SuppressWarnings("resource")
@@ -1290,8 +1290,8 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public void setDefaultGameMode(GameMode arg0) {
-        server.setDefaultGameMode(Utils.toFabric(arg0));
+    public void setDefaultGameMode(GameMode gm) {
+        server.setDefaultGameMode(net.minecraft.world.GameMode.byId(gm.getValue()));
     }
 
     @Override
