@@ -391,7 +391,7 @@ public class WorldImpl implements World {
 
     @Override
     public Difficulty getDifficulty() {
-        return Difficulty.valueOf(nms.getDifficulty().getName());
+        return Difficulty.valueOf(nms.getDifficulty().getName().toUpperCase());
     }
 
     @Override

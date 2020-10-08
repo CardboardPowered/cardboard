@@ -18,10 +18,12 @@
  */
 package com.javazilla.bukkitfabric;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import com.javazilla.bukkitfabric.impl.VersionCommand;
+import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -50,6 +52,14 @@ public class BukkitFabricMod implements ModInitializer {
                     LOGGER.warning(e.getMessage());
                 }
             }
+        }
+
+        LOGGER.info("Loading spigot->intermediary mappings...");
+        try {
+            MappingsReader.main(null);
+            LOGGER.info("Loaded spigot->intermediary mappings...");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

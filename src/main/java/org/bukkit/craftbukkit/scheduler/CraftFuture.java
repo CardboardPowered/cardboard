@@ -63,8 +63,7 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
             if (period == CraftTask.CANCEL)
                 throw new CancellationException();
             if (period == CraftTask.DONE_FOR_FUTURE) {
-                if (exception == null)
-                    return value;
+                if (exception == null) return value;
                 throw new ExecutionException(exception);
             }
             throw new IllegalStateException("Expected " + CraftTask.NO_REPEATING + " to " + CraftTask.DONE_FOR_FUTURE + ", got " + period);

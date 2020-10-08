@@ -16,7 +16,7 @@ import net.md_5.specialsource.SpecialSource;
 
 public class Remapper {
 
-    public static int MAPPINGS_VERSION = 4;
+    public static int MAPPINGS_VERSION = 5;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
@@ -84,7 +84,7 @@ public class Remapper {
         String jarName = jarFile.getName().substring(0, jarFile.getName().indexOf(".jar"));
         LOGGER.info("Remapping \"" + jarFile + "\"...");
 
-        // net.minecraft.server.v1_XX_R1 -> net.minecraft.server
+        // net.minecraft.server.v1_XX_RX -> net.minecraft.server
         File deversionify = new File(remappedDir, jarName + "-deversionify.jar");
         runSpecialSource(versionFix, toMap, deversionify);
 

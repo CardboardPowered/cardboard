@@ -18,6 +18,7 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 
 import org.apache.commons.lang3.Validate;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
@@ -107,7 +108,7 @@ public class PluginClassLoader extends URLClassLoader {
 
         if (result == null) {
             if (checkGlobal) {
-                result = JavaPluginLoader.getByName(name, false);
+                result = loader.getClassByName(name);
 
                 if (result != null) {
                     PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;

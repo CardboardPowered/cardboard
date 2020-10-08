@@ -40,14 +40,14 @@ public class Commodore {
             "org/bukkit/inventory/ItemStack (I)V setTypeId"
     ) );
 
-    public static byte[] convert(byte[] b, final boolean modern, String pl) {
+    public static byte[] convert(byte[] b, final boolean modern, String aname) {
         ClassReader cr = new ClassReader(b);
         ClassWriter cw = new ClassWriter(cr, 0);
 
         cr.accept( new ClassVisitor(Opcodes.ASM7, cw) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                return new ReflectionMethodVisitor( api, super.visitMethod( access, name, desc, signature, exceptions ), pl ) {
+                return new ReflectionMethodVisitor( api, super.visitMethod( access, name, desc, signature, exceptions ), aname) {
 
                     @Override
                     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
@@ -76,18 +76,18 @@ public class Commodore {
                             return;
                         }
 
-                        if (owner.equals( "org/bukkit/Material" )) {
+                        if (owner.equals("org/bukkit/Material")) {
                             try {
                                 Material.valueOf("LEGACY_" + name);
                             } catch ( IllegalArgumentException ex ) {
                                 throw new AuthorNagException("No legacy enum constant for " + name + ". Did you forget to define a modern (1.13+) api-version in your plugin.yml?");
                             }
 
-                            super.visitFieldInsn( opcode, owner, "LEGACY_" + name, desc );
+                            super.visitFieldInsn(opcode, owner, "LEGACY_" + name, desc);
                             return;
                         }
 
-                        if (owner.equals( "org/bukkit/Art" )) {
+                        if (owner.equals("org/bukkit/Art")) {
                             switch (name) {
                                 case "BURNINGSKULL":
                                     super.visitFieldInsn( opcode, owner, "BURNING_SKULL", desc );
@@ -98,44 +98,41 @@ public class Commodore {
                             }
                         }
 
-                        if (owner.equals( "org/bukkit/DyeColor" )) {
-                            switch ( name ) {
+                        if (owner.equals("org/bukkit/DyeColor")) {
+                            switch (name) {
                                 case "SILVER":
-                                    super.visitFieldInsn( opcode, owner, "LIGHT_GRAY", desc );
+                                    super.visitFieldInsn(opcode, owner, "LIGHT_GRAY", desc);
                                     return;
                             }
                         }
 
-                        if (owner.equals( "org/bukkit/Particle" ) ) {
+                        if (owner.equals("org/bukkit/Particle")) {
                             switch ( name ) {
                                 case "BLOCK_CRACK":
                                 case "BLOCK_DUST":
                                 case "FALLING_DUST":
-                                    super.visitFieldInsn( opcode, owner, "LEGACY_" + name, desc );
+                                    super.visitFieldInsn(opcode, owner, "LEGACY_" + name, desc);
                                     return;
                             }
                         }
-
-                        super.visitFieldInsn( opcode, owner, name, desc );
+                        super.visitFieldInsn(opcode, owner, name, desc);
                     }
 
                     @Override
                     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                         // SPIGOT-4496
-                        if ( owner.equals( "org/bukkit/map/MapView" ) && name.equals( "getId" ) && desc.equals( "()S" ) ) {
-                            // Should be same size on stack so just call other method
-                            super.visitMethodInsn( opcode, owner, name, "()I", itf );
+                        if (owner.equals("org/bukkit/map/MapView") && name.equals("getId") && desc.equals("()S")) {
+                            super.visitMethodInsn( opcode, owner, name, "()I", itf ); // Should be same size on stack so just call other method
                             return;
                         }
                         // SPIGOT-4608
-                        if ( (owner.equals( "org/bukkit/Bukkit" ) || owner.equals( "org/bukkit/Server" ) ) && name.equals( "getMap" ) && desc.equals( "(S)Lorg/bukkit/map/MapView;" ) ) {
-                            // Should be same size on stack so just call other method
-                            super.visitMethodInsn( opcode, owner, name, "(I)Lorg/bukkit/map/MapView;", itf );
+                        if ((owner.equals("org/bukkit/Bukkit") || owner.equals("org/bukkit/Server")) && name.equals("getMap") && desc.equals("(S)Lorg/bukkit/map/MapView;") ) {
+                            super.visitMethodInsn(opcode, owner, name, "(I)Lorg/bukkit/map/MapView;", itf); // Should be same size on stack so just call other method
                             return;
                         }
 
                         if (modern) {
-                            if (owner.equals( "org/bukkit/Material")) {
+                            if (owner.equals("org/bukkit/Material")) {
                                 switch (name) {
                                     case "values":
                                         super.visitMethodInsn(opcode, LEGACY_CLASS, "modern_" + name, desc, itf );
@@ -145,12 +142,11 @@ public class Commodore {
                                         return;
                                 }
                             }
-
                             super.visitMethodInsn( opcode, owner, name, desc, itf );
                             return;
                         }
 
-                        if ( owner.equals( "org/bukkit/ChunkSnapshot" ) && name.equals( "getBlockData" ) && desc.equals( "(III)I" ) ) {
+                        if (owner.equals( "org/bukkit/ChunkSnapshot" ) && name.equals("getBlockData") && desc.equals("(III)I")) {
                             super.visitMethodInsn( opcode, owner, "getData", desc, itf );
                             return;
                         }
@@ -214,4 +210,5 @@ public class Commodore {
 
         return cw.toByteArray();
     }
+
 }

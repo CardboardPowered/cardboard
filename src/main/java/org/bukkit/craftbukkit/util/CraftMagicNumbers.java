@@ -30,12 +30,15 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
@@ -230,6 +233,15 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public static boolean isLegacy(PluginDescriptionFile pdf) {
         return pdf.getAPIVersion() == null;
     }
+
+    /*public byte[] processClass(PluginDescriptionFile pdf, String path, byte[] clazz, PluginClassLoader cl) {
+        try {
+            clazz = Commodore.convert(clazz, !isLegacy(pdf), cl, pdf.getName());
+        } catch (Exception ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Fatal error trying to convert " + pdf.getFullName() + ":" + path, ex);
+        }
+        return clazz;
+    }*/
 
     @Override
     public byte[] processClass(PluginDescriptionFile pdf, String path, byte[] clazz) {

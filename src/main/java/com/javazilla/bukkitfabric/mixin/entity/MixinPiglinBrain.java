@@ -37,7 +37,7 @@ import net.minecraft.item.Items;
 public class MixinPiglinBrain {
 
     @Overwrite
-    protected static void loot(PiglinEntity entitypiglin, ItemEntity entityitem) {
+    public static void loot(PiglinEntity entitypiglin, ItemEntity entityitem) {
         stopWalking(entitypiglin);
         ItemStack itemstack;
 
@@ -63,15 +63,15 @@ public class MixinPiglinBrain {
         }
     }
 
-    // This class likes private static methods
-    @Shadow protected static boolean isGoldenItem(Item item) {return false;}
-    @Shadow private static void setEatenRecently(PiglinEntity entitypiglin) {}
-    @Shadow private static void setAdmiringItem(LivingEntity entityliving) {}
-    @Shadow private static boolean hasAteRecently(PiglinEntity entitypiglin) {return false;}
-    @Shadow private static boolean isFood(Item item) {return false;}
-    @Shadow private static ItemStack getItemFromStack(ItemEntity entityitem) {return null;}
-    @Shadow private static void swapItemWithOffHand(PiglinEntity entitypiglin, ItemStack itemstack) {}
-    @Shadow private static void stopWalking(PiglinEntity entitypiglin) {}
-    @Shadow private static void barterItem(PiglinEntity entitypiglin, ItemStack itemstack) {}
+    // This class likes static methods
+    @Shadow public static boolean isGoldenItem(Item item) {return false;}
+    @Shadow public static void setEatenRecently(PiglinEntity entitypiglin) {}
+    @Shadow public static void setAdmiringItem(LivingEntity entityliving) {}
+    @Shadow public static boolean hasAteRecently(PiglinEntity entitypiglin) {return false;}
+    @Shadow public static boolean isFood(Item item) {return false;}
+    @Shadow public static ItemStack getItemFromStack(ItemEntity entityitem) {return null;}
+    @Shadow public static void swapItemWithOffHand(PiglinEntity entitypiglin, ItemStack itemstack) {}
+    @Shadow public static void stopWalking(PiglinEntity entitypiglin) {}
+    @Shadow public static void barterItem(PiglinEntity entitypiglin, ItemStack itemstack) {}
 
 }

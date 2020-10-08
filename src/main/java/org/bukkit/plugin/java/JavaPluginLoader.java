@@ -49,8 +49,8 @@ public final class JavaPluginLoader implements PluginLoader {
 
     final Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$")};
-    private final static Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
-    private final static List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
+    private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+    private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
 
     /**
      * This class was not meant to be constructed explicitly
@@ -63,9 +63,13 @@ public final class JavaPluginLoader implements PluginLoader {
         server = instance;
     }
 
-    public static Class<?> getByName(String name, boolean disableSystemClassLoaderCheck) throws ClassNotFoundException {
-        return disableSystemClassLoaderCheck ? getClassByName2(name) : getClassByName(name);
-    }
+    //public static Class<?> getByName(String name) throws ClassNotFoundException {
+    //    return getByName(name, false);
+    //}
+
+    //public static Class<?> getByName(String name, boolean disableSystemClassLoaderCheck) throws ClassNotFoundException {
+    //    return disableSystemClassLoaderCheck ? getClassByName2(name) : getClassByName(name);
+    //}
 
     @Override
     @SuppressWarnings("deprecation")
@@ -162,7 +166,7 @@ public final class JavaPluginLoader implements PluginLoader {
         return fileFilters.clone();
     }
 
-    static Class<?> getClassByName(final String name) {
+    Class<?> getClassByName(final String name) {
         Class<?> cachedClass = classes.get(name);
 
         if (cachedClass != null) {
@@ -181,23 +185,6 @@ public final class JavaPluginLoader implements PluginLoader {
         } catch (ClassNotFoundException e) {
             return null;
         }
-    }
-
-    static Class<?> getClassByName2(final String name) {
-        Class<?> cachedClass = classes.get(name);
-
-        if (cachedClass != null) {
-            return cachedClass;
-        } else {
-            for (PluginClassLoader loader : loaders) {
-                try {
-                    cachedClass = loader.findClass(name, false);
-                } catch (ClassNotFoundException cnfe) {}
-                if (cachedClass != null)
-                    return cachedClass;
-            }
-        }
-        return null;
     }
 
     void setClass(final String name, final Class<?> clazz) {

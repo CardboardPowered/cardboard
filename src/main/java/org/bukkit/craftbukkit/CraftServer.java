@@ -98,7 +98,7 @@ import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
-import org.bukkit.craftbukkit.util.permissions.CraftDefaultPermissions;
+import org.bukkit.craftbukkit.util.permissions.CommandPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -349,7 +349,7 @@ public class CraftServer implements Server {
             setVanillaCommands();
             commandMap.registerServerAliases();
             DefaultPermissions.registerCorePermissions();
-            CraftDefaultPermissions.registerCorePermissions();
+            CommandPermissions.registerCorePermissions();
             // loadCustomPermissions();
             helpMap.initializeCommands();
             syncCommands();

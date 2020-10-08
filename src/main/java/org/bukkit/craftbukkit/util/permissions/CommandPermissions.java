@@ -6,13 +6,14 @@ import org.bukkit.util.permissions.DefaultPermissions;
 
 public final class CommandPermissions {
 
-    private static final String ROOT = "minecraft.command";
-    private static final String PREFIX = ROOT + ".";
+    private static final String ROOT1 = "minecraft";
+    private static final String ROOT2 = "minecraft.command";
+    private static final String PREFIX = ROOT2 + ".";
 
     private CommandPermissions() {}
 
     public static Permission registerPermissions(Permission parent) {
-        Permission commands = DefaultPermissions.registerPermission(ROOT, "Gives the user the ability to use all vanilla commands", parent);
+        Permission commands = DefaultPermissions.registerPermission(ROOT2, "Gives the user the ability to use all vanilla commands", parent);
 
         DefaultPermissions.registerPermission(PREFIX + "kill", "Allows the user to kill themselves", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(PREFIX + "me", "Allows an alternative chat method", PermissionDefault.TRUE, commands);
@@ -37,6 +38,12 @@ public final class CommandPermissions {
 
         commands.recalculatePermissibles();
         return commands;
+    }
+
+    public static void registerCorePermissions() {
+        Permission parent = DefaultPermissions.registerPermission(ROOT1, "Gives the user the ability to use all vanilla utilities and commands");
+        registerPermissions(parent);
+        parent.recalculatePermissibles();
     }
 
 }

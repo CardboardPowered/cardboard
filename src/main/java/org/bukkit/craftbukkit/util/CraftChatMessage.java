@@ -67,8 +67,6 @@ public final class CraftChatMessage {
                 return ChatColor.ITALIC;
             case LIGHT_PURPLE:
                 return ChatColor.LIGHT_PURPLE;
-            case OBFUSCATED:
-                return ChatColor.MAGIC;
             case RED:
                 return ChatColor.RED;
             case RESET:
@@ -81,6 +79,8 @@ public final class CraftChatMessage {
                 return ChatColor.WHITE;
             case YELLOW:
                 return ChatColor.YELLOW;
+            case OBFUSCATED:
+                return ChatColor.MAGIC;
             default:
                 return null;
         }

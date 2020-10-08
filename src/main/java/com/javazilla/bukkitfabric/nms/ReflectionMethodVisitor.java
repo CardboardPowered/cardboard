@@ -30,11 +30,11 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         SKIP.add("vault");
         SKIP.add("worldguard");
     }
-    private String pl;
+    private String pln;
 
-    public ReflectionMethodVisitor(int api, MethodVisitor visitMethod, String pl) {
+    public ReflectionMethodVisitor(int api, MethodVisitor visitMethod, String pln) {
         super(api, visitMethod);
-        this.pl = pl;
+        this.pln = pln;
     }
 
     @Override
@@ -45,17 +45,20 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         for (String str : SKIP) {
-            if (this.pl.equalsIgnoreCase(str) || owner.startsWith("org/bukkit")) {
+            if (this.pln.equalsIgnoreCase(str) || owner.startsWith("org/bukkit")) {
                 // Skip Vault cause weird things happen
                 super.visitMethodInsn( opcode, owner, name, desc, itf );
                 return;
             }
         }
 
-        //if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;")) {
-        //    super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getClassForName", desc, itf );
-        //    return;
-        //}
+        if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;"))
+            super.visitMethodInsn(Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "mapClassName", "(Ljava/lang/String;)Ljava/lang/String;", false);
+
+        if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getField") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/reflect/Field;")) {
+            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getFieldByName", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/reflect/Field;", false );
+            return;
+        }
 
         if (owner.equalsIgnoreCase("java/lang/Package") && name.equalsIgnoreCase("getName") && desc.equalsIgnoreCase("()Ljava/lang/String;")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getPackageName", "(Ljava/lang/Package;)Ljava/lang/String;", false);
