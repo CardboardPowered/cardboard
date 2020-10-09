@@ -47,7 +47,10 @@ public class MappingsReader {
     }
 
     public static String getIntermedField(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
-        return MAPPINGS.getNewField(FieldData.create(JavaType.fromName(getIntermedClass(c)), spigot)).getName();
+        JavaType type = JavaType.fromName(getIntermedClass(c));
+        if (c.contains("class_"))
+            type = MAPPINGS.inverted().getNewClass(c);
+        return MAPPINGS.getNewField(FieldData.create(type, spigot)).getName();
     }
 
     public static File exportResource(String res, File folder) {

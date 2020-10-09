@@ -1720,7 +1720,7 @@ public class WorldImpl implements World {
         return false;
     }
 
-    public net.minecraft.world.World getHandle() {
+    public ServerWorld getHandle() {
         return nms;
     }
 

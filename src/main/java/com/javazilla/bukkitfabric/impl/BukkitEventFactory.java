@@ -59,6 +59,7 @@ import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -227,6 +228,12 @@ public class BukkitEventFactory {
         org.bukkit.entity.Entity hitEntity = null;
         if (position.getType() == Type.ENTITY)
             hitEntity = ((IMixinEntity)((EntityHitResult) position).getEntity()).getBukkitEntity();
+
+        org.bukkit.entity.Entity e = ((IMixinEntity)entity).getBukkitEntity();
+        if (!(e instanceof Projectile)) {
+            BukkitLogger.getLogger().warning("Entity \"" + e + "\" is not an instance of Projectile! Can not fire ProjectileHitEvent!");
+            return;
+        }
 
         ProjectileHitEvent event = new ProjectileHitEvent((Projectile) ((IMixinEntity)entity).getBukkitEntity(), hitEntity, hitBlock, hitFace);
         Bukkit.getServer().getPluginManager().callEvent(event);

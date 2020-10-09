@@ -20,11 +20,11 @@ public class Remapper {
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
-    @SuppressWarnings("deprecation")
-    public static File configDir = new File(FabricLoader.getInstance().getConfigDirectory(), "bukkit4fabric");
+    public static File configDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), "bukkit4fabric");
     public static File remappedDir = new File(configDir, "remapped-plugins");
     public static File backup = new File(remappedDir, "backup-plugins");
-    public static File versionFix, spigot2inter;
+    public static File versionFix;
+    public static File spigot2inter;
     public static File md5info = new File(remappedDir, "md5-hashes.dat");
 
     public static List<String> hashes = new ArrayList<>();

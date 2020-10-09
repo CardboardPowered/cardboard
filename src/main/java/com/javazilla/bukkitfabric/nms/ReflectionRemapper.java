@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -39,15 +40,24 @@ public class ReflectionRemapper {
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {
-        if (className.startsWith("org.bukkit.craftbukkit." + NMS_VERSION + "."))
-            return "org.bukkit.craftbukkit." + className.substring(23 + NMS_VERSION.length() + 1);
+        if (className.startsWith("org.bukkit.craftbukkit." + NMS_VERSION + ".")) {
+            String c = "org.bukkit.craftbukkit." + className.substring(23 + NMS_VERSION.length() + 1);
+            return MappingsReader.getIntermedClass(c);
+        }
 
-        if (className.startsWith("org.bukkit.craftbukkit.CraftServer."))
-            return className.replace("org.bukkit.craftbukkit.CraftServer.", "org.bukkit.craftbukkit.");
+        if (className.startsWith("org.bukkit.craftbukkit.CraftServer.")) {
+            String c = className.replace("org.bukkit.craftbukkit.CraftServer.", "org.bukkit.craftbukkit.");
+            return MappingsReader.getIntermedClass(c);
+        }
 
         if (className.startsWith("net.minecraft.server." + NMS_VERSION + ".")) {
             String c = className.replace("net.minecraft.server." + NMS_VERSION + ".", "net.minecraft.server.");
             return MappingsReader.getIntermedClass(c);
+        }
+
+        if (className.startsWith("org.bukkit.craftbukkit.")) {
+            // We are not CraftBukkit, check for our own version of the class.
+            return MappingsReader.getIntermedClass(className);
         }
 
         if (className.startsWith("net.minecraft.server.CraftServer.")) {
@@ -62,20 +72,11 @@ public class ReflectionRemapper {
         return getClassFromJPL(className);
     }
 
-    public static String mapFieldName(Class<?> a, String f) {
-        if (!a.getName().startsWith("net"))
-            return f;
-        try {
-            return MappingsReader.getIntermedField(a.getName(), f);
-        } catch (NoSuchFieldException | SecurityException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return f;
-        }
-    }
-
     public static Field getFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
         try {
-            return calling.getField(MappingsReader.getIntermedField(calling.getName(), f));
+            Field field = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+            field.setAccessible(true);
+            return field;
         } catch (NoSuchFieldException | SecurityException e) {
             try {
                 Field a = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
@@ -110,7 +111,7 @@ public class ReflectionRemapper {
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchFieldException | SecurityException e2) {
-                    e2.printStackTrace();
+                    e1.printStackTrace();
                 }
                 return null;
             }

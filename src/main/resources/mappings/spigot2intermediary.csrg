@@ -1,3 +1,6 @@
+org/bukkit/craftbukkit/CraftWorld com/javazilla/bukkitfabric/impl/WorldImpl
+org/bukkit/craftbukkit/CraftWorldBorder com/javazilla/bukkitfabric/impl/WorldBorderImpl
+
 aa$a a (Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/server/AdvancementProgress; method_745
 aa$a a (Lnet/minecraft/server/AdvancementProgress;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement; method_744
 aa$a net/minecraft/class_167$class_168

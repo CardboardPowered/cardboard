@@ -29,6 +29,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     static {
         SKIP.add("vault");
         SKIP.add("worldguard");
+        SKIP.add("essentials");
     }
     private String pln;
 
@@ -60,7 +61,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             return;
         }
 
-        if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getgetDeclaredField") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/reflect/Field;")) {
+        if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getDeclaredField") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/reflect/Field;")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getDeclaredFieldByName", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/reflect/Field;", false );
             return;
         }

@@ -35,6 +35,7 @@
     "entity.MixinSaddledComponent",
     "entity.MixinPiglinBrain",
     "entity.MixinAnimalEntity",
+    "entity.MixinArmorStandEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

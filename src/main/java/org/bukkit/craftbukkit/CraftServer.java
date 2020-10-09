@@ -323,6 +323,11 @@ public class CraftServer implements Server {
 
         File pluginFolder = new File("plugins");
         if (pluginFolder.exists()) {
+            for (File f : pluginFolder.listFiles()) {
+                if (f.getName().endsWith(".jar")) {
+                    com.javazilla.bukkitfabric.nms.Remapper.remap(f); // Bukkit4Fabric: Remap Jar file
+                }
+            }
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
 
             for (Plugin plugin : plugins) {
