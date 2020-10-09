@@ -40,9 +40,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // GudASM
-    // modImplementation "net.gudenau.minecraft:gudasm:${project.gudasm_version}"
-
     // Spigot API
     extraLibs group: "org.spigotmc", name: "spigot-api", version: "${project.spigot_version}"
     extraLibs group: "org.jetbrains", name: "annotations", version: "18.0.0"
@@ -50,7 +47,8 @@ dependencies {
     extraLibs group: 'org.xerial', name: 'sqlite-jdbc', version: '3.32.3'
 
     // NMS Remapping
-    extraLibs group: "net.md-5", name: "SpecialSource", version: "1.8.6"
+    //extraLibs group: "net.md-5", name: "SpecialSource", version: "1.8.6"
+    extraLibs group: "com.github.IsaiahPatton", name: "SpecialSource", version: "master-SNAPSHOT"
     extraLibs group: "com.github.phase", name: "SrgLib", version: "master-SNAPSHOT"
 
     configurations.compile.extendsFrom(configurations.extraLibs)
@@ -78,7 +76,9 @@ tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 
 jar {
     from "LICENSE"
-    from { configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.extraLibs.filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 shadowJar {
@@ -86,5 +86,6 @@ shadowJar {
     dependencies {
       exclude(dependency('com.mojang:minecraft:*'))
       exclude(dependency('net.gudenu.minecraft:gudasm:*'))
+      exclude(dependency('org.objectweb:asm:*'))
     }
 }

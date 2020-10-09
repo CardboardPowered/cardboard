@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
