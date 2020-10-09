@@ -95,6 +95,28 @@ public class ReflectionRemapper {
         }
     }
 
+    public static Field getDeclaredFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
+        try {
+            return calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+        } catch (NoSuchFieldException | SecurityException e) {
+            try {
+                Field a = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+                a.setAccessible(true);
+                return a;
+            } catch (NoSuchFieldException | SecurityException e1) {
+                Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
+                try {
+                    Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField(whyIsAsmBroken.getName(), f));
+                    a.setAccessible(true);
+                    return a;
+                } catch (NoSuchFieldException | SecurityException e2) {
+                    e2.printStackTrace();
+                }
+                return null;
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public static Class<?> getClassFromJPL(String name) {
         try {
