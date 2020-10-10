@@ -25,6 +25,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.techcable.srglib.FieldData;
 import net.techcable.srglib.JavaType;
 import net.techcable.srglib.format.MappingsFormat;
@@ -33,13 +38,34 @@ import net.techcable.srglib.mappings.Mappings;
 public class MappingsReader {
 
     public static Mappings MAPPINGS;
+    public static HashMap<String, String> METHODS;
+    public static HashMap<String, String> METHODS2;
+
+    public static Logger LOGGER = LogManager.getLogger("BukkitNmsRemapper");
 
     public static void main(String[] args) throws IOException {
         File dir = new File("mappings");
         dir.mkdirs();
         File f = exportResource("spigot2intermediary.csrg", dir);
         MAPPINGS = MappingsFormat.COMPACT_SEARGE_FORMAT.parseFile(f);
-        System.out.println("Debug: " + MAPPINGS.getNewClass("net.minecraft.server.MinecraftKey"));
+        METHODS = new HashMap<>();
+        METHODS2 = new HashMap<>();
+        LOGGER.info("Reflection working: " + MAPPINGS.getNewClass("net.minecraft.server.MinecraftKey").getName().equalsIgnoreCase("net.minecraft.class_2960"));
+
+        MAPPINGS.forEachMethod((spigot, intermed) -> {
+            String sN = spigot.getName();
+            String iN = intermed.getName();
+            String clazz = intermed.getDeclaringType().getName();
+
+            METHODS.put(clazz + "=" + sN, iN);
+            boolean put = true;
+            if (METHODS2.containsKey(sN + intermed.getSignature().getDescriptor())) {
+                METHODS2.remove(sN + intermed.getSignature().getDescriptor());
+                put = false;
+            }
+            if (sN.length() > 2 && iN.length() > 2 && put) METHODS2.put(sN + intermed.getSignature().getDescriptor(), iN);
+        });
+        System.out.println(METHODS2.get("setInvisible(Z)V"));
     }
 
     public static String getIntermedClass(String spigot) {
@@ -61,6 +87,12 @@ public class MappingsReader {
             Files.copy(stream, p, StandardCopyOption.REPLACE_EXISTING);
             return p.toFile();
         } catch (IOException e) { e.printStackTrace(); return null;}
+    }
+
+    public static String getIntermedMethod(String name, String spigot) {
+        // TODO This very bad. It doesn't use the method descriptor.
+        // TODO There are 44 spigot-named methods that will have duplicates.
+        return METHODS.getOrDefault(name + "=" + spigot, spigot);
     }
 
 }

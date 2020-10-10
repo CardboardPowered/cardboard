@@ -30,6 +30,8 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+
 /**
  * Very unsafe re-mapping of Reflection.
  */
@@ -39,30 +41,20 @@ public class ReflectionRemapper {
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {
-        if (className.startsWith("org.bukkit.craftbukkit." + NMS_VERSION + ".")) {
-            String c = "org.bukkit.craftbukkit." + className.substring(23 + NMS_VERSION.length() + 1);
-            return MappingsReader.getIntermedClass(c);
-        }
+        if (className.startsWith("org.bukkit.craftbukkit." + NMS_VERSION + "."))
+            return MappingsReader.getIntermedClass("org.bukkit.craftbukkit." + className.substring(23 + NMS_VERSION.length() + 1));
 
-        if (className.startsWith("org.bukkit.craftbukkit.CraftServer.")) {
-            String c = className.replace("org.bukkit.craftbukkit.CraftServer.", "org.bukkit.craftbukkit.");
-            return MappingsReader.getIntermedClass(c);
-        }
+        if (className.startsWith("org.bukkit.craftbukkit.CraftServer."))
+            return MappingsReader.getIntermedClass(className.replace("org.bukkit.craftbukkit.CraftServer.", "org.bukkit.craftbukkit."));
 
-        if (className.startsWith("net.minecraft.server." + NMS_VERSION + ".")) {
-            String c = className.replace("net.minecraft.server." + NMS_VERSION + ".", "net.minecraft.server.");
-            return MappingsReader.getIntermedClass(c);
-        }
+        if (className.startsWith("net.minecraft.server." + NMS_VERSION + "."))
+            return MappingsReader.getIntermedClass(className.replace("net.minecraft.server." + NMS_VERSION + ".", "net.minecraft.server."));
 
-        if (className.startsWith("org.bukkit.craftbukkit.")) {
-            // We are not CraftBukkit, check for our own version of the class.
-            return MappingsReader.getIntermedClass(className);
-        }
+        if (className.startsWith("org.bukkit.craftbukkit."))
+            return MappingsReader.getIntermedClass(className); // We are not CraftBukkit, check for our own version of the class.
 
-        if (className.startsWith("net.minecraft.server.CraftServer.")) {
-            String c = className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server.");
-            return MappingsReader.getIntermedClass(c);
-        }
+        if (className.startsWith("net.minecraft.server.CraftServer."))
+            return MappingsReader.getIntermedClass(className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server."));
 
         return className;
     }
@@ -117,6 +109,39 @@ public class ReflectionRemapper {
         }
     }
 
+    public static Method getMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
+        Method m = getDeclaredMethodByName(calling, f);
+        m.setAccessible(true);
+        return m;
+    }
+
+    public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
+        try {
+            return calling.getDeclaredMethod(MappingsReader.getIntermedMethod(calling.getName(), f));
+        } catch (NoSuchMethodException | SecurityException e) {
+            try {
+                Method a = calling.getDeclaredMethod(MappingsReader.getIntermedMethod(calling.getName(), f));
+                a.setAccessible(true);
+                return a;
+            } catch (NoSuchMethodException | SecurityException e1) {
+                Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
+                try {
+                    Method a = whyIsAsmBroken.getDeclaredMethod(MappingsReader.getIntermedMethod(whyIsAsmBroken.getName(), f));
+                    a.setAccessible(true);
+                    return a;
+                } catch (NoSuchMethodException | SecurityException e2) {
+                    e1.printStackTrace();
+                }
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Retrieve a class that is from a plugin
+     * 
+     * @author Isaiah
+     */
     @SuppressWarnings("unchecked")
     public static Class<?> getClassFromJPL(String name) {
         try {
@@ -136,26 +161,26 @@ public class ReflectionRemapper {
             fc.setAccessible(true);
             return (Class<?>) fc.invoke(jpl, name);
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            BukkitFabricMod.LOGGER.warning("SOMETHING EVERY WRONG! PLEASE REPORT THE EXCEPTION BELOW TO BUKKIT4FABRIC:");
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
-    public static Class<?> getCallerClass() throws ClassNotFoundException {
-        return Class.forName(getCallerClassName());
-    }
-
+    /**
+     */
     public static String getCallerClassName() { 
         StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
         for (int i=1; i<stElements.length; i++) {
             StackTraceElement ste = stElements[i];
-            if (!ste.getClassName().equals(ReflectionRemapper.class.getName()) && ste.getClassName().indexOf("java.lang.Thread")!=0) {
+            if (!ste.getClassName().equals(ReflectionRemapper.class.getName()) && ste.getClassName().indexOf("java.lang.Thread")!=0)
                 return ste.getClassName();
-            }
         }
         return null;
-     }
+    }
 
+    /**
+     */
     public static String getPackageName(Package pkage) {
         String name = pkage.getName();
         if (name.startsWith("org.bukkit.craftbukkit"))
