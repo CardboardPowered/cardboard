@@ -104,6 +104,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -140,6 +141,7 @@ import org.bukkit.plugin.SimpleServicesManager;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
+import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
@@ -1259,12 +1261,51 @@ public class CraftServer implements Server {
 
     @Override
     public void reload() {
-        // TODO Auto-generated method stub server.reload();
+        loadIcon();
+
+        try {
+            server.getPlayerManager().getIpBanList().load();
+        } catch (IOException ex) {
+            logger.log(Level.WARNING, "Failed to load banned-ips.json, " + ex.getMessage());
+        }
+        try {
+            server.getPlayerManager().getUserBanList().load();
+        } catch (IOException ex) {
+            logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
+        }
+
+        pluginManager.clearPlugins();
+        commandMap.clearCommands();
+        resetRecipes();
+        reloadData();
+
+        int pollCount = 0;
+
+        // Wait for at most 2.5 seconds for plugins to close their threads
+        while (pollCount < 50 && getScheduler().getActiveWorkers().size() > 0) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {}
+            pollCount++;
+        }
+
+        List<BukkitWorker> overdueWorkers = getScheduler().getActiveWorkers();
+        for (BukkitWorker worker : overdueWorkers) {
+            Plugin plugin = worker.getOwner();
+            String author = "<NoAuthorGiven>";
+            if (plugin.getDescription().getAuthors().size() > 0) author = plugin.getDescription().getAuthors().get(0);
+            getLogger().log(Level.SEVERE, "Nag author: '" + author + "' of '" + plugin.getDescription().getName() + "' about the following: " +
+                "This plugin is not properly shutting down its async tasks when it is being reloaded. This may cause conflicts with the newly loaded version of the plugin");
+        }
+        loadPlugins();
+        enablePlugins(PluginLoadOrder.STARTUP);
+        enablePlugins(PluginLoadOrder.POSTWORLD);
+        getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.RELOAD));
     }
 
     @Override
     public void reloadData() {
-        // TODO Auto-generated method stub server.reload();
+        // TODO Auto-generated method stub
     }
 
     @Override
