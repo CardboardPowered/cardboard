@@ -1,12 +1,13 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 
 import net.minecraft.entity.Entity;
 
-public class CraftEntity2 extends CraftEntity {
+public class UnknownEntity extends CraftEntity {
 
-    public CraftEntity2(Entity entity) {
+    public UnknownEntity(Entity entity) {
         super(entity);
     }
 

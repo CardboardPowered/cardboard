@@ -19,6 +19,9 @@
 package com.javazilla.bukkitfabric.impl;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -51,6 +54,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
@@ -64,7 +68,6 @@ import org.bukkit.inventory.InventoryView;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -73,8 +76,6 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.CraftingResultInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.GuiCloseC2SPacket;
@@ -327,6 +328,20 @@ public class BukkitEventFactory {
         org.bukkit.inventory.ItemStack bitem = event.getInventory().getResult();
 
         return CraftItemStack.asNMSCopy(bitem);
+    }
+
+    public static EntityTransformEvent callEntityTransformEvent(net.minecraft.entity.LivingEntity original, net.minecraft.entity.LivingEntity coverted, EntityTransformEvent.TransformReason transformReason) {
+        return callEntityTransformEvent(original, Collections.singletonList(coverted), transformReason);
+    }
+
+    public static EntityTransformEvent callEntityTransformEvent(net.minecraft.entity.LivingEntity original, List<net.minecraft.entity.LivingEntity> convertedList, EntityTransformEvent.TransformReason convertType) {
+        List<org.bukkit.entity.Entity> list = new ArrayList<>();
+        for (net.minecraft.entity.LivingEntity entityLiving : convertedList)
+            list.add(((IMixinEntity)entityLiving).getBukkitEntity());
+
+        EntityTransformEvent event = new EntityTransformEvent(((IMixinEntity)original).getBukkitEntity(), list, convertType);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
 }

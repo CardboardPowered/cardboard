@@ -1,6 +1,7 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Projectile;
 
 public abstract class AbstractProjectile extends CraftEntity implements Projectile {

@@ -1,4 +1,6 @@
-package org.bukkit.craftbukkit.util;
+package com.javazilla.bukkitfabric.impl.util;
+
+import org.bukkit.craftbukkit.util.Waitable;
 
 public class WaitableImpl extends Waitable<Object> {
 

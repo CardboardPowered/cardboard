@@ -27,24 +27,16 @@ public class CraftNBTTagConfigSerializer {
     public static Object serialize(Tag base) {
         if (base instanceof CompoundTag) {
             Map<String, Object> innerMap = new HashMap<>();
-            for (String key : ((CompoundTag) base).getKeys()) {
+            for (String key : ((CompoundTag) base).getKeys())
                 innerMap.put(key, serialize(((CompoundTag) base).get(key)));
-            }
-
             return innerMap;
         } else if (base instanceof ListTag) {
             List<Object> baseList = new ArrayList<>();
             for (int i = 0; i < ((AbstractListTag<?>) base).size(); i++)
                 baseList.add(serialize((Tag) ((AbstractListTag<?>) base).get(i)));
-
             return baseList;
-        } else if (base instanceof StringTag) {
-            return base.asString();
-        } else if (base instanceof IntTag) { // No need to check for doubles, those are covered by the double itself
-            return base.toString() + "i";
         }
-
-        return base.toString();
+        return (base instanceof StringTag) ? base.asString() : ((base instanceof IntTag) ? base.toString() + "i" : base.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -57,13 +49,10 @@ public class CraftNBTTagConfigSerializer {
             return compound;
         } else if (object instanceof List) {
             List<Object> list = (List<Object>) object;
-            if (list.isEmpty())
-                return new ListTag(); // default
+            if (list.isEmpty()) return new ListTag(); // default
 
             ListTag tagList = new ListTag();
-            for (Object tag : list)
-                tagList.add(deserialize(tag));
-
+            for (Object tag : list) tagList.add(deserialize(tag));
             return tagList;
         } else if (object instanceof String) {
             String string = (String) object;

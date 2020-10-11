@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.LinkedHashMap;
@@ -1047,7 +1048,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         try {
             return CraftServer.server.getPlayerManager().isOperator(getProfile());
         } catch (NullPointerException e) {
-            return CraftServer.INSTANCE.getOperatorList().contains(getUniqueId().toString());
+            try {
+                return CraftServer.INSTANCE.getOperatorList().contains(getUniqueId().toString());
+            } catch (IOException ex) {
+                GameProfile gp = new GameProfile(super.getUniqueId(), this.getName());
+                return CraftServer.server.getPlayerManager().isOperator(gp);
+            }
         }
     }
 

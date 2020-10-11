@@ -157,7 +157,7 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.tag.CraftBlockTag;
 import com.javazilla.bukkitfabric.impl.tag.CraftItemTag;
-import com.javazilla.bukkitfabric.impl.IconCacheImpl;
+import com.javazilla.bukkitfabric.impl.util.IconCacheImpl;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
 import com.javazilla.bukkitfabric.impl.MinecraftCommandWrapper;
@@ -252,7 +252,6 @@ public class CraftServer implements Server {
 
     public static MinecraftDedicatedServer server;
     public static CraftServer INSTANCE;
-    //private boolean dedicated;
 
     private final MetadataStoreBase<Entity> entityMetadata = MetadataStoreImpl.newEntityMetadataStore();
     private final MetaDataStoreBase<OfflinePlayer> playerMetadata = MetadataStoreImpl.newPlayerMetadataStore();
@@ -1469,14 +1468,13 @@ public class CraftServer implements Server {
     }
 
     // Because PlayerManager is broken
-    public List<String> getOperatorList() {
+    public List<String> getOperatorList() throws IOException {
         File f = new File(MinecraftServer.USER_CACHE_FILE.getParentFile(), "ops.json");
-        getLogger().info(f.getAbsolutePath() + ", EXISTS? " + f.exists());
         List<String> content = null;
         try {
             content = Files.readAllLines(f.toPath());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
         List<String> toreturn = new ArrayList<>();
         for (String s : content) {

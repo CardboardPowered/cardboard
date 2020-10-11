@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.util;
+package com.javazilla.bukkitfabric.impl.util;
 
 public class ServerShutdownThread extends Thread {
 

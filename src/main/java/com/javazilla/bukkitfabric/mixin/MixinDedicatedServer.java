@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.ServerShutdownThread;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.spongepowered.asm.mixin.Final;
@@ -36,9 +35,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.impl.util.ServerShutdownThread;
 import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
 
-import net.minecraft.server.ServerTask;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.PendingServerCommand;

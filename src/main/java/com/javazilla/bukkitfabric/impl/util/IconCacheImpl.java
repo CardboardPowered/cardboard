@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl;
+package com.javazilla.bukkitfabric.impl.util;
 
 import org.bukkit.util.CachedServerIcon;
 

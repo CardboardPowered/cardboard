@@ -27,4 +27,6 @@ public interface IMixinEntity {
 
     public void setProjectileSourceBukkit(ProjectileSource source);
 
+    public ProjectileSource getProjectileSourceBukkit();
+
 }

@@ -39,6 +39,8 @@
     "entity.MixinAnimalEntity",
     "entity.MixinArmorStandEntity",
     "entity.MixinAbstractTraderEntity",
+    "entity.MixinThrownItemEntity",
+    "entity.MixinSlimeEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

@@ -18,7 +18,6 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 
 import org.apache.commons.lang3.Validate;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
@@ -185,7 +184,6 @@ public class PluginClassLoader extends URLClassLoader {
             jar.close();
         }
     }
-
     
     Set<String> getClasses() {
         return classes.keySet();

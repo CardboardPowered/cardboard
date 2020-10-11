@@ -30,15 +30,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.PluginClassLoader;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
@@ -157,9 +154,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
         Preconditions.checkArgument(version <= this.getDataVersion(), "Newer version! Server downgrades are not supported!");
 
         // Fastpath up to date materials
-        if (version == this.getDataVersion()) {
+        if (version == this.getDataVersion())
             return Material.getMaterial(material);
-        }
 
         Dynamic<Tag> name = new Dynamic<>(NbtOps.INSTANCE, StringTag.of("minecraft:" + material.toLowerCase(Locale.ROOT)));
         Dynamic<Tag> converted = Schemas.getFixer().update(TypeReferences.ITEM_NAME, name, version, this.getDataVersion());
@@ -169,8 +165,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return Material.matchMaterial(converted.asString(""));
     }
 
+    @Deprecated
     public String getMappingsVersion() {
-        return "c2d5d7871edcc4fb0f81d18959c647af";
+        return "MinecraftMapping-spigot2intermediary.srg";
     }
 
     @Override
@@ -189,7 +186,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         stack.setItemMeta(CraftItemStack.getItemMeta(nmsStack));
-
         return stack;
     }
 
@@ -214,14 +210,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         if (pdf.getAPIVersion() != null) {
             int pluginIndex = SUPPORTED_API.indexOf(pdf.getAPIVersion());
+            if (pluginIndex == -1) throw new InvalidPluginException("Unsupported API version " + pdf.getAPIVersion());
 
-            if (pluginIndex == -1) {
-                throw new InvalidPluginException("Unsupported API version " + pdf.getAPIVersion());
-            }
-
-            if (pluginIndex < minimumIndex) {
+            if (pluginIndex < minimumIndex)
                 throw new InvalidPluginException("Plugin API version " + pdf.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");
-            }
         } else {
             if (minimumIndex == -1) {
                 CraftLegacyMaterials.init();
@@ -233,15 +225,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public static boolean isLegacy(PluginDescriptionFile pdf) {
         return pdf.getAPIVersion() == null;
     }
-
-    /*public byte[] processClass(PluginDescriptionFile pdf, String path, byte[] clazz, PluginClassLoader cl) {
-        try {
-            clazz = Commodore.convert(clazz, !isLegacy(pdf), cl, pdf.getName());
-        } catch (Exception ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Fatal error trying to convert " + pdf.getFullName() + ":" + path, ex);
-        }
-        return clazz;
-    }*/
 
     @Override
     public byte[] processClass(PluginDescriptionFile pdf, String path, byte[] clazz) {
@@ -259,7 +242,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
      * These should match NBTBase#getTypeId
      */
     public static class NBT {
-
         public static final int TAG_END = 0;
         public static final int TAG_BYTE = 1;
         public static final int TAG_SHORT = 2;

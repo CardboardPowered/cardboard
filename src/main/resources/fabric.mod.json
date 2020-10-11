@@ -13,7 +13,7 @@
     "sources": "https://github.com/fungus-soft/fabricbukkit/"
   },
 
-  "license": "LGPLv3",
+  "license": "GPLv3",
   "icon": "assets/fabricbukkit/icon.png",
   "accessWidener" : "bukkitfabric.accesswidener",
 

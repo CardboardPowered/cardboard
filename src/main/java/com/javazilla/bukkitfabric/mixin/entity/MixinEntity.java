@@ -4,40 +4,95 @@ import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftAbstractVillager;
+import org.bukkit.craftbukkit.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.entity.CraftCreature;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftEntity2;
+import org.bukkit.craftbukkit.entity.CraftFallingBlock;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.entity.CraftItem;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftMonster;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftVillager;
 import org.bukkit.projectiles.ProjectileSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
+import com.javazilla.bukkitfabric.impl.entity.CaveSpiderImpl;
+import com.javazilla.bukkitfabric.impl.entity.ChickenImpl;
+import com.javazilla.bukkitfabric.impl.entity.CowImpl;
+import com.javazilla.bukkitfabric.impl.entity.DrownedImpl;
+import com.javazilla.bukkitfabric.impl.entity.EggImpl;
+import com.javazilla.bukkitfabric.impl.entity.EndermiteImpl;
+import com.javazilla.bukkitfabric.impl.entity.ExperienceOrbImpl;
+import com.javazilla.bukkitfabric.impl.entity.GiantImpl;
+import com.javazilla.bukkitfabric.impl.entity.HuskImpl;
+import com.javazilla.bukkitfabric.impl.entity.LightningStrikeImpl;
+import com.javazilla.bukkitfabric.impl.entity.MagmaCubeImpl;
+import com.javazilla.bukkitfabric.impl.entity.MushroomImpl;
+import com.javazilla.bukkitfabric.impl.entity.PigZombieImpl;
+import com.javazilla.bukkitfabric.impl.entity.SkeletonImpl;
+import com.javazilla.bukkitfabric.impl.entity.SlimeImpl;
+import com.javazilla.bukkitfabric.impl.entity.SnowballImpl;
+import com.javazilla.bukkitfabric.impl.entity.SpiderImpl;
+import com.javazilla.bukkitfabric.impl.entity.StrayImpl;
+import com.javazilla.bukkitfabric.impl.entity.UnknownEntity;
+import com.javazilla.bukkitfabric.impl.entity.VillagerZombieImpl;
+import com.javazilla.bukkitfabric.impl.entity.WanderingTraderImpl;
+import com.javazilla.bukkitfabric.impl.entity.WitherSkeletonImpl;
+import com.javazilla.bukkitfabric.impl.entity.ZombieImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.mob.AbstractSkeletonEntity;
+import net.minecraft.entity.mob.CaveSpiderEntity;
+import net.minecraft.entity.mob.DrownedEntity;
+import net.minecraft.entity.mob.EndermiteEntity;
+import net.minecraft.entity.mob.GiantEntity;
+import net.minecraft.entity.mob.GuardianEntity;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.HuskEntity;
+import net.minecraft.entity.mob.IllagerEntity;
+import net.minecraft.entity.mob.MagmaCubeEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.mob.*;
+import net.minecraft.entity.mob.SlimeEntity;
+import net.minecraft.entity.mob.SpellcastingIllagerEntity;
+import net.minecraft.entity.mob.SpiderEntity;
+import net.minecraft.entity.mob.StrayEntity;
+import net.minecraft.entity.mob.WaterCreatureEntity;
+import net.minecraft.entity.mob.WitherSkeletonEntity;
+import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.mob.ZombieVillagerEntity;
+import net.minecraft.entity.mob.ZombifiedPiglinEntity;
+import net.minecraft.entity.passive.AbstractTraderEntity;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.*;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.MooshroomEntity;
+import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.thrown.EggEntity;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-
-import org.bukkit.craftbukkit.entity.*;
 
 @Mixin(Entity.class)
 public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
@@ -101,11 +156,11 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             else if (entity instanceof PathAwareEntity) {
                 // Animals
                 if (entity instanceof AnimalEntity) {
-                /*    if (entity instanceof ChickenEntity) { return new CraftChicken(server, (ChickenEntity) entity); }
+                    if (entity instanceof ChickenEntity) { return new ChickenImpl(server, (ChickenEntity) entity); }
                     else if (entity instanceof CowEntity) {
-                        if (entity instanceof MooshroomEntity) { return new CraftMushroomCow(server, (MooshroomEntity) entity); }
-                        else { return new CraftCow(server, (CowEntity) entity); }
-                    }
+                        if (entity instanceof MooshroomEntity) { return new MushroomImpl(server, (MooshroomEntity) entity); }
+                        else { return new CowImpl(server, (CowEntity) entity); }
+                    }/*
                     else if (entity instanceof PigEntity) { return new CraftPig(server, (PigEntity) entity); }
                     else if (entity instanceof TameableEntity) {
                         if (entity instanceof WolfEntity) { return new CraftWolf(server, (WolfEntity) entity); }
@@ -132,34 +187,34 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                     //else if (entity instanceof BeeEntity) { return new CraftBee(server, (BeeEntity) entity); }
                     //else if (entity instanceof HoglinEntity) { return new CraftHoglin(server, (HoglinEntity) entity); }
                     //else if (entity instanceof StriderEntity) { return new CraftStrider(server, (StriderEntity) entity); }
-                    //else  { return new CraftAnimals(server, (AnimalEntity) entity); }
+                    else  { return new AnimalsImpl(server, (AnimalEntity) entity); }
                 }
                 // Monsters
                 else if (entity instanceof HostileEntity) {
                     if (entity instanceof ZombieEntity) {
-                        //if (entity instanceof ZombifiedPiglinEntity) { return new CraftPigZombie(server, (ZombifiedPiglinEntity) entity); }
-                        //else if (entity instanceof HuskEntity) { return new CraftHusk(server, (HuskEntity) entity); }
-                        //else if (entity instanceof ZombieVillagerEntity) { return new CraftVillagerZombie(server, (ZombieVillagerEntity) entity); }
-                        //else if (entity instanceof DrownedEntity) { return new CraftDrowned(server, (DrownedEntity) entity); }
-                        //else { return new CraftZombie(server, (ZombieEntity) entity); }
+                        if (entity instanceof ZombifiedPiglinEntity) { return new PigZombieImpl(server, (ZombifiedPiglinEntity) entity); }
+                        else if (entity instanceof HuskEntity) { return new HuskImpl(server, (HuskEntity) entity); }
+                        else if (entity instanceof ZombieVillagerEntity) { return new VillagerZombieImpl(server, (ZombieVillagerEntity) entity); }
+                        else if (entity instanceof DrownedEntity) { return new DrownedImpl(server, (DrownedEntity) entity); }
+                        else { return new ZombieImpl(server, (ZombieEntity) entity); }
                     }
                     //else if (entity instanceof CreeperEntity) { return new CraftCreeper(server, (CreeperEntity) entity); }
                     //else if (entity instanceof EndermanEntity) { return new CraftEnderman(server, (EndermanEntity) entity); }
                     //else if (entity instanceof SilverfishEntity) { return new CraftSilverfish(server, (SilverfishEntity) entity); }
-                    //else if (entity instanceof GiantEntity) { return new CraftGiant(server, (GiantEntity) entity); }
+                    else if (entity instanceof GiantEntity) { return new GiantImpl(server, (GiantEntity) entity); }
                     else if (entity instanceof AbstractSkeletonEntity) {
-                        //if (entity instanceof StrayEntity) { return new CraftStray(server, (StrayEntity) entity); }
-                        //else if (entity instanceof WitherSkeletonEntity) { return new CraftWitherSkeleton(server, (WitherSkeletonEntity) entity); }
-                        //else { return new CraftSkeleton(server, (AbstractSkeletonEntity) entity); }
+                        if (entity instanceof StrayEntity) { return new StrayImpl(server, (StrayEntity) entity); }
+                        else if (entity instanceof WitherSkeletonEntity) { return new WitherSkeletonImpl(server, (WitherSkeletonEntity) entity); }
+                        else { return new SkeletonImpl(server, (AbstractSkeletonEntity) entity); }
                     }
                     //else if (entity instanceof BlazeEntity) { return new CraftBlaze(server, (BlazeEntity) entity); }
                     //else if (entity instanceof WitchEntity) { return new CraftWitch(server, (WitchEntity) entity); }
                     //else if (entity instanceof WitherEntity) { return new CraftWither(server, (WitherEntity) entity); }
                     else if (entity instanceof SpiderEntity) {
-                        //if (entity instanceof CaveSpiderEntity) { return new CraftCaveSpider(server, (CaveSpiderEntity) entity); }
-                        //else { return new CraftSpider(server, (SpiderEntity) entity); }
+                        if (entity instanceof CaveSpiderEntity) { return new CaveSpiderImpl(server, (CaveSpiderEntity) entity); }
+                        else { return new SpiderImpl(server, (SpiderEntity) entity); }
                     }
-                    //else if (entity instanceof EndermiteEntity) { return new CraftEndermite(server, (EndermiteEntity) entity); }
+                    else if (entity instanceof EndermiteEntity) { return new EndermiteImpl(server, (EndermiteEntity) entity); }
                     else if (entity instanceof GuardianEntity) {
                         //if (entity instanceof ElderGuardianEntity) { return new CraftElderGuardian(server, (ElderGuardianEntity) entity); }
                         //else { return new CraftGuardian(server, (GuardianEntity) entity); }
@@ -192,16 +247,16 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 //}
                 else if (entity instanceof AbstractTraderEntity) {
                     if (entity instanceof VillagerEntity) { return new CraftVillager(server, (VillagerEntity) entity); }
-                    //else if (entity instanceof WanderingTraderEntity) { return new CraftWanderingTrader(server, (WanderingTraderEntity) entity); }
+                    else if (entity instanceof WanderingTraderEntity) { return new WanderingTraderImpl(server, (WanderingTraderEntity) entity); }
                     else { return new CraftAbstractVillager(server, (AbstractTraderEntity) entity); }
                 }
                 else { return new CraftCreature(server, (PathAwareEntity) entity); }
             }
             // Slimes are a special (and broken) case
-            //else if (entity instanceof SlimeEntity) {
-                //if (entity instanceof MagmaCubeEntity) { return new CraftMagmaCube(server, (MagmaCubeEntity) entity); }
-                //else { return new CraftSlime(server, (SlimeEntity) entity); }
-            //}
+            else if (entity instanceof SlimeEntity) {
+                if (entity instanceof MagmaCubeEntity) { return new MagmaCubeImpl(server, (MagmaCubeEntity) entity); }
+                else { return new SlimeImpl(server, (SlimeEntity) entity); }
+            }
             // Flying
             //else if (entity instanceof FlyingEntity) {
                 //if (entity instanceof GhastEntity) { return new CraftGhast(server, (GhastEntity) entity); }
@@ -224,8 +279,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             //if (part.owner instanceof EnderDragonEntity) { return new CraftEnderDragonPart(server, (EnderDragonPart) entity); }
            //else { return new CraftComplexPart(server, (EnderDragonPart) entity); }
         }
-        //else if (entity instanceof ExperienceOrbEntity) { return new CraftExperienceOrb(server, (ExperienceOrbEntity) entity); }
-       // else if (entity instanceof ArrowEntity) { return new CraftTippedArrow(server, (ArrowEntity) entity); }
+        else if (entity instanceof ExperienceOrbEntity) { return new ExperienceOrbImpl(server, (ExperienceOrbEntity) entity); }
+        //else if (entity instanceof ArrowEntity) { return new CraftTippedArrow(server, (ArrowEntity) entity); }
         //else if (entity instanceof SpectralArrowEntity) { return new CraftSpectralArrow(server, (SpectralArrowEntity) entity); }
         else if (entity instanceof PersistentProjectileEntity) {
             //if (entity instanceof TridentEntity) { return new CraftTrident(server, (TridentEntity) entity); }
@@ -233,8 +288,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         }
         //else if (entity instanceof BoatEntity) { return new CraftBoat(server, (BoatEntity) entity); }
         else if (entity instanceof ThrownEntity) {
-            //if (entity instanceof EggEntity) { return new CraftEgg(server, (EggEntity) entity); }
-           // else if (entity instanceof SnowballEntity) { return new CraftSnowball(server, (SnowballEntity) entity); }
+            if (entity instanceof EggEntity) { return new EggImpl(server, (EggEntity) entity); }
+            else if (entity instanceof SnowballEntity) { return new SnowballImpl(server, (SnowballEntity) entity); }
             //else if (entity instanceof PotionEntity) { return new CraftThrownPotion(server, (PotionEntity) entity); }
             //else if (entity instanceof EnderPearlEntity) { return new CraftEnderPearl(server, (EnderPearlEntity) entity); }
             //else if (entity instanceof ExperienceBottleEntity) { return new CraftThrownExpBottle(server, (ExperienceBottleEntity) entity); }
@@ -251,7 +306,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         //else if (entity instanceof EndCrystalEntity) { return new CraftEnderCrystal(server, (EndCrystalEntity) entity); }
         //else if (entity instanceof FishingBobberEntity) { return new CraftFishHook(server, (FishingBobberEntity) entity); }
         else if (entity instanceof ItemEntity) { return new CraftItem(server, (ItemEntity) entity); }
-        //else if (entity instanceof LightningEntity) { return new CraftLightningStrike(server, (LightningEntity) entity); }
+        else if (entity instanceof LightningEntity) { return new LightningStrikeImpl(server, (LightningEntity) entity); }
         /*else if (entity instanceof AbstractMinecartEntity) {
             if (entity instanceof FurnaceMinecartEntity) { return new CraftMinecartFurnace(server, (FurnaceMinecartEntity) entity); }
             else if (entity instanceof ChestMinecartEntity) { return new CraftMinecartChest(server, (ChestMinecartEntity) entity); }
@@ -273,10 +328,14 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         //else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
         //else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
         // CHECKSTYLE:ON
-        else return new CraftEntity2(entity); // TODO
 
-        return new CraftEntity2(entity); // TODO
+        return new UnknownEntity(entity); // TODO
         //throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
+    }
+
+    @Override
+    public ProjectileSource getProjectileSourceBukkit() {
+        return projectileSource;
     }
 
 }

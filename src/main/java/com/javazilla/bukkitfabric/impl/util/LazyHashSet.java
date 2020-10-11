@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.util;
+package com.javazilla.bukkitfabric.impl.util;
 
 import java.util.Collection;
 import java.util.Iterator;
