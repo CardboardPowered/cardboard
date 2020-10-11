@@ -88,6 +88,7 @@
     "screen.MixinBrewingStandScreenHandler",
     "screen.MixinGenericContainerScreenHandler",
     "screen.MixinPlayerScreenHandler",
+    "screen.MixinCraftingScreenHandler",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
