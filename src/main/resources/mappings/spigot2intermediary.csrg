@@ -40152,6 +40152,7 @@ net/minecraft/server/PacketEncryptionHandler a field_11612
 net/minecraft/server/PacketEncryptionHandler b field_11613
 net/minecraft/server/PacketEncryptionHandler c field_11614
 net/minecraft/server/PacketEncryptionHandler net/minecraft/class_2524
+net/minecraft/server/PacketHandshakingInListener a (Lnet/minecraft/server/IChatBaseComponent;)V method_10839
 net/minecraft/server/PacketHandshakingInListener a (Lnet/minecraft/server/PacketHandshakingInSetProtocol;)V method_12576
 net/minecraft/server/PacketHandshakingInListener net/minecraft/class_2890
 net/minecraft/server/PacketHandshakingInSetProtocol a (Lnet/minecraft/server/PacketHandshakingInListener;)V method_12575
@@ -44226,7 +44227,7 @@ net/minecraft/server/RegistryBlockID c field_11098
 net/minecraft/server/RegistryBlockID fromId (I)Ljava/lang/Object; a
 net/minecraft/server/RegistryBlockID getId (Ljava/lang/Object;)I a
 net/minecraft/server/RegistryBlockID net/minecraft/class_2361
-net/minecraft/server/RegistryBlocks a ()Lnet/minecraft/server/MinecraftKey; method_10137
+net/minecraft/server/RegistryBlocks a (Ljava/lang/Object;)I method_10206
 net/minecraft/server/RegistryBlocks bf field_11014
 net/minecraft/server/RegistryBlocks bg field_11015
 net/minecraft/server/RegistryBlocks net/minecraft/class_2348

@@ -229,7 +229,7 @@ public class CraftBlockData implements BlockData {
 
     @Override
     public String getAsString() {
-        return toString(((AbstractBlockState) state).getEntries());
+        return toString(state.getEntries());
     }
 
     @Override

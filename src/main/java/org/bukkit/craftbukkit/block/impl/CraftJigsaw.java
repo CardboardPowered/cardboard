@@ -3,7 +3,7 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftJigsaw extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Directional {
+public final class CraftJigsaw extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Jigsaw {
 
     public CraftJigsaw() {
         super();
@@ -13,22 +13,18 @@ public final class CraftJigsaw extends org.bukkit.craftbukkit.block.data.CraftBl
         super(state);
     }
 
-    // org.bukkit.craftbukkit.block.data.CraftDirectional
+    // org.bukkit.craftbukkit.block.data.type.CraftJigsaw
 
-    private static final net.minecraft.state.property.EnumProperty<?> FACING = getEnum(net.minecraft.block.JigsawBlock.class, "facing");
+    private static final net.minecraft.state.property.EnumProperty<?> ORIENTATION = getEnum(net.minecraft.block.JigsawBlock.class, "orientation");
 
     @Override
-    public org.bukkit.block.BlockFace getFacing() {
-        return get(FACING, org.bukkit.block.BlockFace.class);
+    public Orientation getOrientation() {
+        return get(ORIENTATION, Orientation.class);
     }
 
     @Override
-    public void setFacing(org.bukkit.block.BlockFace facing) {
-        set(FACING, facing);
+    public void setOrientation(Orientation orientation) {
+        set(ORIENTATION, orientation);
     }
 
-    @Override
-    public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
-        return getValues(FACING, org.bukkit.block.BlockFace.class);
-    }
 }

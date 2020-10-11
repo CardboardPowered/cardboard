@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 
 public class BukkitLogger extends Logger {
 
-    private org.apache.logging.log4j.Logger log4j;
+    public org.apache.logging.log4j.Logger log4j;
     private static BukkitLogger inst;
 
     public static BukkitLogger getLogger() {

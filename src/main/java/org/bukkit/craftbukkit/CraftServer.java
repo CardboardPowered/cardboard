@@ -250,17 +250,15 @@ public class CraftServer implements Server {
     private YamlConfiguration configuration;
     private IconCacheImpl icon;
 
-    public static MinecraftServer server;
+    public static MinecraftDedicatedServer server;
     public static CraftServer INSTANCE;
-    private boolean dedicated;
+    //private boolean dedicated;
 
     private final MetadataStoreBase<Entity> entityMetadata = MetadataStoreImpl.newEntityMetadataStore();
     private final MetaDataStoreBase<OfflinePlayer> playerMetadata = MetadataStoreImpl.newPlayerMetadataStore();
     private final MetaDataStoreBase<World> worldMetadata = MetadataStoreImpl.newWorldMetadataStore();
 
-    public CraftServer(MinecraftServer nms) {
-        if (nms instanceof MinecraftDedicatedServer)
-            dedicated = true;
+    public CraftServer(MinecraftDedicatedServer nms) {
         INSTANCE = this;
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
         server = nms;
@@ -422,12 +420,8 @@ public class CraftServer implements Server {
         }
     }
 
-    public MinecraftServer getServer() {
-        return server;
-    }
-
-    public MinecraftDedicatedServer getDedicated() {
-        return (MinecraftDedicatedServer)server;
+    public MinecraftDedicatedServer getServer() {
+        return (MinecraftDedicatedServer) server;
     }
 
     @Override
@@ -766,15 +760,12 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getAllowFlight() {
-        if (!dedicated)
-            return true;
-        return getDedicated().getProperties().allowFlight;
+        return getServer().getProperties().allowFlight;
     }
 
     @Override
     public boolean getAllowNether() {
-        if (!dedicated) return true;
-        return getDedicated().getProperties().allowNether;
+        return getServer().getProperties().allowNether;
     }
 
     @Override
@@ -860,8 +851,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        if (!dedicated) return true;
-        return getDedicated().getProperties().generatorOptions.shouldGenerateStructures();
+        return getServer().getProperties().generatorOptions.shouldGenerateStructures();
     }
 
     @Override
@@ -879,14 +869,12 @@ public class CraftServer implements Server {
 
     @Override
     public int getIdleTimeout() {
-        if (!dedicated) return 0;
-        return getDedicated().getProperties().playerIdleTimeout.get();
+        return getServer().getProperties().playerIdleTimeout.get();
     }
 
     @Override
     public String getIp() {
-        if (!dedicated) return "localhost";
-        return getDedicated().getProperties().serverIp;
+        return getServer().getProperties().serverIp;
     }
 
     @Override
@@ -1165,8 +1153,7 @@ public class CraftServer implements Server {
 
     @Override
     public int getViewDistance() {
-        if (!dedicated) return 4;
-        return getDedicated().getProperties().viewDistance;
+        return getServer().getProperties().viewDistance;
     }
 
     @Override
@@ -1208,8 +1195,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getWorldType() {
-        if (!dedicated) return "normal";
-        return getDedicated().getProperties().properties.getProperty("level-type");
+        return getServer().getProperties().properties.getProperty("level-type");
     }
 
     @Override
@@ -1219,14 +1205,12 @@ public class CraftServer implements Server {
 
     @Override
     public boolean hasWhitelist() {
-        if (!dedicated) return true;
-        return getDedicated().getProperties().enforceWhitelist;
+        return getServer().getProperties().enforceWhitelist;
     }
 
     @Override
     public boolean isHardcore() {
-        if (!dedicated) return true;
-        return getDedicated().getProperties().hardcore;
+        return getServer().getProperties().hardcore;
     }
 
     @Override

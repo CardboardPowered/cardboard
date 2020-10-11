@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinPluginClassLoader",
+    "MixinPluginLogger",
 
     "MixinDedicatedServer",
     "MixinMinecraftServer",
@@ -56,6 +57,7 @@
     "network.MixinLegacyQueryHandler",
     "network.MixinServerPlayNetworkHandler",
     "network.MixinServerNetworkIo",
+    "network.MixinClientConnection",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",
