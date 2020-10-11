@@ -1,6 +1,5 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
-import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,14 +9,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
+import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.screen.AbstractFurnaceScreenHandler;
-import net.minecraft.screen.HopperScreenHandler;
+import net.minecraft.screen.HorseScreenHandler;
 
-@Mixin(HopperScreenHandler.class)
-public class MixinHopperScreenHandler extends MixinScreenHandler {
+@Mixin(HorseScreenHandler.class)
+public class MixinHorseScreenHandler extends MixinScreenHandler {
 
     @Shadow
     public Inventory inventory;
@@ -26,7 +26,7 @@ public class MixinHopperScreenHandler extends MixinScreenHandler {
     private PlayerInventory playerInv;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
-    public void setPlayerInv(int i, PlayerInventory playerinventory, Inventory iinventory, CallbackInfo ci) {
+    public void setPlayerInv(int i, PlayerInventory playerinventory, Inventory iinventory, final HorseBaseEntity entityhorseabstract, CallbackInfo ci) {
         this.playerInv = playerinventory;
     }
 
@@ -34,10 +34,7 @@ public class MixinHopperScreenHandler extends MixinScreenHandler {
     public CraftInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
-
-        CraftInventory inventory = new CraftInventory(this.inventory);
-        bukkitEntity = new CraftInventoryView((Player)((IMixinEntity)this.playerInv.player).getBukkitEntity(), inventory, (HopperScreenHandler)(Object)this);
-        return bukkitEntity;
+        return bukkitEntity = new CraftInventoryView((Player)((IMixinEntity)this.playerInv.player).getBukkitEntity(), ((IMixinInventory)inventory).getOwner().getInventory(), (HorseScreenHandler)(Object)this);
     }
 
 

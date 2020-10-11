@@ -36,7 +36,7 @@ public class MixinGeneric3x3ContainerScreenHandler extends MixinScreenHandler {
             return bukkitEntity;
 
         CraftInventory inventory = new CraftInventory(this.inventory);
-        bukkitEntity = new CraftInventoryView((Player)((IMixinEntity)this.playerInv.player).getBukkitEntity(), inventory, (AbstractFurnaceScreenHandler)(Object)this);
+        bukkitEntity = new CraftInventoryView((Player)((IMixinEntity)this.playerInv.player).getBukkitEntity(), inventory, (Generic3x3ContainerScreenHandler)(Object)this);
         return bukkitEntity;
     }
 
