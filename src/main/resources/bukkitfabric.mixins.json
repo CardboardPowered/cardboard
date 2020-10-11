@@ -91,6 +91,7 @@
     "screen.MixinCraftingScreenHandler",
     "screen.MixinAbstractFurnaceScreenHandler",
     "screen.MixinHopperScreenHandler",
+    "screen.MixinGeneric3x3ContainerScreenHandler",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
