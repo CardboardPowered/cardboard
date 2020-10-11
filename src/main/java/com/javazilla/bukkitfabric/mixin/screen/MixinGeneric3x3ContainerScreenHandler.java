@@ -13,7 +13,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.screen.AbstractFurnaceScreenHandler;
 import net.minecraft.screen.Generic3x3ContainerScreenHandler;
 
 @Mixin(Generic3x3ContainerScreenHandler.class)

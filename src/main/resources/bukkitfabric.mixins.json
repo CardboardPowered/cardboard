@@ -18,6 +18,7 @@
     "MixinStatusEffects",
     "MixinAdvancement",
     "MixinStatHandler",
+    "MixinTradeOffer",
 
     "world.MixinServerWorld",
     "world.MixinWorld",
@@ -37,6 +38,7 @@
     "entity.MixinPiglinBrain",
     "entity.MixinAnimalEntity",
     "entity.MixinArmorStandEntity",
+    "entity.MixinAbstractTraderEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
@@ -93,6 +95,8 @@
     "screen.MixinHopperScreenHandler",
     "screen.MixinGeneric3x3ContainerScreenHandler",
     "screen.MixinHorseScreenHandler",
+    "screen.MixinLecternScreenHandler",
+    "screen.MixinMerchantScreenHandler",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
