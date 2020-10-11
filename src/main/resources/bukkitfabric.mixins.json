@@ -90,6 +90,7 @@
     "screen.MixinPlayerScreenHandler",
     "screen.MixinCraftingScreenHandler",
     "screen.MixinAbstractFurnaceScreenHandler",
+    "screen.MixinHopperScreenHandler",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
