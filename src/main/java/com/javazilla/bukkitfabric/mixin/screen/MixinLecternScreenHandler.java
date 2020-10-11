@@ -34,8 +34,8 @@ public class MixinLecternScreenHandler extends MixinScreenHandler {
     private Player player;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
-    public void setPlayerInv(int i, Inventory iinventory, PropertyDelegate icontainerproperties, PlayerInventory playerinventory, CallbackInfo ci) {
-        this.player = (Player)((IMixinEntity)playerinventory.player).getBukkitEntity();
+    public void setPlayerInv(int i, Inventory iinventory, PropertyDelegate icontainerproperties, CallbackInfo ci) {
+        this.player = (Player)((IMixinEntity)((PlayerInventory)iinventory).player).getBukkitEntity();
     }
 
     @Override

@@ -64,6 +64,7 @@ import org.bukkit.inventory.InventoryView;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -253,7 +254,16 @@ public class BukkitEventFactory {
         if (player.currentScreenHandler != player.playerScreenHandler)
             player.networkHandler.onGuiClose(new GuiCloseC2SPacket(player.currentScreenHandler.syncId));
         CraftPlayer craftPlayer = (CraftPlayer) ((IMixinServerEntityPlayer)player).getBukkitEntity();
-        ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, craftPlayer);
+        if (!(player.currentScreenHandler instanceof IMixinScreenHandler)) {
+            System.out.println("FAILED TO FIRE InventoryOpenEvent! SCREEN HANDLER != IMixinInventory");
+            return container;
+        }
+        try {
+            ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, craftPlayer);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            return container;
+        }
 
         InventoryOpenEvent event = new InventoryOpenEvent(((IMixinScreenHandler)container).getBukkitView());
         event.setCancelled(cancelled);
