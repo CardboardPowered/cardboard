@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin.entity;
+package com.javazilla.bukkitfabric.interfaces;
 
 import org.bukkit.craftbukkit.inventory.CraftMerchant;
 

@@ -7,7 +7,7 @@ import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinTradeOffer;
-import com.javazilla.bukkitfabric.mixin.entity.IMixinTrader;
+import com.javazilla.bukkitfabric.interfaces.IMixinTrader;
 
 public class CraftInventoryMerchant extends CraftInventory implements MerchantInventory {
 

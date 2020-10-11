@@ -3,7 +3,6 @@ package com.javazilla.bukkitfabric.mixin.screen;
 import org.bukkit.craftbukkit.inventory.CraftInventoryMerchant;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
