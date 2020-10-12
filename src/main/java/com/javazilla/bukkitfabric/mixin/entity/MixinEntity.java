@@ -1,5 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.entity;
 
+import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
@@ -11,6 +12,7 @@ import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.projectiles.ProjectileSource;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -99,6 +101,9 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     public org.bukkit.entity.Entity bukkit;
     public org.bukkit.projectiles.ProjectileSource projectileSource;
+
+    @Shadow
+    public Random random;
 
     public MixinEntity() {
         this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);//new CraftEntity2((Entity) (Object) this);
@@ -336,6 +341,13 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     @Override
     public ProjectileSource getProjectileSourceBukkit() {
         return projectileSource;
+    }
+
+    @Shadow
+    public void remove() {}
+
+    public void removeBF() {
+        remove();
     }
 
 }

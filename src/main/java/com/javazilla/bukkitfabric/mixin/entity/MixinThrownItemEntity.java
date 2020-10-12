@@ -5,19 +5,12 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinThrownItemEntity;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 @Mixin(ThrownItemEntity.class)
-public abstract class MixinThrownItemEntity extends ThrownEntity implements IMixinThrownItemEntity {
-
-    public MixinThrownItemEntity(EntityType<? extends ThrownEntity> entityType, World world) {
-        super(entityType, world);
-    }
+public abstract class MixinThrownItemEntity implements IMixinThrownItemEntity {
 
     @Shadow
     public abstract Item getDefaultItem();

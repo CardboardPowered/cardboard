@@ -22,11 +22,7 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 @Mixin(SlimeEntity.class)
-public class MixinSlimeEntity extends MobEntity implements IMixinSlimeEntity {
-
-    public MixinSlimeEntity(EntityType<? extends MobEntity> entityType, World world) {
-        super(entityType, world);
-    }
+public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
 
     @Shadow public int getSize() {return 0;}
     @Shadow public void setSize(int i, boolean flag) {}
@@ -43,9 +39,9 @@ public class MixinSlimeEntity extends MobEntity implements IMixinSlimeEntity {
     @Overwrite
     public void remove() {
         int i = this.getSize();
-        if (!this.world.isClient && i > 1 && this.isDead()) {
-            Text ichatbasecomponent = this.getCustomName();
-            boolean flag = this.isAiDisabled();
+        if (!((SlimeEntity)(Object)this).getEntityWorld().isClient && i > 1 && ((SlimeEntity)(Object)this).isDead()) {
+            Text ichatbasecomponent = ((SlimeEntity)(Object)this).getCustomName();
+            boolean flag = ((SlimeEntity)(Object)this).isAiDisabled();
             float f = (float) i / 4.0F;
             int j = i / 2;
             int k = 2 + this.random.nextInt(3);
@@ -56,7 +52,7 @@ public class MixinSlimeEntity extends MobEntity implements IMixinSlimeEntity {
             if (!event.isCancelled() && event.getCount() > 0) {
                 k = event.getCount();
             } else {
-                super.remove();
+                super.removeBF();
                 return;
             }
             List<LivingEntity> slimes = new ArrayList<>(j);
@@ -64,20 +60,20 @@ public class MixinSlimeEntity extends MobEntity implements IMixinSlimeEntity {
             for (int l = 0; l < k; ++l) {
                 float f1 = ((float) (l % 2) - 0.5F) * f;
                 float f2 = ((float) (l / 2) - 0.5F) * f;
-                SlimeEntity entityslime = (SlimeEntity) this.getType().create(this.world);
-                if (this.isPersistent()) entityslime.setPersistent();
+                SlimeEntity entityslime = (SlimeEntity) ((SlimeEntity)(Object)this).getType().create(((SlimeEntity)(Object)this).world);
+                if (((SlimeEntity)(Object)this).isPersistent()) entityslime.setPersistent();
                 entityslime.setCustomName(ichatbasecomponent);
                 entityslime.setAiDisabled(flag);
-                entityslime.setInvulnerable(this.isInvulnerable());
+                entityslime.setInvulnerable(((SlimeEntity)(Object)this).isInvulnerable());
                 ((IMixinSlimeEntity)entityslime).setSizeBF(j, true);
-                entityslime.refreshPositionAndAngles(this.getX() + (double) f1, this.getY() + 0.5D, this.getZ() + (double) f2, this.random.nextFloat() * 360.0F, 0.0F);
+                entityslime.refreshPositionAndAngles(((SlimeEntity)(Object)this).getX() + (double) f1, ((SlimeEntity)(Object)this).getY() + 0.5D, ((SlimeEntity)(Object)this).getZ() + (double) f2, this.random.nextFloat() * 360.0F, 0.0F);
                 slimes.add(entityslime);
             }
 
-            if (BukkitEventFactory.callEntityTransformEvent(this, slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) return;
-            for (LivingEntity living : slimes) this.world.spawnEntity(living);
+            if (BukkitEventFactory.callEntityTransformEvent(((SlimeEntity)(Object)this), slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) return;
+            for (LivingEntity living : slimes) ((SlimeEntity)(Object)this).world.spawnEntity(living);
         }
-        super.remove();
+        super.removeBF();
     }
 
 }
