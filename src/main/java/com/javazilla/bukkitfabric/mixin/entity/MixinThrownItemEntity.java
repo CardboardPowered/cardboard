@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 @Mixin(ThrownItemEntity.class)
 public abstract class MixinThrownItemEntity extends ThrownEntity implements IMixinThrownItemEntity {
 
-    protected MixinThrownItemEntity(EntityType<? extends ThrownEntity> entityType, World world) {
+    public MixinThrownItemEntity(EntityType<? extends ThrownEntity> entityType, World world) {
         super(entityType, world);
     }
 

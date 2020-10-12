@@ -24,7 +24,7 @@ import net.minecraft.world.World;
 @Mixin(SlimeEntity.class)
 public class MixinSlimeEntity extends MobEntity implements IMixinSlimeEntity {
 
-    protected MixinSlimeEntity(EntityType<? extends MobEntity> entityType, World world) {
+    public MixinSlimeEntity(EntityType<? extends MobEntity> entityType, World world) {
         super(entityType, world);
     }
 
