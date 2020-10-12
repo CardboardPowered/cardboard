@@ -504,8 +504,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         for (Map.Entry<?, ?> entry : ench.entrySet()) {
             // Doctor older enchants
             String enchantKey = entry.getKey().toString();
-            if (enchantKey.equals("SWEEPING"))
-                enchantKey = "SWEEPING_EDGE";
+            if (enchantKey.equals("SWEEPING")) enchantKey = "SWEEPING_EDGE";
 
             Enchantment enchantment = Enchantment.getByName(enchantKey);
             if ((enchantment != null) && (entry.getValue() instanceof Integer))
@@ -1315,8 +1314,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                         CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT,
                         CraftMetaKnowledgeBook.BOOK_RECIPES.NBT,
                         // TODO CraftMetaTropicalFishBucket.VARIANT.NBT,
-                        // TODO CraftMetaCrossbow.CHARGED.NBT,
-                        // TODO CraftMetaCrossbow.CHARGED_PROJECTILES.NBT,
+                        CraftMetaCrossbow.CHARGED.NBT,
+                        CraftMetaCrossbow.CHARGED_PROJECTILES.NBT,
                         CraftMetaSuspiciousStew.EFFECTS.NBT
                 ));
             }

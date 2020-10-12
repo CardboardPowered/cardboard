@@ -75,7 +75,6 @@ public class CraftBlockData implements BlockData {
      * @param <B> the bukkit class type
      * @return an immutable Set of values in their appropriate Bukkit type
      */
-    @SuppressWarnings("unchecked")
     protected <B extends Enum<B>> Set<B> getValues(EnumProperty<?> nms, Class<B> bukkit) {
         ImmutableSet.Builder<B> values = ImmutableSet.builder();
 
@@ -98,6 +97,7 @@ public class CraftBlockData implements BlockData {
         this.state = this.state.with(nms, toNMS(bukkit, nms.getType()));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public BlockData merge(BlockData data) {
         CraftBlockData craft = (CraftBlockData) data;
@@ -107,8 +107,7 @@ public class CraftBlockData implements BlockData {
         CraftBlockData clone = (CraftBlockData) this.clone();
         clone.parsedStates = null;
 
-        for (Property parsed : craft.parsedStates.keySet())
-            clone.state = clone.state.with(parsed, craft.state.get(parsed));
+        for (Property parsed : craft.parsedStates.keySet()) clone.state = clone.state.with(parsed, craft.state.get(parsed));
 
         return clone;
     }
@@ -264,6 +263,7 @@ public class CraftBlockData implements BlockData {
         return stateString.toString();
     }
 
+    @SuppressWarnings("rawtypes")
     public CompoundTag toStates() {
         CompoundTag compound = new CompoundTag();
 

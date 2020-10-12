@@ -1,7 +1,11 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinTradeOffer;
 
+import java.util.Collections;
 import java.util.List;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.village.Trader;
@@ -25,13 +29,12 @@ public class CraftMerchant implements Merchant {
 
     @Override
     public List<MerchantRecipe> getRecipes() {
-        return null; // TODO
-        /*return Collections.unmodifiableList(Lists.transform(merchant.getOffers(), new Function<net.minecraft.village.TradeOffer, MerchantRecipe>() {
+        return Collections.unmodifiableList(Lists.transform(merchant.getOffers(), new Function<net.minecraft.village.TradeOffer, MerchantRecipe>() {
             @Override
             public MerchantRecipe apply(net.minecraft.village.TradeOffer recipe) {
-                return recipe.asBukkit();
+                return ((IMixinTradeOffer)recipe).asBukkit();
             }
-        }));*/
+        }));
     }
 
     @Override
@@ -44,8 +47,7 @@ public class CraftMerchant implements Merchant {
 
     @Override
     public MerchantRecipe getRecipe(int i) {
-        // TODO return merchant.getOffers().get(i).asBukkit();
-        return null;
+        return ((IMixinTradeOffer)merchant.getOffers().get(i)).asBukkit();
     }
 
     @Override
