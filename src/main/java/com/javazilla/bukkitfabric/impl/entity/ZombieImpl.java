@@ -4,12 +4,11 @@ import com.google.common.base.Preconditions;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftMonster;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Zombie;
 
-public class ZombieImpl extends CraftMonster implements Zombie {
+public class ZombieImpl extends MonsterImpl implements Zombie {
 
     public ZombieImpl(CraftServer server, ZombieEntity entity) {
         super(server, entity);

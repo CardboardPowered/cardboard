@@ -2,13 +2,12 @@ package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.mob.SlimeEntity;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftMob;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Slime;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinSlimeEntity;
 
-public class SlimeImpl extends CraftMob implements Slime {
+public class SlimeImpl extends MobImpl implements Slime {
 
     public SlimeImpl(CraftServer server, SlimeEntity entity) {
         super(server, entity);

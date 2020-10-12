@@ -2,11 +2,10 @@ package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.mob.EndermiteEntity;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftMonster;
 import org.bukkit.entity.Endermite;
 import org.bukkit.entity.EntityType;
 
-public class EndermiteImpl extends CraftMonster implements Endermite {
+public class EndermiteImpl extends MonsterImpl implements Endermite {
 
     public EndermiteImpl(CraftServer server, EndermiteEntity entity) {
         super(server, entity);

@@ -1,5 +1,17 @@
 org/bukkit/craftbukkit/CraftWorld com/javazilla/bukkitfabric/impl/WorldImpl
 org/bukkit/craftbukkit/CraftWorldBorder com/javazilla/bukkitfabric/impl/WorldBorderImpl
+org/bukkit/craftbukkit/entity/CraftAnimals com/javazilla/bukkitfabric/impl/entity/AnimalsImpl
+org/bukkit/craftbukkit/entity/CraftCaveSpider com/javazilla/bukkitfabric/impl/entity/CaveSpiderImpl
+org/bukkit/craftbukkit/entity/CraftSlime com/javazilla/bukkitfabric/impl/entity/SlimeImpl
+org/bukkit/craftbukkit/entity/CraftVehicle com/javazilla/bukkitfabric/impl/entity/VehicleImpl
+org/bukkit/craftbukkit/entity/CraftFallingBlock com/javazilla/bukkitfabric/impl/entity/FallingBlockImpl
+org/bukkit/craftbukkit/entity/CraftCreature com/javazilla/bukkitfabric/impl/entity/CreatureImpl
+org/bukkit/craftbukkit/entity/CraftItem com/javazilla/bukkitfabric/impl/entity/ItemEntityImpl
+org/bukkit/craftbukkit/entity/CraftAgeable com/javazilla/bukkitfabric/impl/entity/AgeableImpl
+org/bukkit/craftbukkit/entity/CraftMob com/javazilla/bukkitfabric/impl/entity/MobImpl
+org/bukkit/craftbukkit/entity/CraftMonster com/javazilla/bukkitfabric/impl/entity/MonsterImpl
+org/bukkit/craftbukkit/entity/CraftAbstractVillager com/javazilla/bukkitfabric/impl/entity/AbstractVillagerImpl
+org/bukkit/craftbukkit/entity/CraftVillager com/javazilla/bukkitfabric/impl/entity/VillagerImpl
 
 aa$a a (Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/server/AdvancementProgress; method_745
 aa$a a (Lnet/minecraft/server/AdvancementProgress;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement; method_744

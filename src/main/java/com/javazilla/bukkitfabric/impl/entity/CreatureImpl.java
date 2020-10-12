@@ -1,12 +1,12 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.mob.PathAwareEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Creature;
 
-public class CraftCreature extends CraftMob implements Creature {
+public class CreatureImpl extends MobImpl implements Creature {
 
-    public CraftCreature(CraftServer server, PathAwareEntity entity) {
+    public CreatureImpl(CraftServer server, PathAwareEntity entity) {
         super(server, entity);
     }
 

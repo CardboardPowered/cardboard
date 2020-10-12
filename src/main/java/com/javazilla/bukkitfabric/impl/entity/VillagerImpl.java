@@ -1,13 +1,7 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
-import com.google.common.base.Preconditions;
 import java.util.Locale;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.village.VillagerProfession;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
@@ -15,9 +9,18 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 
-public class CraftVillager extends CraftAbstractVillager implements Villager {
+import com.google.common.base.Preconditions;
 
-    public CraftVillager(CraftServer server, VillagerEntity entity) {
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.village.VillagerProfession;
+
+public class VillagerImpl extends AbstractVillagerImpl implements Villager {
+
+    public VillagerImpl(CraftServer server, VillagerEntity entity) {
         super(server, entity);
     }
 
@@ -38,13 +41,13 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public Profession getProfession() {
-        return CraftVillager.nmsToBukkitProfession(getHandle().getVillagerData().getProfession());
+        return nmsToBukkitProfession(getHandle().getVillagerData().getProfession());
     }
 
     @Override
     public void setProfession(Profession profession) {
         Validate.notNull(profession);
-        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(CraftVillager.bukkitToNmsProfession(profession)));
+        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(bukkitToNmsProfession(profession)));
     }
 
     @Override

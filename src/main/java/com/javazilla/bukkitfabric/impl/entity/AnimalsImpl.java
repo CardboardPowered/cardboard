@@ -4,10 +4,9 @@ import com.google.common.base.Preconditions;
 import java.util.UUID;
 import net.minecraft.entity.passive.AnimalEntity;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftAgeable;
 import org.bukkit.entity.Animals;
 
-public class AnimalsImpl extends CraftAgeable implements Animals {
+public class AnimalsImpl extends AgeableImpl implements Animals {
 
     public AnimalsImpl(CraftServer server, AnimalEntity entity) {
         super(server, entity);

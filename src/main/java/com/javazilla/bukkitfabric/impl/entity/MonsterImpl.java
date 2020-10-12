@@ -1,12 +1,13 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
-import net.minecraft.entity.mob.HostileEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Monster;
 
-public class CraftMonster extends CraftCreature implements Monster {
+import net.minecraft.entity.mob.HostileEntity;
 
-    public CraftMonster(CraftServer server, HostileEntity entity) {
+public class MonsterImpl extends CreatureImpl implements Monster {
+
+    public MonsterImpl(CraftServer server, HostileEntity entity) {
         super(server, entity);
     }
 

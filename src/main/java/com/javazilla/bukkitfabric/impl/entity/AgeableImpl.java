@@ -1,12 +1,13 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
-import net.minecraft.entity.passive.PassiveEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Ageable;
 
-public class CraftAgeable extends CraftCreature implements Ageable {
+import net.minecraft.entity.passive.PassiveEntity;
 
-    public CraftAgeable(CraftServer server, PassiveEntity entity) {
+public class AgeableImpl extends CreatureImpl implements Ageable {
+
+    public AgeableImpl(CraftServer server, PassiveEntity entity) {
         super(server, entity);
     }
 

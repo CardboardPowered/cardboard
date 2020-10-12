@@ -1,16 +1,17 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.FallingBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 
-public class CraftFallingBlock extends CraftEntity implements FallingBlock {
+public class FallingBlockImpl extends CraftEntity implements FallingBlock {
 
-    public CraftFallingBlock(CraftServer server, FallingBlockEntity entity) {
+    public FallingBlockImpl(CraftServer server, FallingBlockEntity entity) {
         super(entity);
     }
 

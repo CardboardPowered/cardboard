@@ -2,11 +2,10 @@ package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.mob.SpiderEntity;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftMonster;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Spider;
 
-public class SpiderImpl extends CraftMonster implements Spider {
+public class SpiderImpl extends MonsterImpl implements Spider {
 
     public SpiderImpl(CraftServer server, SpiderEntity entity) {
         super(server, entity);

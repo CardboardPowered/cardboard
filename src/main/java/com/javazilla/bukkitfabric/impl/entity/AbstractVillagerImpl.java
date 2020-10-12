@@ -1,8 +1,7 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
 import java.util.List;
-import net.minecraft.entity.passive.AbstractTraderEntity;
-import net.minecraft.entity.passive.VillagerEntity;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftMerchant;
@@ -12,9 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.MerchantRecipe;
 
-public class CraftAbstractVillager extends CraftAgeable implements AbstractVillager, InventoryHolder {
+import net.minecraft.entity.passive.AbstractTraderEntity;
+import net.minecraft.entity.passive.VillagerEntity;
 
-    public CraftAbstractVillager(CraftServer server, AbstractTraderEntity entity) {
+public class AbstractVillagerImpl extends AgeableImpl implements AbstractVillager, InventoryHolder {
+
+    public AbstractVillagerImpl(CraftServer server, AbstractTraderEntity entity) {
         super(server, entity);
     }
 

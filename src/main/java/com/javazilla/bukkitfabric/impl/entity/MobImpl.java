@@ -1,9 +1,10 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.mob.MobEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -11,9 +12,9 @@ import org.bukkit.loot.LootTable;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
-public abstract class CraftMob extends CraftLivingEntity implements Mob {
+public abstract class MobImpl extends CraftLivingEntity implements Mob {
 
-    public CraftMob(CraftServer server, MobEntity entity) {
+    public MobImpl(CraftServer server, MobEntity entity) {
         super(server, entity);
     }
 

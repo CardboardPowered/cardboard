@@ -1,23 +1,24 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftItem extends CraftEntity implements Item {
+public class ItemEntityImpl extends CraftEntity implements Item {
 
     private final ItemEntity item;
 
-    public CraftItem(CraftServer server, Entity entity, ItemEntity item) {
+    public ItemEntityImpl(CraftServer server, Entity entity, ItemEntity item) {
         super(entity);
         this.item = item;
     }
 
-    public CraftItem(CraftServer server, ItemEntity entity) {
+    public ItemEntityImpl(CraftServer server, ItemEntity entity) {
         this(server, entity, entity);
     }
 
