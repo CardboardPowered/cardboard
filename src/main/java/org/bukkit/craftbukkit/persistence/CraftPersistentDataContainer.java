@@ -40,16 +40,14 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
     @Override
     public <T, Z> boolean has(NamespacedKey key, PersistentDataType<T, Z> type) {
         Tag value = this.customDataTags.get(key.toString());
-        if (value == null)
-            return false;
+        if (value == null) return false;
         return registry.isInstanceOf(type.getPrimitiveType(), value);
     }
 
     @Override
     public <T, Z> Z get(NamespacedKey key, PersistentDataType<T, Z> type) {
         Tag value = this.customDataTags.get(key.toString());
-        if (value == null)
-            return null;
+        if (value == null) return null;
 
         return type.fromPrimitive(registry.extract(type.getPrimitiveType(), value), adapterContext);
     }
@@ -78,14 +76,8 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof CraftPersistentDataContainer)) {
-            return false;
-        }
-
-        Map<String, Tag> myRawMap = getRaw();
-        Map<String, Tag> theirRawMap = ((CraftPersistentDataContainer) obj).getRaw();
-
-        return Objects.equals(myRawMap, theirRawMap);
+        if (!(obj instanceof CraftPersistentDataContainer)) return false;
+        return Objects.equals(getRaw(), ((CraftPersistentDataContainer) obj).getRaw());
     }
 
     public CompoundTag toTagCompound() {
@@ -118,9 +110,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
 
     @Override
     public int hashCode() {
-        int hashCode = 3;
-        hashCode += this.customDataTags.hashCode(); // We will simply add the maps hashcode
-        return hashCode;
+        return 3 + this.customDataTags.hashCode();
     }
 
     @SuppressWarnings("unchecked")
@@ -132,11 +122,9 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
     @Override
     public Set<NamespacedKey> getKeys() {
         Set<NamespacedKey> keys = new HashSet<>();
-
         this.customDataTags.keySet().forEach(key -> {
             String[] keyData = key.split(":", 2);
-            if (keyData.length == 2)
-                keys.add(new NamespacedKey(keyData[0], keyData[1]));
+            if (keyData.length == 2) keys.add(new NamespacedKey(keyData[0], keyData[1]));
         });
 
         return keys;

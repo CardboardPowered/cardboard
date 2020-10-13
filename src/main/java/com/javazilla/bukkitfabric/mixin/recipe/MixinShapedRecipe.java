@@ -7,13 +7,15 @@ import org.bukkit.inventory.RecipeChoice;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.util.collection.DefaultedList;
 
 @Mixin(ShapedRecipe.class)
-public class MixinShapedRecipe {
+public class MixinShapedRecipe implements IMixinRecipe {
 
     @Shadow public String group;
     @Shadow public ItemStack output;

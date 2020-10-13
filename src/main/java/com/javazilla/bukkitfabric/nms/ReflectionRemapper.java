@@ -25,12 +25,16 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
+
+import net.minecraft.SharedConstants;
+import net.minecraft.server.MinecraftServer;
 
 /**
  * Very unsafe re-mapping of Reflection.
@@ -115,7 +119,19 @@ public class ReflectionRemapper {
         return m;
     }
 
+    public static MinecraftServer getNmsServer() {
+        return CraftServer.server;
+    }
+
     public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
+        if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
+            try {
+                return ReflectionRemapper.class.getMethod("getNmsServer");
+            } catch (NoSuchMethodException | SecurityException e) {
+                e.printStackTrace();
+            }
+        }
+            
         try {
             return calling.getDeclaredMethod(MappingsReader.getIntermedMethod(calling.getName(), f));
         } catch (NoSuchMethodException | SecurityException e) {
@@ -186,6 +202,12 @@ public class ReflectionRemapper {
         if (name.startsWith("org.bukkit.craftbukkit"))
             name = name.replace("org.bukkit.craftbukkit", "org.bukkit.craftbukkit." + NMS_VERSION);
         return name;
+    }
+
+    /**
+     */
+    public static String getMinecraftServerVersion() {
+        return SharedConstants.getGameVersion().getName();
     }
 
 }

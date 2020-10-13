@@ -1,9 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
 import java.util.Map;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.collection.DefaultedList;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +10,9 @@ import org.bukkit.inventory.ShapedRecipe;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
+
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.util.collection.DefaultedList;
 
 public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
@@ -53,9 +54,8 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
 
         for (int i = 0; i < shape.length; i++) {
             String row = shape[i];
-            for (int j = 0; j < row.length(); j++) {
+            for (int j = 0; j < row.length(); j++)
                 data.set(i * width + j, toNMS(ingred.get(row.charAt(j)), false));
-            }
         }
 
         ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));

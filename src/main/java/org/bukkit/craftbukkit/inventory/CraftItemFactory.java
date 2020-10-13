@@ -94,7 +94,7 @@ public final class CraftItemFactory implements ItemFactory {
             case SPLASH_POTION:
             case LINGERING_POTION:
             case TIPPED_ARROW:
-                // TODO return meta instanceof CraftMetaPotion ? meta : new CraftMetaPotion(meta);
+                return meta instanceof CraftMetaPotion ? meta : new CraftMetaPotion(meta);
             case FILLED_MAP:
                 return meta instanceof CraftMetaMap ? meta : new CraftMetaMap(meta);
             case FIREWORK_ROCKET:
@@ -192,14 +192,14 @@ public final class CraftItemFactory implements ItemFactory {
             case WITHER_SKELETON_SPAWN_EGG:
             case WOLF_SPAWN_EGG:
             case ZOMBIE_HORSE_SPAWN_EGG:
-            //case ZOMBIE_PIGMAN_SPAWN_EGG:
+            case PIGLIN_SPAWN_EGG:
             case ZOMBIE_SPAWN_EGG:
             case ZOMBIE_VILLAGER_SPAWN_EGG:
-                // TODO return meta instanceof CraftMetaSpawnEgg ? meta : new CraftMetaSpawnEgg(meta);
+                return meta instanceof CraftMetaSpawnEgg ? meta : new CraftMetaSpawnEgg(meta);
             case ARMOR_STAND:
                 return meta instanceof CraftMetaArmorStand ? meta : new CraftMetaArmorStand(meta);
             case KNOWLEDGE_BOOK:
-                // TODO return meta instanceof CraftMetaKnowledgeBook ? meta : new CraftMetaKnowledgeBook(meta);
+                return meta instanceof CraftMetaKnowledgeBook ? meta : new CraftMetaKnowledgeBook(meta);
             case FURNACE:
             case CHEST:
             case TRAPPED_CHEST:
@@ -261,9 +261,9 @@ public final class CraftItemFactory implements ItemFactory {
             case TROPICAL_FISH_BUCKET:
                 // TODO return meta instanceof CraftMetaTropicalFishBucket ? meta : new CraftMetaTropicalFishBucket(meta);
             case CROSSBOW:
-                // TODO return meta instanceof CraftMetaCrossbow ? meta : new CraftMetaCrossbow(meta);
+                return meta instanceof CraftMetaCrossbow ? meta : new CraftMetaCrossbow(meta);
             case SUSPICIOUS_STEW:
-                // TODO return meta instanceof CraftMetaSuspiciousStew ? meta : new CraftMetaSuspiciousStew(meta);
+                return meta instanceof CraftMetaSuspiciousStew ? meta : new CraftMetaSuspiciousStew(meta);
             default:
                 return new CraftMetaItem(meta);
         }
@@ -271,21 +271,16 @@ public final class CraftItemFactory implements ItemFactory {
 
     @Override
     public boolean equals(ItemMeta meta1, ItemMeta meta2) {
-        if (meta1 == meta2) {
-            return true;
-        }
-        if (meta1 != null && !(meta1 instanceof CraftMetaItem)) {
+        if (meta1 == meta2) return true;
+
+        if (meta1 != null && !(meta1 instanceof CraftMetaItem))
             throw new IllegalArgumentException("First meta of " + meta1.getClass().getName() + " does not belong to " + CraftItemFactory.class.getName());
-        }
-        if (meta2 != null && !(meta2 instanceof CraftMetaItem)) {
+
+        if (meta2 != null && !(meta2 instanceof CraftMetaItem))
             throw new IllegalArgumentException("Second meta " + meta2.getClass().getName() + " does not belong to " + CraftItemFactory.class.getName());
-        }
-        if (meta1 == null) {
-            return ((CraftMetaItem) meta2).isEmpty();
-        }
-        if (meta2 == null) {
-            return ((CraftMetaItem) meta1).isEmpty();
-        }
+
+        if (meta1 == null) return ((CraftMetaItem) meta2).isEmpty();
+        if (meta2 == null) return ((CraftMetaItem) meta1).isEmpty();
 
         return equals((CraftMetaItem) meta1, (CraftMetaItem) meta2);
     }
@@ -316,9 +311,8 @@ public final class CraftItemFactory implements ItemFactory {
     @Override
     public ItemMeta asMetaFor(ItemMeta meta, Material material) {
         Validate.notNull(material, "Material cannot be null");
-        if (!(meta instanceof CraftMetaItem)) {
+        if (!(meta instanceof CraftMetaItem))
             throw new IllegalArgumentException("Meta of " + (meta != null ? meta.getClass().toString() : "null") + " not created by " + CraftItemFactory.class.getName());
-        }
         return getItemMeta(material, (CraftMetaItem) meta);
     }
 
@@ -331,4 +325,5 @@ public final class CraftItemFactory implements ItemFactory {
     public Material updateMaterial(ItemMeta meta, Material material) throws IllegalArgumentException {
         return ((CraftMetaItem) meta).updateMaterial(material);
     }
+
 }

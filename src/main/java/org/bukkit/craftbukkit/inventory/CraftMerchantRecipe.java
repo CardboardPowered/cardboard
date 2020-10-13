@@ -77,9 +77,8 @@ public class CraftMerchantRecipe extends MerchantRecipe {
         List<ItemStack> ingredients = getIngredients();
         Preconditions.checkState(!ingredients.isEmpty(), "No offered ingredients");
         handle.firstBuyItem = CraftItemStack.asNMSCopy(ingredients.get(0));
-        if (ingredients.size() > 1) {
+        if (ingredients.size() > 1)
             handle.secondBuyItem = CraftItemStack.asNMSCopy(ingredients.get(1));
-        }
         return handle;
     }
 
@@ -89,7 +88,6 @@ public class CraftMerchantRecipe extends MerchantRecipe {
         } else {
             CraftMerchantRecipe craft = new CraftMerchantRecipe(recipe.getResult(), recipe.getUses(), recipe.getMaxUses(), recipe.hasExperienceReward(), recipe.getVillagerExperience(), recipe.getPriceMultiplier());
             craft.setIngredients(recipe.getIngredients());
-
             return craft;
         }
     }

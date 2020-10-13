@@ -132,10 +132,8 @@ public final class CraftItemStack extends ItemStack {
             handle = new net.minecraft.item.ItemStack(CraftMagicNumbers.getItem(type), 1);
         } else {
             handle.item = CraftMagicNumbers.getItem(type);
-            if (hasItemMeta()) {
-                // This will create the appropriate item meta, which will contain all the data we intend to keep
-                setItemMeta(handle, getItemMeta(handle));
-            }
+            if (hasItemMeta())
+                setItemMeta(handle, getItemMeta(handle)); // This will create the appropriate item meta, which will contain all the data we intend to keep
         }
         setData(null);
     }
@@ -147,19 +145,16 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public void setAmount(int amount) {
-        if (handle == null)
-            return;
+        if (handle == null) return;
 
         handle.setCount(amount);
-        if (amount == 0)
-            handle = null;
+        if (amount == 0) handle = null;
     }
 
     @Override
     public void setDurability(final short durability) {
         // Ignore damage if item is null
-        if (handle != null)
-            handle.setDamage(durability);
+        if (handle != null) handle.setDamage(durability);
     }
 
     @Override
@@ -176,8 +171,7 @@ public final class CraftItemStack extends ItemStack {
     public void addUnsafeEnchantment(Enchantment ench, int level) {
         Validate.notNull(ench, "Cannot add null enchantment");
 
-        if (!makeTag(handle))
-            return;
+        if (!makeTag(handle)) return;
 
         ListTag list = getEnchantmentList(handle);
         if (list == null) {
@@ -201,11 +195,8 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static boolean makeTag(net.minecraft.item.ItemStack item) {
-        if (item == null)
-            return false;
-
-        if (item.getTag() == null)
-            item.setTag(new CompoundTag());
+        if (item == null) return false;
+        if (item.getTag() == null) item.setTag(new CompoundTag());
 
         return true;
     }
@@ -217,8 +208,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public int getEnchantmentLevel(Enchantment ench) {
-        if (handle == null)
-            return 0;
+        if (handle == null) return 0;
         return EnchantmentHelper.getLevel(BukkitEnchantment.getRaw(ench), handle);
     }
 
@@ -227,8 +217,7 @@ public final class CraftItemStack extends ItemStack {
         Validate.notNull(ench, "Cannot remove null enchantment");
 
         ListTag list = getEnchantmentList(handle), listCopy;
-        if (list == null)
-            return 0;
+        if (list == null) return 0;
 
         int index = Integer.MIN_VALUE;
         int level = Integer.MIN_VALUE;
@@ -244,14 +233,12 @@ public final class CraftItemStack extends ItemStack {
             }
         }
 
-        if (index == Integer.MIN_VALUE)
-            return 0;
+        if (index == Integer.MIN_VALUE) return 0;
 
         if (size == 1) {
             handle.getTag().remove(ENCHANTMENTS.NBT);
             if (handle.getTag().isEmpty())
                 handle.setTag(null);
-
             return level;
         }
 
@@ -260,9 +247,7 @@ public final class CraftItemStack extends ItemStack {
         for (int i = 0; i < size; i++)
             if (i != index)
                 listCopy.add(list.get(i));
-
         handle.getTag().put(ENCHANTMENTS.NBT, listCopy);
-
         return level;
     }
 
@@ -340,8 +325,7 @@ public final class CraftItemStack extends ItemStack {
             case SPLASH_POTION:
             case LINGERING_POTION:
             case TIPPED_ARROW:
-                // TODO return new CraftMetaPotion(item.getTag());
-                return new CraftMetaItem(item.getTag());
+                return new CraftMetaPotion(item.getTag());
             case FILLED_MAP:
                 return new CraftMetaMap(item.getTag());
             case FIREWORK_ROCKET:
@@ -439,7 +423,6 @@ public final class CraftItemStack extends ItemStack {
             case WITHER_SKELETON_SPAWN_EGG:
             case WOLF_SPAWN_EGG:
             case ZOMBIE_HORSE_SPAWN_EGG:
-            //case ZOMBIE_PIGMAN_SPAWN_EGG:
             case ZOMBIE_SPAWN_EGG:
             case ZOMBIE_VILLAGER_SPAWN_EGG:
                 return new CraftMetaSpawnEgg(item.getTag());
@@ -518,9 +501,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static Material getType(net.minecraft.item.ItemStack item) {
-        return item == null ? 
-                Material.AIR :
-                    CraftMagicNumbers.getMaterial(item.getItem());
+        return item == null ? Material.AIR : CraftMagicNumbers.getMaterial(item.getItem());
     }
 
     @Override
@@ -529,8 +510,7 @@ public final class CraftItemStack extends ItemStack {
     }
 
     public static boolean setItemMeta(net.minecraft.item.ItemStack item, ItemMeta itemMeta) {
-        if (item == null)
-            return false;
+        if (item == null) return false;
 
         if (CraftItemFactory.instance().equals(itemMeta, null)) {
             item.setTag(null);
@@ -572,19 +552,15 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public boolean isSimilar(ItemStack stack) {
-        if (stack == null)
-            return false;
-        if (stack == this)
-            return true;
+        if (stack == null) return false;
+        if (stack == this) return true;
 
         if (!(stack instanceof CraftItemStack))
             return stack.getClass() == ItemStack.class && stack.isSimilar(this);
 
         CraftItemStack that = (CraftItemStack) stack;
-        if (handle == that.handle)
-            return true;
-        if (handle == null || that.handle == null)
-            return false;
+        if (handle == that.handle) return true;
+        if (handle == null || that.handle == null) return false;
 
         Material comparisonType = CraftLegacy.fromLegacy(that.getType()); // This may be called from legacy item stacks, try to get the right material
         if (!(comparisonType == getType() && getDurability() == that.getDurability()))

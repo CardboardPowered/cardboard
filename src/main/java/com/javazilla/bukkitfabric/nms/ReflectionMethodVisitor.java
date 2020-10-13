@@ -84,6 +84,12 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         if (owner.startsWith("net/minecraft/class_")) {
             if (!name.startsWith("method_"))
                 name = MappingsReader.METHODS2.getOrDefault(name + desc, MappingsReader.getIntermedMethod(owner.replace('/', '.'), name));
+
+            if (owner.equalsIgnoreCase("net/minecraft/class_3176") && name.equalsIgnoreCase("getVersion")) {
+                // Add MinecraftServer#getVersion
+                super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getMinecraftServerVersion", "()Ljava/lang/String;", false);
+                return;
+            }
         }
 
         super.visitMethodInsn( opcode, owner, name, desc, itf );
