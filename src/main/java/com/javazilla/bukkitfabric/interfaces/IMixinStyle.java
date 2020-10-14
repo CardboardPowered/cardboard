@@ -10,23 +10,19 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * General Public License for more details.
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.text.Style;
 
-public interface IMixinScreenHandlerContext {
+// TODO
+public interface IMixinStyle {
 
-    public org.bukkit.Location getLocation();
+    public Style setStrikethrough(Boolean obool);
 
-    public World getWorld();
+    public Style setUnderline(Boolean obool);
 
-    public BlockPos getPosition();
+    public Style setRandom(Boolean obool);
 
 }

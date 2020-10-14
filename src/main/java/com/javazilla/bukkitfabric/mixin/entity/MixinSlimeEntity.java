@@ -14,12 +14,9 @@ import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinSlimeEntity;
 
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.text.Text;
-import net.minecraft.world.World;
 
 @Mixin(SlimeEntity.class)
 public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
@@ -36,6 +33,7 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
      * @author .
      * @reason Call SlimeSplitEvent & EntityTransformEvent
      */
+    @SuppressWarnings("resource")
     @Overwrite
     public void remove() {
         int i = this.getSize();
@@ -52,7 +50,7 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
             if (!event.isCancelled() && event.getCount() > 0) {
                 k = event.getCount();
             } else {
-                super.removeBF();
+                super.remove();
                 return;
             }
             List<LivingEntity> slimes = new ArrayList<>(j);
@@ -73,7 +71,7 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
             if (BukkitEventFactory.callEntityTransformEvent(((SlimeEntity)(Object)this), slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) return;
             for (LivingEntity living : slimes) ((SlimeEntity)(Object)this).world.spawnEntity(living);
         }
-        super.removeBF();
+        super.remove();
     }
 
 }

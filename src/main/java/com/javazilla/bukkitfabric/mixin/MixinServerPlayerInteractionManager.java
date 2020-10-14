@@ -208,7 +208,6 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
             } else if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK) {
                 this.mining = false;
                 if (!Objects.equals(this.miningPos, blockposition)) {
-                   // ServerPlayerInteractionManager.LOGGER.debug("Mismatch in destroy block pos: " + this.miningPos + " " + blockposition); // CraftBukkit - SPIGOT-5457 sent by client when interact event cancelled
                     this.world.setBlockBreakingInfo(this.player.getEntityId(), this.miningPos, -1);
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(this.miningPos, this.world.getBlockState(this.miningPos), packetplayinblockdig_enumplayerdigtype, true, "aborted mismatched destroying"));
                 }
@@ -253,6 +252,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
 
             ci.setReturnValue(false);
+            return;
         }
     }
 
@@ -282,6 +282,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
     @Inject(at = @At("HEAD"), method = "interactBlock", cancellable = true)
     public void interactBlock(ServerPlayerEntity entityplayer, World world, ItemStack itemstack, Hand enumhand, BlockHitResult movingobjectpositionblock,
             CallbackInfoReturnable<ActionResult> ci) {
+        System.out.println("interactBlock 1 DEBUG!");
         BlockPos blockposition = movingobjectpositionblock.getBlockPos();
         BlockState iblockdata = world.getBlockState(blockposition);
         ActionResult enuminteractionresult = ActionResult.PASS;
@@ -305,9 +306,9 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 boolean bottom = iblockdata.get(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
                 entityplayer.networkHandler.sendPacket(new BlockUpdateS2CPacket(world, bottom ? blockposition.up() : blockposition.down()));
             } else if (iblockdata.getBlock() instanceof CakeBlock) {
-                // TODO ((CraftPlayer)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).sendHealthUpdate(); // SPIGOT-1341 - reset health for cake
+                // TODO ((CraftPlayer)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).sendHealthUpdate();
             }
-            ((CraftPlayer)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).updateInventory(); // SPIGOT-2867
+            ((CraftPlayer)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).updateInventory();
             enuminteractionresult = (event.useItemInHand() != Event.Result.ALLOW) ? ActionResult.SUCCESS : ActionResult.PASS;
         } else if (this.gameMode == GameMode.SPECTATOR) {
             NamedScreenHandlerFactory itileinventory = iblockdata.createScreenHandlerFactory(world, blockposition);
@@ -316,6 +317,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 entityplayer.openHandledScreen(itileinventory);
                 ci.setReturnValue(ActionResult.SUCCESS);
             } else ci.setReturnValue(ActionResult.PASS);
+            return;
         } else {
             boolean flag = !entityplayer.getMainHandStack().isEmpty() || !entityplayer.getOffHandStack().isEmpty();
             boolean flag1 = entityplayer.shouldCancelInteraction() && flag;
@@ -327,6 +329,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 if (enuminteractionresult.isAccepted()) {
                     Criteria.ITEM_USED_ON_BLOCK.test(entityplayer, blockposition, itemstack1);
                     ci.setReturnValue(enuminteractionresult);
+                    return;
                 }
             }
 
@@ -344,6 +347,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                     Criteria.ITEM_USED_ON_BLOCK.test(entityplayer, blockposition, itemstack1);
 
                 ci.setReturnValue(enuminteractionresult1);
+                return;
             }
         }
         ci.setReturnValue(enuminteractionresult);

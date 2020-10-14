@@ -589,7 +589,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 } else {
                     BlockHitResult movingobjectpositionblock = (BlockHitResult) movingobjectposition;
                     org.bukkit.event.player.PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getSide(), itemstack, true, enumhand);
-                    cancelled = event.useItemInHand() == org.bukkit.event.Event.Result.DENY;
+                    cancelled = (event.useItemInHand() == org.bukkit.event.Event.Result.DENY);
                 }
             }
 
@@ -600,7 +600,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             ActionResult enuminteractionresult = this.player.interactionManager.interactItem(this.player, worldserver, itemstack, enumhand);
             if (enuminteractionresult.shouldSwingHand())
                 this.player.swingHand(enumhand, true);
-
         }
     }
 

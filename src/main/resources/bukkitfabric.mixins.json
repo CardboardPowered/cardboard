@@ -53,6 +53,7 @@
     "entity.block.MixinAbstractFurnaceBlockEntity",
     "entity.block.MixinSignBlockEntity",
     "entity.block.MixinBoatDispenserBehavior",
+    "entity.block.MixinHopperBlockEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
@@ -102,6 +103,9 @@
     "screen.MixinShulkerBoxScreenHandler",
     "screen.MixinSmithingScreenHandler",
     "screen.MixinStonecutterScreenHandler",
+
+    "item.MixinDyeItem",
+    "item.MixinEndCrystalItem",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],

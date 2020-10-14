@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
 
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
@@ -70,21 +71,31 @@ public class MixinBlockItem {
     public void place(ItemPlacementContext blockactioncontext, CallbackInfoReturnable<ActionResult> ci) {
         if (!blockactioncontext.canPlace()) {
             ci.setReturnValue(ActionResult.FAIL);
+            return;
         } else {
             ItemPlacementContext blockactioncontext1 = this.getPlacementContext(blockactioncontext);
 
             if (blockactioncontext1 == null) {
                 ci.setReturnValue(ActionResult.FAIL);
+                return;
             } else {
                 BlockState iblockdata = this.getPlacementState(blockactioncontext1);
                 org.bukkit.block.BlockState blockstate = null;
                 if (((BlockItem)(Object)this) instanceof LilyPadItem)
                     blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(blockactioncontext1.getWorld(), blockactioncontext1.getBlockPos());
 
+                boolean no = ((IMixinServerPlayerInteractionManager)((ServerPlayerEntity)blockactioncontext1.getPlayer()).interactionManager).getFiredInteractBF();
+                if (no) {
+                    ci.setReturnValue(ActionResult.FAIL);
+                    return;
+                }
+
                 if (iblockdata == null) {
                     ci.setReturnValue(ActionResult.FAIL);
+                    return;
                 } else if (!this.place(blockactioncontext1, iblockdata)) {
                     ci.setReturnValue(ActionResult.FAIL);
+                    return;
                 } else {
                     BlockPos blockposition = blockactioncontext1.getBlockPos();
                     World world = blockactioncontext1.getWorld();
@@ -103,6 +114,7 @@ public class MixinBlockItem {
                             if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
                                 blockstate.update(true, false);
                                 ci.setReturnValue(ActionResult.FAIL);
+                                return;
                             }
                         }
                         if (entityhuman instanceof ServerPlayerEntity)
@@ -115,6 +127,7 @@ public class MixinBlockItem {
                 }
             }
         }
+        ci.setReturnValue(ActionResult.PASS);
     }
 
     /**
