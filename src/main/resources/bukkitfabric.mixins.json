@@ -99,7 +99,9 @@
     "screen.MixinHorseScreenHandler",
     "screen.MixinLecternScreenHandler",
     "screen.MixinMerchantScreenHandler",
-    "screen.ShulkerBoxScreenHandler",
+    "screen.MixinShulkerBoxScreenHandler",
+    "screen.MixinSmithingScreenHandler",
+    "screen.MixinStonecutterScreenHandler",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
