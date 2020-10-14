@@ -206,6 +206,15 @@ public class ReflectionRemapper {
 
     /**
      */
+    public static String getClassName(Class<?> clazz) {
+        String name = clazz.getName();
+        if (name.startsWith("org.bukkit.craftbukkit"))
+            name = name.replace("org.bukkit.craftbukkit", "org.bukkit.craftbukkit." + NMS_VERSION);
+        return name;
+    }
+
+    /**
+     */
     public static String getMinecraftServerVersion() {
         return SharedConstants.getGameVersion().getName();
     }

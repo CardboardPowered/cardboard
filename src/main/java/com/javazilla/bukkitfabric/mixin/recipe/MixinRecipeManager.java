@@ -49,7 +49,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
      */
     @Overwrite
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void apply(Map<Identifier, JsonElement> map, ResourceManager iresourcemanager, Profiler gameprofilerfiller) {
+    public void apply(Map<Identifier, JsonElement> map, ResourceManager iresourcemanager, Profiler gameprofilerfiller) {
         this.errored = false;
         Map<RecipeType<?>, Map<Identifier, Recipe<?>>> map1 = Maps.newHashMap();
         for (RecipeType<?> recipeType : Registry.RECIPE_TYPE)
