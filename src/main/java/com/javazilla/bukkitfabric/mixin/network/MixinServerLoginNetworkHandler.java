@@ -54,7 +54,7 @@ public class MixinServerLoginNetworkHandler {
     @Shadow public ServerPlayerEntity player;
 
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
-    public String hostname = ""; // CraftBukkit - add field
+    public String hostname = ""; // Bukkit - add field
 
     /**
      * @reason Spigot basically overwrites this whole method.

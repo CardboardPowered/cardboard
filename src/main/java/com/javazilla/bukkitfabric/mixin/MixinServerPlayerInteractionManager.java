@@ -280,9 +280,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
     }
 
     @Inject(at = @At("HEAD"), method = "interactBlock", cancellable = true)
-    public void interactBlock(ServerPlayerEntity entityplayer, World world, ItemStack itemstack, Hand enumhand, BlockHitResult movingobjectpositionblock,
-            CallbackInfoReturnable<ActionResult> ci) {
-        System.out.println("interactBlock 1 DEBUG!");
+    public void interactBlock(ServerPlayerEntity entityplayer, World world, ItemStack itemstack, Hand enumhand, BlockHitResult movingobjectpositionblock, CallbackInfoReturnable<ActionResult> ci) {
         BlockPos blockposition = movingobjectpositionblock.getBlockPos();
         BlockState iblockdata = world.getBlockState(blockposition);
         ActionResult enuminteractionresult = ActionResult.PASS;

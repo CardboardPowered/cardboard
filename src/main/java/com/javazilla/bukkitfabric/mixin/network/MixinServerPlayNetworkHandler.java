@@ -157,8 +157,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      * @reason Bukkit
      * @author Bukkit4Fabric
      */
-    @Overwrite
-    public void executeCommand(String string) {
+    @Inject(at = @At("HEAD"), method = "executeCommand", cancellable = true)
+    public void executeCommand(String string, CallbackInfo ci) {
         BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), string, new LazyPlayerSet(CraftServer.server));
         Bukkit.getPluginManager().callEvent(event);
@@ -166,7 +166,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             return;
 
         try {
-            Bukkit.getServer().dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
+            boolean b = Bukkit.getServer().dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
+            if (b) {
+                ci.cancel();
+                return;
+            }
         } catch (org.bukkit.command.CommandException ex) {
             getPlayer().sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
             java.util.logging.Logger.getLogger(ServerPlayNetworkHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -183,7 +187,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             return;
 
         if (!async && s.startsWith("/")) {
-            this.executeCommand(s);
+            get().executeCommand(s);
         } else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
             // Do nothing, this is coming from a plugin
         } else {
@@ -257,7 +261,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             String s = StringUtils.normalizeSpace( packetplayinchat.getChatMessage() );
 
             if (isSync)
-                this.executeCommand(s);
+                get().executeCommand(s);
             else if (s.isEmpty())
                 BukkitLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
             else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
@@ -520,8 +524,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      * @author BukkitFabricMod
      * @reason Events
      */
-    @Overwrite
-    public void onHandSwing(HandSwingC2SPacket packetplayinarmanimation) {
+    @Inject(at = @At("HEAD"), method = "onHandSwing", cancellable = true)
+    public void onHandSwingBF(HandSwingC2SPacket packetplayinarmanimation, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packetplayinarmanimation, get(), this.player.getServerWorld());
         this.player.updateLastActionTime();
         float f1 = this.player.pitch;
@@ -550,10 +554,13 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
         if (event.isCancelled()) return;
         this.player.swingHand(packetplayinarmanimation.getHand());
+
+        ci.cancel();
+        return;
     }
 
-    @Overwrite
-    public void onPlayerInteractItem(PlayerInteractItemC2SPacket packetplayinblockplace) {
+    @Inject(at = @At("HEAD"), method = "onPlayerInteractItem", cancellable = true)
+    public void onPlayerInteractItemBF(PlayerInteractItemC2SPacket packetplayinblockplace, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packetplayinblockplace, get(), this.player.getServerWorld());
         ServerWorld worldserver = this.player.getServerWorld();
         Hand enumhand = packetplayinblockplace.getHand();
@@ -600,6 +607,9 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             ActionResult enuminteractionresult = this.player.interactionManager.interactItem(this.player, worldserver, itemstack, enumhand);
             if (enuminteractionresult.shouldSwingHand())
                 this.player.swingHand(enumhand, true);
+
+            ci.cancel();
+            return;
         }
     }
 
