@@ -3,6 +3,7 @@ package com.javazilla.bukkitfabric.mixin.world;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.spongepowered.asm.mixin.Final;
@@ -47,7 +48,7 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
             // Spigot Start
             boolean usingWrongFile = false;
             if (!file.exists()) {
-                file = new File( this.playerDataDir, java.util.UUID.nameUUIDFromBytes(("OfflinePlayer:" + entityhuman.getEntityName()).getBytes( "UTF-8" )).toString() + ".dat");
+                file = new File( this.playerDataDir, java.util.UUID.nameUUIDFromBytes(("OfflinePlayer:" + entityhuman.getEntityName()).getBytes(StandardCharsets.UTF_8)).toString() + ".dat");
                 if (file.exists()) {
                     usingWrongFile = true;
                     org.bukkit.Bukkit.getServer().getLogger().warning("Using offline mode UUID file for player " + entityhuman.getEntityName() + " as it is the only copy we can find");
