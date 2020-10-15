@@ -85,7 +85,9 @@ public class MixinBlockItem {
                     blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(blockactioncontext1.getWorld(), blockactioncontext1.getBlockPos());
 
                 boolean no = ((IMixinServerPlayerInteractionManager)((ServerPlayerEntity)blockactioncontext1.getPlayer()).interactionManager).getFiredInteractBF();
-                if (no) {
+                if (!no) {
+                    System.out.println("NO!");
+                    ((IMixinServerPlayerInteractionManager)((ServerPlayerEntity)blockactioncontext1.getPlayer()).interactionManager).setFiredInteractBF(false);
                     ci.setReturnValue(ActionResult.FAIL);
                     return;
                 }

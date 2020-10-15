@@ -83,7 +83,6 @@ public class MappingsReader {
         return MAPPINGS.getNewField(FieldData.create(type, spigot)).getName();
     }
 
-
     public static File exportResource(String res, File folder) {
         try (InputStream stream = MappingsReader.class.getClassLoader().getResourceAsStream("mappings/" + res)) {
             if (stream == null) throw new IOException("Null " + res);

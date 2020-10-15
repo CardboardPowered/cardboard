@@ -25,15 +25,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
@@ -46,15 +51,17 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.DifficultyS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityStatusEffectS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnPositionS2CPacket;
 import net.minecraft.server.BannedIpEntry;
-import net.minecraft.server.BannedPlayerEntry;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -65,7 +72,9 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -207,6 +216,31 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
             this.savePlayerData(entityplayer);
 
         return entityplayer;
+    }
+
+    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
+    public void firePlayerJoinEvent(ClientConnection networkmanager, ServerPlayerEntity player, CallbackInfo ci) {
+        String joinMessage = CraftChatMessage.fromComponent(new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}));
+
+        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(CraftServer.INSTANCE.getPlayer(player), joinMessage);
+        Bukkit.getServer().getPluginManager().callEvent(playerJoinEvent);
+        if (!player.networkHandler.connection.isOpen()) return;
+
+        joinMessage = playerJoinEvent.getJoinMessage();
+
+        if (joinMessage != null && joinMessage.length() > 0)
+            for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))
+                CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
+    }
+
+    @Inject(at = @At("HEAD"), method = "broadcastChatMessage", cancellable = true)
+    public void broadcastChatMessage(Text message, MessageType type, UUID senderUuid, CallbackInfo ci) {
+        String s = CraftChatMessage.toJSON(message);
+        if (s.startsWith("{\"color\":\"yellow\",\"translate\":\"multiplayer.player.joined\"")) {
+            // Cancel vanilla's join message. We do this so we don't have to overwrite onPlayerConnect
+            ci.cancel();
+            return;
+        }
     }
 
     @Override
