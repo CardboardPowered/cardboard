@@ -28,11 +28,13 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -231,6 +233,15 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         if (joinMessage != null && joinMessage.length() > 0)
             for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))
                 CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
+    }
+
+    @Inject(at = @At("HEAD"), method = "remove")
+    public void firePlayerQuitEvent(ServerPlayerEntity player, CallbackInfo ci) {
+        player.closeHandledScreen();
+
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(CraftServer.INSTANCE.getPlayer(player), "\u00A7e" + player.getEntityName() + " left the game");
+        CraftServer.INSTANCE.getPluginManager().callEvent(playerQuitEvent);
+        player.playerTick();
     }
 
     @Inject(at = @At("HEAD"), method = "broadcastChatMessage", cancellable = true)

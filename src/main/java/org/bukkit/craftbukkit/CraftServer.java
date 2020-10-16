@@ -1560,9 +1560,8 @@ public class CraftServer implements Server {
         List<String> content = null;
         try {
             content = Files.readAllLines(f.toPath());
-        } catch (IOException e) {
-            throw e;
-        }
+        } catch (IOException e) {throw e;}
+
         List<String> toreturn = new ArrayList<>();
         for (String s : content) {
             s = s.trim();
@@ -1571,7 +1570,6 @@ public class CraftServer implements Server {
                 toreturn.add(s);
             }
         }
-
         return toreturn;
     }
 
