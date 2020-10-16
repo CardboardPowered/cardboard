@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scheduler;
+package com.javazilla.bukkitfabric.impl.scheduler;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,12 +7,12 @@ import java.util.logging.Level;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitWorker;
 
-class CraftAsyncTask extends CraftTask {
+public class AsyncTaskImpl extends BukkitTaskImpl {
 
     private final LinkedList<BukkitWorker> workers = new LinkedList<BukkitWorker>();
-    private final Map<Integer, CraftTask> runners;
+    private final Map<Integer, BukkitTaskImpl> runners;
 
-    CraftAsyncTask(final Map<Integer, CraftTask> runners, final Plugin plugin, final Object task, final int id, final long delay) {
+    AsyncTaskImpl(final Map<Integer, BukkitTaskImpl> runners, final Plugin plugin, final Object task, final int id, final long delay) {
         super(plugin, task, id, delay);
         this.runners = runners;
     }
@@ -26,7 +26,7 @@ class CraftAsyncTask extends CraftTask {
     public void run() {
         final Thread thread = Thread.currentThread();
         synchronized (workers) {
-            if (getPeriod() == CraftTask.CANCEL) return; // Never continue running after cancelled. Checking this with the lock is important!
+            if (getPeriod() == BukkitTaskImpl.CANCEL) return; // Never continue running after cancelled. Checking this with the lock is important!
 
             workers.add(new BukkitWorker() {
                     @Override
@@ -36,12 +36,12 @@ class CraftAsyncTask extends CraftTask {
 
                     @Override
                     public int getTaskId() {
-                        return CraftAsyncTask.this.getTaskId();
+                        return AsyncTaskImpl.this.getTaskId();
                     }
 
                     @Override
                     public Plugin getOwner() {
-                        return CraftAsyncTask.this.getOwner();
+                        return AsyncTaskImpl.this.getOwner();
                     }
                 });
         }
@@ -83,7 +83,7 @@ class CraftAsyncTask extends CraftTask {
     boolean cancel0() {
         synchronized (workers) {
             // Synchronizing here prevents race condition for a completing task
-            setPeriod(CraftTask.CANCEL);
+            setPeriod(BukkitTaskImpl.CANCEL);
             if (workers.isEmpty())
                 runners.remove(getTaskId());
         }

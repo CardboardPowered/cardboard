@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl;
+package com.javazilla.bukkitfabric.impl.command;
 
 import com.google.common.base.Joiner;
 import com.mojang.brigadier.ParseResults;

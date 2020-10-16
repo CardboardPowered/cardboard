@@ -6,8 +6,6 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
 
-import com.javazilla.bukkitfabric.impl.VersionCommand;
-
 public class CommandMapImpl extends SimpleCommandMap {
 
     public CommandMapImpl(Server server) {

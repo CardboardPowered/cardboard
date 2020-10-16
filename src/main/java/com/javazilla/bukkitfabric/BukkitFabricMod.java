@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.javazilla.bukkitfabric.impl.VersionCommand;
+import com.javazilla.bukkitfabric.impl.command.VersionCommand;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import net.fabricmc.api.ModInitializer;
@@ -43,7 +43,7 @@ public class BukkitFabricMod implements ModInitializer {
             int outdated = VersionCommand.check();
             if (outdated > 8) {
                 try {
-                    int time = outdated > 20 ? 40 : 20;
+                    int time = outdated > 20 ? 40 : 10;
                     LOGGER.warning("*** Error, this build is outdated ***");
                     LOGGER.warning("*** Please download a new build from https://curseforge.com/minecraft/mc-mods/bukkit ***");
                     LOGGER.warning("*** Server will start in " + time + " seconds ***");

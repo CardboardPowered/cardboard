@@ -28,7 +28,7 @@ import org.bukkit.help.IndexHelpTopic;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.javazilla.bukkitfabric.impl.MinecraftCommandWrapper;
+import com.javazilla.bukkitfabric.impl.command.MinecraftCommandWrapper;
 
 @SuppressWarnings("rawtypes")
 public class SimpleHelpMap implements HelpMap {

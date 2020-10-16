@@ -31,7 +31,6 @@ import java.util.function.BooleanSupplier;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,6 +43,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableList;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -396,7 +396,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
     @Inject(at = @At("HEAD"), method = "tickWorlds")
     public void doBukkitRunnables(BooleanSupplier b, CallbackInfo ci) {
-        ((CraftScheduler)CraftServer.INSTANCE.getScheduler()).mainThreadHeartbeat(ticks);
+        ((BukkitSchedulerImpl)CraftServer.INSTANCE.getScheduler()).mainThreadHeartbeat(ticks);
         while (!processQueue.isEmpty())
             processQueue.remove().run();
     }

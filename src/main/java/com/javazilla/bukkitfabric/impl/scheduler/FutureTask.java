@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.scheduler;
+package com.javazilla.bukkitfabric.impl.scheduler;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -8,28 +8,28 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.bukkit.plugin.Plugin;
 
-class CraftFuture<T> extends CraftTask implements Future<T> {
+public class FutureTask<T> extends BukkitTaskImpl implements Future<T> {
 
     private final Callable<T> callable;
     private T value;
     private Exception exception = null;
 
-    CraftFuture(final Callable<T> callable, final Plugin plugin, final int id) {
-        super(plugin, null, id, CraftTask.NO_REPEATING);
+    public FutureTask(final Callable<T> callable, final Plugin plugin, final int id) {
+        super(plugin, null, id, BukkitTaskImpl.NO_REPEATING);
         this.callable = callable;
     }
 
     @Override
     public synchronized boolean cancel(final boolean mayInterruptIfRunning) {
-        if (getPeriod() != CraftTask.NO_REPEATING) return false;
-        setPeriod(CraftTask.CANCEL);
+        if (getPeriod() != BukkitTaskImpl.NO_REPEATING) return false;
+        setPeriod(BukkitTaskImpl.CANCEL);
         return true;
     }
 
     @Override
     public boolean isDone() {
         final long period = this.getPeriod();
-        return period != CraftTask.NO_REPEATING && period != CraftTask.PROCESS_FOR_FUTURE;
+        return period != BukkitTaskImpl.NO_REPEATING && period != BukkitTaskImpl.PROCESS_FOR_FUTURE;
     }
 
     @Override
@@ -47,10 +47,10 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
         long period = this.getPeriod();
         long timestamp = timeout > 0 ? System.currentTimeMillis() : 0L;
         while (true) {
-            if (period == CraftTask.NO_REPEATING || period == CraftTask.PROCESS_FOR_FUTURE) {
+            if (period == BukkitTaskImpl.NO_REPEATING || period == BukkitTaskImpl.PROCESS_FOR_FUTURE) {
                 this.wait(timeout);
                 period = this.getPeriod();
-                if (period == CraftTask.NO_REPEATING || period == CraftTask.PROCESS_FOR_FUTURE) {
+                if (period == BukkitTaskImpl.NO_REPEATING || period == BukkitTaskImpl.PROCESS_FOR_FUTURE) {
                     if (timeout == 0L)
                         continue;
                     timeout += timestamp - (timestamp = System.currentTimeMillis());
@@ -59,20 +59,20 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
                     throw new TimeoutException();
                 }
             }
-            if (period == CraftTask.CANCEL) throw new CancellationException();
-            if (period == CraftTask.DONE_FOR_FUTURE) {
+            if (period == BukkitTaskImpl.CANCEL) throw new CancellationException();
+            if (period == BukkitTaskImpl.DONE_FOR_FUTURE) {
                 if (exception == null) return value;
                 throw new ExecutionException(exception);
             }
-            throw new IllegalStateException("Expected " + CraftTask.NO_REPEATING + " to " + CraftTask.DONE_FOR_FUTURE + ", got " + period);
+            throw new IllegalStateException("Expected " + BukkitTaskImpl.NO_REPEATING + " to " + BukkitTaskImpl.DONE_FOR_FUTURE + ", got " + period);
         }
     }
 
     @Override
     public void run() {
         synchronized (this) {
-            if (getPeriod() == CraftTask.CANCEL) return;
-            setPeriod(CraftTask.PROCESS_FOR_FUTURE);
+            if (getPeriod() == BukkitTaskImpl.CANCEL) return;
+            setPeriod(BukkitTaskImpl.PROCESS_FOR_FUTURE);
         }
         try {
             value = callable.call();
@@ -80,7 +80,7 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
             exception = e;
         } finally {
             synchronized (this) {
-                setPeriod(CraftTask.DONE_FOR_FUTURE);
+                setPeriod(BukkitTaskImpl.DONE_FOR_FUTURE);
                 this.notifyAll();
             }
         }
@@ -88,8 +88,8 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
 
     @Override
     synchronized boolean cancel0() {
-        if (getPeriod() != CraftTask.NO_REPEATING) return false;
-        setPeriod(CraftTask.CANCEL);
+        if (getPeriod() != BukkitTaskImpl.NO_REPEATING) return false;
+        setPeriod(BukkitTaskImpl.CANCEL);
         notifyAll();
         return true;
     }

@@ -97,7 +97,6 @@ import org.bukkit.craftbukkit.inventory.CraftSmokingRecipe;
 import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
 import org.bukkit.craftbukkit.inventory.RecipeIterator;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
-import org.bukkit.craftbukkit.scheduler.CraftScheduler;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -165,7 +164,6 @@ import com.javazilla.bukkitfabric.impl.util.IconCacheImpl;
 import com.javazilla.bukkitfabric.impl.world.ChunkDataImpl;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
-import com.javazilla.bukkitfabric.impl.MinecraftCommandWrapper;
 import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
 import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
@@ -174,8 +172,10 @@ import com.javazilla.bukkitfabric.impl.boss.KeyedBossBarImpl;
 import com.javazilla.bukkitfabric.impl.command.BukkitCommandWrapper;
 import com.javazilla.bukkitfabric.impl.command.CommandMapImpl;
 import com.javazilla.bukkitfabric.impl.command.ConsoleCommandSenderImpl;
+import com.javazilla.bukkitfabric.impl.command.MinecraftCommandWrapper;
 import com.javazilla.bukkitfabric.impl.help.SimpleHelpMap;
 import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
+import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
@@ -256,7 +256,7 @@ public class CraftServer implements Server {
     private final SimplePluginManager pluginManager;
     private final CraftMagicNumbers unsafe = (CraftMagicNumbers) CraftMagicNumbers.INSTANCE;
     private final ServicesManager servicesManager = new SimpleServicesManager();
-    private final CraftScheduler scheduler = new CraftScheduler();
+    private final BukkitSchedulerImpl scheduler = new BukkitSchedulerImpl();
     private final ConsoleCommandSender consoleCommandSender = new ConsoleCommandSenderImpl();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
     public final List<CraftPlayer> playerView;
@@ -1140,7 +1140,7 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public CraftScheduler getScheduler() {
+    public BukkitSchedulerImpl getScheduler() {
         return scheduler;
     }
 

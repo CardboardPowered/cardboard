@@ -1,14 +1,13 @@
-package org.bukkit.craftbukkit.scheduler;
+package com.javazilla.bukkitfabric.impl.scheduler;
 
 import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
+public class BukkitTaskImpl implements BukkitTask, Runnable {
 
-class CraftTask implements BukkitTask, Runnable {
-
-    private volatile CraftTask next = null;
+    private volatile BukkitTaskImpl next = null;
     public static final int ERROR = 0;
     public static final int NO_REPEATING = -1;
     public static final int CANCEL = -2;
@@ -29,16 +28,16 @@ class CraftTask implements BukkitTask, Runnable {
     private final Plugin plugin;
     private final int id;
 
-    CraftTask() {
-        this(null, null, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
+    BukkitTaskImpl() {
+        this(null, null, BukkitTaskImpl.NO_REPEATING, BukkitTaskImpl.NO_REPEATING);
     }
 
-    CraftTask(final Object task) {
-        this(null, task, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
+    BukkitTaskImpl(final Object task) {
+        this(null, task, BukkitTaskImpl.NO_REPEATING, BukkitTaskImpl.NO_REPEATING);
     }
 
     @SuppressWarnings("unchecked")
-    CraftTask(final Plugin plugin, final Object task, final int id, final long period) {
+    BukkitTaskImpl(final Plugin plugin, final Object task, final int id, final long period) {
         this.plugin = plugin;
         if (task instanceof Runnable) {
             this.rTask = (Runnable) task;
@@ -92,11 +91,11 @@ class CraftTask implements BukkitTask, Runnable {
         this.nextRun = nextRun;
     }
 
-    CraftTask getNext() {
+    BukkitTaskImpl getNext() {
         return next;
     }
 
-    void setNext(CraftTask next) {
+    void setNext(BukkitTaskImpl next) {
         this.next = next;
     }
 
@@ -106,7 +105,7 @@ class CraftTask implements BukkitTask, Runnable {
 
     @Override
     public boolean isCancelled() {
-        return period == CraftTask.CANCEL;
+        return period == BukkitTaskImpl.CANCEL;
     }
 
     @Override
@@ -120,7 +119,7 @@ class CraftTask implements BukkitTask, Runnable {
      * @return false if it is a craft future task that has already begun execution, true otherwise
      */
     boolean cancel0() {
-        setPeriod(CraftTask.CANCEL);
+        setPeriod(BukkitTaskImpl.CANCEL);
         return true;
     }
 
