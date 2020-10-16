@@ -37,7 +37,9 @@ import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Villager;
@@ -52,6 +54,7 @@ import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.event.entity.CreeperPowerEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
@@ -74,7 +77,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -361,6 +363,12 @@ public class BukkitEventFactory {
         EntityPlaceEvent event = new EntityPlaceEvent(((IMixinEntity)entity).getBukkitEntity(), who, blockClicked, blockFace);
         Bukkit.getPluginManager().callEvent(event);
 
+        return event;
+    }
+
+    public static CreeperPowerEvent callCreeperPowerEvent(Entity creeper, Entity lightning, CreeperPowerEvent.PowerCause cause) {
+        CreeperPowerEvent event = new CreeperPowerEvent((Creeper) ((IMixinEntity)creeper).getBukkitEntity(), (LightningStrike) ((IMixinEntity)lightning).getBukkitEntity(), cause);
+        ((IMixinEntity)creeper).getBukkitEntity().getServer().getPluginManager().callEvent(event);
         return event;
     }
 

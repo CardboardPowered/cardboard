@@ -49,9 +49,7 @@ class CraftAsyncTask extends CraftTask {
         try {
             super.run();
         } catch (final Throwable t) {
-            thrown = t;
-            getOwner().getLogger().log(Level.WARNING, "Plugin " + getOwner().getDescription().getFullName() +
-                    " generated an exception while executing task " + getTaskId(), thrown);
+            getOwner().getLogger().log(Level.WARNING, "Plugin " + getOwner().getDescription().getFullName() + " generated an exception while executing task " + getTaskId(), (thrown = t));
         } finally {
             // Cleanup is important for any async task, otherwise ghost tasks are everywhere
             synchronized (workers) {
@@ -65,12 +63,11 @@ class CraftAsyncTask extends CraftTask {
                             break;
                         }
                     }
-                    if (!removed) throw new IllegalStateException("Unable to remove worker " + thread.getName() + " on task " + getTaskId() + " for " +
-                                getOwner().getDescription().getFullName(), thrown);
+                    if (!removed)
+                        throw new IllegalStateException("Unable to remove worker " + thread.getName() + " on task " + getTaskId() + " for " + getOwner().getDescription().getFullName(), thrown);
                 } finally {
                     if (getPeriod() < 0 && workers.isEmpty()) {
-                        // At this spot, we know we are the final async task being executed!
-                        // Because we have the lock, nothing else is running or will run because delay < 0
+                        // At this spot, we know we are the final async task being executed! Because we have the lock, nothing else is running or will run because delay < 0
                         runners.remove(getTaskId());
                     }
                 }

@@ -43,6 +43,7 @@
     "entity.MixinAbstractTraderEntity",
     "entity.MixinThrownItemEntity",
     "entity.MixinSlimeEntity",
+    "entity.MixinCreeperEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

@@ -21,8 +21,7 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
 
     @Override
     public synchronized boolean cancel(final boolean mayInterruptIfRunning) {
-        if (getPeriod() != CraftTask.NO_REPEATING)
-            return false;
+        if (getPeriod() != CraftTask.NO_REPEATING) return false;
         setPeriod(CraftTask.CANCEL);
         return true;
     }
@@ -60,8 +59,7 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
                     throw new TimeoutException();
                 }
             }
-            if (period == CraftTask.CANCEL)
-                throw new CancellationException();
+            if (period == CraftTask.CANCEL) throw new CancellationException();
             if (period == CraftTask.DONE_FOR_FUTURE) {
                 if (exception == null) return value;
                 throw new ExecutionException(exception);
@@ -73,8 +71,7 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
     @Override
     public void run() {
         synchronized (this) {
-            if (getPeriod() == CraftTask.CANCEL)
-                return;
+            if (getPeriod() == CraftTask.CANCEL) return;
             setPeriod(CraftTask.PROCESS_FOR_FUTURE);
         }
         try {
@@ -91,8 +88,7 @@ class CraftFuture<T> extends CraftTask implements Future<T> {
 
     @Override
     synchronized boolean cancel0() {
-        if (getPeriod() != CraftTask.NO_REPEATING)
-            return false;
+        if (getPeriod() != CraftTask.NO_REPEATING) return false;
         setPeriod(CraftTask.CANCEL);
         notifyAll();
         return true;
