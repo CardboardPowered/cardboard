@@ -88,6 +88,7 @@ import org.bukkit.craftbukkit.inventory.CraftBlastingRecipe;
 import org.bukkit.craftbukkit.inventory.CraftCampfireRecipe;
 import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.CraftRecipe;
 import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
 import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
@@ -153,6 +154,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.BukkitLogger;
@@ -173,15 +175,19 @@ import com.javazilla.bukkitfabric.impl.command.BukkitCommandWrapper;
 import com.javazilla.bukkitfabric.impl.command.CommandMapImpl;
 import com.javazilla.bukkitfabric.impl.command.ConsoleCommandSenderImpl;
 import com.javazilla.bukkitfabric.impl.help.SimpleHelpMap;
+import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
+import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.serialization.DynamicOps;
@@ -192,8 +198,12 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.boss.CommandBossBar;
+import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resource.DataPackSettings;
@@ -210,6 +220,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryOps;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
@@ -607,15 +618,29 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public ItemStack createExplorerMap(World arg0, Location arg1, StructureType arg2) {
-        // TODO Auto-generated method stub
-        return null;
+    public ItemStack createExplorerMap(World world, Location location, StructureType structureType) {
+        return this.createExplorerMap(world, location, structureType, 100, true);
     }
 
+    @SuppressWarnings("static-access")
     @Override
-    public ItemStack createExplorerMap(World arg0, Location arg1, StructureType arg2, int arg3, boolean arg4) {
-        // TODO Auto-generated method stub
-        return null;
+    public ItemStack createExplorerMap(World world, Location location, StructureType structureType, int radius, boolean findUnexplored) {
+        Validate.notNull(world, "World cannot be null");
+        Validate.notNull(structureType, "StructureType cannot be null");
+        Validate.notNull(structureType.getMapIcon(), "Cannot create explorer maps for StructureType " + structureType.getName());
+
+        ServerWorld worldServer = ((WorldImpl) world).getHandle();
+        Location structureLocation = world.locateNearestStructure(location, structureType, radius, findUnexplored);
+        BlockPos structurePosition = new BlockPos(structureLocation.getBlockX(), structureLocation.getBlockY(), structureLocation.getBlockZ());
+
+        // Create map with trackPlayer = true, unlimitedTracking = true
+        net.minecraft.item.ItemStack stack = FilledMapItem.createMap(worldServer, structurePosition.getX(), structurePosition.getZ(), MapView.Scale.NORMAL.getValue(), true, true);
+        FilledMapItem.fillExplorationMap(worldServer, stack);
+        // "+" map ID taken from EntityVillager
+
+        FilledMapItem.getOrCreateMapState(stack, worldServer).addDecorationsTag(stack, structurePosition, "+", net.minecraft.item.map.MapIcon.Type.byId(structureType.getMapIcon().getValue()));
+
+        return CraftItemStack.asBukkitCopy(stack);
     }
 
     @Override
@@ -639,9 +664,12 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public MapView createMap(World arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public MapView createMap(World world) {
+        Validate.notNull(world, "World cannot be null");
+
+        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(Items.MAP, 1);
+        MapState worldmap = FilledMapItem.getOrCreateMapState(stack, ((WorldImpl) world).getHandle());
+        return ((IMixinMapState)worldmap).getMapViewBF();
     }
 
     @Override
@@ -727,8 +755,6 @@ public class CraftServer implements Server {
         }
         ((IMixinLevelProperties)worlddata).checkName(name);
         worlddata.addServerBrand(server.getServerModName(), true);
-
-        // TODO Force upgrade option: server.options.has("forceUpgrade")
 
         long j = BiomeAccess.hashSeed(creator.seed());
         List<Spawner> list = ImmutableList.of(new PhantomSpawner(), new PillagerSpawner(), new CatSpawner(), new ZombieSiegeManager(), new WanderingTraderManager(worlddata));
@@ -882,8 +908,7 @@ public class CraftServer implements Server {
 
     @Override
     public long getConnectionThrottle() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.configuration.getInt("settings.connection-throttle");
     }
 
     @Override
@@ -953,9 +978,11 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public MapView getMap(int arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public MapViewImpl getMap(int arg0) {
+        MapState worldmap = server.getWorld(net.minecraft.world.World.OVERWORLD).getMapState("map_" + arg0);
+        if (worldmap == null)
+            return null;
+        return ((IMixinMapState)worldmap).getMapViewBF();
     }
 
     @Override
@@ -1136,7 +1163,7 @@ public class CraftServer implements Server {
     @Override
     public String getShutdownMessage() {
         // TODO Auto-generated method stub
-        return null;
+        return "Server Shutdown";
     }
 
     @Override
@@ -1180,14 +1207,12 @@ public class CraftServer implements Server {
 
     @Override
     public int getTicksPerAnimalSpawns() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.configuration.getInt("ticks-per.animal-spawns");
     }
 
     @Override
     public int getTicksPerMonsterSpawns() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.configuration.getInt("ticks-per.monster-spawns");
     }
 
     @Override
@@ -1367,9 +1392,22 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public List<Entity> selectEntities(CommandSender arg0, String arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Entity> selectEntities(CommandSender sender, String selector) {
+        Preconditions.checkArgument(selector != null, "Selector cannot be null");
+        Preconditions.checkArgument(sender != null, "Sender cannot be null");
+
+        EntityArgumentType arg = EntityArgumentType.entities();
+        List<? extends net.minecraft.entity.Entity> nms;
+
+        try {
+            StringReader reader = new StringReader(selector);
+            nms = arg.parse(reader).getEntities(MinecraftCommandWrapper.getCommandSource(sender));
+            Preconditions.checkArgument(!reader.canRead(), "Spurious trailing data in selector: " + selector);
+        } catch (CommandSyntaxException ex) {
+            throw new IllegalArgumentException("Could not parse selector: " + selector, ex);
+        }
+
+        return new ArrayList<>(Lists.transform(nms, (entity) -> ((IMixinEntity)entity).getBukkitEntity()));
     }
 
     @Override
@@ -1409,8 +1447,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean unloadWorld(World world, boolean save) {
-        if (world == null)
-            return false;
+        if (world == null) return false;
 
         ServerWorld handle = (ServerWorld) ((WorldImpl) world).getHandle();
 
@@ -1423,12 +1460,10 @@ public class CraftServer implements Server {
         WorldUnloadEvent e = new WorldUnloadEvent(world);
         pluginManager.callEvent(e);
 
-        if (e.isCancelled())
-            return false;
+        if (e.isCancelled()) return false;
 
         try {
-            if (save)
-                handle.save(null, true, true);
+            if (save) handle.save(null, true, true);
             handle.getChunkManager().close();
         } catch (Exception ex) {
             getLogger().log(Level.SEVERE, null, ex);
@@ -1441,14 +1476,12 @@ public class CraftServer implements Server {
 
     @Override
     public int getTicksPerAmbientSpawns() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.configuration.getInt("ticks-per.ambient-spawns");
     }
 
     @Override
     public int getTicksPerWaterSpawns() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.configuration.getInt("ticks-per.water-spawns");
     }
 
     @SuppressWarnings("resource")

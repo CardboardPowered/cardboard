@@ -58,7 +58,7 @@ public final class MinecraftCommandWrapper extends BukkitCommand {
         return name + ((args.length > 0) ? " " + Joiner.on(' ').join(args) : "");
     }
 
-    private ServerCommandSource getCommandSource(CommandSender s) {
+    public static ServerCommandSource getCommandSource(CommandSender s) {
         if (s instanceof CraftPlayer)
             return ((CraftPlayer)s).getHandle().getCommandSource();
         if (s instanceof CraftEntity)
