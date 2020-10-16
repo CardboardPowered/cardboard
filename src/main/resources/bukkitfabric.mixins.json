@@ -20,6 +20,7 @@
     "MixinStatHandler",
     "MixinTradeOffer",
     "MixinServerBossBar",
+    "MixinMapState",
 
     "world.MixinServerWorld",
     "world.MixinWorld",
@@ -107,6 +108,8 @@
 
     "item.MixinDyeItem",
     "item.MixinEndCrystalItem",
+    "item.MixinSkullItem",
+    "item.MixinFilledMapItem",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
