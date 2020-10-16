@@ -376,8 +376,9 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         return (ServerPlayNetworkHandler) (Object) this;
     }
 
-    @Overwrite
-    public void onPlayerMove(PlayerMoveC2SPacket packetplayinflying) {
+    //@Overwrite
+    @Inject(at = @At("HEAD"), method = "onPlayerMove", cancellable = true)
+    public void onPlayerMove(PlayerMoveC2SPacket packetplayinflying, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packetplayinflying, (ServerPlayNetworkHandler)(Object)this, this.player.getServerWorld());
         if (ServerPlayNetworkHandler.validatePlayerMove(packetplayinflying))
             this.disconnect(new TranslatableText("multiplayer.disconnect.invalid_player_movement"));
@@ -435,6 +436,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                                 float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
                                 if (d11 - d10 > Math.max(f2, Math.pow((double) ((float) i * speed), 2))) {
                                     this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.yaw, this.player.pitch);
+                                    ci.cancel();
                                     return;
                                 }
                             }
@@ -486,14 +488,17 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
                                     if (event.isCancelled()) {
                                         teleport(from);
+                                        ci.cancel();
                                         return;
                                     }
                                     if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
                                         ((IMixinServerEntityPlayer)this.player).getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                                        ci.cancel();
                                         return;
                                     }
                                     if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
                                         this.justTeleported = false;
+                                        ci.cancel();
                                         return;
                                     }
                                 }
@@ -512,6 +517,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 }
             }
         }
+        ci.cancel();
+        return;
     }
 
     @Shadow

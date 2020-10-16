@@ -30,6 +30,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.techcable.srglib.FieldData;
 import net.techcable.srglib.JavaType;
 import net.techcable.srglib.format.MappingsFormat;
@@ -65,7 +66,6 @@ public class MappingsReader {
             }
             if (sN.length() > 2 && iN.length() > 2 && put) METHODS2.put(sN + intermed.getSignature().getDescriptor(), iN);
         });
-        System.out.println(METHODS2.get("setInvisible(Z)V"));
     }
 
     public static String getIntermedClass(String spigot) {
@@ -84,6 +84,13 @@ public class MappingsReader {
     }
 
     public static File exportResource(String res, File folder) {
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            // Development Builds
+            File f = new File("C:\\Users\\isaia\\Desktop\\MinecraftMappings\\mappings\\1.16.3\\spigot2yarn.csrg");
+            if (f.exists())
+                return f;
+        }
+
         try (InputStream stream = MappingsReader.class.getClassLoader().getResourceAsStream("mappings/" + res)) {
             if (stream == null) throw new IOException("Null " + res);
 
@@ -96,7 +103,18 @@ public class MappingsReader {
     public static String getIntermedMethod(String name, String spigot) {
         // TODO This very bad. It doesn't use the method descriptor.
         // TODO There are 44 spigot-named methods that will have duplicates.
-        return METHODS.getOrDefault(name + "=" + spigot, spigot);
+
+        if (METHODS.containsKey((name + "=" + spigot)))
+            return METHODS.getOrDefault(name + "=" + spigot, spigot);
+        try {
+            String iclazz = ReflectionRemapper.mapClassName(name);
+            Class<?> cl = Class.forName(iclazz);
+            Class<?> parent = cl.getSuperclass();
+            if (null != parent) {
+                String pname = parent.getName();
+                return METHODS.getOrDefault(pname + "=" + spigot, spigot);
+            } else return spigot;
+        } catch (Exception e) { return spigot; }
     }
 
 }

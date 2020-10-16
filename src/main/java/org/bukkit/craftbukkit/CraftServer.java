@@ -78,6 +78,7 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
@@ -96,6 +97,7 @@ import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
 import org.bukkit.craftbukkit.inventory.RecipeIterator;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scheduler.CraftScheduler;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.util.permissions.CommandPermissions;
@@ -158,12 +160,15 @@ import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.tag.CraftBlockTag;
 import com.javazilla.bukkitfabric.impl.tag.CraftItemTag;
 import com.javazilla.bukkitfabric.impl.util.IconCacheImpl;
+import com.javazilla.bukkitfabric.impl.world.ChunkDataImpl;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
 import com.javazilla.bukkitfabric.impl.MinecraftCommandWrapper;
 import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
 import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
+import com.javazilla.bukkitfabric.impl.boss.BossBarImpl;
+import com.javazilla.bukkitfabric.impl.boss.KeyedBossBarImpl;
 import com.javazilla.bukkitfabric.impl.command.BukkitCommandWrapper;
 import com.javazilla.bukkitfabric.impl.command.CommandMapImpl;
 import com.javazilla.bukkitfabric.impl.command.ConsoleCommandSenderImpl;
@@ -187,6 +192,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
+import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -547,21 +553,57 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public BossBar createBossBar(String arg0, BarColor arg1, BarStyle arg2, BarFlag... arg3) {
-        // TODO Auto-generated method stub
-        return null;
+    public BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
+        return new BossBarImpl(title, color, style, flags);
     }
 
     @Override
-    public KeyedBossBar createBossBar(NamespacedKey arg0, String arg1, BarColor arg2, BarStyle arg3, BarFlag... arg4) {
-        // TODO Auto-generated method stub
-        return null;
+    public KeyedBossBar createBossBar(NamespacedKey key, String title, BarColor barColor, BarStyle barStyle, BarFlag... barFlags) {
+        Preconditions.checkArgument(key != null, "key");
+
+        CommandBossBar bossBattleCustom = getServer().getBossBarManager().add(CraftNamespacedKey.toMinecraft(key), CraftChatMessage.fromString(title, true)[0]);
+        KeyedBossBarImpl craftKeyedBossbar = new KeyedBossBarImpl(bossBattleCustom);
+        craftKeyedBossbar.setColor(barColor);
+        craftKeyedBossbar.setStyle(barStyle);
+        for (BarFlag flag : barFlags)
+            craftKeyedBossbar.addFlag(flag);
+
+        return craftKeyedBossbar;
+    }
+
+    @Override
+    public Iterator<KeyedBossBar> getBossBars() {
+        return Iterators.unmodifiableIterator(Iterators.transform(getServer().getBossBarManager().getAll().iterator(), new Function<CommandBossBar, org.bukkit.boss.KeyedBossBar>() {
+            @Override
+            public org.bukkit.boss.KeyedBossBar apply(CommandBossBar bossBattleCustom) {
+                return (KeyedBossBar) ((IMixinEntity)bossBattleCustom).getBukkitEntity();
+            }
+        }));
+    }
+
+    @Override
+    public KeyedBossBar getBossBar(NamespacedKey key) {
+        Preconditions.checkArgument(key != null, "key");
+        net.minecraft.entity.boss.CommandBossBar bossBattleCustom = getServer().getBossBarManager().get(CraftNamespacedKey.toMinecraft(key));
+        return (bossBattleCustom == null) ? null : (KeyedBossBar) ((IMixinEntity)bossBattleCustom).getBukkitEntity();
+    }
+
+    @Override
+    public boolean removeBossBar(NamespacedKey key) {
+        Preconditions.checkArgument(key != null, "key");
+        net.minecraft.entity.boss.BossBarManager bossBattleCustomData = getServer().getBossBarManager();
+        net.minecraft.entity.boss.CommandBossBar bossBattleCustom = bossBattleCustomData.get(CraftNamespacedKey.toMinecraft(key));
+
+        if (bossBattleCustom != null) {
+            bossBattleCustomData.remove(bossBattleCustom);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public ChunkData createChunkData(World arg0) {
-        // TODO Auto-generated method stub
-        return null;
+        return new ChunkDataImpl(arg0);
     }
 
     @Override
@@ -731,9 +773,40 @@ public class CraftServer implements Server {
         return new DataPackSettings(list, list2);
     }
 
-    public ChunkGenerator getGenerator(String name) {
-        // TODO Auto-generated method stub
-        return null;
+    public ChunkGenerator getGenerator(String world) {
+        ConfigurationSection section = configuration.getConfigurationSection("worlds");
+        ChunkGenerator result = null;
+
+        if (section != null) {
+            section = section.getConfigurationSection(world);
+
+            if (section != null) {
+                String name = section.getString("generator");
+
+                if ((name != null) && (!name.equals(""))) {
+                    String[] split = name.split(":", 2);
+                    String id = (split.length > 1) ? split[1] : null;
+                    Plugin plugin = pluginManager.getPlugin(split[0]);
+
+                    if (plugin == null) {
+                        getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + split[0] + "' does not exist");
+                    } else if (!plugin.isEnabled()) {
+                        getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' is not enabled yet (is it load:STARTUP?)");
+                    } else {
+                        try {
+                            result = plugin.getDefaultWorldGenerator(world, id);
+                            if (result == null) {
+                                getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' lacks a default world generator");
+                            }
+                        } catch (Throwable t) {
+                            plugin.getLogger().log(Level.SEVERE, "Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName(), t);
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -753,8 +826,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getAllowEnd() {
-        // TODO Auto-generated method stub
-        return true;
+        return this.configuration.getBoolean("settings.allow-end");
     }
 
     @Override
@@ -795,18 +867,6 @@ public class CraftServer implements Server {
         Set<OfflinePlayer> set = Sets.newHashSet();
         for (String s : getServer().getPlayerManager().getUserBanList().getNames())
             set.add(getOfflinePlayer(s));
-        return null;
-    }
-
-    @Override
-    public KeyedBossBar getBossBar(NamespacedKey arg0) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Iterator<KeyedBossBar> getBossBars() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -1294,12 +1354,6 @@ public class CraftServer implements Server {
     @Override
     public void reloadWhitelist() {
         server.getPlayerManager().reloadWhitelist();
-    }
-
-    @Override
-    public boolean removeBossBar(NamespacedKey arg0) {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     @Override

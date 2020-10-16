@@ -19,6 +19,7 @@
     "MixinAdvancement",
     "MixinStatHandler",
     "MixinTradeOffer",
+    "MixinServerBossBar",
 
     "world.MixinServerWorld",
     "world.MixinWorld",

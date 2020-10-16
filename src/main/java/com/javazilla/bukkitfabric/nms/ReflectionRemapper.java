@@ -133,7 +133,7 @@ public class ReflectionRemapper {
         }
             
         try {
-            return calling.getDeclaredMethod(MappingsReader.getIntermedMethod(calling.getName(), f));
+            return calling.getMethod(MappingsReader.getIntermedMethod(calling.getName(), f));
         } catch (NoSuchMethodException | SecurityException e) {
             try {
                 Method a = calling.getDeclaredMethod(MappingsReader.getIntermedMethod(calling.getName(), f));

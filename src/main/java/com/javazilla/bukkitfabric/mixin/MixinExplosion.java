@@ -35,6 +35,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -213,10 +216,12 @@ public class MixinExplosion {
      * @reason Explosion Events
      */
     @SuppressWarnings("unused")
-    @Overwrite
-    public void collectBlocksAndDamageEntities() {
-        if (this.power < 0.1F)
+    @Inject(at = @At("HEAD"), method = "collectBlocksAndDamageEntities", cancellable = true)
+    public void collectBlocksAndDamageEntities(CallbackInfo ci) {
+        if (this.power < 0.1F) {
+            ci.cancel();
             return;
+        }
         Set<BlockPos> set = Sets.newHashSet();
         int i;int j;
 
@@ -240,8 +245,7 @@ public class MixinExplosion {
                             BlockState iblockdata = this.world.getBlockState(blockposition);
                             FluidState fluid = this.world.getFluidState(blockposition);
                             Optional<Float> optional = this.behavior.getBlastResistance((Explosion)(Object)this, this.world, blockposition, iblockdata, fluid);
-                            if (optional.isPresent())
-                                f -= ((Float) optional.get() + 0.3F) * 0.3F;
+                            if (optional.isPresent()) f -= ((Float) optional.get() + 0.3F) * 0.3F;
                             if (f > 0.0F && this.behavior.canDestroyBlock((Explosion)(Object)this, this.world, blockposition, iblockdata, f) && blockposition.getY() < 256 && blockposition.getY() >= 0)
                                 set.add(blockposition);
                             d4 += d0 * 0.30000001192092896D;
@@ -305,6 +309,8 @@ public class MixinExplosion {
             }
         }
 
+        ci.cancel();
+        return;
     }
 
 }
