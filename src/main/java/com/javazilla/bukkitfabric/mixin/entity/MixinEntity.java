@@ -20,6 +20,7 @@ import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
 import com.javazilla.bukkitfabric.impl.entity.ArmorStandImpl;
 import com.javazilla.bukkitfabric.impl.entity.ArrowImpl;
+import com.javazilla.bukkitfabric.impl.entity.CatImpl;
 import com.javazilla.bukkitfabric.impl.entity.CaveSpiderImpl;
 import com.javazilla.bukkitfabric.impl.entity.ChickenImpl;
 import com.javazilla.bukkitfabric.impl.entity.CowImpl;
@@ -27,6 +28,7 @@ import com.javazilla.bukkitfabric.impl.entity.CreatureImpl;
 import com.javazilla.bukkitfabric.impl.entity.CreeperImpl;
 import com.javazilla.bukkitfabric.impl.entity.DrownedImpl;
 import com.javazilla.bukkitfabric.impl.entity.EggImpl;
+import com.javazilla.bukkitfabric.impl.entity.EndermanImpl;
 import com.javazilla.bukkitfabric.impl.entity.EndermiteImpl;
 import com.javazilla.bukkitfabric.impl.entity.ExperienceOrbImpl;
 import com.javazilla.bukkitfabric.impl.entity.FallingBlockImpl;
@@ -37,18 +39,24 @@ import com.javazilla.bukkitfabric.impl.entity.LightningStrikeImpl;
 import com.javazilla.bukkitfabric.impl.entity.MagmaCubeImpl;
 import com.javazilla.bukkitfabric.impl.entity.MonsterImpl;
 import com.javazilla.bukkitfabric.impl.entity.MushroomImpl;
+import com.javazilla.bukkitfabric.impl.entity.OcelotImpl;
+import com.javazilla.bukkitfabric.impl.entity.ParrotImpl;
 import com.javazilla.bukkitfabric.impl.entity.PigZombieImpl;
+import com.javazilla.bukkitfabric.impl.entity.PolarBearImpl;
 import com.javazilla.bukkitfabric.impl.entity.SkeletonImpl;
 import com.javazilla.bukkitfabric.impl.entity.SlimeImpl;
 import com.javazilla.bukkitfabric.impl.entity.SnowballImpl;
 import com.javazilla.bukkitfabric.impl.entity.SpiderImpl;
 import com.javazilla.bukkitfabric.impl.entity.StrayImpl;
+import com.javazilla.bukkitfabric.impl.entity.TntImpl;
 import com.javazilla.bukkitfabric.impl.entity.TridentImpl;
+import com.javazilla.bukkitfabric.impl.entity.TurtleImpl;
 import com.javazilla.bukkitfabric.impl.entity.UnknownEntity;
 import com.javazilla.bukkitfabric.impl.entity.VillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.VillagerZombieImpl;
 import com.javazilla.bukkitfabric.impl.entity.WanderingTraderImpl;
 import com.javazilla.bukkitfabric.impl.entity.WitherSkeletonImpl;
+import com.javazilla.bukkitfabric.impl.entity.WolfImpl;
 import com.javazilla.bukkitfabric.impl.entity.ZombieImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -59,6 +67,7 @@ import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -66,6 +75,7 @@ import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.CaveSpiderEntity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.DrownedEntity;
+import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.mob.EndermiteEntity;
 import net.minecraft.entity.mob.GiantEntity;
 import net.minecraft.entity.mob.GuardianEntity;
@@ -85,11 +95,18 @@ import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.passive.AbstractTraderEntity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
+import net.minecraft.entity.passive.OcelotEntity;
+import net.minecraft.entity.passive.ParrotEntity;
+import net.minecraft.entity.passive.PolarBearEntity;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -170,14 +187,14 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                     else if (entity instanceof CowEntity) {
                         if (entity instanceof MooshroomEntity) { return new MushroomImpl(server, (MooshroomEntity) entity); }
                         else { return new CowImpl(server, (CowEntity) entity); }
-                    }/*
-                    else if (entity instanceof PigEntity) { return new CraftPig(server, (PigEntity) entity); }
-                    else if (entity instanceof TameableEntity) {
-                        if (entity instanceof WolfEntity) { return new CraftWolf(server, (WolfEntity) entity); }
-                        else if (entity instanceof CatEntity) { return new CraftCat(server, (CatEntity) entity); }
-                        else if (entity instanceof ParrotEntity) { return new CraftParrot(server, (ParrotEntity) entity); }
                     }
-                    else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
+                    //else if (entity instanceof PigEntity) { return new CraftPig(server, (PigEntity) entity); }
+                    else if (entity instanceof TameableEntity) {
+                        if (entity instanceof WolfEntity) { return new WolfImpl(server, (WolfEntity) entity); }
+                        else if (entity instanceof CatEntity) { return new CatImpl(server, (CatEntity) entity); }
+                        else if (entity instanceof ParrotEntity) { return new ParrotImpl(server, (ParrotEntity) entity); }
+                    }
+                    /*else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
                     else if (entity instanceof HorseBaseEntity) {
                         if (entity instanceof AbstractDonkeyEntity){
                             if (entity instanceof DonkeyEntity) { return new CraftDonkey(server, (DonkeyEntity) entity); }
@@ -189,11 +206,11 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                         else if (entity instanceof ZombieHorseEntity) { return new CraftZombieHorse(server, (ZombieHorseEntity) entity); }
                     }*/
                     //else if (entity instanceof RabbitEntity) { return new CraftRabbit(server, (RabbitEntity) entity); }
-                    //else if (entity instanceof PolarBearEntity) { return new CraftPolarBear(server, (PolarBearEntity) entity); }
-                    //else if (entity instanceof TurtleEntity) { return new CraftTurtle(server, (TurtleEntity) entity); }
-                    //else if (entity instanceof OcelotEntity) { return new CraftOcelot(server, (OcelotEntity) entity); }
+                    else if (entity instanceof PolarBearEntity) { return new PolarBearImpl(server, (PolarBearEntity) entity); }
+                    else if (entity instanceof TurtleEntity) { return new TurtleImpl(server, (TurtleEntity) entity); }
+                    else if (entity instanceof OcelotEntity) { return new OcelotImpl(server, (OcelotEntity) entity); }
                     //else if (entity instanceof PandaEntity) { return new CraftPanda(server, (PandaEntity) entity); }
-                   // else if (entity instanceof FoxEntity) { return new CraftFox(server, (FoxEntity) entity); }
+                    //else if (entity instanceof FoxEntity) { return new CraftFox(server, (FoxEntity) entity); }
                     //else if (entity instanceof BeeEntity) { return new CraftBee(server, (BeeEntity) entity); }
                     //else if (entity instanceof HoglinEntity) { return new CraftHoglin(server, (HoglinEntity) entity); }
                     //else if (entity instanceof StriderEntity) { return new CraftStrider(server, (StriderEntity) entity); }
@@ -209,7 +226,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                         else { return new ZombieImpl(server, (ZombieEntity) entity); }
                     }
                     else if (entity instanceof CreeperEntity) { return new CreeperImpl(server, (CreeperEntity) entity); }
-                    //else if (entity instanceof EndermanEntity) { return new CraftEnderman(server, (EndermanEntity) entity); }
+                    else if (entity instanceof EndermanEntity) { return new EndermanImpl(server, (EndermanEntity) entity); }
                     //else if (entity instanceof SilverfishEntity) { return new CraftSilverfish(server, (SilverfishEntity) entity); }
                     else if (entity instanceof GiantEntity) { return new GiantImpl(server, (GiantEntity) entity); }
                     else if (entity instanceof AbstractSkeletonEntity) {
@@ -331,7 +348,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             //else if (entity instanceof LeashKnotEntity) { return new CraftLeash(server, (LeashKnotEntity) entity); }
             //else { return new CraftHanging(server, (AbstractDecorationEntity) entity); }
         }
-        //else if (entity instanceof TntEntity) { return new CraftTNTPrimed(server, (TntEntity) entity); }
+        else if (entity instanceof TntEntity) { return new TntImpl(server, (TntEntity) entity); }
         //else if (entity instanceof FireworkRocketEntity) { return new CraftFirework(server, (FireworkRocketEntity) entity); }
         //else if (entity instanceof ShulkerBulletEntity) { return new CraftShulkerBullet(server, (ShulkerBulletEntity) entity); }
         //else if (entity instanceof AreaEffectCloudEntity) { return new CraftAreaEffectCloud(server, (AreaEffectCloudEntity) entity); }
