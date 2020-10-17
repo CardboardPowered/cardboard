@@ -5,11 +5,16 @@ import java.util.concurrent.Executor;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.event.server.MapInitializeEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
+
+import net.minecraft.item.map.MapState;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
@@ -36,6 +41,20 @@ public class MixinServerWorld extends MixinWorld {
         if (!cc) {
             org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getWorldImpl())); // WorldSaveEvent
         }
+    }
+
+    /**
+     * @reason MapInitalizeEvent
+     * @author BukkitFabricMod
+     */
+    @Overwrite
+    public MapState getMapState(String s) {
+        return (MapState) CraftServer.INSTANCE.getServer().getOverworld().getPersistentStateManager().get(() -> {
+            MapState newMap = new MapState(s);
+            MapInitializeEvent event = new MapInitializeEvent(((IMixinMapState)newMap).getMapViewBF());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            return newMap;
+        }, s);
     }
 
 }
