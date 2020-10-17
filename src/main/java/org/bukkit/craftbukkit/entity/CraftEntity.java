@@ -14,6 +14,8 @@ import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -33,7 +35,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -50,7 +51,10 @@ import net.minecraft.util.math.Vec3d;
 public abstract class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     protected static PermissibleBase perm;
+    private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
+
     public net.minecraft.entity.Entity nms;
+    private final CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 
     protected final CraftServer server = CraftServer.INSTANCE;
 
@@ -175,8 +179,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public PersistentDataContainer getPersistentDataContainer() {
-        // TODO Auto-generated method stub
-        return null;
+        return persistentDataContainer;
     }
 
     @Override

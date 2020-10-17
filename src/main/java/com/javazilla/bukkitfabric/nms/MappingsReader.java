@@ -41,6 +41,7 @@ public class MappingsReader {
     public static Mappings MAPPINGS;
     public static HashMap<String, String> METHODS;
     public static HashMap<String, String> METHODS2;
+    public static HashMap<String, String> METHODS3;
 
     public static Logger LOGGER = LogManager.getLogger("BukkitNmsRemapper");
 
@@ -51,6 +52,7 @@ public class MappingsReader {
         MAPPINGS = MappingsFormat.COMPACT_SEARGE_FORMAT.parseFile(f);
         METHODS = new HashMap<>();
         METHODS2 = new HashMap<>();
+        METHODS3 = new HashMap<>();
         LOGGER.info("Reflection working: " + MAPPINGS.getNewClass("net.minecraft.server.MinecraftKey").getName().equalsIgnoreCase("net.minecraft.class_2960"));
 
         MAPPINGS.forEachMethod((spigot, intermed) -> {
@@ -64,7 +66,16 @@ public class MappingsReader {
                 METHODS2.remove(sN + intermed.getSignature().getDescriptor());
                 put = false;
             }
-            if (sN.length() > 2 && iN.length() > 2 && put) METHODS2.put(sN + intermed.getSignature().getDescriptor(), iN);
+            if (sN.length() > 0 && iN.length() > 2 && put) METHODS2.put(sN + intermed.getSignature().getDescriptor(), iN);
+
+            boolean put3 = true;
+            String sig = intermed.getSignature().toString();
+            String key = (clazz + "=" + sN + sig.substring(0, sig.indexOf(")")+1));
+            if (METHODS3.containsKey(key)) {
+                METHODS3.remove(key);
+                put3 = false;
+            }
+            if (sN.length() > 0 && iN.length() > 2 && put3) METHODS3.put(key, iN);
         });
     }
 
@@ -84,12 +95,12 @@ public class MappingsReader {
     }
 
     public static File exportResource(String res, File folder) {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+        /*if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
             // Development Builds
             File f = new File("C:\\Users\\isaia\\Desktop\\MinecraftMappings\\mappings\\1.16.3\\spigot2yarn.csrg");
             if (f.exists())
                 return f;
-        }
+        }*/
 
         try (InputStream stream = MappingsReader.class.getClassLoader().getResourceAsStream("mappings/" + res)) {
             if (stream == null) throw new IOException("Null " + res);
@@ -98,6 +109,29 @@ public class MappingsReader {
             Files.copy(stream, p, StandardCopyOption.REPLACE_EXISTING);
             return p.toFile();
         } catch (IOException e) { e.printStackTrace(); return null;}
+    }
+
+    public static String getIntermedMethod(String name, String spigot, Class<?>[] parms) {
+        String sig = "(";
+        for (Class<?> clazz : parms)
+            sig += clazz.getName().substring(clazz.getName().lastIndexOf(".")+1) + ",";
+
+        sig += ")";
+        sig = sig.replace(",)", ")");
+ 
+        System.out.println("DEBUG: " + (name + "=" + spigot + sig));
+
+        if (METHODS3.containsKey((name + "=" + spigot + sig)))
+            return METHODS3.getOrDefault((name + "=" + spigot + sig), spigot);
+        try {
+            String iclazz = ReflectionRemapper.mapClassName(name);
+            Class<?> cl = Class.forName(iclazz);
+            Class<?> parent = cl.getSuperclass();
+            if (null != parent) {
+                String pname = parent.getName();
+                return METHODS3.getOrDefault((pname + "=" + spigot + sig), spigot);
+            } else return spigot;
+        } catch (Exception e) { return getIntermedMethod(name, spigot); }
     }
 
     public static String getIntermedMethod(String name, String spigot) {

@@ -153,6 +153,36 @@ public class ReflectionRemapper {
         }
     }
 
+    public static Method getDeclaredMethodByName(Class<?> calling, String f, Class<?>[] parms) throws ClassNotFoundException {
+        if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
+            try {
+                return ReflectionRemapper.class.getMethod("getNmsServer");
+            } catch (NoSuchMethodException | SecurityException e) {
+                e.printStackTrace();
+            }
+        }
+            
+        try {
+            return calling.getMethod(MappingsReader.getIntermedMethod(calling.getName(), f, parms), parms);
+        } catch (NoSuchMethodException | SecurityException e) {
+            try {
+                Method a = calling.getDeclaredMethod(MappingsReader.getIntermedMethod(calling.getName(), f, parms), parms);
+                a.setAccessible(true);
+                return a;
+            } catch (NoSuchMethodException | SecurityException e1) {
+                Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
+                try {
+                    Method a = whyIsAsmBroken.getDeclaredMethod(MappingsReader.getIntermedMethod(whyIsAsmBroken.getName(), f), parms);
+                    a.setAccessible(true);
+                    return a;
+                } catch (NoSuchMethodException | SecurityException e2) {
+                    e1.printStackTrace();
+                }
+                return getDeclaredMethodByName(calling, f);
+            }
+        }
+    }
+
     /**
      * Retrieve a class that is from a plugin
      * 

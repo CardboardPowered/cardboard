@@ -8,19 +8,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 @Mixin(CreeperEntity.class)
-public class MixinCreeperEntity extends HostileEntity {
+public abstract class MixinCreeperEntity extends Entity {
 
-    protected MixinCreeperEntity(EntityType<? extends HostileEntity> entityType, World world) {
-        super(entityType, world);
+    public MixinCreeperEntity(EntityType<?> type, World world) {
+        super(type, world);
     }
 
     @Shadow

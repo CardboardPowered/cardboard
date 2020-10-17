@@ -13,6 +13,8 @@ org/bukkit/craftbukkit/entity/CraftMonster com/javazilla/bukkitfabric/impl/entit
 org/bukkit/craftbukkit/entity/CraftAbstractVillager com/javazilla/bukkitfabric/impl/entity/AbstractVillagerImpl
 org/bukkit/craftbukkit/entity/CraftVillager com/javazilla/bukkitfabric/impl/entity/VillagerImpl
 org/bukkit/craftbukkit/scheduler/CraftScheduler com/javazilla/bukkitfabric/impl/BukkitSchedulerImpl
+org/bukkit/craftbukkit/entity/CraftVillager com/javazilla/bukkitfabric/impl/entity/VillagerImpl
+org/bukkit/craftbukkit/entity/CraftArmorStand com/javazilla/bukkitfabric/impl/entity/ArmorStandImpl
 
 aa$a a (Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/server/AdvancementProgress; method_745
 aa$a a (Lnet/minecraft/server/AdvancementProgress;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement; method_744

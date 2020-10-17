@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
@@ -19,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
+import com.javazilla.bukkitfabric.impl.entity.ArmorStandImpl;
 import com.javazilla.bukkitfabric.impl.entity.CaveSpiderImpl;
 import com.javazilla.bukkitfabric.impl.entity.ChickenImpl;
 import com.javazilla.bukkitfabric.impl.entity.CowImpl;
@@ -276,7 +276,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 //if (entity instanceof BatEntity) { return new CraftBat(server, (BatEntity) entity); }
                 //else { return new CraftAmbient(server, (AmbientEntity) entity); }
             //}
-            else if (entity instanceof ArmorStandEntity) { return new CraftArmorStand(server, (ArmorStandEntity) entity); }
+            else if (entity instanceof ArmorStandEntity) { return new ArmorStandImpl(server, (ArmorStandEntity) entity); }
             else  { return new CraftLivingEntity(server, (LivingEntity) entity); }
         }
         else if (entity instanceof EnderDragonPart) {

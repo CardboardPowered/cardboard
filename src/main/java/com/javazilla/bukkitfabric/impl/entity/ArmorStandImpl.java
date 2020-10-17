@@ -1,7 +1,8 @@
-package org.bukkit.craftbukkit.entity;
+package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
@@ -10,9 +11,9 @@ import org.bukkit.util.EulerAngle;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinArmorStandEntity;
 
-public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
+public class ArmorStandImpl extends CraftLivingEntity implements ArmorStand {
 
-    public CraftArmorStand(CraftServer server, ArmorStandEntity entity) {
+    public ArmorStandImpl(CraftServer server, ArmorStandEntity entity) {
         super(server, entity);
     }
 
