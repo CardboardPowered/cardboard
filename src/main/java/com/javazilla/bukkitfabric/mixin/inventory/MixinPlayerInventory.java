@@ -11,6 +11,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +19,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 @Mixin(PlayerInventory.class)
-public class MixinPlayerInventory implements IMixinInventory {
+public class MixinPlayerInventory implements IMixinInventory, IMixinPlayerInventory {
 
     private PlayerInventory get() {
         return (PlayerInventory) (Object) this;
@@ -63,6 +64,25 @@ public class MixinPlayerInventory implements IMixinInventory {
     @Override
     public int getMaxStackSize() {
         return get().getMaxCountPerStack();
+    }
+
+    @Override
+    public int canHold(ItemStack itemstack) {
+        int remains = itemstack.getCount();
+        for (int i = 0; i < get().main.size(); ++i) {
+            ItemStack itemstack1 = get().getStack(i);
+            if (itemstack1.isEmpty()) return itemstack.getCount();
+
+            if (get().canStackAddMore(itemstack1, itemstack))
+                remains -= (itemstack1.getMaxCount() < getMaxStackSize() ? itemstack1.getMaxCount() : getMaxStackSize()) - itemstack1.getCount();
+            if (remains <= 0) return itemstack.getCount();
+        }
+        ItemStack offhandItemStack = get().getStack(get().main.size() + get().armor.size());
+        if (get().canStackAddMore(offhandItemStack, itemstack))
+            remains -= (offhandItemStack.getMaxCount() < get().getMaxCountPerStack() ? offhandItemStack.getMaxCount() : get().getMaxCountPerStack()) - offhandItemStack.getCount();
+        if (remains <= 0) return itemstack.getCount();
+
+        return itemstack.getCount() - remains;
     }
 
 }

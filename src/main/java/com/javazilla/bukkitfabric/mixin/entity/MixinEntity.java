@@ -117,6 +117,7 @@ import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.world.World;
 
 @Mixin(Entity.class)
 public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
@@ -126,6 +127,9 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     @Shadow
     public Random random;
+
+    @Shadow
+    public World world;
 
     public MixinEntity() {
         this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);//new CraftEntity2((Entity) (Object) this);
