@@ -114,6 +114,7 @@
     "item.MixinEndCrystalItem",
     "item.MixinSkullItem",
     "item.MixinFilledMapItem",
+    "item.MixinChorusFruitItem",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
