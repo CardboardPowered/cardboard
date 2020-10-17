@@ -44,6 +44,7 @@
     "entity.MixinThrownItemEntity",
     "entity.MixinSlimeEntity",
     "entity.MixinCreeperEntity",
+    "entity.MixinPersistentProjectileEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

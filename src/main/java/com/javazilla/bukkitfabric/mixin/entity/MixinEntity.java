@@ -19,10 +19,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
 import com.javazilla.bukkitfabric.impl.entity.ArmorStandImpl;
+import com.javazilla.bukkitfabric.impl.entity.ArrowImpl;
 import com.javazilla.bukkitfabric.impl.entity.CaveSpiderImpl;
 import com.javazilla.bukkitfabric.impl.entity.ChickenImpl;
 import com.javazilla.bukkitfabric.impl.entity.CowImpl;
 import com.javazilla.bukkitfabric.impl.entity.CreatureImpl;
+import com.javazilla.bukkitfabric.impl.entity.CreeperImpl;
 import com.javazilla.bukkitfabric.impl.entity.DrownedImpl;
 import com.javazilla.bukkitfabric.impl.entity.EggImpl;
 import com.javazilla.bukkitfabric.impl.entity.EndermiteImpl;
@@ -41,6 +43,7 @@ import com.javazilla.bukkitfabric.impl.entity.SlimeImpl;
 import com.javazilla.bukkitfabric.impl.entity.SnowballImpl;
 import com.javazilla.bukkitfabric.impl.entity.SpiderImpl;
 import com.javazilla.bukkitfabric.impl.entity.StrayImpl;
+import com.javazilla.bukkitfabric.impl.entity.TridentImpl;
 import com.javazilla.bukkitfabric.impl.entity.UnknownEntity;
 import com.javazilla.bukkitfabric.impl.entity.VillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.VillagerZombieImpl;
@@ -61,6 +64,7 @@ import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import net.minecraft.entity.mob.CaveSpiderEntity;
+import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.DrownedEntity;
 import net.minecraft.entity.mob.EndermiteEntity;
 import net.minecraft.entity.mob.GiantEntity;
@@ -89,6 +93,7 @@ import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.thrown.EggEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
@@ -203,7 +208,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                         else if (entity instanceof DrownedEntity) { return new DrownedImpl(server, (DrownedEntity) entity); }
                         else { return new ZombieImpl(server, (ZombieEntity) entity); }
                     }
-                    //else if (entity instanceof CreeperEntity) { return new CraftCreeper(server, (CreeperEntity) entity); }
+                    else if (entity instanceof CreeperEntity) { return new CreeperImpl(server, (CreeperEntity) entity); }
                     //else if (entity instanceof EndermanEntity) { return new CraftEnderman(server, (EndermanEntity) entity); }
                     //else if (entity instanceof SilverfishEntity) { return new CraftSilverfish(server, (SilverfishEntity) entity); }
                     else if (entity instanceof GiantEntity) { return new GiantImpl(server, (GiantEntity) entity); }
@@ -288,8 +293,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         //else if (entity instanceof ArrowEntity) { return new CraftTippedArrow(server, (ArrowEntity) entity); }
         //else if (entity instanceof SpectralArrowEntity) { return new CraftSpectralArrow(server, (SpectralArrowEntity) entity); }
         else if (entity instanceof PersistentProjectileEntity) {
-            //if (entity instanceof TridentEntity) { return new CraftTrident(server, (TridentEntity) entity); }
-            //else { return new CraftArrow(server, (PersistentProjectileEntity) entity); }
+            if (entity instanceof TridentEntity) { return new TridentImpl(server, (TridentEntity) entity); }
+            else { return new ArrowImpl(server, (PersistentProjectileEntity) entity); }
         }
         //else if (entity instanceof BoatEntity) { return new CraftBoat(server, (BoatEntity) entity); }
         else if (entity instanceof ThrownEntity) {

@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinCreeperEntity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -17,7 +18,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 @Mixin(CreeperEntity.class)
-public abstract class MixinCreeperEntity extends Entity {
+public abstract class MixinCreeperEntity extends Entity implements IMixinCreeperEntity {
 
     public MixinCreeperEntity(EntityType<?> type, World world) {
         super(type, world);
@@ -25,6 +26,12 @@ public abstract class MixinCreeperEntity extends Entity {
 
     @Shadow
     public static TrackedData<Boolean> CHARGED;
+
+    @Shadow
+    public int explosionRadius = 3;
+
+    @Shadow
+    public int fuseTime = 30;
 
     @Inject(at = @At("HEAD"), method="onStruckByLightning", cancellable = true)
     public void invokeCreeperPowerEvent(ServerWorld worldserver, LightningEntity lightning, CallbackInfo ci) {
@@ -38,8 +45,44 @@ public abstract class MixinCreeperEntity extends Entity {
         return;
     }
 
+    @Override
     public void setPowered(boolean powered) {
         this.dataTracker.set(CHARGED, powered);
     }
+
+    @Override
+    public void explodeBF() {
+        explode();
+    }
+
+    @Shadow
+    public void explode() {
+    }
+
+    @Override
+    public int getExplosionRadiusBF() {
+        return explosionRadius;
+    }
+
+    @Override
+    public void setExplosionRadiusBF(int radius) {
+        this.explosionRadius = radius;
+    }
+
+    @Override
+    public void setFuseTimeBF(int ticks) {
+        this.fuseTime = ticks;
+    }
+
+    @Override
+    public int getFuseTimeBF() {
+        return this.fuseTime;
+    }
+
+    @Override
+    public boolean isPoweredBF() {
+        return (Boolean) this.dataTracker.get(CHARGED);
+    }
+
 
 }
