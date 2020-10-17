@@ -30,7 +30,6 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.techcable.srglib.FieldData;
 import net.techcable.srglib.JavaType;
 import net.techcable.srglib.format.MappingsFormat;
@@ -95,13 +94,6 @@ public class MappingsReader {
     }
 
     public static File exportResource(String res, File folder) {
-        /*if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            // Development Builds
-            File f = new File("C:\\Users\\isaia\\Desktop\\MinecraftMappings\\mappings\\1.16.3\\spigot2yarn.csrg");
-            if (f.exists())
-                return f;
-        }*/
-
         try (InputStream stream = MappingsReader.class.getClassLoader().getResourceAsStream("mappings/" + res)) {
             if (stream == null) throw new IOException("Null " + res);
 
@@ -119,8 +111,6 @@ public class MappingsReader {
         sig += ")";
         sig = sig.replace(",)", ")");
  
-        System.out.println("DEBUG: " + (name + "=" + spigot + sig));
-
         if (METHODS3.containsKey((name + "=" + spigot + sig)))
             return METHODS3.getOrDefault((name + "=" + spigot + sig), spigot);
         try {

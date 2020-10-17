@@ -106,6 +106,7 @@
     "screen.MixinShulkerBoxScreenHandler",
     "screen.MixinSmithingScreenHandler",
     "screen.MixinStonecutterScreenHandler",
+    "screen.MixinGrindstoneScreenHandler",
 
     "item.MixinDyeItem",
     "item.MixinEndCrystalItem",
