@@ -87,6 +87,7 @@
     "inventory.MixinCraftingResultInventory",
     "inventory.MixinEnderChestInventory",
     "inventory.MixinDoubleInventory",
+    "inventory.MixinTraderInventory",
 
     "screen.MixinScreenHandler",
     "screen.MixinScreenHandlerContext",
