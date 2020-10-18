@@ -1,13 +1,16 @@
 package org.bukkit.craftbukkit.entity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
@@ -32,19 +35,24 @@ import org.bukkit.craftbukkit.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
+import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
@@ -87,6 +95,7 @@ import net.minecraft.network.PacketByteBuf;
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
 
+    private final Set<String> channels = new HashSet<String>();
     public ServerPlayerEntity nms;
 
     public CraftPlayer(ServerPlayerEntity entity) {
@@ -133,33 +142,93 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void decrementStatistic(Statistic arg0) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+    public void incrementStatistic(Statistic statistic) {
+        CraftStatistic.incrementStatistic(getHandle().getStatHandler(), statistic);
     }
 
     @Override
-    public void decrementStatistic(Statistic arg0, int arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+    public void decrementStatistic(Statistic statistic) {
+        CraftStatistic.decrementStatistic(getHandle().getStatHandler(), statistic);
     }
 
     @Override
-    public void decrementStatistic(Statistic arg0, Material arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+    public int getStatistic(Statistic statistic) {
+        return CraftStatistic.getStatistic(getHandle().getStatHandler(), statistic);
     }
 
     @Override
-    public void decrementStatistic(Statistic arg0, EntityType arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+    public void incrementStatistic(Statistic statistic, int amount) {
+        CraftStatistic.incrementStatistic(getHandle().getStatHandler(), statistic, amount);
     }
 
     @Override
-    public void decrementStatistic(Statistic arg0, Material arg1, int arg2) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+    public void decrementStatistic(Statistic statistic, int amount) {
+        CraftStatistic.decrementStatistic(getHandle().getStatHandler(), statistic, amount);
     }
 
     @Override
-    public void decrementStatistic(Statistic arg0, EntityType arg1, int arg2) {
-        // TODO Auto-generated method stub
+    public void setStatistic(Statistic statistic, int newValue) {
+        CraftStatistic.setStatistic(getHandle().getStatHandler(), statistic, newValue);
+    }
+
+    @Override
+    public void incrementStatistic(Statistic statistic, Material material) {
+        CraftStatistic.incrementStatistic(getHandle().getStatHandler(), statistic, material);
+    }
+
+    @Override
+    public void decrementStatistic(Statistic statistic, Material material) {
+        CraftStatistic.decrementStatistic(getHandle().getStatHandler(), statistic, material);
+    }
+
+    @Override
+    public int getStatistic(Statistic statistic, Material material) {
+        return CraftStatistic.getStatistic(getHandle().getStatHandler(), statistic, material);
+    }
+
+    @Override
+    public void incrementStatistic(Statistic statistic, Material material, int amount) {
+        CraftStatistic.incrementStatistic(getHandle().getStatHandler(), statistic, material, amount);
+    }
+
+    @Override
+    public void decrementStatistic(Statistic statistic, Material material, int amount) {
+        CraftStatistic.decrementStatistic(getHandle().getStatHandler(), statistic, material, amount);
+    }
+
+    @Override
+    public void setStatistic(Statistic statistic, Material material, int newValue) {
+        CraftStatistic.setStatistic(getHandle().getStatHandler(), statistic, material, newValue);
+    }
+
+    @Override
+    public void incrementStatistic(Statistic statistic, EntityType entityType) {
+        CraftStatistic.incrementStatistic(getHandle().getStatHandler(), statistic, entityType);
+    }
+
+    @Override
+    public void decrementStatistic(Statistic statistic, EntityType entityType) {
+        CraftStatistic.decrementStatistic(getHandle().getStatHandler(), statistic, entityType);
+    }
+
+    @Override
+    public int getStatistic(Statistic statistic, EntityType entityType) {
+        return CraftStatistic.getStatistic(getHandle().getStatHandler(), statistic, entityType);
+    }
+
+    @Override
+    public void incrementStatistic(Statistic statistic, EntityType entityType, int amount) {
+        CraftStatistic.incrementStatistic(getHandle().getStatHandler(), statistic, entityType, amount);
+    }
+
+    @Override
+    public void decrementStatistic(Statistic statistic, EntityType entityType, int amount) {
+        CraftStatistic.decrementStatistic(getHandle().getStatHandler(), statistic, entityType, amount);
+    }
+
+    @Override
+    public void setStatistic(Statistic statistic, EntityType entityType, int newValue) {
+        CraftStatistic.setStatistic(getHandle().getStatHandler(), statistic, entityType, newValue);
     }
 
     @Override
@@ -185,57 +254,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public int getStatistic(Statistic arg0) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getStatistic(Statistic arg0, Material arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getStatistic(Statistic arg0, EntityType arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
     public boolean hasPlayedBefore() {
         // TODO Auto-generated method stub
         return true;
-    }
-
-    @Override
-    public void incrementStatistic(Statistic arg0) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void incrementStatistic(Statistic arg0, int arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void incrementStatistic(Statistic arg0, Material arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void incrementStatistic(Statistic arg0, EntityType arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void incrementStatistic(Statistic arg0, Material arg1, int arg2) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void incrementStatistic(Statistic arg0, EntityType arg1, int arg2) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
     }
 
     @Override
@@ -259,21 +280,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void setStatistic(Statistic arg0, int arg1) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void setStatistic(Statistic arg0, Material arg1, int arg2) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void setStatistic(Statistic arg0, EntityType arg1, int arg2) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
     public void setWhitelisted(boolean arg0) {
         if (arg0)
             nms.getServer().getPlayerManager().getWhitelist().add(new WhitelistEntry(nms.getGameProfile()));
@@ -287,10 +293,42 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return result;
     }
 
+    public void addChannel(String channel) {
+        Preconditions.checkState(channels.size() < 128, "Cannot register channel '%s'. Too many channels registered!", channel);
+        channel = StandardMessenger.validateAndCorrectChannel(channel);
+        if (channels.add(channel))
+            server.getPluginManager().callEvent(new PlayerRegisterChannelEvent(this, channel));
+    }
+
+    public void removeChannel(String channel) {
+        channel = StandardMessenger.validateAndCorrectChannel(channel);
+        if (channels.remove(channel))
+            server.getPluginManager().callEvent(new PlayerUnregisterChannelEvent(this, channel));
+    }
+
     @Override
     public Set<String> getListeningPluginChannels() {
-        // TODO Auto-generated method stub
-        return null;
+        return ImmutableSet.copyOf(channels);
+    }
+
+    public void sendSupportedChannels() {
+        if (getHandle().networkHandler == null) return;
+        Set<String> listening = server.getMessenger().getIncomingChannels();
+
+        if (!listening.isEmpty()) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+            for (String channel : listening) {
+                try {
+                    stream.write(channel.getBytes("UTF8"));
+                    stream.write((byte) 0);
+                } catch (IOException ex) {
+                    BukkitFabricMod.LOGGER.log(Level.SEVERE, "Could not send Plugin Channel REGISTER to " + getName(), ex);
+                }
+            }
+
+            getHandle().networkHandler.sendPacket(new CustomPayloadS2CPacket(new Identifier("register"), new PacketByteBuf(Unpooled.wrappedBuffer(stream.toByteArray()))));
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -299,11 +337,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         StandardMessenger.validatePluginMessage(Bukkit.getMessenger(), source, channel, message);
         if (getHandle().networkHandler == null) return;
 
-        //if (channels.contains(channel)) {
+        if (channels.contains(channel)) {
             channel = StandardMessenger.validateAndCorrectChannel(channel);
             CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(new Identifier(channel), new PacketByteBuf(Unpooled.wrappedBuffer(message)));
             getHandle().networkHandler.sendPacket(packet);
-        //}
+        }
     }
 
     @Override
@@ -343,7 +381,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public int getClientViewDistance() {
-        return 8; // TODO Get Client view distance not server
+        return Bukkit.getViewDistance(); // TODO Get Client view distance not server
     }
 
     @Override
