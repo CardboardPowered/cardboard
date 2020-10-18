@@ -21,6 +21,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -49,6 +50,7 @@ import net.minecraft.client.options.ChatVisibility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
@@ -58,9 +60,11 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -617,6 +621,26 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
             ci.cancel();
             return;
+        }
+    }
+
+    @Overwrite
+    public void onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packetplayinhelditemslot) {
+        NetworkThreadUtils.forceMainThread(packetplayinhelditemslot, get(), this.player.getServerWorld());
+        if (packetplayinhelditemslot.getSelectedSlot() >= 0 && packetplayinhelditemslot.getSelectedSlot() < PlayerInventory.getHotbarSize()) {
+            PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.player.inventory.selectedSlot, packetplayinhelditemslot.getSelectedSlot());
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                this.sendPacket(new HeldItemChangeS2CPacket(this.player.inventory.selectedSlot));
+                this.player.updateLastActionTime();
+                return;
+            }
+            if (this.player.inventory.selectedSlot != packetplayinhelditemslot.getSelectedSlot() && this.player.getActiveHand() == Hand.MAIN_HAND) this.player.clearActiveItem();
+            this.player.inventory.selectedSlot = packetplayinhelditemslot.getSelectedSlot();
+            this.player.updateLastActionTime();
+        } else {
+            System.out.println(this.player.getName().getString() + " tried to set an invalid carried item");
+            this.disconnect(new LiteralText("Invalid hotbar selection (Hacking?)")); // CraftBukkit
         }
     }
 
