@@ -115,6 +115,7 @@
     "item.MixinSkullItem",
     "item.MixinFilledMapItem",
     "item.MixinChorusFruitItem",
+    "item.MixinItemStack",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],
