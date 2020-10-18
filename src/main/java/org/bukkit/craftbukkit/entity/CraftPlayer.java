@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,7 +38,9 @@ import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
+import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
@@ -46,6 +50,7 @@ import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.map.MapCursor;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
@@ -57,28 +62,35 @@ import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementProgressImpl;
+import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
+import com.javazilla.bukkitfabric.impl.map.RenderData;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinGameMessagePacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancement.PlayerAdvancementTracker;
+import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.map.MapIcon;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -418,7 +430,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public double getHealthScale() {
         // TODO Auto-generated method stub
-        return 0;
+        return 20;
     }
 
     @Override
@@ -463,7 +475,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public WeatherType getPlayerWeather() {
         // TODO Auto-generated method stub
-        return null;
+        return WeatherType.CLEAR;
     }
 
     @Override
@@ -472,7 +484,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public Scoreboard getScoreboard() {
+    public CraftScoreboard getScoreboard() {
         return server.getScoreboardManager().getPlayerBoard(this);
     }
 
@@ -569,8 +581,12 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void playEffect(Location arg0, Effect arg1, int arg2) {
-        // TODO Auto-generated method stub
+    public void playEffect(Location loc, Effect effect, int data) {
+        if (getHandle().networkHandler == null) return;
+
+        int packetData = effect.getId();
+        WorldEventS2CPacket packet = new WorldEventS2CPacket(packetData, new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), data, false);
+        getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
@@ -764,8 +780,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void sendMap(MapView arg0) {
-        // TODO Auto-generated method stub
+    public void sendMap(MapView map) {
+        if (getHandle().networkHandler == null) return;
+
+        RenderData data = ((MapViewImpl) map).render(this);
+        Collection<MapIcon> icons = new ArrayList<MapIcon>();
+        for (MapCursor cursor : data.cursors) {
+            if (cursor.isVisible())
+                icons.add(new MapIcon(MapIcon.Type.byId(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), CraftChatMessage.fromStringOrNull(cursor.getCaption())));
+        }
+
+        MapUpdateS2CPacket packet = new MapUpdateS2CPacket(map.getId(), map.getScale().getValue(), true, map.isLocked(), icons, data.buffer, 0, 0, 128, 128);
+        getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
@@ -782,8 +808,19 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void sendSignChange(Location arg0, String[] arg1, DyeColor arg2) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
+    public void sendSignChange(Location loc, String[] lines, DyeColor dyeColor) {
+        if (getHandle().networkHandler == null) return;
+        if (lines == null) lines = new String[4];
+        if (lines.length < 4)
+            throw new IllegalArgumentException("Must have at least 4 lines");
+
+        Text[] components = CraftSign.sanitizeLines(lines);
+        SignBlockEntity sign = new SignBlockEntity();
+        sign.setPos(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+        sign.setTextColor(net.minecraft.util.DyeColor.byId(dyeColor.getWoolData()));
+        System.arraycopy(components, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, ((IMixinSignBlockEntity)sign).getTextBF().length);
+
+        getHandle().networkHandler.sendPacket(sign.toUpdatePacket());
     }
 
     @Override

@@ -21,6 +21,7 @@
     "MixinTradeOffer",
     "MixinServerBossBar",
     "MixinMapState",
+    "MixinServerScoreboard",
 
     "world.MixinServerWorld",
     "world.MixinWorld",
