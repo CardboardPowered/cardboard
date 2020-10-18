@@ -97,6 +97,7 @@ import org.bukkit.craftbukkit.inventory.CraftSmokingRecipe;
 import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
 import org.bukkit.craftbukkit.inventory.RecipeIterator;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
+import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -269,6 +270,7 @@ public class CraftServer implements Server {
 
     public static MinecraftDedicatedServer server;
     public static CraftServer INSTANCE;
+    public CraftScoreboardManager scoreboardManager;
 
     private final MetadataStoreBase<Entity> entityMetadata = MetadataStoreImpl.newEntityMetadataStore();
     private final MetaDataStoreBase<OfflinePlayer> playerMetadata = MetadataStoreImpl.newPlayerMetadataStore();
@@ -280,6 +282,7 @@ public class CraftServer implements Server {
         server = nms;
         commandMap = new CommandMapImpl(this);
         pluginManager = new SimplePluginManager(this, commandMap);
+        scoreboardManager = new CraftScoreboardManager(nms, server.getScoreboard());
 
         configuration = YamlConfiguration.loadConfiguration(new File("bukkit.yml"));
         configuration.options().copyDefaults(true);
@@ -1145,9 +1148,8 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public ScoreboardManager getScoreboardManager() {
-        // TODO Auto-generated method stub
-        return null;
+    public CraftScoreboardManager getScoreboardManager() {
+        return scoreboardManager;
     }
 
     @Override

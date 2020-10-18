@@ -22,6 +22,7 @@ import org.bukkit.Location;
 
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -31,5 +32,7 @@ public interface IMixinPlayerManager {
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity player, ServerWorld world, boolean flag, Location location, boolean avoidSuffocation);
 
     public ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler loginlistener, GameProfile gameprofile, String hostname);
+
+    public void sendScoreboardBF(ServerScoreboard newboard, ServerPlayerEntity handle);
 
 }

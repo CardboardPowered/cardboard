@@ -3,16 +3,16 @@
  * Copyright (C) 2020 Javazilla Software and contributors
  * 
  * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
+ * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either 
  * version 3 of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * General Public License for more details.
  * 
- * You should have received a copy of the GNU Lesser General Public License
+ * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
@@ -28,7 +28,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -63,6 +62,7 @@ import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerSpawnPositionS2CPacket;
+import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -86,22 +86,22 @@ import net.minecraft.world.WorldProperties;
 import net.minecraft.world.biome.source.BiomeAccess;
 
 @Mixin(PlayerManager.class)
-public abstract class MixinPlayerManager implements IMixinPlayerManager {
+public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Shadow
     public List<ServerPlayerEntity> players;
 
     @Shadow
-    public abstract void sendCommandTree(ServerPlayerEntity player);
+    public void sendCommandTree(ServerPlayerEntity player) {}
 
     @Shadow
-    public abstract void sendWorldInfo(ServerPlayerEntity player, ServerWorld world);
+    public void sendWorldInfo(ServerPlayerEntity player, ServerWorld world) {}
 
     @Shadow
-    public abstract void savePlayerData(ServerPlayerEntity player);
+    public void savePlayerData(ServerPlayerEntity player) {}
 
     @Shadow
-    public abstract void sendPlayerStatus(ServerPlayerEntity player);
+    public void sendPlayerStatus(ServerPlayerEntity player) {}
 
     @Shadow
     public Map<UUID, ServerPlayerEntity> playerMap;
@@ -270,7 +270,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
                 list.add(entityplayer);
         }
 
-        Iterator iterator = list.iterator();
+        Iterator<ServerPlayerEntity> iterator = list.iterator();
 
         while (iterator.hasNext()) {
             entityplayer = (ServerPlayerEntity) iterator.next();
@@ -315,6 +315,15 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
             return null;
         }
         return entity;
+    }
+
+    @Shadow
+    public void sendScoreboard(ServerScoreboard scoreboardserver, ServerPlayerEntity entityplayer) {
+    }
+
+    @Override
+    public void sendScoreboardBF(ServerScoreboard newboard, ServerPlayerEntity handle) {
+        sendScoreboard(newboard, handle);
     }
 
 }

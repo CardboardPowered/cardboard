@@ -73,6 +73,7 @@ import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -434,8 +435,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public Scoreboard getScoreboard() {
-        // TODO Auto-generated method stub
-        return null;
+        return server.getScoreboardManager().getPlayerBoard(this);
     }
 
     @Override
@@ -875,8 +875,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void setScoreboard(Scoreboard arg0) throws IllegalArgumentException, IllegalStateException {
-        // TODO Auto-generated method stub
+    public void setScoreboard(Scoreboard scoreboard) {
+        ServerPlayNetworkHandler playerConnection = getHandle().networkHandler;
+        if (playerConnection == null) throw new IllegalStateException("Cannot set scoreboard yet");
+        if (((IMixinPlayNetworkHandler)playerConnection).isDisconnected())
+            throw new IllegalStateException("Cannot set scoreboard for invalid CraftPlayer");
+
+        this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
     }
 
     @Override
