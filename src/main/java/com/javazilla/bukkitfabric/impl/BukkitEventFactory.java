@@ -65,6 +65,7 @@ import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -370,6 +371,12 @@ public class BukkitEventFactory {
         CreeperPowerEvent event = new CreeperPowerEvent((Creeper) ((IMixinEntity)creeper).getBukkitEntity(), (LightningStrike) ((IMixinEntity)lightning).getBukkitEntity(), cause);
         ((IMixinEntity)creeper).getBukkitEntity().getServer().getPluginManager().callEvent(event);
         return event;
+    }
+
+    public static void callPlayerItemBreakEvent(PlayerEntity human, ItemStack brokenItem) {
+        CraftItemStack item = CraftItemStack.asCraftMirror(brokenItem);
+        PlayerItemBreakEvent event = new PlayerItemBreakEvent((Player) ((IMixinEntity)human).getBukkitEntity(), item);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
 }
