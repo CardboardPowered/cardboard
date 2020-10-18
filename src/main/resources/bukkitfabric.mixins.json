@@ -45,6 +45,7 @@
     "entity.MixinSlimeEntity",
     "entity.MixinCreeperEntity",
     "entity.MixinPersistentProjectileEntity",
+    "entity.MixinLivingEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

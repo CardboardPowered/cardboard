@@ -1223,4 +1223,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return EntityType.PLAYER;
     }
 
+    public void updateScaledHealth() {
+        // TODO Auto-generated method stub
+    }
+
 }
