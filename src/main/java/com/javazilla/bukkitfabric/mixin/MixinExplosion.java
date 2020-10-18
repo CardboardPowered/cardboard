@@ -29,11 +29,9 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.block.BlockExplodeEvent;
-
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -105,8 +103,9 @@ public class MixinExplosion {
      * @author BukkitFabric
      * @reason Explosion Events
      */
-    @Overwrite
-    public void affectWorld(boolean flag) {
+    //@Overwrite
+    @Inject(at = @At("HEAD"), method = "affectWorld", cancellable = true)
+    public void affectWorld(boolean flag, CallbackInfo ci) {
         if (this.world.isClient)
             this.world.playSound(this.x, this.y, this.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2F) * 0.7F, false);
 
@@ -162,6 +161,7 @@ public class MixinExplosion {
 
             if (cancelled) {
                 this.wasCanceled = true;
+                ci.cancel();
                 return;
             }
             iterator = this.affectedBlocks.iterator();
@@ -208,7 +208,8 @@ public class MixinExplosion {
                         this.world.setBlockState(blockposition2, AbstractFireBlock.getState((BlockView) this.world, blockposition2));
             }
         }
-
+        ci.cancel();
+        return;
     }
 
     /**
