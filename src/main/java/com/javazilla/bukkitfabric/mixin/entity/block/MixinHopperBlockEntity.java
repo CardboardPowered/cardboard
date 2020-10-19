@@ -67,7 +67,7 @@ public class MixinHopperBlockEntity implements IMixinInventory {
     @Override public InventoryHolder getOwner() {return null;}
     @Override public Location getLocation() {return null;}
 
-    @Inject(at = @At("HEAD"), method = "extract(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/entity/ItemEntity;)Z")
+    @Inject(at = @At("HEAD"), method = "extract(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/entity/ItemEntity;)Z", cancellable = true)
     private static void extract(net.minecraft.inventory.Inventory iinventory, ItemEntity entityitem, CallbackInfoReturnable<Boolean> ci) {
         if (iinventory instanceof IMixinInventory) {
             InventoryPickupItemEvent event = new InventoryPickupItemEvent(((IMixinInventory)iinventory).getOwner().getInventory(), (org.bukkit.entity.Item) ((IMixinEntity)entityitem).getBukkitEntity());
@@ -77,7 +77,7 @@ public class MixinHopperBlockEntity implements IMixinInventory {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "extract(Lnet/minecraft/block/entity/Hopper;Lnet/minecraft/inventory/Inventory;ILnet/minecraft/util/math/Direction;)Z")
+    @Inject(at = @At("HEAD"), method = "extract(Lnet/minecraft/block/entity/Hopper;Lnet/minecraft/inventory/Inventory;ILnet/minecraft/util/math/Direction;)Z", cancellable = true)
     private static void extract(Hopper ihopper, net.minecraft.inventory.Inventory iinventory, int i, Direction enumdirection, CallbackInfoReturnable<Boolean> ci) {
         ItemStack itemstack = iinventory.getStack(i);
 
