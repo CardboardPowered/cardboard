@@ -7,24 +7,21 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.entity.ItemEntityImpl;
-import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stat.Stats;
 
 @Mixin(ItemEntity.class)
+@SuppressWarnings("deprecation")
 public class MixinItemEntity extends MixinEntity {
 
     @Shadow
@@ -41,13 +38,11 @@ public class MixinItemEntity extends MixinEntity {
 
     /**
      * @reason EntityPickupItemEvent
-     * @author BukkitFabricMod
      */
-    @Overwrite
-    public void onPlayerCollision(PlayerEntity entityhuman) {
+    @Inject(at = @At("HEAD"), method = "onPlayerCollision", cancellable = true)
+    public void fireEntityPickupItemEvent(PlayerEntity entityhuman, CallbackInfo ci) {
         if (this.world.isClient) return;
         ItemStack itemstack = ((ItemEntity)(Object)this).getStack();
-        Item item = itemstack.getItem();
         int i = itemstack.getCount();
 
         // CraftBukkit start - fire PlayerPickupItemEvent
@@ -71,21 +66,12 @@ public class MixinItemEntity extends MixinEntity {
             Bukkit.getServer().getPluginManager().callEvent(entityEvent);
             if (entityEvent.isCancelled()) {
                 itemstack.setCount(i); // SPIGOT-5294 - restore count
+                ci.cancel();
                 return;
             }
             itemstack.setCount(canHold + remaining); // = i
             this.pickupDelay = 0;
         } else if (this.pickupDelay == 0) this.pickupDelay = -1;
-
-        if (this.pickupDelay == 0 && (this.owner == null || this.owner.equals(entityhuman.getUuid())) && entityhuman.inventory.insertStack(itemstack)) {
-            entityhuman.sendPickup((ItemEntity)(Object)this, i);
-            if (itemstack.isEmpty()) {
-                this.remove();
-                itemstack.setCount(i);
-            }
-            entityhuman.increaseStat(Stats.PICKED_UP.getOrCreateStat(item), i);
-            entityhuman.method_29499((ItemEntity)(Object)this);
-        }
     }
 
 }

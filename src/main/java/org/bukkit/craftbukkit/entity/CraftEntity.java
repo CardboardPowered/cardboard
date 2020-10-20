@@ -577,6 +577,10 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         return perm;
     }
 
+    org.bukkit.entity.Entity.Spigot spigot = new org.bukkit.entity.Entity.Spigot() {
+        
+    };
+
     @Override
     public org.bukkit.entity.Entity.Spigot spigot() {
         // TODO Auto-generated method stub

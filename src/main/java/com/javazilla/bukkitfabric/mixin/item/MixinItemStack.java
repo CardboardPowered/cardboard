@@ -7,7 +7,10 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -26,9 +29,12 @@ import net.minecraft.stat.Stats;
 @Mixin(ItemStack.class)
 public class MixinItemStack {
 
-    @Overwrite
-    public boolean damage(int i, Random random, ServerPlayerEntity entityplayer) {
-        if (!((ItemStack)(Object)this).isDamageable()) return false;
+    @Inject(at = @At("HEAD"), method = "damage", cancellable = true)
+    public void callPlayerItemDamageEvent(int i, Random random, ServerPlayerEntity entityplayer, CallbackInfoReturnable<Boolean> ci) {
+        if (!((ItemStack)(Object)this).isDamageable()) {
+            ci.setReturnValue(false);
+            return;
+        }
         int j;
 
         if (i > 0) {
@@ -40,22 +46,29 @@ public class MixinItemStack {
                 event.getPlayer().getServer().getPluginManager().callEvent(event);
 
                 if (i != event.getDamage() || event.isCancelled()) event.getPlayer().updateInventory();
-                if (event.isCancelled()) return false;
+                if (event.isCancelled()) {
+                    ci.setReturnValue(false);
+                    return;
+                }
                 i = event.getDamage();
             }
-            if (i <= 0) return false;
+            if (i <= 0) {
+                ci.setReturnValue(false);
+                return;
+            }
         }
         if (entityplayer != null && i != 0) Criteria.ITEM_DURABILITY_CHANGED.trigger(entityplayer, ((ItemStack)(Object)this), ((ItemStack)(Object)this).getDamage() + i);
 
         ((ItemStack)(Object)this).setDamage((j = ((ItemStack)(Object)this).getDamage() + i));
-        return j >= ((ItemStack)(Object)this).getMaxDamage();
+        ci.setReturnValue(j >= ((ItemStack)(Object)this).getMaxDamage());
+        return;
     }
 
-    @Overwrite
-    public <T extends LivingEntity> void damage(int i, T t0, Consumer<T> consumer) {
+    @Inject(at = @At("HEAD"), method = "damage(ILnet/minecraft/entity/LivingEntity;Ljava/util/function/Consumer;)V", cancellable = true)
+    public <T extends LivingEntity> void damage(int i, T t0, Consumer<T> consumer, CallbackInfo ci) {
         if (!t0.world.isClient && (!(t0 instanceof PlayerEntity) || !((PlayerEntity) t0).abilities.creativeMode)) {
             if (((ItemStack)(Object)this).isDamageable()) {
-                if (this.damage(i, t0.getRandom(), t0 instanceof ServerPlayerEntity ? (ServerPlayerEntity) t0 : null)) {
+                if (((ItemStack)(Object)this).damage(i, t0.getRandom(), t0 instanceof ServerPlayerEntity ? (ServerPlayerEntity) t0 : null)) {
                     consumer.accept(t0);
                     Item item = ((ItemStack)(Object)this).getItem();
                     if (((ItemStack)(Object)this).count == 1 && t0 instanceof PlayerEntity)
@@ -69,6 +82,8 @@ public class MixinItemStack {
 
             }
         }
+        ci.cancel();
+        return;
     }
 
 }
