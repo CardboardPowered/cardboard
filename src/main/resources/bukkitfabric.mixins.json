@@ -50,6 +50,7 @@
     "entity.MixinCreeperEntity",
     "entity.MixinPersistentProjectileEntity",
     "entity.MixinLivingEntity",
+    "entity.MixinHorseBaseEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

@@ -36,6 +36,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.HumanEntity;
@@ -61,6 +62,7 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
+import org.bukkit.event.entity.HorseJumpEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
@@ -82,6 +84,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -385,6 +388,12 @@ public class BukkitEventFactory {
     public static EntityTargetLivingEntityEvent callEntityTargetLivingEvent(Entity entity, net.minecraft.entity.LivingEntity target, EntityTargetEvent.TargetReason reason) {
         EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(((IMixinEntity)entity).getBukkitEntity(), (target == null) ? null : (org.bukkit.entity.LivingEntity) (((IMixinEntity)entity).getBukkitEntity()), reason);
         ((IMixinEntity)entity).getBukkitEntity().getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static HorseJumpEvent callHorseJumpEvent(Entity horse, float power) {
+        HorseJumpEvent event = new HorseJumpEvent((AbstractHorse) ((IMixinEntity)horse).getBukkitEntity(), power);
+        Bukkit.getServer().getPluginManager().callEvent(event);
         return event;
     }
 
