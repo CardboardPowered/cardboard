@@ -29,8 +29,8 @@ public class MixinServerHandshakeNetworkHandler {
 
     // CraftBukkit start - add fields
     private static final com.google.gson.Gson gson = new com.google.gson.Gson(); // Spigot
-    private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
-    private static int throttleCounter = 0;
+    //private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
+    //private static int throttleCounter = 0;
     // CraftBukkit end
 
     @Shadow
@@ -51,35 +51,6 @@ public class MixinServerHandshakeNetworkHandler {
             case LOGIN:
                 this.connection.setState(NetworkState.LOGIN);
                 TranslatableText chatmessage;
-
-                // CraftBukkit start - Connection throttle
-                try {
-                    long currentTime = System.currentTimeMillis();
-                    long connectionThrottle = CraftServer.INSTANCE.getConnectionThrottle();
-                    InetAddress address = ((java.net.InetSocketAddress) this.connection.getAddress()).getAddress();
-
-                    synchronized (throttleTracker) {
-                        if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle) {
-                            throttleTracker.put(address, currentTime);
-                            chatmessage = new TranslatableText("Connection throttled! Please wait before reconnecting.");
-                            this.connection.send(new LoginDisconnectS2CPacket(chatmessage));
-                            this.connection.disconnect(chatmessage);
-                            return;
-                        }
-
-                        throttleTracker.put(address, currentTime);
-                        throttleCounter++;
-                        if (throttleCounter > 200) { throttleCounter = 0;
-                            // Cleanup stale entries
-                            java.util.Iterator iter = throttleTracker.entrySet().iterator();
-                            while (iter.hasNext()) {
-                                java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
-                                if (entry.getValue() > connectionThrottle) iter.remove();
-                            }
-                        }
-                    }
-                } catch (Throwable t) { org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t); }
-                // CraftBukkit end
 
                 if (packethandshakinginsetprotocol.getProtocolVersion() > SharedConstants.getGameVersion().getProtocolVersion()) {
                     chatmessage = new TranslatableText( java.text.MessageFormat.format( org.spigotmc.SpigotConfig.outdatedServerMessage.replaceAll("'", "''"), SharedConstants.getGameVersion().getName() ) ); // Spigot

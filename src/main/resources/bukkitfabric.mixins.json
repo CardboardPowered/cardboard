@@ -23,6 +23,9 @@
     "MixinMapState",
     "MixinServerScoreboard",
 
+    "behavior.MixinForgetAttackTargetTask",
+    "behavior.MixinUpdateAttackTargetTask",
+
     "world.MixinServerWorld",
     "world.MixinWorld",
     "world.MixinWorldChunk",
@@ -70,6 +73,7 @@
     "network.MixinServerNetworkIo",
     "network.MixinClientConnection",
     "network.MixinServerHandshakeNetworkHandler",
+    "network.MixinPacketByteBuf",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",
@@ -119,6 +123,10 @@
     "item.MixinFilledMapItem",
     "item.MixinChorusFruitItem",
     "item.MixinItemStack",
+    "item.MixinArmorItem",
+    "item.MixinArmorStandItem",
+
+    "block.MixinDispenserBlock",
 
     "enchantment.MixinFrostWalkerEnchantment"
   ],

@@ -59,7 +59,7 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
                         throw new IllegalArgumentException(icon + " was not created by Bukkit");
                 }
 
-                @Override
+                /*@Override
                 public Iterator<Player> iterator() throws UnsupportedOperationException {
                     return new Iterator<Player>() {
 
@@ -77,11 +77,11 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
                         public void remove() {
                         }
                     };
-                }
+                }*/
 
             }
 
-            ServerListPingEvent event = new ServerListPingEvent ();
+            ServerListPingEvent event = new ServerListPingEvent();
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
             ServerMetadata ping = new ServerMetadata();

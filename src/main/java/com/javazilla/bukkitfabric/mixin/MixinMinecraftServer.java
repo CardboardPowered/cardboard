@@ -46,6 +46,7 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinNetworkIo;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
@@ -338,7 +339,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
         CraftServer.INSTANCE.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
         CraftServer.INSTANCE.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
-       // ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
+        ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
     }
 
     @Override

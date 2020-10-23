@@ -7,6 +7,9 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
@@ -18,7 +21,7 @@ import net.minecraft.network.LegacyQueryHandler;
 import net.minecraft.server.MinecraftServer;
 
 @Mixin(LegacyQueryHandler.class)
-public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
+public class MixinLegacyQueryHandler {
 
     //@Shadow @Final private static Logger LOGGER = LogManager.getLogger();
     @Shadow private ByteBuf toBuffer(String s) {return null;}
@@ -73,6 +76,7 @@ public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
                         return;
                     BukkitFabricMod.LOGGER.config("Ping: (1.6) from " + inetsocketaddress.getAddress() + ":" + inetsocketaddress.getPort());
                     String s1 = String.format("\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
+                    System.out.println("DEBUG: " + s1);
                     ByteBuf bytebuf1 = this.toBuffer(s1);
 
                     try {
