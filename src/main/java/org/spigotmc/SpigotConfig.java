@@ -11,6 +11,10 @@ public class SpigotConfig {
     static int version;
     static Map<String, Command> commands;
 
+    public static String outdatedServerMessage = "Server outdated!";
+    public static String outdatedClientMessage = "Client outdated!";
+    public static boolean bungee = false;
+
     public static void init(File configFile) {
     }
 

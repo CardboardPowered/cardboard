@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 
@@ -43,7 +44,7 @@ import net.minecraft.util.logging.UncaughtExceptionLogger;
 
 @SuppressWarnings("deprecation")
 @Mixin(ServerLoginNetworkHandler.class)
-public class MixinServerLoginNetworkHandler {
+public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkHandler {
 
     @Shadow private byte[] nonce = new byte[4];
     @Shadow private MinecraftServer server;
@@ -55,6 +56,16 @@ public class MixinServerLoginNetworkHandler {
 
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
     public String hostname = ""; // Bukkit - add field
+
+    @Override
+    public String getHostname() {
+        return hostname;
+    }
+
+    @Override
+    public void setHostname(String s) {
+        this.hostname = s;
+    }
 
     /**
      * @reason Spigot basically overwrites this whole method.
@@ -162,7 +173,7 @@ public class MixinServerLoginNetworkHandler {
     public void disconnect(String s) {
         try {
             Text ichatbasecomponent = new LiteralText(s);
-            LOGGER_BF.info("Disconnecting {}: {}", "BUKKITFABRIC_TODO", s);
+            LOGGER_BF.info("Disconnecting BUKKITFABRIC_TODO: " + s);
             this.connection.send(new LoginDisconnectS2CPacket(ichatbasecomponent));
             this.connection.disconnect(ichatbasecomponent);
         } catch (Exception exception) {

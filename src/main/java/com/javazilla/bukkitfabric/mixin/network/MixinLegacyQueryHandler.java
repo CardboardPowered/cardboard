@@ -3,14 +3,12 @@ package com.javazilla.bukkitfabric.mixin.network;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bukkit.craftbukkit.CraftServer;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
 import io.netty.buffer.ByteBuf;
@@ -22,7 +20,7 @@ import net.minecraft.server.MinecraftServer;
 @Mixin(LegacyQueryHandler.class)
 public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
 
-    @Shadow @Final private static Logger LOGGER = LogManager.getLogger();
+    //@Shadow @Final private static Logger LOGGER = LogManager.getLogger();
     @Shadow private ByteBuf toBuffer(String s) {return null;}
     @Shadow private void reply(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf) {}
 
@@ -48,7 +46,7 @@ public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
 
             switch (i) {
                 case 0:
-                    LOGGER.debug("Ping: (<1.3.x) from {}:{}", inetsocketaddress.getAddress(), inetsocketaddress.getPort());
+                    BukkitFabricMod.LOGGER.config("Ping: (<1.3.x) from " + inetsocketaddress.getAddress() + ":" + inetsocketaddress.getPort());
                     s = String.format("%s\u00a7%d\u00a7%d", event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
                     this.reply(channelhandlercontext, this.toBuffer(s));
                     break;
@@ -56,7 +54,7 @@ public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
                     if (bytebuf.readUnsignedByte() != 1)
                         return;
 
-                    LOGGER.debug("Ping: (1.4-1.5.x) from {}:{}", inetsocketaddress.getAddress(), inetsocketaddress.getPort());
+                    BukkitFabricMod.LOGGER.config("Ping: (1.4-1.5.x) from " + inetsocketaddress.getAddress() + ":" + inetsocketaddress.getPort());
                     s = String.format("\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
                     this.reply(channelhandlercontext, this.toBuffer(s));
                     break;
@@ -73,7 +71,7 @@ public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
                     flag1 &= bytebuf.readableBytes() == 0;
                     if (!flag1)
                         return;
-                    LOGGER.debug("Ping: (1.6) from {}:{}", inetsocketaddress.getAddress(), inetsocketaddress.getPort());
+                    BukkitFabricMod.LOGGER.config("Ping: (1.6) from " + inetsocketaddress.getAddress() + ":" + inetsocketaddress.getPort());
                     String s1 = String.format("\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
                     ByteBuf bytebuf1 = this.toBuffer(s1);
 
@@ -87,7 +85,7 @@ public class MixinLegacyQueryHandler extends ChannelInboundHandlerAdapter {
             bytebuf.release();
             flag = false;
         } catch (RuntimeException runtimeexception) {
-            ;
+            runtimeexception.printStackTrace();
         } finally {
             if (flag) {
                 bytebuf.resetReaderIndex();

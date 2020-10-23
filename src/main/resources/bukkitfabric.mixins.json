@@ -69,6 +69,7 @@
     "network.MixinServerPlayNetworkHandler",
     "network.MixinServerNetworkIo",
     "network.MixinClientConnection",
+    "network.MixinServerHandshakeNetworkHandler",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",
