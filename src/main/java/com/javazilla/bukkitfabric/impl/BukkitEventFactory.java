@@ -63,6 +63,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
+import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
@@ -397,5 +398,17 @@ public class BukkitEventFactory {
         return event;
     }
 
+    /**
+     * ItemMergeEvent
+     */
+    public static ItemMergeEvent callItemMergeEvent(ItemEntity merging, ItemEntity mergingWith) {
+        org.bukkit.entity.Item entityMerging = (org.bukkit.entity.Item) ((IMixinEntity)merging).getBukkitEntity();
+        org.bukkit.entity.Item entityMergingWith = (org.bukkit.entity.Item) ((IMixinEntity)mergingWith).getBukkitEntity();
+
+        ItemMergeEvent event = new ItemMergeEvent(entityMerging, entityMergingWith);
+
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
 
 }
