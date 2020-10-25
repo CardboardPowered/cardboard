@@ -27,6 +27,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import com.javazilla.bukkitfabric.impl.inventory.BeaconInventoryImpl;
+import com.javazilla.bukkitfabric.impl.inventory.EnchantingInventoryImpl;
+import com.javazilla.bukkitfabric.impl.inventory.GrindstoneInventoryImpl;
+import com.javazilla.bukkitfabric.impl.inventory.LoomInventoryImpl;
+import com.javazilla.bukkitfabric.impl.inventory.StonecutterInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
 @SuppressWarnings("deprecation")
@@ -418,17 +423,17 @@ public class CraftInventory implements Inventory {
             return InventoryType.SMOKER;
         } else if (inventory instanceof FurnaceBlockEntity) {
             return InventoryType.FURNACE;
-         // TODO } else if (this instanceof CraftInventoryEnchanting) {
-         // TODO    return InventoryType.ENCHANTING;
+        } else if (this instanceof EnchantingInventoryImpl) {
+            return InventoryType.ENCHANTING;
         } else if (inventory instanceof BrewingStandBlockEntity) {
             return InventoryType.BREWING;
-         // TODO } else if (inventory instanceof CraftInventoryCustom.MinecraftInventory) {
-         // TODO     return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
+        } else if (inventory instanceof CraftInventoryCustom.MinecraftInventory) {
+            return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
         } else if (inventory instanceof EnderChestInventory) {
             return InventoryType.ENDER_CHEST;
         } else if (inventory instanceof TraderInventory) {
             return InventoryType.MERCHANT;
-        } else if (this instanceof CraftInventoryBeacon) {
+        } else if (this instanceof BeaconInventoryImpl) {
               return InventoryType.BEACON;
         } else if (this instanceof CraftInventoryAnvil) {
             return InventoryType.ANVIL;
@@ -438,19 +443,17 @@ public class CraftInventory implements Inventory {
             return InventoryType.SHULKER_BOX;
         } else if (inventory instanceof BarrelBlockEntity) {
             return InventoryType.BARREL;
-        } else if (inventory instanceof LecternBlockEntity) { // todo
+        } else if (inventory instanceof LecternBlockEntity) {
             return InventoryType.LECTERN;
-         // TODO } else if (this instanceof CraftInventoryLoom) {
-         // TODO     return InventoryType.LOOM;
+         } else if (this instanceof LoomInventoryImpl) {
+              return InventoryType.LOOM;
          // TODO } else if (this instanceof CraftInventoryCartography) {
          // TODO     return InventoryType.CARTOGRAPHY;
-         // TODO  } else if (this instanceof CraftInventoryGrindstone) {
-         // TODO     return InventoryType.GRINDSTONE;
-         // TODO } else if (this instanceof CraftInventoryStonecutter) {
-         // TODO     return InventoryType.STONECUTTER;
-        } else {
-            return InventoryType.CHEST;
-        }
+        } else if (this instanceof GrindstoneInventoryImpl) {
+            return InventoryType.GRINDSTONE;
+        } else if (this instanceof StonecutterInventoryImpl) {
+            return InventoryType.STONECUTTER;
+        } else return InventoryType.CHEST;
     }
 
     @Override

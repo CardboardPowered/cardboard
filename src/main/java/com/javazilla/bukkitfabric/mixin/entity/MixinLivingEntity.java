@@ -7,16 +7,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
+import net.minecraft.world.GameRules;
 
 @Mixin(LivingEntity.class)
-public class MixinLivingEntity {
+public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity {
 
     private LivingEntity get() {
         return (LivingEntity)(Object)this;
@@ -49,6 +54,23 @@ public class MixinLivingEntity {
                 get().clearActiveItem();
             }
         }
+    }
+
+    @Shadow
+    public int getCurrentExperience(PlayerEntity entityhuman) {
+        return 0;
+    }
+
+    @Override
+    public int getExpReward() {
+        if ((get().shouldAlwaysDropXp() || get().lastDamageTime > 0 && get().canDropLootAndXp() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))) {
+            int i = getCurrentExperience(get().attackingPlayer);
+            return i;
+        } else return 0;
+    }
+
+    @Shadow
+    public void dropLoot(DamageSource damagesource, boolean flag) {
     }
 
 }

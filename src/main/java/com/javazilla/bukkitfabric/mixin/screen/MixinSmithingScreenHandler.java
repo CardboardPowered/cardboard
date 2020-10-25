@@ -4,6 +4,7 @@ import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
 
+import com.javazilla.bukkitfabric.impl.inventory.SmithingInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.screen.SmithingScreenHandler;
@@ -18,7 +19,7 @@ public class MixinSmithingScreenHandler extends MixinForgingScreenHandler {
         if (bukkitEntity != null)
             return bukkitEntity;
 
-        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventorySmithing(this.input, this.output);
+        SmithingInventoryImpl inventory = new SmithingInventoryImpl(this.input, this.output);
         bukkitEntity = new CraftInventoryView((Player)((IMixinServerEntityPlayer)this.player).getBukkitEntity(), inventory, (SmithingScreenHandler)(Object)this);
         return bukkitEntity;
     }

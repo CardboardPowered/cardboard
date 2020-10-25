@@ -152,13 +152,14 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                 protected PlayerPreLoginEvent.Result evaluate() {
                     server.getPluginManager().callEvent(event);
                     return event.getResult();
-                }};
-
-                ((IMixinMinecraftServer)CraftServer.server).getProcessQueue().add(waitable);
-                if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
-                    disconnect(event.getKickMessage());
-                    return;
                 }
+            };
+
+            ((IMixinMinecraftServer)CraftServer.server).getProcessQueue().add(waitable);
+            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
+                disconnect(event.getKickMessage());
+                return;
+            }
         } else {
             if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
                 disconnect(asyncEvent.getKickMessage());

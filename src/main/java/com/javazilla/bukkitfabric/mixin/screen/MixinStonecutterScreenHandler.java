@@ -1,6 +1,5 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
-import org.bukkit.craftbukkit.inventory.CraftInventoryStonecutter;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -9,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.impl.inventory.StonecutterInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.player.PlayerInventory;
@@ -36,7 +36,7 @@ public class MixinStonecutterScreenHandler extends MixinScreenHandler {
         if (bukkitEntity != null)
             return bukkitEntity;
 
-        CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.input, this.output);
+        StonecutterInventoryImpl inventory = new StonecutterInventoryImpl(this.input, this.output);
         bukkitEntity = new CraftInventoryView(this.player, inventory, (StonecutterScreenHandler)(Object)this);
         return bukkitEntity;
     }

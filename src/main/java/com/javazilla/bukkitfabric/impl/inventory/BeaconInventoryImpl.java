@@ -1,12 +1,14 @@
-package org.bukkit.craftbukkit.inventory;
+package com.javazilla.bukkitfabric.impl.inventory;
 
 import net.minecraft.inventory.Inventory;
+
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.BeaconInventory;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftInventoryBeacon extends CraftInventory implements BeaconInventory {
+public class BeaconInventoryImpl extends CraftInventory implements BeaconInventory {
 
-    public CraftInventoryBeacon(Inventory beacon) {
+    public BeaconInventoryImpl(Inventory beacon) {
         super(beacon);
     }
 

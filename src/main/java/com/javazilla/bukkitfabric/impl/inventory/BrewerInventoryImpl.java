@@ -1,15 +1,16 @@
-package org.bukkit.craftbukkit.inventory;
+package com.javazilla.bukkitfabric.impl.inventory;
 
 import net.minecraft.inventory.Inventory;
 import org.bukkit.block.BrewingStand;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-public class CraftInventoryBrewer extends CraftInventory implements BrewerInventory {
+public class BrewerInventoryImpl extends CraftInventory implements BrewerInventory {
 
-    public CraftInventoryBrewer(Inventory inventory) {
+    public BrewerInventoryImpl(Inventory inventory) {
         super(inventory);
     }
 

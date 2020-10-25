@@ -1,14 +1,15 @@
-package org.bukkit.craftbukkit.inventory;
+package com.javazilla.bukkitfabric.impl.inventory;
 
 import net.minecraft.inventory.Inventory;
 import org.bukkit.block.Lectern;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.LecternInventory;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-public class CraftInventoryLectern extends CraftInventory implements LecternInventory {
+public class LecternInventoryImpl extends CraftInventory implements LecternInventory {
 
-    public CraftInventoryLectern(Inventory inventory) {
+    public LecternInventoryImpl(Inventory inventory) {
         super(inventory);
     }
 

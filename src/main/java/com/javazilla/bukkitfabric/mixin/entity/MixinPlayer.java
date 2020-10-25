@@ -25,6 +25,8 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedMainHandEvent;
@@ -45,10 +47,23 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.network.MessageType;
+import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
+import net.minecraft.network.packet.s2c.play.CombatEventS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.scoreboard.AbstractTeam;
+import net.minecraft.scoreboard.ScoreboardCriterion;
+import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
@@ -56,12 +71,23 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.stat.Stats;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Arm;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
 @Mixin(value = ServerPlayerEntity.class, priority = 999)
-public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMixinServerEntityPlayer  {
+public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutput, IMixinServerEntityPlayer  {
 
     private CraftPlayer bukkit;
 
@@ -70,7 +96,7 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
-        this.bukkit = new CraftPlayer((ServerPlayerEntity) (Object) this);
+        this.bukkit = new CraftPlayer((ServerPlayerEntity)(Object)this);
         CraftServer.INSTANCE.playerView.add(this.bukkit);
     }
 
@@ -178,5 +204,93 @@ public class MixinPlayer extends MixinEntity implements IMixinCommandOutput, IMi
             }
         }
     }
+
+    @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
+    public void bukkitizeDeath(DamageSource damagesource, CallbackInfo ci) {
+        boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
+        if (((ServerPlayerEntity)(Object)this).removed) {
+            ci.cancel();
+            return;
+        }
+
+        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).inventory.size());
+        boolean keepInventory = this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || ((ServerPlayerEntity)(Object)this).isSpectator();
+
+        if (!keepInventory)
+            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).inventory.combinedInventory)
+                for (ItemStack item : items)
+                    if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item))
+                        loot.add(CraftItemStack.asCraftMirror(item));
+
+        // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
+        this.dropLoot(damagesource, ((ServerPlayerEntity)(Object)this).playerHitTimer > 0);
+        for (org.bukkit.inventory.ItemStack item : this.drops) loot.add(item);
+        drops.clear(); // SPIGOT-5188: make sure to clear
+
+        Text defaultMessage = ((ServerPlayerEntity)(Object)this).getDamageTracker().getDeathMessage();
+
+        String deathmessage = defaultMessage.getString();
+        org.bukkit.event.entity.PlayerDeathEvent event = BukkitEventFactory.callPlayerDeathEvent(((ServerPlayerEntity)(Object)this), loot, deathmessage, keepInventory);
+
+        // SPIGOT-943 - only call if they have an inventory open
+        if (((ServerPlayerEntity)(Object)this).currentScreenHandler != ((ServerPlayerEntity)(Object)this).playerScreenHandler) this.closeHandledScreen();
+
+        String deathMessage = event.getDeathMessage();
+
+        if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
+            Text ichatbasecomponent = deathMessage.equals(deathmessage) ? ((ServerPlayerEntity)(Object)this).getDamageTracker().getDeathMessage() : CraftChatMessage.fromStringOrNull(deathMessage);
+            ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket((Packet) (new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatbasecomponent)), (future) -> {
+                if (!future.isSuccess()) {
+                    boolean flag1 = true;
+                    String s = ichatbasecomponent.asTruncatedString(256);
+                    TranslatableText chatmessage = new TranslatableText("death.attack.message_too_long", new Object[]{(new LiteralText(s)).formatted(Formatting.GOLD)});
+                    MutableText ichatmutablecomponent = (new TranslatableText("death.attack.even_more_magic", new Object[]{((ServerPlayerEntity)(Object)this).getDisplayName()})).styled((chatmodifier) -> {
+                        return chatmodifier.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, chatmessage));
+                    });
+                    ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatmutablecomponent));
+                }
+
+            });
+            AbstractTeam scoreboardteambase = ((ServerPlayerEntity)(Object)this).getScoreboardTeam();
+
+            if (scoreboardteambase != null && scoreboardteambase.getDeathMessageVisibilityRule() != AbstractTeam.VisibilityRule.ALWAYS) {
+                if (scoreboardteambase.getDeathMessageVisibilityRule() == AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS) {
+                    CraftServer.server.getPlayerManager().sendToTeam((PlayerEntity)(Object) this, ichatbasecomponent);
+                } else if (scoreboardteambase.getDeathMessageVisibilityRule() == AbstractTeam.VisibilityRule.HIDE_FOR_OWN_TEAM)
+                    CraftServer.server.getPlayerManager().sendToOtherTeams(((ServerPlayerEntity)(Object)this), ichatbasecomponent);
+            } else CraftServer.server.getPlayerManager().broadcastChatMessage(ichatbasecomponent, MessageType.SYSTEM, Util.NIL_UUID);
+        } else ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED));
+
+        ((ServerPlayerEntity)(Object)this).dropShoulderEntities();
+        if (this.world.getGameRules().getBoolean(GameRules.FORGIVE_DEAD_PLAYERS)) this.forgiveMobAnger();
+
+        // SPIGOT-5478 must be called manually now
+        ((ServerPlayerEntity)(Object)this).dropXp();
+        // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
+        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).inventory.clear();
+
+        ((ServerPlayerEntity)(Object)this).setCameraEntity(((ServerPlayerEntity)(Object)this)); // Remove spectated target
+        // CraftBukkit end
+
+        // CraftBukkit - Get our scores instead
+       // this.world.getServer().getScoreboard().get.getScoreboardScores(ScoreboardCriterion.DEATH_COUNT, ((ServerPlayerEntity)(Object)this).getEntityName(), ScoreboardPlayerScore::incrementScore);
+        LivingEntity entityliving = ((ServerPlayerEntity)(Object)this).getPrimeAdversary();
+
+        if (entityliving != null) {
+            entityliving.updateKilledAdvancementCriterion(((ServerPlayerEntity)(Object)this), ((ServerPlayerEntity)(Object)this).scoreAmount, damagesource);
+            ((ServerPlayerEntity)(Object)this).onKilledBy(entityliving);
+        }
+
+        this.world.sendEntityStatus(((ServerPlayerEntity)(Object)this), (byte) 3);
+
+        ((ServerPlayerEntity)(Object)this).extinguish();
+        ((ServerPlayerEntity)(Object)this).setFlag(0, false);
+        ((ServerPlayerEntity)(Object)this).getDamageTracker().update();
+        ci.cancel();
+        return;
+    }
+
+    @Shadow
+    public void forgiveMobAnger() {}
 
 }

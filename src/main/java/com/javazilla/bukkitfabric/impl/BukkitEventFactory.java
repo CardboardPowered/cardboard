@@ -64,6 +64,7 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
 import org.bukkit.event.entity.ItemMergeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
@@ -78,6 +79,7 @@ import org.bukkit.inventory.InventoryView;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -408,6 +410,20 @@ public class BukkitEventFactory {
         ItemMergeEvent event = new ItemMergeEvent(entityMerging, entityMergingWith);
 
         Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayerEntity victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage, boolean keepInventory) {
+        CraftPlayer entity = (CraftPlayer) ((IMixinServerEntityPlayer)victim).getBukkitEntity();
+        PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, ((IMixinLivingEntity)victim).getExpReward(), 0, deathMessage);
+        event.setKeepInventory(keepInventory);
+        org.bukkit.World world = entity.getWorld();
+        Bukkit.getServer().getPluginManager().callEvent(event);
+
+        for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
+            if (stack == null || stack.getType() == Material.AIR) continue;
+            world.dropItem(entity.getLocation(), stack);
+        }
         return event;
     }
 

@@ -37,8 +37,7 @@ public class RecipeIterator implements Iterator<Recipe> {
 
     @Override
     public void remove() {
-        if (current == null)
-            throw new IllegalStateException("next() not yet called");
+        if (current == null) throw new IllegalStateException("next() not yet called");
 
         current.remove();
     }

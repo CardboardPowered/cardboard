@@ -1,5 +1,15 @@
 package org.bukkit.craftbukkit.inventory.util;
 
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+
+import com.javazilla.bukkitfabric.impl.inventory.BrewerInventoryImpl;
+
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlastFurnaceBlockEntity;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
@@ -12,16 +22,6 @@ import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.block.entity.SmokerBlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
-import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 
 public abstract class CraftTileInventoryConverter implements CraftInventoryCreator.InventoryConverter {
 
@@ -84,7 +84,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public Inventory getInventory(net.minecraft.inventory.Inventory tileEntity) {
-            return new CraftInventoryBrewer(tileEntity);
+            return new BrewerInventoryImpl(tileEntity);
         }
     }
 

@@ -52,6 +52,7 @@
     "entity.MixinPersistentProjectileEntity",
     "entity.MixinLivingEntity",
     "entity.MixinHorseBaseEntity",
+    "entity.PhaseManager",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
@@ -65,6 +66,7 @@
     "entity.block.MixinSignBlockEntity",
     "entity.block.MixinBoatDispenserBehavior",
     "entity.block.MixinHopperBlockEntity",
+    "entity.block.MixinShulkerBoxBlockEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
@@ -118,6 +120,8 @@
     "screen.MixinSmithingScreenHandler",
     "screen.MixinStonecutterScreenHandler",
     "screen.MixinGrindstoneScreenHandler",
+    "screen.MixinLoomScreenHandler",
+    "screen.MixinEnchantmentScreenHandler",
 
     "item.MixinDyeItem",
     "item.MixinEndCrystalItem",

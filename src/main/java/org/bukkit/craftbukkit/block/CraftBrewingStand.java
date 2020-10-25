@@ -4,8 +4,9 @@ import net.minecraft.block.entity.BrewingStandBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
-import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.inventory.BrewerInventory;
+
+import com.javazilla.bukkitfabric.impl.inventory.BrewerInventoryImpl;
 
 public class CraftBrewingStand extends CraftContainer<BrewingStandBlockEntity> implements BrewingStand {
 
@@ -19,16 +20,15 @@ public class CraftBrewingStand extends CraftContainer<BrewingStandBlockEntity> i
 
     @Override
     public BrewerInventory getSnapshotInventory() {
-        return new CraftInventoryBrewer(this.getSnapshot());
+        return new BrewerInventoryImpl(this.getSnapshot());
     }
 
     @Override
     public BrewerInventory getInventory() {
-        if (!this.isPlaced()) {
+        if (!this.isPlaced())
             return this.getSnapshotInventory();
-        }
 
-        return new CraftInventoryBrewer(this.getTileEntity());
+        return new BrewerInventoryImpl(this.getTileEntity());
     }
 
     @Override
@@ -50,4 +50,5 @@ public class CraftBrewingStand extends CraftContainer<BrewingStandBlockEntity> i
     public void setFuelLevel(int level) {
         this.getSnapshot().fuel = level;
     }
+
 }

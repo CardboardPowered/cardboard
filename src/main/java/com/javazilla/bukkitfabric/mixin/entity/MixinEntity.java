@@ -1,5 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.entity;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
@@ -124,6 +125,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     public org.bukkit.entity.Entity bukkit;
     public org.bukkit.projectiles.ProjectileSource projectileSource;
+    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 
     @Shadow
     public Random random;

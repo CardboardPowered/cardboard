@@ -138,8 +138,7 @@ public class HelpYamlReader {
                 List<HelpTopic> topics = new LinkedList<HelpTopic>();
                 for (String futureTopic : futureTopics) {
                     HelpTopic topic = helpMap.getHelpTopic(futureTopic);
-                    if (topic != null)
-                        topics.add(topic);
+                    if (topic != null) topics.add(topic);
                 }
                 setTopicsCollection(topics);
                 futureTopics = null;
