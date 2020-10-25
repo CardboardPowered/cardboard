@@ -26,7 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 
-@Mixin(ItemStack.class)
+@Mixin(value = ItemStack.class, priority = 999)
 public class MixinItemStack {
 
     @Inject(at = @At("HEAD"), method = "damage", cancellable = true)
