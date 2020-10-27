@@ -141,7 +141,7 @@ import net.minecraft.world.World;
 @Mixin(Entity.class)
 public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
-    public org.bukkit.entity.Entity bukkit;
+    public CraftEntity bukkit;
     public org.bukkit.projectiles.ProjectileSource projectileSource;
     public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 
@@ -171,7 +171,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     @Override
-    public org.bukkit.entity.Entity getBukkitEntity() {
+    public CraftEntity getBukkitEntity() {
         return bukkit;
     }
 

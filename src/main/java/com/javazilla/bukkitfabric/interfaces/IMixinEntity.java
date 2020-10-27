@@ -19,7 +19,6 @@
 package com.javazilla.bukkitfabric.interfaces;
 
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.entity.Entity;
 import org.bukkit.projectiles.ProjectileSource;
 
 public interface IMixinEntity {

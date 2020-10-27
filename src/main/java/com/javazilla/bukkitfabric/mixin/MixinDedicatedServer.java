@@ -61,13 +61,10 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
     private void init(CallbackInfoReturnable<Boolean> ci) {
-        BukkitLogger.getLogger().info("  ____          _     _     _  _    ");
-        BukkitLogger.getLogger().info(" |  _ \\        | |   | |   (_)| |   ");
-        BukkitLogger.getLogger().info(" | |_) | _   _ | | __| | __ _ | |_  ");
-        BukkitLogger.getLogger().info(" |  _ < | | | || |/ /| |/ /| || __| ");
-        BukkitLogger.getLogger().info(" | |_) || |_| ||   < |   < | || |_  ");
-        BukkitLogger.getLogger().info(" |____/  \\__,_||_|\\_\\|_|\\_\\|_| \\__| ");
-        BukkitLogger.getLogger().info("");
+        BukkitLogger.getLogger().info(" ___  _   _  _  __ _  __ ___ _____  ");
+        BukkitLogger.getLogger().info("| _ )| | | || |/ /| |/ /|_ _|_   _| ");
+        BukkitLogger.getLogger().info("| _ \\| |_| || ' < | ' <  | |  | |   ");
+        BukkitLogger.getLogger().info("|___/ \\___/ |_|\\_\\|_|\\_\\|___| |_|   ");
 
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
