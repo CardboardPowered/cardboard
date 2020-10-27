@@ -19,14 +19,11 @@
 package com.javazilla.bukkitfabric;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.javazilla.bukkitfabric.impl.command.VersionCommand;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 
 public class BukkitFabricMod implements ModInitializer {
 
@@ -34,33 +31,15 @@ public class BukkitFabricMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Bukkit for Fabric Mod");
-        LOGGER.info("Copyright (C) 2020, Javazilla.com");
+        LOGGER.info("Bukkit for Fabric Mod - Javazilla.com");
 
-        boolean debug = FabricLoader.getInstance().isDevelopmentEnvironment();
-
-        if (System.getProperty("SkipBukkitVersionCheck") == null && !debug) {
-            int outdated = VersionCommand.check();
-            if (outdated > 8) {
-                try {
-                    int time = outdated > 20 ? 40 : 10;
-                    LOGGER.warning("*** Error, this build is outdated ***");
-                    LOGGER.warning("*** Please download a new build from https://curseforge.com/minecraft/mc-mods/bukkit ***");
-                    LOGGER.warning("*** Server will start in " + time + " seconds ***");
-                    Thread.sleep(TimeUnit.SECONDS.toMillis(time));
-                } catch (Exception e) {
-                    LOGGER.warning(e.getMessage());
-                }
-            }
-        }
-
-        LOGGER.info("Loading spigot->intermediary mappings...");
         try {
             MappingsReader.main(null);
-            LOGGER.info("Loaded spigot->intermediary mappings...");
+            LOGGER.info("Loaded spigot->intermediary mappings.");
         } catch (IOException e) {
             e.printStackTrace();
         }
+        LOGGER.info("Bukkt4Fabric Loaded.");
     }
 
 }

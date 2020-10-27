@@ -32,23 +32,17 @@ public class BukkitLogger extends Logger {
     public void log(LogRecord lr) {
         if (lr.getThrown() == null)
             log4j.log(convertLevel(lr.getLevel()), lr.getMessage());
-        else
-            log4j.log(convertLevel(lr.getLevel()), lr.getMessage(), lr.getThrown());
+        else log4j.log(convertLevel(lr.getLevel()), lr.getMessage(), lr.getThrown());
     }
 
     private Level convertLevel(java.util.logging.Level l) {
-        if (l == java.util.logging.Level.ALL)
-            return Level.ALL;
-        if (l == java.util.logging.Level.CONFIG)
-            return Level.TRACE;
-        if (l == java.util.logging.Level.WARNING)
-            return Level.WARN;
-        if (l == java.util.logging.Level.INFO)
-            return Level.INFO;
-        if (l == java.util.logging.Level.OFF)
-            return Level.OFF;
-        if (l == java.util.logging.Level.SEVERE)
-            return Level.FATAL;
+        if (l == java.util.logging.Level.ALL)     return Level.ALL;
+        if (l == java.util.logging.Level.CONFIG)  return Level.TRACE;
+        if (l == java.util.logging.Level.WARNING) return Level.WARN;
+        if (l == java.util.logging.Level.INFO)    return Level.INFO;
+        if (l == java.util.logging.Level.OFF)     return Level.OFF;
+        if (l == java.util.logging.Level.SEVERE)  return Level.FATAL;
+
         if (l == java.util.logging.Level.FINE || l == java.util.logging.Level.FINER || l == java.util.logging.Level.FINEST)
             return Level.WARN;
         return Level.ALL;

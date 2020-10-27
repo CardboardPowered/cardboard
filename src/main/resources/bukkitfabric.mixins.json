@@ -23,6 +23,13 @@
     "MixinMapState",
     "MixinServerScoreboard",
     "MixinCommandManager",
+    "MixinTimeCommand",
+
+    "loot.MixinSurvivesExplosionLootCondition",
+    "loot.MixinRandomChanceWithLootingLootCondition",
+    "loot.MixinLootContextParameters",
+    "loot.MixinLootTable",
+    "loot.MixinLootManager",
 
     "behavior.MixinForgetAttackTargetTask",
     "behavior.MixinUpdateAttackTargetTask",
@@ -52,7 +59,6 @@
     "entity.MixinPersistentProjectileEntity",
     "entity.MixinLivingEntity",
     "entity.MixinHorseBaseEntity",
-    "entity.PhaseManager",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
