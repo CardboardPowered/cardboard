@@ -22,18 +22,21 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
@@ -133,6 +136,7 @@ import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.thrown.EggEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -144,6 +148,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public CraftEntity bukkit;
     public org.bukkit.projectiles.ProjectileSource projectileSource;
     public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
+    public boolean forceDrops;
 
     @Shadow
     public Random random;
@@ -160,9 +165,34 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
-    private void setBukkit(CallbackInfo callbackInfo) {
+    public void setBukkit(CallbackInfo callbackInfo) {
         if (null == bukkit)
             this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
+    }
+
+    @Inject(at = @At(value = "RETURN"), method = "dropStack")
+    public void dropStackEvent(ItemStack itemstack, float f, CallbackInfoReturnable<ItemStack> ci) {
+        if (itemstack.isEmpty()) {
+            ci.setReturnValue(null);
+            return;
+        }
+
+        if (((Entity)(Object)this) instanceof net.minecraft.entity.LivingEntity && !this.forceDrops) {
+            this.drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack));
+            ci.setReturnValue(null);
+            return;
+        }
+        ItemEntity entityitem = new ItemEntity(this.world, ((Entity) (Object) this).getX(), ((Entity) (Object) this).getY() + (double) f, ((Entity) (Object) this).getZ(), itemstack);
+
+        entityitem.setToDefaultPickupDelay();
+
+        EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) ((IMixinEntity)entityitem).getBukkitEntity());
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            ci.setReturnValue(null);
+            return;
+        }
+        this.world.spawnEntity(entityitem);
     }
 
     @Override
@@ -392,8 +422,6 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     @Shadow
     public void remove() {}
 
-    public void removeBF() {
-        remove();
-    }
+    public void removeBF() {remove();} // Helper
 
 }
