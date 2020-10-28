@@ -170,7 +170,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
     }
 
-    @Inject(at = @At(value = "RETURN"), method = "dropStack")
+    @Inject(at = @At(value = "RETURN"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;")
     public void dropStackEvent(ItemStack itemstack, float f, CallbackInfoReturnable<ItemStack> ci) {
         if (itemstack.isEmpty()) {
             ci.setReturnValue(null);
