@@ -32,7 +32,7 @@ public class MixinItemEntity extends MixinEntity {
     public UUID owner;
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
-    private void setBukkit(CallbackInfo callbackInfo) {
+    public void setBukkit(CallbackInfo callbackInfo) {
         if (null == bukkit)
             this.bukkit = new ItemEntityImpl(CraftServer.INSTANCE, (ItemEntity) (Object) this, (ItemEntity) (Object) this);
     }
