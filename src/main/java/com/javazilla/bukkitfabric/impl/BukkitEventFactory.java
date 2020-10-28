@@ -28,12 +28,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
+import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -41,6 +44,7 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -58,6 +62,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreeperPowerEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
@@ -75,6 +80,7 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
+import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -323,9 +329,47 @@ public class BukkitEventFactory {
         return !event.isCancelled();
     }
 
-    public static Cancellable handleStatisticsIncrease(PlayerEntity player, Stat<?> statistic, int stat, int j) {
-        // TODO Auto-generated method stub
-        return null;
+    public static Cancellable handleStatisticsIncrease(PlayerEntity entityHuman, net.minecraft.stat.Stat<?> statistic, int current, int newValue) {
+        Player player = (Player) ((IMixinServerEntityPlayer) entityHuman).getBukkitEntity();
+        Event event;
+        if (true) {
+            org.bukkit.Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
+            if (stat == null) {
+                System.err.println("Unhandled statistic: " + statistic);
+                return null;
+            }
+            switch (stat) {
+                case FALL_ONE_CM:
+                case BOAT_ONE_CM:
+                case CLIMB_ONE_CM:
+                case WALK_ON_WATER_ONE_CM:
+                case WALK_UNDER_WATER_ONE_CM:
+                case FLY_ONE_CM:
+                case HORSE_ONE_CM:
+                case MINECART_ONE_CM:
+                case PIG_ONE_CM:
+                case PLAY_ONE_MINUTE:
+                case SWIM_ONE_CM:
+                case WALK_ONE_CM:
+                case SPRINT_ONE_CM:
+                case CROUCH_ONE_CM:
+                case TIME_SINCE_DEATH:
+                case SNEAK_TIME:
+                    return null;
+                default:
+            }
+            if (stat.getType() == Statistic.Type.UNTYPED) {
+                event = new PlayerStatisticIncrementEvent(player, stat, current, newValue);
+            } else if (stat.getType() == Statistic.Type.ENTITY) {
+                EntityType entityType = CraftStatistic.getEntityTypeFromStatistic((net.minecraft.stat.Stat<net.minecraft.entity.EntityType<?>>) statistic);
+                event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, entityType);
+            } else {
+                Material material = CraftStatistic.getMaterialFromStatistic(statistic);
+                event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, material);
+            }
+        }
+        Bukkit.getPluginManager().callEvent(event);
+        return (Cancellable) event;
     }
 
     public static EntityPickupItemEvent callEntityPickupItemEvent(Entity who, ItemEntity item, int remaining, boolean cancelled) {
@@ -444,6 +488,23 @@ public class BukkitEventFactory {
 
         LootGenerateEvent event = new LootGenerateEvent(world, (entity != null ? ((IMixinEntity)entity).getBukkitEntity() : null), ((IMixinInventory)inventory).getOwner(), craftLootTable, LootTableImpl.convertContext(lootInfo), bukkitLoot, plugin);
         Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static EntityDeathEvent callEntityDeathEvent(net.minecraft.entity.LivingEntity victim, List<org.bukkit.inventory.ItemStack> drops) {
+        CraftLivingEntity entity = (CraftLivingEntity) ((IMixinEntity)victim).getBukkitEntity();
+        EntityDeathEvent event = new EntityDeathEvent(entity, drops, ((IMixinLivingEntity)victim).getExpReward());
+
+        WorldImpl world = (WorldImpl) entity.getWorld();
+        Bukkit.getServer().getPluginManager().callEvent(event);
+
+        for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
+            if (stack == null || stack.getType() == Material.AIR || stack.getAmount() == 0) continue;
+
+            world.dropItem(entity.getLocation(), stack); // Paper - note: dropItem already clones due to this being bukkit -> NMS
+            if (stack instanceof CraftItemStack) stack.setAmount(0); // Paper
+        }
+
         return event;
     }
 

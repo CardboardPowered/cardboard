@@ -1,5 +1,7 @@
 package com.javazilla.bukkitfabric.mixin.entity;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -8,10 +10,16 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -56,6 +64,23 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
         }
     }
 
+    @Inject(at = @At("HEAD"), method = "drop", cancellable = true)
+    public void drop(DamageSource damagesource, CallbackInfo ci) {
+        Entity entity = damagesource.getAttacker();
+
+        boolean flag = get().playerHitTimer > 0;
+        get().dropInventory();
+        if (!get().isBaby() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
+            this.dropLoot(damagesource, flag);
+            this.dropEquipment(damagesource, ((entity instanceof PlayerEntity) ? EnchantmentHelper.getLooting((LivingEntity) entity) : 0), flag);
+        }
+        BukkitEventFactory.callEntityDeathEvent(get(), this.drops);
+        this.drops = new ArrayList<>();
+        get().dropXp();
+        ci.cancel();
+        return;
+    }
+
     @Shadow
     public int getCurrentExperience(PlayerEntity entityhuman) {
         return 0;
@@ -71,6 +96,10 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
 
     @Shadow
     public void dropLoot(DamageSource damagesource, boolean flag) {
+    }
+
+    @Shadow
+    public void dropEquipment(DamageSource damagesource, int i, boolean flag) {
     }
 
 }
