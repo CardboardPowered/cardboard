@@ -8,11 +8,15 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.BrewingStandFuelEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -23,9 +27,13 @@ import net.minecraft.block.entity.BrewingStandBlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 
 @Mixin(BrewingStandBlockEntity.class)
 public class MixinBrewingStandBlockEntity implements IMixinInventory {
+
+    @Shadow
+    public int fuel;
 
     @Shadow
     public DefaultedList<ItemStack> inventory;
@@ -129,6 +137,20 @@ public class MixinBrewingStandBlockEntity implements IMixinInventory {
             }
         }
 
+    }
+
+    @Inject(at = @At("HEAD"), method = "craft", cancellable = true)
+    public void doCraft(CallbackInfo ci) {
+        InventoryHolder owner = this.getOwner();
+        if (owner != null) {
+            BlockPos pos = ((BrewingStandBlockEntity)(Object)this).getPos();
+            BrewEvent event = new BrewEvent(((IMixinWorld)((BrewingStandBlockEntity)(Object)this).getWorld()).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), this.fuel);
+            org.bukkit.Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                ci.cancel();
+                return;
+            }
+        }
     }
 
     @Override public InventoryHolder getOwner() {return null;}
