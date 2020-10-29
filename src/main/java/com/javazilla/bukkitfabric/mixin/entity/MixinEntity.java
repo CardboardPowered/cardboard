@@ -30,6 +30,7 @@ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Pose;
+import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPoseChangeEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -429,6 +430,18 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             return;
         }
         Bukkit.getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), Pose.values()[entitypose.ordinal()]));
+    }
+
+    @Inject(at = @At("HEAD"), method = "setAir", cancellable = true)
+    public void setAir(int i, CallbackInfo ci) {
+        EntityAirChangeEvent event = new EntityAirChangeEvent(this.getBukkitEntity(), i);
+        event.getEntity().getServer().getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            ci.cancel();
+            return;
+        }
+        i = event.getAmount();
     }
 
     @Shadow
