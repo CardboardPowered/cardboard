@@ -29,7 +29,9 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDropItemEvent;
+import org.bukkit.event.entity.EntityPoseChangeEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -84,6 +86,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
@@ -417,6 +420,15 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     @Override
     public ProjectileSource getProjectileSourceBukkit() {
         return projectileSource;
+    }
+
+    @Inject(at = @At("HEAD"), method = "setPos", cancellable = true)
+    public void setPose(EntityPose entitypose, CallbackInfo ci) {
+        if (entitypose == ((Entity)(Object)this).getPose()) {
+            ci.cancel();
+            return;
+        }
+        Bukkit.getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), Pose.values()[entitypose.ordinal()]));
     }
 
     @Shadow

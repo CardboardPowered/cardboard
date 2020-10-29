@@ -11,6 +11,7 @@ import org.bukkit.util.EulerAngle;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinArmorStandEntity;
 
+@SuppressWarnings("deprecation")
 public class ArmorStandImpl extends CraftLivingEntity implements ArmorStand {
 
     public ArmorStandImpl(CraftServer server, ArmorStandEntity entity) {
