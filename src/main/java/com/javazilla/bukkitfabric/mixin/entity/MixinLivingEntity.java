@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -100,6 +101,25 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
 
     @Shadow
     public void dropEquipment(DamageSource damagesource, int i, boolean flag) {
+    }
+
+    /**
+     * @reason Bukkit RegainHealthEvent
+     */
+    @Inject(at = @At("HEAD"), method = "heal", cancellable = true)
+    public void heal(float f, CallbackInfo ci) {
+        heal(f, EntityRegainHealthEvent.RegainReason.CUSTOM);
+        ci.cancel();
+        return;
+    }
+
+    public void heal(float f, EntityRegainHealthEvent.RegainReason regainReason) {
+        if (get().getHealth() > 0.0F) {
+            EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason);
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (!event.isCancelled()) get().setHealth((float) (get().getHealth() + event.getAmount()));
+        }
     }
 
 }
