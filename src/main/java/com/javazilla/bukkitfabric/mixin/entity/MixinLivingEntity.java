@@ -107,7 +107,7 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
      * @reason Bukkit RegainHealthEvent
      */
     @Inject(at = @At("HEAD"), method = "heal", cancellable = true)
-    public void heal(float f, CallbackInfo ci) {
+    public void doRegainHealthEvent(float f, CallbackInfo ci) {
         heal(f, EntityRegainHealthEvent.RegainReason.CUSTOM);
         ci.cancel();
         return;

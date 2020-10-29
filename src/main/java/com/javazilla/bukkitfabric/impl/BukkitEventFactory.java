@@ -49,6 +49,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.Cancellable;
@@ -69,6 +70,7 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
+import org.bukkit.event.entity.ExpBottleEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
 import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -101,6 +103,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
@@ -505,6 +508,13 @@ public class BukkitEventFactory {
             if (stack instanceof CraftItemStack) stack.setAmount(0); // Paper
         }
 
+        return event;
+    }
+
+    public static ExpBottleEvent callExpBottleEvent(Entity entity, int exp) {
+        ThrownExpBottle bottle = (ThrownExpBottle) ((IMixinEntity)entity).getBukkitEntity();
+        ExpBottleEvent event = new ExpBottleEvent(bottle, exp);
+        Bukkit.getPluginManager().callEvent(event);
         return event;
     }
 

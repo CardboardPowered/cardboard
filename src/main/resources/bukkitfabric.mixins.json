@@ -59,6 +59,7 @@
     "entity.MixinPersistentProjectileEntity",
     "entity.MixinLivingEntity",
     "entity.MixinHorseBaseEntity",
+    "entity.MixinExperienceBottleEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
