@@ -28,6 +28,7 @@ import net.fabricmc.api.ModInitializer;
 public class BukkitFabricMod implements ModInitializer {
 
     public static Logger LOGGER = BukkitLogger.getLogger();
+    public static boolean isAfterWorldLoad = false;
 
     @Override
     public void onInitialize() {
@@ -35,7 +36,6 @@ public class BukkitFabricMod implements ModInitializer {
 
         try {
             MappingsReader.main(null);
-            LOGGER.info("Loaded spigot->intermediary mappings.");
         } catch (IOException e) {
             e.printStackTrace();
         }

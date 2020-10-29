@@ -41,6 +41,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
 import com.javazilla.bukkitfabric.impl.entity.ArmorStandImpl;
@@ -174,7 +175,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
     }
 
-    @Inject(at = @At(value = "RETURN"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;")
+    @Inject(at = @At(value = "RETURN"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;", cancellable = true)
     public void dropStackEvent(ItemStack itemstack, float f, CallbackInfoReturnable<ItemStack> ci) {
         if (itemstack.isEmpty()) {
             ci.setReturnValue(null);
@@ -423,8 +424,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         return projectileSource;
     }
 
-    @Inject(at = @At("HEAD"), method = "setPos", cancellable = true)
-    public void setPose(EntityPose entitypose, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "setPose(Lnet/minecraft/entity/EntityPose;)V", cancellable = true)
+    public void setPoseBF(EntityPose entitypose, CallbackInfo ci) {
         if (entitypose == ((Entity)(Object)this).getPose()) {
             ci.cancel();
             return;
@@ -433,7 +434,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     @Inject(at = @At("HEAD"), method = "setAir", cancellable = true)
-    public void setAir(int i, CallbackInfo ci) {
+    public void setAirBF(int i, CallbackInfo ci) {
+        if (!BukkitFabricMod.isAfterWorldLoad) return;
         EntityAirChangeEvent event = new EntityAirChangeEvent(this.getBukkitEntity(), i);
         event.getEntity().getServer().getPluginManager().callEvent(event);
 
