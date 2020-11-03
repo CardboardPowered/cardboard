@@ -1,7 +1,8 @@
-package org.bukkit.craftbukkit.inventory;
+package com.javazilla.bukkitfabric.impl.inventory.recipe;
 
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
@@ -10,7 +11,8 @@ import org.bukkit.inventory.StonecuttingRecipe;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 
-public class CraftStonecuttingRecipe extends StonecuttingRecipe implements CraftRecipe {
+public class CraftStonecuttingRecipe extends StonecuttingRecipe implements RecipeInterface {
+
     public CraftStonecuttingRecipe(NamespacedKey key, ItemStack result, RecipeChoice source) {
         super(key, result, source);
     }
@@ -28,4 +30,5 @@ public class CraftStonecuttingRecipe extends StonecuttingRecipe implements Craft
         ItemStack result = this.getResult();
         ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.StonecuttingRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), toNMS(this.getInputChoice(), true), CraftItemStack.asNMSCopy(result)));
     }
+
 }

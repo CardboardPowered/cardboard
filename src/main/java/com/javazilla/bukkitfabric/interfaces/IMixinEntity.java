@@ -29,4 +29,8 @@ public interface IMixinEntity {
 
     public ProjectileSource getProjectileSourceBukkit();
 
+    boolean isValidBF();
+
+    void setValid(boolean b);
+
 }

@@ -81,8 +81,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
             ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getId(item).getPath().toUpperCase(Locale.ROOT)));
 
         for (Material material : Material.values()) {
-            if (material.isLegacy())
-                continue;
+            if (material.isLegacy()) continue;
 
             Identifier key = key(material);
             Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
@@ -99,18 +98,12 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static Item getItem(Material material) {
-        if (material != null && material.isLegacy()) {
-            material = CraftLegacyMaterials.fromLegacy(material);
-        }
-
+        if (material != null && material.isLegacy()) material = CraftLegacyMaterials.fromLegacy(material);
         return MATERIAL_ITEM.get(material);
     }
 
     public static Block getBlock(Material material) {
-        if (material != null && material.isLegacy()) {
-            material = CraftLegacyMaterials.fromLegacy(material);
-        }
-
+        if (material != null && material.isLegacy()) material = CraftLegacyMaterials.fromLegacy(material);
         return MATERIAL_BLOCK.get(material);
     }
 
@@ -154,14 +147,12 @@ public final class CraftMagicNumbers implements UnsafeValues {
         Preconditions.checkArgument(version <= this.getDataVersion(), "Newer version! Server downgrades are not supported!");
 
         // Fastpath up to date materials
-        if (version == this.getDataVersion())
-            return Material.getMaterial(material);
+        if (version == this.getDataVersion()) return Material.getMaterial(material);
 
         Dynamic<Tag> name = new Dynamic<>(NbtOps.INSTANCE, StringTag.of("minecraft:" + material.toLowerCase(Locale.ROOT)));
         Dynamic<Tag> converted = Schemas.getFixer().update(TypeReferences.ITEM_NAME, name, version, this.getDataVersion());
 
-        if (name.equals(converted))
-            converted = Schemas.getFixer().update(TypeReferences.BLOCK_NAME, name, version, this.getDataVersion());
+        if (name.equals(converted)) converted = Schemas.getFixer().update(TypeReferences.BLOCK_NAME, name, version, this.getDataVersion());
         return Material.matchMaterial(converted.asString(""));
     }
 

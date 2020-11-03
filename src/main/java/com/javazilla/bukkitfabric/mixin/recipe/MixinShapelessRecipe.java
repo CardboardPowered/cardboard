@@ -1,11 +1,11 @@
 package com.javazilla.bukkitfabric.mixin.recipe;
 
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.inventory.CraftRecipe;
-import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftShapelessRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.item.ItemStack;
@@ -26,8 +26,7 @@ public class MixinShapelessRecipe implements IMixinRecipe {
         CraftShapelessRecipe recipe = new CraftShapelessRecipe(result, (ShapelessRecipe)(Object)this);
         recipe.setGroup(this.group);
 
-        for (Ingredient list : this.input)
-            recipe.addIngredient(CraftRecipe.toBukkit(list));
+        for (Ingredient list : this.input) recipe.addIngredient(RecipeInterface.toBukkit(list));
         return recipe;
     }
 

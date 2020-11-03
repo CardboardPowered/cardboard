@@ -9,8 +9,7 @@ public final class CraftNamespacedKey {
     }
 
     public static NamespacedKey fromStringOrNull(String string) {
-        if (string == null || string.isEmpty())
-            return null;
+        if (string == null || string.isEmpty()) return null;
         Identifier minecraft = Identifier.tryParse(string);
         return (minecraft == null) ? null : fromMinecraft(minecraft);
     }

@@ -4,11 +4,7 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class Waitable<T> implements Runnable {
 
-    private enum Status {
-        WAITING,
-        RUNNING,
-        FINISHED,
-    }
+    private enum Status { WAITING, RUNNING, FINISHED; }
 
     protected Throwable t = null;
     protected T value = null;
@@ -17,8 +13,7 @@ public abstract class Waitable<T> implements Runnable {
     @Override
     public final void run() {
         synchronized (this) {
-            if (status != Status.WAITING)
-                throw new IllegalStateException("Invalid state " + status);
+            if (status != Status.WAITING) throw new IllegalStateException("Invalid state " + status);
             status = Status.RUNNING;
         }
         try {
@@ -36,10 +31,8 @@ public abstract class Waitable<T> implements Runnable {
     protected abstract T evaluate();
 
     public synchronized T get() throws InterruptedException, ExecutionException {
-        while (status != Status.FINISHED)
-            this.wait();
-        if (t != null)
-            throw new ExecutionException(t);
+        while (status != Status.FINISHED) this.wait();
+        if (t != null) throw new ExecutionException(t);
         return value;
     }
 

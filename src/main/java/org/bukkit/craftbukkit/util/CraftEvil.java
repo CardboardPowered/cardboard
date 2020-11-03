@@ -12,9 +12,6 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * @deprecated do not use for any reason
- */
 @Deprecated
 public final class CraftEvil {
 
@@ -22,9 +19,7 @@ public final class CraftEvil {
 
     static {
         for (Material material : Material.values()) {
-            if (!material.isLegacy())
-                continue;
-
+            if (!material.isLegacy()) continue;
             Preconditions.checkState(!byId.containsKey(material.getId()), "Duplicate material ID for", material);
             byId.put(material.getId(), material);
         }

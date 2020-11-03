@@ -54,8 +54,7 @@ public class InventoryIterator implements ListIterator<ItemStack> {
 
     @Override
     public void set(ItemStack item) {
-        if (lastDirection == null)
-            throw new IllegalStateException("No current item");
+        if (lastDirection == null) throw new IllegalStateException("No current item");
         int i = lastDirection ? nextIndex - 1 : nextIndex;
         inventory.setItem(i, item);
     }

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package com.javazilla.bukkitfabric.impl.inventory.recipe;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -29,16 +29,13 @@ public class RecipeIterator implements Iterator<Recipe> {
 
     @Override
     public Recipe next() {
-        if (current == null || !current.hasNext())
-            current = recipes.next().getValue().values().iterator();
-
+        if (current == null || !current.hasNext()) current = recipes.next().getValue().values().iterator();
         return ((IMixinRecipe)current.next()).toBukkitRecipe();
     }
 
     @Override
     public void remove() {
         if (current == null) throw new IllegalStateException("next() not yet called");
-
         current.remove();
     }
 

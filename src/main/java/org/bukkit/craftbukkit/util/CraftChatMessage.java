@@ -25,9 +25,7 @@ public final class CraftChatMessage {
 
     static {
         Builder<Character, Formatting> builder = ImmutableMap.builder();
-        for (Formatting format : Formatting.values())
-            builder.put(Character.toLowerCase(format.toString().charAt(1)), format);
-
+        for (Formatting format : Formatting.values()) builder.put(Character.toLowerCase(format.toString().charAt(1)), format);
         formatMap = builder.build();
     }
 
@@ -157,24 +155,19 @@ public final class CraftChatMessage {
                     needsAdd = true;
                     break;
                 case 2:
-                    if (!(match.startsWith("http://") || match.startsWith("https://")))
-                        match = "http://" + match;
+                    if (!(match.startsWith("http://") || match.startsWith("https://"))) match = "http://" + match;
                     modifier = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     appendNewComponent(matcher.end(groupId));
                     modifier = modifier.withClickEvent((ClickEvent) null);
                     break;
                 case 3:
-                    if (needsAdd)
-                        appendNewComponent(index);
+                    if (needsAdd) appendNewComponent(index);
                     currentChatComponent = null;
                     break;
                 }
                 currentIndex = matcher.end(groupId);
             }
-
-            if (currentIndex < message.length() || needsAdd)
-                appendNewComponent(message.length());
-
+            if (currentIndex < message.length() || needsAdd) appendNewComponent(message.length());
             output = list.toArray(new Text[list.size()]);
         }
 
@@ -262,13 +255,11 @@ public final class CraftChatMessage {
                 int pos = 0;
                 while (matcher.find()) {
                     String match = matcher.group();
-                    if (!(match.startsWith("http://") || match.startsWith("https://")))
-                        match = "http://" + match;
+                    if (!(match.startsWith("http://") || match.startsWith("https://"))) match = "http://" + match;
 
                     LiteralText prev = new LiteralText(msg.substring(pos, matcher.start()));
                     prev.setStyle(modifier);
                     extras.add(prev);
-
                     LiteralText link = new LiteralText(matcher.group());
                     Style linkModi = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
                     link.setStyle(linkModi);
@@ -282,16 +273,14 @@ public final class CraftChatMessage {
                 extras.add(prev);
                 extras.addAll(extrasOld);
 
-                for (Text c : extras)
-                    text.append(c);
+                for (Text c : extras) text.append(c);
             }
         }
 
         List<Text> extras = component.getSiblings();
         for (int i = 0; i < extras.size(); i++) {
             Text comp = extras.get(i);
-            if (comp.getStyle() != null && comp.getStyle().getClickEvent() == null)
-                extras.set(i, fixComponent(comp, matcher));
+            if (comp.getStyle() != null && comp.getStyle().getClickEvent() == null) extras.set(i, fixComponent(comp, matcher));
         }
 
         if (component instanceof TranslatableText) {
@@ -300,13 +289,10 @@ public final class CraftChatMessage {
                 Object comp = subs[i];
                 if (comp instanceof Text) {
                     Text c = (Text) comp;
-                    if (c.getStyle() != null && c.getStyle().getClickEvent() == null)
-                        subs[i] = fixComponent(c, matcher);
-                } else if (comp instanceof String && matcher.reset((String) comp).find())
-                    subs[i] = fixComponent(new LiteralText((String) comp), matcher);
+                    if (c.getStyle() != null && c.getStyle().getClickEvent() == null) subs[i] = fixComponent(c, matcher);
+                } else if (comp instanceof String && matcher.reset((String) comp).find()) subs[i] = fixComponent(new LiteralText((String) comp), matcher);
             }
         }
-
         return component;
     }
 

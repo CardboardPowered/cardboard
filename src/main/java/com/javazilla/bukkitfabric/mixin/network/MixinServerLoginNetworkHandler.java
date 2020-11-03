@@ -22,17 +22,22 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkEncryptionUtils;
+import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.login.LoginHelloS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -72,14 +77,14 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
      * @author BukkitFabric
      */
     @Overwrite
-    public void onKey(LoginKeyC2SPacket packetlogininencryptionbegin) {
+    public void onKey(LoginKeyC2SPacket keyPacket) {
         Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);
         PrivateKey privatekey = this.server.getKeyPair().getPrivate();
 
-        if (!Arrays.equals(this.nonce, packetlogininencryptionbegin.decryptNonce(privatekey))) {
+        if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
             throw new IllegalStateException("Invalid nonce!");
         } else {
-            this.secretKey = packetlogininencryptionbegin.decryptSecretKey(privatekey);
+            this.secretKey = keyPacket.decryptSecretKey(privatekey);
             this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
             this.connection.setupEncryption(this.secretKey);
             Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
@@ -186,7 +191,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
      * @author BukkitFabricMod
      * @reason Fire PlayerLoginEvent
      */
-    @Overwrite
+    /*@Overwrite
     public void acceptPlayer() {
         ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
 
@@ -205,7 +210,50 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
         }
 
+    }*/
+
+    @Overwrite
+    public void onHello(LoginHelloC2SPacket packetlogininstart) {
+        Validate.validState(this.state == ServerLoginNetworkHandler.State.HELLO, "Unexpected hello packet", new Object[0]);
+        this.profile = packetlogininstart.getProfile();
+        if (this.server.isOnlineMode() && !this.connection.isLocal()) {
+            this.state = ServerLoginNetworkHandler.State.KEY;
+            this.connection.send(new LoginHelloS2CPacket("", this.server.getKeyPair().getPublic(), this.nonce));
+        } else {
+            // Spigot start
+            new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
+
+                @Override
+                public void run() {
+                    System.out.println("SPIGOT INIT UUID ON HELLO PACKET DEBUG MESSAGE THING!");
+                    try {
+                        initUUID();
+                        fireEvents();
+                    } catch (Exception ex) {
+                        disconnect("Failed to verify username!");
+                        CraftServer.INSTANCE.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + profile.getName(), ex);
+                    }
+                }
+            }.start();
+            // Spigot end
+        }
+
     }
+
+    // Spigot start
+    public void initUUID() {
+        UUID uuid;
+        if ( ((IMixinClientConnection)connection).getSpoofedUUID() != null )
+            uuid = ((IMixinClientConnection)connection).getSpoofedUUID();
+        else uuid = PlayerEntity.getOfflinePlayerUuid( this.profile.getName() );
+
+        this.profile = new GameProfile( uuid, this.profile.getName() );
+
+        if (((IMixinClientConnection)connection).getSpoofedProfile() != null)
+            for ( com.mojang.authlib.properties.Property property : ((IMixinClientConnection)connection).getSpoofedProfile() )
+                this.profile.getProperties().put( property.getName(), property );
+    }
+    // Spigot end
 
     @Shadow protected GameProfile toOfflineProfile(GameProfile gameprofile) {return null;}
     @Shadow public void disconnect(Text t) {}

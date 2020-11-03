@@ -41,7 +41,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
 import com.javazilla.bukkitfabric.impl.entity.ArmorStandImpl;
@@ -167,6 +166,18 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     public void sendSystemMessage(Text message) {
         ((Entity) (Object) this).sendSystemMessage(message, UUID.randomUUID());
+    }
+
+    public boolean valid = false;
+
+    @Override
+    public boolean isValidBF() {
+        return valid;
+    }
+
+    @Override
+    public void setValid(boolean b) {
+        this.valid = b;
     }
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
@@ -435,7 +446,11 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     @Inject(at = @At("HEAD"), method = "setAir", cancellable = true)
     public void setAirBF(int i, CallbackInfo ci) {
-        if (!BukkitFabricMod.isAfterWorldLoad) return;
+        if (!valid) {
+            ci.cancel();
+            return;
+        }
+
         EntityAirChangeEvent event = new EntityAirChangeEvent(this.getBukkitEntity(), i);
         event.getEntity().getServer().getPluginManager().callEvent(event);
 

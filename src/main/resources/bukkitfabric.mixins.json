@@ -24,6 +24,7 @@
     "MixinServerScoreboard",
     "MixinCommandManager",
     "MixinTimeCommand",
+    "MixinPlayerAdvancementTracker",
 
     "loot.MixinSurvivesExplosionLootCondition",
     "loot.MixinRandomChanceWithLootingLootCondition",
@@ -138,6 +139,7 @@
     "item.MixinItemStack",
     "item.MixinArmorItem",
     "item.MixinArmorStandItem",
+    "item.MixinEnderEyeItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",

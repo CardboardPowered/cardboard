@@ -1,6 +1,7 @@
-package org.bukkit.craftbukkit.inventory;
+package com.javazilla.bukkitfabric.impl.inventory.recipe;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ComplexRecipe;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +11,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 
 import net.minecraft.recipe.SpecialCraftingRecipe;
 
-public class CraftComplexRecipe implements CraftRecipe, ComplexRecipe {
+public class CraftComplexRecipe implements RecipeInterface, ComplexRecipe {
 
     private final SpecialCraftingRecipe recipe;
 

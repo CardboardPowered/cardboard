@@ -1,12 +1,12 @@
 package com.javazilla.bukkitfabric.mixin.recipe;
 
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.inventory.CraftRecipe;
-import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftShapedRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.item.ItemStack;
@@ -71,9 +71,8 @@ public class MixinShapedRecipe implements IMixinRecipe {
         }
         char c = 'a';
         for (Ingredient list : this.inputs) {
-            RecipeChoice choice = CraftRecipe.toBukkit(list);
-            if (choice != null)
-                recipe.setIngredient(c, choice);
+            RecipeChoice choice = RecipeInterface.toBukkit(list);
+            if (choice != null) recipe.setIngredient(c, choice);
             c++;
         }
         return recipe;

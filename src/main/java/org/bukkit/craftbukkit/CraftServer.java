@@ -84,18 +84,8 @@ import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.craftbukkit.inventory.CraftBlastingRecipe;
-import org.bukkit.craftbukkit.inventory.CraftCampfireRecipe;
-import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.inventory.CraftRecipe;
-import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
-import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
-import org.bukkit.craftbukkit.inventory.CraftSmithingRecipe;
-import org.bukkit.craftbukkit.inventory.CraftSmokingRecipe;
-import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
-import org.bukkit.craftbukkit.inventory.RecipeIterator;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -175,6 +165,16 @@ import com.javazilla.bukkitfabric.impl.command.CommandMapImpl;
 import com.javazilla.bukkitfabric.impl.command.ConsoleCommandSenderImpl;
 import com.javazilla.bukkitfabric.impl.command.MinecraftCommandWrapper;
 import com.javazilla.bukkitfabric.impl.help.SimpleHelpMap;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftBlastingRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftCampfireRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftFurnaceRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftShapedRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftShapelessRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftSmithingRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftSmokingRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftStonecuttingRecipe;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
+import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeIterator;
 import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
@@ -465,9 +465,9 @@ public class CraftServer implements Server {
 
     @Override
     public boolean addRecipe(Recipe recipe) {
-        CraftRecipe toAdd;
-        if (recipe instanceof CraftRecipe) {
-            toAdd = (CraftRecipe) recipe;
+        RecipeInterface toAdd;
+        if (recipe instanceof RecipeInterface) {
+            toAdd = (RecipeInterface) recipe;
         } else {
             if (recipe instanceof ShapedRecipe) {
                 toAdd = CraftShapedRecipe.fromBukkitRecipe((ShapedRecipe) recipe);
