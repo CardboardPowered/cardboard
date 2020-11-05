@@ -57,6 +57,8 @@ import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
+
+import com.destroystokyo.paper.Title;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
@@ -80,6 +82,7 @@ import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -1344,5 +1347,56 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void sendRawMessage(UUID uuid, String msg) {
         this.sendRawMessage(msg);
     }
+
+    // PaperAPI - START
+    public void setTitleTimes(int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TIMES, null, 0, 0, 0));
+    }
+
+    public void showTitle(BaseComponent[] title) {
+        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(title)), 0, 0, 0));
+    }
+
+    public void setSubtitle(BaseComponent[] subtitle) {
+        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.SUBTITLE, Text.of(ComponentSerializer.toString(subtitle)), 0, 0, 0));
+    }
+
+    public void showTitle(BaseComponent title) {
+        showTitle(new BaseComponent[]{title});
+    }
+
+    public void setSubtitle(BaseComponent subtitle) {
+        showTitle(new BaseComponent[]{subtitle});
+    }
+
+    public void showTitle(BaseComponent[] title, BaseComponent[] subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        setTitleTimes(fadeInTicks, stayTicks, fadeOutTicks);
+        setSubtitle(subtitle);
+        showTitle(title);
+    }
+
+    public void showTitle(BaseComponent title, BaseComponent subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        setTitleTimes(fadeInTicks, stayTicks, fadeOutTicks);
+        setSubtitle(subtitle);
+        showTitle(title);
+    }
+
+    public void sendTitle(Title title) {
+        Preconditions.checkNotNull(title, "Title is null");
+        setTitleTimes(title.getFadeIn(), title.getStay(), title.getFadeOut());
+        setSubtitle(title.getSubtitle() == null ? new BaseComponent[0] : title.getSubtitle());
+        showTitle(title.getTitle());
+    }
+
+    public void updateTitle(Title title) {
+        Preconditions.checkNotNull(title, "Title is null");
+        setTitleTimes(title.getFadeIn(), title.getStay(), title.getFadeOut());
+        if (title.getSubtitle() != null) {
+            setSubtitle(title.getSubtitle());
+        }
+        showTitle(title.getTitle());
+    }
+
+    // PaperAPI - END
 
 }
