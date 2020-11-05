@@ -19,16 +19,21 @@
 package com.javazilla.bukkitfabric;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 
 public class BukkitFabricMod implements ModInitializer {
 
     public static Logger LOGGER = BukkitLogger.getLogger();
     public static boolean isAfterWorldLoad = false;
+
+    public static List<ServerLoginNetworkHandler> NETWORK_CASHE = new ArrayList<>();
 
     @Override
     public void onInitialize() {

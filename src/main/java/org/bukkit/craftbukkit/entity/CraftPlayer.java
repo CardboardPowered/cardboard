@@ -2,10 +2,12 @@ package org.bukkit.craftbukkit.entity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -64,13 +66,16 @@ import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementProgressImpl;
 import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.impl.map.RenderData;
+import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinGameMessagePacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
@@ -93,6 +98,7 @@ import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -1202,11 +1208,38 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return uuidEquals && idEquals;
     }
 
+    public InetSocketAddress getRawAddress_BF() {
+        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport")) {
+            System.out.println("PS getRawAddress");
+            try {
+                Class<?> ps = ReflectionRemapper.getClassFromJPL("protocolsupport.zplatform.impl.fabric.FabricMiscUtils");
+                HashMap<InetSocketAddress, InetSocketAddress> map = (HashMap<InetSocketAddress, InetSocketAddress>) ps.getField("rawAddressMap").get(null);
+                return map.get(this.getAddress());
+            } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return (InetSocketAddress) ((IMixinClientConnection) (nms.networkHandler.connection)).getRawAddress();
+    }
+
     private final Player.Spigot spigot = new Player.Spigot() {
+
+        int err = 0;
 
         @Override
         public InetSocketAddress getRawAddress() {
-            return (InetSocketAddress) getHandle().networkHandler.connection.getAddress();
+            try {
+                return getRawAddress_BF();
+            } catch (NullPointerException ex) {
+                // What is going on?
+                if (err > 3) {
+                    System.exit(0);
+                    return null;
+                } 
+                err++;
+                ex.printStackTrace();
+                return ((java.net.InetSocketAddress)CraftPlayer.this.getAddress());
+            }
         }
 
         @Override

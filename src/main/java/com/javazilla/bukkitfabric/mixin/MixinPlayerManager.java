@@ -46,7 +46,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -304,7 +303,6 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
         } else {
-            // return this.players.size() >= this.maxPlayers && !this.f(gameprofile) ? new ChatMessage("multiplayer.disconnect.server_full") : null;
             if (this.players.size() >= ((PlayerManager)(Object)this).getMaxPlayerCount() && !((PlayerManager)(Object)this).canBypassPlayerLimit(gameprofile))
                 event.disallow(PlayerLoginEvent.Result.KICK_FULL, "Server is full"); // Spigot
         }

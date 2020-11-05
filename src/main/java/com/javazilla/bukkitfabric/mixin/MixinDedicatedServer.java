@@ -68,6 +68,7 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
 
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
+        org.spigotmc.SpigotConfig.init(new File("spigot.yml"));
 
         Bukkit.getLogger().info("Loading Bukkit plugins...");
         File pluginsDir = new File("plugins");

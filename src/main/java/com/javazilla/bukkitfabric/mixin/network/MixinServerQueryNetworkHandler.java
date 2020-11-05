@@ -92,7 +92,7 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
             } catch (Exception e) {}
             ping.setPlayers(server.getServerMetadata().players);
             int version = SharedConstants.getGameVersion().getProtocolVersion();
-            ping.setVersion(new ServerMetadata.Version("Spigot " + server.getVersion(), version));
+            ping.setVersion(new ServerMetadata.Version("Paper " + server.getVersion(), version));
 
             this.connection.send(new QueryResponseS2CPacket(ping));
         }

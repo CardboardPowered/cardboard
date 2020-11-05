@@ -22,10 +22,15 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
@@ -61,6 +66,11 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
     public String hostname = ""; // Bukkit - add field
+
+    @Inject(at = @At("TAIL"), method = "<init>*")
+    public void setBF(MinecraftServer minecraftserver, ClientConnection networkmanager, CallbackInfo ci) {
+        BukkitFabricMod.NETWORK_CASHE.add((ServerLoginNetworkHandler)(Object)this);
+    }
 
     @Override
     public String getHostname() {
@@ -191,7 +201,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
      * @author BukkitFabricMod
      * @reason Fire PlayerLoginEvent
      */
-    /*@Overwrite
+    @Overwrite
     public void acceptPlayer() {
         ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
 
@@ -204,18 +214,22 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             }
             this.connection.send(new LoginSuccessS2CPacket(this.profile));
             ServerPlayerEntity entityplayer = this.server.getPlayerManager().getPlayer(this.profile.getId());
+
             if (entityplayer != null) {
                 this.state = ServerLoginNetworkHandler.State.DELAY_ACCEPT;
                 this.player = s;
             } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
         }
 
-    }*/
+    }
 
     @Overwrite
     public void onHello(LoginHelloC2SPacket packetlogininstart) {
         Validate.validState(this.state == ServerLoginNetworkHandler.State.HELLO, "Unexpected hello packet", new Object[0]);
         this.profile = packetlogininstart.getProfile();
+
+        System.out.println("GAME PROFILE ===== " + profile.toString());
+
         if (this.server.isOnlineMode() && !this.connection.isLocal()) {
             this.state = ServerLoginNetworkHandler.State.KEY;
             this.connection.send(new LoginHelloS2CPacket("", this.server.getKeyPair().getPublic(), this.nonce));
@@ -225,7 +239,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
                 @Override
                 public void run() {
-                    System.out.println("SPIGOT INIT UUID ON HELLO PACKET DEBUG MESSAGE THING!");
                     try {
                         initUUID();
                         fireEvents();

@@ -19,12 +19,9 @@ public class MixinClientConnection implements IMixinClientConnection {
     public Property[] spoofedProfile;
     public boolean preparing = true;
 
-    @Shadow
-    public Channel channel;
-
     @Override
     public SocketAddress getRawAddress() {
-        return channel.remoteAddress();
+        return ((ClientConnection)(Object)this).channel.remoteAddress();
     }
 
     @Override
