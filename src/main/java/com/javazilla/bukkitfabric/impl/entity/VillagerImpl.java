@@ -111,4 +111,14 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
         return Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
     }
 
+    // Paper start
+    public int getRestocksToday() {
+        return -1; // TODO
+    }
+
+    public void setRestocksToday(int restocksToday) {
+        // TODO
+    }
+    // Paper end
+
 }

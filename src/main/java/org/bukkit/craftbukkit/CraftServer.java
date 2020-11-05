@@ -1656,4 +1656,14 @@ public class CraftServer implements Server {
         return worldMetadata;
     }
 
+    // PaperAPI - start
+    public long[] getTickTimes() {
+        return new long[] {-1};
+    }
+
+    public double getAverageTickTime() {
+        return -1;
+    }
+    // PaperAPI - end
+
 }

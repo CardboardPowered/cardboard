@@ -1411,6 +1411,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         if (message == null || message.isEmpty()) return;
         sendActionBar(org.bukkit.ChatColor.translateAlternateColorCodes(alternateChar, message));
     }
+
+    public int getViewDistance() {
+        throw new NotImplementedException("Was Removed from Paper");
+    }
+
+    public void setViewDistance(int viewDistance) {
+        throw new NotImplementedException("Was Removed from Paper");
+    }
     // PaperAPI - END
 
 }

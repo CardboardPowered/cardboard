@@ -30,17 +30,16 @@ public class TameableAnimalImpl extends AnimalsImpl implements Tameable, Creatur
         getHandle().setOwnerUuid(uuid);
     }
 
+    public UUID getOwnerUniqueId() {return getOwnerUUID();} // Paper
+
     @Override
     public AnimalTamer getOwner() {
-        if (getOwnerUUID() == null) {
+        if (getOwnerUUID() == null)
             return null;
-        }
 
         AnimalTamer owner = getServer().getPlayer(getOwnerUUID());
-        if (owner == null) {
+        if (owner == null)
             owner = getServer().getOfflinePlayer(getOwnerUUID());
-        }
-
         return owner;
     }
 
@@ -64,9 +63,7 @@ public class TameableAnimalImpl extends AnimalsImpl implements Tameable, Creatur
     @Override
     public void setTamed(boolean tame) {
         getHandle().setTamed(tame);
-        if (!tame) {
-            setOwnerUUID(null);
-        }
+        if (!tame) setOwnerUUID(null);
     }
 
     public boolean isSitting() {

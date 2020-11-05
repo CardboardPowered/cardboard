@@ -609,4 +609,16 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         getHandle().setFlag(5, invisible);
     }
 
+    // PaperAPI - start
+    public boolean isJumping() {
+        return getHandle().jumping;
+    }
+
+    public void setJumping(boolean jumping) {
+        getHandle().setJumping(jumping);
+        if (jumping && getHandle() instanceof MobEntity)
+            ((MobEntity) getHandle()).getJumpControl().tick();
+    }
+    // PaperAPI - end
+
 }
