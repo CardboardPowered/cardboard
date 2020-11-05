@@ -1397,6 +1397,20 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         showTitle(title.getTitle());
     }
 
+    public void sendActionBar(BaseComponent[] message) {
+        if (getHandle().networkHandler == null) return;
+        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(message)), 0, 0, 0));
+    }
+
+    public void sendActionBar(String message) {
+        if (getHandle().networkHandler == null || message == null || message.isEmpty()) return;
+        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, CraftChatMessage.fromStringOrNull(message), 0, 0, 0));
+    }
+
+    public void sendActionBar(char alternateChar, String message) {
+        if (message == null || message.isEmpty()) return;
+        sendActionBar(org.bukkit.ChatColor.translateAlternateColorCodes(alternateChar, message));
+    }
     // PaperAPI - END
 
 }
