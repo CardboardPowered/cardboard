@@ -18,6 +18,7 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -29,8 +30,12 @@ public interface IMixinEntity {
 
     public ProjectileSource getProjectileSourceBukkit();
 
-    boolean isValidBF();
+    public boolean isValidBF();
 
-    void setValid(boolean b);
+    public void setValid(boolean b);
+
+    public void setOriginBF(Location loc);
+
+    public Location getOriginBF();
 
 }

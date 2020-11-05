@@ -70,8 +70,14 @@ public class MixinServerWorld extends MixinWorld {
 
     @Inject(at = @At("TAIL"), method = "loadEntityUnchecked")
     public void validateEntityBF(Entity entity, CallbackInfo ci) {
-        if (!this.inEntityTick)
-            ((IMixinEntity)entity).setValid(true);
+        if (!this.inEntityTick) {
+            IMixinEntity bf = (IMixinEntity) entity;
+            bf.setValid(true);
+            if (null == bf.getOriginBF()) {
+                // Paper's Entity Origin API
+                bf.setOriginBF(bf.getBukkitEntity().getLocation());
+            }
+        }
     } 
 
 }

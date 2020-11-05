@@ -612,4 +612,10 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         this.sendMessage(messages);
     }
 
+    // Paper - Entity Origin API
+    public Location getOrigin() {
+        Location origin = ((IMixinEntity)getHandle()).getOriginBF();
+        return origin == null ? null : origin.clone();
+    }
+
 }

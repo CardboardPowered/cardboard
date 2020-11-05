@@ -23,6 +23,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -169,6 +170,17 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     public boolean valid = false;
+    public Location origin_bukkit;
+
+    @Override
+    public Location getOriginBF() {
+        return origin_bukkit;
+    }
+
+    @Override
+    public void setOriginBF(Location loc) {
+        this.origin_bukkit = loc;
+    }
 
     @Override
     public boolean isValidBF() {
