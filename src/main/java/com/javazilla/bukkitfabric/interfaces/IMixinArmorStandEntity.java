@@ -10,4 +10,8 @@ public interface IMixinArmorStandEntity {
 
     public void setMarkerBF(boolean marker);
 
+    public boolean canMoveBF();
+
+    public void setCanMoveBF(boolean b);
+
 }

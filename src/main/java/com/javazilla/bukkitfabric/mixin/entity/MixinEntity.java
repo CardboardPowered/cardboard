@@ -94,6 +94,7 @@ import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
@@ -145,6 +146,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 @Mixin(Entity.class)
@@ -477,5 +479,9 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public void remove() {}
 
     public void removeBF() {remove();} // Helper
+
+    @Shadow
+    public void move(MovementType moveType, Vec3d vec3d) {
+    }
 
 }

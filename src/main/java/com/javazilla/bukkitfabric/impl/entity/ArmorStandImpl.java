@@ -232,4 +232,14 @@ public class ArmorStandImpl extends CraftLivingEntity implements ArmorStand {
         return false;
     }
 
+    // Paper - START
+    public boolean canMove() {
+        return ((IMixinArmorStandEntity)getHandle()).canMoveBF();
+    }
+
+    public void setCanMove(boolean move) {
+        ((IMixinArmorStandEntity)getHandle()).setCanMoveBF(move);
+    }
+    // Paper - END
+
 }
