@@ -598,4 +598,15 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         return EntityType.UNKNOWN;
     }
 
+    // Spigot-743
+    public boolean isInvisible() {
+        return getHandle().isInvisible();
+    }
+
+    // Spigot-743
+    public void setInvisible(boolean invisible) {
+        // TODO getHandle().persistentInvisibility = invisible;
+        getHandle().setFlag(5, invisible);
+    }
+
 }

@@ -2,6 +2,9 @@ package com.javazilla.bukkitfabric.impl.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
+
+import java.util.UUID;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -56,6 +59,26 @@ public class ItemEntityImpl extends CraftEntity implements Item {
     @Override
     public EntityType getType() {
         return EntityType.DROPPED_ITEM;
+    }
+
+    public void setOwner(UUID uuid) {
+        item.setOwner(uuid);
+    }
+
+
+    // Spigot #758
+    public UUID getOwner() {
+        return item.getOwner();
+    }
+
+    // Spigot #758
+    public void setThrower(UUID uuid) {
+        item.setThrower(uuid);
+    }
+
+    // Spigot #758
+    public UUID getThrower() {
+        return item.getThrower();
     }
 
 }

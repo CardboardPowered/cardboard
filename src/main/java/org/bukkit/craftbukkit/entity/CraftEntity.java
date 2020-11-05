@@ -602,4 +602,14 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         return nbttagcompound;
     }
 
+    // SPIGOT-759
+    public void sendMessage(UUID sender, String message) {
+        this.sendMessage(message);
+    }
+
+    // SPIGOT-759
+    public void sendMessage(UUID sender, String[] messages) {
+        this.sendMessage(messages);
+    }
+
 }

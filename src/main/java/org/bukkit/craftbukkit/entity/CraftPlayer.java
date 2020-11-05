@@ -1340,4 +1340,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         // TODO Auto-generated method stub
     }
 
+    // SPIGOT-759
+    public void sendRawMessage(UUID uuid, String msg) {
+        this.sendRawMessage(msg);
+    }
+
 }

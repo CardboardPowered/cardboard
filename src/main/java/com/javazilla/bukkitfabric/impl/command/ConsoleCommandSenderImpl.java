@@ -1,6 +1,7 @@
 package com.javazilla.bukkitfabric.impl.command;
 
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -127,6 +128,18 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender, CommandSe
     @Override
     public void sendRawMessage(String arg0) {
         Bukkit.getLogger().info(arg0);
+    }
+
+    public void sendMessage(UUID uuid, String[] msg) {
+        sendMessage(msg);
+    }
+
+    public void sendMessage(UUID uuid, String msg) {
+        sendMessage(msg);
+    }
+
+    public void sendRawMessage(UUID uuid, String msg) {
+        sendRawMessage(msg);
     }
 
     @Override

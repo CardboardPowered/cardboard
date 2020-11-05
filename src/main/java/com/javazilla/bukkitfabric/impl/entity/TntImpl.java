@@ -4,11 +4,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TNTPrimed;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinTnt;
 
 public class TntImpl extends CraftEntity implements TNTPrimed {
 
@@ -65,6 +67,12 @@ public class TntImpl extends CraftEntity implements TNTPrimed {
     public Entity getSource() {
         LivingEntity source = getHandle().getCausingEntity();
         return (source != null) ? ((IMixinEntity)source).getBukkitEntity() : null;
+    }
+
+    public void setSource(Entity source) {
+        if (source instanceof LivingEntity) {
+            ((IMixinTnt)getHandle()).setSourceBF(((CraftLivingEntity) source).getHandle());
+        } else ((IMixinTnt)getHandle()).setSourceBF(null);
     }
 
 }

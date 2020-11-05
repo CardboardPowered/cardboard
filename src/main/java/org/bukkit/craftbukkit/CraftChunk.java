@@ -15,6 +15,7 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 
 import com.google.common.base.Preconditions;
@@ -304,6 +305,11 @@ public class CraftChunk implements Chunk {
         Preconditions.checkArgument(0 <= x && x <= 15, "x out of range (expected 0-15, got %s)", x);
         Preconditions.checkArgument(0 <= y && y <= 255, "y out of range (expected 0-255, got %s)", y);
         Preconditions.checkArgument(0 <= z && z <= 15, "z out of range (expected 0-15, got %s)", z);
+    }
+
+    public PersistentDataContainer getPersistentDataContainer() {
+        // Added in Bukkit 1.16.3 API (Spigot Pull #672)
+        return null;
     }
 
     static {
