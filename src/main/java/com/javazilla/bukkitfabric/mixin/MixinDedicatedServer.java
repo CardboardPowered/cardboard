@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -34,6 +35,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.impl.util.ServerShutdownThread;
 import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
@@ -73,6 +75,9 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
         Bukkit.getLogger().info("Loading Bukkit plugins...");
         File pluginsDir = new File("plugins");
         pluginsDir.mkdir();
+
+        Bukkit.getPluginManager().registerInterface(JavaPluginLoader.class);
+        BukkitFabricMod.loadLibs();
 
         CraftServer s = ((CraftServer)Bukkit.getServer());
         if (CraftServer.server == null) CraftServer.server = (MinecraftDedicatedServer) (Object) this;

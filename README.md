@@ -2,7 +2,7 @@
 <img align="left" alt="logo" width="100" src="https://i.imgur.com/wazC5XA.png">
 
 # Bukkit for Fabric
-[![Join Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&style=for-the-badge)](https://discord.gg/Qp4a2Nj) [![Build Status](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fci.fungus-soft.com%3A8080%2Fjob%2FBukkit4Fabric&style=for-the-badge)](http://ci.javazilla.com:8080/job/Bukkit4Fabric/) [![Fabric 1.16](https://img.shields.io/badge/Fabric-1.16.3-blue?style=for-the-badge)](https://fabricmc.net/use/?page=server)
+[![Join Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&style=flat-square)](https://discord.gg/Qp4a2Nj) [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Bukkit4Fabric/&style=flat-square)](http://bukkitfabric.javazilla.com/) [![Fabric 1.16](https://img.shields.io/badge/Fabric-1.16.3/1.16.4-blue?style=flat-square)](https://fabricmc.net/use/?page=server)
 
 An implementation of the popular Bukkit/Spigot/Paper Modding API for FabricMC
 
@@ -24,6 +24,7 @@ Support for methods will be added soon.
 * [The Bukkit Project](https://bukkit.org/) for creating the Bukkit API
 * [SpigotMC](https://spigotmc.org/) for maintaining the API past 1.8
 * [PaperMC](https://papermc.io/) for optimizing &amp; updating the API
+* [GlowstoneMC](https://glowstonemc.net) for our library loader.
 * [Fabric](https://fabricmc.net/) for creating the modern mod loader
 
 # Apex Hosting 

@@ -73,7 +73,7 @@ public class MixinServerWorld extends MixinWorld {
         if (!this.inEntityTick) {
             IMixinEntity bf = (IMixinEntity) entity;
             bf.setValid(true);
-            if (null == bf.getOriginBF()) {
+            if (null == bf.getOriginBF() && null != bf.getBukkitEntity()) {
                 // Paper's Entity Origin API
                 bf.setOriginBF(bf.getBukkitEntity().getLocation());
             }

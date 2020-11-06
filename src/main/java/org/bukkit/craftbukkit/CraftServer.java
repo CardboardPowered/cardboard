@@ -338,8 +338,6 @@ public class CraftServer implements Server {
     }
 
     public void loadPlugins() {
-        pluginManager.registerInterface(JavaPluginLoader.class);
-
         File pluginFolder = new File("plugins");
         if (pluginFolder.exists()) {
             for (File f : pluginFolder.listFiles()) {

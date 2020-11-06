@@ -213,6 +213,29 @@ public class ReflectionRemapper {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static JavaPluginLoader getFirstJPL() {
+        try {
+            SimplePluginManager pm = (SimplePluginManager) Bukkit.getPluginManager();
+            if (null == pm) System.out.println(" NULL PM ");
+            Field fa = SimplePluginManager.class.getDeclaredField("fileAssociations");
+            fa.setAccessible(true);
+            Map<Pattern, PluginLoader> pl = (Map<Pattern, PluginLoader>) fa.get(pm);
+            JavaPluginLoader jpl = null;
+            for (PluginLoader loader : pl.values()) {
+                if (loader instanceof JavaPluginLoader) {
+                    jpl = (JavaPluginLoader) loader;
+                    break;
+                }
+            }
+            return jpl;
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            BukkitFabricMod.LOGGER.warning("SOMETHING EVERY WRONG! PLEASE REPORT THE EXCEPTION BELOW TO BUKKIT4FABRIC:");
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      */
     public static String getCallerClassName() { 
