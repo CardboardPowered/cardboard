@@ -69,7 +69,7 @@ public class LibraryClassLoader extends URLClassLoader {
                     try {
                         result = defineClass(name, classBytes, 0, classBytes.length, source);
                     } catch (LinkageError ignore) {
-                        System.err.println(ignore.getMessage()); // Should only be in dev
+                        //System.err.println(ignore.getMessage()); // Should only be in dev
                     }
                 }
 
