@@ -75,7 +75,7 @@ public class LibraryClassLoader extends URLClassLoader {
 
                 try {
                     if (result == null) result = super.findClass(name);
-                } catch (ClassNotFoundException | NoClassDefFoundError e) {}
+                } catch (ClassNotFoundException | LinkageError e) {}
 
                 if (result != null) setClass(name, result);
 
