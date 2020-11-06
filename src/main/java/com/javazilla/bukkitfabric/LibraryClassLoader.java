@@ -20,6 +20,8 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import com.google.common.io.ByteStreams;
 import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 
+import net.fabricmc.loader.launch.knot.Knot;
+
 public class LibraryClassLoader extends URLClassLoader {
 
     public final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
@@ -32,7 +34,10 @@ public class LibraryClassLoader extends URLClassLoader {
         this.jar = new JarFile(file);
         this.manifest = jar.getManifest();
         this.url = file.toURI().toURL();
-        test();
+
+        // Add to Knot (Fabric) instead of PluginClassLoader
+        Knot.getLauncher().propose(this.url);
+        //test();
     }
 
     public void test() {
