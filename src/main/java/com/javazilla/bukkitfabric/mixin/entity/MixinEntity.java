@@ -121,7 +121,7 @@ import net.minecraft.entity.mob.WitherSkeletonEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
-import net.minecraft.entity.passive.AbstractTraderEntity;
+import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.passive.ChickenEntity;
@@ -356,10 +356,10 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                     //else if (entity instanceof IronGolemEntity) { return new CraftIronGolem(server, (IronGolemEntity) entity); }
                     //else if (entity instanceof ShulkerEntity) { return new CraftShulker(server, (ShulkerEntity) entity); }
                 //}
-                else if (entity instanceof AbstractTraderEntity) {
+                else if (entity instanceof MerchantEntity) {
                     if (entity instanceof VillagerEntity) { return new VillagerImpl(server, (VillagerEntity) entity); }
                     else if (entity instanceof WanderingTraderEntity) { return new WanderingTraderImpl(server, (WanderingTraderEntity) entity); }
-                    else { return new AbstractVillagerImpl(server, (AbstractTraderEntity) entity); }
+                    else { return new AbstractVillagerImpl(server, (MerchantEntity) entity); }
                 }
                 else { return new CreatureImpl(server, (PathAwareEntity) entity); }
             }

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.techcable.srglib.FieldData;
 import net.techcable.srglib.JavaType;
 import net.techcable.srglib.format.MappingsFormat;
@@ -44,6 +45,11 @@ public class MappingsReader {
 
     public static Logger LOGGER = LogManager.getLogger("BukkitNmsRemapper");
 
+    public static String dev(String s) {
+        if (!FabricLoader.getInstance().isDevelopmentEnvironment()) return s;
+        return FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary", s);
+    }
+
     public static void main(String[] args) throws IOException {
         File dir = new File("mappings");
         dir.mkdirs();
@@ -52,7 +58,7 @@ public class MappingsReader {
         METHODS = new HashMap<>();
         METHODS2 = new HashMap<>();
         METHODS3 = new HashMap<>();
-        LOGGER.info("Reflection working: " + MAPPINGS.getNewClass("net.minecraft.server.MinecraftKey").getName().equalsIgnoreCase("net.minecraft.class_2960"));
+        LOGGER.info("Reflection working: " + dev(MAPPINGS.getNewClass("net.minecraft.server.MinecraftKey").getName()).equalsIgnoreCase("net.minecraft.class_2960"));
 
         MAPPINGS.forEachMethod((spigot, intermed) -> {
             String sN = spigot.getName();

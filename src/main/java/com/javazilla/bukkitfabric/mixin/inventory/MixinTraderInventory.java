@@ -12,22 +12,22 @@ import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-import net.minecraft.entity.passive.AbstractTraderEntity;
+import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.village.Trader;
-import net.minecraft.village.TraderInventory;
+import net.minecraft.village.Merchant;
+import net.minecraft.village.MerchantInventory;
 
-@Mixin(TraderInventory.class)
+@Mixin(MerchantInventory.class)
 public class MixinTraderInventory implements IMixinInventory {
 
     @Shadow
     public DefaultedList<ItemStack> inventory;
 
     @Shadow
-    public Trader trader;
+    public Merchant merchant;
 
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
@@ -45,7 +45,7 @@ public class MixinTraderInventory implements IMixinInventory {
     @Override
     public void onClose(CraftHumanEntity who) {
         transaction.remove(who);
-        trader.setCurrentCustomer((PlayerEntity) null);
+        merchant.setCurrentCustomer((PlayerEntity) null);
     }
 
     @Override
@@ -65,12 +65,12 @@ public class MixinTraderInventory implements IMixinInventory {
 
     @Override
     public org.bukkit.inventory.InventoryHolder getOwner() {
-        return (trader instanceof AbstractTraderEntity) ? (AbstractVillagerImpl) ((IMixinEntity)((AbstractTraderEntity) this.trader)).getBukkitEntity() : null;
+        return (merchant instanceof MerchantEntity) ? (AbstractVillagerImpl) ((IMixinEntity)((MerchantEntity) this.merchant)).getBukkitEntity() : null;
     }
 
     @Override
     public Location getLocation() {
-        return (trader instanceof VillagerEntity) ? ((IMixinEntity)((VillagerEntity) this.trader)).getBukkitEntity().getLocation() : null;
+        return (merchant instanceof VillagerEntity) ? ((IMixinEntity)((VillagerEntity) this.merchant)).getBukkitEntity().getLocation() : null;
     }
 
 }

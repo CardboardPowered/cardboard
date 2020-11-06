@@ -28,6 +28,10 @@ public class MixinPlayerAdvancementTracker {
     @Shadow public Set<Advancement> progressUpdates;
     @Shadow public PlayerManager field_25325;
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public boolean grantCriterion(Advancement advancement, String s) {
         boolean flag = false;

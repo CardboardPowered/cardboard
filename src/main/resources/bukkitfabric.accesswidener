@@ -13,9 +13,6 @@ accessible	field	net/minecraft/entity/FireworkEntity	ITEM	Lnet/minecraft/entity/
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	burnTime	I
 accessible	field	net/minecraft/advancement/AdvancementManager	advancements	Ljava/util/Map;
 accessible	method	net/minecraft/block/DispenserBlock	dispense	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V
-accessible	field	net/minecraft/entity/AreaEffectCloudEntity	radiusGrowth	F
-accessible	field	net/minecraft/block/ShulkerBoxBlock	color	Lnet/minecraft/util/DyeColor;
-accessible	field	net/minecraft/server/network/ServerPlayerEntity	clientLanguage	Ljava/lang/String;
 accessible	field	net/minecraft/network/ClientConnection	address	Ljava/net/SocketAddress;
 accessible	method	net/minecraft/entity/passive/LlamaEntity	setStrength	(I)V
 accessible	field	net/minecraft/entity/boss/dragon/EnderDragonEntity	parts	[Lnet/minecraft/entity/boss/dragon/EnderDragonPart;
@@ -768,15 +765,8 @@ accessible	class	net/minecraft/container/ContainerType$Factory
 accessible	field	net/minecraft/container/ContainerType	factory	Lnet/minecraft/container/ContainerType$Factory;
 mutable	field	net/minecraft/container/ContainerType	factory	Lnet/minecraft/container/ContainerType$Factory;
 accessible	method	net/minecraft/container/ContainerType	register	(Ljava/lang/String;Lnet/minecraft/container/ContainerType$Factory;)Lnet/minecraft/container/ContainerType;
-accessible	field	net/minecraft/village/TraderInventory	trader	Lnet/minecraft/village/Trader;
-mutable	field	net/minecraft/village/TraderInventory	trader	Lnet/minecraft/village/Trader;
-accessible	field	net/minecraft/village/TraderInventory	traderRecipe	Lnet/minecraft/village/TradeOffer;
-mutable	field	net/minecraft/village/TraderInventory	traderRecipe	Lnet/minecraft/village/TradeOffer;
-accessible	field	net/minecraft/village/TraderInventory	recipeIndex	I
-mutable	field	net/minecraft/village/TraderInventory	recipeIndex	I
-accessible	field	net/minecraft/village/TraderInventory	traderRewardedExperience	I
-mutable	field	net/minecraft/village/TraderInventory	traderRewardedExperience	I
-accessible	method	net/minecraft/village/TraderInventory	needRecipeUpdate	(I)Z
+accessible	field	net/minecraft/village/MerchantInventory	recipeIndex	I
+mutable	field	net/minecraft/village/MerchantInventory	recipeIndex	I
 accessible	field	net/minecraft/inventory/EnderChestInventory	currentBlockEntity	Lnet/minecraft/block/entity/EnderChestBlockEntity;
 mutable	field	net/minecraft/inventory/EnderChestInventory	currentBlockEntity	Lnet/minecraft/block/entity/EnderChestBlockEntity;
 accessible	field	net/minecraft/inventory/CraftingResultInventory	stack	Lnet/minecraft/util/DefaultedList;
@@ -1652,8 +1642,8 @@ extendable	method	net/minecraft/world/chunk/WorldChunk	createBlockEntity	(Lnet/m
 accessible	method	net/minecraft/world/chunk/WorldChunk	createBlockEntity	(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/entity/BlockEntity;
 extendable	method	net/minecraft/world/chunk/WorldChunk	loadBlockEntity	(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/block/entity/BlockEntity;
 accessible	method	net/minecraft/world/chunk/WorldChunk	loadBlockEntity	(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/block/entity/BlockEntity;
-accessible	field	net/minecraft/world/chunk/ChunkSection	palette	Lnet/minecraft/world/chunk/Palette;
-mutable	field	net/minecraft/world/chunk/ChunkSection	palette	Lnet/minecraft/world/chunk/Palette;
+accessible	field	net/minecraft/world/chunk/ChunkSection	PALETTE	Lnet/minecraft/world/chunk/Palette;
+mutable	field	net/minecraft/world/chunk/ChunkSection	PALETTE	Lnet/minecraft/world/chunk/Palette;
 accessible	field	net/minecraft/world/chunk/ChunkSection	yOffset	I
 mutable	field	net/minecraft/world/chunk/ChunkSection	yOffset	I
 accessible	field	net/minecraft/world/chunk/ChunkSection	nonEmptyBlockCount	S
@@ -1934,64 +1924,6 @@ mutable	field	net/minecraft/data/server/AbstractTagProvider	registry	Lnet/minecr
 accessible	field	net/minecraft/data/server/AbstractTagProvider	tagBuilders	Ljava/util/Map;
 mutable	field	net/minecraft/data/server/AbstractTagProvider	tagBuilders	Ljava/util/Map;
 accessible	method	net/minecraft/data/server/AbstractTagProvider	getOrCreateTagBuilder	(Lnet/minecraft/tag/Tag;)Lnet/minecraft/tag/Tag$Builder;
-extendable	class	net/minecraft/nbt/ByteArrayTag$1
-accessible	field	net/minecraft/nbt/ByteArrayTag	value	[B
-mutable	field	net/minecraft/nbt/ByteArrayTag	value	[B
-accessible	method	net/minecraft/nbt/ByteArrayTag	toArray	(Ljava/util/List;)[B
-extendable	class	net/minecraft/nbt/ByteTag$1
-accessible	class	net/minecraft/nbt/ByteTag$Cache
-accessible	field	net/minecraft/nbt/ByteTag$Cache	VALUES	[Lnet/minecraft/nbt/ByteTag;
-mutable	field	net/minecraft/nbt/ByteTag$Cache	VALUES	[Lnet/minecraft/nbt/ByteTag;
-accessible	field	net/minecraft/nbt/ByteTag	value	B
-mutable	field	net/minecraft/nbt/ByteTag	value	B
-extendable	class	net/minecraft/nbt/CompoundTag$1
-accessible	field	net/minecraft/nbt/CompoundTag	PATTERN	Ljava/util/regex/Pattern;
-mutable	field	net/minecraft/nbt/CompoundTag	PATTERN	Ljava/util/regex/Pattern;
-accessible	field	net/minecraft/nbt/CompoundTag	tags	Ljava/util/Map;
-mutable	field	net/minecraft/nbt/CompoundTag	tags	Ljava/util/Map;
-accessible	method	net/minecraft/nbt/CompoundTag	createCrashReport	(Ljava/lang/String;Lnet/minecraft/nbt/TagReader;Ljava/lang/ClassCastException;)Lnet/minecraft/util/crash/CrashReport;
-accessible	method	net/minecraft/nbt/CompoundTag	write	(Ljava/lang/String;Lnet/minecraft/nbt/Tag;Ljava/io/DataOutput;)V
-accessible	method	net/minecraft/nbt/CompoundTag	readByte	(Ljava/io/DataInput;Lnet/minecraft/nbt/PositionTracker;)B
-accessible	method	net/minecraft/nbt/CompoundTag	readString	(Ljava/io/DataInput;Lnet/minecraft/nbt/PositionTracker;)Ljava/lang/String;
-accessible	method	net/minecraft/nbt/CompoundTag	read	(Lnet/minecraft/nbt/TagReader;Ljava/lang/String;Ljava/io/DataInput;ILnet/minecraft/nbt/PositionTracker;)Lnet/minecraft/nbt/Tag;
-accessible	method	net/minecraft/nbt/CompoundTag	escapeTagKey	(Ljava/lang/String;)Ljava/lang/String;
-accessible	method	net/minecraft/nbt/CompoundTag	prettyPrintTagKey	(Ljava/lang/String;)Lnet/minecraft/text/Text;
-extendable	class	net/minecraft/nbt/DoubleTag$1
-accessible	field	net/minecraft/nbt/DoubleTag	value	D
-mutable	field	net/minecraft/nbt/DoubleTag	value	D
-extendable	class	net/minecraft/nbt/EndTag$1
-extendable	class	net/minecraft/nbt/FloatTag$1
-accessible	field	net/minecraft/nbt/FloatTag	value	F
-mutable	field	net/minecraft/nbt/FloatTag	value	F
-extendable	class	net/minecraft/nbt/IntArrayTag$1
-accessible	field	net/minecraft/nbt/IntArrayTag	value	[I
-mutable	field	net/minecraft/nbt/IntArrayTag	value	[I
-accessible	method	net/minecraft/nbt/IntArrayTag	toArray	(Ljava/util/List;)[I
-extendable	class	net/minecraft/nbt/IntTag$1
-accessible	class	net/minecraft/nbt/IntTag$Cache
-accessible	field	net/minecraft/nbt/IntTag$Cache	VALUES	[Lnet/minecraft/nbt/IntTag;
-mutable	field	net/minecraft/nbt/IntTag$Cache	VALUES	[Lnet/minecraft/nbt/IntTag;
-accessible	field	net/minecraft/nbt/IntTag	value	I
-mutable	field	net/minecraft/nbt/IntTag	value	I
-extendable	class	net/minecraft/nbt/ListTag$1
-accessible	field	net/minecraft/nbt/ListTag	value	Ljava/util/List;
-mutable	field	net/minecraft/nbt/ListTag	value	Ljava/util/List;
-accessible	field	net/minecraft/nbt/ListTag	type	B
-mutable	field	net/minecraft/nbt/ListTag	type	B
-accessible	method	net/minecraft/nbt/ListTag	forgetTypeIfEmpty	()V
-accessible	method	net/minecraft/nbt/ListTag	canAdd	(Lnet/minecraft/nbt/Tag;)Z
-accessible	method	net/minecraft/nbt/NbtIo	write	(Lnet/minecraft/nbt/Tag;Ljava/io/DataOutput;)V
-accessible	method	net/minecraft/nbt/NbtIo	read	(Ljava/io/DataInput;ILnet/minecraft/nbt/PositionTracker;)Lnet/minecraft/nbt/Tag;
-extendable	class	net/minecraft/nbt/NbtHelper
-extendable	class	net/minecraft/nbt/ShortTag$1
-accessible	class	net/minecraft/nbt/ShortTag$Cache
-accessible	field	net/minecraft/nbt/ShortTag$Cache	VALUES	[Lnet/minecraft/nbt/ShortTag;
-accessible	field	net/minecraft/nbt/ShortTag	value	S
-mutable	field	net/minecraft/nbt/ShortTag	value	S
-extendable	class	net/minecraft/nbt/StringTag$1
-accessible	field	net/minecraft/nbt/StringTag	EMPTY	Lnet/minecraft/nbt/StringTag;
-accessible	field	net/minecraft/nbt/StringTag	value	Ljava/lang/String;
-mutable	field	net/minecraft/nbt/StringTag	value	Ljava/lang/String;
 accessible	field	net/minecraft/nbt/StringNbtReader	reader	Lcom/mojang/brigadier/StringReader;
 accessible	method	net/minecraft/nbt/StringNbtReader	readCompoundTag	()Lnet/minecraft/nbt/CompoundTag;
 accessible	method	net/minecraft/nbt/StringNbtReader	readString	()Ljava/lang/String;
@@ -2172,14 +2104,6 @@ accessible	field	net/minecraft/util/Identifier	path	Ljava/lang/String;
 accessible	method	net/minecraft/util/Identifier	split	(Ljava/lang/String;C)[Ljava/lang/String;
 accessible	field	net/minecraft/server/ServerTask	creationTicks	I
 accessible	field	net/minecraft/server/ServerTask	runnable	Ljava/lang/Runnable;
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	saveIpBanList	()V
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	saveUserBanList	()V
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	loadIpBanList	()V
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	loadUserBanList	()V
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	loadOpList	()V
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	saveOpList	()V
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	loadWhitelist	()V
-accessible	method	net/minecraft/server/dedicated/DedicatedPlayerManager	saveWhitelist	()V
 accessible	class	net/minecraft/server/dedicated/MinecraftDedicatedServer$1
 accessible	class	net/minecraft/server/dedicated/MinecraftDedicatedServer$2
 accessible	field	net/minecraft/server/dedicated/MinecraftDedicatedServer	commandQueue	Ljava/util/List;
@@ -2299,7 +2223,7 @@ accessible	method	net/minecraft/block/JukeboxBlock	removeRecord	(Lnet/minecraft/
 accessible	field	net/minecraft/village/TradeOffer	secondBuyItem	Lnet/minecraft/item/ItemStack;
 mutable	field	net/minecraft/village/TradeOffer	secondBuyItem	Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/village/TradeOffer	sellItem	Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/village/TradeOffer	traderExperience	I
+accessible	field	net/minecraft/village/TradeOffer	merchantExperience	I
 accessible	field	net/minecraft/village/TradeOffer	uses	I
 accessible	field	net/minecraft/village/TradeOffer	maxUses	I
 accessible	field	net/minecraft/village/TradeOffer	priceMultiplier	F

@@ -48,6 +48,10 @@ public class MixinLecternScreenHandler extends MixinScreenHandler {
         return bukkitEntity;
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public boolean onButtonClick(PlayerEntity entityhuman, int i) {
         int j;

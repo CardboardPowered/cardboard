@@ -11,17 +11,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.MerchantRecipe;
 
-import net.minecraft.entity.passive.AbstractTraderEntity;
+import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 
 public class AbstractVillagerImpl extends AgeableImpl implements AbstractVillager, InventoryHolder {
 
-    public AbstractVillagerImpl(CraftServer server, AbstractTraderEntity entity) {
+    public AbstractVillagerImpl(CraftServer server, MerchantEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public AbstractTraderEntity getHandle() {
+    public MerchantEntity getHandle() {
         return (VillagerEntity) nms;
     }
 

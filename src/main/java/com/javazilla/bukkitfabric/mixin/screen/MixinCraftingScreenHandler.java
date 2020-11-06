@@ -74,6 +74,10 @@ public class MixinCraftingScreenHandler extends MixinScreenHandler {
         }
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void onContentChanged(Inventory iinventory) {
         this.context.run((world, blockposition) -> {

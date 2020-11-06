@@ -223,6 +223,10 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void onHello(LoginHelloC2SPacket packetlogininstart) {
         Validate.validState(this.state == ServerLoginNetworkHandler.State.HELLO, "Unexpected hello packet", new Object[0]);

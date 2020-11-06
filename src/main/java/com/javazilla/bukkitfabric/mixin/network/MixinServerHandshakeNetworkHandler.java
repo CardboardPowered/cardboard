@@ -45,6 +45,10 @@ public class MixinServerHandshakeNetworkHandler {
     public void onDisconnected(Text reason) {
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void onHandshake(HandshakeC2SPacket packethandshakinginsetprotocol) {
         switch (packethandshakinginsetprotocol.getIntendedState()) {

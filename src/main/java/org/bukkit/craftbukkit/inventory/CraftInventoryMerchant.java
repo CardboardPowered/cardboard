@@ -1,19 +1,18 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.village.Trader;
-import net.minecraft.village.TraderInventory;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.MerchantInventory;
+import net.minecraft.village.Merchant;
+import net.minecraft.village.MerchantInventory;
+
 import org.bukkit.inventory.MerchantRecipe;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinTradeOffer;
 import com.javazilla.bukkitfabric.interfaces.IMixinTrader;
 
-public class CraftInventoryMerchant extends CraftInventory implements MerchantInventory {
+public class CraftInventoryMerchant extends CraftInventory implements org.bukkit.inventory.MerchantInventory {
 
-    private final Trader merchant;
+    private final Merchant merchant;
 
-    public CraftInventoryMerchant(Trader merchant, TraderInventory inventory) {
+    public CraftInventoryMerchant(Merchant merchant, MerchantInventory inventory) {
         super(inventory);
         this.merchant = merchant;
     }
@@ -30,12 +29,12 @@ public class CraftInventoryMerchant extends CraftInventory implements MerchantIn
     }
 
     @Override
-    public TraderInventory getInventory() {
-        return (TraderInventory) inventory;
+    public MerchantInventory getInventory() {
+        return (MerchantInventory) inventory;
     }
 
     @Override
-    public Merchant getMerchant() {
+    public org.bukkit.inventory.Merchant getMerchant() {
         return ((IMixinTrader)merchant).getCraftMerchant();
     }
 

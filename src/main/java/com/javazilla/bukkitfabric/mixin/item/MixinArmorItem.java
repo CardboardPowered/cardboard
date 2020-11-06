@@ -30,6 +30,10 @@ import net.minecraft.world.World;
 @Mixin(ArmorItem.class)
 public class MixinArmorItem {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public static boolean dispenseArmor(BlockPointer isourceblock, ItemStack itemstack) {
         BlockPos blockposition = isourceblock.getBlockPos().offset((Direction) isourceblock.getBlockState().get(DispenserBlock.FACING));

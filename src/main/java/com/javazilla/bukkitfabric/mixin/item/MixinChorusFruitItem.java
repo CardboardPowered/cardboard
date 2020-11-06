@@ -27,6 +27,10 @@ public class MixinChorusFruitItem extends Item {
         super(settings);
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public ItemStack finishUsing(ItemStack itemstack, World world, LivingEntity entity) {
         ItemStack itemstack1 = super.finishUsing(itemstack, world, entity);

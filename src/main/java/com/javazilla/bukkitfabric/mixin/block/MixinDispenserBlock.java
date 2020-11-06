@@ -17,6 +17,10 @@ import net.minecraft.util.math.BlockPos;
 @Mixin(DispenserBlock.class)
 public class MixinDispenserBlock implements IMixinDispenserBlock {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void dispense(ServerWorld worldserver, BlockPos blockposition) {
         BlockPointerImpl sourceblock = new BlockPointerImpl(worldserver, blockposition);

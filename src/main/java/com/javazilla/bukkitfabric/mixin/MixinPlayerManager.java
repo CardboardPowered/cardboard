@@ -181,7 +181,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
             entityplayer.updatePosition(entityplayer.getX(), entityplayer.getY() + 1.0D, entityplayer.getZ());
 
         WorldProperties worlddata = worldserver.getLevelProperties();
-        entityplayer.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver.getDimension(), worldserver.getRegistryKey(), BiomeAccess.hashSeed(worldserver.getSeed()), entityplayer.interactionManager.getGameMode(), entityplayer.interactionManager.method_30119(), worldserver.isDebugWorld(), worldserver.isFlat(), flag));
+        entityplayer.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver.getDimension(), worldserver.getRegistryKey(), BiomeAccess.hashSeed(worldserver.getSeed()), entityplayer.interactionManager.getGameMode(), entityplayer.interactionManager.getPreviousGameMode(), worldserver.isDebugWorld(), worldserver.isFlat(), flag));
         entityplayer.setWorld(worldserver);
         entityplayer.removed = false;
         entityplayer.teleport(worldserver, location.getX(), location.getY(), location.getZ(), entityplayer.yaw, entityplayer.pitch);

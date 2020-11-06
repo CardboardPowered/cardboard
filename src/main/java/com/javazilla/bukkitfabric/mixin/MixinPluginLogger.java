@@ -26,6 +26,10 @@ public class MixinPluginLogger {
         this.BF_LOGGER = BukkitLogger.getLogger();
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void log(LogRecord logRecord) {
         logRecord.setMessage(pluginName + logRecord.getMessage());

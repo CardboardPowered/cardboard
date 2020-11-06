@@ -32,6 +32,10 @@ import net.minecraft.stat.StatHandler;
 @Mixin(StatHandler.class)
 public class MixinStatHandler {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void increaseStat(PlayerEntity player, Stat<?> statistic, int i) {
         int j = (int) Math.min((long) this.getStat(statistic) + (long) i, 2147483647L);

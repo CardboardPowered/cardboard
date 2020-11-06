@@ -26,6 +26,10 @@ public class MixinServerScoreboard extends Scoreboard {
     @Shadow
     public Set<ScoreboardObjective> objectives;
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void addScoreboardObjective(ScoreboardObjective scoreboardobjective) {
         List<Packet<?>> list = ((ServerScoreboard)(Object)this).createChangePackets(scoreboardobjective);
@@ -45,6 +49,10 @@ public class MixinServerScoreboard extends Scoreboard {
         this.objectives.add(scoreboardobjective);
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void removeScoreboardObjective(ScoreboardObjective scoreboardobjective) {
         List<Packet<?>> list = ((ServerScoreboard)(Object)this).createRemovePackets(scoreboardobjective);

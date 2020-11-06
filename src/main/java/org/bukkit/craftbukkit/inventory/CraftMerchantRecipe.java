@@ -55,12 +55,12 @@ public class CraftMerchantRecipe extends MerchantRecipe {
 
     @Override
     public int getVillagerExperience() {
-        return handle.traderExperience;
+        return handle.merchantExperience;
     }
 
     @Override
     public void setVillagerExperience(int villagerExperience) {
-        handle.traderExperience = villagerExperience;
+        handle.merchantExperience = villagerExperience;
     }
 
     @Override

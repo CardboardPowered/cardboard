@@ -13,27 +13,27 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.MerchantScreenHandler;
-import net.minecraft.village.Trader;
-import net.minecraft.village.TraderInventory;
+import net.minecraft.village.Merchant;
+import net.minecraft.village.MerchantInventory;
 
 @Mixin(MerchantScreenHandler.class)
 public class MixinMerchantScreenHandler extends MixinScreenHandler {
 
-    @Shadow public Trader trader;
-    @Shadow public TraderInventory traderInventory;
+    @Shadow public Merchant merchant;
+    @Shadow public MerchantInventory merchantInventory;
 
     private CraftInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
-    public void setPlayerInv(int i, PlayerInventory playerinventory, Trader imerchant, CallbackInfo ci) {
+    public void setPlayerInv(int i, PlayerInventory playerinventory, Merchant imerchant, CallbackInfo ci) {
         this.player = playerinventory;
     }
 
     @Override
     public CraftInventoryView getBukkitView() {
         if (bukkitEntity == null)
-            bukkitEntity = new CraftInventoryView((Player)((IMixinEntity)this.player.player).getBukkitEntity(), new CraftInventoryMerchant(trader, traderInventory), (MerchantScreenHandler)(Object)this);
+            bukkitEntity = new CraftInventoryView((Player)((IMixinEntity)this.player.player).getBukkitEntity(), new CraftInventoryMerchant(merchant, merchantInventory), (MerchantScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

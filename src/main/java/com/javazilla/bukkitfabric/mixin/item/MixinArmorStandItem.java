@@ -33,6 +33,10 @@ import net.minecraft.world.World;
 @Mixin(ArmorStandItem.class)
 public class MixinArmorStandItem {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public ActionResult useOnBlock(ItemUsageContext itemactioncontext) {
         Direction enumdirection = itemactioncontext.getSide();

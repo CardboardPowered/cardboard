@@ -23,6 +23,10 @@ import net.minecraft.world.World;
 @Mixin(EndCrystalItem.class)
 public class MixinEndCrystalItem {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @SuppressWarnings("deprecation")
     @Overwrite
     public ActionResult useOnBlock(ItemUsageContext itemactioncontext) {

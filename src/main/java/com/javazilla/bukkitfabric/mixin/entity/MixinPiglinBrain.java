@@ -36,6 +36,10 @@ import net.minecraft.item.Items;
 @Mixin(PiglinBrain.class)
 public class MixinPiglinBrain {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public static void loot(PiglinEntity entitypiglin, ItemEntity entityitem) {
         stopWalking(entitypiglin);

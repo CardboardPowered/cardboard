@@ -66,6 +66,10 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
         this.player = (Player)((IMixinEntity)playerinventory.player).getBukkitEntity();
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void onContentChanged(Inventory iinventory) {
         if (iinventory == this.inventory) {
@@ -154,6 +158,10 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
 
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public boolean onButtonClick(PlayerEntity entityhuman, int i) {
         ItemStack itemstack = this.inventory.getStack(0);

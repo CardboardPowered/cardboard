@@ -8,22 +8,21 @@ import com.javazilla.bukkitfabric.interfaces.IMixinTradeOffer;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.village.Trader;
-import net.minecraft.village.TraderOfferList;
+import net.minecraft.village.Merchant;
+import net.minecraft.village.TradeOfferList;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
 
-public class CraftMerchant implements Merchant {
+public class CraftMerchant implements org.bukkit.inventory.Merchant {
 
-    protected final Trader merchant;
+    protected final Merchant merchant;
 
-    public CraftMerchant(Trader merchant) {
+    public CraftMerchant(Merchant merchant) {
         this.merchant = merchant;
     }
 
-    public Trader getMerchant() {
+    public Merchant getMerchant() {
         return merchant;
     }
 
@@ -39,7 +38,7 @@ public class CraftMerchant implements Merchant {
 
     @Override
     public void setRecipes(List<MerchantRecipe> recipes) {
-        TraderOfferList recipesList = merchant.getOffers();
+        TradeOfferList recipesList = merchant.getOffers();
         recipesList.clear();
         for (MerchantRecipe recipe : recipes)
             recipesList.add(CraftMerchantRecipe.fromBukkit(recipe).toMinecraft());

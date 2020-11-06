@@ -6,7 +6,7 @@ import java.util.ListIterator;
 import net.minecraft.block.entity.Hopper;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EnderChestInventory;
-import net.minecraft.village.TraderInventory;
+import net.minecraft.village.MerchantInventory;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlastFurnaceBlockEntity;
@@ -431,7 +431,7 @@ public class CraftInventory implements Inventory {
             return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
         } else if (inventory instanceof EnderChestInventory) {
             return InventoryType.ENDER_CHEST;
-        } else if (inventory instanceof TraderInventory) {
+        } else if (inventory instanceof MerchantInventory) {
             return InventoryType.MERCHANT;
         } else if (this instanceof BeaconInventoryImpl) {
               return InventoryType.BEACON;

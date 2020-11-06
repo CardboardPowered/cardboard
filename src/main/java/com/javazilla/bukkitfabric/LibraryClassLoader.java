@@ -22,7 +22,7 @@ import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 
 public class LibraryClassLoader extends URLClassLoader {
 
-    private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+    public final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
     public final JarFile jar;
     private final Manifest manifest;
     private final URL url;
@@ -87,6 +87,7 @@ public class LibraryClassLoader extends URLClassLoader {
 
 
     public void setClass(String name, Class<?> result) {
+        classes.put(name, result);
         JavaPluginLoader jpl = ReflectionRemapper.getFirstJPL();
         try {
             Method m = jpl.getClass().getDeclaredMethod("setClass", String.class, Class.class);

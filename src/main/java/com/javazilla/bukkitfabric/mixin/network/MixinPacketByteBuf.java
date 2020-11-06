@@ -13,6 +13,10 @@ import net.minecraft.network.PacketByteBuf;
 @Mixin(PacketByteBuf.class)
 public class MixinPacketByteBuf {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public ItemStack readItemStack() {
         if (!this.readBoolean()) return ItemStack.EMPTY;

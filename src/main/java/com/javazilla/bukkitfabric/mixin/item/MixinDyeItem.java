@@ -23,6 +23,10 @@ public class MixinDyeItem {
     @Shadow
     public DyeColor color;
 
+    /**
+     * @reason .
+     * @author .
+     */
     @SuppressWarnings("deprecation")
     @Overwrite
     public ActionResult useOnEntity(ItemStack itemstack, PlayerEntity entityhuman, LivingEntity entityliving, Hand enumhand) {

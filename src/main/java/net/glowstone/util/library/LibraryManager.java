@@ -24,6 +24,8 @@ import com.google.common.io.Files;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.LibraryClassLoader;
 
+import net.fabricmc.loader.launch.knot.Knot;
+
 /**
  * Simple library manager which downloads external dependencies.
  */

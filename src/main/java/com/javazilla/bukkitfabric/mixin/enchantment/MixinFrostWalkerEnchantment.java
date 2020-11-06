@@ -40,6 +40,10 @@ import net.minecraft.world.World;
 @Mixin(FrostWalkerEnchantment.class)
 public class MixinFrostWalkerEnchantment {
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public static void freezeWater(LivingEntity entity, World world, BlockPos blockpos, int i) {
         if (entity.isOnGround()) {

@@ -36,6 +36,10 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
         return (LivingEntity)(Object)this;
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public void consumeItem() {
         Hand enumhand = get().getActiveHand();

@@ -32,6 +32,10 @@ public class MixinEnderEyeItem extends Item {
         super(settings);
     }
 
+    /**
+     * @reason .
+     * @author .
+     */
     @Overwrite
     public TypedActionResult<ItemStack> use(World world, PlayerEntity entityhuman, Hand enumhand) {
         ItemStack itemstack = entityhuman.getStackInHand(enumhand);
