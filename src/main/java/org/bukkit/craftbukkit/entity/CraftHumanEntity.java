@@ -54,7 +54,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.packet.c2s.play.GuiCloseC2SPacket;
+import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
@@ -289,7 +289,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         if (((ServerPlayerEntity) getHandle()).networkHandler == null) return;
         if (getHandle().currentScreenHandler != getHandle().playerScreenHandler) {
             // fire INVENTORY_CLOSE if one already open
-            ((ServerPlayerEntity) getHandle()).networkHandler.onGuiClose(new GuiCloseC2SPacket(getHandle().currentScreenHandler.syncId));
+            ((ServerPlayerEntity) getHandle()).networkHandler.onCloseHandledScreen(new CloseHandledScreenC2SPacket(getHandle().currentScreenHandler.syncId));
         }
         ServerPlayerEntity player = (ServerPlayerEntity) getHandle();
         ScreenHandler container;

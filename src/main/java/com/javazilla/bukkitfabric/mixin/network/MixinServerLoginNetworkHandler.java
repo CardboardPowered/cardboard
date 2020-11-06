@@ -8,6 +8,7 @@ import java.security.PrivateKey;
 import java.util.Arrays;
 import java.util.UUID;
 
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.lang3.Validate;
@@ -38,6 +39,7 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkEncryptionUtils;
+import net.minecraft.network.encryption.NetworkEncryptionException;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
@@ -91,12 +93,23 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);
         PrivateKey privatekey = this.server.getKeyPair().getPrivate();
 
-        if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
-            throw new IllegalStateException("Invalid nonce!");
-        } else {
-            this.secretKey = keyPacket.decryptSecretKey(privatekey);
-            this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
-            this.connection.setupEncryption(this.secretKey);
+        //if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
+        //    throw new IllegalStateException("Invalid nonce!");
+        //} else {
+            try {
+                if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
+                    throw new IllegalStateException("Protocol error");
+                }
+                this.secretKey = keyPacket.decryptSecretKey(privatekey);
+                Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, this.secretKey);
+                Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, this.secretKey);
+                String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", this.server.getKeyPair().getPublic(), this.secretKey)).toString(16);
+                this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
+                this.connection.setupEncryption(cipher, cipher2);
+            } catch (NetworkEncryptionException networkEncryptionException) {
+                throw new IllegalStateException("Protocol error", networkEncryptionException);
+            }
+
             Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
                 public void run() {
                     GameProfile gameprofile = profile;
@@ -145,7 +158,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
             thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
             thread.start();
-        }
+        //}
     }
 
     public void fireEvents() throws Exception {
@@ -236,7 +249,8 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
         if (this.server.isOnlineMode() && !this.connection.isLocal()) {
             this.state = ServerLoginNetworkHandler.State.KEY;
-            this.connection.send(new LoginHelloS2CPacket("", this.server.getKeyPair().getPublic(), this.nonce));
+
+            this.connection.send(new LoginHelloS2CPacket("", this.server.getKeyPair().getPublic().getEncoded(), this.nonce));
         } else {
             // Spigot start
             new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {

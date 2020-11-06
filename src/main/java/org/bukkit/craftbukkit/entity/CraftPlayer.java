@@ -99,6 +99,7 @@ import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -1108,7 +1109,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void updateInventory() {
-        nms.openHandledScreen(nms.currentScreenHandler);
+        nms.openHandledScreen((NamedScreenHandlerFactory) nms.currentScreenHandler);
     }
 
     @SuppressWarnings("deprecation")
@@ -1184,7 +1185,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         ServerWorld toWorld = (ServerWorld) ((WorldImpl) to.getWorld()).getHandle();
 
         if (getHandle().inventory != getHandle().inventory)
-            getHandle().closeCurrentScreen();
+            getHandle().closeHandledScreen();
 
         if (from.getWorld().equals(to.getWorld()))
              ((IMixinPlayNetworkHandler)(Object)entity.networkHandler).teleport(to);
