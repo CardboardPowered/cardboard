@@ -83,7 +83,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
@@ -131,11 +131,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.SimpleServicesManager;
-import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scheduler.BukkitWorker;
-import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 
@@ -151,6 +149,7 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.tag.CraftBlockTag;
 import com.javazilla.bukkitfabric.impl.tag.CraftItemTag;
+import com.javazilla.bukkitfabric.impl.tag.FluidTagImpl;
 import com.javazilla.bukkitfabric.impl.util.IconCacheImpl;
 import com.javazilla.bukkitfabric.impl.world.ChunkDataImpl;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
@@ -201,6 +200,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.boss.CommandBossBar;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -248,7 +248,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Bukkit4Fabric";
-    public final String bukkitVersion = "1.16.3-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.16.4-R0.1-SNAPSHOT";
     public final String serverVersion;
 
     private final Logger logger = BukkitLogger.getLogger();
@@ -260,7 +260,7 @@ public class CraftServer implements Server {
     private final BukkitSchedulerImpl scheduler = new BukkitSchedulerImpl();
     private final ConsoleCommandSender consoleCommandSender = new ConsoleCommandSenderImpl();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
-    public final List<CraftPlayer> playerView;
+    public final List<PlayerImpl> playerView;
     private WarningState warningState = WarningState.DEFAULT;
     public final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
@@ -1182,6 +1182,9 @@ public class CraftServer implements Server {
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
                 return (org.bukkit.Tag<T>) new CraftItemTag(server.getTagManager().getItems(), key);
+            case org.bukkit.Tag.REGISTRY_FLUIDS:
+                Preconditions.checkArgument(clazz == org.bukkit.Fluid.class, "Fluid namespace must have fluid type");
+                return (org.bukkit.Tag<T>) new FluidTagImpl(server.getTagManager().getFluids(), key);
             default:
                 throw new IllegalArgumentException();
         }
@@ -1200,6 +1203,11 @@ public class CraftServer implements Server {
 
                 TagGroup<Item> itemTags = server.getTagManager().getItems();
                 return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
+            case org.bukkit.Tag.REGISTRY_FLUIDS:
+                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Fluid namespace must have fluid type");
+
+                TagGroup<Fluid> fluidTags = server.getTagManager().getFluids();
+                return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new FluidTagImpl(fluidTags, key)).collect(ImmutableList.toImmutableList());
             default:
                 throw new IllegalArgumentException();
         }

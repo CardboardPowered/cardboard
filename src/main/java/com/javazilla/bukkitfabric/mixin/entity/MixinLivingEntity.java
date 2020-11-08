@@ -3,7 +3,7 @@ package com.javazilla.bukkitfabric.mixin.entity;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -56,7 +56,7 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
 
                     if (event.isCancelled()) {
                         ((Player)((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity()).updateInventory();
-                        ((CraftPlayer)((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity()).updateScaledHealth();
+                        ((PlayerImpl)((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity()).updateScaledHealth();
                         return;
                     }
                     itemstack = (craftItem.equals(event.getItem())) ? get().activeItemStack.finishUsing(get().world, get()) : CraftItemStack.asNMSCopy(event.getItem()).finishUsing(get().world, get());

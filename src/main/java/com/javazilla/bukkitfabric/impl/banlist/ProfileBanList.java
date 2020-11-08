@@ -33,17 +33,13 @@ public class ProfileBanList implements org.bukkit.BanList {
             return null;
 
         BannedPlayerEntry entry = (BannedPlayerEntry) list.get(profile);
-        if (entry == null)
-            return null;
-
-        return new ProfileBanEntry(profile, entry, list);
+        return (entry == null) ? null : new ProfileBanEntry(profile, entry, list);
     }
 
     @Override
     public org.bukkit.BanEntry addBan(String target, String reason, Date expires, String source) {
         GameProfile profile = getProfile(target);
-        if (profile == null)
-            return null;
+        if (profile == null) return null;
 
         BannedPlayerEntry entry = new BannedPlayerEntry(profile, new Date(), StringUtils.isBlank(source) ? null : source, expires, StringUtils.isBlank(reason) ? null : reason);
         list.add(entry);
@@ -69,10 +65,7 @@ public class ProfileBanList implements org.bukkit.BanList {
     @Override
     public boolean isBanned(String target) {
         GameProfile profile = getProfile(target);
-        if (profile == null)
-            return false;
-
-        return list.contains(profile);
+        return (profile == null) ? null : list.contains(profile);
     }
 
     @Override

@@ -36,8 +36,9 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.entity.UnknownEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -88,6 +89,7 @@ import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
@@ -286,13 +288,13 @@ public class BukkitEventFactory {
     public static ScreenHandler callInventoryOpenEvent(ServerPlayerEntity player, ScreenHandler container, boolean cancelled) {
         if (player.currentScreenHandler != player.playerScreenHandler)
             player.networkHandler.onCloseHandledScreen(new CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId));
-        CraftPlayer craftPlayer = (CraftPlayer) ((IMixinServerEntityPlayer)player).getBukkitEntity();
+        PlayerImpl PlayerImpl = (PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity();
         if (!(player.currentScreenHandler instanceof IMixinScreenHandler)) {
             System.out.println("FAILED TO FIRE InventoryOpenEvent! SCREEN HANDLER != IMixinInventory");
             return container;
         }
         try {
-            ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, craftPlayer);
+            ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, PlayerImpl);
         } catch (ClassCastException e) {
             e.printStackTrace();
             return container;
@@ -303,7 +305,7 @@ public class BukkitEventFactory {
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
-            ((IMixinScreenHandler)container).transferTo(player.currentScreenHandler, craftPlayer);
+            ((IMixinScreenHandler)container).transferTo(player.currentScreenHandler, PlayerImpl);
             return null;
         }
 
@@ -332,6 +334,7 @@ public class BukkitEventFactory {
         return !event.isCancelled();
     }
 
+    @SuppressWarnings("unchecked")
     public static Cancellable handleStatisticsIncrease(PlayerEntity entityHuman, net.minecraft.stat.Stat<?> statistic, int current, int newValue) {
         Player player = (Player) ((IMixinServerEntityPlayer) entityHuman).getBukkitEntity();
         Event event;
@@ -469,7 +472,7 @@ public class BukkitEventFactory {
     }
 
     public static PlayerDeathEvent callPlayerDeathEvent(ServerPlayerEntity victim, List<org.bukkit.inventory.ItemStack> drops, String deathMessage, boolean keepInventory) {
-        CraftPlayer entity = (CraftPlayer) ((IMixinServerEntityPlayer)victim).getBukkitEntity();
+        PlayerImpl entity = (PlayerImpl) ((IMixinServerEntityPlayer)victim).getBukkitEntity();
         PlayerDeathEvent event = new PlayerDeathEvent(entity, drops, ((IMixinLivingEntity)victim).getExpReward(), 0, deathMessage);
         event.setKeepInventory(keepInventory);
         org.bukkit.World world = entity.getWorld();
@@ -495,7 +498,11 @@ public class BukkitEventFactory {
     }
 
     public static EntityDeathEvent callEntityDeathEvent(net.minecraft.entity.LivingEntity victim, List<org.bukkit.inventory.ItemStack> drops) {
-        CraftLivingEntity entity = (CraftLivingEntity) ((IMixinEntity)victim).getBukkitEntity();
+        if (((IMixinEntity)victim).getBukkitEntity() instanceof UnknownEntity) {
+            UnknownEntity uk = (UnknownEntity) ((IMixinEntity)victim).getBukkitEntity();
+            BukkitFabricMod.LOGGER.info("Oh no! " + net.minecraft.entity.EntityType.getId(uk.nms.getType()).toString() + " is an unknown bukkit entity!");
+        }
+        LivingEntityImpl entity = (LivingEntityImpl) ((IMixinEntity)victim).getBukkitEntity();
         EntityDeathEvent event = new EntityDeathEvent(entity, drops, ((IMixinLivingEntity)victim).getExpReward());
 
         WorldImpl world = (WorldImpl) entity.getWorld();

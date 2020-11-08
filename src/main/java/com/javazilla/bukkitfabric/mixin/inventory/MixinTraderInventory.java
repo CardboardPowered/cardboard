@@ -3,12 +3,12 @@ package com.javazilla.bukkitfabric.mixin.inventory;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
 import org.bukkit.entity.HumanEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
+import org.cardboardpowered.impl.entity.AbstractVillagerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
@@ -38,12 +38,12 @@ public class MixinTraderInventory implements IMixinInventory {
     }
 
     @Override
-    public void onOpen(CraftHumanEntity who) {
+    public void onOpen(HumanEntityImpl who) {
         transaction.add(who);
     }
 
     @Override
-    public void onClose(CraftHumanEntity who) {
+    public void onClose(HumanEntityImpl who) {
         transaction.remove(who);
         merchant.setCurrentCustomer((PlayerEntity) null);
     }

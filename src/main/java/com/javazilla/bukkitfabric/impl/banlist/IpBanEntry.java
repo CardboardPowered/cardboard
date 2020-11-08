@@ -59,8 +59,7 @@ public final class IpBanEntry implements BanEntry {
 
     @Override
     public void setExpiration(Date expiration) {
-        if (expiration != null && expiration.getTime() == new Date(0, 0, 0, 0, 0, 0).getTime())
-            expiration = null; // Forces "forever"
+        if (expiration != null && expiration.getTime() == new Date(0, 0, 0, 0, 0, 0).getTime()) expiration = null; // Forces "forever"
         this.expiration = expiration;
     }
 

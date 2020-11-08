@@ -18,7 +18,7 @@ import java.util.Objects;
 
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
@@ -304,9 +304,9 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 boolean bottom = iblockdata.get(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
                 entityplayer.networkHandler.sendPacket(new BlockUpdateS2CPacket(world, bottom ? blockposition.up() : blockposition.down()));
             } else if (iblockdata.getBlock() instanceof CakeBlock) {
-                // TODO ((CraftPlayer)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).sendHealthUpdate();
+                // TODO ((PlayerImpl)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).sendHealthUpdate();
             }
-            ((CraftPlayer)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).updateInventory();
+            ((PlayerImpl)((IMixinServerEntityPlayer)entityplayer).getBukkitEntity()).updateInventory();
             enuminteractionresult = (event.useItemInHand() != Event.Result.ALLOW) ? ActionResult.SUCCESS : ActionResult.PASS;
         } else if (this.gameMode == GameMode.SPECTATOR) {
             NamedScreenHandlerFactory itileinventory = iblockdata.createScreenHandlerFactory(world, blockposition);

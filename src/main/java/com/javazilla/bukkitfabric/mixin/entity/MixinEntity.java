@@ -27,9 +27,9 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
@@ -42,48 +42,48 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.javazilla.bukkitfabric.impl.entity.AbstractVillagerImpl;
-import com.javazilla.bukkitfabric.impl.entity.AnimalsImpl;
-import com.javazilla.bukkitfabric.impl.entity.ArmorStandImpl;
-import com.javazilla.bukkitfabric.impl.entity.ArrowImpl;
-import com.javazilla.bukkitfabric.impl.entity.CatImpl;
-import com.javazilla.bukkitfabric.impl.entity.CaveSpiderImpl;
-import com.javazilla.bukkitfabric.impl.entity.ChickenImpl;
-import com.javazilla.bukkitfabric.impl.entity.CowImpl;
-import com.javazilla.bukkitfabric.impl.entity.CreatureImpl;
-import com.javazilla.bukkitfabric.impl.entity.CreeperImpl;
-import com.javazilla.bukkitfabric.impl.entity.DrownedImpl;
-import com.javazilla.bukkitfabric.impl.entity.EggImpl;
-import com.javazilla.bukkitfabric.impl.entity.EndermanImpl;
-import com.javazilla.bukkitfabric.impl.entity.EndermiteImpl;
-import com.javazilla.bukkitfabric.impl.entity.ExperienceOrbImpl;
-import com.javazilla.bukkitfabric.impl.entity.FallingBlockImpl;
-import com.javazilla.bukkitfabric.impl.entity.GiantImpl;
-import com.javazilla.bukkitfabric.impl.entity.HuskImpl;
-import com.javazilla.bukkitfabric.impl.entity.ItemEntityImpl;
-import com.javazilla.bukkitfabric.impl.entity.LightningStrikeImpl;
-import com.javazilla.bukkitfabric.impl.entity.MagmaCubeImpl;
-import com.javazilla.bukkitfabric.impl.entity.MonsterImpl;
-import com.javazilla.bukkitfabric.impl.entity.MushroomImpl;
-import com.javazilla.bukkitfabric.impl.entity.OcelotImpl;
-import com.javazilla.bukkitfabric.impl.entity.ParrotImpl;
-import com.javazilla.bukkitfabric.impl.entity.PigZombieImpl;
-import com.javazilla.bukkitfabric.impl.entity.PolarBearImpl;
-import com.javazilla.bukkitfabric.impl.entity.SkeletonImpl;
-import com.javazilla.bukkitfabric.impl.entity.SlimeImpl;
-import com.javazilla.bukkitfabric.impl.entity.SnowballImpl;
-import com.javazilla.bukkitfabric.impl.entity.SpiderImpl;
-import com.javazilla.bukkitfabric.impl.entity.StrayImpl;
-import com.javazilla.bukkitfabric.impl.entity.TntImpl;
-import com.javazilla.bukkitfabric.impl.entity.TridentImpl;
-import com.javazilla.bukkitfabric.impl.entity.TurtleImpl;
-import com.javazilla.bukkitfabric.impl.entity.UnknownEntity;
-import com.javazilla.bukkitfabric.impl.entity.VillagerImpl;
-import com.javazilla.bukkitfabric.impl.entity.VillagerZombieImpl;
-import com.javazilla.bukkitfabric.impl.entity.WanderingTraderImpl;
-import com.javazilla.bukkitfabric.impl.entity.WitherSkeletonImpl;
-import com.javazilla.bukkitfabric.impl.entity.WolfImpl;
-import com.javazilla.bukkitfabric.impl.entity.ZombieImpl;
+import org.cardboardpowered.impl.entity.AbstractVillagerImpl;
+import org.cardboardpowered.impl.entity.AnimalsImpl;
+import org.cardboardpowered.impl.entity.ArmorStandImpl;
+import org.cardboardpowered.impl.entity.ArrowImpl;
+import org.cardboardpowered.impl.entity.CatImpl;
+import org.cardboardpowered.impl.entity.CaveSpiderImpl;
+import org.cardboardpowered.impl.entity.ChickenImpl;
+import org.cardboardpowered.impl.entity.CowImpl;
+import org.cardboardpowered.impl.entity.CreatureImpl;
+import org.cardboardpowered.impl.entity.CreeperImpl;
+import org.cardboardpowered.impl.entity.DrownedImpl;
+import org.cardboardpowered.impl.entity.EggImpl;
+import org.cardboardpowered.impl.entity.EndermanImpl;
+import org.cardboardpowered.impl.entity.EndermiteImpl;
+import org.cardboardpowered.impl.entity.ExperienceOrbImpl;
+import org.cardboardpowered.impl.entity.FallingBlockImpl;
+import org.cardboardpowered.impl.entity.GiantImpl;
+import org.cardboardpowered.impl.entity.HuskImpl;
+import org.cardboardpowered.impl.entity.ItemEntityImpl;
+import org.cardboardpowered.impl.entity.LightningStrikeImpl;
+import org.cardboardpowered.impl.entity.MagmaCubeImpl;
+import org.cardboardpowered.impl.entity.MonsterImpl;
+import org.cardboardpowered.impl.entity.MushroomImpl;
+import org.cardboardpowered.impl.entity.OcelotImpl;
+import org.cardboardpowered.impl.entity.ParrotImpl;
+import org.cardboardpowered.impl.entity.PigZombieImpl;
+import org.cardboardpowered.impl.entity.PolarBearImpl;
+import org.cardboardpowered.impl.entity.SkeletonImpl;
+import org.cardboardpowered.impl.entity.SlimeImpl;
+import org.cardboardpowered.impl.entity.SnowballImpl;
+import org.cardboardpowered.impl.entity.SpiderImpl;
+import org.cardboardpowered.impl.entity.StrayImpl;
+import org.cardboardpowered.impl.entity.TntImpl;
+import org.cardboardpowered.impl.entity.TridentImpl;
+import org.cardboardpowered.impl.entity.TurtleImpl;
+import org.cardboardpowered.impl.entity.UnknownEntity;
+import org.cardboardpowered.impl.entity.VillagerImpl;
+import org.cardboardpowered.impl.entity.VillagerZombieImpl;
+import org.cardboardpowered.impl.entity.WanderingTraderImpl;
+import org.cardboardpowered.impl.entity.WitherSkeletonImpl;
+import org.cardboardpowered.impl.entity.WolfImpl;
+import org.cardboardpowered.impl.entity.ZombieImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
@@ -248,8 +248,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         if (entity instanceof LivingEntity) {
             // Players
             if (entity instanceof PlayerEntity) {
-                if (entity instanceof ServerPlayerEntity) { return new CraftPlayer((ServerPlayerEntity) entity); }
-                else { return new CraftHumanEntity((PlayerEntity) entity); }
+                if (entity instanceof ServerPlayerEntity) { return new PlayerImpl((ServerPlayerEntity) entity); }
+                else { return new HumanEntityImpl((PlayerEntity) entity); }
             }
             // Water Animals
             else if (entity instanceof WaterCreatureEntity) {
@@ -383,7 +383,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 //else { return new CraftAmbient(server, (AmbientEntity) entity); }
             //}
             else if (entity instanceof ArmorStandEntity) { return new ArmorStandImpl(server, (ArmorStandEntity) entity); }
-            else  { return new CraftLivingEntity(server, (LivingEntity) entity); }
+            else  { return new LivingEntityImpl(server, (LivingEntity) entity); }
         }
         else if (entity instanceof EnderDragonPart) {
             EnderDragonPart part = (EnderDragonPart) entity;

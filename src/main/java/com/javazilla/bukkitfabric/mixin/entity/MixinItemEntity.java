@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.impl.entity.ItemEntityImpl;
+import org.cardboardpowered.impl.entity.ItemEntityImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 

@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -67,7 +67,7 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
         if (nbttagcompound != null) {
             // CraftBukkit start
             if (entityhuman instanceof ServerPlayerEntity) {
-                CraftPlayer player = (CraftPlayer) ((IMixinServerEntityPlayer)entityhuman).getBukkitEntity();
+                PlayerImpl player = (PlayerImpl) ((IMixinServerEntityPlayer)entityhuman).getBukkitEntity();
                 // Only update first played if it is older than the one we have
                 long modified = new File(this.playerDataDir, entityhuman.getUuid().toString() + ".dat").lastModified();
                 if (modified < player.getFirstPlayed()) {

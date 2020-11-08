@@ -17,7 +17,7 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.ScoreboardManager;
 
@@ -29,7 +29,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     private final CraftScoreboard mainScoreboard;
     private final MinecraftServer server;
     private final Collection<CraftScoreboard> scoreboards = new WeakCollection<CraftScoreboard>();
-    private final Map<CraftPlayer, CraftScoreboard> playerBoards = new HashMap<CraftPlayer, CraftScoreboard>();
+    private final Map<PlayerImpl, CraftScoreboard> playerBoards = new HashMap<PlayerImpl, CraftScoreboard>();
 
     public CraftScoreboardManager(MinecraftServer minecraftserver, net.minecraft.scoreboard.Scoreboard scoreboardServer) {
         mainScoreboard = new CraftScoreboard(scoreboardServer);
@@ -50,13 +50,13 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     }
 
     // CraftBukkit method
-    public CraftScoreboard getPlayerBoard(CraftPlayer player) {
+    public CraftScoreboard getPlayerBoard(PlayerImpl player) {
         CraftScoreboard board = playerBoards.get(player);
         return (CraftScoreboard) (board == null ? getMainScoreboard() : board);
     }
 
     // CraftBukkit method
-    public void setPlayerBoard(CraftPlayer player, org.bukkit.scoreboard.Scoreboard bukkitScoreboard) throws IllegalArgumentException {
+    public void setPlayerBoard(PlayerImpl player, org.bukkit.scoreboard.Scoreboard bukkitScoreboard) throws IllegalArgumentException {
         Validate.isTrue(bukkitScoreboard instanceof CraftScoreboard, "Cannot set player scoreboard to an unregistered Scoreboard");
 
         CraftScoreboard scoreboard = (CraftScoreboard) bukkitScoreboard;

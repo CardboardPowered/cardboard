@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.entity.Player;
@@ -181,8 +181,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         }
     }
 
-    public CraftPlayer getPlayer() {
-        return (CraftPlayer) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
+    public PlayerImpl getPlayer() {
+        return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
@@ -85,7 +85,7 @@ import net.minecraft.world.World;
 @Mixin(value = ServerPlayerEntity.class, priority = 999)
 public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutput, IMixinServerEntityPlayer  {
 
-    private CraftPlayer bukkit;
+    private PlayerImpl bukkit;
 
     public ClientConnection connectionBF;
 
@@ -94,7 +94,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
-        this.bukkit = new CraftPlayer((ServerPlayerEntity)(Object)this);
+        this.bukkit = new PlayerImpl((ServerPlayerEntity)(Object)this);
         CraftServer.INSTANCE.playerView.add(this.bukkit);
     }
 

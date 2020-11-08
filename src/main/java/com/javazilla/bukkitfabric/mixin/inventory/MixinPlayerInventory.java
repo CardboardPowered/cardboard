@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,24 +32,24 @@ public class MixinPlayerInventory implements IMixinInventory, IMixinPlayerInvent
     }
 
     @Override
-    public void onOpen(CraftHumanEntity who) {
+    public void onOpen(HumanEntityImpl who) {
         get().onOpen((PlayerEntity) who.nms);
     }
 
     @Override
-    public void onClose(CraftHumanEntity who) {
+    public void onClose(HumanEntityImpl who) {
         get().onClose((PlayerEntity) who.nms);
     }
 
     @Override
     public List<HumanEntity> getViewers() {
         // TODO Auto-generated method stub
-        return Arrays.asList(((CraftPlayer)((IMixinServerEntityPlayer)get().player).getBukkitEntity()));
+        return Arrays.asList(((PlayerImpl)((IMixinServerEntityPlayer)get().player).getBukkitEntity()));
     }
 
     @Override
     public InventoryHolder getOwner() {
-        return ((CraftPlayer)((IMixinServerEntityPlayer)get().player).getBukkitEntity());
+        return ((PlayerImpl)((IMixinServerEntityPlayer)get().player).getBukkitEntity());
     }
 
     @Override
@@ -58,7 +58,7 @@ public class MixinPlayerInventory implements IMixinInventory, IMixinPlayerInvent
 
     @Override
     public Location getLocation() {
-        return ((CraftPlayer)((IMixinServerEntityPlayer)get().player).getBukkitEntity()).getLocation();
+        return ((PlayerImpl)((IMixinServerEntityPlayer)get().player).getBukkitEntity()).getLocation();
     }
 
     @Override

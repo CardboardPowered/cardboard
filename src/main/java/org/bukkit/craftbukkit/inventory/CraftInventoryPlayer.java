@@ -7,7 +7,7 @@ import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.commons.lang.Validate;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -65,7 +65,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     public void setItem(int index, ItemStack item) {
         super.setItem(index, item);
         if (this.getHolder() == null) return;
-        ServerPlayerEntity player = ((CraftPlayer) this.getHolder()).getHandle();
+        ServerPlayerEntity player = ((PlayerImpl) this.getHolder()).getHandle();
         if (player.networkHandler == null) return;
 
         if (index < PlayerInventory.getHotbarSize())
@@ -137,7 +137,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     public void setHeldItemSlot(int slot) {
         Validate.isTrue(slot >= 0 && slot < PlayerInventory.getHotbarSize(), "Slot is not between 0 and 8 inclusive");
         this.getInventory().selectedSlot = slot;
-        ((CraftPlayer) this.getHolder()).getHandle().networkHandler.sendPacket(new HeldItemChangeS2CPacket(slot));
+        ((PlayerImpl) this.getHolder()).getHandle().networkHandler.sendPacket(new HeldItemChangeS2CPacket(slot));
     }
 
     @Override

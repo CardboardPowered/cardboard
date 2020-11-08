@@ -25,9 +25,7 @@ public class IpBanList implements org.bukkit.BanList {
     @Override
     public org.bukkit.BanEntry getBanEntry(String target) {
         BannedIpEntry entry = (BannedIpEntry) list.get(target);
-        if (entry == null)
-            return null;
-        return new IpBanEntry(target, entry, list);
+        return (entry == null) ? null : new IpBanEntry(target, entry, list);
     }
 
     @Override

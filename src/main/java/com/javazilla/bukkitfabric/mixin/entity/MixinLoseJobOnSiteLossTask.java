@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.impl.entity.VillagerImpl;
+import org.cardboardpowered.impl.entity.VillagerImpl;
 
 import net.minecraft.entity.ai.brain.task.LoseJobOnSiteLossTask;
 import net.minecraft.entity.passive.VillagerEntity;

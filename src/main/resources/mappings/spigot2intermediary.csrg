@@ -1,20 +1,22 @@
 org/bukkit/craftbukkit/CraftWorld com/javazilla/bukkitfabric/impl/WorldImpl
 org/bukkit/craftbukkit/CraftWorldBorder com/javazilla/bukkitfabric/impl/WorldBorderImpl
-org/bukkit/craftbukkit/entity/CraftAnimals com/javazilla/bukkitfabric/impl/entity/AnimalsImpl
-org/bukkit/craftbukkit/entity/CraftCaveSpider com/javazilla/bukkitfabric/impl/entity/CaveSpiderImpl
-org/bukkit/craftbukkit/entity/CraftSlime com/javazilla/bukkitfabric/impl/entity/SlimeImpl
-org/bukkit/craftbukkit/entity/CraftVehicle com/javazilla/bukkitfabric/impl/entity/VehicleImpl
-org/bukkit/craftbukkit/entity/CraftFallingBlock com/javazilla/bukkitfabric/impl/entity/FallingBlockImpl
-org/bukkit/craftbukkit/entity/CraftCreature com/javazilla/bukkitfabric/impl/entity/CreatureImpl
-org/bukkit/craftbukkit/entity/CraftItem com/javazilla/bukkitfabric/impl/entity/ItemEntityImpl
-org/bukkit/craftbukkit/entity/CraftAgeable com/javazilla/bukkitfabric/impl/entity/AgeableImpl
-org/bukkit/craftbukkit/entity/CraftMob com/javazilla/bukkitfabric/impl/entity/MobImpl
-org/bukkit/craftbukkit/entity/CraftMonster com/javazilla/bukkitfabric/impl/entity/MonsterImpl
-org/bukkit/craftbukkit/entity/CraftAbstractVillager com/javazilla/bukkitfabric/impl/entity/AbstractVillagerImpl
-org/bukkit/craftbukkit/entity/CraftVillager com/javazilla/bukkitfabric/impl/entity/VillagerImpl
+org/bukkit/craftbukkit/entity/CraftAnimals org/cardboardpowered/impl/entity/AnimalsImpl
+org/bukkit/craftbukkit/entity/CraftCaveSpider org/cardboardpowered/impl/entity/CaveSpiderImpl
+org/bukkit/craftbukkit/entity/CraftSlime org/cardboardpowered/impl/entity/SlimeImpl
+org/bukkit/craftbukkit/entity/CraftVehicle org/cardboardpowered/impl/entity/VehicleImpl
+org/bukkit/craftbukkit/entity/CraftFallingBlock org/cardboardpowered/impl/entity/FallingBlockImpl
+org/bukkit/craftbukkit/entity/CraftCreature org/cardboardpowered/impl/entity/CreatureImpl
+org/bukkit/craftbukkit/entity/CraftItem org/cardboardpowered/impl/entity/ItemEntityImpl
+org/bukkit/craftbukkit/entity/CraftAgeable org/cardboardpowered/impl/entity/AgeableImpl
+org/bukkit/craftbukkit/entity/CraftMob org/cardboardpowered/impl/entity/MobImpl
+org/bukkit/craftbukkit/entity/CraftMonster org/cardboardpowered/impl/entity/MonsterImpl
+org/bukkit/craftbukkit/entity/CraftAbstractVillager org/cardboardpowered/impl/entity/AbstractVillagerImpl
+org/bukkit/craftbukkit/entity/CraftVillager org/cardboardpowered/impl/entity/VillagerImpl
 org/bukkit/craftbukkit/scheduler/CraftScheduler com/javazilla/bukkitfabric/impl/BukkitSchedulerImpl
-org/bukkit/craftbukkit/entity/CraftVillager com/javazilla/bukkitfabric/impl/entity/VillagerImpl
-org/bukkit/craftbukkit/entity/CraftArmorStand com/javazilla/bukkitfabric/impl/entity/ArmorStandImpl
+org/bukkit/craftbukkit/entity/CraftVillager org/cardboardpowered/impl/entity/VillagerImpl
+org/bukkit/craftbukkit/entity/CraftArmorStand org/cardboardpowered/impl/entity/ArmorStandImpl
+org/bukkit/craftbukkit/entity/CraftHumanEntity org/cardboardpowered/impl/entity/HumanEntityImpl
+org/bukkit/craftbukkit/entity/CraftPlayer org/cardboardpowered/impl/entity/PlayerImpl
 
 aa$a a (Lcom/google/gson/JsonElement;Ljava/lang/reflect/Type;Lcom/google/gson/JsonDeserializationContext;)Lnet/minecraft/server/AdvancementProgress; method_745
 aa$a a (Lnet/minecraft/server/AdvancementProgress;Ljava/lang/reflect/Type;Lcom/google/gson/JsonSerializationContext;)Lcom/google/gson/JsonElement; method_744

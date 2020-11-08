@@ -30,7 +30,7 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     public List<Slot> slots;
 
     @Override
-    public void transferTo(ScreenHandler other, org.bukkit.craftbukkit.entity.CraftHumanEntity player) {
+    public void transferTo(ScreenHandler other, org.cardboardpowered.impl.entity.HumanEntityImpl player) {
         InventoryView source = this.getBukkitView(), destination = ((IMixinScreenHandler)other).getBukkitView();
         ((IMixinInventory)((CraftInventory) source.getTopInventory()).getInventory()).onClose(player);
         ((IMixinInventory)((CraftInventory) source.getBottomInventory()).getInventory()).onClose(player);

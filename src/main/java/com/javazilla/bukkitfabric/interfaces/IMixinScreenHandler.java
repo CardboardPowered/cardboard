@@ -20,7 +20,7 @@ package com.javazilla.bukkitfabric.interfaces;
 
 import java.util.List;
 
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
 import org.bukkit.inventory.InventoryView;
 
 import net.minecraft.item.ItemStack;
@@ -37,7 +37,7 @@ public interface IMixinScreenHandler {
 
     public void setTitle(Text title);
 
-    public void transferTo(ScreenHandler other, CraftHumanEntity player);
+    public void transferTo(ScreenHandler other, HumanEntityImpl player);
 
     public DefaultedList<ItemStack> getTrackedStacksBF();
 

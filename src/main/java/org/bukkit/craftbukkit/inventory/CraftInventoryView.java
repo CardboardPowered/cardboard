@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
 import org.bukkit.GameMode;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -16,11 +16,11 @@ import net.minecraft.screen.ScreenHandler;
 public class CraftInventoryView extends InventoryView {
 
     private final ScreenHandler container;
-    private final CraftHumanEntity player;
+    private final HumanEntityImpl player;
     private final CraftInventory viewing;
 
     public CraftInventoryView(HumanEntity player, Inventory viewing, ScreenHandler container) {
-        this.player = (CraftHumanEntity) player;
+        this.player = (HumanEntityImpl) player;
         this.viewing = (CraftInventory) viewing;
         this.container = container;
     }

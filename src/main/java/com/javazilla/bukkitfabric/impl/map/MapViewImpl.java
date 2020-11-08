@@ -13,7 +13,7 @@ import net.minecraft.util.registry.RegistryKey;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
@@ -22,9 +22,9 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 public final class MapViewImpl implements MapView {
 
-    private final Map<CraftPlayer, RenderData> renderCache = new HashMap<CraftPlayer, RenderData>();
+    private final Map<PlayerImpl, RenderData> renderCache = new HashMap<PlayerImpl, RenderData>();
     private final List<MapRenderer> renderers = new ArrayList<MapRenderer>();
-    private final Map<MapRenderer, Map<CraftPlayer, MapCanvasImpl>> canvases = new HashMap<MapRenderer, Map<CraftPlayer, MapCanvasImpl>>();
+    private final Map<MapRenderer, Map<PlayerImpl, MapCanvasImpl>> canvases = new HashMap<MapRenderer, Map<PlayerImpl, MapCanvasImpl>>();
     protected final MapState worldMap;
 
     public MapViewImpl(MapState worldMap) {
@@ -101,7 +101,7 @@ public final class MapViewImpl implements MapView {
     public void addRenderer(MapRenderer renderer) {
         if (!renderers.contains(renderer)) {
             renderers.add(renderer);
-            canvases.put(renderer, new HashMap<CraftPlayer, MapCanvasImpl>());
+            canvases.put(renderer, new HashMap<PlayerImpl, MapCanvasImpl>());
             renderer.initialize(this);
         }
     }
@@ -110,7 +110,7 @@ public final class MapViewImpl implements MapView {
     public boolean removeRenderer(MapRenderer renderer) {
         if (renderers.contains(renderer)) {
             renderers.remove(renderer);
-            for (Map.Entry<CraftPlayer, MapCanvasImpl> entry : canvases.get(renderer).entrySet())
+            for (Map.Entry<PlayerImpl, MapCanvasImpl> entry : canvases.get(renderer).entrySet())
                 for (int x = 0; x < 128; ++x)
                     for (int y = 0; y < 128; ++y)
                         entry.getValue().setPixel(x, y, (byte) -1);
@@ -125,7 +125,7 @@ public final class MapViewImpl implements MapView {
         return false;
     }
 
-    public RenderData render(CraftPlayer player) {
+    public RenderData render(PlayerImpl player) {
         boolean context = isContextual();
         RenderData render = renderCache.get(context ? player : null);
 

@@ -3,7 +3,7 @@ package com.javazilla.bukkitfabric.mixin.item;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.block.BlockDispenseArmorEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,7 +50,7 @@ public class MixinArmorItem {
             org.bukkit.block.Block block = ((IMixinWorld)world).getWorldImpl().getBlockAt(isourceblock.getBlockPos().getX(), isourceblock.getBlockPos().getY(), isourceblock.getBlockPos().getZ());
             CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 
-            BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (CraftLivingEntity) ((IMixinEntity)entityliving).getBukkitEntity());
+            BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (LivingEntityImpl) ((IMixinEntity)entityliving).getBukkitEntity());
             if (!DispenserBlockHelper.eventFired)
                 Bukkit.getPluginManager().callEvent(event);
 

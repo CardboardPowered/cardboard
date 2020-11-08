@@ -16,7 +16,7 @@ import net.minecraft.util.math.Vec3d;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.Inventory;
@@ -87,7 +87,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
             }
 
             if (context.getKiller() != null) {
-                PlayerEntity nmsKiller = ((CraftHumanEntity) context.getKiller()).getHandle();
+                PlayerEntity nmsKiller = ((HumanEntityImpl) context.getKiller()).getHandle();
                 builder.parameter(LootContextParameters.KILLER_ENTITY, nmsKiller);
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
                 builder.parameter(LootContextParameters.DAMAGE_SOURCE, DamageSource.player(nmsKiller));
@@ -121,8 +121,8 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
 
         if (info.hasParameter(LootContextParameters.KILLER_ENTITY)) {
             CraftEntity killer = ((IMixinEntity)info.get(LootContextParameters.KILLER_ENTITY)).getBukkitEntity();
-            if (killer instanceof CraftHumanEntity)
-                contextBuilder.killer((CraftHumanEntity) killer);
+            if (killer instanceof HumanEntityImpl)
+                contextBuilder.killer((HumanEntityImpl) killer);
         }
 
         if (info.hasParameter(LootContextParameters.THIS_ENTITY))

@@ -17,7 +17,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 
@@ -159,15 +159,15 @@ public class BossBarImpl implements BossBar {
     @Override
     public void addPlayer(Player player) {
         Preconditions.checkArgument(player != null, "player == null");
-        Preconditions.checkArgument(((CraftPlayer) player).getHandle().networkHandler != null, "player is not fully connected (wait for PlayerJoinEvent)");
+        Preconditions.checkArgument(((PlayerImpl) player).getHandle().networkHandler != null, "player is not fully connected (wait for PlayerJoinEvent)");
 
-        handle.addPlayer(((CraftPlayer) player).getHandle());
+        handle.addPlayer(((PlayerImpl) player).getHandle());
     }
 
     @Override
     public void removePlayer(Player player) {
         Preconditions.checkArgument(player != null, "player == null");
-        handle.removePlayer(((CraftPlayer) player).getHandle());
+        handle.removePlayer(((PlayerImpl) player).getHandle());
     }
 
     @Override

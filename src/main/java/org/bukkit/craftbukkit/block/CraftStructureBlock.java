@@ -11,7 +11,7 @@ import org.bukkit.block.Structure;
 import org.bukkit.block.structure.Mirror;
 import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.block.structure.UsageMode;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BlockVector;
 
@@ -49,7 +49,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockBlo
 
     @Override
     public void setAuthor(LivingEntity entity) {
-        getSnapshot().author = ((CraftLivingEntity) entity).getHandle().getEntityName();
+        getSnapshot().author = ((LivingEntityImpl) entity).getHandle().getEntityName();
     }
 
     @Override

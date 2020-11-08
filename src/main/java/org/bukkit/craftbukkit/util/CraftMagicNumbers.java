@@ -25,6 +25,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Fluid;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.UnsafeValues;
@@ -72,6 +73,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final Map<Item, Material> ITEM_MATERIAL = new HashMap<>();
     private static final Map<Material, Item> MATERIAL_ITEM = new HashMap<>();
     private static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
+    private static final Map<net.minecraft.fluid.Fluid, org.bukkit.Fluid> FLUID_MATERIAL = new HashMap<>();
+    private static final Map<Material, net.minecraft.fluid.Fluid> MATERIAL_FLUID = new HashMap<>();
+
 
     static {
         for (Block block : Registry.BLOCK)
@@ -80,12 +84,16 @@ public final class CraftMagicNumbers implements UnsafeValues {
         for (Item item : Registry.ITEM)
             ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getId(item).getPath().toUpperCase(Locale.ROOT)));
 
+        for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
+            FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
+
         for (Material material : Material.values()) {
             if (material.isLegacy()) continue;
 
             Identifier key = key(material);
             Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
             Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
+            Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
         }
     }
 
@@ -252,6 +260,14 @@ public final class CraftMagicNumbers implements UnsafeValues {
         public static final int TAG_COMPOUND = 10;
         public static final int TAG_INT_ARRAY = 11;
         public static final int TAG_ANY_NUMBER = 99;
+    }
+
+    public static Fluid getFluid(net.minecraft.fluid.Fluid fluid) {
+        return FLUID_MATERIAL.get(fluid);
+    }
+
+    public static net.minecraft.fluid.Fluid getFluid(Fluid fluid) {
+        return MATERIAL_FLUID.get(fluid);
     }
 
 }

@@ -4,11 +4,11 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableMap;
+import org.cardboardpowered.library.Library;
+import org.cardboardpowered.library.LibraryKey;
+import org.cardboardpowered.library.LibraryManager;
 
-import net.glowstone.util.library.Library;
-import net.glowstone.util.library.LibraryKey;
-import net.glowstone.util.library.LibraryManager;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Compatibility bundles are bundles of libraries that Spigot includes but Fabric does not.

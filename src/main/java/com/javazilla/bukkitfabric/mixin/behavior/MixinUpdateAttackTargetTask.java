@@ -1,6 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.behavior;
 
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +24,7 @@ public class MixinUpdateAttackTargetTask<E extends MobEntity> {
             ci.cancel();
             return;
         }
-        entityliving = (event.getTarget() != null) ? ((CraftLivingEntity) event.getTarget()).getHandle() : null;
+        entityliving = (event.getTarget() != null) ? ((LivingEntityImpl) event.getTarget()).getHandle() : null;
     }
 
 }

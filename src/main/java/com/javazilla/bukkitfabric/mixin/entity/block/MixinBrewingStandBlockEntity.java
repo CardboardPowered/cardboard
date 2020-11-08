@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.BrewEvent;
@@ -42,12 +42,12 @@ public class MixinBrewingStandBlockEntity implements IMixinInventory {
     private int maxStack = 64;
 
     @Override
-    public void onOpen(CraftHumanEntity who) {
+    public void onOpen(HumanEntityImpl who) {
         transaction.add(who);
     }
 
     @Override
-    public void onClose(CraftHumanEntity who) {
+    public void onClose(HumanEntityImpl who) {
         transaction.remove(who);
     }
 

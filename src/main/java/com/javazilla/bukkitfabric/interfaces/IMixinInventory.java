@@ -18,7 +18,7 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
@@ -27,9 +27,9 @@ public interface IMixinInventory {
 
     java.util.List<ItemStack> getContents();
 
-    void onOpen(CraftHumanEntity who);
+    void onOpen(HumanEntityImpl who);
 
-    void onClose(CraftHumanEntity who);
+    void onClose(HumanEntityImpl who);
 
     java.util.List<org.bukkit.entity.HumanEntity> getViewers();
 

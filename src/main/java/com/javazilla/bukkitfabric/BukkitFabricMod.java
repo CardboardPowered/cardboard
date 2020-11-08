@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.cardboardpowered.library.LibraryManager;
+
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import net.fabricmc.api.ModInitializer;
-import net.glowstone.util.library.LibraryManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 
 public class BukkitFabricMod implements ModInitializer {

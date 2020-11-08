@@ -114,15 +114,11 @@ public class CraftBlockData implements BlockData {
 
     @Override
     public boolean matches(BlockData data) {
-        if (data == null)
-            return false;
-
-        if (!(data instanceof CraftBlockData))
-            return false;
+        if (data == null) return false;
+        if (!(data instanceof CraftBlockData)) return false;
 
         CraftBlockData craft = (CraftBlockData) data;
-        if (this.state.getBlock() != craft.state.getBlock())
-            return false;
+        if (this.state.getBlock() != craft.state.getBlock()) return false;
 
         // Fastpath an exact match
         boolean exactMatch = this.equals(data);
@@ -247,7 +243,7 @@ public class CraftBlockData implements BlockData {
 
     @Override
     public String toString() {
-        return "CraftBlockData{" + getAsString() + "}";
+        return "CardboardBlockData{" + getAsString() + "}";
     }
 
     // Mimicked from BlockDataAbstract#toString()
@@ -271,7 +267,6 @@ public class CraftBlockData implements BlockData {
             Property Property = (Property) entry.getKey();
             compound.putString(Property.getName(), Property.name(entry.getValue()));
         }
-
         return compound;
     }
 
@@ -347,22 +342,10 @@ public class CraftBlockData implements BlockData {
         return state;
     }
 
-    /**
-     * Get the minimum value allowed by the IntProperty.
-     *
-     * @param state the state to check
-     * @return the minimum value allowed
-     */
     protected static int getMin(IntProperty state) {
         return 0; // TODO auto-generated method stub
     }
 
-    /**
-     * Get the maximum value allowed by the IntProperty.
-     *
-     * @param state the state to check
-     * @return the maximum value allowed
-     */
     protected static int getMax(IntProperty state) {
         return Integer.MAX_VALUE; // TODO auto-generated method stub
     }
@@ -370,6 +353,7 @@ public class CraftBlockData implements BlockData {
     private static final Map<Class<? extends Block>, Function<BlockState, CraftBlockData>> MAP = new HashMap<>();
 
     static {
+        // Keep synchronized with Spigot
         register(net.minecraft.block.AnvilBlock.class, org.bukkit.craftbukkit.block.impl.CraftAnvil::new);
         register(net.minecraft.block.BambooBlock.class, org.bukkit.craftbukkit.block.impl.CraftBamboo::new);
         register(net.minecraft.block.BannerBlock.class, org.bukkit.craftbukkit.block.impl.CraftBanner::new);
@@ -515,8 +499,7 @@ public class CraftBlockData implements BlockData {
         if (data != null) {
             try {
                 // Material provided, force that material in
-                if (block != null)
-                    data = Registry.BLOCK.getId(block) + data;
+                if (block != null) data = Registry.BLOCK.getId(block) + data;
 
                 StringReader reader = new StringReader(data);
                 BlockArgumentParser arg = new BlockArgumentParser(reader, false).parse(false);

@@ -46,7 +46,7 @@ import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
@@ -1122,7 +1122,7 @@ public class WorldImpl implements World {
         nms.setTimeOfDay(nms.getTimeOfDay() + event.getSkipAmount());
 
         for (Player p : getPlayers()) {
-            CraftPlayer cp = (CraftPlayer) p;
+            PlayerImpl cp = (PlayerImpl) p;
             if (cp.getHandle().networkHandler == null) continue;
 
             cp.getHandle().networkHandler.sendPacket(new WorldTimeUpdateS2CPacket(cp.getHandle().world.getTime(), cp.getHandle().getServerWorld().getTime(), cp.getHandle().world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));

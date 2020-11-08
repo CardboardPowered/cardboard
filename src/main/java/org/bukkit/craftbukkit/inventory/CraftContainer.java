@@ -28,7 +28,7 @@ import net.minecraft.screen.SmokerScreenHandler;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.LiteralText;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -105,8 +105,8 @@ public class CraftContainer extends ScreenHandler {
         boolean typeChanged = (cachedType != view.getType());
         cachedType = view.getType();
         cachedTitle = view.getTitle();
-        if (view.getPlayer() instanceof CraftPlayer) {
-            CraftPlayer player = (CraftPlayer) view.getPlayer();
+        if (view.getPlayer() instanceof PlayerImpl) {
+            PlayerImpl player = (PlayerImpl) view.getPlayer();
             ScreenHandlerType<?> type = getNotchInventoryType(view.getTopInventory());
             net.minecraft.inventory.Inventory top = ((CraftInventory) view.getTopInventory()).getInventory();
             PlayerInventory bottom = (PlayerInventory) ((CraftInventory) view.getBottomInventory()).getInventory();

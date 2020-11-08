@@ -11,7 +11,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
@@ -96,8 +96,8 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
     public void setOwningPlayer(OfflinePlayer player) {
         Preconditions.checkNotNull(player, "player");
 
-        if (player instanceof CraftPlayer)
-            this.profile = ((CraftPlayer) player).nms.getGameProfile();
+        if (player instanceof PlayerImpl)
+            this.profile = ((PlayerImpl) player).nms.getGameProfile();
         else this.profile = new GameProfile(player.getUniqueId(), player.getName());
     }
 
