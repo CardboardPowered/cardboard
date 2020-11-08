@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl;
+package org.cardboardpowered.impl.world;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;

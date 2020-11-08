@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl;
+package org.cardboardpowered.impl.world;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,14 +39,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
-import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
@@ -66,12 +64,12 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
-import com.javazilla.bukkitfabric.impl.WorldBorderImpl;
 import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinChunkHolder;
@@ -79,6 +77,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.ChorusFlowerBlock;
@@ -116,10 +115,10 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ReadOnlyChunk;
 import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
+import net.minecraft.world.level.ServerWorldProperties;
 
 @SuppressWarnings("deprecation")
 public class WorldImpl implements World {
@@ -396,7 +395,7 @@ public class WorldImpl implements World {
 
     @Override
     public ChunkSnapshot getEmptyChunkSnapshot(int arg0, int arg1, boolean arg2, boolean arg3) {
-        return CraftChunk.getEmptyChunkSnapshot(arg0, arg1, this, arg2, arg3);
+        return CardboardChunk.getEmptyChunkSnapshot(arg0, arg1, this, arg2, arg3);
     }
 
     @Override
@@ -414,12 +413,9 @@ public class WorldImpl implements World {
                 net.minecraft.entity.Entity mc = (net.minecraft.entity.Entity) object;
                 Entity bukkit = ((IMixinEntity)mc).getBukkitEntity();
 
-                // Assuming that bukkitEntity isn't null
-                if (bukkit != null && bukkit.isValid())
-                    list.add(bukkit);
+                if (bukkit != null && bukkit.isValid()) list.add(bukkit);
             }
         }
-
         return list;
     }
 

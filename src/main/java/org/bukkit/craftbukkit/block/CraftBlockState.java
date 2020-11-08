@@ -9,15 +9,16 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.CraftChunk;
+
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.cardboardpowered.impl.world.CardboardChunk;
 
 import com.google.common.base.Preconditions;
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.server.world.ServerWorld;
@@ -28,7 +29,7 @@ import net.minecraft.world.WorldAccess;
 public class CraftBlockState implements BlockState {
 
     protected final WorldImpl world;
-    private final CraftChunk chunk;
+    private final CardboardChunk chunk;
     private final BlockPos position;
     protected net.minecraft.block.BlockState data;
     protected int flag;
@@ -37,7 +38,7 @@ public class CraftBlockState implements BlockState {
         this.world = (WorldImpl) block.getWorld();
         this.position = ((CraftBlock) block).getPosition();
         this.data = ((CraftBlock) block).getNMS();
-        this.chunk = (CraftChunk) block.getChunk();
+        this.chunk = (CardboardChunk) block.getChunk();
         this.flag = 3;
     }
 

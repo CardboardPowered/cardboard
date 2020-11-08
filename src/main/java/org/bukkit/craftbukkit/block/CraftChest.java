@@ -13,7 +13,7 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
 import org.bukkit.inventory.Inventory;
 
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest {
 

@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit;
+package org.cardboardpowered.impl.world;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -20,7 +20,6 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
-import com.javazilla.bukkitfabric.impl.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
@@ -42,7 +41,7 @@ import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.gen.ChunkRandom;
 
-public class CraftChunk implements Chunk {
+public class CardboardChunk implements Chunk {
     
     private WeakReference<net.minecraft.world.chunk.WorldChunk> weakChunk;
     private final ServerWorld worldServer;
@@ -51,7 +50,7 @@ public class CraftChunk implements Chunk {
     private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getContainer();
     private static final byte[] emptyLight = new byte[2048];
 
-    public CraftChunk(net.minecraft.world.chunk.WorldChunk chunk) {
+    public CardboardChunk(net.minecraft.world.chunk.WorldChunk chunk) {
         this.weakChunk = new WeakReference<>(chunk);
 
         worldServer = (ServerWorld) getHandle().getWorld();
@@ -274,7 +273,7 @@ public class CraftChunk implements Chunk {
             biome = chunk.getBiomeArray();
 
         World world = getWorld();
-        return new CraftChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
+        return new CardboardChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -298,7 +297,7 @@ public class CraftChunk implements Chunk {
             empty[i] = true;
         }
 
-        return new CraftChunkSnapshot(x, z, world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(null, Heightmap.Type.MOTION_BLOCKING), biome);
+        return new CardboardChunkSnapshot(x, z, world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(null, Heightmap.Type.MOTION_BLOCKING), biome);
     }
 
     static void validateChunkCoordinates(int x, int y, int z) {

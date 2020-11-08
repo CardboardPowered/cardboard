@@ -12,7 +12,7 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> implements Jukebox {
 

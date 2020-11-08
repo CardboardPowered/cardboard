@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.google.common.base.Preconditions;
 import net.minecraft.block.entity.BlockEntity;

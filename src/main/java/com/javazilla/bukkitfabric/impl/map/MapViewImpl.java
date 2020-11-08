@@ -17,7 +17,7 @@ import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 public final class MapViewImpl implements MapView {

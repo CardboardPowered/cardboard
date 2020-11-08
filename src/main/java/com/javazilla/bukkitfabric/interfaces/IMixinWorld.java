@@ -18,7 +18,7 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 public interface IMixinWorld {
 

@@ -154,7 +154,7 @@ import com.javazilla.bukkitfabric.impl.util.IconCacheImpl;
 import com.javazilla.bukkitfabric.impl.world.ChunkDataImpl;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
 import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
 import com.javazilla.bukkitfabric.impl.boss.BossBarImpl;

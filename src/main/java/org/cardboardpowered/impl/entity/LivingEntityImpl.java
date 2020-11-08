@@ -54,7 +54,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.Utils;
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;

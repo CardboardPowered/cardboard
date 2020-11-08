@@ -51,7 +51,7 @@ public class BukkitFabricMod implements ModInitializer {
 
     public static void loadLibs() {
         String repository = "https://repo.glowstone.net/repository/maven-public/";
-        new LibraryManager(repository, "lin", true, 2, CompatibilityBundle.CRAFTBUKKIT.libraries.values()).run();
+        new LibraryManager(repository, "lib", true, 2, CompatibilityBundle.CRAFTBUKKIT.libraries.values()).run();
     }
 
 }

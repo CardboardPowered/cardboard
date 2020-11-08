@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.bukkit.Chunk;
-import org.bukkit.craftbukkit.CraftChunk;
+import org.cardboardpowered.impl.world.CardboardChunk;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,7 +53,7 @@ public class MixinWorldChunk implements IMixinWorldChunk {
 
     @Inject(method = "<init>*", at = @At("TAIL"))
     public void setBukkitChunk(World world, ChunkPos pos, BiomeArray biomes, UpgradeData upgradeData, TickScheduler<Block> blockTickScheduler, TickScheduler<Fluid> fluidTickScheduler, long inhabitedTime, ChunkSection[] sections, Consumer<WorldChunk> loadToWorldConsumer, CallbackInfo ci) {
-        this.bukkit = new CraftChunk((WorldChunk)(Object)this);
+        this.bukkit = new CardboardChunk((WorldChunk)(Object)this);
     }
 
     @Override

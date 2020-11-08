@@ -62,7 +62,7 @@ import com.destroystokyo.paper.Title;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
 import com.javazilla.bukkitfabric.impl.advancements.AdvancementProgressImpl;
 import com.javazilla.bukkitfabric.impl.map.MapViewImpl;

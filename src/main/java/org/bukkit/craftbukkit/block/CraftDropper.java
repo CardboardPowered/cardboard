@@ -11,7 +11,7 @@ import org.bukkit.block.Dropper;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
-import com.javazilla.bukkitfabric.impl.WorldImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 public class CraftDropper extends CraftLootable<DropperBlockEntity> implements Dropper {
 
