@@ -1,19 +1,20 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
-import net.minecraft.block.entity.HopperBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Hopper;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
-public class CraftHopper extends CraftLootable<HopperBlockEntity> implements Hopper {
+import net.minecraft.block.entity.HopperBlockEntity;
 
-    public CraftHopper(final Block block) {
+public class CardboardHopper extends CardboardLootableBlock<HopperBlockEntity> implements Hopper {
+
+    public CardboardHopper(final Block block) {
         super(block, HopperBlockEntity.class);
     }
 
-    public CraftHopper(final Material material, final HopperBlockEntity te) {
+    public CardboardHopper(final Material material, final HopperBlockEntity te) {
         super(material, te);
     }
 
@@ -24,10 +25,7 @@ public class CraftHopper extends CraftLootable<HopperBlockEntity> implements Hop
 
     @Override
     public Inventory getInventory() {
-        if (!this.isPlaced()) {
-            return this.getSnapshotInventory();
-        }
-
-        return new CraftInventory(this.getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CraftInventory(this.getTileEntity());
     }
+
 }

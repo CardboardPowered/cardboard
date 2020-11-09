@@ -16,6 +16,7 @@ import org.bukkit.scoreboard.Score;
  * Also, as an added perk, a CraftScore will (intentionally) stay a valid reference so long as objective is valid.
  */
 final class CraftScore implements Score {
+
     private final String entry;
     private final CraftObjective objective;
 
@@ -48,7 +49,6 @@ final class CraftScore implements Score {
             ScoreboardPlayerScore score = scores.get(objective.getHandle());
             if (score != null) return score.getScore();// Lazy
         }
-
         return 0; // Lazy
     }
 

@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard - Bukkit/Spigot/Paper API for Fabric
+ * Copyright (C) 2020, CardboardPowered.org
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +19,7 @@
 package com.javazilla.bukkitfabric.nms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -40,6 +41,10 @@ public class ReflectionMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+        for (Provider p : Remapper.providers) {
+            boolean b = p.visitFieldInsn( opcode, owner, name, desc );
+            if (b) return;
+        }
         super.visitFieldInsn( opcode, owner, name, desc );
     }
 
@@ -51,6 +56,11 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                 super.visitMethodInsn( opcode, owner, name, desc, itf );
                 return;
             }
+        }
+
+        for (Provider p : Remapper.providers) {
+            boolean b = p.visitMethodInsn( opcode, owner, name, desc, itf );
+            if (b) return;
         }
 
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;"))

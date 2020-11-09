@@ -26,6 +26,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.cardboardpowered.impl.inventory.CardboardAnvilInventory;
 
 import com.javazilla.bukkitfabric.impl.inventory.BeaconInventoryImpl;
 import com.javazilla.bukkitfabric.impl.inventory.EnchantingInventoryImpl;
@@ -435,7 +436,7 @@ public class CraftInventory implements Inventory {
             return InventoryType.MERCHANT;
         } else if (this instanceof BeaconInventoryImpl) {
               return InventoryType.BEACON;
-        } else if (this instanceof CraftInventoryAnvil) {
+        } else if (this instanceof CardboardAnvilInventory) {
             return InventoryType.ANVIL;
         } else if (inventory instanceof Hopper) {
             return InventoryType.HOPPER;

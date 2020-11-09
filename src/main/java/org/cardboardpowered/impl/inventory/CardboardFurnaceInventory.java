@@ -1,15 +1,16 @@
-package org.bukkit.craftbukkit.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.block.Furnace;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-public class CraftInventoryFurnace extends CraftInventory implements FurnaceInventory {
+public class CardboardFurnaceInventory extends CraftInventory implements FurnaceInventory {
 
-    public CraftInventoryFurnace(AbstractFurnaceBlockEntity inventory) {
+    public CardboardFurnaceInventory(AbstractFurnaceBlockEntity inventory) {
         super(inventory);
     }
 

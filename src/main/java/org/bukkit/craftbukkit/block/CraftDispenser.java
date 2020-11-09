@@ -13,9 +13,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.projectiles.BlockProjectileSource;
 
 import com.javazilla.bukkitfabric.impl.BlockProjectileSourceImpl;
+
+import org.cardboardpowered.impl.block.CardboardLootableBlock;
 import org.cardboardpowered.impl.world.WorldImpl;
 
-public class CraftDispenser extends CraftLootable<DispenserBlockEntity> implements Dispenser {
+public class CraftDispenser extends CardboardLootableBlock<DispenserBlockEntity> implements Dispenser {
 
     public CraftDispenser(final Block block) {
         super(block, DispenserBlockEntity.class);

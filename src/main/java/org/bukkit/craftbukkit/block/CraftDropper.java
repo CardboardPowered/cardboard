@@ -10,10 +10,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
-
+import org.cardboardpowered.impl.block.CardboardLootableBlock;
 import org.cardboardpowered.impl.world.WorldImpl;
 
-public class CraftDropper extends CraftLootable<DropperBlockEntity> implements Dropper {
+public class CraftDropper extends CardboardLootableBlock<DropperBlockEntity> implements Dropper {
 
     public CraftDropper(final Block block) {
         super(block, DropperBlockEntity.class);

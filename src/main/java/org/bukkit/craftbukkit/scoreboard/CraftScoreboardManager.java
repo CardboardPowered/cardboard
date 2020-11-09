@@ -64,15 +64,11 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         net.minecraft.scoreboard.Scoreboard newboard = scoreboard.getHandle();
         ServerPlayerEntity entityplayer = player.getHandle();
 
-        if (oldboard == newboard) {
-            return;
-        }
+        if (oldboard == newboard) return;
 
         if (scoreboard == mainScoreboard) {
             playerBoards.remove(player);
-        } else {
-            playerBoards.put(player, (CraftScoreboard) scoreboard);
-        }
+        } else playerBoards.put(player, (CraftScoreboard) scoreboard);
 
         // Old objective tracking
         HashSet<ScoreboardObjective> removed = new HashSet<ScoreboardObjective>();
@@ -86,10 +82,8 @@ public final class CraftScoreboardManager implements ScoreboardManager {
 
         // Old team tracking
         Iterator<?> iterator = oldboard.getTeams().iterator();
-        while (iterator.hasNext()) {
-            Team scoreboardteam = (Team) iterator.next();
-            entityplayer.networkHandler.sendPacket(new TeamS2CPacket(scoreboardteam, 1));
-        }
+        while (iterator.hasNext())
+            entityplayer.networkHandler.sendPacket(new TeamS2CPacket((Team) iterator.next(), 1));
 
         // The above is the reverse of the below method. 
         ((IMixinPlayerManager)server.getPlayerManager()).sendScoreboardBF((ServerScoreboard) newboard, player.getHandle());

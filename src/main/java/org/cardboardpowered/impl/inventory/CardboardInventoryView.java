@@ -1,7 +1,9 @@
-package org.bukkit.craftbukkit.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import org.bukkit.GameMode;
 import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -13,13 +15,13 @@ import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 
 import net.minecraft.screen.ScreenHandler;
 
-public class CraftInventoryView extends InventoryView {
+public class CardboardInventoryView extends InventoryView {
 
     private final ScreenHandler container;
     private final HumanEntityImpl player;
     private final CraftInventory viewing;
 
-    public CraftInventoryView(HumanEntity player, Inventory viewing, ScreenHandler container) {
+    public CardboardInventoryView(HumanEntity player, Inventory viewing, ScreenHandler container) {
         this.player = (HumanEntityImpl) player;
         this.viewing = (CraftInventory) viewing;
         this.container = container;
@@ -43,25 +45,19 @@ public class CraftInventoryView extends InventoryView {
     @Override
     public InventoryType getType() {
         InventoryType type = viewing.getType();
-        if (type == InventoryType.CRAFTING && player.getGameMode() == GameMode.CREATIVE)
-            return InventoryType.CREATIVE;
-        return type;
+        return (type == InventoryType.CRAFTING && player.getGameMode() == GameMode.CREATIVE) ? InventoryType.CREATIVE : type;
     }
 
     @Override
     public void setItem(int slot, ItemStack item) {
         net.minecraft.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
-        if (slot >= 0)
-            container.getSlot(slot).setStack(stack);
-        else
-            player.getHandle().dropStack(stack);
+        if (slot >= 0) container.getSlot(slot).setStack(stack);
+        else player.getHandle().dropStack(stack);
     }
 
     @Override
     public ItemStack getItem(int slot) {
-        if (slot < 0)
-            return null;
-        return CraftItemStack.asCraftMirror(container.getSlot(slot).getStack());
+        return (slot < 0) ? null : CraftItemStack.asCraftMirror(container.getSlot(slot).getStack());
     }
 
     @Override

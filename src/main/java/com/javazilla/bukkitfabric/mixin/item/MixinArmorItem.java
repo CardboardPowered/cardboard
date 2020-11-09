@@ -3,13 +3,13 @@ package com.javazilla.bukkitfabric.mixin.item;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.cardboardpowered.impl.block.DispenserBlockHelper;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.block.BlockDispenseArmorEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import com.javazilla.bukkitfabric.impl.block.DispenserBlockHelper;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 

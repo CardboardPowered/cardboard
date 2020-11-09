@@ -96,8 +96,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
     }
 
     public void putAll(CompoundTag compound) {
-        for (String key : compound.getKeys())
-            this.customDataTags.put(key, compound.get(key));
+        for (String key : compound.getKeys()) this.customDataTags.put(key, compound.get(key));
     }
 
     public Map<String, Tag> getRaw() {
@@ -126,7 +125,6 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
             String[] keyData = key.split(":", 2);
             if (keyData.length == 2) keys.add(new NamespacedKey(keyData[0], keyData[1]));
         });
-
         return keys;
     }
 

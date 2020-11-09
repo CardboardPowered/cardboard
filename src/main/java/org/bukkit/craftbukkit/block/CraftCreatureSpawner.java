@@ -29,7 +29,6 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerBlockE
     public void setSpawnedType(EntityType entityType) {
         if (entityType == null || entityType.getName() == null)
             throw new IllegalArgumentException("Can't spawn EntityType " + entityType + " from mobspawners!");
-
         this.getSnapshot().getLogic().setEntityId(net.minecraft.entity.EntityType.get(entityType.getName()).get());
     }
 
@@ -42,8 +41,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerBlockE
     public void setCreatureTypeByName(String creatureType) {
         // Verify input
         EntityType type = EntityType.fromName(creatureType);
-        if (type == null)
-            return;
+        if (type == null) return;
         setSpawnedType(type);
     }
 

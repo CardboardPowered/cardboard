@@ -1,18 +1,19 @@
-package org.bukkit.craftbukkit.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import net.minecraft.village.Merchant;
 import net.minecraft.village.MerchantInventory;
 
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.MerchantRecipe;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinTradeOffer;
 import com.javazilla.bukkitfabric.interfaces.IMixinTrader;
 
-public class CraftInventoryMerchant extends CraftInventory implements org.bukkit.inventory.MerchantInventory {
+public class CardboardMerchantInventory extends CraftInventory implements org.bukkit.inventory.MerchantInventory {
 
     private final Merchant merchant;
 
-    public CraftInventoryMerchant(Merchant merchant, MerchantInventory inventory) {
+    public CardboardMerchantInventory(Merchant merchant, MerchantInventory inventory) {
         super(inventory);
         this.merchant = merchant;
     }

@@ -35,7 +35,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.impl.util.ServerShutdownThread;
 import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
@@ -63,10 +62,7 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
     private void init(CallbackInfoReturnable<Boolean> ci) {
-        BukkitLogger.getLogger().info(" ___  _   _  _  __ _  __ ___ _____  ");
-        BukkitLogger.getLogger().info("| _ )| | | || |/ /| |/ /|_ _|_   _| ");
-        BukkitLogger.getLogger().info("| _ \\| |_| || ' < | ' <  | |  | |   ");
-        BukkitLogger.getLogger().info("|___/ \\___/ |_|\\_\\|_|\\_\\|___| |_|   ");
+        BukkitLogger.getLogger().info(" Bukkit4Fabric Mod ");
 
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
@@ -77,7 +73,7 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
         pluginsDir.mkdir();
 
         Bukkit.getPluginManager().registerInterface(JavaPluginLoader.class);
-        BukkitFabricMod.loadLibs();
+       // BukkitFabricMod.loadLibs();
 
         CraftServer s = ((CraftServer)Bukkit.getServer());
         if (CraftServer.server == null) CraftServer.server = (MinecraftDedicatedServer) (Object) this;

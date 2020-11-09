@@ -1,7 +1,7 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +30,7 @@ public class MixinLecternScreenHandler extends MixinScreenHandler {
     @Shadow
     public PropertyDelegate propertyDelegate;
 
-    private CraftInventoryView bukkitEntity = null;
+    private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
@@ -39,12 +39,12 @@ public class MixinLecternScreenHandler extends MixinScreenHandler {
     }
 
     @Override
-    public CraftInventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
 
         LecternInventoryImpl inventory = new LecternInventoryImpl(this.inventory);
-        bukkitEntity = new CraftInventoryView(this.player, inventory, (LecternScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView(this.player, inventory, (LecternScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

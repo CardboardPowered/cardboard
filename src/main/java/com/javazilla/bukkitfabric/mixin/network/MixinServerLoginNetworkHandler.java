@@ -236,22 +236,9 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     }
 
-    /**
-     * @reason .
-     * @author .
-     */
-    @Overwrite
-    public void onHello(LoginHelloC2SPacket packetlogininstart) {
-        Validate.validState(this.state == ServerLoginNetworkHandler.State.HELLO, "Unexpected hello packet", new Object[0]);
-        this.profile = packetlogininstart.getProfile();
-
-        System.out.println("GAME PROFILE ===== " + profile.toString());
-
-        if (this.server.isOnlineMode() && !this.connection.isLocal()) {
-            this.state = ServerLoginNetworkHandler.State.KEY;
-
-            this.connection.send(new LoginHelloS2CPacket("", this.server.getKeyPair().getPublic().getEncoded(), this.nonce));
-        } else {
+    @Inject(at = @At("TAIL"), method="onHello")
+    public void spigotHello(LoginHelloC2SPacket packetlogininstart, CallbackInfo ci) {
+        if (!(this.server.isOnlineMode() && !this.connection.isLocal())) {
             // Spigot start
             new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
 
@@ -268,7 +255,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             }.start();
             // Spigot end
         }
-
     }
 
     // Spigot start

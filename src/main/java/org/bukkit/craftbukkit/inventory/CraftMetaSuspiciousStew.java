@@ -27,13 +27,11 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
 
     CraftMetaSuspiciousStew(CraftMetaItem meta) {
         super(meta);
-        if (!(meta instanceof CraftMetaSuspiciousStew)) {
-            return;
-        }
+        if (!(meta instanceof CraftMetaSuspiciousStew)) return;
+
         CraftMetaSuspiciousStew stewMeta = ((CraftMetaSuspiciousStew) meta);
-        if (stewMeta.hasCustomEffects()) {
+        if (stewMeta.hasCustomEffects())
             this.customEffects = new ArrayList<PotionEffect>(stewMeta.customEffects);
-        }
     }
 
     CraftMetaSuspiciousStew(CompoundTag tag) {

@@ -2,11 +2,11 @@ package org.bukkit.craftbukkit.inventory.util;
 
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.cardboardpowered.impl.inventory.CardboardFurnaceInventory;
 
 import com.javazilla.bukkitfabric.impl.inventory.BrewerInventoryImpl;
 
@@ -62,7 +62,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public Inventory getInventory(net.minecraft.inventory.Inventory tileEntity) {
-            return new CraftInventoryFurnace((AbstractFurnaceBlockEntity) tileEntity);
+            return new CardboardFurnaceInventory((AbstractFurnaceBlockEntity) tileEntity);
         }
     }
 
@@ -78,7 +78,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
             net.minecraft.inventory.Inventory tileEntity = getTileEntity();
             if (tileEntity instanceof BrewingStandBlockEntity)
                 ((BrewingStandBlockEntity) tileEntity).setCustomName(CraftChatMessage.fromStringOrNull(title));
-
             return getInventory(tileEntity);
         }
 
@@ -89,7 +88,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     }
 
     public static class Dispenser extends CraftTileInventoryConverter {
-
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new DispenserBlockEntity();
@@ -97,7 +95,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     }
 
     public static class Dropper extends CraftTileInventoryConverter {
-
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new DropperBlockEntity();
@@ -105,7 +102,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     }
 
     public static class Hopper extends CraftTileInventoryConverter {
-
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new HopperBlockEntity();
@@ -113,7 +109,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     }
 
     public static class BlastFurnace extends CraftTileInventoryConverter {
-
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new BlastFurnaceBlockEntity();
@@ -121,7 +116,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     }
 
     public static class Lectern extends CraftTileInventoryConverter {
-
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new LecternBlockEntity().inventory;
@@ -129,7 +123,6 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     }
 
     public static class Smoker extends CraftTileInventoryConverter {
-
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new SmokerBlockEntity();

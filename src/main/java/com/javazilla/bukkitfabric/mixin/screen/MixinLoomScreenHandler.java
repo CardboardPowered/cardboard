@@ -1,6 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,7 +22,7 @@ public class MixinLoomScreenHandler extends MixinScreenHandler {
     @Shadow public Inventory input;
     @Shadow public Inventory output;
 
-    private CraftInventoryView bukkitEntity = null;
+    private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
@@ -31,12 +31,12 @@ public class MixinLoomScreenHandler extends MixinScreenHandler {
     }
 
     @Override
-    public CraftInventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
 
         LoomInventoryImpl inventory = new LoomInventoryImpl(this.input, this.output);
-        bukkitEntity = new CraftInventoryView(this.player, inventory, (LoomScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView(this.player, inventory, (LoomScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

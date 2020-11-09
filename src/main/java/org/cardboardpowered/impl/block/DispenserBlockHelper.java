@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl.block;
+package org.cardboardpowered.impl.block;
 
 public class DispenserBlockHelper {
 

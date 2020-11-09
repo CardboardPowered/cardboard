@@ -43,8 +43,7 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
 
     @SuppressWarnings("unchecked")
     private T createSnapshot(T tileEntity) {
-        if (tileEntity == null)
-            return null;
+        if (tileEntity == null) return null;
 
         CompoundTag nbtTagCompound = tileEntity.toTag(new CompoundTag());
         T snapshot = (T) BlockEntity.createFromTag(data, nbtTagCompound);
@@ -76,7 +75,6 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
 
     public CompoundTag getSnapshotNBT() {
         applyTo(snapshot);
-
         return snapshot.toTag(new CompoundTag());
     }
 

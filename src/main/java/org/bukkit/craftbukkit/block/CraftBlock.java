@@ -30,6 +30,10 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import com.google.common.base.Preconditions;
+
+import org.cardboardpowered.impl.block.CardboardBarrel;
+import org.cardboardpowered.impl.block.CardboardConduit;
+import org.cardboardpowered.impl.block.CardboardHopper;
 import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
@@ -290,7 +294,7 @@ public class CraftBlock implements Block {
             case END_GATEWAY:
                 return new CraftEndGateway(this);
             case HOPPER:
-                return new CraftHopper(this);
+                return new CardboardHopper(this);
             case SPAWNER:
                 return new CraftCreatureSpawner(this);
             case JUKEBOX:
@@ -395,9 +399,9 @@ public class CraftBlock implements Block {
             case YELLOW_BED:
                 return new CraftBed(this);
             case CONDUIT:
-                return new CraftConduit(this);
+                return new CardboardConduit(this);
             case BARREL:
-                return new CraftBarrel(this);
+                return new CardboardBarrel(this);
             case BELL:
                 return new CraftBell(this);
             case BLAST_FURNACE:

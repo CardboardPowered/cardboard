@@ -16,6 +16,11 @@ import net.md_5.specialsource.SpecialSource;
 
 public class Remapper {
 
+    public static List<Provider> providers = new ArrayList<>();
+    public static void addProvider(Provider provider) {
+        providers.add(provider);
+    }
+
     public static int MAPPINGS_VERSION = 10;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
@@ -38,10 +43,16 @@ public class Remapper {
      * These steps will hopefully allow plugins to use NMS during snapshots
      */
     public static void remap(File jarFile) {
+        configDir.mkdirs();
+        remappedDir.mkdirs();
+        backup.mkdirs();
+
+        for (Provider p : Remapper.providers) {
+            boolean b = p.remap(jarFile);
+            if (b) return;
+        }
+
         if (versionFix == null) {
-            configDir.mkdirs();
-            remappedDir.mkdirs();
-            backup.mkdirs();
             if (md5info.exists()) {
                 try {
                     hashes.addAll(Files.readAllLines(md5info.toPath()));
@@ -78,8 +89,7 @@ public class Remapper {
             } else usingBackup = true;
         }
 
-        if (hashes.contains(md5) && hashes.get(0).equals("mappings=" + MAPPINGS_VERSION))
-            return;
+        if (hashes.contains(md5) && hashes.get(0).equals("mappings=" + MAPPINGS_VERSION)) return;
 
         String jarName = jarFile.getName().substring(0, jarFile.getName().indexOf(".jar"));
         LOGGER.info("Remapping \"" + jarFile + "\"...");
@@ -115,8 +125,7 @@ public class Remapper {
             md5 = null;
             e1.printStackTrace();
         }
-        if (null != md5)
-            hashes.add(md5);
+        if (null != md5) hashes.add(md5);
         finalJar.delete();
         saveHashes();
     }
@@ -133,6 +142,11 @@ public class Remapper {
     }
 
     public static void runSpecialSource(File mappingsFile, File inJar, File outJar) {
+        for (Provider p : Remapper.providers) {
+            boolean b = p.runSpecialSource(mappingsFile, inJar, outJar);
+            if (b) return;
+        }
+
         String[] args = {"-q", "-i", inJar.getAbsolutePath(), "-o", outJar.getAbsolutePath(), "-m", mappingsFile.getAbsolutePath()};
         try {
             SpecialSource.main(args);

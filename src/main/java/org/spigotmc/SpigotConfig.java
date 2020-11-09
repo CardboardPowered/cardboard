@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,10 +22,8 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.CraftServer;
 
 public class SpigotConfig {
 
@@ -42,18 +39,14 @@ public class SpigotConfig {
             + "\n"
             + "IRC: #spigot @ irc.spi.gt ( http://www.spigotmc.org/pages/irc/ )\n"
             + "Forums: http://www.spigotmc.org/\n";
-    /*========================================================================*/
     public static YamlConfiguration config;
-    static int version;
-    static Map<String, Command> commands;
-    /*========================================================================*/
-   // private static Metrics metrics;
+    public static int version;
+    public static Map<String, Command> commands;
 
     public static void init(File configFile){ 
         CONFIG_FILE = configFile;
         config = new YamlConfiguration();
-        try
-        {
+        try {
             config.load( CONFIG_FILE );
         } catch ( IOException ex ) {} catch ( InvalidConfigurationException ex ) {
             Bukkit.getLogger().log( Level.SEVERE, "Could not load spigot.yml, please correct your syntax errors", ex );
@@ -189,8 +182,6 @@ public class SpigotConfig {
         restartOnCrash = getBoolean( "settings.restart-on-crash", restartOnCrash );
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
-        //commands.put( "restart", new RestartCommand( "restart" ) );
-        //WatchdogThread.doStart( timeoutTime, restartOnCrash ); // Paper - moved to PaperConfig
     }
 
     public static boolean bungee;

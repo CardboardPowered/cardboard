@@ -1,6 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,7 +19,7 @@ import net.minecraft.screen.ScreenHandlerContext;
 @Mixin(GrindstoneScreenHandler.class)
 public class MixinGrindstoneScreenHandler extends MixinScreenHandler {
 
-    private CraftInventoryView bukkitEntity = null;
+    private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
     @Shadow private Inventory result;
@@ -31,12 +31,12 @@ public class MixinGrindstoneScreenHandler extends MixinScreenHandler {
     }
 
     @Override
-    public CraftInventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
 
         GrindstoneInventoryImpl inventory = new GrindstoneInventoryImpl(this.input, this.result);
-        bukkitEntity = new CraftInventoryView(this.player, inventory, (GrindstoneScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView(this.player, inventory, (GrindstoneScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

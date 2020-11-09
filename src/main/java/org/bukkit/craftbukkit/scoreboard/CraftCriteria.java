@@ -5,20 +5,15 @@ import java.util.Map;
 import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.scoreboard.ScoreboardObjective;
 
-final class CraftCriteria {
+public class CraftCriteria {
+
     static final Map<String, CraftCriteria> DEFAULTS;
     static final CraftCriteria DUMMY;
 
     static {
         ImmutableMap.Builder<String, CraftCriteria> defaults = ImmutableMap.builder();
-
-        for (Map.Entry<?, ?> entry : ((Map<?, ?>) ScoreboardCriterion.OBJECTIVES).entrySet()) {
-            String name = entry.getKey().toString();
-            ScoreboardCriterion criteria = (ScoreboardCriterion) entry.getValue();
-
-            defaults.put(name, new CraftCriteria(criteria));
-        }
-
+        for (Map.Entry<?, ?> entry : ((Map<?, ?>) ScoreboardCriterion.OBJECTIVES).entrySet())
+            defaults.put(entry.getKey().toString(), new CraftCriteria((ScoreboardCriterion) entry.getValue()));
         DEFAULTS = defaults.build();
         DUMMY = DEFAULTS.get("dummy");
     }
@@ -42,22 +37,17 @@ final class CraftCriteria {
 
     static CraftCriteria getFromBukkit(String name) {
         final CraftCriteria criteria = DEFAULTS.get(name);
-        if (criteria != null) {
-            return criteria;
-        }
-        return new CraftCriteria(name);
+        return (criteria != null) ? criteria : new CraftCriteria(name);
     }
 
     @Override
     public boolean equals(Object that) {
-        if (!(that instanceof CraftCriteria)) {
-            return false;
-        }
-        return ((CraftCriteria) that).bukkitName.equals(this.bukkitName);
+        return (!(that instanceof CraftCriteria)) ? false : ((CraftCriteria) that).bukkitName.equals(this.bukkitName);
     }
 
     @Override
     public int hashCode() {
         return this.bukkitName.hashCode() ^ CraftCriteria.class.hashCode();
     }
+
 }

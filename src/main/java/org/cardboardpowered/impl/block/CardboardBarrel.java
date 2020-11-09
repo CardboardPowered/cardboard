@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.entity.BarrelBlockEntity;
 import org.bukkit.Material;
@@ -7,13 +7,13 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 
-public class CraftBarrel extends CraftLootable<BarrelBlockEntity> implements Barrel {
+public class CardboardBarrel extends CardboardLootableBlock<BarrelBlockEntity> implements Barrel {
 
-    public CraftBarrel(Block block) {
+    public CardboardBarrel(Block block) {
         super(block, BarrelBlockEntity.class);
     }
 
-    public CraftBarrel(Material material, BarrelBlockEntity te) {
+    public CardboardBarrel(Material material, BarrelBlockEntity te) {
         super(material, te);
     }
 
@@ -24,10 +24,7 @@ public class CraftBarrel extends CraftLootable<BarrelBlockEntity> implements Bar
 
     @Override
     public Inventory getInventory() {
-        if (!this.isPlaced())
-            return this.getSnapshotInventory();
-
-        return new CraftInventory(getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CraftInventory(getTileEntity());
     }
 
     @Override

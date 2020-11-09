@@ -1,6 +1,11 @@
 package org.cardboardpowered.impl.entity;
 
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftServer;
@@ -10,9 +15,12 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.loot.LootTable;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 public abstract class MobImpl extends LivingEntityImpl implements Mob {
+
+    protected final Random random = new Random();
 
     public MobImpl(CraftServer server, MobEntity entity) {
         super(server, entity);
@@ -73,5 +81,16 @@ public abstract class MobImpl extends LivingEntityImpl implements Mob {
     public long getSeed() {
         return getHandle().lootTableSeed;
     }
+
+    // Paper start
+    public boolean isInDaylight() {
+        if (getHandle().world.isDay()) {
+            float f = getHandle().getBrightnessAtEyes();
+            BlockPos blockPos = getHandle().getVehicle() instanceof BoatEntity ? new BlockPos(getHandle().getX(), Math.round(getHandle().getY()), getHandle().getZ()).up() : new BlockPos(getHandle().getX(), Math.round(getHandle().getY()), getHandle().getZ());
+            if (f > 0.5f && BukkitFabricMod.random.nextFloat() * 30.0f < (f - 0.4f) * 2.0f && getHandle().world.isSkyVisible(blockPos)) return true;
+        }
+        return false;
+    }
+    // Paper end
 
 }

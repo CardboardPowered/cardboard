@@ -10,12 +10,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
 import org.bukkit.inventory.Inventory;
-
+import org.cardboardpowered.impl.block.CardboardLootableBlock;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.cardboardpowered.impl.world.WorldImpl;
 
-public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest {
+public class CraftChest extends CardboardLootableBlock<ChestBlockEntity> implements Chest {
 
     public CraftChest(final Block block) {
         super(block, ChestBlockEntity.class);
@@ -32,27 +32,20 @@ public class CraftChest extends CraftLootable<ChestBlockEntity> implements Chest
 
     @Override
     public Inventory getBlockInventory() {
-        if (!this.isPlaced())
-            return this.getSnapshotInventory();
-
-        return new CraftInventory(this.getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CraftInventory(this.getTileEntity());
     }
 
     @Override
     public Inventory getInventory() {
         CraftInventory inventory = (CraftInventory) this.getBlockInventory();
-        if (!isPlaced())
-            return inventory;
+        if (!isPlaced()) return inventory;
 
-        // The logic here is basically identical to the logic in BlockChest.interact
         WorldImpl world = (WorldImpl) this.getWorld();
 
         ChestBlock blockChest = (ChestBlock) (this.getType() == Material.CHEST ? Blocks.CHEST : Blocks.TRAPPED_CHEST);
         NamedScreenHandlerFactory nms = blockChest.createScreenHandlerFactory(data, world.getHandle(), this.getPosition());
 
-        if (nms instanceof DoubleInventory)
-            inventory = new CraftInventoryDoubleChest((DoubleInventory) nms);
-        return inventory;
+        return (nms instanceof DoubleInventory) ? (inventory = new CardboardDoubleChestInventory((DoubleInventory) nms)) : inventory;
     }
 
     @Override

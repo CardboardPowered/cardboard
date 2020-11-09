@@ -121,9 +121,7 @@ public class CraftBlockState implements BlockState {
         } else {
             if ((data.getClass() == mat.getData()) || (data.getClass() == MaterialData.class)) {
                 this.data = CraftMagicNumbers.getBlock(data);
-            } else {
-                throw new IllegalArgumentException("Provided data is not of type " + mat.getData().getName() + ", found " + data.getClass().getName());
-            }
+            } else throw new IllegalArgumentException("Provided data is not of type " + mat.getData().getName() + ", found " + data.getClass().getName());
         }
     }
 
@@ -137,8 +135,7 @@ public class CraftBlockState implements BlockState {
         Preconditions.checkArgument(type != null, "Material cannot be null");
         Preconditions.checkArgument(type.isBlock(), "Material must be a block!");
 
-        if (this.getType() != type)
-            this.data = CraftMagicNumbers.getBlock(type).getDefaultState();
+        if (this.getType() != type) this.data = CraftMagicNumbers.getBlock(type).getDefaultState();
     }
 
     @Override
@@ -177,13 +174,11 @@ public class CraftBlockState implements BlockState {
 
     @Override
     public boolean update(boolean force, boolean applyPhysics) {
-        if (!isPlaced())
-            return true;
+        if (!isPlaced()) return true;
         CraftBlock block = getBlock();
 
         if (block.getType() != getType())
-            if (!force)
-                return false;
+            if (!force) return false;
 
         net.minecraft.block.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
@@ -212,7 +207,6 @@ public class CraftBlockState implements BlockState {
             loc.setYaw(0);
             loc.setPitch(0);
         }
-
         return loc;
     }
 
@@ -223,8 +217,7 @@ public class CraftBlockState implements BlockState {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
+        if (obj == null || getClass() != obj.getClass()) return false;
 
         final CraftBlockState other = (CraftBlockState) obj;
         if (this.world != other.world && (this.world == null || !this.world.equals(other.world)))
@@ -276,8 +269,7 @@ public class CraftBlockState implements BlockState {
     }
 
     protected void requirePlaced() {
-        if (!isPlaced())
-            throw new IllegalStateException("The blockState must be placed to call this method");
+        if (!isPlaced()) throw new IllegalStateException("The blockState must be placed to call this method");
     }
 
 }

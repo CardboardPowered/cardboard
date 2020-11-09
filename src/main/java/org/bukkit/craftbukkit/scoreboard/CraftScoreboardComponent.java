@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.scoreboard;
 
-abstract class CraftScoreboardComponent {
+public abstract class CraftScoreboardComponent {
+
     private CraftScoreboard scoreboard;
 
-    CraftScoreboardComponent(CraftScoreboard scoreboard) {
+    public CraftScoreboardComponent(CraftScoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
 
@@ -14,4 +15,5 @@ abstract class CraftScoreboardComponent {
     }
 
     abstract void unregister() throws IllegalStateException;
+
 }

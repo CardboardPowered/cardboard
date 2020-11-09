@@ -1,7 +1,8 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
+import org.cardboardpowered.impl.inventory.CardboardAnvilInventory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -18,19 +19,19 @@ public class MixinAnvilScreenHandler extends MixinForgingScreenHandler implement
     // TODO Add AnvilPrepareEvent
 
     public int maximumRepairCost_BF = 40;
-    public CraftInventoryView bukkitEntity;
+    public CardboardInventoryView bukkitEntity;
 
     @Shadow public String newItemName;
     @Shadow public Property levelCost;
 
     @Override
-    public CraftInventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
 
-        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(
+        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new CardboardAnvilInventory(
                 ((IMixinScreenHandlerContext)context).getLocation(), this.input, this.output, (AnvilScreenHandler)(Object)this);
-        bukkitEntity = new CraftInventoryView((Player)((IMixinServerEntityPlayer)this.player).getBukkitEntity(), inventory, (AnvilScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView((Player)((IMixinServerEntityPlayer)this.player).getBukkitEntity(), inventory, (AnvilScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

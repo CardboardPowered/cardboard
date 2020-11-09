@@ -6,7 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.enchantments.EnchantmentOffer;
@@ -58,7 +58,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
     @Shadow public int[] enchantmentId;
     @Shadow public int[] enchantmentLevel;
 
-    private CraftInventoryView bukkitEntity = null;
+    private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
@@ -238,7 +238,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
             return bukkitEntity;
 
         EnchantingInventoryImpl inventory = new EnchantingInventoryImpl(this.inventory);
-        bukkitEntity = new CraftInventoryView(this.player, inventory, (EnchantmentScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView(this.player, inventory, (EnchantmentScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

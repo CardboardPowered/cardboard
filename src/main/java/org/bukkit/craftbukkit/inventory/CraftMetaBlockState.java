@@ -41,7 +41,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.block.CraftBanner;
-import org.bukkit.craftbukkit.block.CraftBarrel;
 import org.bukkit.craftbukkit.block.CraftBeacon;
 import org.bukkit.craftbukkit.block.CraftBeehive;
 import org.bukkit.craftbukkit.block.CraftBell;
@@ -60,7 +59,6 @@ import org.bukkit.craftbukkit.block.CraftEnchantingTable;
 import org.bukkit.craftbukkit.block.CraftEndGateway;
 import org.bukkit.craftbukkit.block.CraftEnderChest;
 import org.bukkit.craftbukkit.block.CraftFurnace;
-import org.bukkit.craftbukkit.block.CraftHopper;
 import org.bukkit.craftbukkit.block.CraftJigsaw;
 import org.bukkit.craftbukkit.block.CraftJukebox;
 import org.bukkit.craftbukkit.block.CraftLectern;
@@ -71,6 +69,8 @@ import org.bukkit.craftbukkit.block.CraftSmoker;
 import org.bukkit.craftbukkit.block.CraftStructureBlock;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.cardboardpowered.impl.block.CardboardBarrel;
+import org.cardboardpowered.impl.block.CardboardHopper;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta {
@@ -339,10 +339,8 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             }
             return new CraftEndGateway(material, (EndGatewayBlockEntity) te);
         case HOPPER:
-            if (te == null) {
-                te = new HopperBlockEntity();
-            }
-            return new CraftHopper(material, (HopperBlockEntity) te);
+            if (te == null) te = new HopperBlockEntity();
+            return new CardboardHopper(material, (HopperBlockEntity) te);
         case SPAWNER:
             if (te == null) {
                 te = new MobSpawnerBlockEntity();
@@ -474,10 +472,9 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             }
             return new CraftComparator(material, (ComparatorBlockEntity) te);
         case BARREL:
-            if (te == null) {
+            if (te == null)
                 te = new BarrelBlockEntity();
-            }
-            return new CraftBarrel(material, (BarrelBlockEntity) te);
+            return new CardboardBarrel(material, (BarrelBlockEntity) te);
         case BELL:
             if (te == null) {
                 te = new BellBlockEntity();
@@ -556,7 +553,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             valid = blockState instanceof CraftEndGateway;
             break;
         case HOPPER:
-            valid = blockState instanceof CraftHopper;
+            valid = blockState instanceof CardboardHopper;
             break;
         case SPAWNER:
             valid = blockState instanceof CraftCreatureSpawner;
@@ -659,7 +656,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             valid = blockState instanceof CraftComparator;
             break;
         case BARREL:
-            valid = blockState instanceof CraftBarrel;
+            valid = blockState instanceof CardboardBarrel;
             break;
         case BELL:
             valid = blockState instanceof CraftBell;

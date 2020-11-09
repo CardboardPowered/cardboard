@@ -617,6 +617,22 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         Location origin = ((IMixinEntity)getHandle()).getOriginBF();
         return origin == null ? null : origin.clone();
     }
+
+    public boolean isTicking() {
+        return nms.getEntityWorld().getChunkManager().shouldTickEntity(nms);
+    }
+
+    public boolean isInLava() {
+        return nms.isInLava();
+    }
+
+    public boolean isInWater() {
+        return nms.isSubmergedInWater();
+    }
+
+    public boolean isInRain() {
+        return nms.isBeingRainedOn();
+    }
     // PaperAPI - END
 
 }

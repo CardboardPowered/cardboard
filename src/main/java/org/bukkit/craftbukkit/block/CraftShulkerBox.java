@@ -9,8 +9,9 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.Inventory;
+import org.cardboardpowered.impl.block.CardboardLootableBlock;
 
-public class CraftShulkerBox extends CraftLootable<ShulkerBoxBlockEntity> implements ShulkerBox {
+public class CraftShulkerBox extends CardboardLootableBlock<ShulkerBoxBlockEntity> implements ShulkerBox {
 
     public CraftShulkerBox(final Block block) {
         super(block, ShulkerBoxBlockEntity.class);

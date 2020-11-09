@@ -19,9 +19,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
 
     CraftMetaArmorStand(CompoundTag tag) {
         super(tag);
-
-        if (tag.contains(ENTITY_TAG.NBT))
-            entityTag = tag.getCompound(ENTITY_TAG.NBT);
+        if (tag.contains(ENTITY_TAG.NBT)) entityTag = tag.getCompound(ENTITY_TAG.NBT);
     }
 
     CraftMetaArmorStand(Map<String, Object> map) {
@@ -31,24 +29,18 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     @Override
     void deserializeInternal(CompoundTag tag, Object context) {
         super.deserializeInternal(tag, context);
-
-        if (tag.contains(ENTITY_TAG.NBT))
-            entityTag = tag.getCompound(ENTITY_TAG.NBT);
+        if (tag.contains(ENTITY_TAG.NBT)) entityTag = tag.getCompound(ENTITY_TAG.NBT);
     }
 
     @Override
     void serializeInternal(Map<String, Tag> internalTags) {
-        if (entityTag != null && !entityTag.isEmpty()) {
-            internalTags.put(ENTITY_TAG.NBT, entityTag);
-        }
+        if (entityTag != null && !entityTag.isEmpty()) internalTags.put(ENTITY_TAG.NBT, entityTag);
     }
 
     @Override
     void applyToItem(CompoundTag tag) {
         super.applyToItem(tag);
-
-        if (entityTag != null)
-            tag.put(ENTITY_TAG.NBT, entityTag);
+        if (entityTag != null) tag.put(ENTITY_TAG.NBT, entityTag);
     }
 
     @Override
@@ -67,8 +59,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
 
     @Override
     boolean equalsCommon(CraftMetaItem meta) {
-        if (!super.equalsCommon(meta))
-            return false;
+        if (!super.equalsCommon(meta)) return false;
 
         if (meta instanceof CraftMetaArmorStand) {
             CraftMetaArmorStand that = (CraftMetaArmorStand) meta;
@@ -86,9 +77,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     int applyHash() {
         final int original;
         int hash = original = super.applyHash();
-
-        if (entityTag != null)
-            hash = 73 * hash + entityTag.hashCode();
+        if (entityTag != null) hash = 73 * hash + entityTag.hashCode();
 
         return original != hash ? CraftMetaArmorStand.class.hashCode() ^ hash : hash;
     }
@@ -96,16 +85,13 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     @Override
     Builder<String, Object> serialize(Builder<String, Object> builder) {
         super.serialize(builder);
-
         return builder;
     }
 
     @Override
     public CraftMetaArmorStand clone() {
         CraftMetaArmorStand clone = (CraftMetaArmorStand) super.clone();
-        if (entityTag != null)
-            clone.entityTag = entityTag.copy();
-
+        if (entityTag != null) clone.entityTag = entityTag.copy();
         return clone;
     }
 

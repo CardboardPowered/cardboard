@@ -46,9 +46,7 @@ public abstract class CraftContainer<T extends LockableContainerBlockEntity> ext
     @Override
     public void applyTo(T container) {
         super.applyTo(container);
-
-        if (this.getSnapshot().customName == null)
-            container.setCustomName(null);
+        if (this.getSnapshot().customName == null) container.setCustomName(null);
     }
 
 }

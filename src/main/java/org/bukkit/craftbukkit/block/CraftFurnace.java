@@ -5,8 +5,8 @@ import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
-import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
 import org.bukkit.inventory.FurnaceInventory;
+import org.cardboardpowered.impl.inventory.CardboardFurnaceInventory;
 
 public class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends CraftContainer<T> implements Furnace {
 
@@ -20,15 +20,12 @@ public class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends CraftCon
 
     @Override
     public FurnaceInventory getSnapshotInventory() {
-        return new CraftInventoryFurnace(this.getSnapshot());
+        return new CardboardFurnaceInventory(this.getSnapshot());
     }
 
     @Override
     public FurnaceInventory getInventory() {
-        if (!this.isPlaced())
-            return this.getSnapshotInventory();
-
-        return new CraftInventoryFurnace(this.getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CardboardFurnaceInventory(this.getTileEntity());
     }
 
     @Override
@@ -39,7 +36,6 @@ public class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends CraftCon
     @Override
     public void setBurnTime(short burnTime) {
         this.getSnapshot().burnTime = burnTime;
-        // SPIGOT-844: Allow lighting and relighting using this API
         this.data = this.data.with(AbstractFurnaceBlock.LIT, burnTime > 0);
     }
 

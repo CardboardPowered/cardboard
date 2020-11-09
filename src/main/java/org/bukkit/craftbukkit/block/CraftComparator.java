@@ -14,4 +14,5 @@ public class CraftComparator extends CraftBlockEntityState<ComparatorBlockEntity
     public CraftComparator(final Material material, final ComparatorBlockEntity te) {
         super(material, te);
     }
+
 }

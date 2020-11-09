@@ -1,6 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,7 +20,7 @@ import net.minecraft.screen.StonecutterScreenHandler;
 @Mixin(StonecutterScreenHandler.class)
 public class MixinStonecutterScreenHandler extends MixinScreenHandler {
 
-    private CraftInventoryView bukkitEntity = null;
+    private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
     @Shadow public Inventory input;
@@ -32,12 +32,12 @@ public class MixinStonecutterScreenHandler extends MixinScreenHandler {
     }
 
     @Override
-    public CraftInventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
 
         StonecutterInventoryImpl inventory = new StonecutterInventoryImpl(this.input, this.output);
-        bukkitEntity = new CraftInventoryView(this.player, inventory, (StonecutterScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView(this.player, inventory, (StonecutterScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

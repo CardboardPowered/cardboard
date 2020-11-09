@@ -29,6 +29,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
@@ -61,7 +62,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
-@Mixin(ServerPlayerInteractionManager.class)
+@Mixin(value = ServerPlayerInteractionManager.class, priority = 999)
 public class MixinServerPlayerInteractionManager implements IMixinServerPlayerInteractionManager {
 
     @Shadow public ServerPlayerEntity player;
@@ -81,8 +82,9 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
      * @reason Interaction Events
      */
     @SuppressWarnings("deprecation")
-    @Overwrite
-    public void processBlockBreakingAction(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, Direction enumdirection, int i) {
+    //@Overwrite
+    @Inject(at = @At("HEAD"), method = "processBlockBreakingAction")
+    public void processBlockBreakingActionBF(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, Direction enumdirection, int i, CallbackInfo ci) {
         double d0 = this.player.getX() - ((double) blockposition.getX() + 0.5D);
         double d1 = this.player.getY() - ((double) blockposition.getY() + 0.5D) + 1.5D;
         double d2 = this.player.getZ() - ((double) blockposition.getZ() + 0.5D);

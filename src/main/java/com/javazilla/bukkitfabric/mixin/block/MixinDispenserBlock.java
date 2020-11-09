@@ -1,9 +1,9 @@
 package com.javazilla.bukkitfabric.mixin.block;
 
+import org.cardboardpowered.impl.block.DispenserBlockHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import com.javazilla.bukkitfabric.impl.block.DispenserBlockHelper;
 import com.javazilla.bukkitfabric.interfaces.IMixinDispenserBlock;
 
 import net.minecraft.block.DispenserBlock;

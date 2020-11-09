@@ -5,7 +5,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.cardboardpowered.impl.entity.HumanEntityImpl;
-import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
@@ -87,7 +87,7 @@ public class MixinHopperBlockEntity implements IMixinInventory {
 
             org.bukkit.inventory.Inventory sourceInventory;
             if (iinventory instanceof DoubleInventory) {
-                sourceInventory = new CraftInventoryDoubleChest((DoubleInventory) iinventory);
+                sourceInventory = new CardboardDoubleChestInventory((DoubleInventory) iinventory);
             } else sourceInventory = ((IMixinInventory)iinventory).getOwner().getInventory();
 
             InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), ((IMixinInventory)ihopper).getOwner().getInventory(), false);

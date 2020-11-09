@@ -440,7 +440,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         //else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
         // CHECKSTYLE:ON
 
-        return new UnknownEntity(entity); // TODO
+        
+        return (entity instanceof net.minecraft.entity.LivingEntity) ? new LivingEntityImpl(entity) : new UnknownEntity(entity); // TODO
         //throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
     }
 

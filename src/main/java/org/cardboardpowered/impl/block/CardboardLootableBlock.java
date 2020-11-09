@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.util.Identifier;
@@ -6,35 +6,30 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Nameable;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.block.CraftContainer;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.loot.LootTable;
 import org.bukkit.loot.Lootable;
 
-public abstract class CraftLootable<T extends LootableContainerBlockEntity> extends CraftContainer<T> implements Nameable, Lootable {
+public abstract class CardboardLootableBlock<T extends LootableContainerBlockEntity> extends CraftContainer<T> implements Nameable, Lootable {
 
-    public CraftLootable(Block block, Class<T> tileEntityClass) {
+    public CardboardLootableBlock(Block block, Class<T> tileEntityClass) {
         super(block, tileEntityClass);
     }
 
-    public CraftLootable(Material material, T tileEntity) {
+    public CardboardLootableBlock(Material material, T tileEntity) {
         super(material, tileEntity);
     }
 
     @Override
     public void applyTo(T lootable) {
         super.applyTo(lootable);
-
-        if (this.getSnapshot().lootTableId == null)
-            lootable.setLootTable((Identifier) null, 0L);
+        if (this.getSnapshot().lootTableId == null) lootable.setLootTable((Identifier) null, 0L);
     }
 
     @Override
     public LootTable getLootTable() {
-        if (getSnapshot().lootTableId == null)
-            return null;
-
-        Identifier key = getSnapshot().lootTableId;
-        return Bukkit.getLootTable(CraftNamespacedKey.fromMinecraft(key));
+        return (getSnapshot().lootTableId == null) ? null : Bukkit.getLootTable(CraftNamespacedKey.fromMinecraft(getSnapshot().lootTableId));
     }
 
     @Override
@@ -53,7 +48,7 @@ public abstract class CraftLootable<T extends LootableContainerBlockEntity> exte
     }
 
     private void setLootTable(LootTable table, long seed) {
-        Identifier key = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
-        getSnapshot().setLootTable(key, seed);
+        getSnapshot().setLootTable(((table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey())), seed);
     }
+
 }

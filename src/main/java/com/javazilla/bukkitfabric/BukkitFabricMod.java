@@ -21,6 +21,7 @@ package com.javazilla.bukkitfabric;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import org.cardboardpowered.library.LibraryManager;
@@ -34,12 +35,15 @@ public class BukkitFabricMod implements ModInitializer {
 
     public static Logger LOGGER = BukkitLogger.getLogger();
     public static boolean isAfterWorldLoad = false;
+    public static final Random random = new Random();
 
     public static List<ServerLoginNetworkHandler> NETWORK_CASHE = new ArrayList<>();
 
     @Override
     public void onInitialize() {
         LOGGER.info("Bukkit for Fabric Mod - Javazilla.com");
+
+        loadLibs();
 
         try {
             MappingsReader.main(null);

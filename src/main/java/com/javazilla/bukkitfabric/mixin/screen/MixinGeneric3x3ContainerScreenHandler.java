@@ -1,7 +1,7 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,7 +21,7 @@ public class MixinGeneric3x3ContainerScreenHandler extends MixinScreenHandler {
     @Shadow
     public Inventory inventory;
 
-    private CraftInventoryView bukkitEntity = null;
+    private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory playerInv;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
@@ -30,12 +30,12 @@ public class MixinGeneric3x3ContainerScreenHandler extends MixinScreenHandler {
     }
 
     @Override
-    public CraftInventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
 
         CraftInventory inventory = new CraftInventory(this.inventory);
-        bukkitEntity = new CraftInventoryView((Player)((IMixinEntity)this.playerInv.player).getBukkitEntity(), inventory, (Generic3x3ContainerScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView((Player)((IMixinEntity)this.playerInv.player).getBukkitEntity(), inventory, (Generic3x3ContainerScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

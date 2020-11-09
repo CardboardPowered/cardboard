@@ -84,7 +84,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 
 @SuppressWarnings("deprecation")
-@Mixin(ServerPlayNetworkHandler.class)
+@Mixin(value = ServerPlayNetworkHandler.class, priority = 999)
 public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetworkHandler {
 
     @Shadow 
@@ -331,16 +331,14 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayer(), packetplayinentityaction.getMode() == ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY);
                 CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
-                if (event.isCancelled())
-                    ci.cancel();
+                if (event.isCancelled()) ci.cancel();
                 break;
             case START_SPRINTING:
             case STOP_SPRINTING:
                 PlayerToggleSprintEvent e2 = new PlayerToggleSprintEvent(this.getPlayer(), packetplayinentityaction.getMode() == ClientCommandC2SPacket.Mode.START_SPRINTING);
                 CraftServer.INSTANCE.getPluginManager().callEvent(e2);
 
-                if (e2.isCancelled())
-                    ci.cancel();
+                if (e2.isCancelled()) ci.cancel();
                 break;
             default:
                 break;
@@ -521,8 +519,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 }
             }
         }
-        ci.cancel();
-        return;
+        //ci.cancel();
+       // return;
     }
 
     @Shadow
@@ -619,8 +617,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             if (enuminteractionresult.shouldSwingHand())
                 this.player.swingHand(enumhand, true);
 
-            ci.cancel();
-            return;
+           // ci.cancel();
+            //return;
         }
     }
 

@@ -1,8 +1,10 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
+import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +25,7 @@ public class MixinGenericContainerScreenHandler extends MixinScreenHandler {
     @Shadow
     public Inventory inventory;
 
-    private CraftInventoryView bukkitEntity = null;
+    private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
@@ -32,18 +34,18 @@ public class MixinGenericContainerScreenHandler extends MixinScreenHandler {
     }
 
     @Override
-    public CraftInventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null)
             return bukkitEntity;
 
         CraftInventory inventory;
         if (this.inventory instanceof PlayerInventory) {
-            inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryPlayer((PlayerInventory) this.inventory);
+            inventory = new CardboardPlayerInventory((PlayerInventory) this.inventory);
         } else if (this.inventory instanceof DoubleInventory) {
-            inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((DoubleInventory) this.inventory);
+            inventory = new CardboardDoubleChestInventory((DoubleInventory) this.inventory);
         } else inventory = new CraftInventory(this.inventory);
 
-        bukkitEntity = new CraftInventoryView((Player)((IMixinServerEntityPlayer)this.player.player).getBukkitEntity(), inventory, (GenericContainerScreenHandler)(Object)this);
+        bukkitEntity = new CardboardInventoryView((Player)((IMixinServerEntityPlayer)this.player.player).getBukkitEntity(), inventory, (GenericContainerScreenHandler)(Object)this);
         return bukkitEntity;
     }
 

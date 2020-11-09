@@ -13,13 +13,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.cardboardpowered.impl.entity.LivingEntityImpl;
-import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
 import org.bukkit.craftbukkit.inventory.CraftContainer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
-import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -70,7 +68,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
 
-    private CraftInventoryPlayer inventory;
+    private CardboardPlayerInventory inventory;
     protected GameMode gm;
     protected final PermissibleBase perm = new PermissibleBase(this);
     private boolean op;
@@ -79,7 +77,7 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
         super(entity);
         this.nms = entity;
         this.gm = CraftServer.INSTANCE.getDefaultGameMode();
-        this.inventory = new CraftInventoryPlayer(entity.inventory);
+        this.inventory = new CardboardPlayerInventory(entity.inventory);
     }
 
     @Override
@@ -244,8 +242,8 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
         ScreenHandler formerContainer = getHandle().currentScreenHandler;
 
         NamedScreenHandlerFactory iinventory = null;
-        if (inventory instanceof CraftInventoryDoubleChest) {
-            iinventory = ((CraftInventoryDoubleChest) inventory).tile;
+        if (inventory instanceof CardboardDoubleChestInventory) {
+            iinventory = ((CardboardDoubleChestInventory) inventory).tile;
         } else if (inventory instanceof CraftInventory) {
             CraftInventory craft = (CraftInventory) inventory;
             if (craft.getInventory() instanceof NamedScreenHandlerFactory)
@@ -296,8 +294,8 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
         }
         ServerPlayerEntity player = (ServerPlayerEntity) getHandle();
         ScreenHandler container;
-        if (inventory instanceof CraftInventoryView) {
-            container = ((CraftInventoryView) inventory).getHandle();
+        if (inventory instanceof CardboardInventoryView) {
+            container = ((CardboardInventoryView) inventory).getHandle();
         } else container = new CraftContainer(inventory, this.getHandle(), ((IMixinServerEntityPlayer)player).nextContainerCounter());
 
         // Trigger an INVENTORY_OPEN event

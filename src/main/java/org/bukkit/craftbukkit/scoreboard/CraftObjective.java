@@ -10,7 +10,8 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 
-final class CraftObjective extends CraftScoreboardComponent implements Objective {
+public class CraftObjective extends CraftScoreboardComponent implements Objective {
+
     private final ScoreboardObjective objective;
     private final CraftCriteria criteria;
 
@@ -26,15 +27,13 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
 
     @Override
     public String getName() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         return objective.getName();
     }
 
     @Override
     public String getDisplayName() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         return CraftChatMessage.fromComponent(objective.getDisplayName());
     }
 
@@ -42,22 +41,19 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public void setDisplayName(String displayName) throws IllegalStateException, IllegalArgumentException {
         Validate.notNull(displayName, "Display name cannot be null");
         Validate.isTrue(displayName.length() <= 128, "Display name '" + displayName + "' is longer than the limit of 128 characters");
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         objective.setDisplayName(CraftChatMessage.fromString(displayName)[0]); // SPIGOT-4112: not nullable
     }
 
     @Override
     public String getCriteria() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         return criteria.bukkitName;
     }
 
     @Override
     public boolean isModifiable() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         return !criteria.criteria.isReadOnly();
     }
 
@@ -67,15 +63,11 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         Scoreboard board = scoreboard.board;
         ScoreboardObjective objective = this.objective;
 
-        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
-            if (board.getObjectiveForSlot(i) == objective) {
-                board.setObjectiveSlot(i, null);
-            }
-        }
-        if (slot != null) {
-            int slotNumber = CraftScoreboardTranslations.fromBukkitSlot(slot);
-            board.setObjectiveSlot(slotNumber, getHandle());
-        }
+        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
+            if (board.getObjectiveForSlot(i) == objective) board.setObjectiveSlot(i, null);
+
+        if (slot != null)
+            board.setObjectiveSlot(CraftScoreboardTranslations.fromBukkitSlot(slot), getHandle());
     }
 
     @Override
@@ -83,35 +75,29 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         CraftScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
         ScoreboardObjective objective = this.objective;
-
-        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
-            if (board.getObjectiveForSlot(i) == objective) {
+        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
+            if (board.getObjectiveForSlot(i) == objective)
                 return CraftScoreboardTranslations.toBukkitSlot(i);
-            }
-        }
         return null;
     }
 
     @Override
     public void setRenderType(RenderType renderType) throws IllegalStateException {
         Validate.notNull(renderType, "RenderType cannot be null");
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         this.objective.setRenderType(CraftScoreboardTranslations.fromBukkitRender(renderType));
     }
 
     @Override
     public RenderType getRenderType() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         return CraftScoreboardTranslations.toBukkitRender(this.objective.getRenderType());
     }
 
     @Override
     public Score getScore(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(player, "Player cannot be null");
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         return new CraftScore(this, player.getName());
     }
 
@@ -119,24 +105,20 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public Score getScore(String entry) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(entry, "Entry cannot be null");
         Validate.isTrue(entry.length() <= 40, "Score '" + entry + "' is longer than the limit of 40 characters");
-        CraftScoreboard scoreboard = checkState();
-
+        checkState();
         return new CraftScore(this, entry);
     }
 
     @Override
     public void unregister() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
-
         scoreboard.board.removeObjective(objective);
     }
 
     @Override
-    CraftScoreboard checkState() throws IllegalStateException {
-        if (getScoreboard().board.getNullableObjective(objective.getName()) == null) {
+    public CraftScoreboard checkState() throws IllegalStateException {
+        if (getScoreboard().board.getNullableObjective(objective.getName()) == null)
             throw new IllegalStateException("Unregistered scoreboard component");
-        }
-
         return getScoreboard();
     }
 
@@ -149,15 +131,10 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
         final CraftObjective other = (CraftObjective) obj;
         return !(this.objective != other.objective && (this.objective == null || !this.objective.equals(other.objective)));
     }
-
 
 }

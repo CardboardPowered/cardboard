@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.google.common.base.Preconditions;
@@ -8,14 +8,16 @@ import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.commons.lang.Validate;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
+public class CardboardPlayerInventory extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
 
-    public CraftInventoryPlayer(net.minecraft.entity.player.PlayerInventory inventory) {
+    public CardboardPlayerInventory(net.minecraft.entity.player.PlayerInventory inventory) {
         super(inventory);
     }
 
