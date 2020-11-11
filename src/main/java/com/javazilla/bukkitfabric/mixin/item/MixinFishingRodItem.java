@@ -22,24 +22,26 @@ import net.minecraft.world.World;
 @Mixin(FishingRodItem.class)
 public class MixinFishingRodItem {
 
-    @Inject(at = @At(value = "INVOKE", target="net.minecraft.world.World.playSound(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FF)V"), method = "use", cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "use", cancellable = true)
     public void bukkitize(World world, PlayerEntity entityhuman, Hand enumhand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
-        ItemStack itemstack = entityhuman.getStackInHand(enumhand);
-        int i = EnchantmentHelper.getLure(itemstack);
-        int j = EnchantmentHelper.getLuckOfTheSea(itemstack);
-
-        FishingBobberEntity entityfishinghook = new FishingBobberEntity(entityhuman, world, j, i);
-        PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) ((IMixinEntity)entityhuman).getBukkitEntity(), null, (org.bukkit.entity.FishHook) ((IMixinEntity)entityfishinghook).getBukkitEntity(), PlayerFishEvent.State.FISHING);
-        Bukkit.getPluginManager().callEvent(playerFishEvent);
-
-        if (playerFishEvent.isCancelled()) {
-            entityhuman.fishHook = null;
-            ci.setReturnValue( new TypedActionResult<ItemStack>(ActionResult.PASS, itemstack) );
+        if (entityhuman.fishHook == null) {
+            ItemStack itemstack = entityhuman.getStackInHand(enumhand);
+            int i = EnchantmentHelper.getLure(itemstack);
+            int j = EnchantmentHelper.getLuckOfTheSea(itemstack);
+    
+            FishingBobberEntity entityfishinghook = new FishingBobberEntity(entityhuman, world, j, i);
+            PlayerFishEvent playerFishEvent = new PlayerFishEvent((org.bukkit.entity.Player) ((IMixinEntity)entityhuman).getBukkitEntity(), null, (org.bukkit.entity.FishHook) ((IMixinEntity)entityfishinghook).getBukkitEntity(), PlayerFishEvent.State.FISHING);
+            Bukkit.getPluginManager().callEvent(playerFishEvent);
+    
+            if (playerFishEvent.isCancelled()) {
+                entityhuman.fishHook = null;
+                ci.setReturnValue( new TypedActionResult<ItemStack>(ActionResult.PASS, itemstack) );
+                return;
+            }
+            world.spawnEntity(entityfishinghook); 
+            ci.setReturnValue(TypedActionResult.success(itemstack, false));
             return;
         }
-        world.spawnEntity(entityfishinghook); 
-        ci.setReturnValue(TypedActionResult.success(itemstack, false));
-        return;
     }
 
 }
