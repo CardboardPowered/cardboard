@@ -48,7 +48,9 @@ import org.cardboardpowered.impl.entity.ArmorStandImpl;
 import org.cardboardpowered.impl.entity.ArrowImpl;
 import org.cardboardpowered.impl.entity.CardboardFishHook;
 import org.cardboardpowered.impl.entity.CardboardGhast;
+import org.cardboardpowered.impl.entity.CardboardHanging;
 import org.cardboardpowered.impl.entity.CardboardIronGolem;
+import org.cardboardpowered.impl.entity.CardboardMinecart;
 import org.cardboardpowered.impl.entity.CardboardPanda;
 import org.cardboardpowered.impl.entity.CardboardSilverfish;
 import org.cardboardpowered.impl.entity.CardboardSnowman;
@@ -157,6 +159,7 @@ import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.thrown.EggEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -434,19 +437,21 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         else if (entity instanceof FishingBobberEntity) { return new CardboardFishHook(server, (FishingBobberEntity) entity); }
         else if (entity instanceof ItemEntity) { return new ItemEntityImpl(server, (ItemEntity) entity); }
         else if (entity instanceof LightningEntity) { return new LightningStrikeImpl(server, (LightningEntity) entity); }
-        /*else if (entity instanceof AbstractMinecartEntity) {
-            if (entity instanceof FurnaceMinecartEntity) { return new CraftMinecartFurnace(server, (FurnaceMinecartEntity) entity); }
+        else if (entity instanceof AbstractMinecartEntity) {
+            /*if (entity instanceof FurnaceMinecartEntity) { return new CraftMinecartFurnace(server, (FurnaceMinecartEntity) entity); }
             else if (entity instanceof ChestMinecartEntity) { return new CraftMinecartChest(server, (ChestMinecartEntity) entity); }
             else if (entity instanceof TntMinecartEntity) { return new CraftMinecartTNT(server, (TntMinecartEntity) entity); }
             else if (entity instanceof HopperMinecartEntity) { return new CraftMinecartHopper(server, (HopperMinecartEntity) entity); }
             else if (entity instanceof SpawnerMinecartEntity) { return new CraftMinecartMobSpawner(server, (SpawnerMinecartEntity) entity); }
             else if (entity instanceof MinecartEntity) { return new CraftMinecartRideable(server, (MinecartEntity) entity); }
-            else if (entity instanceof CommandBlockMinecartEntity) { return new CraftMinecartCommand(server, (CommandBlockMinecartEntity) entity); }
-        }*/ else if (entity instanceof AbstractDecorationEntity) {
+            else if (entity instanceof CommandBlockMinecartEntity) { return new CraftMinecartCommand(server, (CommandBlockMinecartEntity) entity); }*/
+            return new CardboardMinecart(server, (AbstractMinecartEntity) entity);
+        } else if (entity instanceof AbstractDecorationEntity) {
             //if (entity instanceof PaintingEntity) { return new CraftPainting(server, (PaintingEntity) entity); }
             //else if (entity instanceof ItemFrameEntity) { return new CraftItemFrame(server, (ItemFrameEntity) entity); }
             //else if (entity instanceof LeashKnotEntity) { return new CraftLeash(server, (LeashKnotEntity) entity); }
             //else { return new CraftHanging(server, (AbstractDecorationEntity) entity); }
+            return new CardboardHanging(server, (AbstractDecorationEntity) entity);
         }
         else if (entity instanceof TntEntity) { return new TntImpl(server, (TntEntity) entity); }
         //else if (entity instanceof FireworkRocketEntity) { return new CraftFirework(server, (FireworkRocketEntity) entity); }

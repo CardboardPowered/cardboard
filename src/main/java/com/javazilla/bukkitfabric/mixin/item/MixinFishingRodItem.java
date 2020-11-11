@@ -22,7 +22,7 @@ import net.minecraft.world.World;
 @Mixin(FishingRodItem.class)
 public class MixinFishingRodItem {
 
-    @Inject(at = @At(value = "INVOKE", target="spawnEntity"), method = "use", cancellable = true)
+    @Inject(at = @At(value = "INVOKE", target="playSound"), method = "use", cancellable = true)
     public void bukkitize(World world, PlayerEntity entityhuman, Hand enumhand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
         ItemStack itemstack = entityhuman.getStackInHand(enumhand);
         int i = EnchantmentHelper.getLure(itemstack);
