@@ -22,9 +22,9 @@ import net.minecraft.world.World;
 @Mixin(FishingRodItem.class)
 public class MixinFishingRodItem {
 
-    @Inject(at = @At(value = "HEAD"), method = "use", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "use", cancellable = true)
     public void bukkitize(World world, PlayerEntity entityhuman, Hand enumhand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
-        if (entityhuman.fishHook == null) {
+        if (null == entityhuman.fishHook) {
             ItemStack itemstack = entityhuman.getStackInHand(enumhand);
             int i = EnchantmentHelper.getLure(itemstack);
             int j = EnchantmentHelper.getLuckOfTheSea(itemstack);

@@ -19,7 +19,6 @@
 package com.javazilla.bukkitfabric.nms;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
