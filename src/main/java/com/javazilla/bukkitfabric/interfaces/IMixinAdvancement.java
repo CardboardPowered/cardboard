@@ -1,6 +1,6 @@
 package com.javazilla.bukkitfabric.interfaces;
 
-import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
+import org.cardboardpowered.impl.AdvancementImpl;
 
 public interface IMixinAdvancement {
 

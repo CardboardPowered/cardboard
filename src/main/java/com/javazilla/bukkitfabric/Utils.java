@@ -89,7 +89,6 @@ public class Utils {
         else if (object instanceof Long) return (Long) object;
         else if (object instanceof UUID) return (UUID) object;
         else if (object instanceof Boolean) return (Boolean) object;
-
         throw new UnsupportedOperationException("Do not know how to map " + object);
     }
 
@@ -99,7 +98,6 @@ public class Utils {
         else if (object instanceof Long)     return (Long) object;
         else if (object instanceof UUID)     return (UUID) object;
         else if (object instanceof Boolean)  return (Boolean) object;
-
         throw new UnsupportedOperationException("Do not know how to map " + object);
     }
 

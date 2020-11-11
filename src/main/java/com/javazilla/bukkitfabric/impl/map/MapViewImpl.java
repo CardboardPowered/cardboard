@@ -63,7 +63,6 @@ public final class MapViewImpl implements MapView {
     public World getWorld() {
         RegistryKey<net.minecraft.world.World> dimension = worldMap.dimension;
         ServerWorld world = CraftServer.server.getWorld(dimension);
-
         return (world == null) ? null : ((IMixinWorld)world).getWorldImpl();
     }
 

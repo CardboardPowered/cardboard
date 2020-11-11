@@ -18,10 +18,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.commons.lang.Validate;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.util.WeakCollection;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import com.javazilla.bukkitfabric.impl.util.WeakCollection;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 
 public final class CraftScoreboardManager implements ScoreboardManager {

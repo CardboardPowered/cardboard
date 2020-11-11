@@ -19,13 +19,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.block.entity.Hopper;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.inventory.DoubleInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
@@ -64,13 +63,29 @@ public class MixinHopperBlockEntity implements IMixinInventory {
         maxStack = size;
     }
 
-    @Override public InventoryHolder getOwner() {return null;}
-    @Override public Location getLocation() {return null;}
+    @Override 
+    public InventoryHolder getOwner() {
+        HopperBlockEntity b = (HopperBlockEntity) (Object)this;
+        if (b.world == null) return null;
+        org.bukkit.block.Block block = ((IMixinWorld)b.world).getWorldImpl().getBlockAt(b.pos.getX(), b.pos.getY(), b.pos.getZ());
+        if (block == null) {
+            org.bukkit.Bukkit.getLogger().log(java.util.logging.Level.WARNING, "No block for owner at %s %d %d %d", new Object[]{b.world, b.pos.getX(), b.pos.getY(), b.pos.getZ()});
+            return null;
+        }
+        org.bukkit.block.BlockState state = block.getState();
+        return (state instanceof InventoryHolder) ? (InventoryHolder) state : null;
+    }
+
+    @Override
+    public Location getLocation() {
+        HopperBlockEntity b = (HopperBlockEntity) (Object)this;
+        return new Location(((IMixinWorld)b.world).getWorldImpl(), b.pos.getX(), b.pos.getY(), b.pos.getZ());
+    }
 
     @Inject(at = @At("HEAD"), method = "extract(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/entity/ItemEntity;)Z", cancellable = true)
-    private static void extract(net.minecraft.inventory.Inventory iinventory, ItemEntity entityitem, CallbackInfoReturnable<Boolean> ci) {
+    private static void extract1(net.minecraft.inventory.Inventory iinventory, ItemEntity entityitem, CallbackInfoReturnable<Boolean> ci) {
         if (iinventory instanceof IMixinInventory) {
-            InventoryPickupItemEvent event = new InventoryPickupItemEvent(((IMixinInventory)iinventory).getOwner().getInventory(), (org.bukkit.entity.Item) ((IMixinEntity)entityitem).getBukkitEntity());
+            InventoryPickupItemEvent event = new InventoryPickupItemEvent(((IMixinInventory)iinventory).getOwner().getInventory(),(org.bukkit.entity.Item) ((IMixinEntity)entityitem).getBukkitEntity());
             Bukkit.getServer().getPluginManager().callEvent(event);
             if (event.isCancelled())
                 ci.setReturnValue(false);
@@ -78,7 +93,7 @@ public class MixinHopperBlockEntity implements IMixinInventory {
     }
 
     @Inject(at = @At("HEAD"), method = "extract(Lnet/minecraft/block/entity/Hopper;Lnet/minecraft/inventory/Inventory;ILnet/minecraft/util/math/Direction;)Z", cancellable = true)
-    private static void extract(Hopper ihopper, net.minecraft.inventory.Inventory iinventory, int i, Direction enumdirection, CallbackInfoReturnable<Boolean> ci) {
+    private static void extract2(Hopper ihopper, net.minecraft.inventory.Inventory iinventory, int i, Direction enumdirection, CallbackInfoReturnable<Boolean> ci) {
         ItemStack itemstack = iinventory.getStack(i);
 
         if (!itemstack.isEmpty() && canExtract(iinventory, itemstack, i, enumdirection)) {

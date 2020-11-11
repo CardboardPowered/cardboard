@@ -17,9 +17,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
+import org.cardboardpowered.impl.CardboardEnchantment;
 
 import com.google.common.collect.ImmutableMap;
-import com.javazilla.bukkitfabric.impl.enchantments.BukkitEnchantment;
 import com.mojang.serialization.Dynamic;
 
 import net.minecraft.datafixer.TypeReferences;
@@ -208,8 +208,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public int getEnchantmentLevel(Enchantment ench) {
-        if (handle == null) return 0;
-        return EnchantmentHelper.getLevel(BukkitEnchantment.getRaw(ench), handle);
+        return (handle == null) ? 0 : EnchantmentHelper.getLevel(CardboardEnchantment.getRaw(ench), handle);
     }
 
     @Override
@@ -245,8 +244,7 @@ public final class CraftItemStack extends ItemStack {
         // This is workaround for not having an index removal
         listCopy = new ListTag();
         for (int i = 0; i < size; i++)
-            if (i != index)
-                listCopy.add(list.get(i));
+            if (i != index) listCopy.add(list.get(i));
         handle.getTag().put(ENCHANTMENTS.NBT, listCopy);
         return level;
     }
@@ -269,8 +267,7 @@ public final class CraftItemStack extends ItemStack {
             int level = 0xffff & ((CompoundTag) list.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
 
             Enchantment enchant = Enchantment.getByKey(CraftNamespacedKey.fromStringOrNull(id));
-            if (enchant != null)
-                result.put(enchant, level);
+            if (enchant != null) result.put(enchant, level);
         }
 
         return result.build();

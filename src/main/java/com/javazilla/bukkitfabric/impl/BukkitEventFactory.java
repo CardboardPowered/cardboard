@@ -36,6 +36,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.entity.UnknownEntity;
@@ -125,6 +126,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
+@SuppressWarnings("deprecation")
 public class BukkitEventFactory {
 
     public static Entity entityDamage;
@@ -270,7 +272,7 @@ public class BukkitEventFactory {
 
         org.bukkit.entity.Entity e = ((IMixinEntity)entity).getBukkitEntity();
         if (!(e instanceof Projectile)) {
-            BukkitLogger.getLogger().warning("Entity \"" + e + "\" is not an instance of Projectile! Can not fire ProjectileHitEvent!");
+            BukkitLogger.getLogger().warning("Entity \"" + ((CraftEntity)e).nms.getEntityName() + "\" is not an instance of Projectile! Can not fire ProjectileHitEvent!");
             return;
         }
 
@@ -414,12 +416,10 @@ public class BukkitEventFactory {
         return event;
     }
 
-    @SuppressWarnings("deprecation")
     public static EntityPlaceEvent callEntityPlaceEvent(ItemUsageContext itemactioncontext, Entity entity) {
         return callEntityPlaceEvent(itemactioncontext.getWorld(), itemactioncontext.getBlockPos(), itemactioncontext.getSide(), itemactioncontext.getPlayer(), entity);
     }
 
-    @SuppressWarnings("deprecation")
     public static EntityPlaceEvent callEntityPlaceEvent(World world, BlockPos clickPosition, Direction clickedFace, PlayerEntity human, Entity entity) {
         Player who = (human == null) ? null : (Player) ((IMixinEntity)human).getBukkitEntity();
         org.bukkit.block.Block blockClicked = CraftBlock.at((ServerWorld) world, clickPosition);

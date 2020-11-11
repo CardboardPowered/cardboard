@@ -49,11 +49,9 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
         Collection<ItemStack> bukkit = new ArrayList<>(nmsItems.size());
 
         for (net.minecraft.item.ItemStack item : nmsItems) {
-            if (item.isEmpty())
-                continue;
+            if (item.isEmpty()) continue;
             bukkit.add(CraftItemStack.asBukkitCopy(item));
         }
-
         return bukkit;
     }
 
@@ -62,8 +60,6 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
         net.minecraft.loot.context.LootContext nmsContext = convertContext(context);
         CraftInventory craftInventory = (CraftInventory) inventory;
         net.minecraft.inventory.Inventory handle = craftInventory.getInventory();
-
-        // TODO: When events are added, call event here w/ custom reason?
         getHandle().supplyInventory(handle, nmsContext);
     }
 
@@ -103,15 +99,12 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
 
         // SPIGOT-5603 - Avoid IllegalArgumentException in LootTableInfo#build()
         LootContextType.Builder nmsBuilder = new LootContextType.Builder();
-        for (LootContextParameter<?> param : getHandle().getType().getRequired()) {
-            nmsBuilder.require(param);
-        }
-        for (LootContextParameter<?> param : getHandle().getType().getAllowed()) {
+        for (LootContextParameter<?> param : getHandle().getType().getRequired()) nmsBuilder.require(param);
+
+        for (LootContextParameter<?> param : getHandle().getType().getAllowed())
             if (!getHandle().getType().getRequired().contains(param))
                 nmsBuilder.allow(param);
-        }
         nmsBuilder.allow(IMixinLootContextParameters.LOOTING_MOD);
-
         return builder.build(nmsBuilder.build());
     }
 
@@ -122,8 +115,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
 
         if (info.hasParameter(LootContextParameters.KILLER_ENTITY)) {
             CraftEntity killer = ((IMixinEntity)info.get(LootContextParameters.KILLER_ENTITY)).getBukkitEntity();
-            if (killer instanceof HumanEntityImpl)
-                contextBuilder.killer((HumanEntityImpl) killer);
+            if (killer instanceof HumanEntityImpl) contextBuilder.killer((HumanEntityImpl) killer);
         }
 
         if (info.hasParameter(LootContextParameters.THIS_ENTITY))
@@ -143,11 +135,9 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof org.bukkit.loot.LootTable)) {
-            return false;
-        }
-
+        if (!(obj instanceof org.bukkit.loot.LootTable)) return false;
         org.bukkit.loot.LootTable table = (org.bukkit.loot.LootTable) obj;
         return table.getKey().equals(this.getKey());
     }
+
 }

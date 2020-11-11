@@ -12,6 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.util.LazyPlayerSet;
+import org.cardboardpowered.impl.util.WaitableImpl;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.entity.Player;
@@ -36,8 +38,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.impl.util.LazyPlayerSet;
-import com.javazilla.bukkitfabric.impl.util.WaitableImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -166,8 +166,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), string, new LazyPlayerSet(CraftServer.server));
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            return;
+        if (event.isCancelled()) return;
 
         try {
             boolean b = Bukkit.getServer().dispatchCommand(event.getPlayer(), event.getMessage().substring(1));

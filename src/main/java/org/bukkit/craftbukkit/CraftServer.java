@@ -82,8 +82,16 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
-
+import org.cardboardpowered.impl.CardboardBossBar;
+import org.cardboardpowered.impl.IpBanList;
+import org.cardboardpowered.impl.ProfileBanList;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.tag.BlockTagImpl;
+import org.cardboardpowered.impl.tag.FluidTagImpl;
+import org.cardboardpowered.impl.tag.ItemTagImpl;
+import org.cardboardpowered.impl.tag.TagImpl;
+import org.cardboardpowered.impl.util.IconCacheImpl;
+import org.cardboardpowered.impl.util.SimpleHelpMap;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
@@ -147,23 +155,15 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
-import com.javazilla.bukkitfabric.impl.tag.CraftBlockTag;
-import com.javazilla.bukkitfabric.impl.tag.CraftItemTag;
-import com.javazilla.bukkitfabric.impl.tag.FluidTagImpl;
-import com.javazilla.bukkitfabric.impl.util.IconCacheImpl;
-import com.javazilla.bukkitfabric.impl.world.ChunkDataImpl;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
+
+import org.cardboardpowered.impl.world.ChunkDataImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
-import com.javazilla.bukkitfabric.impl.banlist.IpBanList;
-import com.javazilla.bukkitfabric.impl.banlist.ProfileBanList;
-import com.javazilla.bukkitfabric.impl.boss.BossBarImpl;
-import com.javazilla.bukkitfabric.impl.boss.KeyedBossBarImpl;
 import com.javazilla.bukkitfabric.impl.command.BukkitCommandWrapper;
 import com.javazilla.bukkitfabric.impl.command.CommandMapImpl;
 import com.javazilla.bukkitfabric.impl.command.ConsoleCommandSenderImpl;
 import com.javazilla.bukkitfabric.impl.command.MinecraftCommandWrapper;
-import com.javazilla.bukkitfabric.impl.help.SimpleHelpMap;
 import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftBlastingRecipe;
 import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftCampfireRecipe;
 import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftFurnaceRecipe;
@@ -566,7 +566,7 @@ public class CraftServer implements Server {
 
     @Override
     public BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
-        return new BossBarImpl(title, color, style, flags);
+        return new CardboardBossBar(title, color, style, flags);
     }
 
     @Override
@@ -574,7 +574,7 @@ public class CraftServer implements Server {
         Preconditions.checkArgument(key != null, "key");
 
         CommandBossBar bossBattleCustom = getServer().getBossBarManager().add(CraftNamespacedKey.toMinecraft(key), CraftChatMessage.fromString(title, true)[0]);
-        KeyedBossBarImpl craftKeyedBossbar = new KeyedBossBarImpl(bossBattleCustom);
+        CardboardBossBar craftKeyedBossbar = new CardboardBossBar(bossBattleCustom);
         craftKeyedBossbar.setColor(barColor);
         craftKeyedBossbar.setStyle(barStyle);
         for (BarFlag flag : barFlags)
@@ -1178,10 +1178,10 @@ public class CraftServer implements Server {
         switch (registry) {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-                return (org.bukkit.Tag<T>) new CraftBlockTag(server.getTagManager().getBlocks(), key);
+                return (org.bukkit.Tag<T>) new BlockTagImpl(server.getTagManager().getBlocks(), key);
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
-                return (org.bukkit.Tag<T>) new CraftItemTag(server.getTagManager().getItems(), key);
+                return (org.bukkit.Tag<T>) new ItemTagImpl(server.getTagManager().getItems(), key);
             case org.bukkit.Tag.REGISTRY_FLUIDS:
                 Preconditions.checkArgument(clazz == org.bukkit.Fluid.class, "Fluid namespace must have fluid type");
                 return (org.bukkit.Tag<T>) new FluidTagImpl(server.getTagManager().getFluids(), key);
@@ -1197,12 +1197,12 @@ public class CraftServer implements Server {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
                 TagGroup<Block> blockTags = server.getTagManager().getBlocks();
-                return blockTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, key)).collect(ImmutableList.toImmutableList());
+                return blockTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new BlockTagImpl(blockTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
 
                 TagGroup<Item> itemTags = server.getTagManager().getItems();
-                return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
+                return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new ItemTagImpl(itemTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_FLUIDS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Fluid namespace must have fluid type");
 

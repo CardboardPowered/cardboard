@@ -57,19 +57,14 @@ public class BukkitCommandWrapper implements com.mojang.brigadier.Command<Server
     }
 
     public CommandSender getSender(ServerCommandSource source) {
-        CommandSender sender = Bukkit.getConsoleSender();
         try {
             ServerPlayerEntity plr = source.getPlayer();
             if (null != plr)
                 return ((IMixinCommandOutput)plr).getBukkitSender(source);
         } catch (Exception e) {
         }
-
         Entity e = source.getEntity();
-        if (null != e)
-            return ((IMixinCommandOutput)e).getBukkitSender(source);
-
-        return sender;
+        return (null != e) ? ((IMixinCommandOutput)e).getBukkitSender(source) : null;
     }
 
     @Override
@@ -79,9 +74,7 @@ public class BukkitCommandWrapper implements com.mojang.brigadier.Command<Server
         // Defaults to sub nodes, but we have just one giant args node, so offset accordingly
         builder = builder.createOffset(builder.getInput().lastIndexOf(' ') + 1);
 
-        for (String s : results)
-            builder.suggest(s);
-
+        for (String s : results) builder.suggest(s);
         return builder.buildFuture();
     }
 

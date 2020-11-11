@@ -6,7 +6,6 @@
   "mixins": [
     "MixinPluginClassLoader",
     "MixinPluginLogger",
-
     "MixinDedicatedServer",
     "MixinMinecraftServer",
     "MixinServerCommandSource",
@@ -42,6 +41,7 @@
     "world.MixinWorldSaveHandler",
     "world.MixinChunkHolder",
     "world.MixinThreadedAnvilChunkStorage",
+    "world.MixinWorldBorder",
 
     "entity.MixinEntity",
     "entity.MixinPlayer",
@@ -141,15 +141,13 @@
     "item.MixinArmorItem",
     "item.MixinArmorStandItem",
     "item.MixinEnderEyeItem",
+    "item.MixinFishingRodItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",
     "block.MixinEndPortalBlock",
 
     "enchantment.MixinFrostWalkerEnchantment"
-  ],
-  "client": [
-    "client.MixinIntegratedServer"
   ],
   "injectors": {
     "defaultRequire": 1

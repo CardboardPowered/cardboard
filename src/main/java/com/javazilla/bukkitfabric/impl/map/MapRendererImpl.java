@@ -23,8 +23,7 @@ public class MapRendererImpl extends MapRenderer {
     public void render(MapView map, MapCanvas canvas, Player player) {
         // Map
         for (int x = 0; x < 128; ++x)
-            for (int y = 0; y < 128; ++y)
-                canvas.setPixel(x, y, worldMap.colors[y * 128 + x]);
+            for (int y = 0; y < 128; ++y) canvas.setPixel(x, y, worldMap.colors[y * 128 + x]);
 
         // Cursors
         MapCursorCollection cursors = canvas.getCursors();

@@ -7,12 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import org.cardboardpowered.impl.util.IconCacheImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.impl.util.IconCacheImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.SharedConstants;
@@ -55,8 +55,7 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
 
                 @Override
                 public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
-                    if (!(icon instanceof IconCacheImpl))
-                        throw new IllegalArgumentException(icon + " was not created by Bukkit");
+                    if (!(icon instanceof IconCacheImpl)) throw new IllegalArgumentException(icon + " was not created by Bukkit");
                 }
 
                 /*@Override

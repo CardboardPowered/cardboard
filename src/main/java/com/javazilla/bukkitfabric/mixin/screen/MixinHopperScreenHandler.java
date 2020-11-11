@@ -1,8 +1,8 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,6 +38,5 @@ public class MixinHopperScreenHandler extends MixinScreenHandler {
         bukkitEntity = new CardboardInventoryView((Player)((IMixinEntity)this.playerInv.player).getBukkitEntity(), inventory, (HopperScreenHandler)(Object)this);
         return bukkitEntity;
     }
-
 
 }

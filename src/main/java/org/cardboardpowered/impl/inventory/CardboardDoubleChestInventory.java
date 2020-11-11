@@ -7,8 +7,6 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.javazilla.bukkitfabric.impl.ChestBlockDoubleInventory;
-
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 
@@ -18,7 +16,7 @@ public class CardboardDoubleChestInventory extends CraftInventory implements Dou
     private final CraftInventory left;
     private final CraftInventory right;
 
-    public CardboardDoubleChestInventory(ChestBlockDoubleInventory block) {
+    public CardboardDoubleChestInventory(CardboardChestBlockDoubleInventory block) {
         super(block.inventorylargechest);
         this.tile = block;
         this.left = new CraftInventory(block.inventorylargechest.first);

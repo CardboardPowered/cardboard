@@ -56,6 +56,8 @@ import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
+import org.cardboardpowered.impl.AdvancementImpl;
+import org.cardboardpowered.impl.AdvancementProgressImpl;
 import org.cardboardpowered.impl.entity.HumanEntityImpl;
 
 import com.destroystokyo.paper.Title;
@@ -63,8 +65,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import org.cardboardpowered.impl.world.WorldImpl;
-import com.javazilla.bukkitfabric.impl.advancements.AdvancementImpl;
-import com.javazilla.bukkitfabric.impl.advancements.AdvancementProgressImpl;
 import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.impl.map.RenderData;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
