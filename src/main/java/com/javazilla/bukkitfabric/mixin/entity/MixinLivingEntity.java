@@ -120,10 +120,10 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
     public void heal(float f, EntityRegainHealthEvent.RegainReason regainReason) {
         if (get().getHealth() > 0.0F) {
             EntityRegainHealthEvent event = new EntityRegainHealthEvent(this.getBukkitEntity(), f, regainReason);
-            if (this.isValidBF())
+            if (this.isValidBF()) {
                 Bukkit.getPluginManager().callEvent(event);
-
-            if (!event.isCancelled()) get().setHealth((float) (get().getHealth() + event.getAmount()));
+                if (!event.isCancelled()) get().setHealth((float) (get().getHealth() + event.getAmount()));
+            }
         }
     }
 
