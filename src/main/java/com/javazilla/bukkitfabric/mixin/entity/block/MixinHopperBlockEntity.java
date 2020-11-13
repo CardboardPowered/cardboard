@@ -95,32 +95,36 @@ public class MixinHopperBlockEntity implements IMixinInventory {
     @Inject(at = @At("HEAD"), method = "extract(Lnet/minecraft/block/entity/Hopper;Lnet/minecraft/inventory/Inventory;ILnet/minecraft/util/math/Direction;)Z", cancellable = true)
     private static void extract2(Hopper ihopper, net.minecraft.inventory.Inventory iinventory, int i, Direction enumdirection, CallbackInfoReturnable<Boolean> ci) {
         ItemStack itemstack = iinventory.getStack(i);
+        boolean error = false;
 
         if (!itemstack.isEmpty() && canExtract(iinventory, itemstack, i, enumdirection)) {
             ItemStack itemstack1 = itemstack.copy();
             CraftItemStack oitemstack = CraftItemStack.asCraftMirror(iinventory.removeStack(i, 1));
-
-            org.bukkit.inventory.Inventory sourceInventory;
-            if (iinventory instanceof DoubleInventory) {
-                sourceInventory = new CardboardDoubleChestInventory((DoubleInventory) iinventory);
-            } else sourceInventory = ((IMixinInventory)iinventory).getOwner().getInventory();
-
-            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), ((IMixinInventory)ihopper).getOwner().getInventory(), false);
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
+            if (iinventory instanceof IMixinInventory && ihopper instanceof IMixinInventory) {
+                org.bukkit.inventory.Inventory sourceInventory;
+                if (iinventory instanceof DoubleInventory) {
+                    sourceInventory = new CardboardDoubleChestInventory((DoubleInventory) iinventory);
+                } else sourceInventory = ((IMixinInventory)iinventory).getOwner().getInventory();
+    
+                InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), ((IMixinInventory)ihopper).getOwner().getInventory(), false);
+                Bukkit.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    iinventory.setStack(i, itemstack1);
+                    ci.setReturnValue(false);
+                }
+                int origCount = event.getItem().getAmount();
+                ItemStack itemstack2 = transfer(iinventory, ihopper, CraftItemStack.asNMSCopy(event.getItem()), null);
+                if (itemstack2.isEmpty()) {
+                    iinventory.markDirty();
+                    ci.setReturnValue(true);
+                }
+                itemstack1.decrement(origCount - itemstack2.getCount());
                 iinventory.setStack(i, itemstack1);
-                ci.setReturnValue(false);
+            } else {
+                error = true;
             }
-            int origCount = event.getItem().getAmount();
-            ItemStack itemstack2 = transfer(iinventory, ihopper, CraftItemStack.asNMSCopy(event.getItem()), null);
-            if (itemstack2.isEmpty()) {
-                iinventory.markDirty();
-                ci.setReturnValue(true);
-            }
-            itemstack1.decrement(origCount - itemstack2.getCount());
-            iinventory.setStack(i, itemstack1);
         }
-        ci.setReturnValue(false);
+        if (!error) ci.setReturnValue(false);
     }
 
     @Shadow
