@@ -36,6 +36,10 @@ import net.techcable.srglib.JavaType;
 import net.techcable.srglib.format.MappingsFormat;
 import net.techcable.srglib.mappings.Mappings;
 
+/**
+ * @deprecated To be replaced with our Ingot remapping tool
+ */
+@Deprecated
 public class MappingsReader {
 
     public static Mappings MAPPINGS;

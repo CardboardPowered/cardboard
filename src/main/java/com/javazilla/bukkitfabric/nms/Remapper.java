@@ -14,6 +14,10 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import net.fabricmc.loader.api.FabricLoader;
 import net.md_5.specialsource.SpecialSource;
 
+/**
+ * @deprecated To be replaced with our Ingot remapping tool
+ */
+@Deprecated
 public class Remapper {
 
     public static List<Provider> providers = new ArrayList<>();
@@ -21,7 +25,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 10;
+    public static int MAPPINGS_VERSION = 13;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 

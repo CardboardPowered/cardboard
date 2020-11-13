@@ -36,7 +36,7 @@ public class MixinEnderEyeItem extends Item {
      * @reason .
      * @author .
      */
-    @Overwrite
+    /*@Overwrite
     public TypedActionResult<ItemStack> use(World world, PlayerEntity entityhuman, Hand enumhand) {
         ItemStack itemstack = entityhuman.getStackInHand(enumhand);
         BlockHitResult movingobjectpositionblock = raycast(world, entityhuman, RaycastContext.FluidHandling.NONE);
@@ -70,6 +70,6 @@ public class MixinEnderEyeItem extends Item {
             }
             return TypedActionResult.consume(itemstack);
         }
-    }
+    }*/
 
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.cardboardpowered.ingot.IngotReader;
 import org.cardboardpowered.library.LibraryManager;
 
 import com.javazilla.bukkitfabric.nms.MappingsReader;
@@ -47,6 +48,7 @@ public class BukkitFabricMod implements ModInitializer {
 
         try {
             MappingsReader.main(null);
+            // IngotReader.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

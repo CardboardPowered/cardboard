@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.javazilla.bukkitfabric.nms;
+package org.cardboardpowered.ingot;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -32,55 +32,88 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.nms.MappingsReader;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.MinecraftServer;
 
 /**
  * Very unsafe re-mapping of Reflection.
  */
-public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRemapper {
+public class ReflectionRemapper {
 
-    private static final String NMS_VERSION = "v1_16_R2";
+    private static final String[] SUPPORTED_NMS_VERSIONS = {"v1_16_R3", "v1_16_R2"};
     public static JavaPlugin plugin;
 
-    /*public static String mapClassName(String className) {
-        if (className.startsWith("org.bukkit.craftbukkit." + NMS_VERSION + "."))
-            return MappingsReader.getIntermedClass("org.bukkit.craftbukkit." + className.substring(23 + NMS_VERSION.length() + 1));
+    public static String mapClassName(String className) {
+        if (className.startsWith("?")) {
+            // BKCommonLib why?
+            System.out.println("BF CARDBOARD FOUND QUESTION MARK ON CLASS NAME: " + className);
+            className = className.replace("?", "");
+        }
+
+        for (String NMS_VERSION : SUPPORTED_NMS_VERSIONS)
+            if (className.startsWith("org.bukkit.craftbukkit." + NMS_VERSION + "."))
+                return MappingsReader.getIntermedClass("org.bukkit.craftbukkit." + className.substring(23 + NMS_VERSION.length() + 1));
 
         if (className.startsWith("org.bukkit.craftbukkit.CraftServer."))
             return MappingsReader.getIntermedClass(className.replace("org.bukkit.craftbukkit.CraftServer.", "org.bukkit.craftbukkit."));
 
-        if (className.startsWith("net.minecraft.server." + NMS_VERSION + "."))
-            return MappingsReader.getIntermedClass(className.replace("net.minecraft.server." + NMS_VERSION + ".", "net.minecraft.server."));
+        for (String NMS_VERSION : SUPPORTED_NMS_VERSIONS)
+            if (className.startsWith("net.minecraft.server." + NMS_VERSION + "."))
+                return IngotReader.classes_S2F.getOrDefault(className.replace("net.minecraft.server." + NMS_VERSION + ".", "net.minecraft.server."), className);
 
         if (className.startsWith("org.bukkit.craftbukkit."))
             return MappingsReader.getIntermedClass(className); // We are not CraftBukkit, check for our own version of the class.
 
         if (className.startsWith("net.minecraft.server.CraftServer."))
-            return MappingsReader.getIntermedClass(className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server."));
+            return IngotReader.classes_S2F.getOrDefault(className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server."), className);
+
+        if (className.startsWith("net.minecraft.server"))
+            return IngotReader.classes_S2F.getOrDefault(className, className);
 
         return className;
-    }*/
+    }
+
+    public static String getIntermedField(String clazz, String name) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
+        String s = IngotReader.getFieldName(clazz, name, "<BF_ERROR_GETTING_FIELD>");
+        if (s.equalsIgnoreCase("<BF_ERROR_GETTING_FIELD>")) {
+            String fc = IngotReader.classes_S2O.getOrDefault(clazz.replace('/','.'), clazz);
+            fc = IngotReader.classes_F2O.getOrDefault(fc, fc);
+            String fo = IngotReader.obfFields.getOrDefault(fc + "|" + name, name);
+            return fo;
+        }
+        return s;
+    }
+
+    public static String getIntermedMethod(String clazz, String m, Class<?>[] parms) {
+        IngotMethodInfo mi = IngotReader.getMethodInfo(clazz, m, parms, true);
+        if (null != mi)
+            return mi.fabricMethodName;
+        String fc = IngotReader.classes_S2F.getOrDefault(clazz.replace('/','.'), clazz);
+        String mo = FabricLoader.getInstance().getMappingResolver().mapMethodName("official", fc, m, IngotReader.getDescFromArray(parms));
+        return mo;
+    }
 
     public static Class<?> getClassForName(String className) throws ClassNotFoundException {
         return getClassFromJPL(className);
     }
 
-    /*public static Field getFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
+    public static Field getFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
         try {
-            Field field = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+            Field field = calling.getDeclaredField(getIntermedField(calling.getName(), f));
             field.setAccessible(true);
             return field;
         } catch (NoSuchFieldException | SecurityException e) {
             try {
-                Field a = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+                Field a = calling.getDeclaredField(getIntermedField(calling.getName(), f));
                 a.setAccessible(true);
                 return a;
             } catch (NoSuchFieldException | SecurityException e1) {
                 Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
                 try {
-                    Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField(whyIsAsmBroken.getName(), f));
+                    Field a = whyIsAsmBroken.getDeclaredField(getIntermedField(whyIsAsmBroken.getName(), f));
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchFieldException | SecurityException e2) {
@@ -93,16 +126,16 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
 
     public static Field getDeclaredFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
         try {
-            return calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+            return calling.getDeclaredField(getIntermedField(calling.getName(), f));
         } catch (NoSuchFieldException | SecurityException e) {
             try {
-                Field a = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+                Field a = calling.getDeclaredField(getIntermedField(calling.getName(), f));
                 a.setAccessible(true);
                 return a;
             } catch (NoSuchFieldException | SecurityException e1) {
                 Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
                 try {
-                    Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField(whyIsAsmBroken.getName(), f));
+                    Field a = whyIsAsmBroken.getDeclaredField(getIntermedField(whyIsAsmBroken.getName(), f));
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchFieldException | SecurityException e2) {
@@ -113,17 +146,24 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
         }
     }
 
-    public static Method getMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
-        Method m = getDeclaredMethodByName(calling, f);
+    public static Method getMethodByName1(Class<?> calling, String f) throws ClassNotFoundException {
+        Method m = getDeclaredMethodByName1(calling, f);
         m.setAccessible(true);
         return m;
-    }*/
+    }
+
+    public static Method getMethodByName(Class<?> calling, String f, Class<?>[] p) throws ClassNotFoundException {
+        Method m = getDeclaredMethodByName(calling, f, p);
+        m.setAccessible(true);
+        return m;
+    }
 
     public static MinecraftServer getNmsServer() {
         return CraftServer.server;
     }
 
-    /*public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
+    @Deprecated
+    public static Method getDeclaredMethodByName1(Class<?> calling, String f) throws ClassNotFoundException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
             try {
                 return ReflectionRemapper.class.getMethod("getNmsServer");
@@ -153,6 +193,11 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
         }
     }
 
+    //public static void main(String[] args) throws ClassNotFoundException {
+    //    Class[] test = {int.class};
+    //    getDeclaredMethodByName(null, "", test);
+    //}
+
     public static Method getDeclaredMethodByName(Class<?> calling, String f, Class<?>[] parms) throws ClassNotFoundException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
             try {
@@ -163,25 +208,25 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
         }
             
         try {
-            return calling.getMethod(MappingsReader.getIntermedMethod(calling.getName(), f, parms), parms);
+            return calling.getMethod(getIntermedMethod(calling.getName(), f, parms), parms);
         } catch (NoSuchMethodException | SecurityException e) {
             try {
-                Method a = calling.getDeclaredMethod(MappingsReader.getIntermedMethod(calling.getName(), f, parms), parms);
+                Method a = calling.getDeclaredMethod(getIntermedMethod(calling.getName(), f, parms), parms);
                 a.setAccessible(true);
                 return a;
             } catch (NoSuchMethodException | SecurityException e1) {
                 Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
                 try {
-                    Method a = whyIsAsmBroken.getDeclaredMethod(MappingsReader.getIntermedMethod(whyIsAsmBroken.getName(), f), parms);
+                    Method a = whyIsAsmBroken.getDeclaredMethod(getIntermedMethod(whyIsAsmBroken.getName(), f, parms), parms);
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchMethodException | SecurityException e2) {
                     e1.printStackTrace();
                 }
-                return getDeclaredMethodByName(calling, f);
+                return getDeclaredMethodByName1(calling, f);
             }
         }
-    }*/
+    }
 
     /**
      * Retrieve a class that is from a plugin
@@ -246,24 +291,6 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
                 return ste.getClassName();
         }
         return null;
-    }
-
-    /**
-     */
-    public static String getPackageName(Package pkage) {
-        String name = pkage.getName();
-        if (name.startsWith("org.bukkit.craftbukkit"))
-            name = name.replace("org.bukkit.craftbukkit", "org.bukkit.craftbukkit." + NMS_VERSION);
-        return name;
-    }
-
-    /**
-     */
-    public static String getClassName(Class<?> clazz) {
-        String name = clazz.getName();
-        if (name.startsWith("org.bukkit.craftbukkit"))
-            name = name.replace("org.bukkit.craftbukkit", "org.bukkit.craftbukkit." + NMS_VERSION);
-        return name;
     }
 
     /**

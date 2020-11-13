@@ -12,7 +12,9 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import com.javazilla.bukkitfabric.nms.Provider;
 import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
+import com.javazilla.bukkitfabric.nms.Remapper;
 
 /**
  * This file is imported from Commodore.
@@ -47,6 +49,11 @@ public class Commodore {
         cr.accept(new ClassVisitor(Opcodes.ASM7, cw) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+                for (Provider p : Remapper.providers) {
+                    if (p.shouldReplaceASM()) {
+                        return p.newMethodVisitor(api, super.visitMethod(access, name, desc, signature, exceptions), aname);
+                    }
+                }
                 return new ReflectionMethodVisitor(api, super.visitMethod(access, name, desc, signature, exceptions), aname) {
                     @Override
                     public void visitFieldInsn(int opcode, String owner, String name, String desc) {

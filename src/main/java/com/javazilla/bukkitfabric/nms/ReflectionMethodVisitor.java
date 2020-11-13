@@ -40,10 +40,6 @@ public class ReflectionMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-        for (Provider p : Remapper.providers) {
-            boolean b = p.visitFieldInsn( opcode, owner, name, desc );
-            if (b) return;
-        }
         super.visitFieldInsn( opcode, owner, name, desc );
     }
 
@@ -55,11 +51,6 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                 super.visitMethodInsn( opcode, owner, name, desc, itf );
                 return;
             }
-        }
-
-        for (Provider p : Remapper.providers) {
-            boolean b = p.visitMethodInsn( opcode, owner, name, desc, itf );
-            if (b) return;
         }
 
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;"))
