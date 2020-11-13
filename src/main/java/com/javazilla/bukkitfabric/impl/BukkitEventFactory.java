@@ -40,6 +40,7 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.entity.UnknownEntity;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -287,6 +288,7 @@ public class BukkitEventFactory {
     public static ScreenHandler callInventoryOpenEvent(ServerPlayerEntity player, ScreenHandler container, boolean cancelled) {
         if (player.currentScreenHandler != player.playerScreenHandler)
             player.networkHandler.onCloseHandledScreen(new CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId));
+
         PlayerImpl PlayerImpl = (PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity();
         if (!(player.currentScreenHandler instanceof IMixinScreenHandler)) {
             System.out.println("FAILED TO FIRE InventoryOpenEvent! SCREEN HANDLER != IMixinInventory");
@@ -299,7 +301,10 @@ public class BukkitEventFactory {
             return container;
         }
 
-        InventoryOpenEvent event = new InventoryOpenEvent(((IMixinScreenHandler)container).getBukkitView());
+        CardboardInventoryView bv = (CardboardInventoryView) ((IMixinScreenHandler)container).getBukkitView();
+        bv.setPlayerIfNotSet((PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity());
+
+        InventoryOpenEvent event = new InventoryOpenEvent(bv);
         event.setCancelled(cancelled);
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
 

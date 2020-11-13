@@ -4,13 +4,16 @@ import java.util.List;
 
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.InventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import com.google.common.base.Preconditions;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -21,7 +24,13 @@ import net.minecraft.util.collection.DefaultedList;
 public abstract class MixinScreenHandler implements IMixinScreenHandler {
 
     public boolean checkReachable = true;
-    public abstract InventoryView getBukkitView();
+    //public abstract InventoryView getBukkitView();
+
+    public InventoryView getBukkitView() {
+        BukkitFabricMod.LOGGER.info("Using generic InventoryView for ScreenHandler (inventory provided by a mod?)");
+        CraftInventory cbi = new CraftInventory(new SimpleInventory( ((ScreenHandler)(Object)this).getStacks().toArray(new ItemStack[0]) ));
+        return new CardboardInventoryView(null, cbi, ((ScreenHandler)(Object)this));
+    }
 
     @Shadow
     public DefaultedList<ItemStack> trackedStacks;

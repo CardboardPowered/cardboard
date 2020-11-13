@@ -269,7 +269,7 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
         return ((IMixinScreenHandler)getHandle().currentScreenHandler).getBukkitView();
     }
 
-    private void openCustomInventory(Inventory inventory, ServerPlayerEntity player, ScreenHandlerType<?> windowType) {
+    public void openCustomInventory(Inventory inventory, ServerPlayerEntity player, ScreenHandlerType<?> windowType) {
         if (player.networkHandler == null) return;
         Preconditions.checkArgument(windowType != null, "Unknown windowType");
         ScreenHandler container = new CraftContainer(inventory, this.getHandle(), ((IMixinServerEntityPlayer)player).nextContainerCounter());

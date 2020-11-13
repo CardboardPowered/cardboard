@@ -18,13 +18,18 @@ import net.minecraft.screen.ScreenHandler;
 public class CardboardInventoryView extends InventoryView {
 
     private final ScreenHandler container;
-    private final HumanEntityImpl player;
+    private HumanEntityImpl player;
     private final CraftInventory viewing;
 
     public CardboardInventoryView(HumanEntity player, Inventory viewing, ScreenHandler container) {
-        this.player = (HumanEntityImpl) player;
+        this.player = (null !=player) ? (HumanEntityImpl) player : null;
         this.viewing = (CraftInventory) viewing;
         this.container = container;
+    }
+
+    public void setPlayerIfNotSet(HumanEntity player) {
+        if (null == this.player)
+            this.player = (HumanEntityImpl) player;
     }
 
     @Override
