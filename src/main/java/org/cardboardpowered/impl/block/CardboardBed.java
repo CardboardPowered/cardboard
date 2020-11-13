@@ -1,19 +1,20 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.entity.BedBlockEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Bed;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 
 @SuppressWarnings("deprecation")
-public class CraftBed extends CraftBlockEntityState<BedBlockEntity> implements Bed {
+public class CardboardBed extends CraftBlockEntityState<BedBlockEntity> implements Bed {
 
-    public CraftBed(Block block) {
+    public CardboardBed(Block block) {
         super(block, BedBlockEntity.class);
     }
 
-    public CraftBed(Material material, BedBlockEntity te) {
+    public CardboardBed(Material material, BedBlockEntity te) {
         super(material, te);
     }
 

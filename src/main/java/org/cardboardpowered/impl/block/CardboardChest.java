@@ -1,4 +1,12 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.inventory.Inventory;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
@@ -6,22 +14,13 @@ import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.inventory.Inventory;
-import org.cardboardpowered.impl.block.CardboardLootableBlock;
-import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
-import org.cardboardpowered.impl.world.WorldImpl;
+public class CardboardChest extends CardboardLootableBlock<ChestBlockEntity> implements Chest {
 
-public class CraftChest extends CardboardLootableBlock<ChestBlockEntity> implements Chest {
-
-    public CraftChest(final Block block) {
+    public CardboardChest(final Block block) {
         super(block, ChestBlockEntity.class);
     }
 
-    public CraftChest(final Material material, final ChestBlockEntity te) {
+    public CardboardChest(final Material material, final ChestBlockEntity te) {
         super(material, te);
     }
 

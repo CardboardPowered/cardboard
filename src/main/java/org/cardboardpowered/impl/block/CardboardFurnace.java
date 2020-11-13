@@ -1,20 +1,21 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
+import org.bukkit.craftbukkit.block.CraftContainer;
 import org.bukkit.inventory.FurnaceInventory;
 import org.cardboardpowered.impl.inventory.CardboardFurnaceInventory;
 
-public class CraftFurnace<T extends AbstractFurnaceBlockEntity> extends CraftContainer<T> implements Furnace {
+public class CardboardFurnace<T extends AbstractFurnaceBlockEntity> extends CraftContainer<T> implements Furnace {
 
-    public CraftFurnace(Block block, Class<T> tileEntityClass) {
+    public CardboardFurnace(Block block, Class<T> tileEntityClass) {
         super(block, tileEntityClass);
     }
 
-    public CraftFurnace(final Material material, final T te) {
+    public CardboardFurnace(final Material material, final T te) {
         super(material, te);
     }
 

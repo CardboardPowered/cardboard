@@ -1,9 +1,4 @@
-package org.bukkit.craftbukkit.block;
-
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.entity.DispenserBlockEntity;
-import net.minecraft.server.world.ServerWorld;
+package org.cardboardpowered.impl.block;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,19 +6,22 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.projectiles.BlockProjectileSource;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 import com.javazilla.bukkitfabric.impl.BlockProjectileSourceImpl;
 
-import org.cardboardpowered.impl.block.CardboardLootableBlock;
-import org.cardboardpowered.impl.world.WorldImpl;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.entity.DispenserBlockEntity;
+import net.minecraft.server.world.ServerWorld;
 
-public class CraftDispenser extends CardboardLootableBlock<DispenserBlockEntity> implements Dispenser {
+public class CardboardDispenser extends CardboardLootableBlock<DispenserBlockEntity> implements Dispenser {
 
-    public CraftDispenser(final Block block) {
+    public CardboardDispenser(final Block block) {
         super(block, DispenserBlockEntity.class);
     }
 
-    public CraftDispenser(final Material material, final DispenserBlockEntity te) {
+    public CardboardDispenser(final Material material, final DispenserBlockEntity te) {
         super(material, te);
     }
 

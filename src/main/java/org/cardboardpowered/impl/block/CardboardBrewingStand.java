@@ -1,20 +1,21 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
+import org.bukkit.craftbukkit.block.CraftContainer;
 import org.bukkit.inventory.BrewerInventory;
 
 import com.javazilla.bukkitfabric.impl.inventory.BrewerInventoryImpl;
 
-public class CraftBrewingStand extends CraftContainer<BrewingStandBlockEntity> implements BrewingStand {
+public class CardboardBrewingStand extends CraftContainer<BrewingStandBlockEntity> implements BrewingStand {
 
-    public CraftBrewingStand(Block block) {
+    public CardboardBrewingStand(Block block) {
         super(block, BrewingStandBlockEntity.class);
     }
 
-    public CraftBrewingStand(final Material material, final BrewingStandBlockEntity te) {
+    public CardboardBrewingStand(final Material material, final BrewingStandBlockEntity te) {
         super(material, te);
     }
 
@@ -25,10 +26,7 @@ public class CraftBrewingStand extends CraftContainer<BrewingStandBlockEntity> i
 
     @Override
     public BrewerInventory getInventory() {
-        if (!this.isPlaced())
-            return this.getSnapshotInventory();
-
-        return new BrewerInventoryImpl(this.getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new BrewerInventoryImpl(this.getTileEntity());
     }
 
     @Override

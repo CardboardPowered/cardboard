@@ -41,36 +41,16 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.block.CraftBanner;
-import org.bukkit.craftbukkit.block.CraftBeacon;
-import org.bukkit.craftbukkit.block.CraftBeehive;
-import org.bukkit.craftbukkit.block.CraftBell;
-import org.bukkit.craftbukkit.block.CraftBlastFurnace;
 import org.bukkit.craftbukkit.block.CraftBlockEntityState;
-import org.bukkit.craftbukkit.block.CraftBrewingStand;
-import org.bukkit.craftbukkit.block.CraftCampfire;
-import org.bukkit.craftbukkit.block.CraftChest;
-import org.bukkit.craftbukkit.block.CraftCommandBlock;
-import org.bukkit.craftbukkit.block.CraftComparator;
 import org.bukkit.craftbukkit.block.CraftCreatureSpawner;
-import org.bukkit.craftbukkit.block.CraftDaylightDetector;
-import org.bukkit.craftbukkit.block.CraftDispenser;
-import org.bukkit.craftbukkit.block.CraftDropper;
-import org.bukkit.craftbukkit.block.CraftEnchantingTable;
 import org.bukkit.craftbukkit.block.CraftEndGateway;
-import org.bukkit.craftbukkit.block.CraftEnderChest;
-import org.bukkit.craftbukkit.block.CraftFurnace;
-import org.bukkit.craftbukkit.block.CraftJigsaw;
 import org.bukkit.craftbukkit.block.CraftJukebox;
-import org.bukkit.craftbukkit.block.CraftLectern;
-import org.bukkit.craftbukkit.block.CraftShulkerBox;
 import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.craftbukkit.block.CraftSkull;
-import org.bukkit.craftbukkit.block.CraftSmoker;
 import org.bukkit.craftbukkit.block.CraftStructureBlock;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BlockStateMeta;
-import org.cardboardpowered.impl.block.CardboardBarrel;
-import org.cardboardpowered.impl.block.CardboardHopper;
+import org.cardboardpowered.impl.block.*;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta {
@@ -308,54 +288,37 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case OAK_WALL_SIGN:
         case SPRUCE_SIGN:
         case SPRUCE_WALL_SIGN:
-            if (te == null) {
-                te = new SignBlockEntity();
-            }
+            if (te == null) te = new SignBlockEntity();
             return new CraftSign(material, (SignBlockEntity) te);
         case CHEST:
         case TRAPPED_CHEST:
-            if (te == null) {
-                te = new ChestBlockEntity();
-            }
-            return new CraftChest(material, (ChestBlockEntity) te);
+            if (te == null) te = new ChestBlockEntity();
+            return new CardboardChest(material, (ChestBlockEntity) te);
         case FURNACE:
-            if (te == null) {
-                te = new FurnaceBlockEntity();
-            }
-            return new CraftFurnace(material, (AbstractFurnaceBlockEntity) te);
+            if (te == null) te = new FurnaceBlockEntity();
+            return new CardboardFurnace(material, (AbstractFurnaceBlockEntity) te);
         case DISPENSER:
-            if (te == null) {
+            if (te == null)
                 te = new DispenserBlockEntity();
-            }
-            return new CraftDispenser(material, (DispenserBlockEntity) te);
+            return new CardboardDispenser(material, (DispenserBlockEntity) te);
         case DROPPER:
-            if (te == null) {
-                te = new DropperBlockEntity();
-            }
-            return new CraftDropper(material, (DropperBlockEntity) te);
+            if (te == null) te = new DropperBlockEntity();
+            return new CardboardDropper(material, (DropperBlockEntity) te);
         case END_GATEWAY:
-            if (te == null) {
-                te = new EndGatewayBlockEntity();
-            }
+            if (te == null) te = new EndGatewayBlockEntity();
             return new CraftEndGateway(material, (EndGatewayBlockEntity) te);
         case HOPPER:
             if (te == null) te = new HopperBlockEntity();
             return new CardboardHopper(material, (HopperBlockEntity) te);
         case SPAWNER:
-            if (te == null) {
-                te = new MobSpawnerBlockEntity();
-            }
+            if (te == null) te = new MobSpawnerBlockEntity();
             return new CraftCreatureSpawner(material, (MobSpawnerBlockEntity) te);
         case JUKEBOX:
-            if (te == null) {
-                te = new JukeboxBlockEntity();
-            }
+            if (te == null) te = new JukeboxBlockEntity();
             return new CraftJukebox(material, (JukeboxBlockEntity) te);
         case BREWING_STAND:
-            if (te == null) {
-                te = new BrewingStandBlockEntity();
-            }
-            return new CraftBrewingStand(material, (BrewingStandBlockEntity) te);
+            if (te == null) te = new BrewingStandBlockEntity();
+            return new CardboardBrewingStand(material, (BrewingStandBlockEntity) te);
         case CREEPER_HEAD:
         case CREEPER_WALL_HEAD:
         case DRAGON_HEAD:
@@ -378,12 +341,12 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             if (te == null) {
                 te = new CommandBlockBlockEntity();
             }
-            return new CraftCommandBlock(material, (CommandBlockBlockEntity) te);
+            return new CardboardCommandBlock(material, (CommandBlockBlockEntity) te);
         case BEACON:
             if (te == null) {
                 te = new BeaconBlockEntity();
             }
-            return new CraftBeacon(material, (BeaconBlockEntity) te);
+            return new CardboardBeacon(material, (BeaconBlockEntity) te);
         case SHIELD:
             if (te == null) {
                 te = new BannerBlockEntity();
@@ -447,70 +410,58 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case GREEN_SHULKER_BOX:
         case RED_SHULKER_BOX:
         case BLACK_SHULKER_BOX:
-            if (te == null) {
+            if (te == null)
                 te = new ShulkerBoxBlockEntity();
-            }
-            return new CraftShulkerBox(material, (ShulkerBoxBlockEntity) te);
+            return new CardboardShulkerBox(material, (ShulkerBoxBlockEntity) te);
         case ENCHANTING_TABLE:
-            if (te == null) {
+            if (te == null)
                 te = new EnchantingTableBlockEntity();
-            }
-            return new CraftEnchantingTable(material, (EnchantingTableBlockEntity) te);
+            return new CardboardEnchantingTable(material, (EnchantingTableBlockEntity) te);
         case ENDER_CHEST:
-            if (te == null) {
+            if (te == null)
                 te = new EnderChestBlockEntity();
-            }
-            return new CraftEnderChest(material, (EnderChestBlockEntity) te);
+            return new CardboardEnderchest(material, (EnderChestBlockEntity) te);
         case DAYLIGHT_DETECTOR:
-            if (te == null) {
+            if (te == null)
                 te = new DaylightDetectorBlockEntity();
-            }
-            return new CraftDaylightDetector(material, (DaylightDetectorBlockEntity) te);
+            return new CardboardDaylightDetector(material, (DaylightDetectorBlockEntity) te);
         case COMPARATOR:
-            if (te == null) {
+            if (te == null)
                 te = new ComparatorBlockEntity();
-            }
-            return new CraftComparator(material, (ComparatorBlockEntity) te);
+            return new CardboardComparator(material, (ComparatorBlockEntity) te);
         case BARREL:
             if (te == null)
                 te = new BarrelBlockEntity();
             return new CardboardBarrel(material, (BarrelBlockEntity) te);
         case BELL:
-            if (te == null) {
+            if (te == null)
                 te = new BellBlockEntity();
-            }
-            return new CraftBell(material, (BellBlockEntity) te);
+            return new CardboardBell(material, (BellBlockEntity) te);
         case BLAST_FURNACE:
-            if (te == null) {
+            if (te == null)
                 te = new BlastFurnaceBlockEntity();
-            }
-            return new CraftBlastFurnace(material, (BlastFurnaceBlockEntity) te);
+            return new CardboardBlastFurnace(material, (BlastFurnaceBlockEntity) te);
         case CAMPFIRE:
-            if (te == null) {
+            if (te == null)
                 te = new CampfireBlockEntity();
-            }
-            return new CraftCampfire(material, (CampfireBlockEntity) te);
+            return new CardboardCampfire(material, (CampfireBlockEntity) te);
         case JIGSAW:
-            if (te == null) {
+            if (te == null)
                 te = new JigsawBlockEntity();
-            }
-            return new CraftJigsaw(material, (JigsawBlockEntity) te);
+            return new CardboardJigsaw(material, (JigsawBlockEntity) te);
         case LECTERN:
-            if (te == null) {
+            if (te == null)
                 te = new LecternBlockEntity();
-            }
-            return new CraftLectern(material, (LecternBlockEntity) te);
+            return new CardboardLectern(material, (LecternBlockEntity) te);
         case SMOKER:
-            if (te == null) {
+            if (te == null)
                 te = new SmokerBlockEntity();
-            }
-            return new CraftSmoker(material, (SmokerBlockEntity) te);
+            return new CardboardSmoker(material, (SmokerBlockEntity) te);
         case BEE_NEST:
         case BEEHIVE:
-            if (te == null) {
+            if (te == null)
                 te = new BeehiveBlockEntity();
-            }
-            return new CraftBeehive(material, (BeehiveBlockEntity) te);
+            return new CardboardBeehive(material, (BeehiveBlockEntity) te);
         default:
             throw new IllegalStateException("Missing blockState for " + material);
         }
@@ -538,16 +489,16 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             break;
         case CHEST:
         case TRAPPED_CHEST:
-            valid = blockState instanceof CraftChest;
+            valid = blockState instanceof CardboardChest;
             break;
         case FURNACE:
-            valid = blockState instanceof CraftFurnace;
+            valid = blockState instanceof CardboardFurnace;
             break;
         case DISPENSER:
-            valid = blockState instanceof CraftDispenser;
+            valid = blockState instanceof CardboardDispenser;
             break;
         case DROPPER:
-            valid = blockState instanceof CraftDropper;
+            valid = blockState instanceof CardboardDropper;
             break;
         case END_GATEWAY:
             valid = blockState instanceof CraftEndGateway;
@@ -562,7 +513,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             valid = blockState instanceof CraftJukebox;
             break;
         case BREWING_STAND:
-            valid = blockState instanceof CraftBrewingStand;
+            valid = blockState instanceof CardboardBrewingStand;
             break;
         case CREEPER_HEAD:
         case CREEPER_WALL_HEAD:
@@ -581,10 +532,10 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case COMMAND_BLOCK:
         case REPEATING_COMMAND_BLOCK:
         case CHAIN_COMMAND_BLOCK:
-            valid = blockState instanceof CraftCommandBlock;
+            valid = blockState instanceof CardboardCommandBlock;
             break;
         case BEACON:
-            valid = blockState instanceof CraftBeacon;
+            valid = blockState instanceof CardboardBeacon;
             break;
         case SHIELD:
         case BLACK_BANNER:
@@ -641,44 +592,44 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case GREEN_SHULKER_BOX:
         case RED_SHULKER_BOX:
         case BLACK_SHULKER_BOX:
-            valid = blockState instanceof CraftShulkerBox;
+            valid = blockState instanceof CardboardShulkerBox;
             break;
         case ENCHANTING_TABLE:
-            valid = blockState instanceof CraftEnchantingTable;
+            valid = blockState instanceof CardboardEnchantingTable;
             break;
         case ENDER_CHEST:
-            valid = blockState instanceof CraftEnderChest;
+            valid = blockState instanceof CardboardEnderchest;
             break;
         case DAYLIGHT_DETECTOR:
-            valid = blockState instanceof CraftDaylightDetector;
+            valid = blockState instanceof CardboardDaylightDetector;
             break;
         case COMPARATOR:
-            valid = blockState instanceof CraftComparator;
+            valid = blockState instanceof CardboardComparator;
             break;
         case BARREL:
             valid = blockState instanceof CardboardBarrel;
             break;
         case BELL:
-            valid = blockState instanceof CraftBell;
+            valid = blockState instanceof CardboardBell;
             break;
         case BLAST_FURNACE:
-            valid = blockState instanceof CraftBlastFurnace;
+            valid = blockState instanceof CardboardBlastFurnace;
             break;
         case CAMPFIRE:
-            valid = blockState instanceof CraftCampfire;
+            valid = blockState instanceof CardboardCampfire;
             break;
         case JIGSAW:
-            valid = blockState instanceof CraftJigsaw;
+            valid = blockState instanceof CardboardJigsaw;
             break;
         case LECTERN:
-            valid = blockState instanceof CraftLectern;
+            valid = blockState instanceof CardboardLectern;
             break;
         case SMOKER:
-            valid = blockState instanceof CraftSmoker;
+            valid = blockState instanceof CardboardSmoker;
             break;
         case BEEHIVE:
         case BEE_NEST:
-            valid = blockState instanceof CraftBeehive;
+            valid = blockState instanceof CardboardBeehive;
             break;
         default:
             valid = false;

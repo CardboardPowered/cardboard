@@ -30,9 +30,7 @@ public class CraftEndGateway extends CraftBlockEntityState<EndGatewayBlockEntity
             this.getSnapshot().exitPortalPos = null;
         } else if (!Objects.equals(location.getWorld(), this.isPlaced() ? this.getWorld() : null)) {
             throw new IllegalArgumentException("Cannot set exit location to different world");
-        } else {
-            this.getSnapshot().exitPortalPos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        }
+        } else this.getSnapshot().exitPortalPos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
@@ -58,9 +56,7 @@ public class CraftEndGateway extends CraftBlockEntityState<EndGatewayBlockEntity
     @Override
     public void applyTo(EndGatewayBlockEntity endGateway) {
         super.applyTo(endGateway);
-
-        if (this.getSnapshot().exitPortalPos == null) {
-            endGateway.exitPortalPos = null;
-        }
+        if (this.getSnapshot().exitPortalPos == null) endGateway.exitPortalPos = null;
     }
+
 }

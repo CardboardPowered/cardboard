@@ -31,9 +31,7 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Preconditions;
 
-import org.cardboardpowered.impl.block.CardboardBarrel;
-import org.cardboardpowered.impl.block.CardboardConduit;
-import org.cardboardpowered.impl.block.CardboardHopper;
+import org.cardboardpowered.impl.block.*;
 import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
@@ -284,13 +282,13 @@ public class CraftBlock implements Block {
                 return new CraftSign(this);
             case CHEST:
             case TRAPPED_CHEST:
-                return new CraftChest(this);
+                return new CardboardChest(this);
             case FURNACE:
-                return new CraftFurnaceFurnace(this);
+                return new CardboardFurnaceFurnace(this);
             case DISPENSER:
-                return new CraftDispenser(this);
+                return new CardboardDispenser(this);
             case DROPPER:
-                return new CraftDropper(this);
+                return new CardboardDropper(this);
             case END_GATEWAY:
                 return new CraftEndGateway(this);
             case HOPPER:
@@ -300,7 +298,7 @@ public class CraftBlock implements Block {
             case JUKEBOX:
                 return new CraftJukebox(this);
             case BREWING_STAND:
-                return new CraftBrewingStand(this);
+                return new CardboardBrewingStand(this);
             case CREEPER_HEAD:
             case CREEPER_WALL_HEAD:
             case DRAGON_HEAD:
@@ -317,9 +315,9 @@ public class CraftBlock implements Block {
             case COMMAND_BLOCK:
             case CHAIN_COMMAND_BLOCK:
             case REPEATING_COMMAND_BLOCK:
-                return new CraftCommandBlock(this);
+                return new CardboardCommandBlock(this);
             case BEACON:
-                return new CraftBeacon(this);
+                return new CardboardBeacon(this);
             case BLACK_BANNER:
             case BLACK_WALL_BANNER:
             case BLUE_BANNER:
@@ -372,15 +370,15 @@ public class CraftBlock implements Block {
             case GREEN_SHULKER_BOX:
             case RED_SHULKER_BOX:
             case BLACK_SHULKER_BOX:
-                return new CraftShulkerBox(this);
+                return new CardboardShulkerBox(this);
             case ENCHANTING_TABLE:
-                return new CraftEnchantingTable(this);
+                return new CardboardEnchantingTable(this);
             case ENDER_CHEST:
-                return new CraftEnderChest(this);
+                return new CardboardEnderchest(this);
             case DAYLIGHT_DETECTOR:
-                return new CraftDaylightDetector(this);
+                return new CardboardDaylightDetector(this);
             case COMPARATOR:
-                return new CraftComparator(this);
+                return new CardboardComparator(this);
             case BLACK_BED:
             case BLUE_BED:
             case BROWN_BED:
@@ -397,36 +395,33 @@ public class CraftBlock implements Block {
             case RED_BED:
             case WHITE_BED:
             case YELLOW_BED:
-                return new CraftBed(this);
+                return new CardboardBed(this);
             case CONDUIT:
                 return new CardboardConduit(this);
             case BARREL:
                 return new CardboardBarrel(this);
             case BELL:
-                return new CraftBell(this);
+                return new CardboardBell(this);
             case BLAST_FURNACE:
-                return new CraftBlastFurnace(this);
+                return new CardboardBlastFurnace(this);
             case CAMPFIRE:
             case SOUL_CAMPFIRE:
-                return new CraftCampfire(this);
+                return new CardboardCampfire(this);
             case JIGSAW:
-                return new CraftJigsaw(this);
+                return new CardboardJigsaw(this);
             case LECTERN:
-                return new CraftLectern(this);
+                return new CardboardLectern(this);
             case SMOKER:
-                return new CraftSmoker(this);
+                return new CardboardSmoker(this);
             case BEEHIVE:
             case BEE_NEST:
-                return new CraftBeehive(this);
+                return new CardboardBeehive(this);
             default:
                 BlockEntity tileEntity = world.getBlockEntity(position);
                 if (tileEntity != null) {
                     // block with unhandled TileEntity:
                     return new CraftBlockEntityState<BlockEntity>(this, (Class<BlockEntity>) tileEntity.getClass());
-                } else {
-                    // Block without TileEntity:
-                    return new CraftBlockState(this);
-                }
+                } else return new CraftBlockState(this); // Block without BlockEntity
         }
     }
 
@@ -447,10 +442,7 @@ public class CraftBlock implements Block {
     }
 
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(net.minecraft.util.registry.Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {
-        if (bio == null)
-            return null;
-
-        return registry.get(CraftNamespacedKey.toMinecraft(bio.getKey()));
+        return (null == bio) ? null : registry.get(CraftNamespacedKey.toMinecraft(bio.getKey()));
     }
 
     @Override

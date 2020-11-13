@@ -1,25 +1,24 @@
-package org.bukkit.craftbukkit.block;
-
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DropperBlock;
-import net.minecraft.block.entity.DropperBlockEntity;
-import net.minecraft.server.world.ServerWorld;
+package org.cardboardpowered.impl.block;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
-import org.cardboardpowered.impl.block.CardboardLootableBlock;
 import org.cardboardpowered.impl.world.WorldImpl;
 
-public class CraftDropper extends CardboardLootableBlock<DropperBlockEntity> implements Dropper {
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DropperBlock;
+import net.minecraft.block.entity.DropperBlockEntity;
+import net.minecraft.server.world.ServerWorld;
 
-    public CraftDropper(final Block block) {
+public class CardboardDropper extends CardboardLootableBlock<DropperBlockEntity> implements Dropper {
+
+    public CardboardDropper(final Block block) {
         super(block, DropperBlockEntity.class);
     }
 
-    public CraftDropper(final Material material, DropperBlockEntity te) {
+    public CardboardDropper(final Material material, DropperBlockEntity te) {
         super(material, te);
     }
 
@@ -30,11 +29,7 @@ public class CraftDropper extends CardboardLootableBlock<DropperBlockEntity> imp
 
     @Override
     public Inventory getInventory() {
-        if (!this.isPlaced()) {
-            return this.getSnapshotInventory();
-        }
-
-        return new CraftInventory(this.getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CraftInventory(this.getTileEntity());
     }
 
     @Override
@@ -44,7 +39,6 @@ public class CraftDropper extends CardboardLootableBlock<DropperBlockEntity> imp
         if (block.getType() == Material.DROPPER) {
             WorldImpl world = (WorldImpl) this.getWorld();
             DropperBlock drop = (DropperBlock) Blocks.DROPPER;
-
             drop.dispense((ServerWorld) world.getHandle(), this.getPosition());
         }
     }

@@ -33,10 +33,8 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
     @SuppressWarnings("unchecked")
     public CraftBlockEntityState(Material material, T tileEntity) {
         super(material);
-
         this.tileEntityClass = (Class<T>) tileEntity.getClass();
         this.tileEntity = tileEntity;
-
         this.snapshot = this.createSnapshot(tileEntity);
         this.load(snapshot);
     }
@@ -47,7 +45,6 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
 
         CompoundTag nbtTagCompound = tileEntity.toTag(new CompoundTag());
         T snapshot = (T) BlockEntity.createFromTag(data, nbtTagCompound);
-
         return snapshot;
     }
 
@@ -55,7 +52,6 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
         BlockPos pos = to.getPos();
         CompoundTag nbtTagCompound = from.toTag(new CompoundTag());
         to.fromTag(data, nbtTagCompound);
-
         to.setPos(pos);
     }
 
@@ -79,13 +75,11 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
     }
 
     protected void load(T tileEntity) {
-        if (tileEntity != null && tileEntity != snapshot)
-            copyData(tileEntity, snapshot);
+        if (tileEntity != null && tileEntity != snapshot) copyData(tileEntity, snapshot);
     }
 
     protected void applyTo(T tileEntity) {
-        if (tileEntity != null && tileEntity != snapshot)
-            copyData(snapshot, tileEntity);
+        if (tileEntity != null && tileEntity != snapshot) copyData(snapshot, tileEntity);
     }
 
     protected boolean isApplicable(BlockEntity tileEntity) {
@@ -95,16 +89,13 @@ public class CraftBlockEntityState<T extends BlockEntity> extends CraftBlockStat
     @Override
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
-
         if (result && this.isPlaced()) {
             BlockEntity tile = getTileEntityFromWorld();
-
             if (isApplicable(tile)) {
                 applyTo(tileEntityClass.cast(tile));
                 tile.markDirty();
             }
         }
-
         return result;
     }
 

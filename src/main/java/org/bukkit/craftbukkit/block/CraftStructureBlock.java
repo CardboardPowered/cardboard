@@ -154,8 +154,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockBlo
 
     @Override
     public void setMetadata(String metadata) {
-        if (getUsageMode() == UsageMode.DATA)
-            getSnapshot().metadata = metadata;
+        if (getUsageMode() == UsageMode.DATA) getSnapshot().metadata = metadata;
     }
 
     @Override
@@ -169,11 +168,11 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockBlo
         tileEntity.setMode(tileEntity.getMode());
     }
 
-    private static boolean isBetween(int num, int min, int max) {
+    public static boolean isBetween(int num, int min, int max) {
         return num >= min && num <= max;
     }
 
-    private static boolean isBetween(float num, float min, float max) {
+    public static boolean isBetween(float num, float min, float max) {
         return num >= min && num <= max;
     }
 

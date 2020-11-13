@@ -49,10 +49,7 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxBlockEntity> impl
 
     @Override
     public void setPlaying(Material record) {
-        if (record == null || CraftMagicNumbers.getItem(record) == null) {
-            record = Material.AIR;
-        }
-
+        if (record == null || CraftMagicNumbers.getItem(record) == null) record = Material.AIR;
         setRecord(new org.bukkit.inventory.ItemStack(record));
     }
 

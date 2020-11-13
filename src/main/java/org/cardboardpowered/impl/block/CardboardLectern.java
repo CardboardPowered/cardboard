@@ -1,21 +1,22 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.LecternBlock;
 import net.minecraft.block.entity.LecternBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lectern;
+import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.inventory.Inventory;
 
 import com.javazilla.bukkitfabric.impl.inventory.LecternInventoryImpl;
 
-public class CraftLectern extends CraftBlockEntityState<LecternBlockEntity> implements Lectern {
+public class CardboardLectern extends CraftBlockEntityState<LecternBlockEntity> implements Lectern {
 
-    public CraftLectern(Block block) {
+    public CardboardLectern(Block block) {
         super(block, LecternBlockEntity.class);
     }
 
-    public CraftLectern(Material material, LecternBlockEntity te) {
+    public CardboardLectern(Material material, LecternBlockEntity te) {
         super(material, te);
     }
 

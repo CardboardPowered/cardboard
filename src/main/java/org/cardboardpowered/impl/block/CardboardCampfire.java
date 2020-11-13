@@ -1,19 +1,20 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.entity.CampfireBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Campfire;
+import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftCampfire extends CraftBlockEntityState<CampfireBlockEntity> implements Campfire {
+public class CardboardCampfire extends CraftBlockEntityState<CampfireBlockEntity> implements Campfire {
 
-    public CraftCampfire(Block block) {
+    public CardboardCampfire(Block block) {
         super(block, CampfireBlockEntity.class);
     }
 
-    public CraftCampfire(Material material, CampfireBlockEntity te) {
+    public CardboardCampfire(Material material, CampfireBlockEntity te) {
         super(material, te);
     }
 
@@ -52,4 +53,5 @@ public class CraftCampfire extends CraftBlockEntityState<CampfireBlockEntity> im
     public void setCookTimeTotal(int index, int cookTimeTotal) {
         getSnapshot().cookingTotalTimes[index] = cookTimeTotal;
     }
+
 }
