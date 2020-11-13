@@ -1,5 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
+import org.cardboardpowered.impl.inventory.CardboardBrewerInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.impl.inventory.BrewerInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.player.PlayerInventory;
@@ -32,10 +32,9 @@ public class MixinBrewingStandScreenHandler extends MixinScreenHandler {
 
     @Override
     public CardboardInventoryView getBukkitView() {
-        if (bukkitEntity != null)
-            return bukkitEntity;
+        if (bukkitEntity != null) return bukkitEntity;
 
-        BrewerInventoryImpl inventory = new BrewerInventoryImpl(this.inventory);
+        CardboardBrewerInventory inventory = new CardboardBrewerInventory(this.inventory);
         bukkitEntity = new CardboardInventoryView((Player)((IMixinServerEntityPlayer)this.player.player).getBukkitEntity(), inventory, (BrewingStandScreenHandler)(Object)this);
         return bukkitEntity;
     }

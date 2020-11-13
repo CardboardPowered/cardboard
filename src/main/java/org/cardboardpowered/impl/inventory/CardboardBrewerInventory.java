@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import net.minecraft.inventory.Inventory;
 import org.bukkit.block.BrewingStand;
@@ -8,9 +8,9 @@ import org.bukkit.inventory.ItemStack;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-public class BrewerInventoryImpl extends CraftInventory implements BrewerInventory {
+public class CardboardBrewerInventory extends CraftInventory implements BrewerInventory {
 
-    public BrewerInventoryImpl(Inventory inventory) {
+    public CardboardBrewerInventory(Inventory inventory) {
         super(inventory);
     }
 

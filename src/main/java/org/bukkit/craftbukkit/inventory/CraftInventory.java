@@ -26,13 +26,14 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.cardboardpowered.impl.inventory.CardboardAnvilInventory;
 
-import com.javazilla.bukkitfabric.impl.inventory.BeaconInventoryImpl;
-import com.javazilla.bukkitfabric.impl.inventory.EnchantingInventoryImpl;
-import com.javazilla.bukkitfabric.impl.inventory.GrindstoneInventoryImpl;
-import com.javazilla.bukkitfabric.impl.inventory.LoomInventoryImpl;
-import com.javazilla.bukkitfabric.impl.inventory.StonecutterInventoryImpl;
+import org.cardboardpowered.impl.inventory.CardboardAnvilInventory;
+import org.cardboardpowered.impl.inventory.CardboardBeaconInventory;
+import org.cardboardpowered.impl.inventory.CardboardEnchantingInventory;
+import org.cardboardpowered.impl.inventory.CardboardGrindstoneInventory;
+import org.cardboardpowered.impl.inventory.CardboardLoomInventory;
+import org.cardboardpowered.impl.inventory.CardboardStonecutterInventory;
+
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
 @SuppressWarnings("deprecation")
@@ -424,7 +425,7 @@ public class CraftInventory implements Inventory {
             return InventoryType.SMOKER;
         } else if (inventory instanceof FurnaceBlockEntity) {
             return InventoryType.FURNACE;
-        } else if (this instanceof EnchantingInventoryImpl) {
+        } else if (this instanceof CardboardEnchantingInventory) {
             return InventoryType.ENCHANTING;
         } else if (inventory instanceof BrewingStandBlockEntity) {
             return InventoryType.BREWING;
@@ -434,7 +435,7 @@ public class CraftInventory implements Inventory {
             return InventoryType.ENDER_CHEST;
         } else if (inventory instanceof MerchantInventory) {
             return InventoryType.MERCHANT;
-        } else if (this instanceof BeaconInventoryImpl) {
+        } else if (this instanceof CardboardBeaconInventory) {
               return InventoryType.BEACON;
         } else if (this instanceof CardboardAnvilInventory) {
             return InventoryType.ANVIL;
@@ -446,13 +447,13 @@ public class CraftInventory implements Inventory {
             return InventoryType.BARREL;
         } else if (inventory instanceof LecternBlockEntity) {
             return InventoryType.LECTERN;
-         } else if (this instanceof LoomInventoryImpl) {
+         } else if (this instanceof CardboardLoomInventory) {
               return InventoryType.LOOM;
          // TODO } else if (this instanceof CraftInventoryCartography) {
          // TODO     return InventoryType.CARTOGRAPHY;
-        } else if (this instanceof GrindstoneInventoryImpl) {
+        } else if (this instanceof CardboardGrindstoneInventory) {
             return InventoryType.GRINDSTONE;
-        } else if (this instanceof StonecutterInventoryImpl) {
+        } else if (this instanceof CardboardStonecutterInventory) {
             return InventoryType.STONECUTTER;
         } else return InventoryType.CHEST;
     }

@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import net.minecraft.inventory.Inventory;
 
@@ -6,9 +6,9 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.BeaconInventory;
 import org.bukkit.inventory.ItemStack;
 
-public class BeaconInventoryImpl extends CraftInventory implements BeaconInventory {
+public class CardboardBeaconInventory extends CraftInventory implements BeaconInventory {
 
-    public BeaconInventoryImpl(Inventory beacon) {
+    public CardboardBeaconInventory(Inventory beacon) {
         super(beacon);
     }
 

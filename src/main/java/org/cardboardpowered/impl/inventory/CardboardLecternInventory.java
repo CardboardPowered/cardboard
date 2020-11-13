@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import net.minecraft.inventory.Inventory;
 import org.bukkit.block.Lectern;
@@ -7,9 +7,9 @@ import org.bukkit.inventory.LecternInventory;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-public class LecternInventoryImpl extends CraftInventory implements LecternInventory {
+public class CardboardLecternInventory extends CraftInventory implements LecternInventory {
 
-    public LecternInventoryImpl(Inventory inventory) {
+    public CardboardLecternInventory(Inventory inventory) {
         super(inventory);
     }
 

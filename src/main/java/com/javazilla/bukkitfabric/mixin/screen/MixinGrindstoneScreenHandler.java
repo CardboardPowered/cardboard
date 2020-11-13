@@ -1,5 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
+import org.cardboardpowered.impl.inventory.CardboardGrindstoneInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.impl.inventory.GrindstoneInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.player.PlayerInventory;
@@ -35,7 +35,7 @@ public class MixinGrindstoneScreenHandler extends MixinScreenHandler {
         if (bukkitEntity != null)
             return bukkitEntity;
 
-        GrindstoneInventoryImpl inventory = new GrindstoneInventoryImpl(this.input, this.result);
+        CardboardGrindstoneInventory inventory = new CardboardGrindstoneInventory(this.input, this.result);
         bukkitEntity = new CardboardInventoryView(this.player, inventory, (GrindstoneScreenHandler)(Object)this);
         return bukkitEntity;
     }

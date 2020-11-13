@@ -7,8 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Lectern;
 import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.inventory.Inventory;
-
-import com.javazilla.bukkitfabric.impl.inventory.LecternInventoryImpl;
+import org.cardboardpowered.impl.inventory.CardboardLecternInventory;
 
 public class CardboardLectern extends CraftBlockEntityState<LecternBlockEntity> implements Lectern {
 
@@ -32,12 +31,12 @@ public class CardboardLectern extends CraftBlockEntityState<LecternBlockEntity> 
 
     @Override
     public Inventory getSnapshotInventory() {
-        return new LecternInventoryImpl(this.getSnapshot().inventory);
+        return new CardboardLecternInventory(this.getSnapshot().inventory);
     }
 
     @Override
     public Inventory getInventory() {
-        return (!this.isPlaced()) ? this.getSnapshotInventory() : new LecternInventoryImpl(this.getTileEntity().inventory);
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CardboardLecternInventory(this.getTileEntity().inventory);
     }
 
     @Override
@@ -45,7 +44,6 @@ public class CardboardLectern extends CraftBlockEntityState<LecternBlockEntity> 
         boolean result = super.update(force, applyPhysics);
         if (result && this.isPlaced() && this.getType() == Material.LECTERN)
             LecternBlock.setPowered(this.world.getHandle(), this.getPosition(), this.getHandle());
-
         return result;
     }
 

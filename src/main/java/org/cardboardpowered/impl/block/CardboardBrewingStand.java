@@ -6,8 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.craftbukkit.block.CraftContainer;
 import org.bukkit.inventory.BrewerInventory;
-
-import com.javazilla.bukkitfabric.impl.inventory.BrewerInventoryImpl;
+import org.cardboardpowered.impl.inventory.CardboardBrewerInventory;
 
 public class CardboardBrewingStand extends CraftContainer<BrewingStandBlockEntity> implements BrewingStand {
 
@@ -21,12 +20,12 @@ public class CardboardBrewingStand extends CraftContainer<BrewingStandBlockEntit
 
     @Override
     public BrewerInventory getSnapshotInventory() {
-        return new BrewerInventoryImpl(this.getSnapshot());
+        return new CardboardBrewerInventory(this.getSnapshot());
     }
 
     @Override
     public BrewerInventory getInventory() {
-        return (!this.isPlaced()) ? this.getSnapshotInventory() : new BrewerInventoryImpl(this.getTileEntity());
+        return (!this.isPlaced()) ? this.getSnapshotInventory() : new CardboardBrewerInventory(this.getTileEntity());
     }
 
     @Override

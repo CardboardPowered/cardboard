@@ -6,9 +6,8 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.cardboardpowered.impl.inventory.CardboardBrewerInventory;
 import org.cardboardpowered.impl.inventory.CardboardFurnaceInventory;
-
-import com.javazilla.bukkitfabric.impl.inventory.BrewerInventoryImpl;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlastFurnaceBlockEntity;
@@ -83,7 +82,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public Inventory getInventory(net.minecraft.inventory.Inventory tileEntity) {
-            return new BrewerInventoryImpl(tileEntity);
+            return new CardboardBrewerInventory(tileEntity);
         }
     }
 

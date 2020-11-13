@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.cardboardpowered.impl.inventory.CardboardEnchantingInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -21,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.impl.inventory.EnchantingInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandlerContext;
 
@@ -234,10 +234,9 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
 
     @Override
     public InventoryView getBukkitView() {
-        if (bukkitEntity != null)
-            return bukkitEntity;
+        if (bukkitEntity != null) return bukkitEntity;
 
-        EnchantingInventoryImpl inventory = new EnchantingInventoryImpl(this.inventory);
+        CardboardEnchantingInventory inventory = new CardboardEnchantingInventory(this.inventory);
         bukkitEntity = new CardboardInventoryView(this.player, inventory, (EnchantmentScreenHandler)(Object)this);
         return bukkitEntity;
     }

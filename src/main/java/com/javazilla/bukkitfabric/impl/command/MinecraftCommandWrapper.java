@@ -35,7 +35,6 @@ public final class MinecraftCommandWrapper extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         dispatcher.execute(getCommandSource(sender), toDispatcher(args, commandLabel));
-
         return true;
     }
 
@@ -46,7 +45,6 @@ public final class MinecraftCommandWrapper extends BukkitCommand {
 
         List<String> results = new ArrayList<>();
         dispatcher.getDispatcher().getCompletionSuggestions(parsed).thenAccept(suggestions -> suggestions.getList().forEach(s -> results.add(s.getText())));
-
         return results;
     }
 

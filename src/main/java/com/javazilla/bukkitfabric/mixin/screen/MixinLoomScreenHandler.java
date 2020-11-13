@@ -1,6 +1,7 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardLoomInventory;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -8,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.impl.inventory.LoomInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.player.PlayerInventory;
@@ -32,10 +32,9 @@ public class MixinLoomScreenHandler extends MixinScreenHandler {
 
     @Override
     public CardboardInventoryView getBukkitView() {
-        if (bukkitEntity != null)
-            return bukkitEntity;
+        if (bukkitEntity != null) return bukkitEntity;
 
-        LoomInventoryImpl inventory = new LoomInventoryImpl(this.input, this.output);
+        CardboardLoomInventory inventory = new CardboardLoomInventory(this.input, this.output);
         bukkitEntity = new CardboardInventoryView(this.player, inventory, (LoomScreenHandler)(Object)this);
         return bukkitEntity;
     }

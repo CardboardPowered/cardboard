@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl.inventory;
+package org.cardboardpowered.impl.inventory;
 
 import net.minecraft.inventory.Inventory;
 
@@ -6,9 +6,9 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.ItemStack;
 
-public class EnchantingInventoryImpl extends CraftInventory implements EnchantingInventory {
+public class CardboardEnchantingInventory extends CraftInventory implements EnchantingInventory {
 
-    public EnchantingInventoryImpl(Inventory inventory) {
+    public CardboardEnchantingInventory(Inventory inventory) {
         super(inventory);
     }
 

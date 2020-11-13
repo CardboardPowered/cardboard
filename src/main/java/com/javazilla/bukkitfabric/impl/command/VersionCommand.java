@@ -49,8 +49,7 @@ public class VersionCommand extends Command {
             StringBuilder name = new StringBuilder();
 
             for (String arg : args) {
-                if (name.length() > 0)
-                    name.append(' ');
+                if (name.length() > 0) name.append(' ');
                 name.append(arg);
             }
 

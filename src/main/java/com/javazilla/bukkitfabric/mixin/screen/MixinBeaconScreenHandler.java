@@ -1,5 +1,6 @@
 package com.javazilla.bukkitfabric.mixin.screen;
 
+import org.cardboardpowered.impl.inventory.CardboardBeaconInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.entity.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.impl.inventory.BeaconInventoryImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.player.PlayerInventory;
@@ -36,7 +36,7 @@ public class MixinBeaconScreenHandler extends MixinScreenHandler {
         if (bukkitEntity != null)
             return bukkitEntity;
 
-        BeaconInventoryImpl inventory = new BeaconInventoryImpl(this.payment);
+        CardboardBeaconInventory inventory = new CardboardBeaconInventory(this.payment);
         bukkitEntity = new CardboardInventoryView((Player)((IMixinServerEntityPlayer)this.player.player).getBukkitEntity(), inventory, (BeaconScreenHandler)(Object)this);
         return bukkitEntity;
     }
