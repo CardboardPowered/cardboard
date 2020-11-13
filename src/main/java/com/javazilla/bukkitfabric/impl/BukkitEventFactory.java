@@ -294,15 +294,16 @@ public class BukkitEventFactory {
             System.out.println("FAILED TO FIRE InventoryOpenEvent! SCREEN HANDLER != IMixinInventory");
             return container;
         }
+
+        CardboardInventoryView bv = (CardboardInventoryView) ((IMixinScreenHandler)container).getBukkitView();
+        bv.setPlayerIfNotSet((PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity());
+
         try {
             ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, PlayerImpl);
         } catch (ClassCastException e) {
             e.printStackTrace();
             return container;
         }
-
-        CardboardInventoryView bv = (CardboardInventoryView) ((IMixinScreenHandler)container).getBukkitView();
-        bv.setPlayerIfNotSet((PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity());
 
         InventoryOpenEvent event = new InventoryOpenEvent(bv);
         event.setCancelled(cancelled);
