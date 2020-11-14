@@ -4,11 +4,10 @@ import net.minecraft.block.entity.CampfireBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Campfire;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-public class CardboardCampfire extends CraftBlockEntityState<CampfireBlockEntity> implements Campfire {
+public class CardboardCampfire extends CardboardBlockEntityState<CampfireBlockEntity> implements Campfire {
 
     public CardboardCampfire(Block block) {
         super(block, CampfireBlockEntity.class);

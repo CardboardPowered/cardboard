@@ -70,7 +70,7 @@ import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
-import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
+import org.cardboardpowered.impl.CardboardPotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinChunkHolder;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -1548,7 +1548,7 @@ public class WorldImpl implements World {
         PersistentProjectileEntity arrow;
         if (TippedArrow.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.entity.EntityType.ARROW.create(nms);
-            ((IMixinArrowEntity) arrow).setType(PotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
+            ((IMixinArrowEntity) arrow).setType(CardboardPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
         } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.entity.EntityType.SPECTRAL_ARROW.create(nms);
         } else if (Trident.class.isAssignableFrom(clazz)) {

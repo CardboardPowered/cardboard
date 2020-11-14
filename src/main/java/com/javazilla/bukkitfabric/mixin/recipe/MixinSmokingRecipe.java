@@ -5,8 +5,8 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.Recipe;
 import org.spongepowered.asm.mixin.Mixin;
 
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftSmokingRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
+import org.cardboardpowered.impl.inventory.recipe.CardboardSmokingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.recipe.SmokingRecipe;
@@ -19,7 +19,7 @@ public class MixinSmokingRecipe implements IMixinRecipe {
         SmokingRecipe rrr = (SmokingRecipe)(Object)this;
         CraftItemStack result = CraftItemStack.asCraftMirror(rrr.output);
 
-        CraftSmokingRecipe recipe = new CraftSmokingRecipe(CraftNamespacedKey.fromMinecraft(rrr.id), result, RecipeInterface.toBukkit(rrr.input), rrr.experience, rrr.cookTime);
+        CardboardSmokingRecipe recipe = new CardboardSmokingRecipe(CraftNamespacedKey.fromMinecraft(rrr.id), result, RecipeInterface.toBukkit(rrr.input), rrr.experience, rrr.cookTime);
         recipe.setGroup(rrr.group);
 
         return recipe;

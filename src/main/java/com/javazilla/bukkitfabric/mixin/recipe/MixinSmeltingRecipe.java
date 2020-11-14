@@ -5,8 +5,8 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.Recipe;
 import org.spongepowered.asm.mixin.Mixin;
 
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftFurnaceRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
+import org.cardboardpowered.impl.inventory.recipe.CardboardFurnaceRecipe;
+import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.recipe.AbstractCookingRecipe;
@@ -20,7 +20,7 @@ public class MixinSmeltingRecipe implements IMixinRecipe {
         AbstractCookingRecipe nms = (AbstractCookingRecipe)(Object)this;
         CraftItemStack result = CraftItemStack.asCraftMirror(nms.output);
 
-        CraftFurnaceRecipe recipe = new CraftFurnaceRecipe(CraftNamespacedKey.fromMinecraft(nms.id), result, RecipeInterface.toBukkit(nms.input), nms.experience, nms.cookTime);
+        CardboardFurnaceRecipe recipe = new CardboardFurnaceRecipe(CraftNamespacedKey.fromMinecraft(nms.id), result, RecipeInterface.toBukkit(nms.input), nms.experience, nms.cookTime);
         recipe.setGroup(nms.group);
 
         return recipe;

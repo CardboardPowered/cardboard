@@ -4,10 +4,9 @@ import net.minecraft.block.entity.EnchantingTableBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.EnchantingTable;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 
-public class CardboardEnchantingTable extends CraftBlockEntityState<EnchantingTableBlockEntity> implements EnchantingTable {
+public class CardboardEnchantingTable extends CardboardBlockEntityState<EnchantingTableBlockEntity> implements EnchantingTable {
 
     public CardboardEnchantingTable(final Block block) {
         super(block, EnchantingTableBlockEntity.class);
@@ -31,8 +30,7 @@ public class CardboardEnchantingTable extends CraftBlockEntityState<EnchantingTa
     @Override
     public void applyTo(EnchantingTableBlockEntity enchantingTable) {
         super.applyTo(enchantingTable);
-        if (!this.getSnapshot().hasCustomName())
-            enchantingTable.setCustomName(null);
+        if (!this.getSnapshot().hasCustomName()) enchantingTable.setCustomName(null);
     }
 
 }

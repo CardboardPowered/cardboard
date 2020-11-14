@@ -11,6 +11,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.CraftServer;
+import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import com.google.common.base.Preconditions;
@@ -18,7 +19,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.entity.SkullBlockEntity;
 
-public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implements Skull {
+public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> implements Skull {
 
     private static final int MAX_OWNER_LENGTH = 16;
     private GameProfile profile;
@@ -88,7 +89,6 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
             if (profile.getName() != null)
                 return Bukkit.getOfflinePlayer(profile.getName());
         }
-
         return null;
     }
 
@@ -152,8 +152,8 @@ public class CraftSkull extends CraftBlockEntityState<SkullBlockEntity> implemen
     @Override
     public void applyTo(SkullBlockEntity skull) {
         super.applyTo(skull);
-
         if (getSkullType() == SkullType.PLAYER)
             skull.setOwnerAndType(profile);
     }
+
 }

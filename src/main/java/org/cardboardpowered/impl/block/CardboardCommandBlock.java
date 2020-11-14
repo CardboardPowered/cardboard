@@ -4,10 +4,9 @@ import net.minecraft.block.entity.CommandBlockBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 
-public class CardboardCommandBlock extends CraftBlockEntityState<CommandBlockBlockEntity> implements CommandBlock {
+public class CardboardCommandBlock extends CardboardBlockEntityState<CommandBlockBlockEntity> implements CommandBlock {
 
     private String command;
     private String name;

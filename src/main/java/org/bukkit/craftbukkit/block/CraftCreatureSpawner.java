@@ -7,9 +7,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
+import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 
 @SuppressWarnings("deprecation")
-public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerBlockEntity> implements CreatureSpawner {
+public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBlockEntity> implements CreatureSpawner {
 
     public CraftCreatureSpawner(final Block block) {
         super(block, MobSpawnerBlockEntity.class);

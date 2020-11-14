@@ -290,13 +290,13 @@ public class CraftBlock implements Block {
             case DROPPER:
                 return new CardboardDropper(this);
             case END_GATEWAY:
-                return new CraftEndGateway(this);
+                return new CardboardEndGateway(this);
             case HOPPER:
                 return new CardboardHopper(this);
             case SPAWNER:
                 return new CraftCreatureSpawner(this);
             case JUKEBOX:
-                return new CraftJukebox(this);
+                return new CardboardJukebox(this);
             case BREWING_STAND:
                 return new CardboardBrewingStand(this);
             case CREEPER_HEAD:
@@ -352,7 +352,7 @@ public class CraftBlock implements Block {
             case YELLOW_WALL_BANNER:
                 return new CraftBanner(this);
             case STRUCTURE_BLOCK:
-                return new CraftStructureBlock(this);
+                return new CardboardStructureBlock(this);
             case SHULKER_BOX:
             case WHITE_SHULKER_BOX:
             case ORANGE_SHULKER_BOX:
@@ -419,8 +419,7 @@ public class CraftBlock implements Block {
             default:
                 BlockEntity tileEntity = world.getBlockEntity(position);
                 if (tileEntity != null) {
-                    // block with unhandled TileEntity:
-                    return new CraftBlockEntityState<BlockEntity>(this, (Class<BlockEntity>) tileEntity.getClass());
+                    return new CardboardBlockEntityState<BlockEntity>(this, (Class<BlockEntity>) tileEntity.getClass()); // block with unhandled BlockEntity:
                 } else return new CraftBlockState(this); // Block without BlockEntity
         }
     }

@@ -82,16 +82,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
-import org.cardboardpowered.impl.CardboardBossBar;
-import org.cardboardpowered.impl.IpBanList;
-import org.cardboardpowered.impl.ProfileBanList;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.cardboardpowered.impl.tag.BlockTagImpl;
-import org.cardboardpowered.impl.tag.FluidTagImpl;
-import org.cardboardpowered.impl.tag.ItemTagImpl;
-import org.cardboardpowered.impl.tag.TagImpl;
-import org.cardboardpowered.impl.util.IconCacheImpl;
-import org.cardboardpowered.impl.util.SimpleHelpMap;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
@@ -144,6 +134,18 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
+import org.cardboardpowered.impl.CardboardBossBar;
+import org.cardboardpowered.impl.IpBanList;
+import org.cardboardpowered.impl.ProfileBanList;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.recipe.CardboardBlastingRecipe;
+import org.cardboardpowered.impl.tag.BlockTagImpl;
+import org.cardboardpowered.impl.tag.FluidTagImpl;
+import org.cardboardpowered.impl.tag.ItemTagImpl;
+import org.cardboardpowered.impl.util.IconCacheImpl;
+import org.cardboardpowered.impl.util.SimpleHelpMap;
+import org.cardboardpowered.impl.world.ChunkDataImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -157,24 +159,20 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
-
-import org.cardboardpowered.impl.world.ChunkDataImpl;
-import org.cardboardpowered.impl.world.WorldImpl;
-import com.javazilla.bukkitfabric.impl.command.BukkitCommandWrapper;
-import com.javazilla.bukkitfabric.impl.command.CommandMapImpl;
-import com.javazilla.bukkitfabric.impl.command.ConsoleCommandSenderImpl;
-import com.javazilla.bukkitfabric.impl.command.MinecraftCommandWrapper;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftBlastingRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftCampfireRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftFurnaceRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftShapedRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftShapelessRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftSmithingRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftSmokingRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftStonecuttingRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeIterator;
-import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
+import org.cardboardpowered.impl.command.BukkitCommandWrapper;
+import org.cardboardpowered.impl.command.CommandMapImpl;
+import org.cardboardpowered.impl.command.ConsoleCommandSenderImpl;
+import org.cardboardpowered.impl.command.MinecraftCommandWrapper;
+import org.cardboardpowered.impl.inventory.recipe.CardboardCampfireRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardFurnaceRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardShapedRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardShapelessRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardSmithingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardSmokingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardStonecuttingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
+import org.cardboardpowered.impl.inventory.recipe.RecipeIterator;
+import org.cardboardpowered.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -468,21 +466,21 @@ public class CraftServer implements Server {
             toAdd = (RecipeInterface) recipe;
         } else {
             if (recipe instanceof ShapedRecipe) {
-                toAdd = CraftShapedRecipe.fromBukkitRecipe((ShapedRecipe) recipe);
+                toAdd = CardboardShapedRecipe.fromBukkitRecipe((ShapedRecipe) recipe);
             } else if (recipe instanceof ShapelessRecipe) {
-                toAdd = CraftShapelessRecipe.fromBukkitRecipe((ShapelessRecipe) recipe);
+                toAdd = CardboardShapelessRecipe.fromBukkitRecipe((ShapelessRecipe) recipe);
             } else if (recipe instanceof FurnaceRecipe) {
-                toAdd = CraftFurnaceRecipe.fromBukkitRecipe((FurnaceRecipe) recipe);
+                toAdd = CardboardFurnaceRecipe.fromBukkitRecipe((FurnaceRecipe) recipe);
             } else if (recipe instanceof BlastingRecipe) {
-                toAdd = CraftBlastingRecipe.fromBukkitRecipe((BlastingRecipe) recipe);
+                toAdd = CardboardBlastingRecipe.fromBukkitRecipe((BlastingRecipe) recipe);
             } else if (recipe instanceof CampfireRecipe) {
-                toAdd = CraftCampfireRecipe.fromBukkitRecipe((CampfireRecipe) recipe);
+                toAdd = CardboardCampfireRecipe.fromBukkitRecipe((CampfireRecipe) recipe);
             } else if (recipe instanceof SmokingRecipe) {
-                toAdd = CraftSmokingRecipe.fromBukkitRecipe((SmokingRecipe) recipe);
+                toAdd = CardboardSmokingRecipe.fromBukkitRecipe((SmokingRecipe) recipe);
             } else if (recipe instanceof StonecuttingRecipe) {
-                toAdd = CraftStonecuttingRecipe.fromBukkitRecipe((StonecuttingRecipe) recipe);
+                toAdd = CardboardStonecuttingRecipe.fromBukkitRecipe((StonecuttingRecipe) recipe);
             } else if (recipe instanceof SmithingRecipe) {
-                toAdd = CraftSmithingRecipe.fromBukkitRecipe((SmithingRecipe) recipe);
+                toAdd = CardboardSmithingRecipe.fromBukkitRecipe((SmithingRecipe) recipe);
             } else if (recipe instanceof ComplexRecipe) {
                 throw new UnsupportedOperationException("Cannot add custom complex recipe");
             } else return false;

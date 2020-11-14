@@ -25,11 +25,11 @@ import org.bukkit.help.HelpTopic;
 import org.bukkit.help.HelpTopicComparator;
 import org.bukkit.help.HelpTopicFactory;
 import org.bukkit.help.IndexHelpTopic;
+import org.cardboardpowered.impl.command.MinecraftCommandWrapper;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.javazilla.bukkitfabric.impl.command.MinecraftCommandWrapper;
 
 @SuppressWarnings("rawtypes")
 public class SimpleHelpMap implements HelpMap {

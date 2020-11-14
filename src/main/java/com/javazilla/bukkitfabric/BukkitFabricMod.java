@@ -30,8 +30,10 @@ import org.cardboardpowered.library.LibraryManager;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 
+@SuppressWarnings("deprecation")
 public class BukkitFabricMod implements ModInitializer {
 
     public static Logger LOGGER = BukkitLogger.getLogger();
@@ -40,6 +42,7 @@ public class BukkitFabricMod implements ModInitializer {
 
     public static List<ServerLoginNetworkHandler> NETWORK_CASHE = new ArrayList<>();
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onInitialize() {
         LOGGER.info("Bukkit for Fabric Mod - Javazilla.com");
@@ -48,7 +51,8 @@ public class BukkitFabricMod implements ModInitializer {
 
         try {
             MappingsReader.main(null);
-            // IngotReader.start();
+            if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                IngotReader.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -74,8 +74,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     public void setItem(int index, ItemStack item) {
         if (index < getResultInventory().size())
             getResultInventory().setStack(index, CraftItemStack.asNMSCopy(item));
-        else
-            getMatrixInventory().setStack((index - getResultInventory().size()), CraftItemStack.asNMSCopy(item));
+        else getMatrixInventory().setStack((index - getResultInventory().size()), CraftItemStack.asNMSCopy(item));
     }
 
     @Override
@@ -95,11 +94,8 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
         if (getMatrixInventory().size() > contents.length)
             throw new IllegalArgumentException("Invalid inventory size; expected " + getMatrixInventory().size() + " or less");
 
-        for (int i = 0; i < getMatrixInventory().size(); i++) {
-            if (i < contents.length)
-                 getMatrixInventory().setStack(i, CraftItemStack.asNMSCopy(contents[i]));
-            else getMatrixInventory().setStack(i, net.minecraft.item.ItemStack.EMPTY);
-        }
+        for (int i = 0; i < getMatrixInventory().size(); i++)
+            getMatrixInventory().setStack(i, (i < contents.length) ? CraftItemStack.asNMSCopy(contents[i]) : net.minecraft.item.ItemStack.EMPTY);
     }
 
     @Override

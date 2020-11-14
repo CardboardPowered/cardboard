@@ -2,7 +2,7 @@ package com.javazilla.bukkitfabric.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 
-import com.javazilla.bukkitfabric.impl.potion.PotionEffectTypeImpl;
+import org.cardboardpowered.impl.CardboardPotionEffectType;
 
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffects;
@@ -13,7 +13,7 @@ public class MixinStatusEffects {
 
     static {
         for (Object effect : Registry.STATUS_EFFECT) {
-            org.bukkit.potion.PotionEffectType.registerPotionEffectType(new PotionEffectTypeImpl((StatusEffect) effect));
+            org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
         }
     }
 

@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 
 import org.cardboardpowered.ingot.srglib.JavaType;
@@ -189,12 +190,19 @@ public class IngotReader {
         }
 
         File out = new File(fold, "ingot-cl-1.16.4.csrg");
-        String s = "# (C) CardboardPowered.org";
+        try {
+            out.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String s = "# (C) CardboardPowered.org\n";
+
         for (String str : classes_S2F.keySet()) {
-            s += "\n" + str.replace('.', '/') + " " + classes_S2F.get(str).replace('.','/');
+            String t = str.replace('.', '/') + " " + classes_S2F.get(str).replace('.','/') + "\n";
+            if (!t.contains("#") || t.startsWith("# (C) Cardboard")) s += t + "\n";
         }
         try {
-            Files.write(out.toPath(), s.getBytes());
+            Files.write(out.toPath(), s.getBytes(), StandardOpenOption.SYNC, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();
         }

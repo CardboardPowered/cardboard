@@ -5,11 +5,10 @@ import net.minecraft.block.entity.LecternBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lectern;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.inventory.Inventory;
 import org.cardboardpowered.impl.inventory.CardboardLecternInventory;
 
-public class CardboardLectern extends CraftBlockEntityState<LecternBlockEntity> implements Lectern {
+public class CardboardLectern extends CardboardBlockEntityState<LecternBlockEntity> implements Lectern {
 
     public CardboardLectern(Block block) {
         super(block, LecternBlockEntity.class);

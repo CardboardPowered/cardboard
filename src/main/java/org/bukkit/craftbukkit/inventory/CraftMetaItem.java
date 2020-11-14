@@ -53,6 +53,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.cardboardpowered.impl.CardboardAttributable;
+import org.cardboardpowered.impl.CardboardAttributeInstance;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -66,8 +68,6 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonParseException;
 import com.javazilla.bukkitfabric.Utils;
-import com.javazilla.bukkitfabric.impl.AttributableImpl;
-import com.javazilla.bukkitfabric.impl.AttributeInstanceImpl;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -349,13 +349,11 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         Set<String> keys = tag.getKeys();
         for (String key : keys)
-            if (!getHandledTags().contains(key))
-                unhandledTags.put(key, tag.get(key));
+            if (!getHandledTags().contains(key)) unhandledTags.put(key, tag.get(key));
     }
 
     static Map<Enchantment, Integer> buildEnchantments(CompoundTag tag, ItemMetaKey key) {
-        if (!tag.contains(key.NBT))
-            return null;
+        if (!tag.contains(key.NBT)) return null;
 
         ListTag ench = tag.getList(key.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
         Map<Enchantment, Integer> enchantments = new LinkedHashMap<Enchantment, Integer>(ench.size());
@@ -365,10 +363,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             int level = 0xffff & ((CompoundTag) ench.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
 
             Enchantment enchant = Enchantment.getByKey(CraftNamespacedKey.fromStringOrNull(id));
-            if (enchant != null)
-                enchantments.put(enchant, level);
+            if (enchant != null) enchantments.put(enchant, level);
         }
-
         return enchantments;
     }
 
@@ -382,22 +378,18 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         for (int i = 0; i < size; i++) {
             CompoundTag entry = mods.getCompound(i);
-            if (entry.isEmpty())
-                continue; // entry is not an actual CompoundTag. getCompound returns empty CompoundTag in that case
+            if (entry.isEmpty()) continue; // entry is not an actual CompoundTag. getCompound returns empty CompoundTag in that case
 
             EntityAttributeModifier nmsModifier = EntityAttributeModifier.fromTag(entry);
-            if (nmsModifier == null)
-                continue;
+            if (nmsModifier == null) continue;
 
-            AttributeModifier attribMod = AttributeInstanceImpl.convert(nmsModifier);
+            AttributeModifier attribMod = CardboardAttributeInstance.convert(nmsModifier);
 
             String attributeName = entry.getString(ATTRIBUTES_IDENTIFIER.NBT);
-            if (attributeName == null || attributeName.isEmpty())
-                continue;
+            if (attributeName == null || attributeName.isEmpty()) continue;
 
-            Attribute attribute = AttributableImpl.fromMinecraft(attributeName);
-            if (attribute == null)
-                continue;
+            Attribute attribute = CardboardAttributable.fromMinecraft(attributeName);
+            if (attribute == null) continue;
 
             if (entry.contains(ATTRIBUTES_SLOT.NBT, CraftMagicNumbers.NBT.TAG_STRING)) {
                 String slotName = entry.getString(ATTRIBUTES_SLOT.NBT);
@@ -629,7 +621,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
             if (entry.getKey() == null || entry.getValue() == null)
                 continue;
-            net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = AttributeInstanceImpl.convert(entry.getValue());
+            net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = CardboardAttributeInstance.convert(entry.getValue());
             CompoundTag sub = nmsModifier.toTag();
             if (sub.isEmpty())
                 continue;

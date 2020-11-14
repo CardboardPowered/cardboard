@@ -7,7 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import org.cardboardpowered.ingot.IngotReader;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 
@@ -25,7 +28,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 13;
+    public static int MAPPINGS_VERSION = 21 + new Date().getMinutes();
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
@@ -104,7 +107,8 @@ public class Remapper {
 
         // Spigot -> Intermediary
         File finalJar = new File(remappedDir, jarName + "-intermediary.jar");
-        runSpecialSource(spigot2inter, deversionify, finalJar);
+        System.out.println(IngotReader.finishedSetup);
+        runSpecialSource(IngotReader.finishedSetup ? IngotReader.outFile : spigot2inter, deversionify, finalJar);
 
         // Cleanup
         deversionify.delete();

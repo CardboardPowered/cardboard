@@ -55,7 +55,7 @@ import org.bukkit.util.Vector;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.Utils;
 import org.cardboardpowered.impl.world.WorldImpl;
-import com.javazilla.bukkitfabric.impl.potion.PotionUtil;
+import org.cardboardpowered.impl.CardboardPotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
@@ -180,7 +180,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
                 launch = new ArrowEntity(world, getHandle());
-                ((IMixinArrowEntity)(ArrowEntity) launch).setType(PotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
+                ((IMixinArrowEntity)(ArrowEntity) launch).setType(CardboardPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
                 launch = new SpectralArrowEntity(world, getHandle());
             } else if (Trident.class.isAssignableFrom(projectile)) {

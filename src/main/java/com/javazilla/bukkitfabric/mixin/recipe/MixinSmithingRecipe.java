@@ -6,8 +6,8 @@ import org.bukkit.inventory.Recipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftSmithingRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
+import org.cardboardpowered.impl.inventory.recipe.CardboardSmithingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.item.ItemStack;
@@ -26,7 +26,7 @@ public class MixinSmithingRecipe implements IMixinRecipe {
     @Override
     public Recipe toBukkitRecipe() {
         CraftItemStack result = CraftItemStack.asCraftMirror(this.result);
-        CraftSmithingRecipe recipe = new CraftSmithingRecipe(CraftNamespacedKey.fromMinecraft(this.id), result, RecipeInterface.toBukkit(this.base), RecipeInterface.toBukkit(this.addition));
+        CardboardSmithingRecipe recipe = new CardboardSmithingRecipe(CraftNamespacedKey.fromMinecraft(this.id), result, RecipeInterface.toBukkit(this.base), RecipeInterface.toBukkit(this.addition));
 
         return recipe;
     }

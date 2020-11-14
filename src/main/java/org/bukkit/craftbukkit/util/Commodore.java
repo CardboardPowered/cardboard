@@ -22,6 +22,7 @@ import com.javazilla.bukkitfabric.nms.Remapper;
  * @author md_5
  * @author Bukkit4Fabric Mod
  */
+@SuppressWarnings("deprecation")
 public class Commodore {
 
     // BF: define CB classes in fields

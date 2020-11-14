@@ -8,10 +8,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Beehive;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.entity.Bee;
 
-public class CardboardBeehive extends CraftBlockEntityState<BeehiveBlockEntity> implements Beehive {
+public class CardboardBeehive extends CardboardBlockEntityState<BeehiveBlockEntity> implements Beehive {
 
     public CardboardBeehive(final Block block) {
         super(block, BeehiveBlockEntity.class);

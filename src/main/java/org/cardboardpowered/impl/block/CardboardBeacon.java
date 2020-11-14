@@ -8,13 +8,12 @@ import net.minecraft.inventory.ContainerLock;
 import org.bukkit.Material;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class CardboardBeacon extends CraftBlockEntityState<BeaconBlockEntity> implements Beacon {
+public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity> implements Beacon {
 
     public CardboardBeacon(final Block block) {
         super(block, BeaconBlockEntity.class);

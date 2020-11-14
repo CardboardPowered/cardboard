@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.impl.map.MapViewImpl;
+import org.cardboardpowered.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
 
 import net.minecraft.item.map.MapState;

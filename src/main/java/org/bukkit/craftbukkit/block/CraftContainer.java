@@ -6,8 +6,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 
-public abstract class CraftContainer<T extends LockableContainerBlockEntity> extends CraftBlockEntityState<T> implements Container {
+public abstract class CraftContainer<T extends LockableContainerBlockEntity> extends CardboardBlockEntityState<T> implements Container {
 
     public CraftContainer(Block block, Class<T> tileEntityClass) {
         super(block, tileEntityClass);

@@ -4,9 +4,8 @@ import net.minecraft.block.entity.BellBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Bell;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 
-public class CardboardBell extends CraftBlockEntityState<BellBlockEntity> implements Bell {
+public class CardboardBell extends CardboardBlockEntityState<BellBlockEntity> implements Bell {
 
     public CardboardBell(Block block) {
         super(block, BellBlockEntity.class);

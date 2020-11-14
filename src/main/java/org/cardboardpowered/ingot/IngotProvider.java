@@ -8,8 +8,6 @@ import org.objectweb.asm.Opcodes;
 
 import com.javazilla.bukkitfabric.nms.Provider;
 
-import net.md_5.specialsource.SpecialSource;
-
 public class IngotProvider implements Provider {
 
     @Override
@@ -19,17 +17,17 @@ public class IngotProvider implements Provider {
 
     @Override
     public boolean runSpecialSource(File mappingsFile, File inJar, File outJar) {
-        if (mappingsFile.getName().contains("deversionify"))
+        //if (mappingsFile.getName().contains("deversionify"))
             return false;
 
-        String[] args = {"-q", "-i", inJar.getAbsolutePath(), "-o", outJar.getAbsolutePath(), "-m", IngotReader.outFile.getAbsolutePath()};
+        /*String[] args = {"-q", "-i", inJar.getAbsolutePath(), "-o", outJar.getAbsolutePath(), "-m", IngotReader.outFile.getAbsolutePath()};
         try {
             SpecialSource.main(args);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
-    }
+    */}
 
     @Override
     public boolean shouldReplaceASM() {

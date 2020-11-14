@@ -5,8 +5,8 @@ import org.bukkit.inventory.RecipeChoice;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.impl.inventory.recipe.CraftShapedRecipe;
-import com.javazilla.bukkitfabric.impl.inventory.recipe.RecipeInterface;
+import org.cardboardpowered.impl.inventory.recipe.CardboardShapedRecipe;
+import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.item.ItemStack;
@@ -25,7 +25,7 @@ public class MixinShapedRecipe implements IMixinRecipe {
 
     public org.bukkit.inventory.ShapedRecipe toBukkitRecipe() {
         CraftItemStack result = CraftItemStack.asCraftMirror(this.output);
-        CraftShapedRecipe recipe = new CraftShapedRecipe(result, (ShapedRecipe)(Object)this);
+        CardboardShapedRecipe recipe = new CardboardShapedRecipe(result, (ShapedRecipe)(Object)this);
         recipe.setGroup(this.group);
 
         switch (this.height) {

@@ -5,10 +5,9 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Bed;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.block.CraftBlockEntityState;
 
 @SuppressWarnings("deprecation")
-public class CardboardBed extends CraftBlockEntityState<BedBlockEntity> implements Bed {
+public class CardboardBed extends CardboardBlockEntityState<BedBlockEntity> implements Bed {
 
     public CardboardBed(Block block) {
         super(block, BedBlockEntity.class);

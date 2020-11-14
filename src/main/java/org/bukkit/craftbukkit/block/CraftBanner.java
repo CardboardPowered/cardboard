@@ -13,8 +13,10 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 
-public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implements Banner {
+@SuppressWarnings("deprecation")
+public class CraftBanner extends CardboardBlockEntityState<BannerBlockEntity> implements Banner {
 
     private DyeColor base;
     private List<Pattern> patterns;
@@ -93,7 +95,6 @@ public class CraftBanner extends CraftBlockEntityState<BannerBlockEntity> implem
         super.applyTo(banner);
 
         banner.baseColor = net.minecraft.util.DyeColor.byId(base.getWoolData());
-
         ListTag newPatterns = new ListTag();
 
         for (Pattern p : patterns) {

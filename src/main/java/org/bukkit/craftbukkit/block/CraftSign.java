@@ -8,10 +8,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 
-public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements Sign {
+public class CraftSign extends CardboardBlockEntityState<SignBlockEntity> implements Sign {
 
     private String[] lines;
     private boolean editable;
@@ -27,7 +28,6 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
     @Override
     public void load(SignBlockEntity sign) {
         super.load(sign);
-
         lines = new String[((IMixinSignBlockEntity)sign).getTextBF().length];
         System.arraycopy(revertComponents(((IMixinSignBlockEntity)sign).getTextBF()), 0, lines, 0, lines.length);
         editable = sign.editable;
@@ -83,7 +83,6 @@ public class CraftSign extends CraftBlockEntityState<SignBlockEntity> implements
         Text[] components = new Text[4];
         for (int i = 0; i < 4; i++)
             components[i] = (i < lines.length && lines[i] != null) ? CraftChatMessage.fromString(lines[i])[0] : new LiteralText("");
-
         return components;
     }
 
