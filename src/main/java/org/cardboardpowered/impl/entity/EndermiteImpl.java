@@ -28,12 +28,12 @@ public class EndermiteImpl extends MonsterImpl implements Endermite {
 
     @Override
     public boolean isPlayerSpawned() {
-        return getHandle().isPlayerSpawned();
+        return false; // TODO 1.17 return getHandle().isPlayerSpawned();
     }
 
     @Override
     public void setPlayerSpawned(boolean playerSpawned) {
-        getHandle().setPlayerSpawned(playerSpawned);
+        // TODO 1.17 getHandle().setPlayerSpawned(playerSpawned);
     }
 
 }

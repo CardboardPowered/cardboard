@@ -1,6 +1,0 @@
-net/minecraft/server/v1_16_R1/ net/minecraft/server
-org/bukkit/craftbukkit/v1_16_R1/ org/bukkit/craftbukkit
-net/minecraft/server/v1_16_R2/ net/minecraft/server
-org/bukkit/craftbukkit/v1_16_R2/ org/bukkit/craftbukkit
-net/minecraft/server/v1_16_R3/ net/minecraft/server
-org/bukkit/craftbukkit/v1_16_R3/ org/bukkit/craftbukkit

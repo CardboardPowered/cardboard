@@ -20,14 +20,15 @@ import net.minecraft.util.math.BlockPos;
 @Mixin(CampfireBlockEntity.class)
 public class MixinCampfireBlockEntity {
 
-    @Shadow
-    public DefaultedList<ItemStack> itemsBeingCooked;
+    //@Shadow
+    //public DefaultedList<ItemStack> itemsBeingCooked;
 
     /**
      * @author BukkitFabric
      * @reason BlockCookEvent
      */
-    @Overwrite
+    // TODO 1.17
+    /*@Overwrite
     public void updateItemsBeingCooked() {
         CampfireBlockEntity nms = (CampfireBlockEntity)(Object)this;
         for (int i = 0; i < this.itemsBeingCooked.size(); ++i) {
@@ -61,6 +62,6 @@ public class MixinCampfireBlockEntity {
             }
         }
 
-    }
+    }*/
 
 }

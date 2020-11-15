@@ -28,7 +28,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 21 + new Date().getMinutes();
+    public static int MAPPINGS_VERSION = 21;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 

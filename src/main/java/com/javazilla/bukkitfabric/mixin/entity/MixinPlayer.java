@@ -177,7 +177,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                 this.closeHandledScreen();
 
             this.nextContainerCounter();
-            ScreenHandler container = itileinventory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));
+            ScreenHandler container = itileinventory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).getInventory(), ((ServerPlayerEntity)(Object)this));
 
             if (container != null) {
                 ((IMixinScreenHandler)container).setTitle(itileinventory.getDisplayName());
@@ -206,16 +206,16 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
     public void bukkitizeDeath(DamageSource damagesource, CallbackInfo ci) {
         boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
-        if (((ServerPlayerEntity)(Object)this).removed) {
+        if (((ServerPlayerEntity)(Object)this).isRemoved()) {
             ci.cancel();
             return;
         }
 
-        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).inventory.size());
+        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).getInventory().size());
         boolean keepInventory = this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || ((ServerPlayerEntity)(Object)this).isSpectator();
 
         if (!keepInventory)
-            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).inventory.combinedInventory)
+            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).getInventory().combinedInventory)
                 for (ItemStack item : items)
                     if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item))
                         loot.add(CraftItemStack.asCraftMirror(item));
@@ -265,7 +265,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         // SPIGOT-5478 must be called manually now
         ((ServerPlayerEntity)(Object)this).dropXp();
         // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
-        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).inventory.clear();
+        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).getInventory().clear();
 
         ((ServerPlayerEntity)(Object)this).setCameraEntity(((ServerPlayerEntity)(Object)this)); // Remove spectated target
         // CraftBukkit end

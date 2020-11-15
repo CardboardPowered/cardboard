@@ -45,14 +45,17 @@ public class BukkitFabricMod implements ModInitializer {
     @SuppressWarnings("deprecation")
     @Override
     public void onInitialize() {
-        LOGGER.info("Bukkit for Fabric Mod - Javazilla.com");
+        LOGGER.info("");
+        LOGGER.info("Cardboard (formerly Bukkit4Fabric) Mod - CardboardPowered.org");
+        LOGGER.info("Version: 1.17-snapshot-ea");
+        LOGGER.info("");
 
         loadLibs();
 
         try {
             MappingsReader.main(null);
-            if (FabricLoader.getInstance().isDevelopmentEnvironment())
-                IngotReader.start();
+           // if (FabricLoader.getInstance().isDevelopmentEnvironment())
+           //     IngotReader.start();
         } catch (IOException e) {
             e.printStackTrace();
         }

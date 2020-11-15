@@ -1238,6 +1238,14 @@ public class CraftServer implements Server {
 
     @Override
     public String getVersion() {
+        // 1.17 change for snapshots:
+        // Fake game version as 1.16.4 to trick plugins, like WorldEdit,
+        // to think we are running a supported version.
+
+        return serverVersion + " (MC: 1.16.4)"; //return serverVersion + " (MC: " + getServer().getVersion() + ")";
+    }
+
+    public String getRealVersion() {
         return serverVersion + " (MC: " + getServer().getVersion() + ")";
     }
 

@@ -75,7 +75,8 @@ public class MixinBrewingStandBlockEntity implements IMixinInventory {
      * @author BukkitFabric
      * @reason BrewingStandFuelEvent
      */
-    @Overwrite
+    // TODO 1.17
+    /*@Overwrite
     public void tick() {
         BrewingStandBlockEntity nms = (BrewingStandBlockEntity)(Object)this;
         ItemStack itemstack = (ItemStack) this.inventory.get(4);
@@ -137,9 +138,10 @@ public class MixinBrewingStandBlockEntity implements IMixinInventory {
             }
         }
 
-    }
+    }*/
 
-    @Inject(at = @At("HEAD"), method = "craft", cancellable = true)
+    // TODO 1.17
+    /*@Inject(at = @At("HEAD"), method = "craft", cancellable = true)
     public void doCraft(CallbackInfo ci) {
         InventoryHolder owner = this.getOwner();
         if (owner != null) {
@@ -151,7 +153,7 @@ public class MixinBrewingStandBlockEntity implements IMixinInventory {
                 return;
             }
         }
-    }
+    }*/
 
     @Override public InventoryHolder getOwner() {return null;}
     @Override public Location getLocation() {return null;}

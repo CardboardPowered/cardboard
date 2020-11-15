@@ -49,6 +49,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
@@ -109,7 +110,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity entityplayer, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
         entityplayer.stopRiding(); // CraftBukkit
         this.players.remove(entityplayer);
-        entityplayer.getServerWorld().removePlayer(entityplayer);
+        entityplayer.getServerWorld().removePlayer(entityplayer, RemovalReason.CHANGED_DIMENSION);
 
         BlockPos blockposition = entityplayer.getSpawnPointPosition();
         float f = entityplayer.getSpawnAngle();
@@ -183,7 +184,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         WorldProperties worlddata = worldserver.getLevelProperties();
         entityplayer.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver.getDimension(), worldserver.getRegistryKey(), BiomeAccess.hashSeed(worldserver.getSeed()), entityplayer.interactionManager.getGameMode(), entityplayer.interactionManager.getPreviousGameMode(), worldserver.isDebugWorld(), worldserver.isFlat(), flag));
         entityplayer.setWorld(worldserver);
-        entityplayer.removed = false;
+        // TODO 1.17 entityplayer.removed = false;
         entityplayer.teleport(worldserver, location.getX(), location.getY(), location.getZ(), entityplayer.yaw, entityplayer.pitch);
         entityplayer.setSneaking(false);
 

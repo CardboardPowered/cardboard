@@ -43,15 +43,15 @@ public class CardboardBlockEntityState<T extends BlockEntity> extends CraftBlock
         if (tileEntity == null) return null;
 
         CompoundTag nbtTagCompound = tileEntity.toTag(new CompoundTag());
-        T snapshot = (T) BlockEntity.createFromTag(data, nbtTagCompound);
+        T snapshot = (T) BlockEntity.createFromTag(getPosition(), data, nbtTagCompound);
         return snapshot;
     }
 
     private void copyData(T from, T to) {
         BlockPos pos = to.getPos();
         CompoundTag nbtTagCompound = from.toTag(new CompoundTag());
-        to.fromTag(data, nbtTagCompound);
-        to.setPos(pos);
+        to.createFromTag(pos, data, nbtTagCompound); // TODO 1.17: check if correct
+        to.pos = pos;
     }
 
     public T getTileEntity() {

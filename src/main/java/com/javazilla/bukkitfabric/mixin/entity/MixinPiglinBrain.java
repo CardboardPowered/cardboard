@@ -40,7 +40,8 @@ public class MixinPiglinBrain {
      * @reason .
      * @author .
      */
-    @Overwrite
+    // TODO 1.17
+    /*@Overwrite
     public static void loot(PiglinEntity entitypiglin, ItemEntity entityitem) {
         stopWalking(entitypiglin);
         ItemStack itemstack;
@@ -65,10 +66,10 @@ public class MixinPiglinBrain {
         } else {
             if (!entitypiglin.tryEquip(itemstack)) barterItem(entitypiglin, itemstack);
         }
-    }
+    }*/
 
     // This class likes static methods
-    @Shadow public static boolean isGoldenItem(Item item) {return false;}
+    /*@Shadow public static boolean isGoldenItem(Item item) {return false;}
     @Shadow public static void setEatenRecently(PiglinEntity entitypiglin) {}
     @Shadow public static void setAdmiringItem(LivingEntity entityliving) {}
     @Shadow public static boolean hasAteRecently(PiglinEntity entitypiglin) {return false;}
@@ -76,6 +77,6 @@ public class MixinPiglinBrain {
     @Shadow public static ItemStack getItemFromStack(ItemEntity entityitem) {return null;}
     @Shadow public static void swapItemWithOffHand(PiglinEntity entitypiglin, ItemStack itemstack) {}
     @Shadow public static void stopWalking(PiglinEntity entitypiglin) {}
-    @Shadow public static void barterItem(PiglinEntity entitypiglin, ItemStack itemstack) {}
+    @Shadow public static void barterItem(PiglinEntity entitypiglin, ItemStack itemstack) {}*/
 
 }
