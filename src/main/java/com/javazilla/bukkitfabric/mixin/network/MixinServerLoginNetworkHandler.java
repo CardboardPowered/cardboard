@@ -5,10 +5,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.security.PrivateKey;
-import java.util.Arrays;
 import java.util.UUID;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.lang3.Validate;
@@ -19,6 +17,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
+import org.cardboardpowered.login.LoginKeyHandler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -31,7 +30,6 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
@@ -39,12 +37,10 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkEncryptionUtils;
-import net.minecraft.network.encryption.NetworkEncryptionException;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.login.LoginHelloS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -93,9 +89,17 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);
         PrivateKey privatekey = this.server.getKeyPair().getPrivate();
 
-        //if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
-        //    throw new IllegalStateException("Invalid nonce!");
-        //} else {
+        /*if (server.getVersion().equalsIgnoreCase("1.16.3")) {
+            // Hacky way to support 1.16.3
+            try {
+                this.secretKey = keyPacket.decryptSecretKey(privatekey);
+                this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
+                Method m = this.connection.getClass().getDeclaredMethod("setupEncryption", SecretKey.class);
+                m.invoke(this.connection, this.secretKey);
+            } catch (Exception e) {
+                throw new IllegalStateException("Protocol error", e);
+            }
+        } else {
             try {
                 if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
                     throw new IllegalStateException("Protocol error");
@@ -109,6 +113,11 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             } catch (NetworkEncryptionException networkEncryptionException) {
                 throw new IllegalStateException("Protocol error", networkEncryptionException);
             }
+        }*/
+        LoginKeyHandler h = LoginKeyHandler.getLoginKeyHandler(state, secretKey, privatekey);
+        h.onKey(keyPacket, connection, nonce, server);
+        this.state = h.state;
+        this.secretKey = h.secretKey;
 
             Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
                 public void run() {
