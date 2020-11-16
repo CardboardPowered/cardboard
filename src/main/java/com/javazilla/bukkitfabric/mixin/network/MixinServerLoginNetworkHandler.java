@@ -89,31 +89,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);
         PrivateKey privatekey = this.server.getKeyPair().getPrivate();
 
-        /*if (server.getVersion().equalsIgnoreCase("1.16.3")) {
-            // Hacky way to support 1.16.3
-            try {
-                this.secretKey = keyPacket.decryptSecretKey(privatekey);
-                this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
-                Method m = this.connection.getClass().getDeclaredMethod("setupEncryption", SecretKey.class);
-                m.invoke(this.connection, this.secretKey);
-            } catch (Exception e) {
-                throw new IllegalStateException("Protocol error", e);
-            }
-        } else {
-            try {
-                if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
-                    throw new IllegalStateException("Protocol error");
-                }
-                this.secretKey = keyPacket.decryptSecretKey(privatekey);
-                Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, this.secretKey);
-                Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, this.secretKey);
-                String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", this.server.getKeyPair().getPublic(), this.secretKey)).toString(16);
-                this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
-                this.connection.setupEncryption(cipher, cipher2);
-            } catch (NetworkEncryptionException networkEncryptionException) {
-                throw new IllegalStateException("Protocol error", networkEncryptionException);
-            }
-        }*/
         LoginKeyHandler h = LoginKeyHandler.getLoginKeyHandler(state, secretKey, privatekey);
         h.onKey(keyPacket, connection, nonce, server);
         this.state = h.state;
@@ -128,9 +103,8 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
                         profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
                         if (profile != null) {
-                            // CraftBukkit start - fire PlayerPreLoginEvent
-                            if (!connection.isOpen())
-                                return;
+                            // Fire PlayerPreLoginEvent
+                            if (!connection.isOpen()) return;
                             fireEvents();
                         } else if (server.isSinglePlayer()) {
                             LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
