@@ -54,6 +54,7 @@ import org.cardboardpowered.impl.entity.CardboardMinecart;
 import org.cardboardpowered.impl.entity.CardboardPanda;
 import org.cardboardpowered.impl.entity.CardboardSilverfish;
 import org.cardboardpowered.impl.entity.CardboardSnowman;
+import org.cardboardpowered.impl.entity.CardboardThrownExpBottle;
 import org.cardboardpowered.impl.entity.CardboardWaterMob;
 import org.cardboardpowered.impl.entity.CatImpl;
 import org.cardboardpowered.impl.entity.CaveSpiderImpl;
@@ -157,6 +158,7 @@ import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.thrown.EggEntity;
+import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
@@ -422,7 +424,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             else if (entity instanceof SnowballEntity) { return new SnowballImpl(server, (SnowballEntity) entity); }
             //else if (entity instanceof PotionEntity) { return new CraftThrownPotion(server, (PotionEntity) entity); }
             //else if (entity instanceof EnderPearlEntity) { return new CraftEnderPearl(server, (EnderPearlEntity) entity); }
-            //else if (entity instanceof ExperienceBottleEntity) { return new CraftThrownExpBottle(server, (ExperienceBottleEntity) entity); }
+            else if (entity instanceof ExperienceBottleEntity) { return new CardboardThrownExpBottle(server, (ExperienceBottleEntity) entity); }
+            
         }
         else if (entity instanceof FallingBlockEntity) { return new FallingBlockImpl(server, (FallingBlockEntity) entity); }
         else if (entity instanceof ExplosiveProjectileEntity) {
