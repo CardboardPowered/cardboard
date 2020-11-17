@@ -46,6 +46,8 @@ import org.cardboardpowered.impl.entity.AbstractVillagerImpl;
 import org.cardboardpowered.impl.entity.AnimalsImpl;
 import org.cardboardpowered.impl.entity.ArmorStandImpl;
 import org.cardboardpowered.impl.entity.ArrowImpl;
+import org.cardboardpowered.impl.entity.CardboardAmbient;
+import org.cardboardpowered.impl.entity.CardboardBat;
 import org.cardboardpowered.impl.entity.CardboardDolphin;
 import org.cardboardpowered.impl.entity.CardboardEnderPearl;
 import org.cardboardpowered.impl.entity.CardboardFish;
@@ -123,6 +125,7 @@ import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
+import net.minecraft.entity.mob.AmbientEntity;
 import net.minecraft.entity.mob.CaveSpiderEntity;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.DrownedEntity;
@@ -151,6 +154,7 @@ import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.CodEntity;
@@ -423,10 +427,10 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 //return new CraftEnderDragon(server, (EnderDragonEntity) entity);
             //}
             // Ambient
-            //else if (entity instanceof AmbientEntity) {
-                //if (entity instanceof BatEntity) { return new CraftBat(server, (BatEntity) entity); }
-                //else { return new CraftAmbient(server, (AmbientEntity) entity); }
-            //}
+            else if (entity instanceof AmbientEntity) {
+                if (entity instanceof BatEntity) { return new CardboardBat(server, (BatEntity) entity); }
+                else { return new CardboardAmbient(server, (AmbientEntity) entity); }
+            }
             else if (entity instanceof ArmorStandEntity) { return new ArmorStandImpl(server, (ArmorStandEntity) entity); }
             else  { return new LivingEntityImpl(server, (LivingEntity) entity); }
         }
