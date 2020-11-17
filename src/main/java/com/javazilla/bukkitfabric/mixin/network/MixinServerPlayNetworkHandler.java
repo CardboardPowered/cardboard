@@ -570,7 +570,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     @Inject(at = @At("HEAD"), method = "onPlayerInteractItem", cancellable = true)
     public void onPlayerInteractItemBF(PlayerInteractItemC2SPacket packetplayinblockplace, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packetplayinblockplace, get(), this.player.getServerWorld());
-        ServerWorld worldserver = this.player.getServerWorld();
         Hand enumhand = packetplayinblockplace.getHand();
         ItemStack itemstack = this.player.getStackInHand(enumhand);
 
@@ -610,14 +609,9 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
             if (cancelled) {
                 ((Player)((IMixinServerEntityPlayer)this.player).getBukkitEntity()).updateInventory(); // SPIGOT-2524
+                ci.cancel();
                 return;
             }
-            ActionResult enuminteractionresult = this.player.interactionManager.interactItem(this.player, worldserver, itemstack, enumhand);
-            if (enuminteractionresult.shouldSwingHand())
-                this.player.swingHand(enumhand, true);
-
-           // ci.cancel();
-            //return;
         }
     }
 

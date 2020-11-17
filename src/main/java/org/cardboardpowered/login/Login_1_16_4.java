@@ -21,6 +21,7 @@ public class Login_1_16_4 extends LoginKeyHandler {
         super(state, key, privatekey);
     }
 
+    @SuppressWarnings("unused")
     @Override
     public void onKey(LoginKeyC2SPacket keyPacket, ClientConnection connection, byte[] nonce, MinecraftServer server) {
         Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);

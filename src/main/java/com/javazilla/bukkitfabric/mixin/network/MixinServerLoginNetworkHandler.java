@@ -94,54 +94,49 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         this.state = h.state;
         this.secretKey = h.secretKey;
 
-            Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
-                public void run() {
-                    GameProfile gameprofile = profile;
+        Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
+            @Override
+            public void run() {
+                GameProfile gameprofile = profile;
 
-                    try {
-                        String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
-
-                        profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
-                        if (profile != null) {
-                            // Fire PlayerPreLoginEvent
-                            if (!connection.isOpen()) return;
-                            fireEvents();
-                        } else if (server.isSinglePlayer()) {
-                            LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
-                            profile = toOfflineProfile(gameprofile);
-                            state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
-                        } else {
-                            disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
-                            LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
-                        }
-                    } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                        if (server.isSinglePlayer()) {
-                            LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
-                            profile = toOfflineProfile(gameprofile);
-                            state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
-                        } else {
-                            disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
-                            LOGGER_BF.error("Couldn't verify username because servers are unavailable");
-                        }
-                        // CraftBukkit start - catch all exceptions
-                    } catch (Exception exception) {
-                        disconnect("Failed to verify username!");
-                        LOGGER_BF.log(Level.WARN, "Exception verifying " + gameprofile.getName(), exception);
-                        // CraftBukkit end
+                try {
+                    String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
+                    profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
+                    if (profile != null) {
+                        // Fire PlayerPreLoginEvent
+                        if (!connection.isOpen()) return;
+                        fireEvents();
+                    } else if (server.isSinglePlayer()) {
+                        LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
+                        profile = toOfflineProfile(gameprofile);
+                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                    } else {
+                        disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
+                        LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
                     }
-
+                } catch (AuthenticationUnavailableException authenticationunavailableexception) {
+                    if (server.isSinglePlayer()) {
+                        LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
+                        profile = toOfflineProfile(gameprofile);
+                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                    } else {
+                        disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
+                        LOGGER_BF.error("Couldn't verify username because servers are unavailable");
+                    }
+                } catch (Exception exception) {
+                    disconnect("Failed to verify username!");
+                    LOGGER_BF.log(Level.WARN, "Exception verifying " + gameprofile.getName(), exception);
                 }
+            }
 
-                @Nullable
-                private InetAddress a() {
-                    SocketAddress socketaddress = connection.getAddress();
-                    return server.shouldPreventProxyConnections() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
-                }
-            };
-
-            thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
-            thread.start();
-        //}
+            @Nullable
+            private InetAddress a() {
+                SocketAddress socketaddress = connection.getAddress();
+                return server.shouldPreventProxyConnections() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
+            }
+        };
+        thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
+        thread.start();
     }
 
     public void fireEvents() throws Exception {
