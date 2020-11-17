@@ -46,6 +46,7 @@ import org.cardboardpowered.impl.entity.AbstractVillagerImpl;
 import org.cardboardpowered.impl.entity.AnimalsImpl;
 import org.cardboardpowered.impl.entity.ArmorStandImpl;
 import org.cardboardpowered.impl.entity.ArrowImpl;
+import org.cardboardpowered.impl.entity.CardboardEnderPearl;
 import org.cardboardpowered.impl.entity.CardboardFishHook;
 import org.cardboardpowered.impl.entity.CardboardGhast;
 import org.cardboardpowered.impl.entity.CardboardHanging;
@@ -55,6 +56,7 @@ import org.cardboardpowered.impl.entity.CardboardPanda;
 import org.cardboardpowered.impl.entity.CardboardSilverfish;
 import org.cardboardpowered.impl.entity.CardboardSnowman;
 import org.cardboardpowered.impl.entity.CardboardThrownExpBottle;
+import org.cardboardpowered.impl.entity.CardboardThrownPotion;
 import org.cardboardpowered.impl.entity.CardboardWaterMob;
 import org.cardboardpowered.impl.entity.CatImpl;
 import org.cardboardpowered.impl.entity.CaveSpiderImpl;
@@ -158,7 +160,9 @@ import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.thrown.EggEntity;
+import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
 import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
+import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
@@ -422,8 +426,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         else if (entity instanceof ThrownEntity) {
             if (entity instanceof EggEntity) { return new EggImpl(server, (EggEntity) entity); }
             else if (entity instanceof SnowballEntity) { return new SnowballImpl(server, (SnowballEntity) entity); }
-            //else if (entity instanceof PotionEntity) { return new CraftThrownPotion(server, (PotionEntity) entity); }
-            //else if (entity instanceof EnderPearlEntity) { return new CraftEnderPearl(server, (EnderPearlEntity) entity); }
+            else if (entity instanceof PotionEntity) { return new CardboardThrownPotion(server, (PotionEntity) entity); }
+            else if (entity instanceof EnderPearlEntity) { return new CardboardEnderPearl(server, (EnderPearlEntity) entity); }
             else if (entity instanceof ExperienceBottleEntity) { return new CardboardThrownExpBottle(server, (ExperienceBottleEntity) entity); }
             
         }
