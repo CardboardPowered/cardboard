@@ -46,15 +46,24 @@ import org.cardboardpowered.impl.entity.AbstractVillagerImpl;
 import org.cardboardpowered.impl.entity.AnimalsImpl;
 import org.cardboardpowered.impl.entity.ArmorStandImpl;
 import org.cardboardpowered.impl.entity.ArrowImpl;
+import org.cardboardpowered.impl.entity.CardboardDolphin;
 import org.cardboardpowered.impl.entity.CardboardEnderPearl;
+import org.cardboardpowered.impl.entity.CardboardFish;
+import org.cardboardpowered.impl.entity.CardboardFishCod;
 import org.cardboardpowered.impl.entity.CardboardFishHook;
+import org.cardboardpowered.impl.entity.CardboardFishPufferfish;
+import org.cardboardpowered.impl.entity.CardboardFishSalmon;
+import org.cardboardpowered.impl.entity.CardboardFishTropical;
 import org.cardboardpowered.impl.entity.CardboardGhast;
 import org.cardboardpowered.impl.entity.CardboardHanging;
 import org.cardboardpowered.impl.entity.CardboardIronGolem;
+import org.cardboardpowered.impl.entity.CardboardLlamaSpit;
 import org.cardboardpowered.impl.entity.CardboardMinecart;
 import org.cardboardpowered.impl.entity.CardboardPanda;
+import org.cardboardpowered.impl.entity.CardboardShulker;
 import org.cardboardpowered.impl.entity.CardboardSilverfish;
 import org.cardboardpowered.impl.entity.CardboardSnowman;
+import org.cardboardpowered.impl.entity.CardboardSquid;
 import org.cardboardpowered.impl.entity.CardboardThrownExpBottle;
 import org.cardboardpowered.impl.entity.CardboardThrownPotion;
 import org.cardboardpowered.impl.entity.CardboardWaterMob;
@@ -126,6 +135,7 @@ import net.minecraft.entity.mob.HuskEntity;
 import net.minecraft.entity.mob.IllagerEntity;
 import net.minecraft.entity.mob.MagmaCubeEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.mob.SilverfishEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.mob.SpellcastingIllagerEntity;
@@ -140,7 +150,10 @@ import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CodEntity;
 import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.DolphinEntity;
+import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.passive.GolemEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
@@ -148,8 +161,12 @@ import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.passive.ParrotEntity;
 import net.minecraft.entity.passive.PolarBearEntity;
+import net.minecraft.entity.passive.PufferfishEntity;
+import net.minecraft.entity.passive.SalmonEntity;
 import net.minecraft.entity.passive.SnowGolemEntity;
+import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
@@ -157,6 +174,7 @@ import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.entity.projectile.LlamaSpitEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.entity.projectile.thrown.EggEntity;
@@ -277,17 +295,16 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             }
             // Water Animals
             else if (entity instanceof WaterCreatureEntity) {
-                /*if (entity instanceof SquidEntity) { return new CraftSquid(server, (SquidEntity) entity); }
+                if (entity instanceof SquidEntity) { return new CardboardSquid(server, (SquidEntity) entity); }
                 else if (entity instanceof FishEntity) {
-                    if (entity instanceof CodEntity) { return new CraftCod(server, (CodEntity) entity); }
-                    else if (entity instanceof PufferfishEntity) { return new CraftPufferFish(server, (PufferfishEntity) entity); }
-                    else if (entity instanceof SalmonEntity) { return new CraftSalmon(server, (SalmonEntity) entity); }
-                    else if (entity instanceof TropicalFishEntity) { return new CraftTropicalFish(server, (TropicalFishEntity) entity); }
-                    else { return new CraftFish(server, (FishEntity) entity); }
+                    if (entity instanceof CodEntity) { return new CardboardFishCod(server, (CodEntity) entity); }
+                    else if (entity instanceof PufferfishEntity) { return new CardboardFishPufferfish(server, (PufferfishEntity) entity); }
+                    else if (entity instanceof SalmonEntity) { return new CardboardFishSalmon(server, (SalmonEntity) entity); }
+                    else if (entity instanceof TropicalFishEntity) { return new CardboardFishTropical(server, (TropicalFishEntity) entity); }
+                    else { return new CardboardFish(server, (FishEntity) entity); }
                 }
-                //else if (entity instanceof DolphinEntity) { return new CraftDolphin(server, (DolphinEntity) entity); }
-                //else { return new CraftWaterMob(server, (WaterCreatureEntity) entity); }*/
-                return new CardboardWaterMob(server, (WaterCreatureEntity) entity);
+                else if (entity instanceof DolphinEntity) { return new CardboardDolphin(server, (DolphinEntity) entity); }
+                else { return new CardboardWaterMob(server, (WaterCreatureEntity) entity); }
             }
             else if (entity instanceof PathAwareEntity) {
                 // Animals
@@ -379,7 +396,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 else if (entity instanceof GolemEntity) {
                     if (entity instanceof SnowGolemEntity) { return new CardboardSnowman(server, (SnowGolemEntity) entity); }
                     else if (entity instanceof IronGolemEntity) { return new CardboardIronGolem(server, (IronGolemEntity) entity); }
-                    //else if (entity instanceof ShulkerEntity) { return new CraftShulker(server, (ShulkerEntity) entity); }
+                    else if (entity instanceof ShulkerEntity) { return new CardboardShulker(server, (ShulkerEntity) entity); }
                 }
                 else if (entity instanceof MerchantEntity) {
                     if (entity instanceof VillagerEntity) { return new VillagerImpl(server, (VillagerEntity) entity); }
@@ -465,7 +482,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         //else if (entity instanceof ShulkerBulletEntity) { return new CraftShulkerBullet(server, (ShulkerBulletEntity) entity); }
         //else if (entity instanceof AreaEffectCloudEntity) { return new CraftAreaEffectCloud(server, (AreaEffectCloudEntity) entity); }
         //else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
-        //else if (entity instanceof LlamaSpitEntity) { return new CraftLlamaSpit(server, (LlamaSpitEntity) entity); }
+        else if (entity instanceof LlamaSpitEntity) { return new CardboardLlamaSpit(server, (LlamaSpitEntity) entity); }
         // CHECKSTYLE:ON
 
         

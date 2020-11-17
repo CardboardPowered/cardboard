@@ -219,7 +219,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         if (!(this.server.isOnlineMode() && !this.connection.isLocal())) {
             // Spigot start
             new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
-
                 @Override
                 public void run() {
                     try {
