@@ -54,12 +54,14 @@ import org.cardboardpowered.impl.entity.CardboardFishHook;
 import org.cardboardpowered.impl.entity.CardboardFishPufferfish;
 import org.cardboardpowered.impl.entity.CardboardFishSalmon;
 import org.cardboardpowered.impl.entity.CardboardFishTropical;
+import org.cardboardpowered.impl.entity.CardboardFlying;
 import org.cardboardpowered.impl.entity.CardboardGhast;
 import org.cardboardpowered.impl.entity.CardboardHanging;
 import org.cardboardpowered.impl.entity.CardboardIronGolem;
 import org.cardboardpowered.impl.entity.CardboardLlamaSpit;
 import org.cardboardpowered.impl.entity.CardboardMinecart;
 import org.cardboardpowered.impl.entity.CardboardPanda;
+import org.cardboardpowered.impl.entity.CardboardPhantom;
 import org.cardboardpowered.impl.entity.CardboardShulker;
 import org.cardboardpowered.impl.entity.CardboardSilverfish;
 import org.cardboardpowered.impl.entity.CardboardSnowman;
@@ -135,6 +137,7 @@ import net.minecraft.entity.mob.HuskEntity;
 import net.minecraft.entity.mob.IllagerEntity;
 import net.minecraft.entity.mob.MagmaCubeEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.PhantomEntity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.entity.mob.SilverfishEntity;
 import net.minecraft.entity.mob.SlimeEntity;
@@ -413,8 +416,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             // Flying
             else if (entity instanceof FlyingEntity) {
                 if (entity instanceof GhastEntity) { return new CardboardGhast(server, (GhastEntity) entity); }
-                //else if (entity instanceof PhantomEntity) { return new CraftPhantom(server, (PhantomEntity) entity); }
-                //else { return new CraftFlying(server, (FlyingEntity) entity); }
+                else if (entity instanceof PhantomEntity) { return new CardboardPhantom(server, (PhantomEntity) entity); }
+                else { return new CardboardFlying(server, (FlyingEntity) entity); }
             }
             //else if (entity instanceof EnderDragonEntity) {
                 //return new CraftEnderDragon(server, (EnderDragonEntity) entity);
