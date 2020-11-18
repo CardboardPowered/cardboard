@@ -39,6 +39,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -270,17 +271,17 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
     }
 
-    @Inject(at = @At(value = "RETURN"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;", cancellable = true)
-    public void dropStackEvent(ItemStack itemstack, float f, CallbackInfoReturnable<ItemStack> ci) {
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;")
+    public boolean dropStackEvent1(World world, Entity entity, ItemStack itemstack, float f) {
         if (itemstack.isEmpty()) {
-            ci.setReturnValue(null);
-            return;
+            //ci.setReturnValue(null);
+            return false;
         }
 
+        System.out.println("DROP STACK TEST");
         if (((Entity)(Object)this) instanceof net.minecraft.entity.LivingEntity && !this.forceDrops) {
             this.drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack));
-            ci.setReturnValue(null);
-            return;
+            return false;
         }
         ItemEntity entityitem = new ItemEntity(this.world, ((Entity) (Object) this).getX(), ((Entity) (Object) this).getY() + (double) f, ((Entity) (Object) this).getZ(), itemstack);
 
@@ -289,11 +290,11 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) ((IMixinEntity)entityitem).getBukkitEntity());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            ci.setReturnValue(null);
-            return;
+            return false;
         }
-        this.world.spawnEntity(entityitem);
+        return this.world.spawnEntity(entityitem);
     }
+
 
     @Override
     public CommandSender getBukkitSender(ServerCommandSource serverCommandSource) {
