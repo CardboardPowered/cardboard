@@ -30,6 +30,7 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.cardboardpowered.ingot.IngotReader;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 
@@ -44,7 +45,7 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
     private static final String NMS_VERSION = "v1_16_R2";
     public static JavaPlugin plugin;
 
-    /*public static String mapClassName(String className) {
+    public static String mapClassName(String className) {
         if (className.startsWith("org.bukkit.craftbukkit." + NMS_VERSION + "."))
             return MappingsReader.getIntermedClass("org.bukkit.craftbukkit." + className.substring(23 + NMS_VERSION.length() + 1));
 
@@ -61,13 +62,13 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
             return MappingsReader.getIntermedClass(className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server."));
 
         return className;
-    }*/
+    }
 
     public static Class<?> getClassForName(String className) throws ClassNotFoundException {
         return getClassFromJPL(className);
     }
 
-    /*public static Field getFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
+    public static Field getFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
         try {
             Field field = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
             field.setAccessible(true);
@@ -117,13 +118,13 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
         Method m = getDeclaredMethodByName(calling, f);
         m.setAccessible(true);
         return m;
-    }*/
+    }
 
     public static MinecraftServer getNmsServer() {
         return CraftServer.server;
     }
 
-    /*public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
+    public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
             try {
                 return ReflectionRemapper.class.getMethod("getNmsServer");
@@ -181,7 +182,7 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
                 return getDeclaredMethodByName(calling, f);
             }
         }
-    }*/
+    }
 
     /**
      * Retrieve a class that is from a plugin

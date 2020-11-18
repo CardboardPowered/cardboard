@@ -5,10 +5,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.security.PrivateKey;
-import java.util.Arrays;
 import java.util.UUID;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.lang3.Validate;
@@ -19,6 +17,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
+import org.cardboardpowered.login.LoginKeyHandler;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -31,7 +30,6 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
@@ -39,12 +37,10 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkEncryptionUtils;
-import net.minecraft.network.encryption.NetworkEncryptionException;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.login.LoginHelloS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -93,72 +89,54 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);
         PrivateKey privatekey = this.server.getKeyPair().getPrivate();
 
-        //if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
-        //    throw new IllegalStateException("Invalid nonce!");
-        //} else {
-            try {
-                if (!Arrays.equals(this.nonce, keyPacket.decryptNonce(privatekey))) {
-                    throw new IllegalStateException("Protocol error");
+        LoginKeyHandler h = LoginKeyHandler.getLoginKeyHandler(state, secretKey, privatekey);
+        h.onKey(keyPacket, connection, nonce, server);
+        this.state = h.state;
+        this.secretKey = h.secretKey;
+
+        Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
+            @Override
+            public void run() {
+                GameProfile gameprofile = profile;
+
+                try {
+                    String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
+                    profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
+                    if (profile != null) {
+                        // Fire PlayerPreLoginEvent
+                        if (!connection.isOpen()) return;
+                        fireEvents();
+                    } else if (server.isSinglePlayer()) {
+                        LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
+                        profile = toOfflineProfile(gameprofile);
+                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                    } else {
+                        disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
+                        LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
+                    }
+                } catch (AuthenticationUnavailableException authenticationunavailableexception) {
+                    if (server.isSinglePlayer()) {
+                        LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
+                        profile = toOfflineProfile(gameprofile);
+                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                    } else {
+                        disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
+                        LOGGER_BF.error("Couldn't verify username because servers are unavailable");
+                    }
+                } catch (Exception exception) {
+                    disconnect("Failed to verify username!");
+                    LOGGER_BF.log(Level.WARN, "Exception verifying " + gameprofile.getName(), exception);
                 }
-                this.secretKey = keyPacket.decryptSecretKey(privatekey);
-                Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, this.secretKey);
-                Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, this.secretKey);
-                String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", this.server.getKeyPair().getPublic(), this.secretKey)).toString(16);
-                this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
-                this.connection.setupEncryption(cipher, cipher2);
-            } catch (NetworkEncryptionException networkEncryptionException) {
-                throw new IllegalStateException("Protocol error", networkEncryptionException);
             }
 
-            Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
-                public void run() {
-                    GameProfile gameprofile = profile;
-
-                    try {
-                        String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
-
-                        profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
-                        if (profile != null) {
-                            // CraftBukkit start - fire PlayerPreLoginEvent
-                            if (!connection.isOpen())
-                                return;
-                            fireEvents();
-                        } else if (server.isSinglePlayer()) {
-                            LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
-                            profile = toOfflineProfile(gameprofile);
-                            state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
-                        } else {
-                            disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
-                            LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
-                        }
-                    } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                        if (server.isSinglePlayer()) {
-                            LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
-                            profile = toOfflineProfile(gameprofile);
-                            state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
-                        } else {
-                            disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
-                            LOGGER_BF.error("Couldn't verify username because servers are unavailable");
-                        }
-                        // CraftBukkit start - catch all exceptions
-                    } catch (Exception exception) {
-                        disconnect("Failed to verify username!");
-                        LOGGER_BF.log(Level.WARN, "Exception verifying " + gameprofile.getName(), exception);
-                        // CraftBukkit end
-                    }
-
-                }
-
-                @Nullable
-                private InetAddress a() {
-                    SocketAddress socketaddress = connection.getAddress();
-                    return server.shouldPreventProxyConnections() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
-                }
-            };
-
-            thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
-            thread.start();
-        //}
+            @Nullable
+            private InetAddress a() {
+                SocketAddress socketaddress = connection.getAddress();
+                return server.shouldPreventProxyConnections() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
+            }
+        };
+        thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
+        thread.start();
     }
 
     public void fireEvents() throws Exception {
@@ -241,7 +219,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         if (!(this.server.isOnlineMode() && !this.connection.isLocal())) {
             // Spigot start
             new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
-
                 @Override
                 public void run() {
                     try {

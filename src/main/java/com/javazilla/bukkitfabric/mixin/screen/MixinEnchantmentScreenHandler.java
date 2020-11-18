@@ -66,6 +66,8 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
         this.player = (Player)((IMixinEntity)playerinventory.player).getBukkitEntity();
     }
 
+    // TODO: Fix this!
+
     /**
      * @reason .
      * @author .
@@ -162,7 +164,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
      * @reason .
      * @author .
      */
-    @Overwrite
+   @Overwrite
     public boolean onButtonClick(PlayerEntity entityhuman, int i) {
         ItemStack itemstack = this.inventory.getStack(0);
         ItemStack itemstack1 = this.inventory.getStack(1);
@@ -207,7 +209,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
                             EnchantmentLevelEntry weightedrandomenchant = new EnchantmentLevelEntry(nms, entry.getValue());
                             EnchantedBookItem.addEnchantment(itemstack2, weightedrandomenchant);
                         } else item.addUnsafeEnchantment(entry.getKey(), entry.getValue());
-                    } catch (IllegalArgumentException e) {/* Just swallow invalid enchantments */}
+                    } catch (IllegalArgumentException e) {}
                 }
                 entityhuman.applyEnchantmentCosts(itemstack, j);
 
@@ -222,7 +224,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
 
                 this.inventory.markDirty();
                 this.seed.set(entityhuman.getEnchantmentTableSeed());
-                this.onContentChanged(this.inventory);
+                ((EnchantmentScreenHandler)(Object)this).onContentChanged(this.inventory);
                 world.playSound((PlayerEntity) null, blockposition, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, world.random.nextFloat() * 0.1F + 0.9F);
             });
             return true;

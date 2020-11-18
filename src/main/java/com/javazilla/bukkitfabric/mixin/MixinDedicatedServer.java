@@ -26,6 +26,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.cardboardpowered.impl.CardboardEnchantment;
 import org.cardboardpowered.impl.util.ServerShutdownThread;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -39,9 +40,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
 
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.PendingServerCommand;
+import net.minecraft.util.registry.Registry;
 
 @Mixin(MinecraftDedicatedServer.class)
 public abstract class MixinDedicatedServer extends MixinMinecraftServer implements IMixinDedicatedServer {
@@ -64,6 +67,11 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
     private void init(CallbackInfoReturnable<Boolean> ci) {
         BukkitLogger.getLogger().info(" Bukkit4Fabric Mod ");
 
+        // Register Bukkit Enchantments
+        for (Object enchantment : Registry.ENCHANTMENT) {
+            org.bukkit.enchantments.Enchantment.registerEnchantment(new CardboardEnchantment((Enchantment) enchantment));
+        }
+
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
         org.spigotmc.SpigotConfig.init(new File("spigot.yml"));
@@ -73,7 +81,6 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
         pluginsDir.mkdir();
 
         Bukkit.getPluginManager().registerInterface(JavaPluginLoader.class);
-       // BukkitFabricMod.loadLibs();
 
         CraftServer s = ((CraftServer)Bukkit.getServer());
         if (CraftServer.server == null) CraftServer.server = (MinecraftDedicatedServer) (Object) this;
