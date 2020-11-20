@@ -273,10 +273,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;")
     public boolean dropStackEvent1(World world, Entity entity, ItemStack itemstack, float f) {
-        if (itemstack.isEmpty()) {
-            //ci.setReturnValue(null);
+        if (itemstack.isEmpty())
             return false;
-        }
 
         System.out.println("DROP STACK TEST");
         if (((Entity)(Object)this) instanceof net.minecraft.entity.LivingEntity && !this.forceDrops) {
@@ -289,9 +287,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
         EntityDropItemEvent event = new EntityDropItemEvent(this.getBukkitEntity(), (org.bukkit.entity.Item) ((IMixinEntity)entityitem).getBukkitEntity());
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
+        if (event.isCancelled())
             return false;
-        }
         return this.world.spawnEntity(entityitem);
     }
 
