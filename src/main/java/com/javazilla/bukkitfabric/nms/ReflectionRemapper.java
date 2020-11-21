@@ -40,7 +40,7 @@ import net.minecraft.server.MinecraftServer;
 /**
  * Very unsafe re-mapping of Reflection.
  */
-public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRemapper {
+public class ReflectionRemapper {
 
     private static final String NMS_VERSION = "v1_16_R2";
     public static JavaPlugin plugin;
@@ -132,7 +132,10 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
                 e.printStackTrace();
             }
         }
-            
+        if (calling.getName().equalsIgnoreCase("java.lang.Runtime")) {
+            System.out.println("TEST STUFF::: " + f);
+        }
+
         try {
             return calling.getMethod(MappingsReader.getIntermedMethod(calling.getName(), f));
         } catch (NoSuchMethodException | SecurityException e) {
@@ -271,6 +274,12 @@ public class ReflectionRemapper extends org.cardboardpowered.ingot.ReflectionRem
      */
     public static String getMinecraftServerVersion() {
         return SharedConstants.getGameVersion().getName();
+    }
+
+    public static Method getMethodByName(Class<?> calling, String f, Class<?>[] p) throws ClassNotFoundException {
+        Method m = getDeclaredMethodByName(calling, f, p);
+        m.setAccessible(true);
+        return m;
     }
 
 }

@@ -155,7 +155,7 @@ public class IngotReader {
                     String owner = (String) f1.get(a);
                     String name = (String) f2.get(a);
                     obfFields.put(owner + "|" + name, (String) b);
-                    System.out.println(owner + "|" + name + " = " + b);
+                    //System.out.println(owner + "|" + name + " = " + b);
                 } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
                     e.printStackTrace();
                 }

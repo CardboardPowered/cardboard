@@ -28,7 +28,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 21 + new Date().getMinutes();
+    public static int MAPPINGS_VERSION = 21;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 
@@ -107,7 +107,7 @@ public class Remapper {
 
         // Spigot -> Intermediary
         File finalJar = new File(remappedDir, jarName + "-intermediary.jar");
-        System.out.println(IngotReader.finishedSetup);
+        //System.out.println(IngotReader.finishedSetup);
         runSpecialSource(IngotReader.finishedSetup ? IngotReader.outFile : spigot2inter, deversionify, finalJar);
 
         // Cleanup
