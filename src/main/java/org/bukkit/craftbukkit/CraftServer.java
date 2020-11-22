@@ -267,6 +267,7 @@ public class CraftServer implements Server {
     private IconCacheImpl icon;
 
     public static MinecraftDedicatedServer server;
+    public static MinecraftDedicatedServer console;
     public static CraftServer INSTANCE;
     public CraftScoreboardManager scoreboardManager;
 
@@ -278,6 +279,7 @@ public class CraftServer implements Server {
         INSTANCE = this;
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
         server = nms;
+        console = nms;
         commandMap = new CommandMapImpl(this);
         pluginManager = new SimplePluginManager(this, commandMap);
         scoreboardManager = new CraftScoreboardManager(nms, server.getScoreboard());

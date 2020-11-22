@@ -18,7 +18,11 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
+import java.util.Set;
+
 import org.bukkit.Location;
+
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket.Flag;
 
 public interface IMixinPlayNetworkHandler {
 
