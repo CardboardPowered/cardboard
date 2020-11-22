@@ -146,6 +146,7 @@ import org.cardboardpowered.impl.util.IconCacheImpl;
 import org.cardboardpowered.impl.util.SimpleHelpMap;
 import org.cardboardpowered.impl.world.ChunkDataImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.spigotmc.SpigotConfig;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -1589,7 +1590,7 @@ public class CraftServer implements Server {
 
         @Override
         public YamlConfiguration getConfig() {
-            return null; // TODO
+            return SpigotConfig.config; // TODO
         }
 
         @Override

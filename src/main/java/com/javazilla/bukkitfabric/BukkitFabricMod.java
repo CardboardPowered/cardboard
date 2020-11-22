@@ -24,13 +24,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import org.cardboardpowered.ingot.IngotReader;
 import org.cardboardpowered.library.LibraryManager;
 
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 
 @SuppressWarnings("deprecation")
@@ -42,7 +40,6 @@ public class BukkitFabricMod implements ModInitializer {
 
     public static List<ServerLoginNetworkHandler> NETWORK_CASHE = new ArrayList<>();
 
-    @SuppressWarnings("deprecation")
     @Override
     public void onInitialize() {
         LOGGER.info("Bukkit for Fabric Mod - Javazilla.com");

@@ -95,8 +95,13 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
-        this.bukkit = new PlayerImpl((ServerPlayerEntity)(Object)this);
-        CraftServer.INSTANCE.playerView.add(this.bukkit);
+        if (null != Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid())) {
+            this.bukkit = (PlayerImpl) Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid());
+            this.bukkit.setHandle((ServerPlayerEntity)(Object)this);
+        } else {
+            this.bukkit = new PlayerImpl((ServerPlayerEntity)(Object)this);
+            CraftServer.INSTANCE.playerView.add(this.bukkit);
+        }
     }
 
     @Override
