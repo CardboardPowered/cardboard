@@ -146,6 +146,7 @@ import org.cardboardpowered.impl.util.IconCacheImpl;
 import org.cardboardpowered.impl.util.SimpleHelpMap;
 import org.cardboardpowered.impl.world.ChunkDataImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.spigotmc.SpigotConfig;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -267,6 +268,7 @@ public class CraftServer implements Server {
     private IconCacheImpl icon;
 
     public static MinecraftDedicatedServer server;
+    public static MinecraftDedicatedServer console;
     public static CraftServer INSTANCE;
     public CraftScoreboardManager scoreboardManager;
 
@@ -278,6 +280,7 @@ public class CraftServer implements Server {
         INSTANCE = this;
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
         server = nms;
+        console = nms;
         commandMap = new CommandMapImpl(this);
         pluginManager = new SimplePluginManager(this, commandMap);
         scoreboardManager = new CraftScoreboardManager(nms, server.getScoreboard());
@@ -1595,7 +1598,7 @@ public class CraftServer implements Server {
 
         @Override
         public YamlConfiguration getConfig() {
-            return null; // TODO
+            return SpigotConfig.config; // TODO
         }
 
         @Override

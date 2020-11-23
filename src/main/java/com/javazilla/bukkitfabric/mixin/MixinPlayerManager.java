@@ -35,6 +35,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.cardboardpowered.impl.world.WorldImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -54,14 +55,8 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.MessageType;
-import net.minecraft.network.packet.s2c.play.DifficultyS2CPacket;
-import net.minecraft.network.packet.s2c.play.EntityStatusEffectS2CPacket;
-import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerSpawnPositionS2CPacket;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.PlayerManager;
@@ -69,8 +64,6 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
@@ -82,8 +75,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProperties;
-import net.minecraft.world.biome.source.BiomeAccess;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager implements IMixinPlayerManager {
@@ -108,28 +99,11 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Override
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity entityplayer, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
-        entityplayer.stopRiding(); // CraftBukkit
-        this.players.remove(entityplayer);
-        entityplayer.getServerWorld().removePlayer(entityplayer, RemovalReason.CHANGED_DIMENSION);
 
+        boolean flag2 = false;
         BlockPos blockposition = entityplayer.getSpawnPointPosition();
         float f = entityplayer.getSpawnAngle();
         boolean flag1 = entityplayer.isSpawnPointSet();
-
-        org.bukkit.World fromWorld = ((IMixinServerEntityPlayer)entityplayer).getBukkitEntity().getWorld();
-        entityplayer.notInAnyWorld = false;
-        // CraftBukkit end
-
-        Iterator<String> iterator = entityplayer.getScoreboardTags().iterator();
-
-        while (iterator.hasNext()) {
-            String s = (String) iterator.next();
-            entityplayer.addScoreboardTag(s);
-        }
-
-        boolean flag2 = false;
-
-        // CraftBukkit start - fire PlayerRespawnEvent
         if (location == null) {
             boolean isBedSpawn = false;
             ServerWorld worldserver1 = CraftServer.server.getWorld(entityplayer.getSpawnPointDimension());
@@ -145,7 +119,6 @@ public class MixinPlayerManager implements IMixinPlayerManager {
                     boolean flag3 = iblockdata.isOf(Blocks.RESPAWN_ANCHOR);
                     Vec3d vec3d = (Vec3d) optional.get();
                     float f1;
-
                     if (!iblockdata.isIn((Tag<Block>) BlockTags.BEDS) && !flag3) {
                         f1 = f;
                     } else {
@@ -172,50 +145,19 @@ public class MixinPlayerManager implements IMixinPlayerManager {
             PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag2, flag2);
             CraftServer.INSTANCE.getPluginManager().callEvent(respawnEvent);
 
-            if (entityplayer.isDisconnected())
-                return entityplayer;
+            if (entityplayer.isDisconnected())  return entityplayer;
 
             location = respawnEvent.getRespawnLocation();
         } else location.setWorld(((IMixinWorld)worldserver).getWorldImpl());
 
-        while (avoidSuffocation && !worldserver.isSpaceEmpty(entityplayer) && entityplayer.getY() < 256.0D)
-            entityplayer.updatePosition(entityplayer.getX(), entityplayer.getY() + 1.0D, entityplayer.getZ());
-
-        WorldProperties worlddata = worldserver.getLevelProperties();
-        entityplayer.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver.getDimension(), worldserver.getRegistryKey(), BiomeAccess.hashSeed(worldserver.getSeed()), entityplayer.interactionManager.getGameMode(), entityplayer.interactionManager.getPreviousGameMode(), worldserver.isDebugWorld(), worldserver.isFlat(), flag));
-        entityplayer.setWorld(worldserver);
-        // TODO 1.17 entityplayer.removed = false;
-        entityplayer.teleport(worldserver, location.getX(), location.getY(), location.getZ(), entityplayer.yaw, entityplayer.pitch);
-        entityplayer.setSneaking(false);
-
-        entityplayer.networkHandler.sendPacket(new PlayerSpawnPositionS2CPacket(worldserver.getSpawnPos(), worldserver.getSpawnAngle()));
-        entityplayer.networkHandler.sendPacket(new DifficultyS2CPacket(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
-        entityplayer.networkHandler.sendPacket(new ExperienceBarUpdateS2CPacket(entityplayer.experienceProgress, entityplayer.totalExperience, entityplayer.experienceLevel));
-        this.sendWorldInfo(entityplayer, worldserver);
-        this.sendCommandTree(entityplayer);
-        if (!entityplayer.isDisconnected()) {
-            worldserver.onPlayerRespawned(entityplayer);
-            this.players.add(entityplayer);
-        }
-
-        entityplayer.setHealth(entityplayer.getHealth());
-        if (flag2)
-            entityplayer.networkHandler.sendPacket(new PlaySoundS2CPacket(SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE, SoundCategory.BLOCKS, (double) blockposition.getX(), (double) blockposition.getY(), (double) blockposition.getZ(), 1.0F, 1.0F));
-
-        sendPlayerStatus(entityplayer);
-        entityplayer.sendAbilitiesUpdate();
-        for (Object o1 : entityplayer.getStatusEffects()) {
-            StatusEffectInstance mobEffect = (StatusEffectInstance) o1;
-            entityplayer.networkHandler.sendPacket(new EntityStatusEffectS2CPacket(entityplayer.getEntityId(), mobEffect));
-        }
+        ServerWorld worldserver1 = ((WorldImpl) location.getWorld()).getHandle();
+        ServerWorld fromWorld = entityplayer.getServerWorld();
+        entityplayer.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
 
         if (fromWorld != location.getWorld()) {
-            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) ((IMixinServerEntityPlayer)entityplayer).getBukkitEntity(), fromWorld);
+            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) ((IMixinServerEntityPlayer)entityplayer).getBukkitEntity(), ((IMixinWorld)fromWorld).getWorldImpl());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
         }
-
-        if (entityplayer.isDisconnected())
-            this.savePlayerData(entityplayer);
 
         return entityplayer;
     }

@@ -107,7 +107,7 @@ public class Remapper {
 
         // Spigot -> Intermediary
         File finalJar = new File(remappedDir, jarName + "-intermediary.jar");
-        System.out.println(IngotReader.finishedSetup);
+        //System.out.println(IngotReader.finishedSetup);
         runSpecialSource(IngotReader.finishedSetup ? IngotReader.outFile : spigot2inter, deversionify, finalJar);
 
         // Cleanup

@@ -20,6 +20,7 @@ package com.javazilla.bukkitfabric.mixin.entity;
 
 import java.util.OptionalInt;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -31,6 +32,7 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.MainHand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -65,7 +67,6 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
@@ -94,8 +95,13 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void init(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
-        this.bukkit = new PlayerImpl((ServerPlayerEntity)(Object)this);
-        CraftServer.INSTANCE.playerView.add(this.bukkit);
+        if (null != Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid())) {
+            this.bukkit = (PlayerImpl) Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid());
+            this.bukkit.setHandle((ServerPlayerEntity)(Object)this);
+        } else {
+            this.bukkit = new PlayerImpl((ServerPlayerEntity)(Object)this);
+            CraftServer.INSTANCE.playerView.add(this.bukkit);
+        }
     }
 
     @Override
@@ -123,13 +129,15 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         CraftServer.INSTANCE.playerView.remove(this.bukkit);
     }
 
-    /**
-     * @author BukkitFabric
-     * @reason Bukkit Multiworld Teleport
-     */
-    @Overwrite
-    public void teleport(ServerWorld worldserver, double d0, double d1, double d2, float f, float f1) {
-        this.getBukkitEntity().teleport(new Location(((IMixinWorld)worldserver).getWorldImpl(), d0, d1, d2, f, f1), org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.UNKNOWN);
+    @Inject(at = @At("HEAD"), method = "teleport", cancellable = true)
+    public void teleport(ServerWorld worldserver, double x, double y, double z, float f, float f1, CallbackInfo ci) {
+        PlayerTeleportEvent event = new PlayerTeleportEvent((Player) this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(((IMixinWorld)worldserver).getWorldImpl(), x,y,z,f,f1), PlayerTeleportEvent.TeleportCause.UNKNOWN);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            ci.cancel();
+            return;
+        }
     }
 
     @SuppressWarnings("deprecation")

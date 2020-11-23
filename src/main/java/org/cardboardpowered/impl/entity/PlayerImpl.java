@@ -1346,6 +1346,11 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
         this.sendRawMessage(msg);
     }
 
+    public void setHandle(ServerPlayerEntity plr) {
+        this.nms = plr;
+        super.nms = plr;
+    }
+
     // PaperAPI - START
     public void setTitleTimes(int fadeInTicks, int stayTicks, int fadeOutTicks) {
         getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TIMES, null, 0, 0, 0));
