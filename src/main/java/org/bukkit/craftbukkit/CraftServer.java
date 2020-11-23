@@ -82,6 +82,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
@@ -288,11 +289,23 @@ public class CraftServer implements Server {
         configuration = YamlConfiguration.loadConfiguration(new File("bukkit.yml"));
         configuration.options().copyDefaults(true);
         configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
+        saveConfig();
 
         this.playerView = new ArrayList<>();
         loadIcon();
     }
 
+    public void saveConfig() {
+        try {
+            configuration.save(getConfigFile());
+        } catch (IOException ex) {
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, "Could not save " + getConfigFile(), ex);
+        }
+    }
+
+    public File getConfigFile() {
+        return new File("bukkit.yml");
+    }
 
     private void loadIcon() {
         icon = new IconCacheImpl(null);
@@ -379,8 +392,10 @@ public class CraftServer implements Server {
         }
     }
 
+    public CommandManager vanillaCommandManager;
+
     private void setVanillaCommands() {
-        CommandManager dispatcher = server.getCommandManager();
+        CommandManager dispatcher = (this.vanillaCommandManager = server.getCommandManager());
 
         // Build a list of all Vanilla commands and create wrappers
         for (CommandNode<ServerCommandSource> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
@@ -839,6 +854,17 @@ public class CraftServer implements Server {
 
     @Override
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
+        if (commandLine.startsWith("minecraft:") && sender instanceof Entity) {
+            try {
+                int result = vanillaCommandManager.dispatcher.execute(commandLine.replace("minecraft:", ""), ((CraftEntity)sender).nms.getCommandSource());
+                System.out.println(result);
+                return result != -1;
+            } catch (CommandSyntaxException e) {
+                e.printStackTrace();
+                throw new CommandException("Vanilla command syntax error: " + e.getMessage());
+            }
+        }
+
         if (commandMap.dispatch(sender, commandLine))
             return true;
 
