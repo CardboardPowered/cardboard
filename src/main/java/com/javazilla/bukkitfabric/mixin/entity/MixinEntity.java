@@ -276,7 +276,6 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         if (itemstack.isEmpty())
             return false;
 
-        System.out.println("DROP STACK TEST");
         if (((Entity)(Object)this) instanceof net.minecraft.entity.LivingEntity && !this.forceDrops) {
             this.drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack));
             return false;
