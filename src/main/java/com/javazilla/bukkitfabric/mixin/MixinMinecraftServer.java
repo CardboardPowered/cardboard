@@ -20,6 +20,8 @@ package com.javazilla.bukkitfabric.mixin;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -194,6 +196,15 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Overwrite
     public void loadWorld() {
         int worldCount = 3;
+
+        // Fix PolyMC mod
+        try {
+            Class<?> polymc = Class.forName("io.github.theepicblock.polymc.PolyMc");
+            Method m = polymc.getMethod("generatePolyMap");
+            m.invoke(null);
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
         for (int worldId = 0; worldId < worldCount; ++worldId) {
             ServerWorld world;
