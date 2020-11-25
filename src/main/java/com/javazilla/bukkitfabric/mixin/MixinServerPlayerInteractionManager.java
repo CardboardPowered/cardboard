@@ -83,7 +83,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
      */
     @SuppressWarnings("deprecation")
     //@Overwrite
-    @Inject(at = @At("HEAD"), method = "processBlockBreakingAction")
+    @Inject(at = @At("HEAD"), method = "processBlockBreakingAction", cancellable = true)
     public void processBlockBreakingActionBF(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, Direction enumdirection, int i, CallbackInfo ci) {
         double d0 = this.player.getX() - ((double) blockposition.getX() + 0.5D);
         double d1 = this.player.getY() - ((double) blockposition.getY() + 0.5D) + 1.5D;
@@ -106,6 +106,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                     BlockEntity tileentity = world.getBlockEntity(blockposition);
                     if (tileentity != null)
                         this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
+                    ci.cancel();
                     return;
                 }
 
@@ -117,6 +118,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                     BlockEntity tileentity = this.world.getBlockEntity(blockposition);
                     if (tileentity != null)
                         this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
+                    ci.cancel();
                     return;
                 }
 
@@ -127,6 +129,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
 
                 if (this.player.isBlockBreakingRestricted((World) this.world, blockposition, this.gameMode)) {
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "block action restricted"));
+                    ci.cancel();
                     return;
                 }
 
@@ -162,6 +165,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 if (blockEvent.isCancelled()) {
                     // Let the client know the block still exists
                     this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
+                    ci.cancel();
                     return;
                 }
 

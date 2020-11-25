@@ -3,6 +3,7 @@ package com.javazilla.bukkitfabric.mixin.item;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemDamageEvent;
@@ -98,13 +99,15 @@ public class MixinItemStack {
         if (actionResult != ActionResult.FAIL) {
             List<BlockState> blocks = new java.util.ArrayList<>(((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().values());
             ((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().clear();
-            BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld)context.getWorld(), playerEntity, Hand.MAIN_HAND, blocks.get(0), blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld)context.getWorld(), playerEntity, Hand.MAIN_HAND, blocks.get(0), blockPos.getX(), blockPos.getY(), blockPos.getZ()); 
             if ((placeEvent.isCancelled() || !placeEvent.canBuild())) {
                 ((IMixinWorld)context.getWorld()).setCaptureBlockStates_BF(false);
-                BlockPos pos = context.getBlockPos().add(0, 1, 0);
-                while (context.getWorld().getBlockState(pos) != Blocks.AIR.getDefaultState()) {
-                    context.getWorld().setBlockState(context.getBlockPos().add(0, 1, 0), Blocks.AIR.getDefaultState());
-                }
+
+                CraftBlockState b = (CraftBlockState) blocks.get(0);
+                BlockPos pos = b.getPosition();
+                while (context.getWorld().getBlockState(pos) != Blocks.AIR.getDefaultState())
+                    context.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+
                 context.getStack().increment(1);
                 ((Player)((IMixinServerEntityPlayer)context.getPlayer()).getBukkitEntity()).updateInventory();
                 return ActionResult.FAIL;
