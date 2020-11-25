@@ -98,6 +98,7 @@ import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -1106,7 +1107,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
 
     @Override
     public void updateInventory() {
-        nms.openHandledScreen((NamedScreenHandlerFactory) nms.currentScreenHandler);
+        nms.onHandlerRegistered(nms.currentScreenHandler, nms.currentScreenHandler.getStacks());
     }
 
     @SuppressWarnings("deprecation")

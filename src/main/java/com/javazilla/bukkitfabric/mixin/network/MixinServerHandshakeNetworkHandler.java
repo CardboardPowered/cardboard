@@ -1,14 +1,10 @@
 package com.javazilla.bukkitfabric.mixin.network;
 
-import java.net.InetAddress;
-import java.util.HashMap;
-
-import org.bukkit.craftbukkit.CraftServer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinHandshakeC2SPacket;
@@ -18,13 +14,8 @@ import net.minecraft.SharedConstants;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
-import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
 import net.minecraft.server.network.ServerHandshakeNetworkHandler;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
-import net.minecraft.server.network.ServerQueryNetworkHandler;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 @Mixin(ServerHandshakeNetworkHandler.class)
 public class MixinServerHandshakeNetworkHandler {
@@ -34,17 +25,8 @@ public class MixinServerHandshakeNetworkHandler {
     @Shadow
     public ClientConnection connection;
 
-    @Shadow
-    public ClientConnection getConnection() {
-        return null;
-    }
-
-    @Shadow
-    public void onDisconnected(Text reason) {
-    }
-
     @Inject(at = @At("TAIL"), method = "onHandshake")
-    public void onHandshake_Bungee(HandshakeC2SPacket packethandshakinginsetprotocol) {
+    public void onHandshake_Bungee(HandshakeC2SPacket packethandshakinginsetprotocol, CallbackInfo ci) {
         if (packethandshakinginsetprotocol.getIntendedState() == NetworkState.LOGIN) {
             if (packethandshakinginsetprotocol.getProtocolVersion() > SharedConstants.getGameVersion().getProtocolVersion()) {
             } else if (packethandshakinginsetprotocol.getProtocolVersion() < SharedConstants.getGameVersion().getProtocolVersion()) {

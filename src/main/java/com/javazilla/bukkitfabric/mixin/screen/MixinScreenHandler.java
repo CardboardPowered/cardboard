@@ -59,7 +59,6 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
 
     @Override
     public final void setTitle(Text title) {
-        Preconditions.checkState(this.title == null, "Title already set");
         this.title = title;
     }
 

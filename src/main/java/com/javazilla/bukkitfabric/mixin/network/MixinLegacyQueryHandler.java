@@ -7,23 +7,17 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import net.minecraft.network.LegacyQueryHandler;
 import net.minecraft.server.MinecraftServer;
 
 @Mixin(LegacyQueryHandler.class)
 public class MixinLegacyQueryHandler {
 
-    //@Shadow @Final private static Logger LOGGER = LogManager.getLogger();
     @Shadow private ByteBuf toBuffer(String s) {return null;}
     @Shadow private void reply(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf) {}
 

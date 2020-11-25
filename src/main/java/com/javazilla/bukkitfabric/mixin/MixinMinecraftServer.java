@@ -46,7 +46,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.google.common.collect.ImmutableList;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinNetworkIo;
@@ -203,7 +202,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             Method m = polymc.getMethod("generatePolyMap");
             m.invoke(null);
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
         }
 
         for (int worldId = 0; worldId < worldCount; ++worldId) {
