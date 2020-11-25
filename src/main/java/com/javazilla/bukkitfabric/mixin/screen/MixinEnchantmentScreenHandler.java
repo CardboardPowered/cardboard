@@ -235,7 +235,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
     public List<EnchantmentLevelEntry> generateEnchantments(ItemStack itemstack, int i, int j) {return null;}
 
     @Override
-    public InventoryView getBukkitView() {
+    public CardboardInventoryView getBukkitView() {
         if (bukkitEntity != null) return bukkitEntity;
 
         CardboardEnchantingInventory inventory = new CardboardEnchantingInventory(this.inventory);

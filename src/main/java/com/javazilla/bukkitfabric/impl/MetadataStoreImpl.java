@@ -21,7 +21,6 @@ public class MetadataStoreImpl {
         };
     }
 
-
     public static MetaDataStoreBase<OfflinePlayer> newPlayerMetadataStore() {
         return new MetaDataStoreBase<OfflinePlayer>() {
             @Override

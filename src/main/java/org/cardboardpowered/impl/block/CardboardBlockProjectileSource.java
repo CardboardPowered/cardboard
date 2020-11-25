@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.impl;
+package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.entity.DispenserBlockEntity;
 import org.bukkit.block.Block;
@@ -8,11 +8,11 @@ import org.bukkit.util.Vector;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
-public class BlockProjectileSourceImpl implements BlockProjectileSource {
+public class CardboardBlockProjectileSource implements BlockProjectileSource {
 
     private final DispenserBlockEntity dispenserBlock;
 
-    public BlockProjectileSourceImpl(DispenserBlockEntity dispenserBlock) {
+    public CardboardBlockProjectileSource(DispenserBlockEntity dispenserBlock) {
         this.dispenserBlock = dispenserBlock;
     }
 

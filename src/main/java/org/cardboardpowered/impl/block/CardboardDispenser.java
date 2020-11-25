@@ -8,8 +8,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.cardboardpowered.impl.world.WorldImpl;
 
-import com.javazilla.bukkitfabric.impl.BlockProjectileSourceImpl;
-
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.entity.DispenserBlockEntity;
@@ -38,7 +36,7 @@ public class CardboardDispenser extends CardboardLootableBlock<DispenserBlockEnt
     @Override
     public BlockProjectileSource getBlockProjectileSource() {
         if (getBlock().getType() != Material.DISPENSER) return null;
-        return new BlockProjectileSourceImpl((DispenserBlockEntity) this.getTileEntityFromWorld());
+        return new CardboardBlockProjectileSource((DispenserBlockEntity) this.getTileEntityFromWorld());
     }
 
     @Override
