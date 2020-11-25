@@ -99,7 +99,6 @@ public class MixinItemStack {
             List<BlockState> blocks = new java.util.ArrayList<>(((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().values());
             ((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().clear();
             BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld)context.getWorld(), playerEntity, Hand.MAIN_HAND, blocks.get(0), blockPos.getX(), blockPos.getY(), blockPos.getZ());
-            placeEvent.setCancelled(true); // test
             if ((placeEvent.isCancelled() || !placeEvent.canBuild())) {
                 ((IMixinWorld)context.getWorld()).setCaptureBlockStates_BF(false);
                 BlockPos pos = context.getBlockPos().add(0, 1, 0);

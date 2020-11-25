@@ -261,7 +261,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      */
     @Overwrite
     public void method_31286(String message) {
-        System.out.println("test");
         if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
             this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED), MessageType.CHAT, player.getUuid()));
         } else {
