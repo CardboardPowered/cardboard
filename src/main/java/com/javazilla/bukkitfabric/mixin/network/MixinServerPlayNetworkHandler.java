@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -66,6 +67,7 @@ import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -245,34 +247,37 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     }
 
     /**
-     * @reason Bukkit
+     * @reason Fixes AsyncChatEvent
      * @author Bukkit4Fabric
      */
     @Overwrite
-    public void onGameMessage(ChatMessageC2SPacket packetplayinchat) {
-        if (CraftServer.server.isStopped())
-            return;
+    public void filterText(String text, Consumer<String> consumer) {
+        consumer.accept(text); // Skip filtering so we can stay off the primary server thread.
+    }
 
-        boolean isSync = packetplayinchat.getChatMessage().startsWith("/");
-        if (packetplayinchat.getChatMessage().startsWith("/"))
-            NetworkThreadUtils.forceMainThread(packetplayinchat, ((ServerPlayNetworkHandler)(Object)this), this.player.getServerWorld());
-
+    /**
+     * @reason Bukkit AsyncChat
+     * @author Bukkit4Fabric
+     */
+    @Overwrite
+    public void method_31286(String message) {
+        System.out.println("test");
         if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
             this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED), MessageType.CHAT, player.getUuid()));
         } else {
+            boolean isSync = message.startsWith("/");
             this.player.updateLastActionTime();
-            String s = StringUtils.normalizeSpace( packetplayinchat.getChatMessage() );
 
             if (isSync)
-                get().executeCommand(s);
-            else if (s.isEmpty())
+                get().executeCommand(message);
+            else if (message.isEmpty())
                 BukkitLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
             else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
                 TranslatableText chatmessage = new TranslatableText("chat.cannotSend", new Object[0]);
 
                 chatmessage.getStyle().withColor(Formatting.RED);
                 this.sendPacket(new GameMessageS2CPacket(chatmessage, MessageType.CHAT, player.getUuid()));
-            } else this.chat(s, true);
+            } else this.chat(message, true);
 
             if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
                 if (!isSync) {
