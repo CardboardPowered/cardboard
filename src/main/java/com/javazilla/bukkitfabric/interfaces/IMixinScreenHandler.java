@@ -21,7 +21,7 @@ package com.javazilla.bukkitfabric.interfaces;
 import java.util.List;
 
 import org.cardboardpowered.impl.entity.HumanEntityImpl;
-import org.bukkit.inventory.InventoryView;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -31,7 +31,7 @@ import net.minecraft.util.collection.DefaultedList;
 
 public interface IMixinScreenHandler {
 
-    public InventoryView getBukkitView();
+    public CardboardInventoryView getBukkitView();
 
     public Text getTitle();
 

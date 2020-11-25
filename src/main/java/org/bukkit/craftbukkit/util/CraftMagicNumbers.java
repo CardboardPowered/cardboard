@@ -98,7 +98,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static Material getMaterial(Block block) {
-        return BLOCK_MATERIAL.get(block);
+        // TODO: add support for modded blocks/items
+        return BLOCK_MATERIAL.getOrDefault(block, Material.STONE);
     }
 
     public static Material getMaterial(Item item) {
@@ -107,7 +108,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     public static Item getItem(Material material) {
         if (material != null && material.isLegacy()) material = CraftLegacyMaterials.fromLegacy(material);
-        return MATERIAL_ITEM.get(material);
+        return MATERIAL_ITEM.get(material); // TODO: add support for modded blocks/items
     }
 
     public static Block getBlock(Material material) {

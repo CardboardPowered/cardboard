@@ -14,11 +14,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.CraftingResultInventory;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
 @Mixin(PlayerScreenHandler.class)
-public class MixinPlayerScreenHandler extends MixinScreenHandler {
+public class MixinPlayerScreenHandler extends MixinScreenHandler implements NamedScreenHandlerFactory {
 
     private CraftingInventory craftingInput;
     private CraftingResultInventory craftingResult;
@@ -41,6 +45,16 @@ public class MixinPlayerScreenHandler extends MixinScreenHandler {
         CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.craftingInput, this.craftingResult);
         bukkitEntity = new CardboardInventoryView((Player)((IMixinServerEntityPlayer)this.player.player).getBukkitEntity(), inventory, (PlayerScreenHandler)(Object)this);
         return bukkitEntity;
+    }
+
+    @Override
+    public ScreenHandler createMenu(int arg0, PlayerInventory arg1, PlayerEntity arg2) {
+        return new PlayerScreenHandler(arg1, true, arg2);
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return this.getTitle();
     }
 
 }
