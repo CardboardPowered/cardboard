@@ -146,6 +146,7 @@
     "item.MixinBoatItem",
     "item.MixinBucketItem",
     "item.MixinFirechargeItem",
+    "item.MixinFlintAndSteelItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",
