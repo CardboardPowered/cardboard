@@ -42,6 +42,7 @@ import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.entity.UnknownEntity;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -598,6 +599,12 @@ public class BukkitEventFactory {
 
         craftServer.getPluginManager().callEvent(event);
 
+        return event;
+    }
+
+    public static BlockIgniteEvent callBlockIgniteEvent(World world, BlockPos pos, IgniteCause cause, Entity igniter) {
+        BlockIgniteEvent event = new BlockIgniteEvent(((IMixinWorld)world).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), cause, ((IMixinEntity)igniter).getBukkitEntity());
+        Bukkit.getPluginManager().callEvent(event);
         return event;
     }
 
