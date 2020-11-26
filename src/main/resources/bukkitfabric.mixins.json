@@ -144,6 +144,7 @@
     "item.MixinFishingRodItem",
     "item.MixinBowItem",
     "item.MixinBoatItem",
+    "item.MixinBucketItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",

@@ -44,6 +44,7 @@ import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Animals;
@@ -85,6 +86,9 @@ import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
@@ -112,6 +116,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
@@ -543,6 +548,56 @@ public class BukkitEventFactory {
 
         EntityShootBowEvent event = new EntityShootBowEvent(shooter, itemInHand, itemConsumable, arrow, handSlot, force, consumeItem);
         Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    /**
+     * Bucket methods
+     */
+    public static PlayerBucketEmptyEvent callPlayerBucketEmptyEvent(ServerWorld world, PlayerEntity who, BlockPos changed, BlockPos clicked, Direction clickedFace, ItemStack itemInHand) {
+        return (PlayerBucketEmptyEvent) getPlayerBucketEvent(false, world, who, changed, clicked, clickedFace, itemInHand, Items.BUCKET);
+    }
+
+    public static PlayerBucketFillEvent callPlayerBucketFillEvent(ServerWorld world, PlayerEntity who, BlockPos changed, BlockPos clicked, Direction clickedFace, ItemStack itemInHand, net.minecraft.item.Item bucket) {
+        return (PlayerBucketFillEvent) getPlayerBucketEvent(true, world, who, clicked, changed, clickedFace, itemInHand, bucket);
+    }
+
+    private static PlayerEvent getPlayerBucketEvent(boolean isFilling, ServerWorld world, PlayerEntity who, BlockPos changed, BlockPos clicked, Direction clickedFace, ItemStack itemstack, net.minecraft.item.Item item) {
+        return getPlayerBucketEvent(isFilling, world, who, changed, clicked, clickedFace, itemstack, item, null);
+    }
+
+    public static PlayerBucketEmptyEvent callPlayerBucketEmptyEvent(World world, PlayerEntity who, BlockPos changed, BlockPos clicked, Direction clickedFace, ItemStack itemstack, Hand enumHand) {
+        return (PlayerBucketEmptyEvent) getPlayerBucketEvent(false, world, who, changed, clicked, clickedFace, itemstack, Items.BUCKET, enumHand);
+    }
+
+    public static PlayerBucketFillEvent callPlayerBucketFillEvent(World world, PlayerEntity who, BlockPos changed, BlockPos clicked, Direction clickedFace, ItemStack itemInHand, net.minecraft.item.Item bucket, Hand enumHand) {
+        return (PlayerBucketFillEvent) getPlayerBucketEvent(true, world, who, clicked, changed, clickedFace, itemInHand, bucket, enumHand);
+    }
+
+    private static PlayerEvent getPlayerBucketEvent(boolean isFilling, World world, PlayerEntity who, BlockPos changed, BlockPos clicked, Direction clickedFace, ItemStack itemstack, net.minecraft.item.Item item, Hand enumHand) {
+        // Paper end
+        Player player = (Player) ((IMixinServerEntityPlayer)who).getBukkitEntity();
+        CraftItemStack itemInHand = CraftItemStack.asNewCraftStack(item);
+        Material bucket = CraftMagicNumbers.getMaterial(itemstack.getItem());
+
+        CraftServer craftServer = (CraftServer) player.getServer();
+
+        Block block = CraftBlock.at((ServerWorld) world, changed);
+        Block blockClicked = CraftBlock.at((ServerWorld) world, clicked);
+        BlockFace blockFace = CraftBlock.notchToBlockFace(clickedFace);
+
+        // TODO - When we move to PaperAPI we need to add hand to event.
+        PlayerEvent event;
+        if (isFilling) {
+            event = new PlayerBucketFillEvent(player, block, blockClicked, blockFace, bucket, itemInHand); 
+            ((PlayerBucketFillEvent) event).setCancelled(!canBuild((ServerWorld) world, player, changed.getX(), changed.getZ()));
+        } else {
+            event = new PlayerBucketEmptyEvent(player, block, blockClicked, blockFace, bucket, itemInHand);
+            ((PlayerBucketEmptyEvent) event).setCancelled(!canBuild((ServerWorld) world, player, changed.getX(), changed.getZ()));
+        }
+
+        craftServer.getPluginManager().callEvent(event);
+
         return event;
     }
 
