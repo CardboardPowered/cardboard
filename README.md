@@ -27,6 +27,11 @@ We do support using Spigot's ``net.minecraft.server`` classes.
 
 Classes and Fields will automatically remap to their intermediary counterparts *(Including Reflection!)*
 
+# Progress
+There is a progress indicator in the Discord.
+Although, if your not in the discord:
+Progress can be determined by the completeness of the to-do lists on the two pinned issues.
+
 
 ## Credits
 * [The Bukkit Project](https://bukkit.org/) for creating the Bukkit API
@@ -35,8 +40,9 @@ Classes and Fields will automatically remap to their intermediary counterparts *
 * [GlowstoneMC](https://glowstonemc.net) for the library loader.
 * [md_5](https://github.com/md_5/SpecialSource/) for the SpecialSource mapping tool
 * [Techcable & Orion](https://github.com/OrionMinecraft/SrgLib) for the SrgLib
+* [Phase](https://github.com/phase/MinecraftMapping/) for the MinecraftMapping tool
 * [Fabric](https://fabricmc.net/) for creating the modern mod loader
 
 # Apex Hosting 
-Thanks to Apex Hosting for sponoring this project, Get a Minecraft server by clicking on the banner below:
-[![Apex Hosting](https://apexminecrafthosting.com/images/apex-hosting-mobile.png)](https://billing.apexminecrafthosting.com/aff.php?aff=3548)
+Thanks to Apex Hosting for sponsoring this project, Get a Minecraft server by clicking on the banner below:
+[![Apex Hosting](https://cdn.apexminecrafthosting.com/img/theme/apex-hosting-mobile.png)](https://billing.apexminecrafthosting.com/aff.php?aff=3548)

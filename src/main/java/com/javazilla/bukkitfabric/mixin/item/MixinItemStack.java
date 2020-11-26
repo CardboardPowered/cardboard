@@ -97,20 +97,22 @@ public class MixinItemStack {
         ActionResult actionResult = item.useOnBlock(context);
 
         if (actionResult != ActionResult.FAIL) {
-            List<BlockState> blocks = new java.util.ArrayList<>(((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().values());
-            ((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().clear();
-            BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld)context.getWorld(), playerEntity, Hand.MAIN_HAND, blocks.get(0), blockPos.getX(), blockPos.getY(), blockPos.getZ()); 
-            if ((placeEvent.isCancelled() || !placeEvent.canBuild())) {
-                ((IMixinWorld)context.getWorld()).setCaptureBlockStates_BF(false);
-
-                CraftBlockState b = (CraftBlockState) blocks.get(0);
-                BlockPos pos = b.getPosition();
-                while (context.getWorld().getBlockState(pos) != Blocks.AIR.getDefaultState())
-                    context.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
-
-                context.getStack().increment(1);
-                ((Player)((IMixinServerEntityPlayer)context.getPlayer()).getBukkitEntity()).updateInventory();
-                return ActionResult.FAIL;
+            if (((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().size() > 0) {
+                List<BlockState> blocks = new java.util.ArrayList<>(((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().values());
+                ((IMixinWorld)context.getWorld()).getCapturedBlockStates_BF().clear();
+                BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld)context.getWorld(), playerEntity, Hand.MAIN_HAND, blocks.get(0), blockPos.getX(), blockPos.getY(), blockPos.getZ()); 
+                if ((placeEvent.isCancelled() || !placeEvent.canBuild())) {
+                    ((IMixinWorld)context.getWorld()).setCaptureBlockStates_BF(false);
+    
+                    CraftBlockState b = (CraftBlockState) blocks.get(0);
+                    BlockPos pos = b.getPosition();
+                    while (context.getWorld().getBlockState(pos) != Blocks.AIR.getDefaultState())
+                        context.getWorld().setBlockState(pos, Blocks.AIR.getDefaultState());
+    
+                    context.getStack().increment(1);
+                    ((Player)((IMixinServerEntityPlayer)context.getPlayer()).getBukkitEntity()).updateInventory();
+                    return ActionResult.FAIL;
+                }
             }
         }
 
