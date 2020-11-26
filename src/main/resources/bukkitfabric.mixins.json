@@ -43,7 +43,7 @@
     "world.MixinThreadedAnvilChunkStorage",
     "world.MixinWorldBorder",
     "world.MixinWorldAccess",
-    "world.MixinServerWorldAccess"
+    "world.MixinServerWorldAccess",
 
     "entity.MixinEntity",
     "entity.MixinPlayer",
