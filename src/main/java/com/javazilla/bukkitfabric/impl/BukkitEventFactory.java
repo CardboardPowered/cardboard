@@ -51,6 +51,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LightningStrike;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.ThrownExpBottle;
@@ -71,6 +72,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
@@ -106,6 +108,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
@@ -527,5 +530,21 @@ public class BukkitEventFactory {
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }
+
+    public static EntityShootBowEvent callEntityShootBowEvent(net.minecraft.entity.LivingEntity who, ItemStack bow, ItemStack consumableItem, Entity entityArrow, Hand hand, float force, boolean consumeItem) {
+        LivingEntity shooter = (LivingEntity) ((IMixinEntity)who).getBukkitEntity();
+        CraftItemStack itemInHand = CraftItemStack.asCraftMirror(bow);
+        CraftItemStack itemConsumable = CraftItemStack.asCraftMirror(consumableItem);
+        org.bukkit.entity.Entity arrow = ((IMixinEntity)entityArrow).getBukkitEntity();
+        EquipmentSlot handSlot = (hand == Hand.MAIN_HAND) ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
+
+        if (itemInHand != null && (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0))
+            itemInHand = null;
+
+        EntityShootBowEvent event = new EntityShootBowEvent(shooter, itemInHand, itemConsumable, arrow, handSlot, force, consumeItem);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
 
 }
