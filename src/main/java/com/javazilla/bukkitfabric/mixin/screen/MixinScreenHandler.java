@@ -16,6 +16,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -53,7 +54,8 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
 
     @Override
     public final Text getTitle() {
-        Preconditions.checkState(this.title != null, "Title not set");
+        if (null == this.title)
+            this.title = new LiteralText("CARDBOARD: TITLE NOT SET!");
         return this.title;
     }
 
