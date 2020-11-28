@@ -64,6 +64,7 @@
     "entity.MixinHorseBaseEntity",
     "entity.MixinExperienceBottleEntity",
     "entity.MixinTntEntity",
+    "entity.MixinDamageSource",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
