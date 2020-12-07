@@ -30,7 +30,6 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
-import org.cardboardpowered.ingot.IngotReader;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 
@@ -42,7 +41,7 @@ import net.minecraft.server.MinecraftServer;
  */
 public class ReflectionRemapper {
 
-    private static final String NMS_VERSION = "v1_16_R2";
+    private static final String NMS_VERSION = "v1_16_R3";
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {

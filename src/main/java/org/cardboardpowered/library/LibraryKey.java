@@ -19,9 +19,14 @@ public class LibraryKey implements Comparable<LibraryKey> {
      */
     public final String artifactId;
 
-    public LibraryKey(@NonNls String groupId, @NonNls String artifactId) {
+    /**
+     */
+    public final String spigotJarVersion;
+
+    public LibraryKey(@NonNls String groupId, @NonNls String artifactId, String spigotJarVersion) {
         this.groupId = groupId;
         this.artifactId = artifactId;
+        this.spigotJarVersion = spigotJarVersion;
     }
 
     @Override

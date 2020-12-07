@@ -24,6 +24,7 @@
     "MixinCommandManager",
     "MixinTimeCommand",
     "MixinPlayerAdvancementTracker",
+    "MixinMaterial",
 
     "loot.MixinSurvivesExplosionLootCondition",
     "loot.MixinRandomChanceWithLootingLootCondition",

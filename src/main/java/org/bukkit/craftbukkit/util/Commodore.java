@@ -5,12 +5,14 @@ import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.plugin.AuthorNagException;
+import org.cardboardpowered.asm.SwitchTableFixer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.ClassNode;
 
 import com.javazilla.bukkitfabric.nms.Provider;
 import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
@@ -44,8 +46,13 @@ public class Commodore {
     ));
 
     public static byte[] convert(byte[] b, final boolean modern, String aname) {
+        ClassNode node = new ClassNode();
+
         ClassReader cr = new ClassReader(b);
         ClassWriter cw = new ClassWriter(cr,0);
+
+        cr.accept(node, ClassReader.SKIP_FRAMES);
+        SwitchTableFixer.INSTANCE.processClass(node);
 
         cr.accept(new ClassVisitor(Opcodes.ASM7, cw) {
             @Override

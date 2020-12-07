@@ -1,9 +1,17 @@
 package org.bukkit.craftbukkit.util;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
+
+import io.izzel.arclight.api.EnumHelper;
+import io.izzel.arclight.api.Unsafe;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -33,10 +41,13 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.cardboardpowered.impl.CardboardModdedBlock;
+import org.cardboardpowered.impl.CardboardModdedItem;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
@@ -97,21 +108,101 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
     }
 
+    private static final List<Class<?>> MAT_CTOR = ImmutableList.of(int.class);
+    private static final List<Class<?>> ENTITY_CTOR = ImmutableList.of(String.class, Class.class, int.class);
+    private static final List<Class<?>> ENV_CTOR = ImmutableList.of(int.class);
+    public static final Map<String, Material> BY_NAME = Unsafe.getStatic(Material.class, "BY_NAME");
+    private static final Map<String, EntityType> ENTITY_NAME_MAP = Unsafe.getStatic(EntityType.class, "NAME_MAP");
+
+    public static void test() {
+        int blocks = 0, items = 0;
+        int i = Material.values().length;
+        int origin = i;
+
+        List<Material> list = new ArrayList<>();
+        for (Block block : Registry.BLOCK) {
+            Identifier id = Registry.BLOCK.getId(block);
+            String name = standardize(id);
+            Material material = BY_NAME.get(name);
+            if (null == material) {
+                material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
+                ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedBlock(block));
+                i++;
+                blocks++;
+                MATERIAL_BLOCK.put(material, block);
+                BY_NAME.put(name, material);
+                list.add(material);
+                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
+            }
+            BLOCK_MATERIAL.put(block, Material.getMaterial(id.getPath().toUpperCase(Locale.ROOT)));
+        }
+
+        for (Item item : Registry.ITEM) {
+            Identifier id = Registry.ITEM.getId(item);
+            String name = standardize(id);
+            Material material = BY_NAME.get(name);
+            if (null == material) {
+                material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
+                ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedItem(item));
+                i++;
+                items++;
+                MATERIAL_ITEM.put(material, item);
+                BY_NAME.put(name, material);
+                list.add(material);
+                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
+            }
+            ITEM_MATERIAL.put(item, Material.getMaterial(id.getPath().toUpperCase(Locale.ROOT)));
+        }
+
+        for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
+            FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
+
+        EnumHelper.addEnums(Material.class, list);
+
+        for (Material material : list) {
+            Identifier key = key(material);
+            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
+            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
+            Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
+        }
+    }
+
+    public static String standardize(Identifier location) {
+        Preconditions.checkNotNull(location, "location");
+        return (location.getNamespace().equals(NamespacedKey.MINECRAFT) ? location.getPath() : location.toString())
+            .replace(':', '_')
+            .replaceAll("\\s+", "_")
+            .replaceAll("\\W", "")
+            .toUpperCase(Locale.ENGLISH);
+    }
+
+    public static String standardizeLower(Identifier location) {
+        return (location.getNamespace().equals(NamespacedKey.MINECRAFT) ? location.getPath() : location.toString())
+            .replace(':', '_')
+            .replaceAll("\\s+", "_")
+            .replaceAll("\\W", "")
+            .toLowerCase(Locale.ENGLISH);
+    }
+
     public static Material getMaterial(Block block) {
         // TODO: add support for modded blocks/items
+        test();
         return BLOCK_MATERIAL.getOrDefault(block, Material.STONE);
     }
 
     public static Material getMaterial(Item item) {
-        return ITEM_MATERIAL.getOrDefault(item, Material.AIR);
+        test();
+        return ITEM_MATERIAL.getOrDefault(item, Material.ACACIA_BOAT);
     }
 
     public static Item getItem(Material material) {
+        test();
         if (material != null && material.isLegacy()) material = CraftLegacyMaterials.fromLegacy(material);
         return MATERIAL_ITEM.get(material); // TODO: add support for modded blocks/items
     }
 
     public static Block getBlock(Material material) {
+        test();
         if (material != null && material.isLegacy()) material = CraftLegacyMaterials.fromLegacy(material);
         return MATERIAL_BLOCK.get(material);
     }
@@ -152,6 +243,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public Material getMaterial(String material, int version) {
+        test();
         Preconditions.checkArgument(material != null, "material == null");
         Preconditions.checkArgument(version <= this.getDataVersion(), "Newer version! Server downgrades are not supported!");
 

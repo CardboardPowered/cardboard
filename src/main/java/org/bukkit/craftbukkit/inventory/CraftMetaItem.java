@@ -513,25 +513,21 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             return result;
 
         for (Object obj : mods.keySet()) {
-            if (!(obj instanceof String))
-                continue;
+            if (!(obj instanceof String)) continue;
 
             String attributeName = (String) obj;
-            if (Strings.isNullOrEmpty(attributeName))
-                continue;
+            if (Strings.isNullOrEmpty(attributeName)) continue;
 
             List<?> list = SerializableMeta.getObject(List.class, mods, attributeName, true);
             if (list == null || list.isEmpty())
                 return result;
 
             for (Object o : list) {
-                if (!(o instanceof AttributeModifier))
-                    continue; // catches NPE
+                if (!(o instanceof AttributeModifier)) continue; // catches NPE
 
                 AttributeModifier modifier = (AttributeModifier) o;
                 Attribute attribute = EnumUtils.getEnum(Attribute.class, attributeName.toUpperCase(Locale.ROOT));
-                if (attribute == null)
-                    continue;
+                if (attribute == null) continue;
 
                 result.put(attribute, modifier);
             }
@@ -585,8 +581,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     ListTag createStringList(List<Text> list) {
-        if (list == null || list.isEmpty())
-            return null;
+        if (list == null || list.isEmpty()) return null;
 
         ListTag tagList = new ListTag();
         for (Text value : list)
@@ -596,8 +591,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     static void applyEnchantments(Map<Enchantment, Integer> enchantments, CompoundTag tag, ItemMetaKey key) {
-        if (enchantments == null)
-            return;
+        if (enchantments == null) return;
 
         ListTag list = new ListTag();
 
@@ -609,7 +603,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
             list.add(subtag);
         }
-
         tag.put(key.NBT, list);
     }
 
@@ -623,18 +616,15 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 continue;
             net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = CardboardAttributeInstance.convert(entry.getValue());
             CompoundTag sub = nmsModifier.toTag();
-            if (sub.isEmpty())
-                continue;
+            if (sub.isEmpty()) continue;
 
             String name = entry.getKey().getKey().toString();
-            if (name == null || name.isEmpty())
-                continue;
+            if (name == null || name.isEmpty()) continue;
 
             sub.putString(ATTRIBUTES_IDENTIFIER.NBT, name); // Attribute Name
             if (entry.getValue().getSlot() != null) {
                 net.minecraft.entity.EquipmentSlot slot = Utils.getNMS(entry.getValue().getSlot());
-                if (slot != null)
-                    sub.putString(ATTRIBUTES_SLOT.NBT, slot.getName());
+                if (slot != null) sub.putString(ATTRIBUTES_SLOT.NBT, slot.getName());
             }
             list.add(sub);
         }
@@ -643,10 +633,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     void setDisplayTag(CompoundTag tag, String key, Tag value) {
         final CompoundTag display = tag.getCompound(DISPLAY.NBT);
-
-        if (!tag.contains(DISPLAY.NBT))
-            tag.put(DISPLAY.NBT, display);
-
+        if (!tag.contains(DISPLAY.NBT)) tag.put(DISPLAY.NBT, display);
         display.put(key, value);
     }
 
@@ -707,9 +694,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     public int getEnchantLevel(Enchantment ench) {
         Validate.notNull(ench, "Enchantment cannot be null");
         Integer level = hasEnchants() ? enchantments.get(ench) : null;
-        if (level == null)
-            return 0;
-        return level;
+        return (level == null) ? 0 : level;
     }
 
     @Override
@@ -719,8 +704,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public boolean addEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
-        if (enchantments == null)
-            enchantments = new LinkedHashMap<Enchantment, Integer>(4);
+        if (enchantments == null) enchantments = new LinkedHashMap<Enchantment, Integer>(4);
 
         if (ignoreRestrictions || level >= ench.getStartLevel() && level <= ench.getMaxLevel()) {
             Integer old = enchantments.put(ench, level);
@@ -732,8 +716,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     @Override
     public boolean removeEnchant(Enchantment ench) {
         boolean b = hasEnchants() && enchantments.remove(ench) != null;
-        if ( enchantments != null && enchantments.isEmpty() )
-            this.enchantments = null;
+        if (enchantments != null && enchantments.isEmpty()) this.enchantments = null;
         return b;
     }
 
@@ -764,8 +747,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         Set<ItemFlag> currentFlags = EnumSet.noneOf(ItemFlag.class);
 
         for (ItemFlag f : ItemFlag.values())
-            if (hasItemFlag(f))
-                currentFlags.add(f);
+            if (hasItemFlag(f)) currentFlags.add(f);
         return currentFlags;
     }
 
@@ -882,20 +864,17 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     private void checkAttributeList() {
-        if (attributeModifiers == null) {
+        if (attributeModifiers == null)
             attributeModifiers = LinkedHashMultimap.create();
-        }
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(org.bukkit.inventory.EquipmentSlot slot) {
         checkAttributeList();
         SetMultimap<Attribute, AttributeModifier> result = LinkedHashMultimap.create();
-        for (Map.Entry<Attribute, AttributeModifier> entry : attributeModifiers.entries()) {
-            if (entry.getValue().getSlot() == null || entry.getValue().getSlot() == slot) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : attributeModifiers.entries())
+            if (entry.getValue().getSlot() == null || entry.getValue().getSlot() == slot)
                 result.put(entry.getKey(), entry.getValue());
-            }
-        }
         return result;
     }
 
@@ -910,9 +889,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         Preconditions.checkNotNull(attribute, "Attribute cannot be null");
         Preconditions.checkNotNull(modifier, "AttributeModifier cannot be null");
         checkAttributeList();
-        for (Map.Entry<Attribute, AttributeModifier> entry : attributeModifiers.entries()) {
+        for (Map.Entry<Attribute, AttributeModifier> entry : attributeModifiers.entries())
             Preconditions.checkArgument(!entry.getValue().getUniqueId().equals(modifier.getUniqueId()), "Cannot register AttributeModifier. Modifier is already applied! %s", modifier);
-        }
         return attributeModifiers.put(attribute, modifier);
     }
 
@@ -929,7 +907,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         Iterator<Map.Entry<Attribute, AttributeModifier>> iterator = attributeModifiers.entries().iterator();
         while (iterator.hasNext()) {
             Map.Entry<Attribute, AttributeModifier> next = iterator.next();
-
             if (next.getKey() == null || next.getValue() == null) {
                 iterator.remove();
                 continue;
@@ -998,8 +975,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     private static boolean compareModifiers(Multimap<Attribute, AttributeModifier> first, Multimap<Attribute, AttributeModifier> second) {
-        if (first == null || second == null)
-            return false;
+        if (first == null || second == null) return false;
 
         for (Map.Entry<Attribute, AttributeModifier> entry : first.entries())
             if (!second.containsEntry(entry.getKey(), entry.getValue()))
@@ -1008,7 +984,6 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         for (Map.Entry<Attribute, AttributeModifier> entry : second.entries())
             if (!first.containsEntry(entry.getKey(), entry.getValue()))
                 return false;
-
         return true;
     }
 
@@ -1029,15 +1004,10 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public final boolean equals(Object object) {
-        if (object == null)
-            return false;
+        if (object == null) return false;
+        if (object == this) return true;
 
-        if (object == this)
-            return true;
-
-        if (!(object instanceof CraftMetaItem))
-            return false;
-
+        if (!(object instanceof CraftMetaItem)) return false;
         return CraftItemFactory.instance().equals(this, (ItemMeta) object);
     }
 
@@ -1246,9 +1216,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             return false;
 
         for (Enchantment enchant : enchantments.keySet())
-            if (enchant.conflictsWith(ench))
-                return true;
-
+            if (enchant.conflictsWith(ench)) return true;
         return false;
     }
 
@@ -1314,4 +1282,5 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             return HANDLED_TAGS;
         }
     }
+
 }

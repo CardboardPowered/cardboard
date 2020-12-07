@@ -68,7 +68,6 @@ public class CraftInventory implements Inventory {
             net.minecraft.item.ItemStack mcItem = mcItems.get(i);
             items[i] = (mcItem.isEmpty()) ? null : CraftItemStack.asCraftMirror(mcItem);
         }
-
         return items;
     }
 
@@ -107,18 +106,14 @@ public class CraftInventory implements Inventory {
         for (ItemStack item : getStorageContents())
             if (item != null && item.getType() == material)
                 return true;
-
         return false;
     }
 
     @Override
     public boolean contains(ItemStack item) {
-        if (item == null)
-            return false;
-
+        if (item == null) return false;
         for (ItemStack i : getStorageContents())
-            if (item.equals(i))
-                return true;
+            if (item.equals(i)) return true;
 
         return false;
     }
@@ -126,44 +121,32 @@ public class CraftInventory implements Inventory {
     @Override
     public boolean contains(Material material, int amount) {
         material = CraftLegacy.fromLegacy(material);
-        if (amount <= 0)
-            return true;
+        if (amount <= 0) return true;
 
         for (ItemStack item : getStorageContents())
             if (item != null && item.getType() == material)
                 if ((amount -= item.getAmount()) <= 0)
                     return true;
-
         return false;
     }
 
     @Override
     public boolean contains(ItemStack item, int amount) {
-        if (item == null)
-            return false;
-
-        if (amount <= 0)
-            return true;
+        if (item == null) return false;
+        if (amount <= 0) return true;
 
         for (ItemStack i : getStorageContents())
-            if (item.equals(i) && --amount <= 0)
-                return true;
-
+            if (item.equals(i) && --amount <= 0) return true;
         return false;
     }
 
     @Override
     public boolean containsAtLeast(ItemStack item, int amount) {
-        if (item == null)
-            return false;
-
-        if (amount <= 0)
-            return true;
+        if (item == null) return false;
+        if (amount <= 0) return true;
 
         for (ItemStack i : getStorageContents())
-            if (item.isSimilar(i) && (amount -= i.getAmount()) <= 0)
-                return true;
-
+            if (item.isSimilar(i) && (amount -= i.getAmount()) <= 0) return true;
         return false;
     }
 
@@ -212,12 +195,10 @@ public class CraftInventory implements Inventory {
     }
 
     private int first(ItemStack item, boolean withAmount) {
-        if (item == null)
-            return -1;
+        if (item == null) return -1;
         ItemStack[] inventory = getStorageContents();
         for (int i = 0; i < inventory.length; i++) {
             if (inventory[i] == null) continue;
-
             if (withAmount ? item.equals(inventory[i]) : item.isSimilar(inventory[i]))
                 return i;
         }
@@ -230,7 +211,6 @@ public class CraftInventory implements Inventory {
         for (int i = 0; i < inventory.length; i++)
             if (inventory[i] == null)
                 return i;
-
         return -1;
     }
 
@@ -490,8 +470,7 @@ public class CraftInventory implements Inventory {
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        return false; // TODO Auto-generated method stub
     }
 
 }

@@ -34,8 +34,8 @@ public class Library implements Comparable<Library> {
     /**
      * Creates a {@link Library} instance with the specified group ID, artifact ID, version, and checksum.
      */
-    public Library(@NonNls String groupId, @NonNls String artifactId, @NonNls String version, HashAlgorithm checksumType, @NonNls String checksumValue) {
-        this(groupId, artifactId, version, null, checksumType, checksumValue, false);
+    public Library(@NonNls String groupId, @NonNls String artifactId, @NonNls String version, HashAlgorithm checksumType, @NonNls String checksumValue, String spigot) {
+        this(groupId, artifactId, version, null, checksumType, checksumValue, false, spigot);
     }
 
     /**
@@ -48,8 +48,8 @@ public class Library implements Comparable<Library> {
      * @param checksumValue The checksum to validate the downloaded library against.
      * @param excludeDependencies Specifies that dependencies may be excluded.
      */
-    public Library(String groupId, String artifactId, String version, String repository, HashAlgorithm checksumType, String checksumValue, boolean excludeDependencies) {
-        this.libraryKey = new LibraryKey(groupId, artifactId);
+    public Library(String groupId, String artifactId, String version, String repository, HashAlgorithm checksumType, String checksumValue, boolean excludeDependencies, String spigot) {
+        this.libraryKey = new LibraryKey(groupId, artifactId, StringUtils.isBlank(spigot) ? null : spigot);
         this.version = version;
         this.repository = StringUtils.isBlank(repository) ? null : repository;
         this.checksumType = checksumType;

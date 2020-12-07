@@ -28,6 +28,8 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
@@ -64,6 +66,7 @@ public final class CraftItemStack extends ItemStack {
     public static ItemStack asBukkitCopy(net.minecraft.item.ItemStack original) {
         if (original.isEmpty())
             return new ItemStack(Material.AIR);
+
         ItemStack stack = new ItemStack(CraftMagicNumbers.getMaterial(original.getItem()), original.getCount());
         if (hasItemMeta(original))
             stack.setItemMeta(getItemMeta(original));
@@ -108,6 +111,7 @@ public final class CraftItemStack extends ItemStack {
         setAmount(amount);
         setDurability(durability);
         setItemMeta(itemMeta);
+        System.out.println("NEW CRAFT STACK");
     }
 
     @Override
@@ -117,6 +121,17 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public Material getType() {
+        if (handle != null) {
+            if (handle != null) {
+                boolean isModded = (null == CraftMagicNumbers.getMaterial(handle.getItem()));
+                if (isModded) {
+                    Identifier id = Registry.ITEM.getId(handle.item);
+                    String name = CraftMagicNumbers.standardize(id);
+                    Material material = CraftMagicNumbers.BY_NAME.get(name);                    
+                    return material;
+                }
+            }
+        }
         return handle != null ? CraftMagicNumbers.getMaterial(handle.getItem()) : Material.AIR;
     }
 
@@ -498,6 +513,15 @@ public final class CraftItemStack extends ItemStack {
     }
 
     static Material getType(net.minecraft.item.ItemStack item) {
+        if (null != item) {
+            boolean isModded = (null == CraftMagicNumbers.getMaterial(item.getItem()));
+            if (isModded) {
+                Identifier id = Registry.ITEM.getId(item.item);
+                String name = CraftMagicNumbers.standardize(id);
+                Material material = CraftMagicNumbers.BY_NAME.get(name);                    
+                return material;
+            }
+        }
         return item == null ? Material.AIR : CraftMagicNumbers.getMaterial(item.getItem());
     }
 

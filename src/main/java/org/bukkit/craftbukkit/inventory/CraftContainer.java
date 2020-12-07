@@ -20,6 +20,7 @@ import net.minecraft.screen.HopperScreenHandler;
 import net.minecraft.screen.LecternScreenHandler;
 import net.minecraft.screen.LoomScreenHandler;
 import net.minecraft.screen.MerchantScreenHandler;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
@@ -28,6 +29,8 @@ import net.minecraft.screen.SmokerScreenHandler;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -264,9 +267,8 @@ public class CraftContainer extends ScreenHandler {
         }
 
         // SPIGOT-4598 - we should still delegate the shift click handler
-        if (cachedType == InventoryType.WORKBENCH) {
+        if (cachedType == InventoryType.WORKBENCH)
             delegate = new CraftingScreenHandler(windowId, bottom);
-        }
     }
 
     private void setupWorkbench(net.minecraft.inventory.Inventory top, net.minecraft.inventory.Inventory bottom) {

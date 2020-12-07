@@ -108,7 +108,6 @@ public final class LibraryManager {
             this.repository = repository;
         }
 
-        @SuppressWarnings("resource")
         @Override
         public void run() {
             // check if we already have it
@@ -120,8 +119,14 @@ public final class LibraryManager {
                     // download it
                     BukkitFabricMod.LOGGER.info("Downloading " + library.toString() + "...");
                     try {
-                        URL downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
-                                        + '/' + library.libraryKey.artifactId + '-' + library.version + ".jar");
+                        URL downloadUrl;
+                        if (null == library.libraryKey.spigotJarVersion) {
+                            downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
+                                    + '/' + library.libraryKey.artifactId + '-' + library.version + ".jar");
+                        } else {
+                            downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
+                                    + '/' + library.libraryKey.spigotJarVersion + ".jar");
+                        }
                         HttpsURLConnection connection = (HttpsURLConnection) downloadUrl.openConnection();
                         connection.setRequestProperty("User-Agent", "Mozilla/5.0 Chrome/80");
 
@@ -197,6 +202,7 @@ public final class LibraryManager {
                 BukkitFabricMod.LOGGER.log(Level.SEVERE, "Failed to compute digest for '" + file.getName() + "'", ex);
                 return false;
             }
+            //System.out.println(file.getName() + ": " + digest);
             return digest.equals(checksum);
         }
     }

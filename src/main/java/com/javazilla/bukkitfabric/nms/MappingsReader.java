@@ -54,6 +54,10 @@ public class MappingsReader {
         return FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary", s);
     }
 
+    public static String obf(String s) {
+        return dev(FabricLoader.getInstance().getMappingResolver().mapClassName("official", s));
+    }
+
     public static void main(String[] args) throws IOException {
         File dir = new File("mappings");
         dir.mkdirs();
@@ -62,7 +66,7 @@ public class MappingsReader {
         METHODS = new HashMap<>();
         METHODS2 = new HashMap<>();
         METHODS3 = new HashMap<>();
-        LOGGER.info("Reflection working: " + dev(MAPPINGS.getNewClass("net.minecraft.server.MinecraftKey").getName()).equalsIgnoreCase("net.minecraft.class_2960"));
+        LOGGER.info("Reflection working: " + dev(MAPPINGS.getNewClass("net.minecraft.server.MinecraftKey").getName()).equalsIgnoreCase(dev("net.minecraft.class_2960")));
 
         MAPPINGS.forEachMethod((spigot, intermed) -> {
             String sN = spigot.getName();
@@ -89,18 +93,18 @@ public class MappingsReader {
     }
 
     public static String getIntermedClass(String spigot) {
-        return MAPPINGS.getNewClass(spigot).getName();
+        return dev(MAPPINGS.getNewClass(spigot).getName());
     }
 
     public static String getIntermedField(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
         JavaType type = JavaType.fromName(getIntermedClass(c));
         if (c.contains("class_")) type = MAPPINGS.inverted().getNewClass(c);
-        return MAPPINGS.getNewField(FieldData.create(type, spigot)).getName();
+        return obf(MAPPINGS.getNewField(FieldData.create(type, spigot)).getName());
     }
 
     public static String getIntermedField2(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
         JavaType type = JavaType.fromName(getIntermedClass(c));
-        return MAPPINGS.getNewField(FieldData.create(type, spigot)).getName();
+        return obf(MAPPINGS.getNewField(FieldData.create(type, spigot)).getName());
     }
 
     public static File exportResource(String res, File folder) {
@@ -122,15 +126,15 @@ public class MappingsReader {
         sig = sig.replace(",)", ")");
  
         if (METHODS3.containsKey((name + "=" + spigot + sig)))
-            return METHODS3.getOrDefault((name + "=" + spigot + sig), spigot);
+            return METHODS3.getOrDefault((name + "=" + spigot + sig), obf(spigot));
         try {
             String iclazz = ReflectionRemapper.mapClassName(name);
             Class<?> cl = Class.forName(iclazz);
             Class<?> parent = cl.getSuperclass();
             if (null != parent) {
                 String pname = parent.getName();
-                return METHODS3.getOrDefault((pname + "=" + spigot + sig), spigot);
-            } else return spigot;
+                return obf(METHODS3.getOrDefault((pname + "=" + spigot + sig), spigot));
+            } else return obf(spigot);
         } catch (Exception e) { return getIntermedMethod(name, spigot); }
     }
 
@@ -139,16 +143,16 @@ public class MappingsReader {
         // TODO There are 44 spigot-named methods that will have duplicates.
 
         if (METHODS.containsKey((name + "=" + spigot)))
-            return METHODS.getOrDefault(name + "=" + spigot, spigot);
+            return METHODS.getOrDefault(name + "=" + spigot, obf(spigot));
         try {
             String iclazz = ReflectionRemapper.mapClassName(name);
             Class<?> cl = Class.forName(iclazz);
             Class<?> parent = cl.getSuperclass();
             if (null != parent) {
                 String pname = parent.getName();
-                return METHODS.getOrDefault(pname + "=" + spigot, spigot);
-            } else return spigot;
-        } catch (Exception e) { return spigot; }
+                return obf(METHODS.getOrDefault(pname + "=" + spigot, spigot));
+            } else return obf(spigot);
+        } catch (Exception e) { return obf(spigot); }
     }
 
 }
