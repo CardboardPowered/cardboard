@@ -29,7 +29,7 @@ Classes and Fields will automatically remap to their intermediary counterparts *
 
 # Progress
 There is a progress indicator in the Discord.
-Although, if your not in the discord:
+Although, if you're not in the Discord:
 Progress can be determined by the completeness of the to-do lists on the two pinned issues.
 
 
