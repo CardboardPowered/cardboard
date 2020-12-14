@@ -111,7 +111,6 @@ public final class CraftItemStack extends ItemStack {
         setAmount(amount);
         setDurability(durability);
         setItemMeta(itemMeta);
-        System.out.println("NEW CRAFT STACK");
     }
 
     @Override

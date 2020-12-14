@@ -113,6 +113,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final List<Class<?>> ENV_CTOR = ImmutableList.of(int.class);
     public static final Map<String, Material> BY_NAME = Unsafe.getStatic(Material.class, "BY_NAME");
     private static final Map<String, EntityType> ENTITY_NAME_MAP = Unsafe.getStatic(EntityType.class, "NAME_MAP");
+    public static final HashMap<String, Material> MODDED_MATERIALS = new HashMap<>();
 
     public static void test() {
         int blocks = 0, items = 0;
@@ -132,6 +133,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 MATERIAL_BLOCK.put(material, block);
                 BY_NAME.put(name, material);
                 list.add(material);
+                MODDED_MATERIALS.put(name, material);
                 BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
             }
             BLOCK_MATERIAL.put(block, Material.getMaterial(id.getPath().toUpperCase(Locale.ROOT)));
@@ -149,6 +151,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 MATERIAL_ITEM.put(material, item);
                 BY_NAME.put(name, material);
                 list.add(material);
+                MODDED_MATERIALS.put(name, material);
                 BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
             }
             ITEM_MATERIAL.put(item, Material.getMaterial(id.getPath().toUpperCase(Locale.ROOT)));

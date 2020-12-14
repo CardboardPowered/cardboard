@@ -18,8 +18,11 @@
  */
 package com.javazilla.bukkitfabric.nms;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import org.bukkit.Material;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -40,11 +43,34 @@ public class ReflectionMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+        if (owner.equalsIgnoreCase("org/bukkit/Material")) {
+            if (CraftMagicNumbers.MODDED_MATERIALS.containsKey(name)) { 
+                super.visitFieldInsn( opcode, owner, "STONE", desc );
+                return;
+            }
+        }
+
         super.visitFieldInsn( opcode, owner, name, desc );
+    }
+
+    public static Field Material_getField(String name) throws NoSuchFieldException, SecurityException {
+        try {
+            return Material.class.getField(name);
+        } catch (NoSuchFieldException | SecurityException e) {
+            return Material.class.getField("STONE");
+        }
     }
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+        if (owner.equalsIgnoreCase("org/bukkit/Material")) {
+            if (name.equalsIgnoreCase("getField")) {
+                System.out.println("\nGET MATERIAL FIELD!!!!!\n");
+                super.visitFieldInsn( opcode, "com/javazilla/bukkitfabric/nms/ReflectionMethodVisitor", "Material_getField", desc );
+                return;
+            }
+        }
+
         for (String str : SKIP) {
             if (this.pln.equalsIgnoreCase(str) || owner.startsWith("org/bukkit")) {
                 // Skip Vault cause weird things happen

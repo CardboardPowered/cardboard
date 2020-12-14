@@ -32,6 +32,7 @@ import java.util.function.BooleanSupplier;
 
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -54,6 +55,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 
+import io.izzel.arclight.api.EnumHelper;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.minecraft.block.Block;
 import net.minecraft.command.DataCommandStorage;
@@ -353,6 +355,8 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
 
         CraftMagicNumbers.test();
+
+        //io.github.essentialsx.itemdbgenerator.Main.main(new String[] {"test"});
 
         BukkitFabricMod.isAfterWorldLoad = true;
     }

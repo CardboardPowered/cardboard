@@ -60,7 +60,7 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
     @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
         CraftServer.server = (MinecraftDedicatedServer) (Object) this;
-        Runtime.getRuntime().addShutdownHook(new ServerShutdownThread());
+        //Runtime.getRuntime().addShutdownHook(new ServerShutdownThread());
     }
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
@@ -94,6 +94,7 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
     @Inject(at = @At("TAIL"), method = "exit")
     public void killProcess(CallbackInfo ci) {
         BukkitLogger.getLogger().info("Goodbye!");
+        System.exit(0);
     }
 
     /**
