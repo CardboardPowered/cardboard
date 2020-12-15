@@ -91,11 +91,11 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
         Bukkit.getLogger().info("");
     }
 
-    @Inject(at = @At("TAIL"), method = "exit")
+    /*@Inject(at = @At("TAIL"), method = "exit")
     public void killProcess(CallbackInfo ci) {
         BukkitLogger.getLogger().info("Goodbye!");
         System.exit(0);
-    }
+    }*/
 
     /**
      * @author BukkitFabric

@@ -1467,6 +1467,7 @@ public class CraftServer implements Server {
 
     @Override
     public void shutdown() {
+        System.out.println("SHUTDOWN");
         server.stop(false);
     }
 

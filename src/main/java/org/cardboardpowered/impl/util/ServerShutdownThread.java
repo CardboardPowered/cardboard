@@ -1,13 +1,12 @@
 package org.cardboardpowered.impl.util;
 
+import org.bukkit.craftbukkit.CraftServer;
+
 public class ServerShutdownThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            System.out.println("Server Closed! ");
-        } finally {
-        }
+        System.out.println("Server Closed! ");
     }
 
 }

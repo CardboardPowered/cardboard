@@ -421,8 +421,21 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             processQueue.remove().run();
     }
 
+    private boolean hasStopped = false;
+    private final Object stopLock = new Object();
+    public final boolean hasStopped() {
+        synchronized (stopLock) {
+            return hasStopped;
+        }
+    }
+
     @Inject(at = @At("HEAD"), method = "shutdown")
     public void doStop(CallbackInfo ci) {
+        synchronized(stopLock) {
+            if (hasStopped) return;
+            hasStopped = true;
+        }
+
         if (null != CraftServer.INSTANCE)
             CraftServer.INSTANCE.getPluginManager().disablePlugins();
     }

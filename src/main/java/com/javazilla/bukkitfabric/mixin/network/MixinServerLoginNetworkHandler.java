@@ -192,8 +192,8 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
      * @author BukkitFabricMod
      * @reason Fire PlayerLoginEvent
      */
-    @Overwrite
-    public void acceptPlayer() {
+    @Inject(at = @At("HEAD"), method = "acceptPlayer", cancellable = true)
+    public void acceptPlayer_BF(CallbackInfo ci) {
         ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
 
         if (s != null) {
@@ -211,7 +211,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                 this.player = s;
             } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
         }
-
+        ci.cancel();
     }
 
     @Inject(at = @At("TAIL"), method="onHello")
