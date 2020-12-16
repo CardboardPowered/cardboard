@@ -77,14 +77,6 @@ public class MixinWorld implements IMixinWorld {
                 this.capturedBlockStates.put(blockposition.toImmutable(), blockstate);
                 captured = true;
             }
-            /*BlockState iblockdata1 = chunk.setBlockState(blockposition, iblockdata); // Bukkit: custom NO_PLACE flag
-            if (iblockdata1 == null) {
-                // CraftBukkit start - remove blockstate if failed (or the same)
-                if (this.captureBlockStates && captured) {
-                    this.capturedBlockStates.remove(blockposition);
-                }
-                // CraftBukkit end
-            }*/
         }
     }
 

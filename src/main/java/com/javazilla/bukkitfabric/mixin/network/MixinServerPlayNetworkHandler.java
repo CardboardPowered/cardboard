@@ -348,7 +348,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         }
     }
 
-    @Inject(at = @At("TAIL"), method = "onSignUpdate", cancellable = true)
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/UpdateSignC2SPacket;getText()[Ljava/lang/String;"), method = "onSignUpdate", cancellable = true)
     public void fireSignUpdateEvent(UpdateSignC2SPacket packet, CallbackInfo ci) {
         String[] astring = packet.getText();
 
@@ -361,15 +361,18 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         for (int i = 0; i < astring.length; ++i)
             lines[i] = Formatting.strip(new LiteralText(Formatting.strip(astring[i])).getString());
 
-        SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), player, lines);
-        CraftServer.INSTANCE.getPluginManager().callEvent(event);
-
-        if (!event.isCancelled()) {
-            BlockEntity tileentity = this.player.getServerWorld().getBlockEntity(packet.getPos());
-            SignBlockEntity tileentitysign = (SignBlockEntity) tileentity;
-            System.arraycopy(org.bukkit.craftbukkit.block.CraftSign.sanitizeLines(event.getLines()), 0, ((IMixinSignBlockEntity)tileentitysign).getTextBF(), 0, 4);
-            tileentitysign.editable = false;
-         }
+        ((IMixinMinecraftServer)CraftServer.server).cardboard_runOnMainThread(() -> {
+            System.out.println("SIGN CHANGE EVENT!");
+            SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), player, lines);
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+    
+            if (!event.isCancelled()) {
+                BlockEntity tileentity = this.player.getServerWorld().getBlockEntity(packet.getPos());
+                SignBlockEntity tileentitysign = (SignBlockEntity) tileentity;
+                System.arraycopy(org.bukkit.craftbukkit.block.CraftSign.sanitizeLines(event.getLines()), 0, ((IMixinSignBlockEntity)tileentitysign).getTextBF(), 0, 4);
+                tileentitysign.editable = false;
+             }
+        });
     }
 
     @Inject(at = @At("TAIL"), method = "tick")

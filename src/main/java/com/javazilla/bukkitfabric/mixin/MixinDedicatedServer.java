@@ -27,7 +27,6 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.cardboardpowered.impl.CardboardEnchantment;
-import org.cardboardpowered.impl.util.ServerShutdownThread;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -91,11 +90,11 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
         Bukkit.getLogger().info("");
     }
 
-    /*@Inject(at = @At("TAIL"), method = "exit")
+    @Inject(at = @At("TAIL"), method = "exit")
     public void killProcess(CallbackInfo ci) {
         BukkitLogger.getLogger().info("Goodbye!");
-        System.exit(0);
-    }*/
+        Runtime.getRuntime().halt(0);
+    }
 
     /**
      * @author BukkitFabric

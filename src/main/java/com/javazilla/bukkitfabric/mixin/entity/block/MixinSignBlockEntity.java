@@ -19,6 +19,4 @@ public class MixinSignBlockEntity implements IMixinSignBlockEntity {
         return text;
     }
 
-
-
 }

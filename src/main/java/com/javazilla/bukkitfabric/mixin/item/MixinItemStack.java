@@ -37,8 +37,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.block.BlockPlaceEvent;
 

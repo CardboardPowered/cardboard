@@ -59,4 +59,6 @@ public interface IMixinMinecraftServer {
 
     public Session getSessionBF();
 
+    public void cardboard_runOnMainThread(Runnable r);
+
 }

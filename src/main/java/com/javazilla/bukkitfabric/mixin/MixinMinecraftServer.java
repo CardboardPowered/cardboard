@@ -421,6 +421,12 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             processQueue.remove().run();
     }
 
+    @Override
+    public void cardboard_runOnMainThread(Runnable r) {
+        System.out.print("runOnMainThread");
+        processQueue.add(r);
+    }
+
     private boolean hasStopped = false;
     private final Object stopLock = new Object();
     public final boolean hasStopped() {

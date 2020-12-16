@@ -76,7 +76,7 @@ public class CraftSign extends CardboardBlockEntityState<SignBlockEntity> implem
 
         Text[] newLines = sanitizeLines(lines);
         System.arraycopy(newLines, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, 4);
-        sign.setEditable(editable);
+        sign.editable = true;//.setEditable(editable);
     }
 
     public static Text[] sanitizeLines(String[] lines) {

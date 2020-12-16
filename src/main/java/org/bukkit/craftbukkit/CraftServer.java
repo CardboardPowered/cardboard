@@ -1334,8 +1334,10 @@ public class CraftServer implements Server {
 
     @Override
     public boolean isPrimaryThread() {
+        if (!server.isOnThread())
+            System.out.println(server.isOnThread() + " / " + Thread.currentThread().getName());
         return server.isOnThread();
-    }
+    } 
 
     @Override
     public List<Player> matchPlayer(String partialName) {
