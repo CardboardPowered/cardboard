@@ -66,6 +66,7 @@
     "entity.MixinExperienceBottleEntity",
     "entity.MixinTntEntity",
     "entity.MixinDamageSource",
+    "entity.MixinExperienceOrbEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

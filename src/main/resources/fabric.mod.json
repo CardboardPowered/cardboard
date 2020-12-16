@@ -3,13 +3,13 @@
   "id": "bukkitfabric",
   "version": "${version}",
 
-  "name": "Bukkit for Fabric",
-  "description": "An implementation of the popular Spigot API for Fabric",
+  "name": "CardboardMod",
+  "description": "An implementation of the popular Spigot/Paper API for Fabric",
   "authors": [
     "Isaiah"
   ],
   "contact": {
-    "homepage": "https://javazilla.com/",
+    "homepage": "https://cardboardpowered.org/",
     "sources": "https://github.com/bukkitfabric/bukkit4fabric/"
   },
 
