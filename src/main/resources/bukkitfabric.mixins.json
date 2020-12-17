@@ -46,6 +46,7 @@
     "world.MixinWorldAccess",
     "world.MixinServerWorldAccess",
     "world.MixinCommandBlockExecutor",
+    "world.MixinChunkTicketType",
 
     "entity.MixinEntity",
     "entity.MixinPlayer",
