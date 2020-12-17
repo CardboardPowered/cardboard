@@ -81,6 +81,7 @@
     "entity.block.MixinBoatDispenserBehavior",
     "entity.block.MixinHopperBlockEntity",
     "entity.block.MixinShulkerBoxBlockEntity",
+    "entity.block.MixinEndGatewayBlockEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
