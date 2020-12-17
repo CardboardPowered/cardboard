@@ -37,7 +37,7 @@ public class MixinEndGatewayBlockEntity extends EndPortalBlockEntity {
     public void startTeleportCooldown() {
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;teleport(DDD)V"), method = "tryTeleportingEntity")
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;teleport(DDD)V"), method = "tryTeleportingEntity", cancellable = true)
     public void bukkitize(Entity entity, CallbackInfo ci) {
         BlockPos blockposition = this.exactTeleport ? this.exitPortalPos : this.findBestPortalExitPos();
         Entity entity1;
@@ -52,7 +52,6 @@ public class MixinEndGatewayBlockEntity extends EndPortalBlockEntity {
             } else entity1 = entity;
         } else entity1 = entity.getRootVehicle();
 
-        // CraftBukkit start - Fire PlayerTeleportEvent
         if (entity1 instanceof ServerPlayerEntity) {
             PlayerImpl player = (PlayerImpl) ((IMixinEntity)entity1).getBukkitEntity();
             org.bukkit.Location location = new Location(((IMixinWorld)world).getWorldImpl(), (double) blockposition.getX() + 0.5D, (double) blockposition.getY() + 0.5D, (double) blockposition.getZ() + 0.5D);
@@ -61,14 +60,17 @@ public class MixinEndGatewayBlockEntity extends EndPortalBlockEntity {
 
             PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.END_GATEWAY);
             Bukkit.getPluginManager().callEvent(teleEvent);
-            if (teleEvent.isCancelled()) return;
+            if (teleEvent.isCancelled()) {
+                ci.cancel();
+                return;
+            }
 
             entity1.resetNetherPortalCooldown();
             ((IMixinPlayNetworkHandler) ((ServerPlayerEntity) entity1).networkHandler).teleport(teleEvent.getTo());
-            this.startTeleportCooldown(); // CraftBukkit - call at end of method
+            this.startTeleportCooldown();
+            ci.cancel();
             return;
         }
-        // CraftBukkit end
     }
 
 }

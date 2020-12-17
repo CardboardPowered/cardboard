@@ -82,6 +82,7 @@
     "entity.block.MixinHopperBlockEntity",
     "entity.block.MixinShulkerBoxBlockEntity",
     "entity.block.MixinEndGatewayBlockEntity",
+    "entity.block.MixinBeehiveBlockEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
