@@ -45,6 +45,7 @@
     "world.MixinWorldBorder",
     "world.MixinWorldAccess",
     "world.MixinServerWorldAccess",
+    "world.MixinCommandBlockExecutor",
 
     "entity.MixinEntity",
     "entity.MixinPlayer",
