@@ -31,7 +31,7 @@
     "loot.MixinLootContextParameters",
     "loot.MixinLootTable",
     "loot.MixinLootManager",
-    "loot.MixinLootingEnchantLootFunction"
+    "loot.MixinLootingEnchantLootFunction",
 
     "behavior.MixinForgetAttackTargetTask",
     "behavior.MixinUpdateAttackTargetTask",
