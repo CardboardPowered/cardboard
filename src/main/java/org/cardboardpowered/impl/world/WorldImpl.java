@@ -66,6 +66,12 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
+import org.bukkit.entity.minecart.CommandMinecart;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
+import org.bukkit.entity.minecart.SpawnerMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.event.world.TimeSkipEvent;
@@ -114,7 +120,21 @@ import net.minecraft.entity.mob.EvokerFangsEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
+import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.thrown.EggEntity;
+import net.minecraft.entity.projectile.thrown.PotionEntity;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
+import net.minecraft.entity.vehicle.ChestMinecartEntity;
+import net.minecraft.entity.vehicle.CommandBlockMinecartEntity;
+import net.minecraft.entity.vehicle.FurnaceMinecartEntity;
+import net.minecraft.entity.vehicle.HopperMinecartEntity;
+import net.minecraft.entity.vehicle.MinecartEntity;
+import net.minecraft.entity.vehicle.SpawnerMinecartEntity;
+import net.minecraft.entity.vehicle.TntMinecartEntity;
 import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -1280,12 +1300,67 @@ public class WorldImpl implements World {
         float pitch = location.getPitch();
         float yaw = location.getYaw();
 
-        if (FallingBlock.class.isAssignableFrom(clazz)) {
+        if (Boat.class.isAssignableFrom(clazz)) {
+            entity = new BoatEntity(nms, x, y, z);
+            entity.refreshPositionAndAngles(x, y, z, yaw, pitch);
+        } else if (FallingBlock.class.isAssignableFrom(clazz)) {
             entity = new FallingBlockEntity(nms, x, y, z, nms.getBlockState(new BlockPos(x, y, z)));
         } else if (Projectile.class.isAssignableFrom(clazz)) {
-            // TODO Projectiles
+            if (Snowball.class.isAssignableFrom(clazz)) {
+                entity = new SnowballEntity(nms, x, y, z);
+            } else if (Egg.class.isAssignableFrom(clazz)) {
+                entity = new EggEntity(nms, x, y, z);
+            } else if (AbstractArrow.class.isAssignableFrom(clazz)) {
+                if (TippedArrow.class.isAssignableFrom(clazz)) {
+                    entity = net.minecraft.entity.EntityType.ARROW.create(nms);
+                    // TODO set type
+                } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
+                    entity = net.minecraft.entity.EntityType.SPECTRAL_ARROW.create(nms);
+                } else if (Trident.class.isAssignableFrom(clazz)) {
+                    entity = net.minecraft.entity.EntityType.TRIDENT.create(nms);
+                } else {
+                    entity = net.minecraft.entity.EntityType.ARROW.create(nms);
+                }
+                entity.refreshPositionAndAngles(x, y, z, 0, 0);
+            } else if (ThrownExpBottle.class.isAssignableFrom(clazz)) {
+                entity = net.minecraft.entity.EntityType.EXPERIENCE_BOTTLE.create(nms);
+                entity.refreshPositionAndAngles(x, y, z, 0, 0);
+            } else if (EnderPearl.class.isAssignableFrom(clazz)) {
+                entity = net.minecraft.entity.EntityType.ENDER_PEARL.create(nms);
+                entity.refreshPositionAndAngles(x, y, z, 0, 0);
+            } else if (ThrownPotion.class.isAssignableFrom(clazz)) {
+                if (LingeringPotion.class.isAssignableFrom(clazz)) {
+                    entity = new PotionEntity(nms, x, y, z);
+                    ((PotionEntity) entity).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.LINGERING_POTION, 1)));
+                } else {
+                    entity = new PotionEntity(nms, x, y, z);
+                    ((PotionEntity) entity).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.SPLASH_POTION, 1)));
+                }
+            } else if (Fireball.class.isAssignableFrom(clazz)) {
+                // TODO Fireball
+            } else if (ShulkerBullet.class.isAssignableFrom(clazz)) {
+                entity = net.minecraft.entity.EntityType.SHULKER_BULLET.create(nms);
+                entity.refreshPositionAndAngles(x, y, z, yaw, pitch);
+            } else if (LlamaSpit.class.isAssignableFrom(clazz)) {
+                entity = net.minecraft.entity.EntityType.LLAMA_SPIT.create(nms);
+                entity.refreshPositionAndAngles(x, y, z, yaw, pitch);
+            } else if (Firework.class.isAssignableFrom(clazz)) {
+                entity = new FireworkRocketEntity(nms, x, y, z, net.minecraft.item.ItemStack.EMPTY);
+            }
         } else if (Minecart.class.isAssignableFrom(clazz)) {
-            // TODO Minecarts
+            if (PoweredMinecart.class.isAssignableFrom(clazz)) {
+                entity = new FurnaceMinecartEntity(nms, x, y, z);
+            } else if (StorageMinecart.class.isAssignableFrom(clazz)) {
+                entity = new ChestMinecartEntity(nms, x, y, z);
+            } else if (ExplosiveMinecart.class.isAssignableFrom(clazz)) {
+                entity = new TntMinecartEntity(nms, x, y, z);
+            } else if (HopperMinecart.class.isAssignableFrom(clazz)) {
+                entity = new HopperMinecartEntity(nms, x, y, z);
+            } else if (SpawnerMinecart.class.isAssignableFrom(clazz)) {
+                entity = new SpawnerMinecartEntity(nms, x, y, z);
+            } else if (CommandMinecart.class.isAssignableFrom(clazz)) {
+                entity = new CommandBlockMinecartEntity(nms, x, y, z);
+            } else entity = new MinecartEntity(nms, x, y, z);
         } else if (EnderSignal.class.isAssignableFrom(clazz)) {
             // TODO EnderSignal
         } else if (EnderCrystal.class.isAssignableFrom(clazz)) {
@@ -1325,19 +1400,14 @@ public class WorldImpl implements World {
                     } else if (Mule.class.isAssignableFrom(clazz)) {
                         entity = net.minecraft.entity.EntityType.MULE.create(nms);
                     } else if (Llama.class.isAssignableFrom(clazz)) {
-                        if (TraderLlama.class.isAssignableFrom(clazz)) {
-                            entity = net.minecraft.entity.EntityType.TRADER_LLAMA.create(nms);
-                        } else {
-                            entity = net.minecraft.entity.EntityType.LLAMA.create(nms);
-                        }
+                        entity = TraderLlama.class.isAssignableFrom(clazz) ?
+                                net.minecraft.entity.EntityType.TRADER_LLAMA.create(nms) : net.minecraft.entity.EntityType.LLAMA.create(nms);
                     }
                 } else if (SkeletonHorse.class.isAssignableFrom(clazz)) {
                     entity = net.minecraft.entity.EntityType.SKELETON_HORSE.create(nms);
                 } else if (ZombieHorse.class.isAssignableFrom(clazz)) {
                     entity = net.minecraft.entity.EntityType.ZOMBIE_HORSE.create(nms);
-                } else {
-                    entity = net.minecraft.entity.EntityType.HORSE.create(nms);
-                }
+                } else entity = net.minecraft.entity.EntityType.HORSE.create(nms);
             } else if (Skeleton.class.isAssignableFrom(clazz)) {
                 if (Stray.class.isAssignableFrom(clazz)) {
                     entity = net.minecraft.entity.EntityType.STRAY.create(nms);
@@ -1468,9 +1538,8 @@ public class WorldImpl implements World {
                 entity = net.minecraft.entity.EntityType.PIGLIN_BRUTE.create(nms);
             } else if (Strider.class.isAssignableFrom(clazz)) {
                 entity = net.minecraft.entity.EntityType.STRIDER.create(nms);
-            } else if (Zoglin.class.isAssignableFrom(clazz)) {
+            } else if (Zoglin.class.isAssignableFrom(clazz))
                 entity = net.minecraft.entity.EntityType.ZOGLIN.create(nms);
-            }
 
             if (entity != null) {
                 entity.updatePositionAndAngles(x, y, z, yaw, pitch);
@@ -1514,9 +1583,8 @@ public class WorldImpl implements World {
                 }
             }
 
-            if (entity != null && !((AbstractDecorationEntity) entity).canStayAttached()) {
+            if (entity != null && !((AbstractDecorationEntity) entity).canStayAttached())
                 throw new IllegalArgumentException("Cannot spawn hanging entity for " + clazz.getName() + " at " + location);
-            }
         } else if (TNTPrimed.class.isAssignableFrom(clazz)) {
             entity = new TntEntity(nms, x, y, z, null);
         } else if (ExperienceOrb.class.isAssignableFrom(clazz)) {
@@ -1525,9 +1593,9 @@ public class WorldImpl implements World {
             entity = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(nms);
         } else if (AreaEffectCloud.class.isAssignableFrom(clazz)) {
             entity = new AreaEffectCloudEntity(nms, x, y, z);
-        } else if (EvokerFangs.class.isAssignableFrom(clazz)) {
+        } else if (EvokerFangs.class.isAssignableFrom(clazz))
             entity = new EvokerFangsEntity(nms, x, y, z, (float) Math.toRadians(yaw), 0, null);
-        }
+
         if (entity != null)
             return entity;
         throw new IllegalArgumentException("Cannot spawn an entity for " + clazz.getName());
