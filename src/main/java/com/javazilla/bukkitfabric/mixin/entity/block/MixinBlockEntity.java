@@ -26,7 +26,7 @@ public class MixinBlockEntity implements IMixinBlockEntity {
     }
 
     @Inject(at = @At("TAIL"), method = "fromTag")
-    public void loadEnd(BlockState state, CompoundTag tag, CallbackInfo callback) {
+    public void loadEnd(CompoundTag tag, CallbackInfo callback) {
         this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 
         CompoundTag persistentDataTag = tag.getCompound("PublicBukkitValues");

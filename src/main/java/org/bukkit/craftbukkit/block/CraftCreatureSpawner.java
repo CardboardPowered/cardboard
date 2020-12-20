@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
+
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.util.Identifier;
 import org.bukkit.Material;
@@ -22,7 +24,7 @@ public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBl
 
     @Override
     public EntityType getSpawnedType() {
-        Identifier key = this.getSnapshot().getLogic().getEntityId();
+        Identifier key = BlockEntityType.getId(this.getSnapshot().getType());
         return (key == null) ? EntityType.PIG : EntityType.fromName(key.getPath());
     }
 
@@ -35,7 +37,7 @@ public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBl
 
     @Override
     public String getCreatureTypeName() {
-        return this.getSnapshot().getLogic().getEntityId().getPath();
+        return BlockEntityType.getId(this.getSnapshot().getType()).getPath();
     }
 
     @Override

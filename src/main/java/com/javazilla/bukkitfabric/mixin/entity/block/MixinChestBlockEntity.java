@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 public class MixinChestBlockEntity implements IMixinInventory {
 
     @Shadow public DefaultedList<ItemStack> inventory;
-    @Shadow public int viewerCount;
+    // TODO 1.17 @Shadow public int viewerCount;
 
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
@@ -76,7 +76,8 @@ public class MixinChestBlockEntity implements IMixinInventory {
      * @author BukkitFabric
      * @reason Redstone Events
      */
-    @Overwrite
+    // TODO 1.17
+    /*@Overwrite
     public void onOpen(PlayerEntity entityhuman) {
         if (!entityhuman.isSpectator()) {
             if (this.viewerCount < 0)
@@ -97,6 +98,6 @@ public class MixinChestBlockEntity implements IMixinInventory {
             ((ChestBlockEntity)(Object)this).onInvOpenOrClose();
         }
 
-    }
+    }*/
 
 }

@@ -18,7 +18,7 @@ public class MixinBannerBlockEntity {
     public ListTag patternListTag;
 
     @Inject(at = @At("TAIL"), method = "fromTag")
-    public void fromTag(BlockState iblockdata, CompoundTag nbttagcompound, CallbackInfo ci) {
+    public void fromTag(CompoundTag nbttagcompound, CallbackInfo ci) {
         // Bukkit - TitleEntityBanner.patch
         while (this.patternListTag.size() > 20)
             this.patternListTag.remove(20);
