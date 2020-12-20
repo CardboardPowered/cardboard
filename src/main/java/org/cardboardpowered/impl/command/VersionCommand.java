@@ -21,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
@@ -35,7 +36,7 @@ public class VersionCommand extends Command {
         this.description = "Gets the version of this server including any plugins in use";
         this.usageMessage = "/version [plugin name]";
         this.setPermission("bukkit.command.version");
-        this.setAliases(Arrays.asList("ver", "about"));
+        this.setAliases(Arrays.asList("ver", "about", "version"));
     }
 
     @Override
@@ -43,7 +44,7 @@ public class VersionCommand extends Command {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + CraftServer.INSTANCE.getShortVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
             sendVersion(sender);
         } else {
             StringBuilder name = new StringBuilder();

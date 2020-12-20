@@ -48,7 +48,10 @@ public class BukkitFabricMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Bukkit for Fabric Mod - Javazilla.com");
+        LOGGER.info("");
+        LOGGER.info("Cardboard Mod - CardboardPowered.org");
+        LOGGER.info("(formerly known as Bukkit4Fabric)");
+        LOGGER.info("");
 
         loadLibs();
 

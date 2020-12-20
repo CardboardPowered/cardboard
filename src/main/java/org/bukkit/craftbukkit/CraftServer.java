@@ -247,9 +247,10 @@ import net.minecraft.world.level.storage.LevelStorage;
 @SuppressWarnings("deprecation")
 public class CraftServer implements Server {
 
-    public final String serverName = "Bukkit4Fabric";
+    public final String serverName = "CardboardPowered.org";
     public final String bukkitVersion = "1.16.4-R0.1-SNAPSHOT";
     public final String serverVersion;
+    public final String shortVersion;
 
     private final Logger logger = BukkitLogger.getLogger();
 
@@ -280,6 +281,7 @@ public class CraftServer implements Server {
     public CraftServer(MinecraftDedicatedServer nms) {
         INSTANCE = this;
         serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
+        shortVersion = "git-" + Utils.getGitHash().substring(0,7);
         server = nms;
         console = nms;
         commandMap = new CommandMapImpl(this);
@@ -356,7 +358,11 @@ public class CraftServer implements Server {
         if (pluginFolder.exists()) {
             for (File f : pluginFolder.listFiles()) {
                 if (f.getName().endsWith(".jar")) {
-                    com.javazilla.bukkitfabric.nms.Remapper.remap(f); // Bukkit4Fabric: Remap Jar file
+                    try {
+                        com.javazilla.bukkitfabric.nms.Remapper.remap(f); // Bukkit4Fabric: Remap Jar file
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
@@ -1268,6 +1274,10 @@ public class CraftServer implements Server {
     @Override
     public String getVersion() {
         return serverVersion + " (MC: " + getServer().getVersion() + ")";
+    }
+
+    public String getShortVersion() {
+        return shortVersion + " (MC: " + getServer().getVersion() + ")";
     }
 
     @Override
