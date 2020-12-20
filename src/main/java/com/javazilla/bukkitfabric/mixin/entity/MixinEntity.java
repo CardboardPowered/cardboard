@@ -50,8 +50,11 @@ import org.cardboardpowered.impl.entity.ArrowImpl;
 import org.cardboardpowered.impl.entity.CardboardAmbient;
 import org.cardboardpowered.impl.entity.CardboardBat;
 import org.cardboardpowered.impl.entity.CardboardBlaze;
+import org.cardboardpowered.impl.entity.CardboardComplexPart;
 import org.cardboardpowered.impl.entity.CardboardDolphin;
+import org.cardboardpowered.impl.entity.CardboardDragonPart;
 import org.cardboardpowered.impl.entity.CardboardEnderPearl;
+import org.cardboardpowered.impl.entity.CardboardEnderdragon;
 import org.cardboardpowered.impl.entity.CardboardEvoker;
 import org.cardboardpowered.impl.entity.CardboardFish;
 import org.cardboardpowered.impl.entity.CardboardFishCod;
@@ -139,6 +142,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -452,9 +456,9 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 else if (entity instanceof PhantomEntity) { return new CardboardPhantom(server, (PhantomEntity) entity); }
                 else { return new CardboardFlying(server, (FlyingEntity) entity); }
             }
-            //else if (entity instanceof EnderDragonEntity) {
-                //return new CraftEnderDragon(server, (EnderDragonEntity) entity);
-            //}
+            else if (entity instanceof EnderDragonEntity) {
+                return new CardboardEnderdragon(server, (EnderDragonEntity) entity);
+            }
             // Ambient
             else if (entity instanceof AmbientEntity) {
                 if (entity instanceof BatEntity) { return new CardboardBat(server, (BatEntity) entity); }
@@ -465,8 +469,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         }
         else if (entity instanceof EnderDragonPart) {
             EnderDragonPart part = (EnderDragonPart) entity;
-            //if (part.owner instanceof EnderDragonEntity) { return new CraftEnderDragonPart(server, (EnderDragonPart) entity); }
-           //else { return new CraftComplexPart(server, (EnderDragonPart) entity); }
+            if (part.owner instanceof EnderDragonEntity) { return new CardboardDragonPart(server, (EnderDragonPart) entity); }
+            else { return new CardboardComplexPart(server, (EnderDragonPart) entity); }
         }
         else if (entity instanceof ExperienceOrbEntity) { return new ExperienceOrbImpl(server, (ExperienceOrbEntity) entity); }
         //else if (entity instanceof ArrowEntity) { return new CraftTippedArrow(server, (ArrowEntity) entity); }
