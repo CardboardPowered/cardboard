@@ -35,16 +35,15 @@ public class MixinWorldChunk implements IMixinWorldChunk {
     @Final
     public Map<Heightmap.Type, Heightmap> heightmaps;
 
-    //@Shadow
-    //@Final
-    //public TypeFilterableList<Entity>[] entitySections;
+    @Shadow
+    @Final
+    public TypeFilterableList<Entity>[] entitySections;
 
     private Chunk bukkit;
 
     @Override
     public TypeFilterableList<Entity>[] getEntitySections() {
-        return null;
-        //return entitySections;
+        return entitySections;
     }
 
     @Override

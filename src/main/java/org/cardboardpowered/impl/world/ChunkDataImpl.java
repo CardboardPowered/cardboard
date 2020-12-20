@@ -134,7 +134,7 @@ public final class ChunkDataImpl implements ChunkGenerator.ChunkData {
         ChunkSection section = getChunkSection(y, true);
         section.setBlockState(x, y & 0xf, z, type);
 
-        if (type.hasBlockEntity()) {
+        if (type.getBlock().hasBlockEntity()) {
             if (tiles == null) tiles = new HashSet<>();
             tiles.add(new BlockPos(x, y, z));
         }

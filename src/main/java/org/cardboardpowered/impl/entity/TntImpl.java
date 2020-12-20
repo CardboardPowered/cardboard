@@ -40,7 +40,7 @@ public class TntImpl extends CraftEntity implements TNTPrimed {
 
     @Override
     public int getFuseTicks() {
-        return getHandle().getFuse();
+        return getHandle().getFuseTimer();
     }
 
     @Override

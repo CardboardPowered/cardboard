@@ -261,7 +261,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      */
     @Overwrite
     public void method_31286(String message) {
-        if (this.player.isRemoved() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
+        if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
             this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED), MessageType.CHAT, player.getUuid()));
         } else {
             boolean isSync = message.startsWith("/");
@@ -327,7 +327,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     @Inject(at = @At("HEAD"), method = "onClientCommand", cancellable = true)
     public void onClientCommand(ClientCommandC2SPacket packetplayinentityaction, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packetplayinentityaction, get(), this.player.getServerWorld());
-        if (this.player.isRemoved()) return;
+        if (this.player.removed) return;
         switch (packetplayinentityaction.getMode()) {
             case PRESS_SHIFT_KEY:
             case RELEASE_SHIFT_KEY:
@@ -439,7 +439,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                             if (d11 > 0) allowedPlayerTicks -= 1;
                             else allowedPlayerTicks = 20;
 
-                            double speed = player.getAbilities().flying ? (player.getAbilities().getFlySpeed() * 20f) : (player.getAbilities().getWalkSpeed() * 10f);
+                            double speed = player.abilities.flying ? (player.abilities.getFlySpeed() * 20f) : (player.abilities.getWalkSpeed() * 10f);
                             if (!this.player.isInTeleportationState() && (!this.player.getServerWorld().getGameRules().getBoolean(GameRules.DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isFallFlying())) {
                                 float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
                                 if (d11 - d10 > Math.max(f2, Math.pow((double) ((float) i * speed), 2))) {
@@ -512,7 +512,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                                 }
                             }
                             this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
-                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.getAbilities().allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.method_29780((Entity) this.player) && !this.player.isUsingRiptide();
+                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.abilities.allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.method_29780((Entity) this.player) && !this.player.isUsingRiptide();
                             this.player.getServerWorld().getChunkManager().updateCameraPosition(this.player);
                             this.player.handleFall(this.player.getY() - d3, packetplayinflying.isOnGround());
                             if (flag) this.player.fallDistance = 0.0F;
@@ -561,7 +561,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         HitResult movingobjectposition = ((ServerWorld)this.player.world).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
 
         if (movingobjectposition == null || movingobjectposition.getType() != HitResult.Type.BLOCK)
-            BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_AIR, this.player.getInventory().getMainHandStack(), Hand.MAIN_HAND);
+            BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_AIR, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
 
         // Arm swing animation
         PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
@@ -630,15 +630,15 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packetplayinhelditemslot) {
         NetworkThreadUtils.forceMainThread(packetplayinhelditemslot, get(), this.player.getServerWorld());
         if (packetplayinhelditemslot.getSelectedSlot() >= 0 && packetplayinhelditemslot.getSelectedSlot() < PlayerInventory.getHotbarSize()) {
-            PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.player.getInventory().selectedSlot, packetplayinhelditemslot.getSelectedSlot());
+            PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.player.inventory.selectedSlot, packetplayinhelditemslot.getSelectedSlot());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
-                this.sendPacket(new HeldItemChangeS2CPacket(this.player.getInventory().selectedSlot));
+                this.sendPacket(new HeldItemChangeS2CPacket(this.player.inventory.selectedSlot));
                 this.player.updateLastActionTime();
                 return;
             }
-            if (this.player.getInventory().selectedSlot != packetplayinhelditemslot.getSelectedSlot() && this.player.getActiveHand() == Hand.MAIN_HAND) this.player.clearActiveItem();
-            this.player.getInventory().selectedSlot = packetplayinhelditemslot.getSelectedSlot();
+            if (this.player.inventory.selectedSlot != packetplayinhelditemslot.getSelectedSlot() && this.player.getActiveHand() == Hand.MAIN_HAND) this.player.clearActiveItem();
+            this.player.inventory.selectedSlot = packetplayinhelditemslot.getSelectedSlot();
             this.player.updateLastActionTime();
         } else {
             System.out.println(this.player.getName().getString() + " tried to set an invalid carried item");

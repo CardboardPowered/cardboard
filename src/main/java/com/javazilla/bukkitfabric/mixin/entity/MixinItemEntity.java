@@ -55,7 +55,7 @@ public class MixinItemEntity extends MixinEntity {
         int i = itemstack.getCount();
 
         // CraftBukkit start - fire PlayerPickupItemEvent
-        int canHold = ((IMixinPlayerInventory)entityhuman.getInventory()).canHold(itemstack);
+        int canHold = ((IMixinPlayerInventory)entityhuman.inventory).canHold(itemstack);
         int remaining = i - canHold;
 
         if (this.pickupDelay <= 0 && canHold > 0) {

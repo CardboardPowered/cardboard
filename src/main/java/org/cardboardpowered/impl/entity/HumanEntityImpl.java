@@ -77,7 +77,7 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
         super(entity);
         this.nms = entity;
         this.gm = CraftServer.INSTANCE.getDefaultGameMode();
-        this.inventory = new CardboardPlayerInventory(entity.getInventory());
+        this.inventory = new CardboardPlayerInventory(entity.inventory);
     }
 
     @Override
@@ -164,7 +164,7 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
 
     @Override
     public ItemStack getItemOnCursor() {
-        return CraftItemStack.asCraftMirror(getHandle().getInventory().getCursorStack());
+        return CraftItemStack.asCraftMirror(getHandle().inventory.getCursorStack());
     }
 
     @Override
@@ -253,11 +253,8 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
         if (iinventory instanceof NamedScreenHandlerFactory) {
             if (iinventory instanceof BlockEntity) {
                 BlockEntity te = (BlockEntity) iinventory;
-                if (!te.hasWorld()) {
-                    // te.setLocation(getHandle().world, getHandle().getBlockPos());
-                    te.setWorld(getHandle().world);
-                    te.pos = getHandle().getBlockPos();
-                }
+                if (!te.hasWorld())
+                    te.setLocation(getHandle().world, getHandle().getBlockPos());
             }
         }
 
@@ -360,7 +357,7 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
     @Override
     public void setItemOnCursor(ItemStack item) {
         net.minecraft.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
-        getHandle().getInventory().setCursorStack(stack);
+        getHandle().inventory.setCursorStack(stack);
         if (this instanceof PlayerImpl)
             ((ServerPlayerEntity) getHandle()).updateCursorStack();
     }

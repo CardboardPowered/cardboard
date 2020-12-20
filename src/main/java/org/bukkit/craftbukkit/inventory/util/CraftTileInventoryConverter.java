@@ -47,9 +47,8 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            AbstractFurnaceBlockEntity furnace = new FurnaceBlockEntity(BlockPos.ORIGIN, null);
-            //furnace.setLocation(CraftServer.server.getWorld(World.OVERWORLD), BlockPos.ORIGIN);
-            furnace.setWorld(CraftServer.server.getWorld(World.OVERWORLD));
+            AbstractFurnaceBlockEntity furnace = new FurnaceBlockEntity();
+            furnace.setLocation(CraftServer.server.getWorld(World.OVERWORLD), BlockPos.ORIGIN);
             return furnace;
         }
 
@@ -70,7 +69,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return new BrewingStandBlockEntity(null, null);
+            return new BrewingStandBlockEntity();
         }
 
         @Override
@@ -90,42 +89,42 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
     public static class Dispenser extends CraftTileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return new DispenserBlockEntity(null, null);
+            return new DispenserBlockEntity();
         }
     }
 
     public static class Dropper extends CraftTileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return new DropperBlockEntity(null, null);
+            return new DropperBlockEntity();
         }
     }
 
     public static class Hopper extends CraftTileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return new HopperBlockEntity(null, null);
+            return new HopperBlockEntity();
         }
     }
 
     public static class BlastFurnace extends CraftTileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return new BlastFurnaceBlockEntity(null, null);
+            return new BlastFurnaceBlockEntity();
         }
     }
 
     public static class Lectern extends CraftTileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return new LecternBlockEntity(null, null).inventory;
+            return new LecternBlockEntity().inventory;
         }
     }
 
     public static class Smoker extends CraftTileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
-            return new SmokerBlockEntity(null, null);
+            return new SmokerBlockEntity();
         }
     }
 

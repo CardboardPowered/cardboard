@@ -31,7 +31,7 @@ public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity
 
     @Override
     public int getTier() {
-        return this.getSnapshot().level;
+        return this.getSnapshot().getLevel();
     }
 
     @Override

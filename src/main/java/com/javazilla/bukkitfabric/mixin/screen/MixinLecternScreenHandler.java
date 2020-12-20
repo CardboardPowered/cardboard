@@ -78,7 +78,7 @@ public class MixinLecternScreenHandler extends MixinScreenHandler {
 
                     ItemStack itemstack = this.inventory.removeStack(0);
                     this.inventory.markDirty();
-                    if (!entityhuman.getInventory().insertStack(itemstack))  entityhuman.dropItem(itemstack, false);
+                    if (!entityhuman.inventory.insertStack(itemstack))  entityhuman.dropItem(itemstack, false);
 
                     return true;
                 default:

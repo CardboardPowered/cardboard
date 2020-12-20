@@ -176,7 +176,7 @@ public class MixinExplosion {
 
                     this.world.getProfiler().push("explosion_blocks");
                     if (block.shouldDropItemsOnExplosion((Explosion)(Object)this) && this.world instanceof ServerWorld) {
-                        BlockEntity tileentity = block.getStateManager().getStates().get(0).hasBlockEntity() ? this.world.getBlockEntity(blockposition) : null;
+                        BlockEntity tileentity = block.hasBlockEntity() ? this.world.getBlockEntity(blockposition) : null;
                         LootContext.Builder loottableinfo_builder = (new LootContext.Builder((ServerWorld) this.world)).random(this.world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter((Vec3i) blockposition)).parameter(LootContextParameters.TOOL, ItemStack.EMPTY).optionalParameter(LootContextParameters.BLOCK_ENTITY, tileentity).optionalParameter(LootContextParameters.THIS_ENTITY, this.entity);
 
                         if (this.destructionType ==Explosion.DestructionType.DESTROY || yield < 1.0F)
@@ -302,7 +302,7 @@ public class MixinExplosion {
                         if (entity instanceof PlayerEntity) {
                             PlayerEntity entityhuman = (PlayerEntity) entity;
 
-                            if (!entityhuman.isSpectator() && (!entityhuman.isCreative() || !entityhuman.getAbilities().flying))
+                            if (!entityhuman.isSpectator() && (!entityhuman.isCreative() || !entityhuman.abilities.flying))
                                 this.affectedPlayers.put(entityhuman, new Vec3d(d8 * d13, d9 * d13, d10 * d13));
                         }
                     }

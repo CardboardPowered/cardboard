@@ -122,7 +122,7 @@ public class MixinBlockItem {
                         if (entityhuman instanceof ServerPlayerEntity)
                             Criteria.PLACED_BLOCK.trigger((ServerPlayerEntity) entityhuman, blockposition, itemstack);
                     }
-                    if ((entityhuman == null || !entityhuman.getAbilities().creativeMode) && itemstack != ItemStack.EMPTY)
+                    if ((entityhuman == null || !entityhuman.abilities.creativeMode) && itemstack != ItemStack.EMPTY)
                         itemstack.decrement(1);
 
                     ci.setReturnValue(ActionResult.success(world.isClient));

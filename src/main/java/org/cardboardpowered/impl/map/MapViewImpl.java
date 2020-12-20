@@ -34,8 +34,6 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public int getId() {
-        return 0; // TODO 1.17
-        /*
         String text = worldMap.getId();
         if (text.startsWith("map_")) {
             try {
@@ -44,7 +42,6 @@ public final class MapViewImpl implements MapView {
                 throw new IllegalStateException("Map has non-numeric ID");
             }
         } else throw new IllegalStateException("Map has invalid ID");
-        */
     }
 
     @Override
@@ -59,7 +56,7 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public void setScale(Scale scale) {
-        // TODO 1.17 worldMap.scale = scale.getValue();
+        worldMap.scale = scale.getValue();
     }
 
     @Override
@@ -71,7 +68,7 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public void setWorld(World world) {
-        // TODO 1.17 worldMap.dimension = ((WorldImpl) world).getHandle().getRegistryKey();
+        worldMap.dimension = ((WorldImpl) world).getHandle().getRegistryKey();
     }
 
     @Override
@@ -86,12 +83,12 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public void setCenterX(int x) {
-     // TODO 1.17  worldMap.xCenter = x;
+        worldMap.xCenter = x;
     }
 
     @Override
     public void setCenterZ(int z) {
-     // TODO 1.17   worldMap.zCenter = z;
+        worldMap.zCenter = z;
     }
 
     @Override
@@ -172,22 +169,22 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public boolean isTrackingPosition() {
-        return true; // TODO 1.17 return worldMap.showIcons;
+        return worldMap.showIcons;
     }
 
     @Override
     public void setTrackingPosition(boolean trackingPosition) {
-     // TODO 1.17 worldMap.showIcons = trackingPosition;
+        worldMap.showIcons = trackingPosition;
     }
 
     @Override
     public boolean isUnlimitedTracking() {
-        return true; // TODO 1.17 return worldMap.unlimitedTracking;
+        return worldMap.unlimitedTracking;
     }
 
     @Override
     public void setUnlimitedTracking(boolean unlimited) {
-     // TODO 1.17 worldMap.unlimitedTracking = unlimited;
+        worldMap.unlimitedTracking = unlimited;
     }
 
     @Override
@@ -197,7 +194,7 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public void setLocked(boolean locked) {
-     // TODO 1.17  worldMap.locked = locked;
+        worldMap.locked = locked;
     }
 
 }

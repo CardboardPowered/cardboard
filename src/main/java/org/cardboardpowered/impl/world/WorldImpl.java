@@ -180,8 +180,10 @@ public class WorldImpl implements World {
     @Override
     public Set<String> getListeningPluginChannels() {
         Set<String> result = new HashSet<String>();
+
         for (Player player : getPlayers())
             result.addAll(player.getListeningPluginChannels());
+
         return result;
     }
 
@@ -441,10 +443,15 @@ public class WorldImpl implements World {
     @Override
     public List<Entity> getEntities() {
         List<Entity> list = new ArrayList<Entity>();
-        nms.iterateEntities().forEach(mc -> {
-            Entity bukkit = ((IMixinEntity)mc).getBukkitEntity();
-            if (bukkit != null && bukkit.isValid()) list.add(bukkit);  
-        });
+
+        for (Object object : nms.entitiesById.values()) {
+            if (object instanceof net.minecraft.entity.Entity) {
+                net.minecraft.entity.Entity mc = (net.minecraft.entity.Entity) object;
+                Entity bukkit = ((IMixinEntity)mc).getBukkitEntity();
+
+                if (bukkit != null && bukkit.isValid()) list.add(bukkit);
+            }
+        }
         return list;
     }
 
@@ -459,15 +466,20 @@ public class WorldImpl implements World {
     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T> arg0) {
         Collection<T> list = new ArrayList<T>();
 
-        nms.iterateEntities().forEach(entity -> {
-            Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
+        for (Object entity: nms.entitiesById.values()) {
+            if (entity instanceof net.minecraft.entity.Entity) {
+                Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
 
-            if (bukkitEntity != null) {
+                if (bukkitEntity == null)
+                    continue;
+
                 Class<?> bukkitClass = bukkitEntity.getClass();
+
                 if (arg0.isAssignableFrom(bukkitClass) && bukkitEntity.isValid())
                     list.add((T) bukkitEntity);
             }
-        });
+        }
+
         return list;
     }
 
@@ -475,11 +487,15 @@ public class WorldImpl implements World {
     public Collection<Entity> getEntitiesByClasses(Class<?>... arg0) {
         Collection<Entity> list = new ArrayList<Entity>();
 
-        nms.iterateEntities().forEach(entity -> {
-            Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
+        for (Object entity: nms.entitiesById.values()) {
+            if (entity instanceof net.minecraft.entity.Entity) {
+                Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
 
-            if (bukkitEntity != null) {
+                if (bukkitEntity == null)
+                    continue;
+
                 Class<?> bukkitClass = bukkitEntity.getClass();
+
                 for (Class<?> clazz : arg0) {
                     if (clazz.isAssignableFrom(bukkitClass)) {
                         if (bukkitEntity.isValid())
@@ -488,7 +504,7 @@ public class WorldImpl implements World {
                     }
                 }
             }
-        });
+        }
 
         return list;
     }
@@ -653,13 +669,17 @@ public class WorldImpl implements World {
     public List<LivingEntity> getLivingEntities() {
         List<LivingEntity> list = new ArrayList<LivingEntity>();
 
-        nms.iterateEntities().forEach(mcEnt -> {
-            Entity bukkitEntity = ((IMixinEntity)mcEnt).getBukkitEntity();
+        for (Object o : nms.entitiesById.values()) {
+            if (o instanceof net.minecraft.entity.Entity) {
+                net.minecraft.entity.Entity mcEnt = (net.minecraft.entity.Entity) o;
+                Entity bukkitEntity = ((IMixinEntity)mcEnt).getBukkitEntity();
 
-            // Assuming that bukkitEntity isn't null
-            if (bukkitEntity != null && bukkitEntity instanceof LivingEntity && bukkitEntity.isValid())
-                list.add((LivingEntity) bukkitEntity);
-        });
+                // Assuming that bukkitEntity isn't null
+                if (bukkitEntity != null && bukkitEntity instanceof LivingEntity && bukkitEntity.isValid())
+                    list.add((LivingEntity) bukkitEntity);
+            }
+        }
+
         return list;
     }
 

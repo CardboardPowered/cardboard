@@ -40,7 +40,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
 
-import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.command.ServerCommandSource;
@@ -273,12 +272,12 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Entity getPassenger() {
-        return isEmpty() ? null : ((IMixinEntity)getHandle().getPassengerList().get(0)).getBukkitEntity();
+        return isEmpty() ? null : ((IMixinEntity)getHandle().passengerList.get(0)).getBukkitEntity();
     }
 
     @Override
     public List<Entity> getPassengers() {
-        return Lists.newArrayList(Lists.transform(getHandle().getPassengerList(), new Function<net.minecraft.entity.Entity, org.bukkit.entity.Entity>() {
+        return Lists.newArrayList(Lists.transform(getHandle().passengerList, new Function<net.minecraft.entity.Entity, org.bukkit.entity.Entity>() {
             @Override
             public org.bukkit.entity.Entity apply(net.minecraft.entity.Entity input) {
                 return ((IMixinEntity)input).getBukkitEntity();
@@ -422,7 +421,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public void remove() {
-        nms.remove(RemovalReason.DISCARDED);
+        nms.remove();
     }
 
     @Override
@@ -533,7 +532,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         location.checkFinite();
         BukkitFabricMod.LOGGER.info("ENTITY TELEPORT DEBUG!!!");
 
-        if (nms.hasPassengers() || nms.isRemoved())
+        if (nms.hasPassengers() || nms.removed)
             return false;
 
         nms.stopRiding();
@@ -620,8 +619,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
     public boolean isTicking() {
-        return true;
-        // TODO 1.17 return nms.getEntityWorld().getChunkManager().shouldTickEntity(nms);
+        return nms.getEntityWorld().getChunkManager().shouldTickEntity(nms);
     }
 
     public boolean isInLava() {

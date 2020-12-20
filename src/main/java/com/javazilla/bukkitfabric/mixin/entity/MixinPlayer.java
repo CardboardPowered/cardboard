@@ -185,7 +185,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                 this.closeHandledScreen();
 
             this.nextContainerCounter();
-            ScreenHandler container = itileinventory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).getInventory(), ((ServerPlayerEntity)(Object)this));
+            ScreenHandler container = itileinventory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));
 
             if (container != null) {
                 ((IMixinScreenHandler)container).setTitle(itileinventory.getDisplayName());
@@ -214,16 +214,16 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
     public void bukkitizeDeath(DamageSource damagesource, CallbackInfo ci) {
         boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
-        if (((ServerPlayerEntity)(Object)this).isRemoved()) {
+        if (((ServerPlayerEntity)(Object)this).removed) {
             ci.cancel();
             return;
         }
 
-        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).getInventory().size());
+        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).inventory.size());
         boolean keepInventory = this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || ((ServerPlayerEntity)(Object)this).isSpectator();
 
         if (!keepInventory)
-            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).getInventory().combinedInventory)
+            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).inventory.combinedInventory)
                 for (ItemStack item : items)
                     if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item))
                         loot.add(CraftItemStack.asCraftMirror(item));
@@ -273,7 +273,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         // SPIGOT-5478 must be called manually now
         ((ServerPlayerEntity)(Object)this).dropXp();
         // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
-        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).getInventory().clear();
+        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).inventory.clear();
 
         ((ServerPlayerEntity)(Object)this).setCameraEntity(((ServerPlayerEntity)(Object)this)); // Remove spectated target
         // CraftBukkit end
@@ -307,6 +307,37 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Override
     public ClientConnection getConnectionBF() {
         return this.connectionBF;
+    }
+
+    @Overwrite
+    public void copyFrom(ServerPlayerEntity entityplayer, boolean flag) {
+        if (flag) {
+            ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
+            ((ServerPlayerEntity)(Object)this).setHealth(entityplayer.getHealth());
+            ((ServerPlayerEntity)(Object)this).hungerManager = entityplayer.hungerManager;
+            ((ServerPlayerEntity)(Object)this).experienceLevel = entityplayer.experienceLevel;
+            ((ServerPlayerEntity)(Object)this).totalExperience = entityplayer.totalExperience;
+            ((ServerPlayerEntity)(Object)this).experienceProgress = entityplayer.experienceProgress;
+            ((ServerPlayerEntity)(Object)this).setScore(entityplayer.getScore());
+            ((ServerPlayerEntity)(Object)this).lastNetherPortalPosition = entityplayer.lastNetherPortalPosition;
+        } else if (((ServerPlayerEntity)(Object)this).world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || entityplayer.isSpectator()) {
+            ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
+            ((ServerPlayerEntity)(Object)this).experienceLevel = entityplayer.experienceLevel;
+            ((ServerPlayerEntity)(Object)this).totalExperience = entityplayer.totalExperience;
+            ((ServerPlayerEntity)(Object)this).experienceProgress = entityplayer.experienceProgress;
+            ((ServerPlayerEntity)(Object)this).setScore(entityplayer.getScore());
+        }
+        ((ServerPlayerEntity)(Object)this).enderChestInventory = entityplayer.enderChestInventory;
+        ((ServerPlayerEntity)(Object)this).getDataTracker().set(ServerPlayerEntity.PLAYER_MODEL_PARTS, entityplayer.getDataTracker().get(ServerPlayerEntity.PLAYER_MODEL_PARTS));
+        ((ServerPlayerEntity)(Object)this).syncedExperience = -1;
+        ((ServerPlayerEntity)(Object)this).syncedHealth = -1.0F;
+        ((ServerPlayerEntity)(Object)this).syncedFoodLevel = -1;
+        ((ServerPlayerEntity)(Object)this).removedEntities.addAll(entityplayer.removedEntities);
+        ((ServerPlayerEntity)(Object)this).seenCredits = entityplayer.seenCredits;
+        ((ServerPlayerEntity)(Object)this).enteredNetherPos = entityplayer.enteredNetherPos;
+        ((ServerPlayerEntity)(Object)this).setShoulderEntityLeft(entityplayer.getShoulderEntityLeft());
+        ((ServerPlayerEntity)(Object)this).setShoulderEntityRight(entityplayer.getShoulderEntityRight());
+
     }
 
 }

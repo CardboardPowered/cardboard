@@ -43,7 +43,7 @@ public class MixinArmorItem {
             return false;
         } else {
             LivingEntity entityliving = (LivingEntity) list.get(0);
-            EquipmentSlot enumitemslot = MobEntity.method_32326(itemstack);
+            EquipmentSlot enumitemslot = MobEntity.getPreferredEquipmentSlot(itemstack);
             ItemStack itemstack1 = itemstack.split(1);
 
             World world = isourceblock.getWorld();

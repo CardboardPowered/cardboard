@@ -1,6 +1,8 @@
 package org.cardboardpowered.impl.map;
 
+import net.minecraft.item.map.MapIcon;
 import net.minecraft.item.map.MapState;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
@@ -28,18 +30,14 @@ public class MapRendererImpl extends MapRenderer {
         while (cursors.size() > 0)
             cursors.removeCursor(cursors.getCursor(0));
 
-        worldMap.method_32373().forEach(decoration -> {
-            cursors.addCursor(decoration.getX(), decoration.getZ(), (byte) (decoration.getRotation() & 15), decoration.getType().getId(), true, CraftChatMessage.fromComponent(decoration.getText()));
-        });
-
-        /*for (Object key : worldMap.icons.keySet()) {
+        for (Object key : worldMap.icons.keySet()) {
             // If this cursor is for a player check visibility with vanish system
             Player other = Bukkit.getPlayerExact((String) key);
             if (other != null && !player.canSee(other)) continue;
 
             MapIcon decoration = (MapIcon) worldMap.icons.get(key);
             cursors.addCursor(decoration.getX(), decoration.getZ(), (byte) (decoration.getRotation() & 15), decoration.getType().getId(), true, CraftChatMessage.fromComponent(decoration.getText()));
-        }*/
+        }
     }
 
 }

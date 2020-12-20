@@ -33,7 +33,7 @@ public class MixinExperienceBottleEntity extends MixinProjectileEntity {
             i -= j;
             this.world.spawnEntity(new ExperienceOrbEntity(this.world, ((Entity)(Object)this).getX(), ((Entity)(Object)this).getY(), ((Entity)(Object)this).getZ(), j));
         }
-        this.removeBF();
+        this.remove();
         ci.cancel();
         return;
     }
