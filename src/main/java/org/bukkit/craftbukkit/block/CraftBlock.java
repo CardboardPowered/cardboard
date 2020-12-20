@@ -512,7 +512,7 @@ public class CraftBlock implements Block {
     }
 
     private static int getPower(int i, net.minecraft.block.BlockState iblockdata) {
-        if (!iblockdata.getBlock().is(Blocks.REDSTONE_WIRE)) {
+        if (!iblockdata.getBlock().equals(Blocks.REDSTONE_WIRE)) {
             return i;
         } else {
             int j = iblockdata.get(RedstoneWireBlock.POWER);

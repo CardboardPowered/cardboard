@@ -126,6 +126,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.FallingBlockEntity;
@@ -547,8 +548,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     @Shadow
-    public void remove() {}
-    public void removeBF() {remove();} // Helper
+    public void remove(RemovalReason rr) {}
+    public void removeBF() {remove(RemovalReason.DISCARDED);} // Helper
 
     @Shadow
     public void move(MovementType moveType, Vec3d vec3d) {

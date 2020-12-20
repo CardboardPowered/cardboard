@@ -21,7 +21,14 @@ import net.minecraft.text.Text;
 @Mixin(SlimeEntity.class)
 public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
 
-    @Shadow public int getSize() {return 0;}
+    @Override
+    public void setSizeBF(int i, boolean flag) {
+        // TODO Auto-generated method stub
+    }
+
+    // TODO 1.17!
+
+    /*@Shadow public int getSize() {return 0;}
     @Shadow public void setSize(int i, boolean flag) {}
 
     @Override
@@ -32,7 +39,7 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
     /**
      * @author .
      * @reason Call SlimeSplitEvent & EntityTransformEvent
-     */
+     *
     @SuppressWarnings("resource")
     @Overwrite
     public void remove() {
@@ -72,6 +79,6 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
             for (LivingEntity living : slimes) ((SlimeEntity)(Object)this).world.spawnEntity(living);
         }
         super.remove();
-    }
+    }*/
 
 }

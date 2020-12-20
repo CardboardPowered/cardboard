@@ -410,7 +410,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
 
     @Override
     public boolean getAllowFlight() {
-        return getHandle().abilities.allowFlying;
+        return getHandle().getAbilities().allowFlying;
     }
 
     @Override
@@ -548,7 +548,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
 
     @Override
     public boolean isFlying() {
-        return nms.abilities.flying;
+        return nms.getAbilities().flying;
     }
 
     @Override
@@ -812,7 +812,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
                 icons.add(new MapIcon(MapIcon.Type.byId(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), CraftChatMessage.fromStringOrNull(cursor.getCaption())));
         }
 
-        MapUpdateS2CPacket packet = new MapUpdateS2CPacket(map.getId(), map.getScale().getValue(), true, map.isLocked(), icons, data.buffer, 0, 0, 128, 128);
+        MapUpdateS2CPacket packet =  new MapUpdateS2CPacket();// TODO 1.17: new MapUpdateS2CPacket(map.getId(), map.getScale().getValue(), true, map.isLocked(), icons, data.buffer, 0, 0, 128, 128);;
         getHandle().networkHandler.sendPacket(packet);
     }
 
@@ -837,8 +837,8 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
             throw new IllegalArgumentException("Must have at least 4 lines");
 
         Text[] components = CraftSign.sanitizeLines(lines);
-        SignBlockEntity sign = new SignBlockEntity();
-        sign.setPos(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+        SignBlockEntity sign = new SignBlockEntity(null, null);
+        sign.pos = (new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         sign.setTextColor(net.minecraft.util.DyeColor.byId(dyeColor.getWoolData()));
         System.arraycopy(components, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, ((IMixinSignBlockEntity)sign).getTextBF().length);
 
@@ -865,9 +865,9 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
     @Override
     public void setAllowFlight(boolean arg0) {
         if (isFlying() && !arg0)
-            getHandle().abilities.flying = false;
+            getHandle().getAbilities().flying = false;
 
-        getHandle().abilities.allowFlying = arg0;
+        getHandle().getAbilities().allowFlying = arg0;
         getHandle().sendAbilitiesUpdate();
     }
 
@@ -902,7 +902,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
         if (!getAllowFlight() && arg0)
             throw new IllegalArgumentException("getAllowFlight() is false, cannot set player flying");
 
-        getHandle().abilities.flying = arg0;
+        getHandle().getAbilities().flying = arg0;
         getHandle().sendAbilitiesUpdate();
     }
 
@@ -958,12 +958,12 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
 
     @Override
     public void setResourcePack(String url) {
-        nms.sendResourcePackUrl(url, null);
+        nms.sendResourcePackUrl(url, null, false);
     }
 
     @Override
     public void setResourcePack(String url, byte[] hash) {
-        nms.sendResourcePackUrl(url, new String(hash));
+        nms.sendResourcePackUrl(url, new String(hash), false);
     }
 
     @Override
@@ -1013,7 +1013,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
 
     @Override
     public void setWalkSpeed(float arg0) throws IllegalArgumentException {
-        nms.abilities.setWalkSpeed(arg0);
+        nms.getAbilities().setWalkSpeed(arg0);
     }
 
     @Override
@@ -1177,7 +1177,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
         location.checkFinite();
         ServerPlayerEntity entity = getHandle();
 
-        if (getHealth() == 0 || entity.removed || entity.networkHandler == null || entity.hasPassengers())
+        if (getHealth() == 0 || entity.isRemoved() || entity.networkHandler == null || entity.hasPassengers())
             return false;
 
         Location from = this.getLocation();
@@ -1196,7 +1196,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
 
         ServerWorld toWorld = (ServerWorld) ((WorldImpl) to.getWorld()).getHandle();
 
-        if (getHandle().inventory != getHandle().inventory)
+        if (getHandle().getInventory() != getHandle().getInventory())
             getHandle().closeHandledScreen();
 
         if (from.getWorld().equals(to.getWorld()))

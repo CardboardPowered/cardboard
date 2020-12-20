@@ -35,8 +35,8 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     @Shadow
     public DefaultedList<ItemStack> trackedStacks;
 
-    @Shadow
-    public List<Slot> slots;
+    //@Shadow
+    //public List<Slot> slots;
 
     @Override
     public void transferTo(ScreenHandler other, org.cardboardpowered.impl.entity.HumanEntityImpl player) {
@@ -76,7 +76,7 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
 
     @Override
     public void setSlots(List<Slot> slots) {
-        this.slots = slots;
+        // TODO 1.17 this.slots = slots;
     }
 
     @Override

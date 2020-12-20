@@ -50,6 +50,8 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity.RemovalReason;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.MessageType;
@@ -97,6 +99,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Override
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity entityplayer, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
+
         boolean flag2 = false;
         BlockPos blockposition = entityplayer.getSpawnPointPosition();
         float f = entityplayer.getSpawnAngle();
@@ -146,6 +149,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
             location = respawnEvent.getRespawnLocation();
         } else location.setWorld(((IMixinWorld)worldserver).getWorldImpl());
+
         ServerWorld worldserver1 = ((WorldImpl) location.getWorld()).getHandle();
         ServerWorld fromWorld = entityplayer.getServerWorld();
         entityplayer.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
