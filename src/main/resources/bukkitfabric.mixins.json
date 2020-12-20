@@ -50,6 +50,7 @@
     "world.MixinCommandBlockExecutor",
     "world.MixinChunkTicketType",
     "world.MixinChunkRegion",
+    "world.MixinBlockView",
 
     "entity.MixinEntity",
     "entity.MixinPlayer",

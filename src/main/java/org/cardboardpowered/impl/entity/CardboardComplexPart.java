@@ -1,7 +1,5 @@
 package org.cardboardpowered.impl.entity;
 
-import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.ComplexEntityPart;
@@ -10,6 +8,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
 
 public class CardboardComplexPart extends CraftEntity implements ComplexEntityPart {
 
