@@ -69,6 +69,9 @@ import org.cardboardpowered.impl.entity.CardboardIllusioner;
 import org.cardboardpowered.impl.entity.CardboardIronGolem;
 import org.cardboardpowered.impl.entity.CardboardLlamaSpit;
 import org.cardboardpowered.impl.entity.CardboardMinecart;
+import org.cardboardpowered.impl.entity.CardboardMinecartChest;
+import org.cardboardpowered.impl.entity.CardboardMinecartFurnace;
+import org.cardboardpowered.impl.entity.CardboardMinecartRideable;
 import org.cardboardpowered.impl.entity.CardboardPanda;
 import org.cardboardpowered.impl.entity.CardboardPhantom;
 import org.cardboardpowered.impl.entity.CardboardPillager;
@@ -79,6 +82,7 @@ import org.cardboardpowered.impl.entity.CardboardSpellcaster;
 import org.cardboardpowered.impl.entity.CardboardSquid;
 import org.cardboardpowered.impl.entity.CardboardThrownExpBottle;
 import org.cardboardpowered.impl.entity.CardboardThrownPotion;
+import org.cardboardpowered.impl.entity.CardboardTntCart;
 import org.cardboardpowered.impl.entity.CardboardVex;
 import org.cardboardpowered.impl.entity.CardboardVindicator;
 import org.cardboardpowered.impl.entity.CardboardWaterMob;
@@ -213,6 +217,13 @@ import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.entity.vehicle.ChestMinecartEntity;
+import net.minecraft.entity.vehicle.CommandBlockMinecartEntity;
+import net.minecraft.entity.vehicle.FurnaceMinecartEntity;
+import net.minecraft.entity.vehicle.HopperMinecartEntity;
+import net.minecraft.entity.vehicle.MinecartEntity;
+import net.minecraft.entity.vehicle.SpawnerMinecartEntity;
+import net.minecraft.entity.vehicle.TntMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -487,14 +498,14 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         else if (entity instanceof ItemEntity) { return new ItemEntityImpl(server, (ItemEntity) entity); }
         else if (entity instanceof LightningEntity) { return new LightningStrikeImpl(server, (LightningEntity) entity); }
         else if (entity instanceof AbstractMinecartEntity) {
-            /*if (entity instanceof FurnaceMinecartEntity) { return new CraftMinecartFurnace(server, (FurnaceMinecartEntity) entity); }
-            else if (entity instanceof ChestMinecartEntity) { return new CraftMinecartChest(server, (ChestMinecartEntity) entity); }
-            else if (entity instanceof TntMinecartEntity) { return new CraftMinecartTNT(server, (TntMinecartEntity) entity); }
-            else if (entity instanceof HopperMinecartEntity) { return new CraftMinecartHopper(server, (HopperMinecartEntity) entity); }
-            else if (entity instanceof SpawnerMinecartEntity) { return new CraftMinecartMobSpawner(server, (SpawnerMinecartEntity) entity); }
-            else if (entity instanceof MinecartEntity) { return new CraftMinecartRideable(server, (MinecartEntity) entity); }
-            else if (entity instanceof CommandBlockMinecartEntity) { return new CraftMinecartCommand(server, (CommandBlockMinecartEntity) entity); }*/
-            return new CardboardMinecart(server, (AbstractMinecartEntity) entity);
+            if (entity instanceof FurnaceMinecartEntity) { return new CardboardMinecartFurnace(server, (FurnaceMinecartEntity) entity); }
+            else if (entity instanceof ChestMinecartEntity) { return new CardboardMinecartChest(server, (ChestMinecartEntity) entity); }
+            else if (entity instanceof TntMinecartEntity) { return new CardboardTntCart(server, (TntMinecartEntity) entity); }
+            //else if (entity instanceof HopperMinecartEntity) { return new CraftMinecartHopper(server, (HopperMinecartEntity) entity); }
+            //else if (entity instanceof SpawnerMinecartEntity) { return new CraftMinecartMobSpawner(server, (SpawnerMinecartEntity) entity); }
+            else if (entity instanceof MinecartEntity) { return new CardboardMinecartRideable(server, (MinecartEntity) entity); }
+            //else if (entity instanceof CommandBlockMinecartEntity) { return new CraftMinecartCommand(server, (CommandBlockMinecartEntity) entity); }*/
+            else return new CardboardMinecart(server, (AbstractMinecartEntity) entity);
         } else if (entity instanceof AbstractDecorationEntity) {
             //if (entity instanceof PaintingEntity) { return new CraftPainting(server, (PaintingEntity) entity); }
             //else if (entity instanceof ItemFrameEntity) { return new CraftItemFrame(server, (ItemFrameEntity) entity); }
