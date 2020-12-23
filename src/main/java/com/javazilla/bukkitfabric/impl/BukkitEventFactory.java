@@ -37,6 +37,7 @@ import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.event.block.*;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.entity.UnknownEntity;
@@ -61,14 +62,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreeperPowerEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
@@ -110,7 +104,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinLootManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.mixin.entity.MixinExperienceOrbEntity;
+//import com.javazilla.bukkitfabric.mixin.entity.MixinExperienceOrbEntity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ExperienceOrbEntity;
@@ -139,6 +133,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public class BukkitEventFactory {
@@ -155,7 +150,7 @@ public class BukkitEventFactory {
         WorldImpl worldImpl = ((IMixinWorld)world).getWorldImpl();
         CraftServer craftServer = CraftServer.INSTANCE;
 
-        Player player = (Player) ((IMixinServerEntityPlayer)(ServerPlayerEntity)who).getBukkitEntity();
+        Player player = (Player) ((IMixinServerEntityPlayer) who).getBukkitEntity();
 
         Block blockClicked = worldImpl.getBlockAt(x, y, z);
         Block placedBlock = replacedBlockState.getBlock();
@@ -190,7 +185,7 @@ public class BukkitEventFactory {
     }
 
     public static BlockIgniteEvent callBlockIgniteEvent(World world, int x, int y, int z, Explosion explosion) {
-        org.bukkit.World bukkitWorld = ((IMixinWorld)(ServerWorld)world).getWorldImpl();
+        org.bukkit.World bukkitWorld = ((IMixinWorld)world).getWorldImpl();
         org.bukkit.entity.Entity igniter = explosion.entity == null ? null : ((IMixinEntity)explosion.entity).getBukkitEntity();
 
         BlockIgniteEvent event = new BlockIgniteEvent(bukkitWorld.getBlockAt(x, y, z), IgniteCause.EXPLOSION, igniter);
@@ -212,6 +207,7 @@ public class BukkitEventFactory {
         Player player = (who == null) ? null : (Player) ((IMixinServerEntityPlayer)who).getBukkitEntity();
         CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
 
+        assert player != null;
         WorldImpl WorldImpl = (WorldImpl) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
 
@@ -246,6 +242,7 @@ public class BukkitEventFactory {
         Player player = (who == null) ? null : (Player) ((IMixinServerEntityPlayer)who).getBukkitEntity();
         CraftItemStack itemInHand = CraftItemStack.asCraftMirror(itemstack);
 
+        assert player != null;
         WorldImpl WorldImpl = (WorldImpl) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
 
@@ -254,6 +251,12 @@ public class BukkitEventFactory {
         BlockDamageEvent event = new BlockDamageEvent(player, blockClicked, itemInHand, instaBreak);
         craftServer.getPluginManager().callEvent(event);
 
+        return event;
+    }
+
+    public static BlockBurnEvent callBlockBurnEvent(World world, BlockPos pos, @Nullable Block ignitingBlock){
+        BlockBurnEvent event = new BlockBurnEvent(((IMixinWorld)world).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), ignitingBlock);
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
         return event;
     }
 
@@ -281,12 +284,14 @@ public class BukkitEventFactory {
         }
 
         org.bukkit.entity.Entity hitEntity = null;
-        if (position.getType() == Type.ENTITY)
+        if (position.getType() == Type.ENTITY) {
+            assert position instanceof EntityHitResult;
             hitEntity = ((IMixinEntity)((EntityHitResult) position).getEntity()).getBukkitEntity();
+        }
 
-        org.bukkit.entity.Entity e = ((IMixinEntity)entity).getBukkitEntity();
+        CraftEntity e = ((IMixinEntity)entity).getBukkitEntity();
         if (!(e instanceof Projectile)) {
-            BukkitLogger.getLogger().warning("Entity \"" + ((CraftEntity)e).nms.getEntityName() + "\" is not an instance of Projectile! Can not fire ProjectileHitEvent!");
+            BukkitLogger.getLogger().warning("Entity \"" + e.nms.getEntityName() + "\" is not an instance of Projectile! Can not fire ProjectileHitEvent!");
             return;
         }
 
@@ -308,7 +313,7 @@ public class BukkitEventFactory {
             return container;
         }
 
-        CardboardInventoryView bv = (CardboardInventoryView) ((IMixinScreenHandler)container).getBukkitView();
+        CardboardInventoryView bv = ((IMixinScreenHandler)container).getBukkitView();
         bv.setPlayerIfNotSet((PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity());
 
         try {
@@ -356,41 +361,40 @@ public class BukkitEventFactory {
     public static Cancellable handleStatisticsIncrease(PlayerEntity entityHuman, net.minecraft.stat.Stat<?> statistic, int current, int newValue) {
         Player player = (Player) ((IMixinServerEntityPlayer) entityHuman).getBukkitEntity();
         Event event;
-        if (true) {
-            org.bukkit.Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
-            if (stat == null) {
-                System.err.println("Unhandled statistic: " + statistic);
+        Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
+        if (stat == null) {
+            System.err.println("Unhandled statistic: " + statistic);
+            return null;
+        }
+        switch (stat) {
+            case FALL_ONE_CM:
+            case BOAT_ONE_CM:
+            case CLIMB_ONE_CM:
+            case WALK_ON_WATER_ONE_CM:
+            case WALK_UNDER_WATER_ONE_CM:
+            case FLY_ONE_CM:
+            case HORSE_ONE_CM:
+            case MINECART_ONE_CM:
+            case PIG_ONE_CM:
+            case PLAY_ONE_MINUTE:
+            case SWIM_ONE_CM:
+            case WALK_ONE_CM:
+            case SPRINT_ONE_CM:
+            case CROUCH_ONE_CM:
+            case TIME_SINCE_DEATH:
+            case SNEAK_TIME:
                 return null;
-            }
-            switch (stat) {
-                case FALL_ONE_CM:
-                case BOAT_ONE_CM:
-                case CLIMB_ONE_CM:
-                case WALK_ON_WATER_ONE_CM:
-                case WALK_UNDER_WATER_ONE_CM:
-                case FLY_ONE_CM:
-                case HORSE_ONE_CM:
-                case MINECART_ONE_CM:
-                case PIG_ONE_CM:
-                case PLAY_ONE_MINUTE:
-                case SWIM_ONE_CM:
-                case WALK_ONE_CM:
-                case SPRINT_ONE_CM:
-                case CROUCH_ONE_CM:
-                case TIME_SINCE_DEATH:
-                case SNEAK_TIME:
-                    return null;
-                default:
-            }
-            if (stat.getType() == Statistic.Type.UNTYPED) {
-                event = new PlayerStatisticIncrementEvent(player, stat, current, newValue);
-            } else if (stat.getType() == Statistic.Type.ENTITY) {
-                EntityType entityType = CraftStatistic.getEntityTypeFromStatistic((net.minecraft.stat.Stat<net.minecraft.entity.EntityType<?>>) statistic);
-                event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, entityType);
-            } else {
-                Material material = CraftStatistic.getMaterialFromStatistic(statistic);
-                event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, material);
-            }
+            default:
+        }
+        if (stat.getType() == Statistic.Type.UNTYPED) {
+            event = new PlayerStatisticIncrementEvent(player, stat, current, newValue);
+        } else if (stat.getType() == Statistic.Type.ENTITY) {
+            EntityType entityType = CraftStatistic.getEntityTypeFromStatistic((net.minecraft.stat.Stat<net.minecraft.entity.EntityType<?>>) statistic);
+            event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, entityType);
+        } else {
+            Material material = CraftStatistic.getMaterialFromStatistic(statistic);
+            assert material != null;
+            event = new PlayerStatisticIncrementEvent(player, stat, current, newValue, material);
         }
         Bukkit.getPluginManager().callEvent(event);
         return (Cancellable) event;
@@ -548,7 +552,7 @@ public class BukkitEventFactory {
         org.bukkit.entity.Entity arrow = ((IMixinEntity)entityArrow).getBukkitEntity();
         EquipmentSlot handSlot = (hand == Hand.MAIN_HAND) ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
 
-        if (itemInHand != null && (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0))
+        if (itemInHand.getType() == Material.AIR || itemInHand.getAmount() == 0)
             itemInHand = null;
 
         EntityShootBowEvent event = new EntityShootBowEvent(shooter, itemInHand, itemConsumable, arrow, handSlot, force, consumeItem);
