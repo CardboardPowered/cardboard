@@ -45,6 +45,7 @@ import org.bukkit.loot.LootContext;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLootContextParameters;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import org.jetbrains.annotations.NotNull;
 
 public class LootTableImpl implements org.bukkit.loot.LootTable {
 
@@ -61,7 +62,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
     }
 
     @Override
-    public Collection<ItemStack> populateLoot(Random random, LootContext context) {
+    public @NotNull Collection<ItemStack> populateLoot(@NotNull Random random, @NotNull LootContext context) {
         net.minecraft.loot.context.LootContext nmsContext = convertContext(context);
         List<net.minecraft.item.ItemStack> nmsItems = handle.generateLoot(nmsContext);
         Collection<ItemStack> bukkit = new ArrayList<>(nmsItems.size());
@@ -74,7 +75,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
     }
 
     @Override
-    public void fillInventory(Inventory inventory, Random random, LootContext context) {
+    public void fillInventory(@NotNull Inventory inventory, @NotNull Random random, @NotNull LootContext context) {
         net.minecraft.loot.context.LootContext nmsContext = convertContext(context);
         CraftInventory craftInventory = (CraftInventory) inventory;
         net.minecraft.inventory.Inventory handle = craftInventory.getInventory();
@@ -82,7 +83,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
     }
 
     @Override
-    public NamespacedKey getKey() {
+    public @NotNull NamespacedKey getKey() {
         return key;
     }
 
