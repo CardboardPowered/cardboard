@@ -104,7 +104,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinLootManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-//import com.javazilla.bukkitfabric.mixin.entity.MixinExperienceOrbEntity;
+import com.javazilla.bukkitfabric.mixin.entity.MixinExperienceOrbEntity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ExperienceOrbEntity;
