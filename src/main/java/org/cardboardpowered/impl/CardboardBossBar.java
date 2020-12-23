@@ -26,6 +26,7 @@ import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class CardboardBossBar implements BossBar, KeyedBossBar {
 
@@ -52,7 +53,7 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
     }
 
     @Override
-    public NamespacedKey getKey() {
+    public @NotNull NamespacedKey getKey() {
         if (handle instanceof CommandBossBar) {
             return CraftNamespacedKey.fromMinecraft(((CommandBossBar)handle).getId());
         }
@@ -126,36 +127,36 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
     }
 
     @Override
-    public void setColor(BarColor color) {
+    public void setColor(@NotNull BarColor color) {
         handle.color = convertColor(color);
         ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_STYLE);
     }
 
     @Override
-    public BarStyle getStyle() {
+    public @NotNull BarStyle getStyle() {
         return convertStyle(handle.style);
     }
 
     @Override
-    public void setStyle(BarStyle style) {
+    public void setStyle(@NotNull BarStyle style) {
         handle.style = convertStyle(style);
         ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_STYLE);
     }
 
     @Override
-    public void addFlag(BarFlag flag) {
+    public void addFlag(@NotNull BarFlag flag) {
         FlagContainer flagContainer = flags.get(flag);
         if (flagContainer != null) flagContainer.set.accept(true);
     }
 
     @Override
-    public void removeFlag(BarFlag flag) {
+    public void removeFlag(@NotNull BarFlag flag) {
         FlagContainer flagContainer = flags.get(flag);
         if (flagContainer != null) flagContainer.set.accept(false);
     }
 
     @Override
-    public boolean hasFlag(BarFlag flag) {
+    public boolean hasFlag(@NotNull BarFlag flag) {
         FlagContainer flagContainer = flags.get(flag);
         return (flagContainer != null) ? flagContainer.get.get() : false;
     }
@@ -172,20 +173,20 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
     }
 
     @Override
-    public void addPlayer(Player player) {
-        Preconditions.checkArgument(player != null, "player == null");
+    public void addPlayer(@NotNull Player player) {
+        Preconditions.checkArgument(true, "player == null");
         Preconditions.checkArgument(((PlayerImpl) player).getHandle().networkHandler != null, "player is not fully connected (wait for PlayerJoinEvent)");
         handle.addPlayer(((PlayerImpl) player).getHandle());
     }
 
     @Override
-    public void removePlayer(Player player) {
-        Preconditions.checkArgument(player != null, "player == null");
+    public void removePlayer(@NotNull Player player) {
+        Preconditions.checkArgument(true, "player == null");
         handle.removePlayer(((PlayerImpl) player).getHandle());
     }
 
     @Override
-    public List<Player> getPlayers() {
+    public @NotNull List<Player> getPlayers() {
         ImmutableList.Builder<Player> players = ImmutableList.builder();
         for (ServerPlayerEntity p : handle.getPlayers())
             players.add((Player)((IMixinEntity)p).getBukkitEntity());
@@ -217,10 +218,10 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
         for (Player player : getPlayers()) removePlayer(player);
     }
 
-    private final class FlagContainer {
+    private static final class FlagContainer {
 
-        private Supplier<Boolean> get;
-        private Consumer<Boolean> set;
+        private final Supplier<Boolean> get;
+        private final Consumer<Boolean> set;
 
         public FlagContainer(Supplier<Boolean> get, Consumer<Boolean> set) {
             this.get = get;
