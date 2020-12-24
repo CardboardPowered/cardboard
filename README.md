@@ -29,7 +29,7 @@ Classes and Fields will automatically remap to their intermediary counterparts *
 
 # Progress
 There is a progress indicator in the Discord.
-Although, if your not in the discord:
+Although, if you're not in the Discord:
 Progress can be determined by the completeness of the to-do lists on the two pinned issues.
 
 
@@ -44,5 +44,5 @@ Progress can be determined by the completeness of the to-do lists on the two pin
 * [Fabric](https://fabricmc.net/) for creating the modern mod loader
 
 # Apex Hosting 
-Thanks to Apex Hosting for sponsoring this project, Get a Minecraft server by clicking on the banner below:
+Thanks to Apex Hosting for sponsoring this project, get a Minecraft server by clicking on the banner below:
 [![Apex Hosting](https://cdn.apexminecrafthosting.com/img/theme/apex-hosting-mobile.png)](https://billing.apexminecrafthosting.com/aff.php?aff=3548)
