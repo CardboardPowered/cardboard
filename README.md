@@ -38,7 +38,7 @@ Progress can be determined by the completeness of the to-do lists on the two pin
 * [SpigotMC](https://spigotmc.org/) for maintaining the API past 1.8
 * [PaperMC](https://papermc.io/) for optimizing &amp; updating the API
 * [GlowstoneMC](https://glowstonemc.net) for the library loader.
-* [md_5](https://github.com/md_5/SpecialSource/) for the SpecialSource mapping tool
+* [md_5](https://github.com/md-5/SpecialSource) for the SpecialSource mapping tool
 * [Techcable & Orion](https://github.com/OrionMinecraft/SrgLib) for the SrgLib
 * [Phase](https://github.com/phase/MinecraftMapping/) for the MinecraftMapping tool
 * [Fabric](https://fabricmc.net/) for creating the modern mod loader
