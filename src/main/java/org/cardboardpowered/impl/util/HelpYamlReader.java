@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -31,7 +32,8 @@ public class HelpYamlReader {
         this.server = server;
 
         File helpYamlFile = new File("help.yml");
-        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/help.yml"), Charsets.UTF_8));
+        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(Objects.requireNonNull
+                (getClass().getClassLoader().getResourceAsStream("configurations/help.yml")), Charsets.UTF_8));
 
         try {
             helpYaml = YamlConfiguration.loadConfiguration(helpYamlFile);
@@ -55,13 +57,13 @@ public class HelpYamlReader {
      * @return A list of general topics.
      */
     public List<HelpTopic> getGeneralTopics() {
-        List<HelpTopic> topics = new LinkedList<HelpTopic>();
+        List<HelpTopic> topics = new LinkedList<>();
         ConfigurationSection generalTopics = helpYaml.getConfigurationSection("general-topics");
         if (generalTopics != null) {
             for (String topicName : generalTopics.getKeys(false)) {
                 ConfigurationSection section = generalTopics.getConfigurationSection(topicName);
-                String shortText = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, section.getString("shortText", ""));
-                String fullText = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, section.getString("fullText", ""));
+                String shortText = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, Objects.requireNonNull(section.getString("shortText", "")));
+                String fullText = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, Objects.requireNonNull(section.getString("fullText", "")));
                 String permission = section.getString("permission", "");
                 topics.add(new CustomHelpTopic(topicName, shortText, fullText, permission));
             }
@@ -75,14 +77,14 @@ public class HelpYamlReader {
      * @return A list of index topics.
      */
     public List<HelpTopic> getIndexTopics() {
-        List<HelpTopic> topics = new LinkedList<HelpTopic>();
+        List<HelpTopic> topics = new LinkedList<>();
         ConfigurationSection indexTopics = helpYaml.getConfigurationSection("index-topics");
         if (indexTopics != null) {
             for (String topicName : indexTopics.getKeys(false)) {
                 ConfigurationSection section = indexTopics.getConfigurationSection(topicName);
-                String shortText = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, section.getString("shortText", ""));
-                String preamble = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, section.getString("preamble", ""));
-                String permission = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, section.getString("permission", ""));
+                String shortText = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, Objects.requireNonNull(section.getString("shortText", "")));
+                String preamble = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, Objects.requireNonNull(section.getString("preamble", "")));
+                String permission = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, Objects.requireNonNull(section.getString("permission", "")));
                 List<String> commands = section.getStringList("commands");
                 topics.add(new CustomIndexHelpTopic(server.getHelpMap(), topicName, shortText, permission, commands, preamble));
             }
@@ -96,13 +98,13 @@ public class HelpYamlReader {
      * @return A list of amendments.
      */
     public List<HelpTopicAmendment> getTopicAmendments() {
-        List<HelpTopicAmendment> amendments = new LinkedList<HelpTopicAmendment>();
+        List<HelpTopicAmendment> amendments = new LinkedList<>();
         ConfigurationSection commandTopics = helpYaml.getConfigurationSection("amended-topics");
         if (commandTopics != null) {
             for (String topicName : commandTopics.getKeys(false)) {
                 ConfigurationSection section = commandTopics.getConfigurationSection(topicName);
-                String description = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, section.getString("shortText", ""));
-                String usage = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, section.getString("fullText", ""));
+                String description = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, Objects.requireNonNull(section.getString("shortText", "")));
+                String usage = ChatColor.translateAlternateColorCodes(ALT_COLOR_CODE, Objects.requireNonNull(section.getString("fullText", "")));
                 String permission = section.getString("permission", "");
                 amendments.add(new HelpTopicAmendment(topicName, description, usage, permission));
             }
@@ -119,13 +121,13 @@ public class HelpYamlReader {
     }
 
     // Originally in separate class
-    public class CustomIndexHelpTopic extends IndexHelpTopic {
+    public static class CustomIndexHelpTopic extends IndexHelpTopic {
 
         private List<String> futureTopics;
         private final HelpMap helpMap;
 
         public CustomIndexHelpTopic(HelpMap helpMap, String name, String shortText, String permission, List<String> futureTopics, String preamble) {
-            super(name, shortText, permission, new HashSet<HelpTopic>(), preamble);
+            super(name, shortText, permission, new HashSet<>(), preamble);
             this.helpMap = helpMap;
             this.futureTopics = futureTopics;
         }
@@ -133,7 +135,7 @@ public class HelpYamlReader {
         @Override
         public String getFullText(CommandSender sender) {
             if (futureTopics != null) {
-                List<HelpTopic> topics = new LinkedList<HelpTopic>();
+                List<HelpTopic> topics = new LinkedList<>();
                 for (String futureTopic : futureTopics) {
                     HelpTopic topic = helpMap.getHelpTopic(futureTopic);
                     if (topic != null) topics.add(topic);
@@ -148,7 +150,7 @@ public class HelpYamlReader {
     }
 
     // Originally in separate class
-    public class HelpTopicAmendment {
+    public static class HelpTopicAmendment {
         public final String topicName;
         public final String shortText;
         public final String fullText;
@@ -163,7 +165,7 @@ public class HelpYamlReader {
     }
 
     // Originally in separate class
-    public class CustomHelpTopic extends HelpTopic {
+    public static class CustomHelpTopic extends HelpTopic {
         private final String permissionNode;
 
         public CustomHelpTopic(String name, String shortText, String fullText, String permissionNode) {
@@ -175,7 +177,7 @@ public class HelpYamlReader {
 
         @Override
         public boolean canSee(CommandSender sender) {
-            return (sender instanceof ConsoleCommandSender) ? true : (!permissionNode.equals("") ? sender.hasPermission(permissionNode) : true);
+            return sender instanceof ConsoleCommandSender || (permissionNode.equals("") || sender.hasPermission(permissionNode));
         }
     }
 

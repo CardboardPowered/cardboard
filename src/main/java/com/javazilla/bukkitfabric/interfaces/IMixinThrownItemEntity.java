@@ -5,8 +5,8 @@ import net.minecraft.item.ItemStack;
 
 public interface IMixinThrownItemEntity {
 
-    public Item getDefaultItemPublic();
+    Item getDefaultItemPublic();
 
-    public ItemStack getItemBF();
+    ItemStack getItemBF();
 
 }

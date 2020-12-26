@@ -7,14 +7,14 @@ import com.mojang.authlib.properties.Property;
 
 public interface IMixinClientConnection {
 
-    public SocketAddress getRawAddress();
+    SocketAddress getRawAddress();
 
-    public UUID getSpoofedUUID();
+    UUID getSpoofedUUID();
 
-    public void setSpoofedUUID(UUID uuid);
+    void setSpoofedUUID(UUID uuid);
 
-    public Property[] getSpoofedProfile();
+    Property[] getSpoofedProfile();
 
-    public void setSpoofedProfile(Property[] profile);
+    void setSpoofedProfile(Property[] profile);
 
 }

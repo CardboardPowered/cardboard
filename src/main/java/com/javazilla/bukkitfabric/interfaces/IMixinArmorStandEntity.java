@@ -2,16 +2,16 @@ package com.javazilla.bukkitfabric.interfaces;
 
 public interface IMixinArmorStandEntity {
 
-    public void setHideBasePlateBF(boolean b);
+    void setHideBasePlateBF(boolean b);
 
-    public void setShowArmsBF(boolean arms);
+    void setShowArmsBF(boolean arms);
 
-    public void setSmallBF(boolean small);
+    void setSmallBF(boolean small);
 
-    public void setMarkerBF(boolean marker);
+    void setMarkerBF(boolean marker);
 
-    public boolean canMoveBF();
+    boolean canMoveBF();
 
-    public void setCanMoveBF(boolean b);
+    void setCanMoveBF(boolean b);
 
 }

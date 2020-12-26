@@ -49,7 +49,7 @@ public class BukkitCommandWrapper implements com.mojang.brigadier.Command<Server
     @Override
     public int run(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         try {
-            return ((CraftServer)Bukkit.getServer()).dispatchCommand(getSender(context.getSource()),context.getInput()) ? 1 : 0;
+            return Bukkit.getServer().dispatchCommand(getSender(context.getSource()),context.getInput()) ? 1 : 0;
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -61,15 +61,16 @@ public class BukkitCommandWrapper implements com.mojang.brigadier.Command<Server
             ServerPlayerEntity plr = source.getPlayer();
             if (null != plr)
                 return ((IMixinCommandOutput)plr).getBukkitSender(source);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
+            //ex.printStackTrace();
         }
         Entity e = source.getEntity();
         return (null != e) ? ((IMixinCommandOutput)e).getBukkitSender(source) : null;
     }
 
     @Override
-    public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
-        List<String> results = ((CraftServer)Bukkit.getServer()).tabComplete(((IMixinServerCommandSource)(Object)context.getSource()).getBukkitSender(), builder.getInput(), context.getSource().getWorld(), context.getSource().getPosition(), true);
+    public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
+        List<String> results = ((CraftServer)Bukkit.getServer()).tabComplete(((IMixinServerCommandSource) context.getSource()).getBukkitSender(), builder.getInput(), context.getSource().getWorld(), context.getSource().getPosition(), true);
 
         // Defaults to sub nodes, but we have just one giant args node, so offset accordingly
         builder = builder.createOffset(builder.getInput().lastIndexOf(' ') + 1);

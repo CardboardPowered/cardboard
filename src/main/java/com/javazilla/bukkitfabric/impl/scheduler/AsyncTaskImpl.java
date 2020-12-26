@@ -9,7 +9,7 @@ import org.bukkit.scheduler.BukkitWorker;
 
 public class AsyncTaskImpl extends BukkitTaskImpl {
 
-    private final LinkedList<BukkitWorker> workers = new LinkedList<BukkitWorker>();
+    private final LinkedList<BukkitWorker> workers = new LinkedList<>();
     private final Map<Integer, BukkitTaskImpl> runners;
 
     AsyncTaskImpl(final Map<Integer, BukkitTaskImpl> runners, final Plugin plugin, final Object task, final int id, final long delay) {

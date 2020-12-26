@@ -18,10 +18,8 @@
  */
 package com.javazilla.bukkitfabric.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -89,7 +87,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
 
     private net.minecraft.loot.context.LootContext convertContext(LootContext context) {
         Location loc = context.getLocation();
-        ServerWorld handle = ((WorldImpl) loc.getWorld()).getHandle();
+        ServerWorld handle = ((WorldImpl) Objects.requireNonNull(loc.getWorld())).getHandle();
 
         net.minecraft.loot.context.LootContext.Builder builder = new net.minecraft.loot.context.LootContext.Builder(handle);
         if (getHandle() != LootTable.EMPTY) {
@@ -133,12 +131,12 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
         LootContext.Builder contextBuilder = new LootContext.Builder(location);
 
         if (info.hasParameter(LootContextParameters.KILLER_ENTITY)) {
-            CraftEntity killer = ((IMixinEntity)info.get(LootContextParameters.KILLER_ENTITY)).getBukkitEntity();
+            CraftEntity killer = ((IMixinEntity) Objects.requireNonNull(info.get(LootContextParameters.KILLER_ENTITY))).getBukkitEntity();
             if (killer instanceof HumanEntityImpl) contextBuilder.killer((HumanEntityImpl) killer);
         }
 
         if (info.hasParameter(LootContextParameters.THIS_ENTITY))
-            contextBuilder.lootedEntity(((IMixinEntity)info.get(LootContextParameters.THIS_ENTITY)).getBukkitEntity());
+            contextBuilder.lootedEntity(((IMixinEntity) Objects.requireNonNull(info.get(LootContextParameters.THIS_ENTITY))).getBukkitEntity());
 
         if (info.hasParameter(IMixinLootContextParameters.LOOTING_MOD))
             contextBuilder.lootingModifier(info.get(IMixinLootContextParameters.LOOTING_MOD));

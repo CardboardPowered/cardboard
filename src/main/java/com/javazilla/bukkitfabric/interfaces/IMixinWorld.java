@@ -27,12 +27,12 @@ import net.minecraft.util.math.BlockPos;
 
 public interface IMixinWorld {
 
-    public WorldImpl getWorldImpl();
+    WorldImpl getWorldImpl();
 
-    public Map<BlockPos, CapturedBlockState> getCapturedBlockStates_BF();
+    Map<BlockPos, CapturedBlockState> getCapturedBlockStates_BF();
 
-    public boolean isCaptureBlockStates_BF();
+    boolean isCaptureBlockStates_BF();
 
-    public void setCaptureBlockStates_BF(boolean b);
+    void setCaptureBlockStates_BF(boolean b);
 
 }

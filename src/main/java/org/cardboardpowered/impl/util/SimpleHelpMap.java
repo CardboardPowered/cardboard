@@ -42,8 +42,8 @@ public class SimpleHelpMap implements HelpMap {
 
     @SuppressWarnings("unchecked")
     public SimpleHelpMap(CraftServer server) {
-        this.helpTopics = new TreeMap<String, HelpTopic>(HelpTopicComparator.topicNameComparatorInstance()); // Using a TreeMap for its explicit sorting on key
-        this.topicFactoryMap = new HashMap<Class, HelpTopicFactory<Command>>();
+        this.helpTopics = new TreeMap<>(HelpTopicComparator.topicNameComparatorInstance()); // Using a TreeMap for its explicit sorting on key
+        this.topicFactoryMap = new HashMap<>();
         this.server = server;
         this.yaml = new HelpYamlReader(server);
 

@@ -24,7 +24,7 @@ public class MixinEndPortalBlock {
 
     @Inject(at = @At("HEAD"), method = "onEntityCollision")
     public void callBukkitEvent(BlockState iblockdata, World world, BlockPos blockposition, Entity entity, CallbackInfo ci) {
-        if (world instanceof ServerWorld && !entity.hasVehicle() && !entity.hasPassengers() && entity.canUsePortals() && VoxelShapes.matchesAnywhere(VoxelShapes.cuboid(entity.getBoundingBox().offset((double) (-blockposition.getX()), (double) (-blockposition.getY()), (double) (-blockposition.getZ()))), iblockdata.getOutlineShape(world, blockposition), BooleanBiFunction.AND)) {
+        if (world instanceof ServerWorld && !entity.hasVehicle() && !entity.hasPassengers() && entity.canUsePortals() && VoxelShapes.matchesAnywhere(VoxelShapes.cuboid(entity.getBoundingBox().offset(-blockposition.getX(), -blockposition.getY(), -blockposition.getZ())), iblockdata.getOutlineShape(world, blockposition), BooleanBiFunction.AND)) {
             EntityPortalEnterEvent event = new EntityPortalEnterEvent(((IMixinEntity)entity).getBukkitEntity(), new org.bukkit.Location(((IMixinWorld)world).getWorldImpl(), blockposition.getX(), blockposition.getY(), blockposition.getZ()));
             Bukkit.getPluginManager().callEvent(event);
         }

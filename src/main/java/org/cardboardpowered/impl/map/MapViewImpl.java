@@ -1,13 +1,8 @@
 package org.cardboardpowered.impl.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import net.minecraft.item.map.MapState;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.RegistryKey;
 import org.bukkit.Bukkit;
@@ -22,9 +17,9 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 public final class MapViewImpl implements MapView {
 
-    private final Map<PlayerImpl, RenderData> renderCache = new HashMap<PlayerImpl, RenderData>();
-    private final List<MapRenderer> renderers = new ArrayList<MapRenderer>();
-    private final Map<MapRenderer, Map<PlayerImpl, MapCanvasImpl>> canvases = new HashMap<MapRenderer, Map<PlayerImpl, MapCanvasImpl>>();
+    private final Map<PlayerImpl, RenderData> renderCache = new HashMap<>();
+    private final List<MapRenderer> renderers = new ArrayList<>();
+    private final Map<MapRenderer, Map<PlayerImpl, MapCanvasImpl>> canvases = new HashMap<>();
     protected final MapState worldMap;
 
     public MapViewImpl(MapState worldMap) {
@@ -50,11 +45,13 @@ public final class MapViewImpl implements MapView {
     }
 
     @Override
+    @Deprecated
     public Scale getScale() {
-        return Scale.valueOf(worldMap.scale);
+        return Objects.requireNonNull(Scale.valueOf(worldMap.scale));
     }
 
     @Override
+    @Deprecated
     public void setScale(Scale scale) {
         worldMap.scale = scale.getValue();
     }
@@ -93,14 +90,14 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public List<MapRenderer> getRenderers() {
-        return new ArrayList<MapRenderer>(renderers);
+        return new ArrayList<>(renderers);
     }
 
     @Override
     public void addRenderer(MapRenderer renderer) {
         if (!renderers.contains(renderer)) {
             renderers.add(renderer);
-            canvases.put(renderer, new HashMap<PlayerImpl, MapCanvasImpl>());
+            canvases.put(renderer, new HashMap<>());
             renderer.initialize(this);
         }
     }
@@ -133,6 +130,7 @@ public final class MapViewImpl implements MapView {
             renderCache.put(context ? player : null, render);
         }
 
+        // Can try instead of 2 condition this? renderCache.isEmpty()
         if (context && renderCache.containsKey(null))
             renderCache.remove(null);
 

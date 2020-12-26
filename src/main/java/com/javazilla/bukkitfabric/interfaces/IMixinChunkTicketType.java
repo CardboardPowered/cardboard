@@ -5,6 +5,6 @@ import net.minecraft.util.Unit;
 
 public interface IMixinChunkTicketType {
 
-    public ChunkTicketType<Unit> getBukkitPluginTicketType();
+    ChunkTicketType<Unit> getBukkitPluginTicketType();
 
 }

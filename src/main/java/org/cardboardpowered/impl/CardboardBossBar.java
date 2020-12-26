@@ -217,10 +217,10 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
         for (Player player : getPlayers()) removePlayer(player);
     }
 
-    private final class FlagContainer {
+    private static final class FlagContainer {
 
-        private Supplier<Boolean> get;
-        private Consumer<Boolean> set;
+        private final Supplier<Boolean> get;
+        private final Consumer<Boolean> set;
 
         public FlagContainer(Supplier<Boolean> get, Consumer<Boolean> set) {
             this.get = get;

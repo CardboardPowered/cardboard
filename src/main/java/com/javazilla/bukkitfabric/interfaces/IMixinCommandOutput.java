@@ -24,6 +24,6 @@ import net.minecraft.server.command.ServerCommandSource;
 
 public interface IMixinCommandOutput {
 
-    public CommandSender getBukkitSender(ServerCommandSource serverCommandSource);
+    CommandSender getBukkitSender(ServerCommandSource serverCommandSource);
 
 }

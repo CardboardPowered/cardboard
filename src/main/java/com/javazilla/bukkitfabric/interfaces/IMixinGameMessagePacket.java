@@ -22,8 +22,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 
 public interface IMixinGameMessagePacket {
 
-    public BaseComponent[] getBungeeComponents();
+    BaseComponent[] getBungeeComponents();
 
-    public void setBungeeComponents(BaseComponent[] components);
+    void setBungeeComponents(BaseComponent[] components);
 
 }

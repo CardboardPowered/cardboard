@@ -2,18 +2,18 @@ package com.javazilla.bukkitfabric.interfaces;
 
 public interface IMixinCreeperEntity {
 
-    public void explodeBF();
+    void explodeBF();
 
-    public int getExplosionRadiusBF();
+    int getExplosionRadiusBF();
 
-    public void setExplosionRadiusBF(int radius);
+    void setExplosionRadiusBF(int radius);
 
-    public void setFuseTimeBF(int ticks);
+    void setFuseTimeBF(int ticks);
 
-    public int getFuseTimeBF();
+    int getFuseTimeBF();
 
-    public void setPowered(boolean powered);
+    void setPowered(boolean powered);
 
-    public boolean isPoweredBF();
+    boolean isPoweredBF();
 
 }

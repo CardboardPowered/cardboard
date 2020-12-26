@@ -4,6 +4,6 @@ import org.cardboardpowered.impl.AdvancementImpl;
 
 public interface IMixinAdvancement {
 
-    public AdvancementImpl getBukkitAdvancement();
+    AdvancementImpl getBukkitAdvancement();
 
 }
