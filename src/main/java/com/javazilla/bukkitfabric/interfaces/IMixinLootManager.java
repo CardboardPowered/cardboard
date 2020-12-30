@@ -7,6 +7,6 @@ import net.minecraft.util.Identifier;
 
 public interface IMixinLootManager {
 
-    public Map<LootTable, Identifier> getLootTableToKeyMapBF();
+    Map<LootTable, Identifier> getLootTableToKeyMapBF();
 
 }

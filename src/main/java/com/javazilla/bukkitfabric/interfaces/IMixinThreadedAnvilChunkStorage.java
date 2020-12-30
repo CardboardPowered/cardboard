@@ -5,6 +5,6 @@ import net.minecraft.server.world.ChunkHolder;
 
 public interface IMixinThreadedAnvilChunkStorage {
 
-    public Long2ObjectLinkedOpenHashMap<ChunkHolder> getChunkHoldersBF();
+    Long2ObjectLinkedOpenHashMap<ChunkHolder> getChunkHoldersBF();
 
 }

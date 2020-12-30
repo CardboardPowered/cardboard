@@ -3,6 +3,7 @@ package org.cardboardpowered.impl;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -25,7 +26,7 @@ public class IpBanList implements org.bukkit.BanList {
 
     @Override
     public org.bukkit.BanEntry getBanEntry(String target) {
-        BannedIpEntry entry = (BannedIpEntry) list.get(target);
+        BannedIpEntry entry = list.get(target);
         return (entry == null) ? null : new IpBanEntry(target, entry, list);
     }
 
@@ -46,7 +47,7 @@ public class IpBanList implements org.bukkit.BanList {
     public Set<org.bukkit.BanEntry> getBanEntries() {
         ImmutableSet.Builder<org.bukkit.BanEntry> builder = ImmutableSet.builder();
         for (String target : list.getNames())
-            builder.add(new IpBanEntry(target, (BannedIpEntry) list.get(target), list));
+            builder.add(new IpBanEntry(target, Objects.requireNonNull(list.get(target)), list));
         return builder.build();
     }
 
@@ -60,7 +61,7 @@ public class IpBanList implements org.bukkit.BanList {
         list.remove(target);
     }
 
-    public class IpBanEntry implements BanEntry {
+    public static class IpBanEntry implements BanEntry {
 
         private final BannedIpList list;
         private final String target;

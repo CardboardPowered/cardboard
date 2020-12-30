@@ -2,10 +2,10 @@ package com.javazilla.bukkitfabric.interfaces;
 
 public interface IMixinPersistentProjectileEntity {
 
-    public int getPunchBF();
+    int getPunchBF();
 
-    public boolean getInGroundBF();
+    boolean getInGroundBF();
 
-    public void setLifeBF(int value);
+    void setLifeBF(int value);
 
 }

@@ -22,6 +22,6 @@ import org.bukkit.inventory.Recipe;
 
 public interface IMixinRecipe {
 
-    public Recipe toBukkitRecipe();
+    Recipe toBukkitRecipe();
 
 }

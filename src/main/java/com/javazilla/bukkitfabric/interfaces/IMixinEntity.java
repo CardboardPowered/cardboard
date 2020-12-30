@@ -24,18 +24,18 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public interface IMixinEntity {
 
-    public CraftEntity getBukkitEntity();
+    CraftEntity getBukkitEntity();
 
-    public void setProjectileSourceBukkit(ProjectileSource source);
+    void setProjectileSourceBukkit(ProjectileSource source);
 
-    public ProjectileSource getProjectileSourceBukkit();
+    ProjectileSource getProjectileSourceBukkit();
 
-    public boolean isValidBF();
+    boolean isValidBF();
 
-    public void setValid(boolean b);
+    void setValid(boolean b);
 
-    public void setOriginBF(Location loc);
+    void setOriginBF(Location loc);
 
-    public Location getOriginBF();
+    Location getOriginBF();
 
 }

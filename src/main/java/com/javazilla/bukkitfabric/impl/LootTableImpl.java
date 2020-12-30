@@ -18,10 +18,8 @@
  */
 package com.javazilla.bukkitfabric.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -45,6 +43,7 @@ import org.bukkit.loot.LootContext;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLootContextParameters;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import org.jetbrains.annotations.NotNull;
 
 public class LootTableImpl implements org.bukkit.loot.LootTable {
 
@@ -61,7 +60,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
     }
 
     @Override
-    public Collection<ItemStack> populateLoot(Random random, LootContext context) {
+    public @NotNull Collection<ItemStack> populateLoot(@NotNull Random random, @NotNull LootContext context) {
         net.minecraft.loot.context.LootContext nmsContext = convertContext(context);
         List<net.minecraft.item.ItemStack> nmsItems = handle.generateLoot(nmsContext);
         Collection<ItemStack> bukkit = new ArrayList<>(nmsItems.size());
@@ -74,7 +73,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
     }
 
     @Override
-    public void fillInventory(Inventory inventory, Random random, LootContext context) {
+    public void fillInventory(@NotNull Inventory inventory, @NotNull Random random, @NotNull LootContext context) {
         net.minecraft.loot.context.LootContext nmsContext = convertContext(context);
         CraftInventory craftInventory = (CraftInventory) inventory;
         net.minecraft.inventory.Inventory handle = craftInventory.getInventory();
@@ -82,13 +81,13 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
     }
 
     @Override
-    public NamespacedKey getKey() {
+    public @NotNull NamespacedKey getKey() {
         return key;
     }
 
     private net.minecraft.loot.context.LootContext convertContext(LootContext context) {
         Location loc = context.getLocation();
-        ServerWorld handle = ((WorldImpl) loc.getWorld()).getHandle();
+        ServerWorld handle = ((WorldImpl) Objects.requireNonNull(loc.getWorld())).getHandle();
 
         net.minecraft.loot.context.LootContext.Builder builder = new net.minecraft.loot.context.LootContext.Builder(handle);
         if (getHandle() != LootTable.EMPTY) {
@@ -132,12 +131,12 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
         LootContext.Builder contextBuilder = new LootContext.Builder(location);
 
         if (info.hasParameter(LootContextParameters.KILLER_ENTITY)) {
-            CraftEntity killer = ((IMixinEntity)info.get(LootContextParameters.KILLER_ENTITY)).getBukkitEntity();
+            CraftEntity killer = ((IMixinEntity) Objects.requireNonNull(info.get(LootContextParameters.KILLER_ENTITY))).getBukkitEntity();
             if (killer instanceof HumanEntityImpl) contextBuilder.killer((HumanEntityImpl) killer);
         }
 
         if (info.hasParameter(LootContextParameters.THIS_ENTITY))
-            contextBuilder.lootedEntity(((IMixinEntity)info.get(LootContextParameters.THIS_ENTITY)).getBukkitEntity());
+            contextBuilder.lootedEntity(((IMixinEntity) Objects.requireNonNull(info.get(LootContextParameters.THIS_ENTITY))).getBukkitEntity());
 
         if (info.hasParameter(IMixinLootContextParameters.LOOTING_MOD))
             contextBuilder.lootingModifier(info.get(IMixinLootContextParameters.LOOTING_MOD));

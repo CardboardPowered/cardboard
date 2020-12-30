@@ -31,7 +31,7 @@ public class ProfileBanList implements org.bukkit.BanList {
         if (profile == null)
             return null;
 
-        BannedPlayerEntry entry = (BannedPlayerEntry) list.get(profile);
+        BannedPlayerEntry entry = list.get(profile);
         return (entry == null) ? null : new ProfileBanEntry(profile, entry, list);
     }
 
@@ -80,7 +80,7 @@ public class ProfileBanList implements org.bukkit.BanList {
         return (uuid != null) ? CraftServer.server.getUserCache().getByUuid(uuid) : CraftServer.server.getUserCache().findByName(target);
     }
 
-    public class ProfileBanEntry implements org.bukkit.BanEntry {
+    public static class ProfileBanEntry implements org.bukkit.BanEntry {
         private final BannedPlayerList list;
         private final GameProfile profile;
         private Date created;

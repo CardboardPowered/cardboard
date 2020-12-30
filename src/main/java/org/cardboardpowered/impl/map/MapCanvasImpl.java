@@ -2,6 +2,8 @@ package org.cardboardpowered.impl.map;
 
 import java.awt.Image;
 import java.util.Arrays;
+import java.util.Objects;
+
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapFont;
@@ -63,6 +65,7 @@ public class MapCanvasImpl implements MapCanvas {
     }
 
     @Override
+    @Deprecated
     public void drawImage(int x, int y, Image image) {
         byte[] bytes = MapPalette.imageToBytes(image);
         for (int x2 = 0; x2 < image.getWidth(null); ++x2)
@@ -89,7 +92,8 @@ public class MapCanvasImpl implements MapCanvas {
                         color = Byte.parseByte(text.substring(i + 1, j));
                         i = j;
                         continue;
-                    } catch (NumberFormatException ex) {
+                    } catch (NumberFormatException ignored) {
+                        // ex.printStackTrace();
                     }
                 }
                 throw new IllegalArgumentException("Text contains unterminated color string");
@@ -97,9 +101,10 @@ public class MapCanvasImpl implements MapCanvas {
 
             CharacterSprite sprite = font.getChar(text.charAt(i));
             for (int r = 0; r < font.getHeight(); ++r) {
-                for (int c = 0; c < sprite.getWidth(); ++c)
+                for (int c = 0; c < Objects.requireNonNull(sprite).getWidth(); ++c)
                     if (sprite.get(r, c)) setPixel(x + c, y + r, color);
             }
+            assert sprite != null;
             x += sprite.getWidth() + 1;
         }
     }

@@ -132,7 +132,7 @@ public interface JavaType {
      * @throws IllegalArgumentException if the name is invalid
      */
     //@NonNull
-    public static JavaType fromName(String name) {
+    static JavaType fromName(String name) {
         requireNonNull(name, "Null name");
         if (name.endsWith("[]")) {
             int dimensions = 0;
@@ -168,7 +168,7 @@ public interface JavaType {
      * @param internalName the internal name of the type.
      * @return a new JavaType
      */
-    public static JavaType fromInternalName(String internalName) {
+    static JavaType fromInternalName(String internalName) {
         requireNonNull(internalName, "Null internal name");
         return fromName(internalName.replace('/', '.'));
     }

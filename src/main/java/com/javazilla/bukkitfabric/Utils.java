@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -86,27 +87,27 @@ public class Utils {
 
     public static Object fromNmsGlobalPos(Object object) {
         if (object instanceof GlobalPos) return fromNmsGlobalPos((GlobalPos) object);
-        else if (object instanceof Long) return (Long) object;
-        else if (object instanceof UUID) return (UUID) object;
-        else if (object instanceof Boolean) return (Boolean) object;
+        else if (object instanceof Long) return object;
+        else if (object instanceof UUID) return object;
+        else if (object instanceof Boolean) return object;
         throw new UnsupportedOperationException("Do not know how to map " + object);
     }
 
     public static Object toNmsGlobalPos(Object object) {
         if (object == null) return null;
         else if (object instanceof Location) return toNmsGlobalPos((Location) object);
-        else if (object instanceof Long)     return (Long) object;
-        else if (object instanceof UUID)     return (UUID) object;
-        else if (object instanceof Boolean)  return (Boolean) object;
+        else if (object instanceof Long)     return object;
+        else if (object instanceof UUID)     return object;
+        else if (object instanceof Boolean)  return object;
         throw new UnsupportedOperationException("Do not know how to map " + object);
     }
 
     public static Location fromNmsGlobalPos(GlobalPos globalPos) {
-        return new org.bukkit.Location(((IMixinWorld)((CraftServer) CraftServer.INSTANCE).getServer().getWorld(globalPos.getDimension())).getWorldImpl(), globalPos.getPos().getX(), globalPos.getPos().getY(), globalPos.getPos().getZ());
+        return new org.bukkit.Location(((IMixinWorld) Objects.requireNonNull(CraftServer.INSTANCE.getServer().getWorld(globalPos.getDimension()))).getWorldImpl(), globalPos.getPos().getX(), globalPos.getPos().getY(), globalPos.getPos().getZ());
     }
 
     public static GlobalPos toNmsGlobalPos(Location location) {
-        return GlobalPos.create(((WorldImpl) location.getWorld()).getHandle().getRegistryKey(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        return GlobalPos.create(((WorldImpl) Objects.requireNonNull(location.getWorld())).getHandle().getRegistryKey(), new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
 
     private static final net.minecraft.entity.EquipmentSlot[] slots = new net.minecraft.entity.EquipmentSlot[EquipmentSlot.values().length];

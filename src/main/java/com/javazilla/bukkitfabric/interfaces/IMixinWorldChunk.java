@@ -28,10 +28,10 @@ import net.minecraft.world.Heightmap;
 
 public interface IMixinWorldChunk {
 
-    public Map<Heightmap.Type, Heightmap> getHeightMaps();
+    Map<Heightmap.Type, Heightmap> getHeightMaps();
 
-    public TypeFilterableList<Entity>[] getEntitySections();
+    TypeFilterableList<Entity>[] getEntitySections();
 
-    public Chunk getBukkitChunk();
+    Chunk getBukkitChunk();
 
 }

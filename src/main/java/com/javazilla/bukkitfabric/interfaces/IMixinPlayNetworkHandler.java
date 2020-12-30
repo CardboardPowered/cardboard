@@ -26,10 +26,10 @@ import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket.Flag;
 
 public interface IMixinPlayNetworkHandler {
 
-    public void chat(String message, boolean notDeprecated);
+    void chat(String message, boolean notDeprecated);
 
-    public void teleport(Location location);
+    void teleport(Location location);
 
-    public boolean isDisconnected();
+    boolean isDisconnected();
 
 }

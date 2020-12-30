@@ -2,11 +2,11 @@ package org.cardboardpowered.impl;
 
 public interface CardboardModdedMaterial {
 
-    public boolean isBlock();
+    boolean isBlock();
 
-    public boolean isItem();
+    boolean isItem();
 
-    public boolean isEdible();
+    boolean isEdible();
 
     short getDamage();
 

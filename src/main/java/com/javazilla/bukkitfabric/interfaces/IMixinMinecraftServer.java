@@ -37,28 +37,28 @@ import net.minecraft.world.level.storage.LevelStorage.Session;
 
 public interface IMixinMinecraftServer {
 
-    public Queue<Runnable> getProcessQueue();
+    Queue<Runnable> getProcessQueue();
 
-    public Map<RegistryKey<net.minecraft.world.World>, ServerWorld> getWorldMap();
+    Map<RegistryKey<net.minecraft.world.World>, ServerWorld> getWorldMap();
 
-    public void convertWorld(String name);
+    void convertWorld(String name);
 
-    public WorldGenerationProgressListenerFactory getWorldGenerationProgressListenerFactory();
+    WorldGenerationProgressListenerFactory getWorldGenerationProgressListenerFactory();
 
-    public CommandManager setCommandManager(CommandManager commandManager);
+    CommandManager setCommandManager(CommandManager commandManager);
 
-    public static MinecraftServer getServer() {
+    static MinecraftServer getServer() {
         return CraftServer.server;
     }
 
-    public void loadSpawn(WorldGenerationProgressListener worldGenerationProgressListener, ServerWorld internal);
+    void loadSpawn(WorldGenerationProgressListener worldGenerationProgressListener, ServerWorld internal);
 
-    public void initWorld(ServerWorld worldserver, ServerWorldProperties iworlddataserver, SaveProperties saveData, GeneratorOptions generatorsettings);
+    void initWorld(ServerWorld worldserver, ServerWorldProperties iworlddataserver, SaveProperties saveData, GeneratorOptions generatorsettings);
 
-    public WorldSaveHandler getSaveHandler_BF();
+    WorldSaveHandler getSaveHandler_BF();
 
-    public Session getSessionBF();
+    Session getSessionBF();
 
-    public void cardboard_runOnMainThread(Runnable r);
+    void cardboard_runOnMainThread(Runnable r);
 
 }
