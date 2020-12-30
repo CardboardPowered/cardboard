@@ -4,6 +4,6 @@ import org.bukkit.craftbukkit.inventory.CraftMerchantRecipe;
 
 public interface IMixinTradeOffer {
 
-    public CraftMerchantRecipe asBukkit();
+    CraftMerchantRecipe asBukkit();
 
 }

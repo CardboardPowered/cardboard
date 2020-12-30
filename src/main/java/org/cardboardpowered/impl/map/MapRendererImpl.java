@@ -20,6 +20,7 @@ public class MapRendererImpl extends MapRenderer {
     }
 
     @Override
+    @Deprecated
     public void render(MapView map, MapCanvas canvas, Player player) {
         // Map
         for (int x = 0; x < 128; ++x)
@@ -35,7 +36,7 @@ public class MapRendererImpl extends MapRenderer {
             Player other = Bukkit.getPlayerExact((String) key);
             if (other != null && !player.canSee(other)) continue;
 
-            MapIcon decoration = (MapIcon) worldMap.icons.get(key);
+            MapIcon decoration = worldMap.icons.get(key);
             cursors.addCursor(decoration.getX(), decoration.getZ(), (byte) (decoration.getRotation() & 15), decoration.getType().getId(), true, CraftChatMessage.fromComponent(decoration.getText()));
         }
     }

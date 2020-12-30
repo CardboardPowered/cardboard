@@ -26,10 +26,10 @@ import net.minecraft.util.Identifier;
 
 public interface IMixinRecipeManager {
 
-    public void addRecipe(Recipe<?> irecipe);
+    void addRecipe(Recipe<?> irecipe);
 
-    public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes();
+    Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes();
 
-    public void clearRecipes();
+    void clearRecipes();
 
 }

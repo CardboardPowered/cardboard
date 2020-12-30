@@ -22,6 +22,6 @@ import org.bukkit.command.CommandSender;
 
 public interface IMixinServerCommandSource {
 
-    public CommandSender getBukkitSender();
+    CommandSender getBukkitSender();
 
 }

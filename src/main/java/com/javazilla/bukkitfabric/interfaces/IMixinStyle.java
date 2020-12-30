@@ -19,10 +19,10 @@ import net.minecraft.text.Style;
 // TODO
 public interface IMixinStyle {
 
-    public Style setStrikethrough(Boolean obool);
+    Style setStrikethrough(Boolean obool);
 
-    public Style setUnderline(Boolean obool);
+    Style setUnderline(Boolean obool);
 
-    public Style setRandom(Boolean obool);
+    Style setRandom(Boolean obool);
 
 }

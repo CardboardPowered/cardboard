@@ -4,6 +4,6 @@ import net.minecraft.item.ItemStack;
 
 public interface IMixinPlayerInventory extends IMixinInventory {
 
-    public int canHold(ItemStack itemstack);
+    int canHold(ItemStack itemstack);
 
 }

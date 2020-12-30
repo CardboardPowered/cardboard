@@ -31,20 +31,20 @@ import net.minecraft.util.collection.DefaultedList;
 
 public interface IMixinScreenHandler {
 
-    public CardboardInventoryView getBukkitView();
+    CardboardInventoryView getBukkitView();
 
-    public Text getTitle();
+    Text getTitle();
 
-    public void setTitle(Text title);
+    void setTitle(Text title);
 
-    public void transferTo(ScreenHandler other, HumanEntityImpl player);
+    void transferTo(ScreenHandler other, HumanEntityImpl player);
 
-    public DefaultedList<ItemStack> getTrackedStacksBF();
+    DefaultedList<ItemStack> getTrackedStacksBF();
 
-    public void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks);
+    void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks);
 
-    public void setSlots(List<Slot> slots);
+    void setSlots(List<Slot> slots);
 
-    public void setCheckReachable(boolean bl);
+    void setCheckReachable(boolean bl);
 
 }

@@ -24,14 +24,14 @@ public class MixinDispenserBlock implements IMixinDispenserBlock {
     @Overwrite
     public void dispense(ServerWorld worldserver, BlockPos blockposition) {
         BlockPointerImpl sourceblock = new BlockPointerImpl(worldserver, blockposition);
-        DispenserBlockEntity tileentitydispenser = (DispenserBlockEntity) sourceblock.getBlockEntity();
+        DispenserBlockEntity tileentitydispenser = sourceblock.getBlockEntity();
         int i = tileentitydispenser.chooseNonEmptySlot();
 
         if (i < 0) {
             worldserver.syncWorldEvent(1001, blockposition, 0);
         } else {
             ItemStack itemstack = tileentitydispenser.getStack(i);
-            DispenserBehavior idispensebehavior = (DispenserBehavior) DispenserBlock.BEHAVIORS.get(itemstack.getItem());
+            DispenserBehavior idispensebehavior = DispenserBlock.BEHAVIORS.get(itemstack.getItem());
 
             if (idispensebehavior != DispenserBehavior.NOOP) {
                 DispenserBlockHelper.eventFired = false;

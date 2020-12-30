@@ -4,10 +4,10 @@ import org.cardboardpowered.impl.CardboardModdedMaterial;
 
 public interface IMixinMaterial {
 
-    public boolean isModded();
+    boolean isModded();
 
-    public CardboardModdedMaterial getModdedData();
+    CardboardModdedMaterial getModdedData();
 
-    public void setModdedData(CardboardModdedMaterial data);
+    void setModdedData(CardboardModdedMaterial data);
 
 }

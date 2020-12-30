@@ -22,6 +22,6 @@ import org.bukkit.Chunk;
 
 public interface IMixinChunk {
 
-    public Chunk getBukkitChunk();
+    Chunk getBukkitChunk();
 
 }

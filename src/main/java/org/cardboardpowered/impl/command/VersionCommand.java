@@ -116,7 +116,7 @@ public class VersionCommand extends Command {
         Validate.notNull(alias, "Alias cannot be null");
 
         if (args.length == 1) {
-            List<String> completions = new ArrayList<String>();
+            List<String> completions = new ArrayList<>();
             String toComplete = args[0].toLowerCase(java.util.Locale.ENGLISH);
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
                 if (StringUtil.startsWithIgnoreCase(plugin.getName(), toComplete))
@@ -130,7 +130,7 @@ public class VersionCommand extends Command {
     private final ReentrantLock versionLock = new ReentrantLock();
     private boolean hasVersion = false;
     private String versionMessage = null;
-    private final Set<CommandSender> versionWaiters = new HashSet<CommandSender>();
+    private final Set<CommandSender> versionWaiters = new HashSet<>();
     private boolean versionTaskStarted = false;
     private long lastCheck = 0;
 
@@ -154,7 +154,7 @@ public class VersionCommand extends Command {
             sender.sendMessage("Checking version, please wait...");
             if (!versionTaskStarted) {
                 versionTaskStarted = true;
-                new Thread(() -> obtainVersion()).start();
+                new Thread(this::obtainVersion).start();
             }
         } finally {
             versionLock.unlock();

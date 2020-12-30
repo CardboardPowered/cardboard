@@ -24,16 +24,16 @@ import net.minecraft.world.World;
 
 public interface IMixinServerEntityPlayer extends IMixinEntity {
 
-    public void reset();
+    void reset();
 
-    public BlockPos getSpawnPoint(World world);
+    BlockPos getSpawnPoint(World world);
 
-    public void closeHandledScreen();
+    void closeHandledScreen();
 
-    public int nextContainerCounter();
+    int nextContainerCounter();
 
-    public void setConnectionBF(ClientConnection connection);
+    void setConnectionBF(ClientConnection connection);
 
-    public ClientConnection getConnectionBF();
+    ClientConnection getConnectionBF();
 
 }
