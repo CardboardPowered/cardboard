@@ -4,7 +4,6 @@
   "package": "com.javazilla.bukkitfabric.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinPluginClassLoader",
     "MixinPluginLogger",
     "MixinDedicatedServer",
     "MixinMinecraftServer",

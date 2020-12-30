@@ -27,6 +27,7 @@ public abstract class LoginKeyHandler {
         this.privatekey = privatekey;
     }
 
+    @SuppressWarnings("deprecation")
     public static LoginKeyHandler getLoginKeyHandler(ServerLoginNetworkHandler.State state, SecretKey key, PrivateKey privatekey) {
         if (CraftServer.server.getVersion().equalsIgnoreCase("1.16.3")) {
             return new Login_1_16_3(state, key, privatekey);

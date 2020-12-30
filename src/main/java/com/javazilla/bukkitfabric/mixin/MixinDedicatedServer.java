@@ -29,7 +29,6 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.cardboardpowered.impl.CardboardEnchantment;
-import org.objectweb.asm.ClassReader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -43,7 +42,6 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.MakeMaterial;
 import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
 
-import net.fabricmc.loader.launch.knot.Knot;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;

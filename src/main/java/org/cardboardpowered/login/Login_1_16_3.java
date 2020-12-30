@@ -11,6 +11,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerLoginNetworkHandler.State;
 
+/**
+ * @deprecated We no longer support 1.16.3
+ */
+@Deprecated
 public class Login_1_16_3 extends LoginKeyHandler {
 
     public Login_1_16_3(State state, SecretKey key, PrivateKey privatekey) {

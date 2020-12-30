@@ -188,6 +188,15 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         return (MinecraftServer) (Object) this;
     }
 
+    @Shadow
+    public void loadWorldResourcePack() {
+    }
+
+    @Shadow
+    public void createWorlds(WorldGenerationProgressListener worldGenerationProgressListener) {
+    }
+
+
     /**
      * @reason Bukkit's Custom Multiworld handling
      * @author Bukkit4Fabric
@@ -353,9 +362,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
 
         CraftMagicNumbers.setupUnknownModdedMaterials();
-
-        //io.github.essentialsx.itemdbgenerator.Main.main(new String[] {"test"});
-
         BukkitFabricMod.isAfterWorldLoad = true;
     }
 

@@ -37,12 +37,6 @@ import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.event.block.*;
-import org.cardboardpowered.impl.entity.LivingEntityImpl;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.cardboardpowered.impl.entity.UnknownEntity;
-import org.cardboardpowered.impl.inventory.CardboardInventoryView;
-import org.cardboardpowered.impl.world.WorldImpl;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -62,7 +56,15 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreeperPowerEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
@@ -94,6 +96,12 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.entity.UnknownEntity;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.Nullable;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
@@ -104,7 +112,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinLootManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.mixin.entity.MixinExperienceOrbEntity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ExperienceOrbEntity;
@@ -133,7 +140,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public class BukkitEventFactory {

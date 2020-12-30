@@ -81,6 +81,7 @@ public class MakeMaterial {
         mc2.delete();
         //f.delete();
         LOGGER.info("Adding \"" + f2.getName() + "\" to Knot.");
+        if (!FabricLoader.getInstance().isDevelopmentEnvironment())
         Knot.getLauncher().propose(f2.toURI().toURL());
     }
 
@@ -158,7 +159,11 @@ public class MakeMaterial {
             return false;
         }
         ArrayList<String> arguments = new ArrayList<String>();
-        for (String s : list) arguments.add(s);
+        for (String s : list) {
+            if (s.startsWith("-cp") && FabricLoader.getInstance().isDevelopmentEnvironment())
+                break;
+            arguments.add(s);
+        }
         StandardJavaFileManager fileManager = javac.getStandardFileManager(diagnostics, null, Charset.forName("UTF-8"));
         CompilationTask task = javac.getTask(null, fileManager, diagnostics, arguments, null, fileManager.getJavaFileObjectsFromFiles(Arrays.asList(source)));
 

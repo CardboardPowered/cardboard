@@ -34,6 +34,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 
+import io.netty.channel.local.LocalAddress;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkEncryptionUtils;
@@ -141,7 +142,10 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     public void fireEvents() throws Exception {
         String playerName = profile.getName();
-        java.net.InetAddress address = ((java.net.InetSocketAddress) connection.getAddress()).getAddress();
+        java.net.InetAddress address;
+        if (connection.getAddress() instanceof LocalAddress) {
+            address = InetAddress.getLocalHost();
+        } else address = ((java.net.InetSocketAddress) connection.getAddress()).getAddress();
         UUID uniqueId = profile.getId();
         final org.bukkit.craftbukkit.CraftServer server = CraftServer.INSTANCE;
 
@@ -194,6 +198,8 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
      */
     @Inject(at = @At("HEAD"), method = "acceptPlayer", cancellable = true)
     public void acceptPlayer_BF(CallbackInfo ci) {
+        if (connection.getAddress() instanceof LocalAddress)
+            return;
         ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
 
         if (s != null) {

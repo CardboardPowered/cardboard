@@ -460,7 +460,7 @@ public class CraftServer implements Server {
     }
 
     public MinecraftDedicatedServer getServer() {
-        return (MinecraftDedicatedServer) server;
+        return server;
     }
 
     @Override
@@ -888,12 +888,12 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getAllowFlight() {
-        return getServer().getProperties().allowFlight;
+        return getServer().isFlightEnabled();
     }
 
     @Override
     public boolean getAllowNether() {
-        return getServer().getProperties().allowNether;
+        return getServer().isNetherAllowed();
     }
 
     @Override
@@ -966,7 +966,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean getGenerateStructures() {
-        return getServer().getProperties().generatorOptions.shouldGenerateStructures();
+        return getServer().getSaveProperties().getGeneratorOptions().shouldGenerateStructures();
     }
 
     @Override
@@ -984,12 +984,12 @@ public class CraftServer implements Server {
 
     @Override
     public int getIdleTimeout() {
-        return getServer().getProperties().playerIdleTimeout.get();
+        return getServer().playerIdleTimeout;
     }
 
     @Override
     public String getIp() {
-        return getServer().getProperties().serverIp;
+        return getServer().serverIp;
     }
 
     @Override
@@ -1270,16 +1270,16 @@ public class CraftServer implements Server {
 
     @Override
     public String getVersion() {
-        return serverVersion + " (MC: " + getServer().getVersion() + ")";
+        return serverVersion + " (MC: " + server.getVersion() + ")";
     }
 
     public String getShortVersion() {
-        return shortVersion + " (MC: " + getServer().getVersion() + ")";
+        return shortVersion + " (MC: " + server.getVersion() + ")";
     }
 
     @Override
     public int getViewDistance() {
-        return getServer().getProperties().viewDistance;
+        return server instanceof MinecraftDedicatedServer ? ((MinecraftDedicatedServer)getServer()).getProperties().viewDistance : 12;
     }
 
     @Override
@@ -1321,7 +1321,7 @@ public class CraftServer implements Server {
 
     @Override
     public String getWorldType() {
-        return getServer().getProperties().properties.getProperty("level-type");
+        return server instanceof MinecraftDedicatedServer ? ((MinecraftDedicatedServer)getServer()).getProperties().properties.getProperty("level-type") : "NORMAL";
     }
 
     @Override
@@ -1331,12 +1331,12 @@ public class CraftServer implements Server {
 
     @Override
     public boolean hasWhitelist() {
-        return getServer().getProperties().enforceWhitelist;
+        return getServer().isEnforceWhitelist();
     }
 
     @Override
     public boolean isHardcore() {
-        return getServer().getProperties().hardcore;
+        return getServer().isHardcore();
     }
 
     @Override
