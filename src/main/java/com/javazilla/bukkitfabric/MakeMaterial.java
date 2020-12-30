@@ -51,9 +51,8 @@ public class MakeMaterial {
             newlines.add(str);
             if (str.trim().startsWith("// CARDBOARD MATERIAL START PLACE")) {
                 List<String> toAdd = setupUnknownModdedMaterials();
-                for (String add : toAdd) {
+                for (String add : toAdd)
                     newlines.add("    " + add);
-                }
             }
         }
         Files.write(f.toPath(), newlines, StandardCharsets.UTF_8);
@@ -95,11 +94,10 @@ public class MakeMaterial {
             if (!f.getName().contains("Cardboard-Generated"))
                 cp += f.getAbsolutePath() + File.pathSeparator;
         File rj = new File(new File(".fabric"), "remappedJars");
-        for (File f : rj.listFiles()) {
-            cp += f.getAbsolutePath() + File.separator + "intermediary-server.jar" + File.pathSeparator;
-        }
+        if (rj.listFiles() != null)
+            for (File f : rj.listFiles())
+                cp += f.getAbsolutePath() + File.separator + "intermediary-server.jar" + File.pathSeparator;
         cp += ".";
-
         return cp;
     }
 
@@ -113,7 +111,6 @@ public class MakeMaterial {
     }
 
     public static List<String> setupUnknownModdedMaterials() {
-        int blocks = 0, items = 0;
         int i = MATERIAL_LENGTH; 
 
         List<String> names = new ArrayList<>();
@@ -121,43 +118,27 @@ public class MakeMaterial {
         for (Block block : Registry.BLOCK) {
             Identifier id = Registry.BLOCK.getId(block);
             String name = standardize(id);
-            if (id.getNamespace().startsWith("minecraft"))
-                continue;
+            if (id.getNamespace().startsWith("minecraft")) continue;
 
             list.add(name + "(" + i + "," + " new org.cardboardpowered.impl.CardboardModdedBlock(\"" + id.toString() + "\") ),");
             names.add(name);
 
             i++;
-            blocks++;
             BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + name + "'");
         }
 
         for (Item item : Registry.ITEM) {
             Identifier id = Registry.ITEM.getId(item);
             String name = standardize(id);
-            if (id.getNamespace().startsWith("minecraft") || names.contains(name))
-                continue;
+            if (id.getNamespace().startsWith("minecraft") || names.contains(name)) continue;
 
             list.add(name + "(" + i + "," + " new org.cardboardpowered.impl.CardboardModdedItem(\"" + id.toString() + "\") ),");
             names.add(name);
 
             i++;
-            items++;
             BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + name + "'");
         }
-
         return list;
-        //for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
-        //    FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
-
-        //EnumHelper.addEnums(Material.class, list);
-
-        /*for (Material material : list) {
-            Identifier key = key(material);
-            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
-            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
-            Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
-        }*/
     }
 
     private static class Diagnostics implements DiagnosticListener<JavaFileObject> {

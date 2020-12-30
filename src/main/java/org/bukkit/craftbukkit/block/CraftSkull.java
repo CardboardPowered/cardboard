@@ -19,6 +19,7 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.entity.SkullBlockEntity;
 
+@SuppressWarnings("deprecation")
 public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> implements Skull {
 
     private static final int MAX_OWNER_LENGTH = 16;

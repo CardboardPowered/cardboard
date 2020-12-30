@@ -81,8 +81,7 @@ public class BukkitFabricMod implements ModInitializer {
         Map<LibraryKey, Library> libraries2 = Stream.of(
                 new Library("org.apache.commons", "commons-collections4", "4.4", LibraryManager.HashAlgorithm.SHA1, "62ebe7544cb7164d87e0637a2a6a2bdc981395e8", null),
                 new Library("commons-collections", "commons-collections", "3.2.1", LibraryManager.HashAlgorithm.SHA1, "761ea405b9b37ced573d2df0d1e3a4e0f9edc668", null),
-                new Library("com.google.code.gson", "gson", "2.8.6", LibraryManager.HashAlgorithm.SHA1, "9180733b7df8542621dc12e21e87557e8c99b8cb", null)/*,
-                new Library("org.spigotmc", "spigot-api", "1.16.4-R0.1-SNAPSHOT", LibraryManager.HashAlgorithm.SHA1, "20350b6a1fc5c4481c4a24c9b906c6414780ac37", "spigot-api-1.16.4-R0.1-20201222.210427-34")*/
+                new Library("com.google.code.gson", "gson", "2.8.6", LibraryManager.HashAlgorithm.SHA1, "9180733b7df8542621dc12e21e87557e8c99b8cb", null)
             ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
         new LibraryManager(repository2, "lib", true, 2, libraries2.values()).run();
 

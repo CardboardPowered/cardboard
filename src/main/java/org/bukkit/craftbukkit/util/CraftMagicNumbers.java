@@ -6,8 +6,6 @@ import com.google.common.base.Preconditions;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
 
-import io.izzel.arclight.api.Unsafe;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -101,7 +99,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
     }
 
-    public static final Map<String, Material> BY_NAME = Unsafe.getStatic(Material.class, "BY_NAME");
+    //public static final Map<String, Material> BY_NAME = Unsafe.getStatic(Material.class, "BY_NAME");
     public static final HashMap<String, Material> MODDED_MATERIALS = new HashMap<>();
 
     public static final HashMap<Item, Material> MODDED_ITEM_MATERIAL = new HashMap<>();
@@ -341,11 +339,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     public static net.minecraft.fluid.Fluid getFluid(Fluid fluid) {
         return MATERIAL_FLUID.get(fluid);
-    }
-
-    public static Object isModded(Item item) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

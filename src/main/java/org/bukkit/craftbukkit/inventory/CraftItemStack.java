@@ -506,7 +506,7 @@ public final class CraftItemStack extends ItemStack {
             if (isModded) {
                 Identifier id = Registry.ITEM.getId(item.item);
                 String name = CraftMagicNumbers.standardize(id);
-                Material material = CraftMagicNumbers.BY_NAME.get(name);                    
+                Material material = Material.getMaterial(name);                    
                 return material;
             }
         }
