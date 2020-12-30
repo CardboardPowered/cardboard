@@ -8,4 +8,8 @@ public interface CardboardModdedMaterial {
 
     public boolean isEdible();
 
+    short getDamage();
+
+    String getId();
+
 }

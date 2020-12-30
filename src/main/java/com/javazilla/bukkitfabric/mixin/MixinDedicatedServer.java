@@ -19,14 +19,17 @@
 package com.javazilla.bukkitfabric.mixin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.cardboardpowered.impl.CardboardEnchantment;
+import org.objectweb.asm.ClassReader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -37,8 +40,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.MakeMaterial;
 import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
 
+import net.fabricmc.loader.launch.knot.Knot;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
@@ -64,12 +69,17 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
 
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
     private void init(CallbackInfoReturnable<Boolean> ci) {
-        BukkitLogger.getLogger().info(" Bukkit4Fabric Mod ");
-
         // Register Bukkit Enchantments
-        for (Object enchantment : Registry.ENCHANTMENT) {
-            org.bukkit.enchantments.Enchantment.registerEnchantment(new CardboardEnchantment((Enchantment) enchantment));
+        for (Enchantment enchantment : Registry.ENCHANTMENT)
+            org.bukkit.enchantments.Enchantment.registerEnchantment(new CardboardEnchantment(enchantment));
+
+        try {
+            MakeMaterial.make();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
+
+        CraftMagicNumbers.setupUnknownModdedMaterials();
 
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));

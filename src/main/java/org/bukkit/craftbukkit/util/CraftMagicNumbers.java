@@ -1,17 +1,13 @@
 package org.bukkit.craftbukkit.util;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
 
-import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,13 +37,10 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.cardboardpowered.impl.CardboardModdedBlock;
-import org.cardboardpowered.impl.CardboardModdedItem;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
@@ -108,61 +101,16 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
     }
 
-    private static final List<Class<?>> MAT_CTOR = ImmutableList.of(int.class);
-    private static final List<Class<?>> ENTITY_CTOR = ImmutableList.of(String.class, Class.class, int.class);
-    private static final List<Class<?>> ENV_CTOR = ImmutableList.of(int.class);
     public static final Map<String, Material> BY_NAME = Unsafe.getStatic(Material.class, "BY_NAME");
-    private static final Map<String, EntityType> ENTITY_NAME_MAP = Unsafe.getStatic(EntityType.class, "NAME_MAP");
     public static final HashMap<String, Material> MODDED_MATERIALS = new HashMap<>();
 
-    public static void test() {
-        int blocks = 0, items = 0;
-        int i = Material.values().length;
-        int origin = i;
+    public static final HashMap<Item, Material> MODDED_ITEM_MATERIAL = new HashMap<>();
+    public static final HashMap<Material, Item> MODDED_MATERIAL_ITEM = new HashMap<>();
 
-        List<Material> list = new ArrayList<>();
-        for (Block block : Registry.BLOCK) {
-            Identifier id = Registry.BLOCK.getId(block);
-            String name = standardize(id);
-            Material material = BY_NAME.get(name);
-            if (null == material) {
-                material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
-                ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedBlock(block));
-                i++;
-                blocks++;
-                MATERIAL_BLOCK.put(material, block);
-                BY_NAME.put(name, material);
-                list.add(material);
-                MODDED_MATERIALS.put(name, material);
-                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
-            }
-            BLOCK_MATERIAL.put(block, Material.getMaterial(id.getPath().toUpperCase(Locale.ROOT)));
-        }
-
-        for (Item item : Registry.ITEM) {
-            Identifier id = Registry.ITEM.getId(item);
-            String name = standardize(id);
-            Material material = BY_NAME.get(name);
-            if (null == material) {
-                material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
-                ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedItem(item));
-                i++;
-                items++;
-                MATERIAL_ITEM.put(material, item);
-                BY_NAME.put(name, material);
-                list.add(material);
-                MODDED_MATERIALS.put(name, material);
-                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
-            }
-            ITEM_MATERIAL.put(item, Material.getMaterial(id.getPath().toUpperCase(Locale.ROOT)));
-        }
-
-        for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
-            FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
-
-        EnumHelper.addEnums(Material.class, list);
-
-        for (Material material : list) {
+    @Deprecated
+    public static void setupUnknownModdedMaterials() {
+        for (Material material : Material.values()) {
+            if (material.isLegacy()) continue;
             Identifier key = key(material);
             Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
             Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
@@ -188,26 +136,55 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static Material getMaterial(Block block) {
-        // TODO: add support for modded blocks/items
-        test();
-        return BLOCK_MATERIAL.getOrDefault(block, Material.STONE);
+        Identifier id = Registry.BLOCK.getId(block);
+        Material m = BLOCK_MATERIAL.getOrDefault(block, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
+        BLOCK_MATERIAL.put(block, m);
+        MATERIAL_BLOCK.put(m, block);
+        return m;
     }
 
     public static Material getMaterial(Item item) {
-        test();
-        return ITEM_MATERIAL.getOrDefault(item, Material.ACACIA_BOAT);
+        for (Item item1 : Registry.ITEM) {
+            Identifier id = Registry.ITEM.getId(item1);
+            if (!id.getNamespace().toLowerCase().contains("minecraft"))
+            ITEM_MATERIAL.put(item1, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
+        }
+
+        Identifier id = Registry.ITEM.getId(item);
+        Material m = ITEM_MATERIAL.getOrDefault(item, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
+        ITEM_MATERIAL.put(item, m);
+        MATERIAL_ITEM.put(m,item);
+        return m;
     }
 
     public static Item getItem(Material material) {
-        test();
         if (material != null && material.isLegacy()) material = CraftLegacyMaterials.fromLegacy(material);
-        return MATERIAL_ITEM.get(material); // TODO: add support for modded blocks/items
+        return MATERIAL_ITEM.getOrDefault(material, getModdedItem(material));
     }
 
     public static Block getBlock(Material material) {
-        test();
         if (material != null && material.isLegacy()) material = CraftLegacyMaterials.fromLegacy(material);
-        return MATERIAL_BLOCK.get(material);
+        return MATERIAL_BLOCK.getOrDefault(material, getModdedBlock(material));
+    }
+
+    private static Item getModdedItem(Material mat) {
+        IMixinMaterial mm = (IMixinMaterial)(Object) mat;
+        if (!mm.isModded()) return null;
+
+        Identifier id = new Identifier(mm.getModdedData().getId());
+        Item item = Registry.ITEM.get(id);
+        MATERIAL_ITEM.put(mat, item);
+        return item;
+    }
+
+    private static Block getModdedBlock(Material mat) {
+        IMixinMaterial mm = (IMixinMaterial)(Object) mat;
+        if (!mm.isModded()) return null;
+
+        Identifier id = new Identifier(mm.getModdedData().getId());
+        Block block = Registry.BLOCK.get(id);
+        MATERIAL_BLOCK.put(mat, block);
+        return block;
     }
 
     public static Identifier key(Material mat) {
@@ -246,7 +223,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public Material getMaterial(String material, int version) {
-        test();
+        setupUnknownModdedMaterials();
         Preconditions.checkArgument(material != null, "material == null");
         Preconditions.checkArgument(version <= this.getDataVersion(), "Newer version! Server downgrades are not supported!");
 
@@ -364,6 +341,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     public static net.minecraft.fluid.Fluid getFluid(Fluid fluid) {
         return MATERIAL_FLUID.get(fluid);
+    }
+
+    public static Object isModded(Item item) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

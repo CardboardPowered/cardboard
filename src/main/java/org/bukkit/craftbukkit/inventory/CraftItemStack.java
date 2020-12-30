@@ -120,17 +120,6 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public Material getType() {
-        if (handle != null) {
-            if (handle != null) {
-                boolean isModded = (null == CraftMagicNumbers.getMaterial(handle.getItem()));
-                if (isModded) {
-                    Identifier id = Registry.ITEM.getId(handle.item);
-                    String name = CraftMagicNumbers.standardize(id);
-                    Material material = CraftMagicNumbers.BY_NAME.get(name);                    
-                    return material;
-                }
-            }
-        }
         return handle != null ? CraftMagicNumbers.getMaterial(handle.getItem()) : Material.AIR;
     }
 

@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
 
 @Mixin(value = Material.class, remap = false)
+@Deprecated
 public class MixinMaterial implements IMixinMaterial {
 
     private CardboardModdedMaterial moddedData;

@@ -573,16 +573,13 @@ public class CraftServer implements Server {
     @Override
     public BlockData createBlockData(Material material, Consumer<BlockData> consumer) {
         BlockData data = createBlockData(material);
-        if (consumer != null)
-            consumer.accept(data);
-
+        if (consumer != null) consumer.accept(data);
         return data;
     }
 
     @Override
     public BlockData createBlockData(Material material, String data) throws IllegalArgumentException {
         Validate.isTrue(material != null || data != null, "Must provide one of material or data");
-
         return CraftBlockData.newData(material, data);
     }
 

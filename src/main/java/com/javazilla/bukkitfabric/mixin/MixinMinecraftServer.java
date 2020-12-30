@@ -354,7 +354,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         CraftServer.INSTANCE.getPluginManager().callEvent(new ServerLoadEvent(ServerLoadEvent.LoadType.STARTUP));
         ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
 
-        CraftMagicNumbers.test();
+        CraftMagicNumbers.setupUnknownModdedMaterials();
 
         //io.github.essentialsx.itemdbgenerator.Main.main(new String[] {"test"});
 

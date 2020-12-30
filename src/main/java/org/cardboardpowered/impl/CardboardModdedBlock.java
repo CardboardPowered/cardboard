@@ -5,9 +5,20 @@ import net.minecraft.block.Block;
 public class CardboardModdedBlock implements CardboardModdedMaterial {
 
     private Block block;
+    private String id;
+
+    public CardboardModdedBlock(String id) {
+        this.id = id;
+        this.block = net.minecraft.util.registry.Registry.BLOCK.get(new net.minecraft.util.Identifier(id));
+    }
 
     public CardboardModdedBlock(Block block) {
         this.block = block;
+    }
+
+    @Override
+    public short getDamage() {
+        return 0;
     }
 
     @Override
@@ -23,6 +34,11 @@ public class CardboardModdedBlock implements CardboardModdedMaterial {
     @Override
     public boolean isEdible() {
         return false;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
 }
