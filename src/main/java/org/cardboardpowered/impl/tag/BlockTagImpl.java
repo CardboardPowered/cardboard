@@ -1,8 +1,7 @@
 package org.cardboardpowered.impl.tag;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.block.Block;
 import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
@@ -17,12 +16,23 @@ public class BlockTagImpl extends TagImpl<Block, Material> {
 
     @Override
     public boolean isTagged(Material item) {
-        return getHandle().contains(CraftMagicNumbers.getBlock(item));
+        try {
+            return getHandle().contains(CraftMagicNumbers.getBlock(item));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public Set<Material> getValues() {
-        return Collections.unmodifiableSet(getHandle().values().stream().map((block) -> CraftMagicNumbers.getMaterial(block)).collect(Collectors.toSet()));
+        HashMap<Material, Block> map = new HashMap<>();
+        for (Block block : getHandle().values()) {
+            try {
+                map.put(CraftMagicNumbers.getMaterial(block), block);
+            } catch (Exception e) {
+            }
+        }
+        return map.keySet();
     }
 
 }

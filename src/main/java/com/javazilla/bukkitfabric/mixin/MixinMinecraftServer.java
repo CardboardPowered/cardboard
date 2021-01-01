@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.function.BooleanSupplier;
 
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -362,7 +364,52 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         ((IMixinNetworkIo)(Object)getServer().getNetworkIo()).acceptConnections();
 
         CraftMagicNumbers.setupUnknownModdedMaterials();
+        fixBukkitWorldEdit();
         BukkitFabricMod.isAfterWorldLoad = true;
+    }
+
+    private void fixBukkitWorldEdit() {
+        try {
+            if (!Bukkit.getPluginManager().isPluginEnabled("WorldEdit"))
+                return;
+
+            ClassLoader cl = Bukkit.getPluginManager().getPlugin("WorldEdit").getClass().getClassLoader();
+            Class<?> ITEM_TYPE = Class.forName("com.sk89q.worldedit.world.item.ItemType", true, cl);
+            Class<?> BLOCK_TYPE = Class.forName("com.sk89q.worldedit.world.block.BlockType", true, cl);
+
+            Object REGISTRY_ITEM = ITEM_TYPE.getDeclaredField("REGISTRY").get(null);
+            Method REGISTER_ITEM = null;
+            for (Method m : REGISTRY_ITEM.getClass().getMethods()) {
+                if (m.getName().equalsIgnoreCase("register")) {
+                    REGISTER_ITEM = m;
+                    break;
+                }
+            }
+
+            Object REGISTRY_BLOCK = BLOCK_TYPE.getDeclaredField("REGISTRY").get(null);
+            Method REGISTER_BLOCK = null;
+            for (Method m : REGISTRY_BLOCK.getClass().getMethods()) {
+                if (m.getName().equalsIgnoreCase("register")) {
+                    REGISTER_BLOCK = m;
+                    break;
+                }
+            }
+            HashMap<String, Material> moddedMaterials = CraftMagicNumbers.getModdedMaterials();
+
+            if (moddedMaterials.size() > 0)
+                BukkitFabricMod.LOGGER.info("Adding Modded blocks/items to WorldEdit registry...");
+            for (String mid : moddedMaterials.keySet()) {
+                try {
+                    REGISTER_ITEM.invoke(REGISTRY_ITEM, "minecraft:" + mid.toLowerCase(), ITEM_TYPE.getConstructor(String.class).newInstance(mid));
+                    REGISTER_BLOCK.invoke(REGISTRY_BLOCK, "minecraft:" + mid.toLowerCase(), BLOCK_TYPE.getConstructor(String.class).newInstance(mid));
+                } catch (Exception e) {
+                }
+            }
+            if (moddedMaterials.size() > 0)
+                BukkitFabricMod.LOGGER.info("Added Modded blocks/items to WorldEdit registry.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

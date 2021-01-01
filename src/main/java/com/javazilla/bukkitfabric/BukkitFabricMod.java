@@ -44,7 +44,7 @@ public class BukkitFabricMod implements ModInitializer {
     public static boolean isAfterWorldLoad = false;
     public static final Random random = new Random();
 
-    public static List<ServerLoginNetworkHandler> NETWORK_CASHE = new ArrayList<>();
+    public static List<ServerLoginNetworkHandler> NETWORK_CACHE = new ArrayList<>();
 
     @Override
     public void onInitialize() {

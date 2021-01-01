@@ -21,6 +21,8 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+
 import com.google.common.base.Preconditions;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -39,6 +41,15 @@ public class MakeMaterial {
     // TODO: This needs to be kept updated when Spigot updates
     // It is the value of Material.values().length
     public static int MATERIAL_LENGTH = 1540;
+    public static int MODDED_LENGTH = 0;
+
+    /**
+     * Due to the limitation of the length we use reflection
+     * to add Materials after we directly add 450. 
+     * 
+     * @see Section 4.9.1 of the JVM Specification
+     */
+    public static int JVM_LIMIT = 450;
 
     public static void make() throws IOException {
         Path p = FabricLoader.getInstance().getModContainer("bukkitfabric").get().getPath("org/bukkit/Material.java1");
@@ -52,7 +63,7 @@ public class MakeMaterial {
             if (str.trim().startsWith("// CARDBOARD MATERIAL START PLACE")) {
                 List<String> toAdd = setupUnknownModdedMaterials();
                 for (String add : toAdd)
-                    newlines.add("    " + add);
+                   newlines.add("    " + add);
             }
         }
         Files.write(f.toPath(), newlines, StandardCharsets.UTF_8);
@@ -83,6 +94,7 @@ public class MakeMaterial {
         LOGGER.info("Adding \"" + f2.getName() + "\" to Knot.");
         if (!FabricLoader.getInstance().isDevelopmentEnvironment())
         Knot.getLauncher().propose(f2.toURI().toURL());
+        CraftMagicNumbers.test();
     }
 
     public static String getCP() {
@@ -120,6 +132,7 @@ public class MakeMaterial {
             Identifier id = Registry.BLOCK.getId(block);
             String name = standardize(id);
             if (id.getNamespace().startsWith("minecraft")) continue;
+            if ((i-MATERIAL_LENGTH) > JVM_LIMIT) break;
 
             list.add(name + "(" + i + "," + " new org.cardboardpowered.impl.CardboardModdedBlock(\"" + id.toString() + "\") ),");
             names.add(name);
@@ -132,6 +145,7 @@ public class MakeMaterial {
             Identifier id = Registry.ITEM.getId(item);
             String name = standardize(id);
             if (id.getNamespace().startsWith("minecraft") || names.contains(name)) continue;
+            if ((i-MATERIAL_LENGTH) > JVM_LIMIT) break;
 
             list.add(name + "(" + i + "," + " new org.cardboardpowered.impl.CardboardModdedItem(\"" + id.toString() + "\") ),");
             names.add(name);
@@ -139,6 +153,7 @@ public class MakeMaterial {
             i++;
             BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + name + "'");
         }
+        MODDED_LENGTH = i;
         return list;
     }
 

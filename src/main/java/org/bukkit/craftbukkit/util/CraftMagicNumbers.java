@@ -1,11 +1,18 @@
 package org.bukkit.craftbukkit.util;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.MakeMaterial;
 import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
 
+import io.izzel.arclight.api.EnumHelper;
+import io.izzel.arclight.api.Unsafe;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +46,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.cardboardpowered.impl.CardboardModdedBlock;
+import org.cardboardpowered.impl.CardboardModdedItem;
+import org.cardboardpowered.impl.CardboardModdedMaterial;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
@@ -99,7 +109,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
     }
 
-    //public static final Map<String, Material> BY_NAME = Unsafe.getStatic(Material.class, "BY_NAME");
+    public static final Map<String, Material> BY_NAME = Unsafe.getStatic(Material.class, "BY_NAME");
+    private static final List<Class<?>> MAT_CTOR = ImmutableList.of(int.class);
     public static final HashMap<String, Material> MODDED_MATERIALS = new HashMap<>();
 
     public static final HashMap<Item, Material> MODDED_ITEM_MATERIAL = new HashMap<>();
@@ -114,6 +125,90 @@ public final class CraftMagicNumbers implements UnsafeValues {
             Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
             Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
         }
+    }
+
+    public static void test() {
+        // Because I don't want to use ASM hacks more than necessary, we use the id of
+        // the last modded material field. This allows switch statements to still work.
+        int i = MakeMaterial.MODDED_LENGTH - 1;
+
+        List<String> names = new ArrayList<>();
+        List<Material> list = new ArrayList<>();
+
+        for (Block block : Registry.BLOCK) {
+            Identifier id = Registry.BLOCK.getId(block);
+            String name = standardize(id);
+            if (id.getNamespace().startsWith("minecraft")) continue;
+
+            Material material = BY_NAME.get(name);
+            if (null == material && !names.contains(name)) {
+                material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
+                ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedBlock(id.toString()));
+                // i++;
+                MATERIAL_BLOCK.put(material, block);
+                BY_NAME.put(name, material);
+                list.add(material);
+                MODDED_MATERIALS.put(name, material);
+                
+                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
+            }
+            Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
+            BLOCK_MATERIAL.put(block, m);
+            MATERIAL_BLOCK.put(m, block);
+        }
+
+        for (Item item : Registry.ITEM) {
+            Identifier id = Registry.ITEM.getId(item);
+            String name = standardize(id);
+            if (id.getNamespace().startsWith("minecraft")) continue;
+
+            Material material = BY_NAME.get(name);
+            if (null == material && !names.contains(name)) {
+                material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
+                ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedItem(id.toString()));
+                i++;
+                MATERIAL_ITEM.put(material, item);
+                BY_NAME.put(name, material);
+                list.add(material);
+                MODDED_MATERIALS.put(name, material);
+                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
+            }
+            Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
+            ITEM_MATERIAL.put(item, m);
+            MATERIAL_ITEM.put(m, item);
+        }
+
+        for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
+            FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
+
+        EnumHelper.addEnums(Material.class, list);
+
+        for (Material material : list) {
+            Identifier key = key(material);
+            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
+            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
+            Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
+        }
+    }
+
+    public static HashMap<String, Material> getModdedMaterials() {
+        HashMap<String, Material> map = new HashMap<>();
+        for (Block block : Registry.BLOCK) {
+            Identifier id = Registry.BLOCK.getId(block);
+            String name = standardize(id);
+            if (id.getNamespace().startsWith("minecraft")) continue;
+
+            map.put(name, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
+        }
+
+        for (Item item : Registry.ITEM) {
+            Identifier id = Registry.ITEM.getId(item);
+            String name = standardize(id);
+            if (id.getNamespace().startsWith("minecraft")) continue;
+
+            map.put(name, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
+        }
+        return map;
     }
 
     public static String standardize(Identifier location) {

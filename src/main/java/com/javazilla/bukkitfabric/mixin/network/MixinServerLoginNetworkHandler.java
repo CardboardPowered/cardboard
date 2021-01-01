@@ -68,7 +68,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     @Inject(at = @At("TAIL"), method = "<init>*")
     public void setBF(MinecraftServer minecraftserver, ClientConnection networkmanager, CallbackInfo ci) {
-        BukkitFabricMod.NETWORK_CASHE.add((ServerLoginNetworkHandler)(Object)this);
+        BukkitFabricMod.NETWORK_CACHE.add((ServerLoginNetworkHandler)(Object)this);
     }
 
     @Override

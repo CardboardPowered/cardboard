@@ -860,7 +860,6 @@ public class CraftServer implements Server {
         if (commandLine.startsWith("minecraft:") && sender instanceof Entity) {
             try {
                 int result = vanillaCommandManager.dispatcher.execute(commandLine.replace("minecraft:", ""), ((CraftEntity)sender).nms.getCommandSource());
-                System.out.println(result);
                 return result != -1;
             } catch (CommandSyntaxException e) {
                 e.printStackTrace();
@@ -1341,8 +1340,6 @@ public class CraftServer implements Server {
 
     @Override
     public boolean isPrimaryThread() {
-        if (!server.isOnThread())
-            System.out.println(server.isOnThread() + " / " + Thread.currentThread().getName());
         return server.isOnThread();
     } 
 
@@ -1450,7 +1447,6 @@ public class CraftServer implements Server {
         } catch (CommandSyntaxException ex) {
             throw new IllegalArgumentException("Could not parse selector: " + selector, ex);
         }
-
         return new ArrayList<>(Lists.transform(nms, (entity) -> ((IMixinEntity)entity).getBukkitEntity()));
     }
 
@@ -1467,6 +1463,7 @@ public class CraftServer implements Server {
     @Override
     public void setSpawnRadius(int arg0) {
         // TODO Auto-generated method stub
+        // server.getProperties().spawnProtection = arg0;
     }
 
     @Override
@@ -1476,7 +1473,6 @@ public class CraftServer implements Server {
 
     @Override
     public void shutdown() {
-        System.out.println("SHUTDOWN");
         server.stop(false);
     }
 
