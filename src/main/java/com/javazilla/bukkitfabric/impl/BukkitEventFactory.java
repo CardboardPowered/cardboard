@@ -91,6 +91,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.LootGenerateEvent;
@@ -117,6 +118,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -637,5 +639,12 @@ public class BukkitEventFactory {
         return event;
     }
 
+    public static boolean handlePlayerShearEntityEvent(net.minecraft.entity.LivingEntity player, Entity sheared, ItemStack shears, Hand hand) {
+        if (!(player instanceof PlayerEntity)) return true;
+
+        PlayerShearEntityEvent event = new PlayerShearEntityEvent((Player) ((IMixinEntity)player).getBukkitEntity(), ((IMixinEntity)sheared).getBukkitEntity(), CraftItemStack.asCraftMirror(shears), (hand == Hand.OFF_HAND ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND));
+        Bukkit.getPluginManager().callEvent(event);
+        return !event.isCancelled();
+    }
 
 }

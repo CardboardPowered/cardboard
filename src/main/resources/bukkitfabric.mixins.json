@@ -72,6 +72,8 @@
     "entity.MixinDamageSource",
     "entity.MixinExperienceOrbEntity",
     "entity.MixinGoToWorkTask",
+    "entity.MixinSheepEntity",
+    "entity.MixinMooshroomEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
