@@ -99,6 +99,7 @@
     "network.MixinClientConnection",
     "network.MixinServerHandshakeNetworkHandler",
     "network.MixinPacketByteBuf",
+    "network.MixinResourcePackStatusC2SPacket",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",

@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
@@ -27,6 +26,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -42,6 +42,7 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinResourcePackStatusC2SPacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
@@ -57,11 +58,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdatePlayerAbilitiesC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
@@ -69,14 +70,12 @@ import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -149,8 +148,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         if (CraftServer.INSTANCE.getServer().isRunning())
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
-        if (event.isCancelled())
-            return;
+        if (event.isCancelled()) return;
 
         reason = new LiteralText(event.getReason());
         final Text reason_final = reason;
@@ -158,7 +156,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         get().connection.send(new DisconnectS2CPacket(reason), (future) -> get().connection.disconnect(reason_final));
         get().onDisconnected(reason);
         get().connection.disableAutoRead();
-        get().connection.getClass();
+        CraftServer.server.submitAndJoin(get().connection::handleDisconnection);
     }
 
     /**
@@ -335,14 +333,12 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             case RELEASE_SHIFT_KEY:
                 PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayer(), packetplayinentityaction.getMode() == ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY);
                 CraftServer.INSTANCE.getPluginManager().callEvent(event);
-
                 if (event.isCancelled()) ci.cancel();
                 break;
             case START_SPRINTING:
             case STOP_SPRINTING:
                 PlayerToggleSprintEvent e2 = new PlayerToggleSprintEvent(this.getPlayer(), packetplayinentityaction.getMode() == ClientCommandC2SPacket.Mode.START_SPRINTING);
                 CraftServer.INSTANCE.getPluginManager().callEvent(e2);
-
                 if (e2.isCancelled()) ci.cancel();
                 break;
             default:
@@ -656,10 +652,14 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 this.player.abilities.flying = packet.isFlying();
-            } else {
-                this.player.sendAbilitiesUpdate();
-            }
+            } else this.player.sendAbilitiesUpdate();
         }
+    }
+
+    @Inject(at = @At("HEAD"), method = "onResourcePackStatus")
+    public void doBukkitEvent_PlayerResourcePackStatusEvent(ResourcePackStatusC2SPacket packet, CallbackInfo ci) {
+        NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
+        Bukkit.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal()]));
     }
 
 }

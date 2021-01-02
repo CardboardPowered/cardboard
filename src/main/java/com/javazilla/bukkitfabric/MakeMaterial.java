@@ -88,8 +88,8 @@ public class MakeMaterial {
         out.write(data2, 0, data2.length);
         out.closeEntry();
         out.close();
-        mc1.delete();
-        mc2.delete();
+        //mc1.delete();
+        //mc2.delete();
         //f.delete();
         LOGGER.info("Adding \"" + f2.getName() + "\" to Knot.");
         if (!FabricLoader.getInstance().isDevelopmentEnvironment())
