@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.util.LazyPlayerSet;
 import org.cardboardpowered.impl.util.WaitableImpl;
@@ -27,6 +28,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
@@ -60,6 +62,7 @@ import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
@@ -660,6 +663,31 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void doBukkitEvent_PlayerResourcePackStatusEvent(ResourcePackStatusC2SPacket packet, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
         Bukkit.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal()]));
+    }
+
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"),
+            method = "onPlayerAction", cancellable = true)
+    public void doBukkitEvent_PlayerSwapHandItemsEvent(PlayerActionC2SPacket packet, CallbackInfo ci) {
+        ItemStack itemstack = this.player.getStackInHand(Hand.OFF_HAND);
+        CraftItemStack mainHand = CraftItemStack.asCraftMirror(itemstack);
+        CraftItemStack offHand = CraftItemStack.asCraftMirror(this.player.getStackInHand(Hand.MAIN_HAND));
+
+        PlayerSwapHandItemsEvent swapItemsEvent = new PlayerSwapHandItemsEvent(getPlayer(), mainHand.clone(), offHand.clone());
+        Bukkit.getPluginManager().callEvent(swapItemsEvent);
+        if (swapItemsEvent.isCancelled()) {
+            ci.cancel();
+            return;
+        }
+        if (swapItemsEvent.getOffHandItem().equals(offHand)) {
+            this.player.setStackInHand(Hand.OFF_HAND, this.player.getStackInHand(Hand.MAIN_HAND));
+        } else this.player.setStackInHand(Hand.OFF_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getOffHandItem()));
+
+        if (swapItemsEvent.getMainHandItem().equals(mainHand)) {
+            this.player.setStackInHand(Hand.MAIN_HAND, itemstack);
+        } else this.player.setStackInHand(Hand.MAIN_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getMainHandItem()));
+
+        // Cancel to not set item twice.
+        ci.cancel();
     }
 
 }
