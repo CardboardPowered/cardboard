@@ -162,6 +162,7 @@
     "item.MixinBucketItem",
     "item.MixinFirechargeItem",
     "item.MixinFlintAndSteelItem",
+    "item.MixinTridentItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",
