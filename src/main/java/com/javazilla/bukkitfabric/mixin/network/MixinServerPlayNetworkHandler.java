@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -61,6 +62,7 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.packet.c2s.play.UpdatePlayerAbilitiesC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
@@ -540,8 +542,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      * @reason Events
      */
     @Inject(at = @At("HEAD"), method = "onHandSwing", cancellable = true)
-    public void onHandSwingBF(HandSwingC2SPacket packetplayinarmanimation, CallbackInfo ci) {
-        NetworkThreadUtils.forceMainThread(packetplayinarmanimation, get(), this.player.getServerWorld());
+    public void onHandSwingBF(HandSwingC2SPacket packet, CallbackInfo ci) {
+        NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
         this.player.updateLastActionTime();
         float f1 = this.player.pitch;
         float f2 = this.player.yaw;
@@ -567,10 +569,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
         Bukkit.getPluginManager().callEvent(event);
 
-        if (event.isCancelled()) return;
-        this.player.swingHand(packetplayinarmanimation.getHand());
-
-        ci.cancel();
+        if (event.isCancelled()) {
+            ci.cancel();
+            return;
+        }
+        this.player.swingHand(packet.getHand());
         return;
     }
 
@@ -643,6 +646,19 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         } else {
             System.out.println(this.player.getName().getString() + " tried to set an invalid carried item");
             this.disconnect(new LiteralText("Invalid hotbar selection (Hacking?)")); // CraftBukkit
+        }
+    }
+
+    @Inject(at = @At("TAIL"), method = "onPlayerAbilities")
+    public void doBukkitEvent_PlayerToggleFlightEvent(UpdatePlayerAbilitiesC2SPacket packet, CallbackInfo ci) {
+        if (this.player.abilities.allowFlying && this.player.abilities.flying != packet.isFlying()) {
+            PlayerToggleFlightEvent event = new PlayerToggleFlightEvent((Player)(((IMixinServerEntityPlayer)this.player).getBukkitEntity()), packet.isFlying());
+            Bukkit.getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                this.player.abilities.flying = packet.isFlying();
+            } else {
+                this.player.sendAbilitiesUpdate();
+            }
         }
     }
 
