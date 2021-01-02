@@ -308,6 +308,19 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         return this.connectionBF;
     }
 
+    private int oldLevel = -1;
+
+    @Inject(at = @At("TAIL"), method = "playerTick")
+    public void doBukkitEvent_PlayerLevelChangeEvent(CallbackInfo ci) {
+        try {
+            if (this.oldLevel == -1) this.oldLevel = ((ServerPlayerEntity)(Object)this).experienceLevel;
+            if (this.oldLevel != ((ServerPlayerEntity)(Object)this).experienceLevel) {
+                BukkitEventFactory.callPlayerLevelChangeEvent((Player)getBukkitEntity(), this.oldLevel, ((ServerPlayerEntity)(Object)this).experienceLevel);
+                this.oldLevel = ((ServerPlayerEntity)(Object)this).experienceLevel;
+            }
+        } catch (Throwable throwable) {}
+    }
+
     @Overwrite
     public void copyFrom(ServerPlayerEntity entityplayer, boolean flag) {
         if (flag) {

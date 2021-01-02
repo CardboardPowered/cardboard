@@ -91,6 +91,7 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
@@ -659,6 +660,12 @@ public class BukkitEventFactory {
 
     public static PlayerLeashEntityEvent callPlayerLeashEntityEvent(MobEntity entity, Entity leashHolder, PlayerEntity player) {
         PlayerLeashEntityEvent event = new PlayerLeashEntityEvent(((IMixinEntity)entity).getBukkitEntity(), ((IMixinEntity)leashHolder).getBukkitEntity(), (Player) ((IMixinEntity)player).getBukkitEntity());
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static PlayerLevelChangeEvent callPlayerLevelChangeEvent(Player player, int oldLevel, int newLevel) {
+        PlayerLevelChangeEvent event = new PlayerLevelChangeEvent(player, oldLevel, newLevel);
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }
