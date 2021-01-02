@@ -78,6 +78,7 @@ import org.bukkit.event.entity.ExpBottleEvent;
 import org.bukkit.event.entity.HorseJumpEvent;
 import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
@@ -93,6 +94,7 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
+import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -117,6 +119,8 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.decoration.LeashKnotEntity;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.VillagerEntity;
@@ -645,6 +649,18 @@ public class BukkitEventFactory {
         PlayerShearEntityEvent event = new PlayerShearEntityEvent((Player) ((IMixinEntity)player).getBukkitEntity(), ((IMixinEntity)sheared).getBukkitEntity(), CraftItemStack.asCraftMirror(shears), (hand == Hand.OFF_HAND ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND));
         Bukkit.getPluginManager().callEvent(event);
         return !event.isCancelled();
+    }
+
+    public static PlayerUnleashEntityEvent callPlayerUnleashEntityEvent(MobEntity entity, PlayerEntity player) {
+        PlayerUnleashEntityEvent event = new PlayerUnleashEntityEvent(((IMixinEntity)entity).getBukkitEntity(), (Player) ((IMixinEntity)player).getBukkitEntity());
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static PlayerLeashEntityEvent callPlayerLeashEntityEvent(MobEntity entity, Entity leashHolder, PlayerEntity player) {
+        PlayerLeashEntityEvent event = new PlayerLeashEntityEvent(((IMixinEntity)entity).getBukkitEntity(), ((IMixinEntity)leashHolder).getBukkitEntity(), (Player) ((IMixinEntity)player).getBukkitEntity());
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
 }

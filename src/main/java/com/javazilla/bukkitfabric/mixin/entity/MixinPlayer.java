@@ -152,11 +152,11 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             ci.cancel();
     }
 
-    public String locale = "en_us"; // CraftBukkit - add, lowercase
+    public String locale_BF = "en_us";
 
     @Inject(at = @At("HEAD"), method = "setClientSettings")
-    public void setClientSettings(ClientSettingsC2SPacket packetplayinsettings, CallbackInfo ci) {
-        if (((ServerPlayerEntity) (Object) this).getMainArm() != packetplayinsettings.getMainArm()) {
+    public void setClientSettings(ClientSettingsC2SPacket packet, CallbackInfo ci) {
+        if (((ServerPlayerEntity) (Object) this).getMainArm() != packet.getMainArm()) {
             PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent((Player) getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
         }
@@ -245,9 +245,8 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
         if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
             Text ichatbasecomponent = deathMessage.equals(deathmessage) ? ((ServerPlayerEntity)(Object)this).getDamageTracker().getDeathMessage() : CraftChatMessage.fromStringOrNull(deathMessage);
-            ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket((Packet) (new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatbasecomponent)), (future) -> {
+            ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket((Packet<?>) (new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatbasecomponent)), (future) -> {
                 if (!future.isSuccess()) {
-                    boolean flag1 = true;
                     String s = ichatbasecomponent.asTruncatedString(256);
                     TranslatableText chatmessage = new TranslatableText("death.attack.message_too_long", new Object[]{(new LiteralText(s)).formatted(Formatting.GOLD)});
                     MutableText ichatmutablecomponent = (new TranslatableText("death.attack.even_more_magic", new Object[]{((ServerPlayerEntity)(Object)this).getDisplayName()})).styled((chatmodifier) -> {
