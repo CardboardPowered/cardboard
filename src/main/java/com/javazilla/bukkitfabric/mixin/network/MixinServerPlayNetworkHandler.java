@@ -668,7 +668,9 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         Bukkit.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal()]));
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"),
+    // TODO: Fabric does not map this correctly at runtime
+    // TODO: currently only works in dev.
+    /*@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"),
             method = "onPlayerAction", cancellable = true)
     public void doBukkitEvent_PlayerSwapHandItemsEvent(PlayerActionC2SPacket packet, CallbackInfo ci) {
         ItemStack itemstack = this.player.getStackInHand(Hand.OFF_HAND);
@@ -691,6 +693,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
         // Cancel to not set item twice.
         ci.cancel();
-    }
+    }*/
 
 }
