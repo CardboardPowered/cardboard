@@ -18,6 +18,7 @@
  */
 package com.javazilla.bukkitfabric;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,10 +88,21 @@ public class BukkitFabricMod implements ModInitializer {
 
         String repository3 = "https://repo1.maven.org/maven2/";
 
-        Map<LibraryKey, Library> libraries3 = Stream.of(
-                new Library("com.google.errorprone", "javac", "1.8.0-u20", LibraryManager.HashAlgorithm.SHA1, "b23b2b0e3f79e3f737496a9eca5bab65cdca791d", null)
-            ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
-        new LibraryManager(repository3, "lib", true, 2, libraries3.values()).run();
+        String internalVer = System.getProperty("java.class.version");
+        double javaVer = Double.valueOf(internalVer) - 44;
+
+        if (javaVer <= 7) {
+            // The JDK and JRE are not separate post Java 8
+            // So we don't need to worry about it.
+            Map<LibraryKey, Library> libraries3 = Stream.of(
+                    new Library("com.google.errorprone", "javac", "1.8.0-u20", LibraryManager.HashAlgorithm.SHA1, "b23b2b0e3f79e3f737496a9eca5bab65cdca791d", null)
+                ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
+            new LibraryManager(repository3, "lib", true, 2, libraries3.values()).run();
+        } else {
+            File jdk = new File("lib", "javac-1.8.0-u20.jar");
+            if (jdk.exists())
+                jdk.delete();
+        }
     }
 
 }
