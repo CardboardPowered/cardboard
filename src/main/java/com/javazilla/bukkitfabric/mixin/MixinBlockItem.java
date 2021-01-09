@@ -134,10 +134,9 @@ public class MixinBlockItem {
 
     /**
      * @reason BlockCanBuildEvent
-     * @author BukkitFabric
      */
-    @Overwrite
-    public boolean canPlace(ItemPlacementContext blockactioncontext, BlockState iblockdata) {
+    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/item/BlockItem;canPlace(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z", cancellable = true)
+    public void doBukkitEvent_BlockCanBuildEvent(ItemPlacementContext blockactioncontext, BlockState iblockdata, CallbackInfoReturnable<Boolean> ci) {
         PlayerEntity entityhuman = blockactioncontext.getPlayer();
         ShapeContext voxelshapecollision = entityhuman == null ? ShapeContext.absent() : ShapeContext.of((Entity) entityhuman);
 
@@ -146,8 +145,7 @@ public class MixinBlockItem {
 
         BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at((ServerWorld) blockactioncontext.getWorld(), blockactioncontext.getBlockPos()), player, CraftBlockData.fromData(iblockdata), defaultReturn);
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
-
-        return event.isBuildable();
+        ci.setReturnValue(event.isBuildable());
     }
 
 }
