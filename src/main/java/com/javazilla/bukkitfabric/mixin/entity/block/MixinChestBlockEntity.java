@@ -3,12 +3,14 @@ package com.javazilla.bukkitfabric.mixin.entity.block;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
+import org.cardboardpowered.impl.entity.HumanEntityImpl;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
@@ -72,31 +74,26 @@ public class MixinChestBlockEntity implements IMixinInventory {
         return new Location(((IMixinWorld)(((ChestBlockEntity)(Object)this).world)).getWorldImpl(), pos.x, pos.y, pos.z);
     }
 
+    private int oldPower_B;
+
     /**
-     * @author BukkitFabric
-     * @reason Redstone Events
+     * @reason Redstone Event - store old power value
      */
-    @Overwrite
-    public void onOpen(PlayerEntity entityhuman) {
-        if (!entityhuman.isSpectator()) {
-            if (this.viewerCount < 0)
-                this.viewerCount = 0;
+    @Inject(at = @At("HEAD"), method = "onOpen")
+    public void doBukkitEvent_RedstoneChange_1(PlayerEntity e, CallbackInfo ci) {
+        oldPower_B = Math.max(0, Math.min(15, this.viewerCount)); // CraftBukkit - Get power before new viewer is added
+    }
 
-            int oldPower = Math.max(0, Math.min(15, this.viewerCount)); // CraftBukkit - Get power before new viewer is added
-
-            ++this.viewerCount;
-            if (((ChestBlockEntity)(Object)this).world == null) return; // CraftBukkit
-
-            // CraftBukkit start - Call redstone event
-            if (((ChestBlockEntity)(Object)this).getCachedState().getBlock() == Blocks.TRAPPED_CHEST) {
-                int newPower = Math.max(0, Math.min(15, this.viewerCount));
-                if (oldPower != newPower)
-                    BukkitEventFactory.callRedstoneChange(((ChestBlockEntity)(Object)this).world, ((ChestBlockEntity)(Object)this).pos, oldPower, newPower);
-            }
-            // CraftBukkit end
-            ((ChestBlockEntity)(Object)this).onInvOpenOrClose();
+    /**
+     * @reason Redstone Event
+     */
+    @Inject(at = @At("TAIL"), method = "onOpen")
+    public void doBukkitEvent_RedstoneChange_2(PlayerEntity e, CallbackInfo ci) {
+        if (((ChestBlockEntity)(Object)this).getCachedState().getBlock() == Blocks.TRAPPED_CHEST) {
+            int newPower = Math.max(0, Math.min(15, this.viewerCount));
+            if (oldPower_B != newPower)
+                BukkitEventFactory.callRedstoneChange(((ChestBlockEntity)(Object)this).world, ((ChestBlockEntity)(Object)this).pos, oldPower_B, newPower);
         }
-
     }
 
 }

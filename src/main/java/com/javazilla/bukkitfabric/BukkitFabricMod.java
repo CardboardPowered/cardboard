@@ -91,7 +91,7 @@ public class BukkitFabricMod implements ModInitializer {
         String internalVer = System.getProperty("java.class.version");
         double javaVer = Double.valueOf(internalVer) - 44;
 
-        if (javaVer <= 7) {
+        if (javaVer <= 8) {
             // The JDK and JRE are not separate post Java 8
             // So we don't need to worry about it.
             Map<LibraryKey, Library> libraries3 = Stream.of(

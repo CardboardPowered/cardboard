@@ -2,21 +2,23 @@ package com.javazilla.bukkitfabric.mixin.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinSlimeEntity;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.SlimeEntity;
-import net.minecraft.text.Text;
+import net.minecraft.world.World;
 
 @Mixin(SlimeEntity.class)
 public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
@@ -29,49 +31,49 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
         setSize(i, flag);
     }
 
-    /**
-     * @author .
-     * @reason Call SlimeSplitEvent & EntityTransformEvent
-     */
-    @SuppressWarnings("resource")
-    @Overwrite
-    public void remove() {
-        int i = this.getSize();
-        if (!((SlimeEntity)(Object)this).getEntityWorld().isClient && i > 1 && ((SlimeEntity)(Object)this).isDead()) {
-            Text ichatbasecomponent = ((SlimeEntity)(Object)this).getCustomName();
-            boolean flag = ((SlimeEntity)(Object)this).isAiDisabled();
-            float f = (float) i / 4.0F;
-            int j = i / 2;
-            int k = 2 + this.random.nextInt(3);
+    private boolean cancelRemove_B;
+    private List<net.minecraft.entity.LivingEntity> slimes_B = new ArrayList<>();
 
-            SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) ((IMixinEntity)(SlimeEntity)(Object)this).getBukkitEntity(), k);
-            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+    @Redirect(at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"), method = "remove")
+    public int doBukkitEvent_SlimeSplitEvent(Random r, int a) {
+        slimes_B.clear();
+        int k = 2 + this.random.nextInt(3);
 
-            if (!event.isCancelled() && event.getCount() > 0) {
-                k = event.getCount();
-            } else {
-                super.remove();
-                return;
-            }
-            List<LivingEntity> slimes = new ArrayList<>(j);
+        SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
+        Bukkit.getPluginManager().callEvent(event);
 
-            for (int l = 0; l < k; ++l) {
-                float f1 = ((float) (l % 2) - 0.5F) * f;
-                float f2 = ((float) (l / 2) - 0.5F) * f;
-                SlimeEntity entityslime = (SlimeEntity) ((SlimeEntity)(Object)this).getType().create(((SlimeEntity)(Object)this).world);
-                if (((SlimeEntity)(Object)this).isPersistent()) entityslime.setPersistent();
-                entityslime.setCustomName(ichatbasecomponent);
-                entityslime.setAiDisabled(flag);
-                entityslime.setInvulnerable(((SlimeEntity)(Object)this).isInvulnerable());
-                ((IMixinSlimeEntity)entityslime).setSizeBF(j, true);
-                entityslime.refreshPositionAndAngles(((SlimeEntity)(Object)this).getX() + (double) f1, ((SlimeEntity)(Object)this).getY() + 0.5D, ((SlimeEntity)(Object)this).getZ() + (double) f2, this.random.nextFloat() * 360.0F, 0.0F);
-                slimes.add(entityslime);
-            }
+        if (!event.isCancelled() && event.getCount() > 0) {
+            return event.getCount() - 2;
+        } else cancelRemove_B = true;
+        return k - 2;
+    }
 
-            if (BukkitEventFactory.callEntityTransformEvent(((SlimeEntity)(Object)this), slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) return;
-            for (LivingEntity living : slimes) ((SlimeEntity)(Object)this).world.spawnEntity(living);
+    @Inject(at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"), method = "remove", cancellable = true)
+    public void doBukkitEvent_SlimeSplitEvent_2(CallbackInfo ci) {
+        if (cancelRemove_B) {
+            super.remove();
+            ci.cancel();
+            return;
         }
-        super.remove();
+    }
+
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), method = "remove")
+    public boolean doBukkitEvent_RedirectSpawnEntity(World w, Entity e) {
+        this.slimes_B.add((SlimeEntity)e);
+        return false;
+    }
+
+    /**
+     * @reason EntityTransformEvent
+     */
+    @Inject(at = @At(value = "TAIL"), method = "remove", cancellable = true)
+    public void doBukkitEvent_RedirectSpawnEntity_2(CallbackInfo ci) {
+        if (BukkitEventFactory.callEntityTransformEvent((SlimeEntity)(Object)this, slimes_B, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
+            ci.cancel();
+            return;
+        }
+        for (net.minecraft.entity.LivingEntity living : slimes_B)
+            this.world.spawnEntity(living); // TODO SpawnReason.SLIME_SPLIT
     }
 
 }

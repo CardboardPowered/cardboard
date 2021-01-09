@@ -1,17 +1,5 @@
 package org.bukkit.craftbukkit.util;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.BukkitLogger;
-import com.javazilla.bukkitfabric.MakeMaterial;
-import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.Dynamic;
-
-import io.izzel.arclight.api.EnumHelper;
-import io.izzel.arclight.api.Unsafe;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,19 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
-import net.minecraft.block.BlockState;
-import net.minecraft.datafixer.Schemas;
-import net.minecraft.datafixer.TypeReferences;
-import net.minecraft.SharedConstants;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Fluid;
@@ -48,7 +23,31 @@ import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.cardboardpowered.impl.CardboardModdedBlock;
 import org.cardboardpowered.impl.CardboardModdedItem;
-import org.cardboardpowered.impl.CardboardModdedMaterial;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.MakeMaterial;
+import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Dynamic;
+
+import io.izzel.arclight.api.EnumHelper;
+import io.izzel.arclight.api.Unsafe;
+import net.minecraft.SharedConstants;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.datafixer.Schemas;
+import net.minecraft.datafixer.TypeReferences;
+import net.minecraft.item.Item;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
