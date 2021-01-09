@@ -105,7 +105,7 @@ public class MixinExplosion {
      */
     //@Overwrite
     @Inject(at = @At("HEAD"), method = "affectWorld", cancellable = true)
-    public void affectWorld(boolean flag, CallbackInfo ci) {
+    public void affectWorld_cardboard(boolean flag, CallbackInfo ci) {
         if (this.world.isClient)
             this.world.playSound(this.x, this.y, this.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2F) * 0.7F, false);
 
@@ -218,7 +218,7 @@ public class MixinExplosion {
      */
     @SuppressWarnings("unused")
     @Inject(at = @At("HEAD"), method = "collectBlocksAndDamageEntities", cancellable = true)
-    public void collectBlocksAndDamageEntities(CallbackInfo ci) {
+    public void collectBlocksAndDamageEntities_cardboard(CallbackInfo ci) {
         if (this.power < 0.1F) {
             ci.cancel();
             return;

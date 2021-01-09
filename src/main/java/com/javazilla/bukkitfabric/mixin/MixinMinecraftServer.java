@@ -152,13 +152,10 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         return saveHandler;
     }
 
-    /**
-     * @reason Bukkit
-     * @author Bukkit4Fabric
-     */
-    @Overwrite
-    public String getServerModName() {
-        return "Fabric,Bukkit";
+    @Inject(at = @At("HEAD"), method = "getServetModName")
+    public void getServerModName_cardboard(CallbackInfoReturnable<String> ci) {
+        if (null != Bukkit.getServer())
+            ci.setReturnValue("CardboardPowered.org (Spigot+Fabric)");
     }
 
     @Override
@@ -252,7 +249,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
                 if (!newWorld.isDirectory() && oldWorld.isDirectory() && oldLevelDat.isFile()) {
                     BukkitFabricMod.LOGGER.info("---- Migration of old " + worldType + " folder required ----");
                     BukkitFabricMod.LOGGER.info("Unfortunately due to the way that Minecraft implemented multiworld support in 1.6, Bukkit requires that you move your " + worldType + " folder to a new location in order to operate correctly.");
-                    BukkitFabricMod.LOGGER.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Bukkit in the future.");
+                    BukkitFabricMod.LOGGER.info("We will move this folder for you, but it will mean that you need to move it back should you wish to stop using Cardboard in the future.");
                     BukkitFabricMod.LOGGER.info("Attempting to move " + oldWorld + " to " + newWorld + "...");
 
                     if (newWorld.exists()) {
@@ -343,7 +340,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
                 world = new ServerWorld((MinecraftServer)(Object)this, this.workerExecutor, worldSession, iworlddataserver, worldKey, dimensionmanager, worldloadlistener, chunkgenerator, flag, j, ImmutableList.of(), true/*, org.bukkit.World.Environment.getEnvironment(dimension), gen*/);
             }
 
-            worlddata.addServerBrand(this.getServerModName(), true);
+            worlddata.addServerBrand(CraftServer.server.getServerModName(), true);
             this.initWorld(world, worlddata, saveProperties, worlddata.getGeneratorOptions());
             CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)world).getWorldImpl()));
 
