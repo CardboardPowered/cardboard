@@ -52,7 +52,7 @@ public class MakeMaterial {
     public static int JVM_LIMIT = 450;
 
     public static void make() throws IOException {
-        Path p = FabricLoader.getInstance().getModContainer("bukkitfabric").get().getPath("org/bukkit/Material.java1");
+        Path p = FabricLoader.getInstance().getModContainer("cardboard").get().getPath("org/bukkit/Material.java1");
         File f = new File("lib", "Material.java");
         Files.copy(p, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
