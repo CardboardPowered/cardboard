@@ -2,43 +2,24 @@ package com.javazilla.bukkitfabric.mixin.block;
 
 import org.cardboardpowered.impl.block.DispenserBlockHelper;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinDispenserBlock;
 
 import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.dispenser.DispenserBehavior;
-import net.minecraft.block.entity.DispenserBlockEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPointerImpl;
-import net.minecraft.util.math.BlockPos;
 
 @Mixin(DispenserBlock.class)
 public class MixinDispenserBlock implements IMixinDispenserBlock {
 
     /**
-     * @reason .
-     * @author .
+     * @author CardboardPowered.org
+     * @reason Set event fired to false
      */
-    @Overwrite
-    public void dispense(ServerWorld worldserver, BlockPos blockposition) {
-        BlockPointerImpl sourceblock = new BlockPointerImpl(worldserver, blockposition);
-        DispenserBlockEntity tileentitydispenser = sourceblock.getBlockEntity();
-        int i = tileentitydispenser.chooseNonEmptySlot();
-
-        if (i < 0) {
-            worldserver.syncWorldEvent(1001, blockposition, 0);
-        } else {
-            ItemStack itemstack = tileentitydispenser.getStack(i);
-            DispenserBehavior idispensebehavior = DispenserBlock.BEHAVIORS.get(itemstack.getItem());
-
-            if (idispensebehavior != DispenserBehavior.NOOP) {
-                DispenserBlockHelper.eventFired = false;
-                tileentitydispenser.setStack(i, idispensebehavior.dispense(sourceblock, itemstack));
-            }
-
-        }
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/block/DispenserBlock;getBehaviorForItem(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/block/dispenser/DispenserBehavior;"), method = "Lnet/minecraft/block/DispenserBlock;dispense(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V")
+    public void doBukkit_setEventFired(CallbackInfo ci) {
+        DispenserBlockHelper.eventFired = false;
     }
 
 }
