@@ -1340,12 +1340,13 @@ public class CraftServer implements Server {
 
     @Override
     public boolean isPrimaryThread() {
-        if (!server.isOnThread()) {
+        boolean mainThread = server.isOnThread();
+        if (!mainThread) {
             // Check if thread a DimensionalThreading thread, these threads are
             // safe to perform operations on as if they were the main thread.
             return Thread.currentThread().getName().startsWith("dimthread");
         }
-        return server.isOnThread();
+        return mainThread;
     } 
 
     @Override

@@ -32,7 +32,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     static {
         SKIP.add("vault");
         SKIP.add("worldguard");
-        SKIP.add("essentials");
+        //SKIP.add("essentials");
     }
     private String pln;
 
@@ -102,6 +102,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             return;
         }
 
+        //this.getClass().getCanonicalName();
         if (owner.equalsIgnoreCase("java/lang/Package") && name.equalsIgnoreCase("getName") && desc.equalsIgnoreCase("()Ljava/lang/String;")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getPackageName", "(Ljava/lang/Package;)Ljava/lang/String;", false);
             return;
@@ -109,6 +110,11 @@ public class ReflectionMethodVisitor extends MethodVisitor {
 
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getName") && desc.equalsIgnoreCase("()Ljava/lang/String;")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getClassName", "(Ljava/lang/Class;)Ljava/lang/String;", false);
+            return;
+        }
+
+        if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getCanonicalName") && desc.equalsIgnoreCase("()Ljava/lang/String;")) {
+            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getCanonicalName", "(Ljava/lang/Class;)Ljava/lang/String;", false);
             return;
         }
  

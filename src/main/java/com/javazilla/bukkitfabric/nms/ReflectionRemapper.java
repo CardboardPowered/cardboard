@@ -91,7 +91,7 @@ public class ReflectionRemapper {
         }
     }
 
-    public static Field getDeclaredFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
+    public static Field getDeclaredFieldByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchFieldException {
         try {
             return calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
         } catch (NoSuchFieldException | SecurityException e) {
@@ -106,14 +106,15 @@ public class ReflectionRemapper {
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchFieldException | SecurityException e2) {
-                    e1.printStackTrace();
+                    throw e2;
+                    //e1.printStackTrace();
                 }
-                return null;
+               // return null;
             }
         }
     }
 
-    public static Method getMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
+    public static Method getMethodByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchMethodException {
         Method m = getDeclaredMethodByName(calling, f);
         m.setAccessible(true);
         return m;
@@ -123,16 +124,9 @@ public class ReflectionRemapper {
         return CraftServer.server;
     }
 
-    public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException {
+    public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchMethodException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
-            try {
-                return ReflectionRemapper.class.getMethod("getNmsServer");
-            } catch (NoSuchMethodException | SecurityException e) {
-                e.printStackTrace();
-            }
-        }
-        if (calling.getName().equalsIgnoreCase("java.lang.Runtime")) {
-            System.out.println("TEST STUFF::: " + f);
+            return BukkitFabricMod.GET_SERVER;
         }
 
         try {
@@ -149,20 +143,17 @@ public class ReflectionRemapper {
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchMethodException | SecurityException e2) {
-                    e1.printStackTrace();
+                    throw e2;
+                    //e1.printStackTrace();
                 }
-                return null;
+                //return null;
             }
         }
     }
 
-    public static Method getDeclaredMethodByName(Class<?> calling, String f, Class<?>[] parms) throws ClassNotFoundException {
+    public static Method getDeclaredMethodByName(Class<?> calling, String f, Class<?>[] parms) throws ClassNotFoundException, NoSuchMethodException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
-            try {
-                return ReflectionRemapper.class.getMethod("getNmsServer");
-            } catch (NoSuchMethodException | SecurityException e) {
-                e.printStackTrace();
-            }
+            return BukkitFabricMod.GET_SERVER;
         }
             
         try {
@@ -271,11 +262,20 @@ public class ReflectionRemapper {
 
     /**
      */
+    public static String getCanonicalName(Class<?> clazz) {
+        String name = clazz.getName();
+        if (name.startsWith("org.bukkit.craftbukkit"))
+            name = name.replace("org.bukkit.craftbukkit", "org.bukkit.craftbukkit." + NMS_VERSION);
+        return name;
+    }
+
+    /**
+     */
     public static String getMinecraftServerVersion() {
         return SharedConstants.getGameVersion().getName();
     }
 
-    public static Method getMethodByName(Class<?> calling, String f, Class<?>[] p) throws ClassNotFoundException {
+    public static Method getMethodByName(Class<?> calling, String f, Class<?>[] p) throws ClassNotFoundException, NoSuchMethodException {
         Method m = getDeclaredMethodByName(calling, f, p);
         m.setAccessible(true);
         return m;

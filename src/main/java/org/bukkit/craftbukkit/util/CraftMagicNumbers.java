@@ -270,6 +270,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     private static Block getModdedBlock(Material mat) {
+        if (null == mat) return null;
         IMixinMaterial mm = (IMixinMaterial)(Object) mat;
         if (!mm.isModded()) return null;
 

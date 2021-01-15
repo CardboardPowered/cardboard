@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.cardboardpowered.ingot.IngotReader;
@@ -28,7 +27,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 21;
+    public static int MAPPINGS_VERSION = 22;
 
     public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
 

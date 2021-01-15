@@ -20,6 +20,7 @@ package com.javazilla.bukkitfabric;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.cardboardpowered.library.LibraryManager;
 
 import com.google.common.collect.ImmutableMap;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
+import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -46,6 +48,7 @@ public class BukkitFabricMod implements ModInitializer {
     public static final Random random = new Random();
 
     public static List<ServerLoginNetworkHandler> NETWORK_CACHE = new ArrayList<>();
+    public static Method GET_SERVER;
 
     @Override
     public void onInitialize() {
@@ -55,6 +58,11 @@ public class BukkitFabricMod implements ModInitializer {
         LOGGER.info("");
 
         loadLibs();
+
+        try {
+            GET_SERVER = ReflectionRemapper.class.getMethod("getNmsServer");
+        } catch (NoSuchMethodException | SecurityException e) {
+        }
 
         try {
             MappingsReader.main(null);
