@@ -46,11 +46,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Spigot API
-    //extraLibs group: "org.spigotmc", name: "spigot-api", version: "${project.api_version}"
-    extraLibs fileTree(dir: 'libs', include: 'spigot-api-1.16.3.jar')
+    extraLibs fileTree(dir: 'libs', include: 'paper-api-1.16.4-416.jar')
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     compile   fileTree(dir: 'libs', include: 'material-compile-only.jar')
-    //extraLibs group: "com.destroystokyo.paper", name: "paper-api", version: "${project.api_version}"
     extraLibs group: "org.jetbrains", name: "annotations", version: "18.0.0"
     extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
     extraLibs "org.yaml:snakeyaml:1.27"

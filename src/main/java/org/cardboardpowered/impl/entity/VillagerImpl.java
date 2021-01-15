@@ -1,6 +1,8 @@
 package org.cardboardpowered.impl.entity;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
@@ -9,6 +11,7 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 
+import com.destroystokyo.paper.entity.villager.Reputation;
 import com.google.common.base.Preconditions;
 
 import net.minecraft.block.BedBlock;
@@ -118,6 +121,33 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
 
     public void setRestocksToday(int restocksToday) {
         // TODO
+    }
+
+    @Override
+    public void clearReputations() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public Reputation getReputation(UUID arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Map<UUID, Reputation> getReputations() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setReputation(UUID arg0, Reputation arg1) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setReputations(Map<UUID, Reputation> arg0) {
+        // TODO Auto-generated method stub
     }
     // Paper end
 

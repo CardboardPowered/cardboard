@@ -3,6 +3,7 @@ package org.cardboardpowered.impl.entity;
 import net.minecraft.entity.mob.AbstractSkeletonEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Skeleton;
 
 @SuppressWarnings("deprecation")
@@ -35,6 +36,18 @@ public class SkeletonImpl extends MonsterImpl implements Skeleton {
     @Override
     public void setSkeletonType(SkeletonType type) {
         throw new UnsupportedOperationException("Not supported.");
+    }
+
+    @Override
+    public void rangedAttack(LivingEntity arg0, float arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setChargingAttack(boolean arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

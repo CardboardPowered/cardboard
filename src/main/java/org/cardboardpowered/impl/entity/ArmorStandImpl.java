@@ -1,14 +1,27 @@
 package org.cardboardpowered.impl.entity;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+
+import java.util.Set;
+
+import org.bukkit.Chunk;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
+import com.destroystokyo.paper.block.TargetBlockInfo;
+import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
+import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.javazilla.bukkitfabric.interfaces.IMixinArmorStandEntity;
 
 @SuppressWarnings("deprecation")
@@ -241,5 +254,209 @@ public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
         ((IMixinArmorStandEntity)getHandle()).setCanMoveBF(move);
     }
     // Paper - END
+
+    @Override
+    public void clearActiveItem() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public ItemStack getActiveItem() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getArrowsStuck() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getHandRaisedTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getHurtDirection() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getItemUseRemainingTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getShieldBlockingDelay() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Block getTargetBlock(int arg0, FluidMode arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public BlockFace getTargetBlockFace(int arg0, FluidMode arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TargetBlockInfo getTargetBlockInfo(int arg0, FluidMode arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity getTargetEntity(int arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TargetEntityInfo getTargetEntityInfo(int arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isHandRaised() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void playPickupItemAnimation(Item arg0, int arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setArrowsStuck(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setHurtDirection(float arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setKiller(Player arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setShieldBlockingDelay(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean fromMobSpawner() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Chunk getChunk() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SpawnReason getEntitySpawnReason() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isInBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRain() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRainOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void addDisabledSlots(EquipmentSlot... arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean canTick() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Set<EquipmentSlot> getDisabledSlots() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ItemStack getItem(EquipmentSlot arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isSlotDisabled(EquipmentSlot arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void removeDisabledSlots(EquipmentSlot... arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setCanTick(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDisabledSlots(EquipmentSlot... arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setItem(EquipmentSlot arg0, ItemStack arg1) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

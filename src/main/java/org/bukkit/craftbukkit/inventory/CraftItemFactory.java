@@ -1,12 +1,17 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableSet;
+
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.hover.content.Content;
+
 import java.util.Collection;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.util.CraftLegacy;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -324,6 +329,48 @@ public final class CraftItemFactory implements ItemFactory {
     @Override
     public Material updateMaterial(ItemMeta meta, Material material) throws IllegalArgumentException {
         return ((CraftMetaItem) meta).updateMaterial(material);
+    }
+
+    @Override
+    public ItemStack ensureServerConversions(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getI18NDisplayName(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return arg0.getType().name();
+    }
+
+    @Override
+    public Content hoverContentOf(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Content hoverContentOf(Entity arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Content hoverContentOf(Entity arg0, String arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Content hoverContentOf(Entity arg0, BaseComponent arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Content hoverContentOf(Entity arg0, BaseComponent[] arg1) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

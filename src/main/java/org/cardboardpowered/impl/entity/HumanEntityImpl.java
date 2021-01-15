@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
@@ -26,6 +27,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.InventoryView.Property;
@@ -495,6 +497,72 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
     @Override
     public EntityType getType() {
         return EntityType.PLAYER;
+    }
+
+    @Override
+    public void closeInventory(Reason arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Location getPotentialBedLocation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openAnvil(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openCartographyTable(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openGrindstone(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openLoom(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void openSign(Sign arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public InventoryView openSmithingTable(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openStonecutter(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity releaseLeftShoulderEntity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity releaseRightShoulderEntity() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

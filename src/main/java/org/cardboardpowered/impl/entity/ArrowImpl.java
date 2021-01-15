@@ -7,12 +7,15 @@ import com.javazilla.bukkitfabric.interfaces.IMixinPersistentProjectileEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
 public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
@@ -135,6 +138,54 @@ public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
     @Override
     public EntityType getType() {
         return EntityType.ARROW;
+    }
+
+    @Override
+    public boolean fromMobSpawner() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Chunk getChunk() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SpawnReason getEntitySpawnReason() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isInBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRain() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRainOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

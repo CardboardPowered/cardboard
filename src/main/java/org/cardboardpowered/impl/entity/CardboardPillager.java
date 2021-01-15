@@ -2,6 +2,7 @@ package org.cardboardpowered.impl.entity;
 
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Pillager;
 import org.bukkit.inventory.Inventory;
 
@@ -31,6 +32,16 @@ public class CardboardPillager extends CardboardIllager implements Pillager {
     @Override
     public Inventory getInventory() {
         return null; // TODO  inventory is not visible.
+    }
+
+    @Override
+    public void rangedAttack(LivingEntity arg0, float arg1) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setChargingAttack(boolean arg0) {
+        // TODO Auto-generated method stub
     }
 
 }

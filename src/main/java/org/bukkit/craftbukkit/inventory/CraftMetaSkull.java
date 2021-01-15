@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
 import java.util.Map;
@@ -195,6 +196,18 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             return builder.put(SKULL_OWNER.BUKKIT, this.profile.getName());
 
         return builder;
+    }
+
+    @Override
+    public PlayerProfile getPlayerProfile() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setPlayerProfile(PlayerProfile arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

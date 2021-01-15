@@ -44,4 +44,28 @@ public class LightningStrikeImpl extends CraftEntity implements LightningStrike 
         return spigot;
     }
 
+    @Override
+    public int getFlashCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getLifeTicks() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setFlashCount(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setLifeTicks(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

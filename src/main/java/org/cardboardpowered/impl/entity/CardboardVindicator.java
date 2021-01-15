@@ -26,4 +26,16 @@ public class CardboardVindicator extends CardboardIllager implements Vindicator 
         return EntityType.VINDICATOR;
     }
 
+    @Override
+    public boolean isJohnny() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setJohnny(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

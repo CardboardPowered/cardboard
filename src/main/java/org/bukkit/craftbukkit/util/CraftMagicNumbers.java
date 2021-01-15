@@ -17,6 +17,7 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
@@ -434,6 +435,50 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     public static net.minecraft.fluid.Fluid getFluid(Fluid fluid) {
         return MATERIAL_FLUID.get(fluid);
+    }
+
+    @Override
+    public ItemStack deserializeItem(byte[] arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getTimingsServerName() {
+        return "Fabric";
+    }
+
+    @Override
+    public String getTranslationKey(Material arg0) {
+        return arg0.name();
+    }
+
+    @Override
+    public String getTranslationKey(org.bukkit.block.Block arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getTranslationKey(EntityType arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int nextEntityId() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void reportTimings() {
+    }
+
+    @Override
+    public byte[] serializeItem(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

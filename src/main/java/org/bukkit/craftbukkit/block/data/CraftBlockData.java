@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
+import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -519,6 +520,11 @@ public class CraftBlockData implements BlockData {
 
     public static CraftBlockData fromData(BlockState data) {
         return MAP.getOrDefault(data.getBlock().getClass(), CraftBlockData::new).apply(data);
+    }
+
+    @Override
+    public SoundGroup getSoundGroup() {
+        return null;
     }
 
 }

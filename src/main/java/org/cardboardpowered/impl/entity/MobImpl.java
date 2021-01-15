@@ -15,6 +15,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.loot.LootTable;
 
+import com.destroystokyo.paper.entity.Pathfinder;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
@@ -91,6 +92,14 @@ public abstract class MobImpl extends LivingEntityImpl implements Mob {
         }
         return false;
     }
+
+    @Override
+    public Pathfinder getPathfinder() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    
     // Paper end
 
 }

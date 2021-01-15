@@ -54,4 +54,10 @@ public class EndermanImpl extends MonsterImpl implements Enderman {
     public EntityType getType() {
         return EntityType.ENDERMAN;
     }
+
+    @Override
+    public boolean teleportRandomly() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

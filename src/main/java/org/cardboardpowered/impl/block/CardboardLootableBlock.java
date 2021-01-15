@@ -47,7 +47,7 @@ public abstract class CardboardLootableBlock<T extends LootableContainerBlockEnt
         setLootTable(getLootTable(), seed);
     }
 
-    private void setLootTable(LootTable table, long seed) {
+    public void setLootTable(LootTable table, long seed) {
         getSnapshot().setLootTable(((table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey())), seed);
     }
 

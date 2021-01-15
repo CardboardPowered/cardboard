@@ -60,4 +60,16 @@ public class CardboardFurnace<T extends AbstractFurnaceBlockEntity> extends Craf
         this.getSnapshot().cookTimeTotal = cookTimeTotal;
     }
 
+    @Override
+    public double getCookSpeedMultiplier() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setCookSpeedMultiplier(double arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

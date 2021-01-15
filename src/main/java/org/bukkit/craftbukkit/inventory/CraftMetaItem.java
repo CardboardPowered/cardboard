@@ -56,6 +56,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.cardboardpowered.impl.CardboardAttributable;
 import org.cardboardpowered.impl.CardboardAttributeInstance;
 
+import com.destroystokyo.paper.Namespaced;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -69,6 +70,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonParseException;
 import com.javazilla.bukkitfabric.Utils;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
@@ -1281,6 +1283,90 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             }
             return HANDLED_TAGS;
         }
+    }
+
+    @Override
+    public Set<Material> getCanDestroy() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Set<Material> getCanPlaceOn() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Set<Namespaced> getDestroyableKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public BaseComponent[] getDisplayNameComponent() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<BaseComponent[]> getLoreComponents() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Set<Namespaced> getPlaceableKeys() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasDestroyableKeys() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasPlaceableKeys() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setCanDestroy(Set<Material> arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setCanPlaceOn(Set<Material> arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDestroyableKeys(Collection<Namespaced> arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDisplayNameComponent(BaseComponent[] arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setLoreComponents(List<BaseComponent[]> arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPlaceableKeys(Collection<Namespaced> arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

@@ -149,6 +149,8 @@ import org.cardboardpowered.impl.world.ChunkDataImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.spigotmc.SpigotConfig;
 
+import com.destroystokyo.paper.entity.ai.MobGoals;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -1708,6 +1710,100 @@ public class CraftServer implements Server {
 
     public double getAverageTickTime() {
         return -1;
+    }
+
+    @Override
+    public PlayerProfile createProfile(UUID arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public PlayerProfile createProfile(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public PlayerProfile createProfile(UUID arg0, String arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ChunkData createVanillaChunkData(World arg0, int arg1, int arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getCurrentTick() {
+        return server.getTicks();
+    }
+
+    @Override
+    public int getMaxWorldSize() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public String getMinecraftVersion() {
+        return server.getVersion();
+    }
+
+    @Override
+    public MobGoals getMobGoals() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public OfflinePlayer getOfflinePlayerIfCached(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getPermissionMessage() {
+        return "No Permission";
+    }
+
+    @Override
+    public UUID getPlayerUniqueId(String arg0) {
+        return Bukkit.getPlayer(arg0).getUniqueId();
+    }
+
+    @Override
+    public double[] getTPS() {
+        return new double[] {server.tickTime};
+    }
+
+    @Override
+    public boolean isStopping() {
+        return server.isStopping();
+    }
+
+    @Override
+    public boolean reloadCommandAliases() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void reloadPermissions() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setMaxPlayers(int arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public boolean suggestPlayerNamesWhenNullTabCompletions() {
+        // TODO Auto-generated method stub
+        return false;
     }
     // PaperAPI - end
 

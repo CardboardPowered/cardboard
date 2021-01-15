@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -19,6 +20,7 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.PermissibleBase;
@@ -632,6 +634,48 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     public boolean isInRain() {
         return nms.isBeingRainedOn();
+    }
+
+    @Override
+    public Chunk getChunk() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SpawnReason getEntitySpawnReason() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isInBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRain() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRainOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean fromMobSpawner() {
+        // TODO Auto-generated method stub
+        return false;
     }
     // PaperAPI - END
 

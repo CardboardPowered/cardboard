@@ -89,4 +89,22 @@ public class CreeperImpl extends MonsterImpl implements Creeper {
     public EntityType getType() {
         return EntityType.CREEPER;
     }
+
+    @Override
+    public int getFuseTicks() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isIgnited() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setIgnited(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
 }

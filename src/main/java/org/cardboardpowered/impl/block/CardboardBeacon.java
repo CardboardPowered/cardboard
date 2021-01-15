@@ -82,4 +82,20 @@ public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity
         this.getSnapshot().lock = (key == null) ? ContainerLock.EMPTY : new ContainerLock(key);
     }
 
+    @Override
+    public double getEffectRange() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void resetEffectRange() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setEffectRange(double arg0) {
+        // TODO Auto-generated method stub
+    }
+
 }

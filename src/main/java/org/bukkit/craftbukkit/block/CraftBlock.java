@@ -29,6 +29,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import com.destroystokyo.paper.block.BlockSoundGroup;
 import com.google.common.base.Preconditions;
 
 import org.cardboardpowered.impl.block.*;
@@ -633,6 +634,56 @@ public class CraftBlock implements Block {
     public boolean applyBoneMeal(BlockFace face) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public boolean breakNaturally(ItemStack arg0, boolean arg1) {
+        return this.breakNaturally(arg0);
+    }
+
+    @Override
+    public float getDestroySpeed(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public BlockSoundGroup getSoundGroup() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public org.bukkit.block.BlockState getState(boolean arg0) {
+        return CraftBlockState.getBlockState(world, position);
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return getNMS().getBlock().getTranslationKey();
+    }
+
+    @Override
+    public boolean isBuildable() {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
+    @Override
+    public boolean isBurnable() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isReplaceable() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isSolid() {
+        return getBlockData().getMaterial().isSolid();
     }
 
 }

@@ -81,4 +81,38 @@ public class ItemEntityImpl extends CraftEntity implements Item {
         return item.getThrower();
     }
 
+    @Override
+    public boolean canMobPickup() {
+        return !item.cannotPickup();
+    }
+
+    @Override
+    public boolean canPlayerPickup() {
+        return !item.cannotPickup();
+    }
+
+    @Override
+    public void setCanMobPickup(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setCanPlayerPickup(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setWillAge(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean willAge() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

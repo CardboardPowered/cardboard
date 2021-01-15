@@ -10,4 +10,10 @@ public class IconCacheImpl implements CachedServerIcon {
         this.value = value;
     }
 
+    @Override
+    public String getData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

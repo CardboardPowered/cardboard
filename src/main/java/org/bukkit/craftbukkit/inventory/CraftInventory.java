@@ -473,4 +473,16 @@ public class CraftInventory implements Inventory {
         return false; // TODO Auto-generated method stub
     }
 
+    @Override
+    public InventoryHolder getHolder(boolean arg0) {
+        // TODO Auto-generated method stub
+        return this.getHolder();
+    }
+
+    @Override
+    public HashMap<Integer, ItemStack> removeItemAnySlot(ItemStack... arg0) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

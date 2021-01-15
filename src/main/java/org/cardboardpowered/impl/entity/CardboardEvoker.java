@@ -5,6 +5,7 @@ import net.minecraft.entity.mob.SpellcastingIllagerEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Evoker;
+import org.bukkit.entity.Sheep;
 
 public class CardboardEvoker extends CardboardSpellcaster implements Evoker {
 
@@ -35,6 +36,17 @@ public class CardboardEvoker extends CardboardSpellcaster implements Evoker {
     @Override
     public void setCurrentSpell(Evoker.Spell spell) {
         getHandle().setSpell(spell == null ? SpellcastingIllagerEntity.Spell.NONE : SpellcastingIllagerEntity.Spell.byId(spell.ordinal()));
+    }
+
+    @Override
+    public Sheep getWololoTarget() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setWololoTarget(Sheep arg0) {
+        // TODO Auto-generated method stub
     }
 
 }

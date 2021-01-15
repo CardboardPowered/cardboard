@@ -38,4 +38,14 @@ public class SlimeImpl extends MobImpl implements Slime {
         return EntityType.SLIME;
     }
 
+    @Override
+    public boolean canWander() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setWander(boolean arg0) {
+    }
+
 }

@@ -48,4 +48,40 @@ public class CardboardFishHook extends ProjectileImpl implements FishHook {
         this.biteChance = chance;
     }
 
+    @Override
+    public boolean getApplyLure() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public int getMaxWaitTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getMinWaitTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setApplyLure(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setMaxWaitTime(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setMinWaitTime(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

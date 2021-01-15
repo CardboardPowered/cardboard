@@ -8,12 +8,14 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -27,6 +29,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.FishHook;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LingeringPotion;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.LlamaSpit;
@@ -42,6 +45,7 @@ import org.bukkit.entity.TippedArrow;
 import org.bukkit.entity.Trident;
 import org.bukkit.entity.WitherSkull;
 import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionData;
@@ -52,6 +56,9 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import com.destroystokyo.paper.block.TargetBlockInfo;
+import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
+import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.Utils;
 import org.cardboardpowered.impl.world.WorldImpl;
@@ -619,6 +626,153 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
         getHandle().setJumping(jumping);
         if (jumping && getHandle() instanceof MobEntity)
             ((MobEntity) getHandle()).getJumpControl().tick();
+    }
+
+    @Override
+    public boolean fromMobSpawner() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Chunk getChunk() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SpawnReason getEntitySpawnReason() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isInBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRain() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterOrRainOrBubbleColumn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void clearActiveItem() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public ItemStack getActiveItem() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getArrowsStuck() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getHandRaisedTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getHurtDirection() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getItemUseRemainingTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getShieldBlockingDelay() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Block getTargetBlock(int arg0, FluidMode arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public BlockFace getTargetBlockFace(int arg0, FluidMode arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TargetBlockInfo getTargetBlockInfo(int arg0, FluidMode arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity getTargetEntity(int arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public TargetEntityInfo getTargetEntityInfo(int arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isHandRaised() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void playPickupItemAnimation(Item arg0, int arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setArrowsStuck(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setHurtDirection(float arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setKiller(Player arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setShieldBlockingDelay(int arg0) {
+        // TODO Auto-generated method stub
     }
     // PaperAPI - end
 

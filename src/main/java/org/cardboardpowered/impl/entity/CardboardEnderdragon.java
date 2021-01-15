@@ -1,5 +1,6 @@
 package org.cardboardpowered.impl.entity;
 
+import com.destroystokyo.paper.entity.Pathfinder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -14,6 +15,8 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.loot.LootTable;
 import org.cardboardpowered.impl.CardboardDragonBattle;
 
 public class CardboardEnderdragon extends CardboardComplexEntity implements EnderDragon {
@@ -76,5 +79,65 @@ public class CardboardEnderdragon extends CardboardComplexEntity implements Ende
     @Override
     public int getDeathAnimationTicks() {
         return getHandle().ticksSinceDeath;
+    }
+
+    @Override
+    public Pathfinder getPathfinder() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public LivingEntity getTarget() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isAware() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isInDaylight() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setAware(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setTarget(LivingEntity arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public LootTable getLootTable() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public long getSeed() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setLootTable(LootTable arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSeed(long arg0) {
+        // TODO Auto-generated method stub
+        
     }
 }

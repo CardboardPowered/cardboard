@@ -124,4 +124,58 @@ public class ZombieImpl extends MonsterImpl implements Zombie {
     public void setBreed(boolean b) {
     }
 
+    @Override
+    public boolean canBreakDoors() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isArmsRaised() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isDrowning() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setArmsRaised(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setCanBreakDoors(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setShouldBurnInDay(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean shouldBurnInDay() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void startDrowning(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void stopDrowning() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

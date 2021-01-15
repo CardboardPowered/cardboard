@@ -6,6 +6,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.HashMap;
+
 import org.apache.commons.lang.Validate;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
@@ -13,6 +16,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class CardboardPlayerInventory extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
@@ -290,6 +294,58 @@ public class CardboardPlayerInventory extends CraftInventory implements org.bukk
     @Override
     public void setBootsDropChance(float chance) {
         throw new UnsupportedOperationException("Cannot set drop chance for PlayerInventory");
+    }
+
+    @Override
+    public InventoryHolder getHolder(boolean arg0) {
+        return this.getHolder();
+    }
+
+    @Override
+    public HashMap<Integer, ItemStack> removeItemAnySlot(ItemStack... arg0) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setBoots(ItemStack arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setChestplate(ItemStack arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setHelmet(ItemStack arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setItem(EquipmentSlot arg0, ItemStack arg1, boolean arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setItemInMainHand(ItemStack arg0, boolean arg1) {
+        this.setItemInMainHand(arg0);
+    }
+
+    @Override
+    public void setItemInOffHand(ItemStack arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        this.setItemInOffHand(arg0);
+    }
+
+    @Override
+    public void setLeggings(ItemStack arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

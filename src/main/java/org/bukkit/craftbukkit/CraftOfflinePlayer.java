@@ -406,4 +406,14 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         // TODO auto-generated method stub
     }
 
+    @Override
+    public long getLastLogin() {
+        return 0;
+    }
+
+    @Override
+    public long getLastSeen() {
+        return 0;
+    }
+
 }

@@ -21,6 +21,7 @@ package org.cardboardpowered.impl.world;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import org.bukkit.Chunk;
@@ -30,6 +31,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
@@ -43,6 +45,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.world.ServerWorld;
@@ -331,6 +334,23 @@ public class CardboardChunk implements Chunk {
 
     static {
         Arrays.fill(emptyLight, (byte) 0xFF);
+    }
+
+    @Override
+    public BlockState[] getTileEntities(boolean arg0) {
+        Map<BlockPos,BlockEntity> map = getHandle().getBlockEntities();
+        BlockState[] bk = new BlockState[map.size()];
+        int i = 0;
+        for (BlockEntity e : map.values()) {
+            bk[i] = CraftBlockState.getBlockState(this.worldServer, e.getPos());
+            i++;
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<BlockState> getTileEntities(Predicate<Block> arg0, boolean arg1) {
+        return null;
     }
 
 }

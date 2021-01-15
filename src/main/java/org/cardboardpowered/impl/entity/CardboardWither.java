@@ -3,6 +3,7 @@ package org.cardboardpowered.impl.entity;
 import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Wither;
 
 import net.minecraft.entity.boss.WitherEntity;
@@ -34,6 +35,18 @@ public class CardboardWither extends MonsterImpl implements Wither {
     @Override
     public BossBar getBossBar() {
         return bossBar;
+    }
+
+    @Override
+    public void rangedAttack(LivingEntity arg0, float arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setChargingAttack(boolean arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

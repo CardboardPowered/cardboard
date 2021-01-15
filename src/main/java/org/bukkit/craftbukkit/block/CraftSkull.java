@@ -14,6 +14,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 
@@ -155,6 +156,18 @@ public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> impl
         super.applyTo(skull);
         if (getSkullType() == SkullType.PLAYER)
             skull.setOwnerAndType(profile);
+    }
+
+    @Override
+    public PlayerProfile getPlayerProfile() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setPlayerProfile(PlayerProfile arg0) {
+        this.profile = new GameProfile(arg0.getId(), arg0.getName());
+        
     }
 
 }

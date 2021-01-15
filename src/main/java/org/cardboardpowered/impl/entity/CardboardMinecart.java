@@ -3,6 +3,8 @@ package org.cardboardpowered.impl.entity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+
+import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
@@ -122,6 +124,11 @@ public class CardboardMinecart extends VehicleImpl implements Minecart {
     @Override
     public EntityType getType() {
         return EntityType.MINECART;
+    }
+
+    @Override
+    public Material getMinecartMaterial() {
+        return Material.MINECART;
     }
 
 }

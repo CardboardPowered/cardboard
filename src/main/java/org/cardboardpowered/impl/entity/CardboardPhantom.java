@@ -1,6 +1,9 @@
 package org.cardboardpowered.impl.entity;
 
 import net.minecraft.entity.mob.PhantomEntity;
+
+import java.util.UUID;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Phantom;
@@ -34,6 +37,12 @@ public class CardboardPhantom extends CardboardFlying implements Phantom {
     @Override
     public EntityType getType() {
         return EntityType.PHANTOM;
+    }
+
+    @Override
+    public UUID getSpawningEntity() {
+        // TODO Auto-generated method stub
+        return getHandle().getUuid();
     }
 
 }

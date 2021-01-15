@@ -1,6 +1,7 @@
 package org.cardboardpowered.impl.entity;
 
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 
 import net.minecraft.entity.mob.DrownedEntity;
 import org.bukkit.craftbukkit.CraftServer;
@@ -25,6 +26,18 @@ public class DrownedImpl extends ZombieImpl implements Drowned {
     @Override
     public EntityType getType() {
         return EntityType.DROWNED;
+    }
+
+    @Override
+    public void rangedAttack(LivingEntity arg0, float arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setChargingAttack(boolean arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

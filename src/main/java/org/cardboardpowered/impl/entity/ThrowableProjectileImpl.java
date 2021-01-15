@@ -32,4 +32,5 @@ public abstract class ThrowableProjectileImpl extends ProjectileImpl implements 
         return (ThrownItemEntity) nms;
     }
 
+
 }

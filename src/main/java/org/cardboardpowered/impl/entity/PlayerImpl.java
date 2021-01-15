@@ -48,6 +48,7 @@ import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
@@ -64,10 +65,14 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapCursor;
 import org.bukkit.map.MapView;
@@ -76,7 +81,10 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import org.cardboardpowered.impl.AdvancementImpl;
 import org.cardboardpowered.impl.AdvancementProgressImpl;
+
+import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.Title;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
@@ -1438,5 +1446,209 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
         throw new NotImplementedException("Was Removed from Paper");
     }
     // PaperAPI - END
+
+    @Override
+    public void closeInventory(Reason arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Location getPotentialBedLocation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openAnvil(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openCartographyTable(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openGrindstone(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openLoom(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void openSign(Sign arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public InventoryView openSmithingTable(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openStonecutter(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity releaseLeftShoulderEntity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity releaseRightShoulderEntity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public long getLastLogin() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public long getLastSeen() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getProtocolVersion() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public InetSocketAddress getVirtualHost() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int applyMending(int arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Firework boostElytra(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean getAffectsSpawning() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String getClientBrandName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> T getClientOption(ClientOption<T> arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public float getCooldownPeriod() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getCooledAttackStrength(float arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public PlayerProfile getPlayerProfile() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getResourcePackHash() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Status getResourcePackStatus() {
+        // TODO Auto-generated method stub
+        return Status.SUCCESSFULLY_LOADED;
+    }
+
+    @Override
+    public void giveExp(int arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean hasResourcePack() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void hideTitle() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void resetCooldown() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setAffectsSpawning(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent[] arg0, BaseComponent[] arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent arg0, BaseComponent arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPlayerProfile(PlayerProfile arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setResourcePack(String arg0, String arg1) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

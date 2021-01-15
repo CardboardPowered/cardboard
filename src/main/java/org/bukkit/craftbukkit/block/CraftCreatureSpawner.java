@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 
 @SuppressWarnings("deprecation")
@@ -117,6 +118,23 @@ public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBl
     @Override
     public void setSpawnRange(int spawnRange) {
         this.getSnapshot().getLogic().spawnRange = spawnRange;
+    }
+
+    @Override
+    public boolean isActivated() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void resetTimer() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSpawnedItem(ItemStack arg0) {
+        // TODO Auto-generated method stub
     }
 
 }

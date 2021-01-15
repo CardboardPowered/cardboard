@@ -3,6 +3,7 @@ package org.cardboardpowered.impl.entity;
 import net.minecraft.entity.passive.SnowGolemEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Snowman;
 
 public class CardboardSnowman extends CardboardGolem implements Snowman {
@@ -34,6 +35,14 @@ public class CardboardSnowman extends CardboardGolem implements Snowman {
     @Override
     public EntityType getType() {
         return EntityType.SNOWMAN;
+    }
+
+    @Override
+    public void rangedAttack(LivingEntity arg0, float arg1) {
+    }
+
+    @Override
+    public void setChargingAttack(boolean arg0) {
     }
 
 }

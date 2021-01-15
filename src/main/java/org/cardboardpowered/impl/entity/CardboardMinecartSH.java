@@ -42,7 +42,7 @@ public abstract class CardboardMinecartSH extends CardboardMinecart implements L
         return -1; // TODO lootSeed
     }
 
-    private void setLootTable(LootTable table, long seed) {
+    public void setLootTable(LootTable table, long seed) {
         Identifier newKey = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
         getHandle().setLootTable(newKey, seed);
     }

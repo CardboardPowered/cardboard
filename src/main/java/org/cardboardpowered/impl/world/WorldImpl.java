@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang.Validate;
@@ -90,6 +91,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 
+import com.destroystokyo.paper.HeightmapType;
 import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
@@ -102,6 +104,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 
+import io.papermc.paper.world.MoonPhase;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.ChorusFlowerBlock;
@@ -1855,6 +1858,101 @@ public class WorldImpl implements World {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean createExplosion(Entity arg0, Location arg1, float arg2, boolean arg3, boolean arg4) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public CompletableFuture<Chunk> getChunkAtAsync(int arg0, int arg1, boolean arg2, boolean arg3) {
+        Chunk c = this.getChunkAt(arg0, arg1);
+        return CompletableFuture.completedFuture(c);
+    }
+
+    @Override
+    public int getChunkCount() {
+        return nms.getChunkManager().getTotalChunksLoadedCount();
+    }
+
+    @Override
+    public int getClearWeatherDuration() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Entity getEntity(UUID arg0) {
+        return ((IMixinEntity)nms.getEntity(arg0)).getBukkitEntity();
+    }
+
+    @Override
+    public int getEntityCount() {
+        return nms.entitiesByUuid.size();
+    }
+
+    @Override
+    public int getHighestBlockYAt(int arg0, int arg1, HeightmapType arg2) throws UnsupportedOperationException {
+        return this.getHighestBlockYAt(arg0, arg1);
+    }
+
+    @Override
+    public MoonPhase getMoonPhase() {
+        return MoonPhase.getPhase(nms.getLunarTime());
+    }
+
+    @Override
+    public int getNoTickViewDistance() {
+        return 0;
+    }
+
+    @Override
+    public int getPlayerCount() {
+        return nms.getPlayers().size();
+    }
+
+    @Override
+    public int getTickableTileEntityCount() {
+        return nms.tickingBlockEntities.size();
+    }
+
+    @Override
+    public int getTileEntityCount() {
+        return nms.blockEntities.size();
+    }
+
+    @Override
+    public boolean isClearWeather() {
+        return !nms.isRaining();
+    }
+
+    @Override
+    public boolean isDayTime() {
+        return nms.isDay();
+    }
+
+    @Override
+    public void setClearWeatherDuration(int arg0) {
+        nms.setWeather(arg0, 0, false, false);
+    }
+
+    @Override
+    public void setNoTickViewDistance(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setViewDistance(int arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle arg0, List<Player> arg1, Player arg2, double arg3, double arg4, double arg5,
+            int arg6, double arg7, double arg8, double arg9, double arg10, T arg11, boolean arg12) {
+        // TODO Auto-generated method stub
     }
 
 }
