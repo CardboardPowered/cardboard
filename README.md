@@ -9,7 +9,7 @@ Cardboard *(formerly called Bukkit4Fabric)* is an implementation of the popular 
 | Minecraft      | Supported?                | Download      | Build Status |
 |----------------|---------------------------|---------------|----------------------|
 | 1.17-snapshots | &#x274C; UNSUPPORTED   | ~~[Download for 1.17](https://ci.codemc.io/job/IsaiahPatton/job/Cardboard-1.17/)~~ *(old)* | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard-1.17/&style=flat-square)](https://ci.codemc.io/job/IsaiahPatton/job/Cardboard-1.17/) |
-| 1.16.4         | &#x2705; SUPPORTED        | [Download for 1.16.x](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Bukkit4Fabric/&style=flat-square)](https://cardboardpowered.org/download) |
+| 1.16.4         | &#x2705; SUPPORTED        | [Download for 1.16.x](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
 | 1.16.2/1.16.3  | &#x274C; UNSUPPORTED      |            | |
 | 1.15.x         | &#x274C; UNSUPPORTED      |                        | |
 | 1.14.x         | &#x274C; UNSUPPORTED      |                        | |
