@@ -235,8 +235,26 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     public CraftEntity bukkit;
     public org.bukkit.projectiles.ProjectileSource projectileSource;
-    public ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
-    public boolean forceDrops;
+    private ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
+    private boolean forceDrops;
+
+    @Override
+    public ArrayList<org.bukkit.inventory.ItemStack> cardboard_getDrops() {
+        return drops;
+    }
+
+    @Override
+    public void cardboard_setDrops(ArrayList<org.bukkit.inventory.ItemStack> drops) {
+        this.drops = drops;
+    }
+
+    @Override
+    public boolean cardboard_getForceDrops() {return forceDrops;}
+
+    @Override
+    public void cardboard_setForceDrops(boolean forceDrops) {
+        this.forceDrops = forceDrops;
+    }
 
     @Shadow
     public Random random;

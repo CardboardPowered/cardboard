@@ -445,6 +445,9 @@ public class BukkitEventFactory {
         for (net.minecraft.entity.LivingEntity entityLiving : convertedList)
             list.add(((IMixinEntity)entityLiving).getBukkitEntity());
 
+        if (list.size() <= 0)
+            return null;
+
         EntityTransformEvent event = new EntityTransformEvent(((IMixinEntity)original).getBukkitEntity(), list, convertType);
         Bukkit.getPluginManager().callEvent(event);
         return event;

@@ -68,7 +68,8 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
      */
     @Inject(at = @At(value = "TAIL"), method = "remove", cancellable = true)
     public void doBukkitEvent_RedirectSpawnEntity_2(CallbackInfo ci) {
-        if (BukkitEventFactory.callEntityTransformEvent((SlimeEntity)(Object)this, slimes_B, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
+        EntityTransformEvent ev = BukkitEventFactory.callEntityTransformEvent((SlimeEntity)(Object)this, slimes_B, EntityTransformEvent.TransformReason.SPLIT);
+        if (ev != null && ev.isCancelled()) {
             ci.cancel();
             return;
         }

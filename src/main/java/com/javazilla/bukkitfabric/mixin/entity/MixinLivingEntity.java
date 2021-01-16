@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
@@ -79,8 +80,8 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
             this.dropLoot(damagesource, flag);
             this.dropEquipment(damagesource, ((entity instanceof PlayerEntity) ? EnchantmentHelper.getLooting((LivingEntity) entity) : 0), flag);
         }
-        BukkitEventFactory.callEntityDeathEvent(get(), this.drops);
-        this.drops = new ArrayList<>();
+        BukkitEventFactory.callEntityDeathEvent(get(), ((IMixinEntity)this).cardboard_getDrops());
+        ((IMixinEntity)this).cardboard_setDrops(new ArrayList<>());
         get().dropXp();
         ci.cancel();
         return;

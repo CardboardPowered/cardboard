@@ -1713,22 +1713,24 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public PlayerProfile createProfile(UUID arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public com.destroystokyo.paper.profile.PlayerProfile createProfile(UUID uuid) {
+        return createProfile(uuid, null);
     }
 
     @Override
-    public PlayerProfile createProfile(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public com.destroystokyo.paper.profile.PlayerProfile createProfile(String name) {
+        return createProfile(null, name);
     }
 
     @Override
-    public PlayerProfile createProfile(UUID arg0, String arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public com.destroystokyo.paper.profile.PlayerProfile createProfile(UUID uuid, String name) {
+        Player player = uuid != null ? Bukkit.getPlayer(uuid) : (name != null ? Bukkit.getPlayerExact(name) : null);
+        if (player != null) {
+            return new com.destroystokyo.paper.profile.CraftPlayerProfile((PlayerImpl) player);
+        }
+        return new com.destroystokyo.paper.profile.CraftPlayerProfile(uuid, name);
     }
+
 
     @Override
     public ChunkData createVanillaChunkData(World arg0, int arg1, int arg2) {
@@ -1781,7 +1783,7 @@ public class CraftServer implements Server {
 
     @Override
     public boolean isStopping() {
-        return server.isStopping();
+        return !server.isRunning();
     }
 
     @Override

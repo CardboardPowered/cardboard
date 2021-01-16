@@ -261,6 +261,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     private static Item getModdedItem(Material mat) {
+        if (!((Object)mat instanceof IMixinMaterial)) {
+            // Dev env
+            return null;
+        }
         IMixinMaterial mm = (IMixinMaterial)(Object) mat;
         if (!mm.isModded()) return null;
 
@@ -272,6 +276,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     private static Block getModdedBlock(Material mat) {
         if (null == mat) return null;
+        if (!((Object)mat instanceof IMixinMaterial)) {
+            // Dev env
+            return null;
+        }
         IMixinMaterial mm = (IMixinMaterial)(Object) mat;
         if (!mm.isModded()) return null;
 

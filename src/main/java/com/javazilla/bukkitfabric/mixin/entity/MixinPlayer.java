@@ -44,6 +44,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -230,8 +231,8 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
         // SPIGOT-5071: manually add player loot tables (SPIGOT-5195 - ignores keepInventory rule)
         this.dropLoot(damagesource, ((ServerPlayerEntity)(Object)this).playerHitTimer > 0);
-        for (org.bukkit.inventory.ItemStack item : this.drops) loot.add(item);
-        drops.clear(); // SPIGOT-5188: make sure to clear
+        for (org.bukkit.inventory.ItemStack item : ((IMixinEntity)this).cardboard_getDrops()) loot.add(item);
+        ((IMixinEntity)this).cardboard_getDrops().clear(); // SPIGOT-5188: make sure to clear
 
         Text defaultMessage = ((ServerPlayerEntity)(Object)this).getDamageTracker().getDeathMessage();
 
