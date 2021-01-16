@@ -73,7 +73,9 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         include "fabric.mod.json"
-        expand "version": project.version
+        if(System.env.BUILD_NUMBER){
+            expand "version": System.env.BUILD_NUMBER
+        }
     }
 
     from(sourceSets.main.resources.srcDirs) {
