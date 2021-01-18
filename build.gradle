@@ -30,13 +30,11 @@ minecraft {
 }
 
 repositories {
-    maven { url = 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
-    maven { url = 'https://maven.dblsaiko.net/' }
-    maven { url = 'https://isaiah.fungus-soft.com/maven-repo' }
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = 'https://repo.codemc.io/repository/maven-releases/' }
     mavenCentral()
 }
 
@@ -56,6 +54,9 @@ dependencies {
     // NMS Remapping
     extraLibs group: "com.github.IsaiahPatton", name: "SpecialSource", version: "31af248ea6"
     extraLibs group: "com.github.OrionMinecraft", name: "SrgLib", version: "master-SNAPSHOT"
+
+    // (Optional) Fabric Permissions API.
+    modImplementation "com.javazilla.mods:permissions:1.1"
 
     // Remove parts that are included with Minecraft or Downloaded
     removeLibs group: "com.google.guava", name: "guava", version: "21.0"
