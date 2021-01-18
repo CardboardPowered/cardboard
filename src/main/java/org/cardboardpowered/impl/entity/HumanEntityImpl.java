@@ -48,6 +48,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -430,12 +431,22 @@ public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
 
     @Override
     public boolean hasPermission(String name) {
-        return perm.hasPermission(name);
+        boolean b = perm.hasPermission(name);
+        if (!b && FabricLoader.getInstance().isModLoaded("cyber-permissions")) {
+            if (nms instanceof ServerPlayerEntity)
+                return org.cardboardpowered.impl.hooks.PermissionHook.hasPermission((ServerPlayerEntity) nms, name);
+        }
+        return b;
     }
 
     @Override
     public boolean hasPermission(Permission perm) {
-        return this.perm.hasPermission(perm);
+        boolean b = this.perm.hasPermission(perm);
+        if (!b && FabricLoader.getInstance().isModLoaded("cyber-permissions")) {
+            if (nms instanceof ServerPlayerEntity)
+                return org.cardboardpowered.impl.hooks.PermissionHook.hasPermission((ServerPlayerEntity) nms, perm.getName());
+        }
+        return b;
     }
 
     @Override

@@ -25,12 +25,14 @@ public class ModsCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (args.length == 0) {
+        if (sender.hasPermission("cardboard.command.mods")) {
             String mods = "";
             for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
                 mods += ", " + mod.getMetadata().getName();
             }
             sender.sendMessage("Mods: " + mods.substring(2));
+        } else {
+            sender.sendMessage("No Permission for command!");
         }
         return true;
     }
