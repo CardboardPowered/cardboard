@@ -1,6 +1,9 @@
 package org.cardboardpowered.impl.command;
 
 import com.javazilla.bukkitfabric.Utils;
+
+import net.fabricmc.loader.api.FabricLoader;
+
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -44,7 +47,11 @@ public class VersionCommand extends Command {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + CraftServer.INSTANCE.getShortVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
+            String ver = FabricLoader.getInstance().getModContainer("cardboard").get().getMetadata().getVersion().getFriendlyString();
+            if (ver.contains("version"))
+                ver = CraftServer.INSTANCE.getShortVersion(); // Dev ENV
+
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + ver + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
             sendVersion(sender);
         } else {
             StringBuilder name = new StringBuilder();
