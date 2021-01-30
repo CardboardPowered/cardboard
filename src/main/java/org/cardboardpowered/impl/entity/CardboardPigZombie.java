@@ -1,13 +1,13 @@
-package org.cardboardpowered.impl.entity;
+ package org.cardboardpowered.impl.entity;
 
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.PigZombie;
 
-public class PigZombieImpl extends ZombieImpl implements PigZombie {
+public class CardboardPigZombie extends ZombieImpl implements PigZombie {
 
-    public PigZombieImpl(CraftServer server, ZombifiedPiglinEntity entity) {
+    public CardboardPigZombie(CraftServer server, ZombifiedPiglinEntity entity) {
         super(server, entity);
     }
 

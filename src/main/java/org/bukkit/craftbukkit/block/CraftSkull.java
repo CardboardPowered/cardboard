@@ -71,12 +71,10 @@ public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> impl
 
     @Override
     public boolean setOwner(String name) {
-        if (name == null || name.length() > MAX_OWNER_LENGTH)
-            return false;
+        if (name == null || name.length() > MAX_OWNER_LENGTH) return false;
 
         GameProfile profile = CraftServer.server.getUserCache().findByName(name);
-        if (profile == null)
-            return false;
+        if (profile == null) return false;
 
         this.profile = profile;
         return true;
@@ -85,11 +83,8 @@ public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> impl
     @Override
     public OfflinePlayer getOwningPlayer() {
         if (profile != null) {
-            if (profile.getId() != null)
-                return Bukkit.getOfflinePlayer(profile.getId());
-
-            if (profile.getName() != null)
-                return Bukkit.getOfflinePlayer(profile.getName());
+            if (profile.getId() != null) return Bukkit.getOfflinePlayer(profile.getId());
+            if (profile.getName() != null) return Bukkit.getOfflinePlayer(profile.getName());
         }
         return null;
     }
@@ -97,10 +92,7 @@ public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> impl
     @Override
     public void setOwningPlayer(OfflinePlayer player) {
         Preconditions.checkNotNull(player, "player");
-
-        if (player instanceof PlayerImpl)
-            this.profile = ((PlayerImpl) player).nms.getGameProfile();
-        else this.profile = new GameProfile(player.getUniqueId(), player.getName());
+        this.profile = (player instanceof PlayerImpl) ? ((PlayerImpl) player).nms.getGameProfile() : new GameProfile(player.getUniqueId(), player.getName());
     }
 
     @Override
@@ -112,10 +104,8 @@ public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> impl
     @Override
     public void setRotation(BlockFace rotation) {
         BlockData blockData = getBlockData();
-        if (blockData instanceof Rotatable)
-            ((Rotatable) blockData).setRotation(rotation);
-        else
-            ((Directional) blockData).setFacing(rotation);
+        if (blockData instanceof Rotatable) ((Rotatable) blockData).setRotation(rotation);
+        else ((Directional) blockData).setFacing(rotation);
 
         setBlockData(blockData);
     }

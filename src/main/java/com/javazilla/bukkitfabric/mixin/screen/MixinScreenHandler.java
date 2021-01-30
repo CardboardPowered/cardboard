@@ -3,7 +3,9 @@ package com.javazilla.bukkitfabric.mixin.screen;
 import java.util.List;
 
 import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.inventory.util.CraftCustomInventoryConverter;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.inventory.CustomInventoryView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -29,7 +31,7 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     public CardboardInventoryView getBukkitView() {
         BukkitFabricMod.LOGGER.info("Using generic InventoryView for ScreenHandler (inventory provided by a mod?)");
         CraftInventory cbi = new CraftInventory(new SimpleInventory( ((ScreenHandler)(Object)this).getStacks().toArray(new ItemStack[0]) ));
-        return new CardboardInventoryView(null, cbi, ((ScreenHandler)(Object)this));
+        return new CustomInventoryView(null, cbi, ((ScreenHandler)(Object)this));
     }
 
     @Shadow

@@ -85,7 +85,7 @@ public class BukkitFabricMod implements ModInitializer {
         new LibraryManager(repository, "lib", true, 2, libraries.values()).run();
         
         
-        String repository2 = "https://hub.spigotmc.org/nexus/content/repositories/public/";
+        String repository2 = "https://repo1.maven.org/maven2/";
 
         Map<LibraryKey, Library> libraries2 = Stream.of(
                 new Library("org.apache.commons", "commons-collections4", "4.4", LibraryManager.HashAlgorithm.SHA1, "62ebe7544cb7164d87e0637a2a6a2bdc981395e8", null),

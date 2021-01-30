@@ -26,7 +26,6 @@ accessible	field	net/minecraft/entity/vehicle/StorageMinecartEntity	lootTableId	
 accessible	field	net/minecraft/block/entity/BeaconBlockEntity	lock	Lnet/minecraft/inventory/ContainerLock;
 accessible	field	net/minecraft/server/dedicated/AbstractPropertiesHandler	properties	Ljava/util/Properties;
 accessible	field	net/minecraft/entity/boss/ServerBossBar	visible	Z
-accessible	field	net/minecraft/world/storage/RegionBasedStorage	cachedRegionFiles	Lit/unimi/dsi/fastutil/longs/Long2ObjectLinkedOpenHashMap;
 accessible	field	net/minecraft/block/DispenserBlock	BEHAVIORS	Ljava/util/Map;
 accessible	field	net/minecraft/entity/LivingEntity	defaultMaximumHealth	I
 mutable	field	net/minecraft/entity/LivingEntity	defaultMaximumHealth	I
@@ -46,8 +45,6 @@ mutable	field	net/minecraft/village/TradeOffer	maxUses	I
 accessible	field	net/minecraft/entity/attribute/ClampedEntityAttribute	maxValue	D
 accessible	field	net/minecraft/server/world/ChunkHolder	lastTickLevel	I
 accessible	field	net/minecraft/network/ClientConnection	channel	Lio/netty/channel/Channel;
-accessible	field	net/minecraft/entity/projectile/FishingBobberEntity	owner	Lnet/minecraft/entity/player/PlayerEntity;
-mutable	field	net/minecraft/entity/projectile/FishingBobberEntity	owner	Lnet/minecraft/entity/player/PlayerEntity;
 accessible	field	net/minecraft/server/world/ChunkTicket	argument	Ljava/lang/Object;
 accessible	field	net/minecraft/server/dedicated/ServerCommandOutput	server	Lnet/minecraft/server/MinecraftServer;
 mutable	field	net/minecraft/server/dedicated/ServerCommandOutput	server	Lnet/minecraft/server/MinecraftServer;
@@ -149,16 +146,8 @@ accessible	field	net/minecraft/entity/damage/EntityDamageSource	source	Lnet/mine
 mutable	field	net/minecraft/entity/damage/EntityDamageSource	source	Lnet/minecraft/entity/Entity;
 accessible	field	net/minecraft/entity/damage/ProjectileDamageSource	attacker	Lnet/minecraft/entity/Entity;
 mutable	field	net/minecraft/entity/damage/ProjectileDamageSource	attacker	Lnet/minecraft/entity/Entity;
-accessible	field	net/minecraft/entity/passive/PassiveEntity	breedingAge	I
-mutable	field	net/minecraft/entity/passive/PassiveEntity	breedingAge	I
 accessible	field	net/minecraft/entity/passive/PassiveEntity	forcedAge	I
 mutable	field	net/minecraft/entity/passive/PassiveEntity	forcedAge	I
-accessible	field	net/minecraft/entity/passive/PassiveEntity	happyTicksRemaining	I
-mutable	field	net/minecraft/entity/passive/PassiveEntity	happyTicksRemaining	I
-accessible	method	net/minecraft/entity/passive/PassiveEntity	onPlayerSpawnedChild	(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/passive/PassiveEntity;)V
-accessible	method	net/minecraft/entity/passive/PassiveEntity	onGrowUp	()V
-accessible	field	net/minecraft/entity/Entity	renderDistanceMultiplier	D
-mutable	field	net/minecraft/entity/Entity	renderDistanceMultiplier	D
 accessible	field	net/minecraft/entity/Entity	type	Lnet/minecraft/entity/EntityType;
 mutable	field	net/minecraft/entity/Entity	type	Lnet/minecraft/entity/EntityType;
 accessible	field	net/minecraft/entity/Entity	entityId	I
@@ -662,48 +651,6 @@ mutable	field	net/minecraft/entity/player/HungerManager	foodStarvationTimer	I
 accessible	field	net/minecraft/entity/player/HungerManager	prevFoodLevel	I
 mutable	field	net/minecraft/entity/player/HungerManager	prevFoodLevel	I
 accessible	method	net/minecraft/item/FoodComponents	create	(I)Lnet/minecraft/item/FoodComponent;
-accessible	field	net/minecraft/container/Container	trackedStacks	Lnet/minecraft/util/DefaultedList;
-mutable	field	net/minecraft/container/Container	trackedStacks	Lnet/minecraft/util/DefaultedList;
-accessible	field	net/minecraft/container/Container	properties	Ljava/util/List;
-accessible	field	net/minecraft/container/Container	type	Lnet/minecraft/container/ContainerType;
-mutable	field	net/minecraft/container/Container	type	Lnet/minecraft/container/ContainerType;
-accessible	field	net/minecraft/container/Container	actionId	S
-mutable	field	net/minecraft/container/Container	actionId	S
-accessible	field	net/minecraft/container/Container	quickCraftStage	I
-mutable	field	net/minecraft/container/Container	quickCraftStage	I
-accessible	field	net/minecraft/container/Container	quickCraftButton	I
-mutable	field	net/minecraft/container/Container	quickCraftButton	I
-accessible	field	net/minecraft/container/Container	quickCraftSlots	Ljava/util/Set;
-mutable	field	net/minecraft/container/Container	quickCraftSlots	Ljava/util/Set;
-accessible	field	net/minecraft/container/Container	listeners	Ljava/util/List;
-mutable	field	net/minecraft/container/Container	listeners	Ljava/util/List;
-accessible	field	net/minecraft/container/Container	restrictedPlayers	Ljava/util/Set;
-mutable	field	net/minecraft/container/Container	restrictedPlayers	Ljava/util/Set;
-accessible	method	net/minecraft/container/Container	canUse	(Lnet/minecraft/container/BlockContext;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/block/Block;)Z
-accessible	method	net/minecraft/container/Container	checkContainerSize	(Lnet/minecraft/inventory/Inventory;I)V
-accessible	method	net/minecraft/container/Container	checkContainerDataCount	(Lnet/minecraft/container/PropertyDelegate;I)V
-accessible	method	net/minecraft/container/Container	addSlot	(Lnet/minecraft/container/Slot;)Lnet/minecraft/container/Slot;
-accessible	method	net/minecraft/container/Container	addProperty	(Lnet/minecraft/container/Property;)Lnet/minecraft/container/Property;
-accessible	method	net/minecraft/container/Container	addProperties	(Lnet/minecraft/container/PropertyDelegate;)V
-accessible	method	net/minecraft/container/Container	dropInventory	(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/World;Lnet/minecraft/inventory/Inventory;)V
-accessible	method	net/minecraft/container/Container	insertItem	(Lnet/minecraft/item/ItemStack;IIZ)Z
-accessible	method	net/minecraft/container/Container	endQuickCraft	()V
-accessible	field	net/minecraft/container/AbstractFurnaceContainer	inventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/AbstractFurnaceContainer	inventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/AbstractFurnaceContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
-mutable	field	net/minecraft/container/AbstractFurnaceContainer	propertyDelegate	Lnet/minecraft/container/PropertyDelegate;
-accessible	field	net/minecraft/container/AbstractFurnaceContainer	world	Lnet/minecraft/world/World;
-mutable	field	net/minecraft/container/AbstractFurnaceContainer	world	Lnet/minecraft/world/World;
-accessible	field	net/minecraft/container/AbstractFurnaceContainer	recipeType	Lnet/minecraft/recipe/RecipeType;
-mutable	field	net/minecraft/container/AbstractFurnaceContainer	recipeType	Lnet/minecraft/recipe/RecipeType;
-extendable	method	net/minecraft/container/AbstractFurnaceContainer	isSmeltable	(Lnet/minecraft/item/ItemStack;)Z
-accessible	method	net/minecraft/container/AbstractFurnaceContainer	isSmeltable	(Lnet/minecraft/item/ItemStack;)Z
-extendable	method	net/minecraft/container/AbstractFurnaceContainer	isFuel	(Lnet/minecraft/item/ItemStack;)Z
-accessible	method	net/minecraft/container/AbstractFurnaceContainer	isFuel	(Lnet/minecraft/item/ItemStack;)Z
-accessible	field	net/minecraft/container/GenericContainer	inventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/GenericContainer	inventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/GenericContainer	rows	I
-mutable	field	net/minecraft/container/GenericContainer	rows	I
 extendable	class	net/minecraft/container/SlotActionType
 extendable	class	net/minecraft/container/BlockContext$1
 extendable	class	net/minecraft/container/BlockContext$2
@@ -724,18 +671,6 @@ accessible	field	net/minecraft/container/Property	oldValue	I
 mutable	field	net/minecraft/container/Property	oldValue	I
 accessible	field	net/minecraft/container/Generic3x3Container	inventory	Lnet/minecraft/inventory/Inventory;
 mutable	field	net/minecraft/container/Generic3x3Container	inventory	Lnet/minecraft/inventory/Inventory;
-accessible	class	net/minecraft/container/EnchantingTableContainer$1
-accessible	class	net/minecraft/container/EnchantingTableContainer$2
-accessible	class	net/minecraft/container/EnchantingTableContainer$3
-accessible	field	net/minecraft/container/EnchantingTableContainer	inventory	Lnet/minecraft/inventory/Inventory;
-mutable	field	net/minecraft/container/EnchantingTableContainer	inventory	Lnet/minecraft/inventory/Inventory;
-accessible	field	net/minecraft/container/EnchantingTableContainer	context	Lnet/minecraft/container/BlockContext;
-mutable	field	net/minecraft/container/EnchantingTableContainer	context	Lnet/minecraft/container/BlockContext;
-accessible	field	net/minecraft/container/EnchantingTableContainer	seed	Lnet/minecraft/container/Property;
-mutable	field	net/minecraft/container/EnchantingTableContainer	seed	Lnet/minecraft/container/Property;
-accessible	method	net/minecraft/container/EnchantingTableContainer	getRandomEnchantments	(Lnet/minecraft/item/ItemStack;II)Ljava/util/List;
-accessible	field	net/minecraft/container/FurnaceFuelSlot	container	Lnet/minecraft/container/AbstractFurnaceContainer;
-mutable	field	net/minecraft/container/FurnaceFuelSlot	container	Lnet/minecraft/container/AbstractFurnaceContainer;
 accessible	field	net/minecraft/container/FurnaceOutputSlot	player	Lnet/minecraft/entity/player/PlayerEntity;
 mutable	field	net/minecraft/container/FurnaceOutputSlot	player	Lnet/minecraft/entity/player/PlayerEntity;
 accessible	field	net/minecraft/container/FurnaceOutputSlot	amount	I
@@ -796,20 +731,6 @@ accessible	field	net/minecraft/util/DyeColor	BY_FIREWORK_COLOR	Lit/unimi/dsi/fas
 mutable	field	net/minecraft/util/DyeColor	BY_FIREWORK_COLOR	Lit/unimi/dsi/fastutil/ints/Int2ObjectOpenHashMap;
 accessible	field	net/minecraft/util/DyeColor	id	I
 mutable	field	net/minecraft/util/DyeColor	id	I
-accessible	field	net/minecraft/util/DyeColor	name	Ljava/lang/String;
-mutable	field	net/minecraft/util/DyeColor	name	Ljava/lang/String;
-accessible	field	net/minecraft/util/DyeColor	materialColor	Lnet/minecraft/block/MaterialColor;
-mutable	field	net/minecraft/util/DyeColor	materialColor	Lnet/minecraft/block/MaterialColor;
-accessible	field	net/minecraft/util/DyeColor	color	I
-mutable	field	net/minecraft/util/DyeColor	color	I
-accessible	field	net/minecraft/util/DyeColor	colorSwapped	I
-mutable	field	net/minecraft/util/DyeColor	colorSwapped	I
-accessible	field	net/minecraft/util/DyeColor	colorComponents	[F
-mutable	field	net/minecraft/util/DyeColor	colorComponents	[F
-accessible	field	net/minecraft/util/DyeColor	fireworkColor	I
-mutable	field	net/minecraft/util/DyeColor	fireworkColor	I
-accessible	field	net/minecraft/util/DyeColor	signColor	I
-mutable	field	net/minecraft/util/DyeColor	signColor	I
 accessible	field	net/minecraft/item/DyeItem	DYES	Ljava/util/Map;
 mutable	field	net/minecraft/item/DyeItem	DYES	Ljava/util/Map;
 accessible	field	net/minecraft/item/DyeItem	color	Lnet/minecraft/util/DyeColor;
@@ -824,13 +745,8 @@ accessible	field	net/minecraft/item/Item	maxCount	I
 mutable	field	net/minecraft/item/Item	maxCount	I
 accessible	field	net/minecraft/item/Item	maxDamage	I
 mutable	field	net/minecraft/item/Item	maxDamage	I
-accessible	field	net/minecraft/item/Item	recipeRemainder	Lnet/minecraft/item/Item;
-mutable	field	net/minecraft/item/Item	recipeRemainder	Lnet/minecraft/item/Item;
-accessible	field	net/minecraft/item/Item	translationKey	Ljava/lang/String;
-mutable	field	net/minecraft/item/Item	translationKey	Ljava/lang/String;
 accessible	field	net/minecraft/item/Item	foodComponent	Lnet/minecraft/item/FoodComponent;
 mutable	field	net/minecraft/item/Item	foodComponent	Lnet/minecraft/item/FoodComponent;
-accessible	method	net/minecraft/item/Item	getOrCreateTranslationKey	()Ljava/lang/String;
 accessible	method	net/minecraft/item/Item	rayTrace	(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/RayTraceContext$FluidHandling;)Lnet/minecraft/util/hit/HitResult;
 accessible	method	net/minecraft/item/Item	isIn	(Lnet/minecraft/item/ItemGroup;)Z
 extendable	class	net/minecraft/item/ItemStack
@@ -1109,15 +1025,12 @@ accessible	field	net/minecraft/world/World	chunkManager	Lnet/minecraft/world/chu
 mutable	field	net/minecraft/world/World	chunkManager	Lnet/minecraft/world/chunk/ChunkManager;
 accessible	field	net/minecraft/world/World	properties	Lnet/minecraft/world/level/LevelProperties;
 mutable	field	net/minecraft/world/World	properties	Lnet/minecraft/world/level/LevelProperties;
-accessible	field	net/minecraft/world/World	profiler	Lnet/minecraft/util/profiler/Profiler;
-mutable	field	net/minecraft/world/World	profiler	Lnet/minecraft/util/profiler/Profiler;
 accessible	field	net/minecraft/world/World	iteratingTickingBlockEntities	Z
 mutable	field	net/minecraft/world/World	iteratingTickingBlockEntities	Z
 accessible	field	net/minecraft/world/World	border	Lnet/minecraft/world/border/WorldBorder;
 mutable	field	net/minecraft/world/World	border	Lnet/minecraft/world/border/WorldBorder;
 accessible	field	net/minecraft/world/World	biomeAccess	Lnet/minecraft/world/biome/source/BiomeAccess;
 mutable	field	net/minecraft/world/World	biomeAccess	Lnet/minecraft/world/biome/source/BiomeAccess;
-accessible	method	net/minecraft/world/World	getPendingBlockEntity	(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/entity/BlockEntity;
 accessible	method	net/minecraft/world/World	initWeatherGradients	()V
 accessible	method	net/minecraft/world/World	tickTime	()V
 extendable	class	net/minecraft/world/level/LevelInfo
@@ -1432,7 +1345,6 @@ mutable	field	net/minecraft/block/entity/CampfireBlockEntity	cookingTimes	[I
 accessible	field	net/minecraft/block/entity/CampfireBlockEntity	cookingTotalTimes	[I
 mutable	field	net/minecraft/block/entity/CampfireBlockEntity	cookingTotalTimes	[I
 accessible	method	net/minecraft/block/entity/CampfireBlockEntity	updateItemsBeingCooked	()V
-accessible	method	net/minecraft/block/entity/CampfireBlockEntity	spawnSmokeParticles	()V
 accessible	method	net/minecraft/block/entity/CampfireBlockEntity	saveInitialChunkData	(Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/nbt/CompoundTag;
 accessible	method	net/minecraft/block/entity/CampfireBlockEntity	updateListeners	()V
 accessible	field	net/minecraft/block/entity/ChestBlockEntity	animationAngle	F
@@ -1659,14 +1571,8 @@ accessible	field	net/minecraft/world/dimension/Dimension	world	Lnet/minecraft/wo
 mutable	field	net/minecraft/world/dimension/Dimension	world	Lnet/minecraft/world/World;
 accessible	field	net/minecraft/world/dimension/Dimension	type	Lnet/minecraft/world/dimension/DimensionType;
 mutable	field	net/minecraft/world/dimension/Dimension	type	Lnet/minecraft/world/dimension/DimensionType;
-accessible	field	net/minecraft/world/dimension/Dimension	waterVaporizes	Z
-mutable	field	net/minecraft/world/dimension/Dimension	waterVaporizes	Z
 accessible	field	net/minecraft/world/dimension/Dimension	isNether	Z
 mutable	field	net/minecraft/world/dimension/Dimension	isNether	Z
-accessible	field	net/minecraft/world/dimension/Dimension	lightLevelToBrightness	[F
-mutable	field	net/minecraft/world/dimension/Dimension	lightLevelToBrightness	[F
-accessible	field	net/minecraft/world/dimension/Dimension	backgroundColor	[F
-mutable	field	net/minecraft/world/dimension/Dimension	backgroundColor	[F
 accessible	field	net/minecraft/world/dimension/DimensionType	id	I
 mutable	field	net/minecraft/world/dimension/DimensionType	id	I
 accessible	field	net/minecraft/world/dimension/DimensionType	suffix	Ljava/lang/String;

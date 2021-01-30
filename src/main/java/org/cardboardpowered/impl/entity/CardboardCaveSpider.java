@@ -5,9 +5,9 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.EntityType;
 
-public class CaveSpiderImpl extends SpiderImpl implements CaveSpider {
+public class CardboardCaveSpider extends SpiderImpl implements CaveSpider {
 
-    public CaveSpiderImpl(CraftServer server, CaveSpiderEntity entity) {
+    public CardboardCaveSpider(CraftServer server, CaveSpiderEntity entity) {
         super(server, entity);
     }
 

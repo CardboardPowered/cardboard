@@ -104,6 +104,7 @@ import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.entity.UnknownEntity;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.inventory.CustomInventoryView;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.jetbrains.annotations.Nullable;
 
@@ -326,6 +327,11 @@ public class BukkitEventFactory {
 
         CardboardInventoryView bv = ((IMixinScreenHandler)container).getBukkitView();
         bv.setPlayerIfNotSet((PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity());
+        if (bv instanceof CustomInventoryView) {
+            // Bug: Modded inventories do not like us 
+            return container;
+        }
+
 
         try {
             ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, PlayerImpl);

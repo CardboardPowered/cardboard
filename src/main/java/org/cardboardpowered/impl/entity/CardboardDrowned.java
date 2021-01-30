@@ -7,9 +7,9 @@ import net.minecraft.entity.mob.DrownedEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Drowned;
 
-public class DrownedImpl extends ZombieImpl implements Drowned {
+public class CardboardDrowned extends ZombieImpl implements Drowned {
 
-    public DrownedImpl(CraftServer server, DrownedEntity entity) {
+    public CardboardDrowned(CraftServer server, DrownedEntity entity) {
         super(server, entity);
     }
 
@@ -31,13 +31,11 @@ public class DrownedImpl extends ZombieImpl implements Drowned {
     @Override
     public void rangedAttack(LivingEntity arg0, float arg1) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setChargingAttack(boolean arg0) {
         // TODO Auto-generated method stub
-        
     }
 
 }

@@ -5,9 +5,9 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.MagmaCube;
 
-public class MagmaCubeImpl extends SlimeImpl implements MagmaCube {
+public class CardboardMagmaCube extends SlimeImpl implements MagmaCube {
 
-    public MagmaCubeImpl(CraftServer server, MagmaCubeEntity entity) {
+    public CardboardMagmaCube(CraftServer server, MagmaCubeEntity entity) {
         super(server, entity);
     }
 

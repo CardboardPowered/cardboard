@@ -41,92 +41,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.cardboardpowered.impl.entity.AbstractVillagerImpl;
-import org.cardboardpowered.impl.entity.AnimalsImpl;
-import org.cardboardpowered.impl.entity.ArmorStandImpl;
-import org.cardboardpowered.impl.entity.ArrowImpl;
-import org.cardboardpowered.impl.entity.CardboardAmbient;
-import org.cardboardpowered.impl.entity.CardboardBat;
-import org.cardboardpowered.impl.entity.CardboardBlaze;
-import org.cardboardpowered.impl.entity.CardboardComplexPart;
-import org.cardboardpowered.impl.entity.CardboardDolphin;
-import org.cardboardpowered.impl.entity.CardboardDragonPart;
-import org.cardboardpowered.impl.entity.CardboardEnderPearl;
-import org.cardboardpowered.impl.entity.CardboardEnderdragon;
-import org.cardboardpowered.impl.entity.CardboardEvoker;
-import org.cardboardpowered.impl.entity.CardboardFish;
-import org.cardboardpowered.impl.entity.CardboardFishCod;
-import org.cardboardpowered.impl.entity.CardboardFishHook;
-import org.cardboardpowered.impl.entity.CardboardFishPufferfish;
-import org.cardboardpowered.impl.entity.CardboardFishSalmon;
-import org.cardboardpowered.impl.entity.CardboardFishTropical;
-import org.cardboardpowered.impl.entity.CardboardFlying;
-import org.cardboardpowered.impl.entity.CardboardGhast;
-import org.cardboardpowered.impl.entity.CardboardGuardian;
-import org.cardboardpowered.impl.entity.CardboardGuardianElder;
-import org.cardboardpowered.impl.entity.CardboardHanging;
-import org.cardboardpowered.impl.entity.CardboardIllager;
-import org.cardboardpowered.impl.entity.CardboardIllusioner;
-import org.cardboardpowered.impl.entity.CardboardIronGolem;
-import org.cardboardpowered.impl.entity.CardboardLlamaSpit;
-import org.cardboardpowered.impl.entity.CardboardMinecart;
-import org.cardboardpowered.impl.entity.CardboardMinecartChest;
-import org.cardboardpowered.impl.entity.CardboardMinecartFurnace;
-import org.cardboardpowered.impl.entity.CardboardMinecartRideable;
-import org.cardboardpowered.impl.entity.CardboardPanda;
-import org.cardboardpowered.impl.entity.CardboardPhantom;
-import org.cardboardpowered.impl.entity.CardboardPillager;
-import org.cardboardpowered.impl.entity.CardboardShulker;
-import org.cardboardpowered.impl.entity.CardboardSilverfish;
-import org.cardboardpowered.impl.entity.CardboardSnowman;
-import org.cardboardpowered.impl.entity.CardboardSpellcaster;
-import org.cardboardpowered.impl.entity.CardboardSquid;
-import org.cardboardpowered.impl.entity.CardboardThrownExpBottle;
-import org.cardboardpowered.impl.entity.CardboardThrownPotion;
-import org.cardboardpowered.impl.entity.CardboardTntCart;
-import org.cardboardpowered.impl.entity.CardboardVex;
-import org.cardboardpowered.impl.entity.CardboardVindicator;
-import org.cardboardpowered.impl.entity.CardboardWaterMob;
-import org.cardboardpowered.impl.entity.CardboardWitch;
-import org.cardboardpowered.impl.entity.CardboardWither;
-import org.cardboardpowered.impl.entity.CatImpl;
-import org.cardboardpowered.impl.entity.CaveSpiderImpl;
-import org.cardboardpowered.impl.entity.ChickenImpl;
-import org.cardboardpowered.impl.entity.CowImpl;
-import org.cardboardpowered.impl.entity.CreatureImpl;
-import org.cardboardpowered.impl.entity.CreeperImpl;
-import org.cardboardpowered.impl.entity.DrownedImpl;
-import org.cardboardpowered.impl.entity.EggImpl;
-import org.cardboardpowered.impl.entity.EndermanImpl;
-import org.cardboardpowered.impl.entity.EndermiteImpl;
-import org.cardboardpowered.impl.entity.ExperienceOrbImpl;
-import org.cardboardpowered.impl.entity.FallingBlockImpl;
-import org.cardboardpowered.impl.entity.GiantImpl;
-import org.cardboardpowered.impl.entity.HuskImpl;
-import org.cardboardpowered.impl.entity.ItemEntityImpl;
-import org.cardboardpowered.impl.entity.LightningStrikeImpl;
-import org.cardboardpowered.impl.entity.MagmaCubeImpl;
-import org.cardboardpowered.impl.entity.MonsterImpl;
-import org.cardboardpowered.impl.entity.MushroomImpl;
-import org.cardboardpowered.impl.entity.OcelotImpl;
-import org.cardboardpowered.impl.entity.ParrotImpl;
-import org.cardboardpowered.impl.entity.PigZombieImpl;
-import org.cardboardpowered.impl.entity.PolarBearImpl;
-import org.cardboardpowered.impl.entity.SkeletonImpl;
-import org.cardboardpowered.impl.entity.SlimeImpl;
-import org.cardboardpowered.impl.entity.SnowballImpl;
-import org.cardboardpowered.impl.entity.SpiderImpl;
-import org.cardboardpowered.impl.entity.StrayImpl;
-import org.cardboardpowered.impl.entity.TntImpl;
-import org.cardboardpowered.impl.entity.TridentImpl;
-import org.cardboardpowered.impl.entity.TurtleImpl;
-import org.cardboardpowered.impl.entity.UnknownEntity;
-import org.cardboardpowered.impl.entity.VillagerImpl;
-import org.cardboardpowered.impl.entity.VillagerZombieImpl;
-import org.cardboardpowered.impl.entity.WanderingTraderImpl;
-import org.cardboardpowered.impl.entity.WitherSkeletonImpl;
-import org.cardboardpowered.impl.entity.WolfImpl;
-import org.cardboardpowered.impl.entity.ZombieImpl;
+import org.cardboardpowered.impl.entity.*;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
@@ -370,7 +285,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                     //else if (entity instanceof PigEntity) { return new CraftPig(server, (PigEntity) entity); }
                     else if (entity instanceof TameableEntity) {
                         if (entity instanceof WolfEntity) { return new WolfImpl(server, (WolfEntity) entity); }
-                        else if (entity instanceof CatEntity) { return new CatImpl(server, (CatEntity) entity); }
+                        else if (entity instanceof CatEntity) { return new CardboardCat(server, (CatEntity) entity); }
                         else if (entity instanceof ParrotEntity) { return new ParrotImpl(server, (ParrotEntity) entity); }
                     }
                     /*else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
@@ -398,16 +313,16 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 // Monsters
                 else if (entity instanceof HostileEntity) {
                     if (entity instanceof ZombieEntity) {
-                        if (entity instanceof ZombifiedPiglinEntity) { return new PigZombieImpl(server, (ZombifiedPiglinEntity) entity); }
-                        else if (entity instanceof HuskEntity) { return new HuskImpl(server, (HuskEntity) entity); }
+                        if (entity instanceof ZombifiedPiglinEntity) { return new CardboardPigZombie(server, (ZombifiedPiglinEntity) entity); }
+                        else if (entity instanceof HuskEntity) { return new CardboardHusk(server, (HuskEntity) entity); }
                         else if (entity instanceof ZombieVillagerEntity) { return new VillagerZombieImpl(server, (ZombieVillagerEntity) entity); }
-                        else if (entity instanceof DrownedEntity) { return new DrownedImpl(server, (DrownedEntity) entity); }
+                        else if (entity instanceof DrownedEntity) { return new CardboardDrowned(server, (DrownedEntity) entity); }
                         else { return new ZombieImpl(server, (ZombieEntity) entity); }
                     }
                     else if (entity instanceof CreeperEntity) { return new CreeperImpl(server, (CreeperEntity) entity); }
                     else if (entity instanceof EndermanEntity) { return new EndermanImpl(server, (EndermanEntity) entity); }
                     else if (entity instanceof SilverfishEntity) { return new CardboardSilverfish(server, (SilverfishEntity) entity); }
-                    else if (entity instanceof GiantEntity) { return new GiantImpl(server, (GiantEntity) entity); }
+                    else if (entity instanceof GiantEntity) { return new CardboardGiant(server, (GiantEntity) entity); }
                     else if (entity instanceof AbstractSkeletonEntity) {
                         if (entity instanceof StrayEntity) { return new StrayImpl(server, (StrayEntity) entity); }
                         else if (entity instanceof WitherSkeletonEntity) { return new WitherSkeletonImpl(server, (WitherSkeletonEntity) entity); }
@@ -417,7 +332,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                     else if (entity instanceof WitchEntity) { return new CardboardWitch(server, (WitchEntity) entity); }
                     else if (entity instanceof WitherEntity) { return new CardboardWither(server, (WitherEntity) entity); }
                     else if (entity instanceof SpiderEntity) {
-                        if (entity instanceof CaveSpiderEntity) { return new CaveSpiderImpl(server, (CaveSpiderEntity) entity); }
+                        if (entity instanceof CaveSpiderEntity) { return new CardboardCaveSpider(server, (CaveSpiderEntity) entity); }
                         else { return new SpiderImpl(server, (SpiderEntity) entity); }
                     }
                     else if (entity instanceof EndermiteEntity) { return new EndermiteImpl(server, (EndermiteEntity) entity); }
@@ -460,7 +375,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             }
             // Slimes are a special (and broken) case
             else if (entity instanceof SlimeEntity) {
-                if (entity instanceof MagmaCubeEntity) { return new MagmaCubeImpl(server, (MagmaCubeEntity) entity); }
+                if (entity instanceof MagmaCubeEntity) { return new CardboardMagmaCube(server, (MagmaCubeEntity) entity); }
                 else { return new SlimeImpl(server, (SlimeEntity) entity); }
             }
             // Flying

@@ -7,9 +7,9 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.EntityType;
 
-public class CatImpl extends TameableAnimalImpl implements Cat {
+public class CardboardCat extends TameableAnimalImpl implements Cat {
 
-    public CatImpl(CraftServer server, CatEntity entity) {
+    public CardboardCat(CraftServer server, CatEntity entity) {
         super(server, entity);
     }
 
