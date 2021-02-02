@@ -82,7 +82,7 @@ public class CardboardPotionUtil {
         if ((potionType = upgradeable.inverse().get(type)) != null)
             return new PotionData(potionType, false, true);
 
-        if ((regular.inverse().get(type)) != null)
+        if ((potionType = regular.inverse().get(type)) != null)
             return new PotionData(potionType, false, false);
         return new PotionData(PotionType.UNCRAFTABLE, false, false);
     }
