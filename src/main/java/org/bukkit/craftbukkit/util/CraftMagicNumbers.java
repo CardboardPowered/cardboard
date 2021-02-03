@@ -144,7 +144,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
             if (null == material && !names.contains(name)) {
                 material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
                 ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedBlock(id.toString()));
-                // i++;
                 MATERIAL_BLOCK.put(material, block);
                 BY_NAME.put(name, material);
                 list.add(material);
@@ -166,7 +165,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
             if (null == material && !names.contains(name)) {
                 material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
                 ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedItem(id.toString()));
-                i++;
                 MATERIAL_ITEM.put(material, item);
                 BY_NAME.put(name, material);
                 list.add(material);
