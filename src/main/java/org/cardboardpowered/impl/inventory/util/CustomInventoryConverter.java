@@ -1,11 +1,11 @@
-package org.bukkit.craftbukkit.inventory.util;
+package org.cardboardpowered.impl.inventory.util;
 
 import org.bukkit.craftbukkit.inventory.CraftInventoryCustom;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-public class CraftCustomInventoryConverter implements CraftInventoryCreator.InventoryConverter {
+public class CustomInventoryConverter implements InventoryCreator.InventoryConverter {
 
     @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type) {

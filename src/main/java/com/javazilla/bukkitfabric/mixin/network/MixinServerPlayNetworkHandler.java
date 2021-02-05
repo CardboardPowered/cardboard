@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.cardboardpowered.impl.block.CardboardSign;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.util.LazyPlayerSet;
 import org.cardboardpowered.impl.util.WaitableImpl;
@@ -371,7 +372,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                     if (!event.isCancelled()) {
                         BlockEntity tileentity = this.player.getServerWorld().getBlockEntity(packet.getPos());
                         SignBlockEntity tileentitysign = (SignBlockEntity) tileentity;
-                        System.arraycopy(org.bukkit.craftbukkit.block.CraftSign.sanitizeLines(event.getLines()), 0, ((IMixinSignBlockEntity)tileentitysign).getTextBF(), 0, 4);
+                        System.arraycopy(CardboardSign.sanitizeLines(event.getLines()), 0, ((IMixinSignBlockEntity)tileentitysign).getTextBF(), 0, 4);
                         tileentitysign.editable = false;
                      }
                 } catch (NullPointerException serverNoLikeSigns) {}

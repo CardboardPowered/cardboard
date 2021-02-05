@@ -1,31 +1,33 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
-import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.block.AbstractBannerBlock;
-import net.minecraft.block.entity.BannerBlockEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.cardboardpowered.impl.block.CardboardBlockEntityState;
+
+import com.google.common.base.Preconditions;
+
+import net.minecraft.block.AbstractBannerBlock;
+import net.minecraft.block.entity.BannerBlockEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 @SuppressWarnings("deprecation")
-public class CraftBanner extends CardboardBlockEntityState<BannerBlockEntity> implements Banner {
+public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity> implements Banner {
 
     private DyeColor base;
     private List<Pattern> patterns;
 
-    public CraftBanner(final Block block) {
+    public CardboardBanner(final Block block) {
         super(block, BannerBlockEntity.class);
     }
 
-    public CraftBanner(final Material material, final BannerBlockEntity te) {
+    public CardboardBanner(final Material material, final BannerBlockEntity te) {
         super(material, te);
     }
 

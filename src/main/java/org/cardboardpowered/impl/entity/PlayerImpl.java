@@ -58,7 +58,6 @@ import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
-import org.bukkit.craftbukkit.block.CraftSign;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -81,6 +80,7 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scoreboard.Scoreboard;
 import org.cardboardpowered.impl.AdvancementImpl;
 import org.cardboardpowered.impl.AdvancementProgressImpl;
+import org.cardboardpowered.impl.block.CardboardSign;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.Title;
@@ -844,7 +844,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
         if (lines.length < 4)
             throw new IllegalArgumentException("Must have at least 4 lines");
 
-        Text[] components = CraftSign.sanitizeLines(lines);
+        Text[] components = CardboardSign.sanitizeLines(lines);
         SignBlockEntity sign = new SignBlockEntity();
         sign.setPos(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         sign.setTextColor(net.minecraft.util.DyeColor.byId(dyeColor.getWoolData()));

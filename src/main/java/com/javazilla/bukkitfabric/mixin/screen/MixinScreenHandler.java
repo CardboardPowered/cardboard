@@ -3,13 +3,11 @@ package com.javazilla.bukkitfabric.mixin.screen;
 import java.util.List;
 
 import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.util.CraftCustomInventoryConverter;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.inventory.CustomInventoryView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
@@ -45,6 +43,11 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
         CardboardInventoryView source = this.getBukkitView(), destination = ((IMixinScreenHandler)other).getBukkitView();
         source.setPlayerIfNotSet(player);
         destination.setPlayerIfNotSet(player);
+
+        if ((source.getTopInventory() instanceof CustomInventoryView) || source.getBottomInventory() instanceof CustomInventoryView ||
+                destination.getTopInventory() instanceof CustomInventoryView || destination.getBottomInventory() instanceof CustomInventoryView) {
+            return;
+        }
 
         ((IMixinInventory)((CraftInventory) source.getTopInventory()).getInventory()).onClose(player);
         ((IMixinInventory)((CraftInventory) source.getBottomInventory()).getInventory()).onClose(player);

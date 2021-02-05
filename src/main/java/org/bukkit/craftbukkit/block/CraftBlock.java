@@ -280,7 +280,7 @@ public class CraftBlock implements Block {
             case SPRUCE_WALL_SIGN:
             case WARPED_SIGN:
             case WARPED_WALL_SIGN:
-                return new CraftSign(this);
+                return new CardboardSign(this);
             case CHEST:
             case TRAPPED_CHEST:
                 return new CardboardChest(this);
@@ -312,7 +312,7 @@ public class CraftBlock implements Block {
             case WITHER_SKELETON_WALL_SKULL:
             case ZOMBIE_HEAD:
             case ZOMBIE_WALL_HEAD:
-                return new CraftSkull(this);
+                return new CardboardSkull(this);
             case COMMAND_BLOCK:
             case CHAIN_COMMAND_BLOCK:
             case REPEATING_COMMAND_BLOCK:
@@ -351,7 +351,7 @@ public class CraftBlock implements Block {
             case WHITE_WALL_BANNER:
             case YELLOW_BANNER:
             case YELLOW_WALL_BANNER:
-                return new CraftBanner(this);
+                return new CardboardBanner(this);
             case STRUCTURE_BLOCK:
                 return new CardboardStructureBlock(this);
             case SHULKER_BOX:

@@ -85,7 +85,6 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.inventory.util.CraftInventoryCreator;
 import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -137,8 +136,23 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import org.cardboardpowered.impl.CardboardBossBar;
 import org.cardboardpowered.impl.IpBanList;
 import org.cardboardpowered.impl.ProfileBanList;
+import org.cardboardpowered.impl.command.BukkitCommandWrapper;
+import org.cardboardpowered.impl.command.CommandMapImpl;
+import org.cardboardpowered.impl.command.ConsoleCommandSenderImpl;
+import org.cardboardpowered.impl.command.MinecraftCommandWrapper;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.recipe.CardboardBlastingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardCampfireRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardFurnaceRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardShapedRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardShapelessRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardSmithingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardSmokingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.CardboardStonecuttingRecipe;
+import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
+import org.cardboardpowered.impl.inventory.recipe.RecipeIterator;
+import org.cardboardpowered.impl.inventory.util.InventoryCreator;
+import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.tag.BlockTagImpl;
 import org.cardboardpowered.impl.tag.FluidTagImpl;
 import org.cardboardpowered.impl.tag.ItemTagImpl;
@@ -150,7 +164,6 @@ import org.cardboardpowered.impl.world.WorldImpl;
 import org.spigotmc.SpigotConfig;
 
 import com.destroystokyo.paper.entity.ai.MobGoals;
-import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -163,20 +176,6 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
-import org.cardboardpowered.impl.command.BukkitCommandWrapper;
-import org.cardboardpowered.impl.command.CommandMapImpl;
-import org.cardboardpowered.impl.command.ConsoleCommandSenderImpl;
-import org.cardboardpowered.impl.command.MinecraftCommandWrapper;
-import org.cardboardpowered.impl.inventory.recipe.CardboardCampfireRecipe;
-import org.cardboardpowered.impl.inventory.recipe.CardboardFurnaceRecipe;
-import org.cardboardpowered.impl.inventory.recipe.CardboardShapedRecipe;
-import org.cardboardpowered.impl.inventory.recipe.CardboardShapelessRecipe;
-import org.cardboardpowered.impl.inventory.recipe.CardboardSmithingRecipe;
-import org.cardboardpowered.impl.inventory.recipe.CardboardSmokingRecipe;
-import org.cardboardpowered.impl.inventory.recipe.CardboardStonecuttingRecipe;
-import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
-import org.cardboardpowered.impl.inventory.recipe.RecipeIterator;
-import org.cardboardpowered.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -667,22 +666,22 @@ public class CraftServer implements Server {
 
     @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type) {
-        return CraftInventoryCreator.INSTANCE.createInventory(holder, type);
+        return InventoryCreator.INSTANCE.createInventory(holder, type);
     }
 
     @Override
     public Inventory createInventory(InventoryHolder arg0, int arg1) throws IllegalArgumentException {
-        return CraftInventoryCreator.INSTANCE.createInventory(arg0, arg1);
+        return InventoryCreator.INSTANCE.createInventory(arg0, arg1);
     }
 
     @Override
     public Inventory createInventory(InventoryHolder arg0, InventoryType arg1, String arg2) {
-        return CraftInventoryCreator.INSTANCE.createInventory(arg0, arg1, arg2);
+        return InventoryCreator.INSTANCE.createInventory(arg0, arg1, arg2);
     }
 
     @Override
     public Inventory createInventory(InventoryHolder arg0, int arg1, String arg2) throws IllegalArgumentException {
-        return CraftInventoryCreator.INSTANCE.createInventory(arg0, arg1, arg2);
+        return InventoryCreator.INSTANCE.createInventory(arg0, arg1, arg2);
     }
 
     @Override

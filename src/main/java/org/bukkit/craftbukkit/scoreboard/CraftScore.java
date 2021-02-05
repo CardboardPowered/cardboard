@@ -9,18 +9,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
-/**
- * TL;DR: This class is special and lazily grabs a handle...
- * ...because a handle is a full fledged (I think permanent) hashMap for the associated name.
- * <p>
- * Also, as an added perk, a CraftScore will (intentionally) stay a valid reference so long as objective is valid.
- */
-final class CraftScore implements Score {
+public final class CraftScore implements Score {
 
     private final String entry;
     private final CraftObjective objective;
 
-    CraftScore(CraftObjective objective, String entry) {
+    public CraftScore(CraftObjective objective, String entry) {
         this.objective = objective;
         this.entry = entry;
     }
@@ -43,13 +37,12 @@ final class CraftScore implements Score {
     @Override
     public int getScore() throws IllegalStateException {
         Scoreboard board = objective.checkState().board;
-
-        if (board.getKnownPlayers().contains(entry)) { // Lazy
+        if (board.getKnownPlayers().contains(entry)) {
             Map<ScoreboardObjective, ScoreboardPlayerScore> scores = board.getPlayerObjectives(entry);
             ScoreboardPlayerScore score = scores.get(objective.getHandle());
-            if (score != null) return score.getScore();// Lazy
+            if (score != null) return score.getScore();
         }
-        return 0; // Lazy
+        return 0;
     }
 
     @Override

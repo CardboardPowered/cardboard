@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,7 +11,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.CraftServer;
-import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
@@ -21,16 +20,16 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.block.entity.SkullBlockEntity;
 
 @SuppressWarnings("deprecation")
-public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> implements Skull {
+public class CardboardSkull extends CardboardBlockEntityState<SkullBlockEntity> implements Skull {
 
     private static final int MAX_OWNER_LENGTH = 16;
     private GameProfile profile;
 
-    public CraftSkull(final Block block) {
+    public CardboardSkull(Block block) {
         super(block, SkullBlockEntity.class);
     }
 
-    public CraftSkull(final Material material, final SkullBlockEntity te) {
+    public CardboardSkull(Material material, SkullBlockEntity te) {
         super(material, te);
     }
 
@@ -157,7 +156,6 @@ public class CraftSkull extends CardboardBlockEntityState<SkullBlockEntity> impl
     @Override
     public void setPlayerProfile(PlayerProfile arg0) {
         this.profile = new GameProfile(arg0.getId(), arg0.getName());
-        
     }
 
 }

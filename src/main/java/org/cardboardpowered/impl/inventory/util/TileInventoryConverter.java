@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.inventory.util;
+package org.cardboardpowered.impl.inventory.util;
 
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
@@ -22,7 +22,7 @@ import net.minecraft.block.entity.SmokerBlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public abstract class CraftTileInventoryConverter implements CraftInventoryCreator.InventoryConverter {
+public abstract class TileInventoryConverter implements InventoryCreator.InventoryConverter {
 
     public abstract net.minecraft.inventory.Inventory getTileEntity();
 
@@ -43,7 +43,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         return new CraftInventory(tileEntity);
     }
 
-    public static class Furnace extends CraftTileInventoryConverter {
+    public static class Furnace extends TileInventoryConverter {
 
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
@@ -65,7 +65,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class BrewingStand extends CraftTileInventoryConverter {
+    public static class BrewingStand extends TileInventoryConverter {
 
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
@@ -86,42 +86,42 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class Dispenser extends CraftTileInventoryConverter {
+    public static class Dispenser extends TileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new DispenserBlockEntity();
         }
     }
 
-    public static class Dropper extends CraftTileInventoryConverter {
+    public static class Dropper extends TileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new DropperBlockEntity();
         }
     }
 
-    public static class Hopper extends CraftTileInventoryConverter {
+    public static class Hopper extends TileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new HopperBlockEntity();
         }
     }
 
-    public static class BlastFurnace extends CraftTileInventoryConverter {
+    public static class BlastFurnace extends TileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new BlastFurnaceBlockEntity();
         }
     }
 
-    public static class Lectern extends CraftTileInventoryConverter {
+    public static class Lectern extends TileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new LecternBlockEntity().inventory;
         }
     }
 
-    public static class Smoker extends CraftTileInventoryConverter {
+    public static class Smoker extends TileInventoryConverter {
         @Override
         public net.minecraft.inventory.Inventory getTileEntity() {
             return new SmokerBlockEntity();

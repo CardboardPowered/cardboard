@@ -1,27 +1,28 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.cardboardpowered.impl.block.CardboardBlockEntityState;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 
-public class CraftSign extends CardboardBlockEntityState<SignBlockEntity> implements Sign {
+import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+
+@SuppressWarnings("deprecation")
+public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> implements Sign {
 
     private String[] lines;
     private boolean editable;
 
-    public CraftSign(final Block block) {
+    public CardboardSign(final Block block) {
         super(block, SignBlockEntity.class);
     }
 
-    public CraftSign(final Material material, final SignBlockEntity te) {
+    public CardboardSign(final Material material, final SignBlockEntity te) {
         super(material, te);
     }
 
@@ -58,13 +59,11 @@ public class CraftSign extends CardboardBlockEntityState<SignBlockEntity> implem
         this.editable = editable;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public DyeColor getColor() {
         return DyeColor.getByWoolData((byte) getSnapshot().getTextColor().getId());
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void setColor(DyeColor color) {
         getSnapshot().setTextColor(net.minecraft.util.DyeColor.byId(color.getWoolData()));
@@ -76,7 +75,7 @@ public class CraftSign extends CardboardBlockEntityState<SignBlockEntity> implem
 
         Text[] newLines = sanitizeLines(lines);
         System.arraycopy(newLines, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, 4);
-        sign.editable = true;//.setEditable(editable);
+        sign.editable = true;
     }
 
     public static Text[] sanitizeLines(String[] lines) {

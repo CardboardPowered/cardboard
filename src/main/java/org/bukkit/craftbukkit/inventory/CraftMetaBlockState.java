@@ -268,7 +268,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case SPRUCE_SIGN:
         case SPRUCE_WALL_SIGN:
             if (te == null) te = new SignBlockEntity();
-            return new CraftSign(material, (SignBlockEntity) te);
+            return new CardboardSign(material, (SignBlockEntity) te);
         case CHEST:
         case TRAPPED_CHEST:
             if (te == null) te = new ChestBlockEntity();
@@ -310,7 +310,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case ZOMBIE_HEAD:
         case ZOMBIE_WALL_HEAD:
             if (te == null) te = new SkullBlockEntity();
-            return new CraftSkull(material, (SkullBlockEntity) te);
+            return new CardboardSkull(material, (SkullBlockEntity) te);
         case COMMAND_BLOCK:
         case REPEATING_COMMAND_BLOCK:
         case CHAIN_COMMAND_BLOCK:
@@ -360,10 +360,10 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case WHITE_WALL_BANNER:
         case YELLOW_BANNER:
         case YELLOW_WALL_BANNER:
-            if (te == null) {
+            if (te == null)
                 te = new BannerBlockEntity();
-            }
-            return new CraftBanner(material == Material.SHIELD ? shieldToBannerHack(blockEntityTag) : material, (BannerBlockEntity) te);
+
+            return new CardboardBanner(material == Material.SHIELD ? shieldToBannerHack(blockEntityTag) : material, (BannerBlockEntity) te);
         case STRUCTURE_BLOCK:
             if (te == null) te = new StructureBlockBlockEntity();
             return new CardboardStructureBlock(material, (StructureBlockBlockEntity) te);
@@ -458,7 +458,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case OAK_WALL_SIGN:
         case SPRUCE_SIGN:
         case SPRUCE_WALL_SIGN:
-            valid = blockState instanceof CraftSign;
+            valid = blockState instanceof CardboardSign;
             break;
         case CHEST:
         case TRAPPED_CHEST:
@@ -500,7 +500,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case WITHER_SKELETON_WALL_SKULL:
         case ZOMBIE_HEAD:
         case ZOMBIE_WALL_HEAD:
-            valid = blockState instanceof CraftSkull;
+            valid = blockState instanceof CardboardSkull;
             break;
         case COMMAND_BLOCK:
         case REPEATING_COMMAND_BLOCK:
@@ -543,7 +543,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case WHITE_WALL_BANNER:
         case YELLOW_BANNER:
         case YELLOW_WALL_BANNER:
-            valid = blockState instanceof CraftBanner;
+            valid = blockState instanceof CardboardBanner;
             break;
         case STRUCTURE_BLOCK:
             valid = blockState instanceof CardboardStructureBlock;
@@ -614,7 +614,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         blockEntityTag = ((CardboardBlockEntityState) blockState).getSnapshotNBT();
         // Set shield base
         if (material == Material.SHIELD)
-            blockEntityTag.putInt(CraftMetaBanner.BASE.NBT, ((CraftBanner) blockState).getBaseColor().getWoolData());
+            blockEntityTag.putInt(CraftMetaBanner.BASE.NBT, ((CardboardBanner) blockState).getBaseColor().getWoolData());
     }
 
     private static Material shieldToBannerHack(CompoundTag tag) {

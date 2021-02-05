@@ -18,9 +18,12 @@
  */
 package com.javazilla.bukkitfabric.mixin;
 
+import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLogger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -29,9 +32,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.destroystokyo.paper.utils.PaperPluginLogger;
 import com.javazilla.bukkitfabric.BukkitLogger;
 
-@Mixin(value = PluginLogger.class, remap = false)
+@Mixin(value = PaperPluginLogger.class, remap = false)
 public class MixinPluginLogger {
 
     @Shadow
@@ -42,6 +46,12 @@ public class MixinPluginLogger {
     @Inject(at = @At("TAIL"), method = "<init>*")
     public void setBF(Plugin context, CallbackInfo ci) {
         this.BF_LOGGER = BukkitLogger.getLogger();
+    }
+
+    @Overwrite
+    public static Logger getLogger(PluginDescriptionFile description) {
+        Logger logger = BukkitLogger.getLogger();
+        return logger;
     }
 
     /**

@@ -7,8 +7,8 @@ import net.minecraft.scoreboard.ScoreboardObjective;
 
 public class CraftCriteria {
 
-    static final Map<String, CraftCriteria> DEFAULTS;
-    static final CraftCriteria DUMMY;
+    private static final Map<String, CraftCriteria> DEFAULTS;
+    private static final CraftCriteria DUMMY;
 
     static {
         ImmutableMap.Builder<String, CraftCriteria> defaults = ImmutableMap.builder();
@@ -35,7 +35,7 @@ public class CraftCriteria {
         return DEFAULTS.get(objective.getCriterion().getName());
     }
 
-    static CraftCriteria getFromBukkit(String name) {
+    public static CraftCriteria getFromBukkit(String name) {
         final CraftCriteria criteria = DEFAULTS.get(name);
         return (criteria != null) ? criteria : new CraftCriteria(name);
     }
