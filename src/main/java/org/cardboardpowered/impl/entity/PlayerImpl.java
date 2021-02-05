@@ -966,7 +966,7 @@ public class PlayerImpl extends HumanEntityImpl implements Player {
 
     @Override
     public void setResourcePack(String url) {
-        nms.sendResourcePackUrl(url, null);
+        nms.sendResourcePackUrl(url, "null");
     }
 
     @Override
