@@ -18,19 +18,12 @@
  */
 package com.javazilla.bukkitfabric.mixin;
 
-import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLogger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.destroystokyo.paper.utils.PaperPluginLogger;
 import com.javazilla.bukkitfabric.BukkitLogger;
@@ -38,30 +31,14 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 @Mixin(value = PaperPluginLogger.class, remap = false)
 public class MixinPluginLogger {
 
-    @Shadow
-    public String pluginName;
-
-    public BukkitLogger BF_LOGGER;
-
-    @Inject(at = @At("TAIL"), method = "<init>*")
-    public void setBF(Plugin context, CallbackInfo ci) {
-        this.BF_LOGGER = BukkitLogger.getLogger();
-    }
-
     @Overwrite
-    public static Logger getLogger(PluginDescriptionFile description) {
-        Logger logger = BukkitLogger.getLogger();
+    public static Logger getLogger(PluginDescriptionFile des) {
+        Logger logger = BukkitLogger.getPluginLogger(des.getName());
         return logger;
     }
 
-    /**
-     * @reason .
-     * @author .
-     */
-    @Overwrite
     public void log(LogRecord logRecord) {
-        logRecord.setMessage(pluginName + logRecord.getMessage());
-        BF_LOGGER.log(logRecord);
+        BukkitLogger.getLogger().log(logRecord);
     }
 
 }
