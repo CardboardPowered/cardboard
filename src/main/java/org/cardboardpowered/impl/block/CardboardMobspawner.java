@@ -1,23 +1,22 @@
-package org.bukkit.craftbukkit.block;
+package org.cardboardpowered.impl.block;
 
-import com.google.common.base.Preconditions;
-import net.minecraft.block.entity.MobSpawnerBlockEntity;
-import net.minecraft.util.Identifier;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.cardboardpowered.impl.block.CardboardBlockEntityState;
+
+import net.minecraft.block.entity.MobSpawnerBlockEntity;
+import net.minecraft.util.Identifier;
 
 @SuppressWarnings("deprecation")
-public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBlockEntity> implements CreatureSpawner {
+public class CardboardMobspawner extends CardboardBlockEntityState<MobSpawnerBlockEntity> implements CreatureSpawner {
 
-    public CraftCreatureSpawner(final Block block) {
+    public CardboardMobspawner(final Block block) {
         super(block, MobSpawnerBlockEntity.class);
     }
 
-    public CraftCreatureSpawner(final Material material, MobSpawnerBlockEntity te) {
+    public CardboardMobspawner(final Material material, MobSpawnerBlockEntity te) {
         super(material, te);
     }
 
@@ -41,7 +40,6 @@ public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBl
 
     @Override
     public void setCreatureTypeByName(String creatureType) {
-        // Verify input
         EntityType type = EntityType.fromName(creatureType);
         if (type == null) return;
         setSpawnedType(type);
@@ -64,7 +62,6 @@ public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBl
 
     @Override
     public void setMinSpawnDelay(int spawnDelay) {
-        Preconditions.checkArgument(spawnDelay <= getMaxSpawnDelay(), "Minimum Spawn Delay must be less than or equal to Maximum Spawn Delay");
         this.getSnapshot().getLogic().minSpawnDelay = spawnDelay;
     }
 
@@ -75,8 +72,6 @@ public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBl
 
     @Override
     public void setMaxSpawnDelay(int spawnDelay) {
-        Preconditions.checkArgument(spawnDelay > 0, "Maximum Spawn Delay must be greater than 0.");
-        Preconditions.checkArgument(spawnDelay >= getMinSpawnDelay(), "Maximum Spawn Delay must be greater than or equal to Minimum Spawn Delay");
         this.getSnapshot().getLogic().maxSpawnDelay = spawnDelay;
     }
 
@@ -129,7 +124,6 @@ public class CraftCreatureSpawner extends CardboardBlockEntityState<MobSpawnerBl
     @Override
     public void resetTimer() {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

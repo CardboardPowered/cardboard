@@ -266,7 +266,7 @@ public final class JavaPluginLoader implements PluginLoader {
                 }
             }
 
-            EventExecutor executor = new EventExecutor() {
+            /*EventExecutor executor = new EventExecutor() {
                 @Override
                 public void execute(Listener listener, Event event) throws EventException {
                     try {
@@ -279,7 +279,9 @@ public final class JavaPluginLoader implements PluginLoader {
                         throw new EventException(t);
                     }
                 }
-            };
+            };*/
+            EventExecutor executor = new co.aikar.timings.TimedEventExecutor(EventExecutor.create(method, eventClass), plugin, method, eventClass); // Paper // Paper (Yes.) - Use factory method `EventExecutor.create()`
+            
             eventSet.add(useTimings ? new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()) :
                 new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
         }

@@ -1,8 +1,46 @@
 package org.bukkit.craftbukkit.inventory;
 
+import java.util.Map;
+
+import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
+import org.bukkit.block.BlockState;
+import org.bukkit.configuration.serialization.DelegateDeserialization;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.cardboardpowered.impl.block.CardboardBanner;
+import org.cardboardpowered.impl.block.CardboardBarrel;
+import org.cardboardpowered.impl.block.CardboardBeacon;
+import org.cardboardpowered.impl.block.CardboardBeehive;
+import org.cardboardpowered.impl.block.CardboardBell;
+import org.cardboardpowered.impl.block.CardboardBlastFurnace;
+import org.cardboardpowered.impl.block.CardboardBlockEntityState;
+import org.cardboardpowered.impl.block.CardboardBrewingStand;
+import org.cardboardpowered.impl.block.CardboardCampfire;
+import org.cardboardpowered.impl.block.CardboardChest;
+import org.cardboardpowered.impl.block.CardboardCommandBlock;
+import org.cardboardpowered.impl.block.CardboardComparator;
+import org.cardboardpowered.impl.block.CardboardDaylightDetector;
+import org.cardboardpowered.impl.block.CardboardDispenser;
+import org.cardboardpowered.impl.block.CardboardDropper;
+import org.cardboardpowered.impl.block.CardboardEnchantingTable;
+import org.cardboardpowered.impl.block.CardboardEndGateway;
+import org.cardboardpowered.impl.block.CardboardEnderchest;
+import org.cardboardpowered.impl.block.CardboardFurnace;
+import org.cardboardpowered.impl.block.CardboardHopper;
+import org.cardboardpowered.impl.block.CardboardJigsaw;
+import org.cardboardpowered.impl.block.CardboardJukebox;
+import org.cardboardpowered.impl.block.CardboardLectern;
+import org.cardboardpowered.impl.block.CardboardMobspawner;
+import org.cardboardpowered.impl.block.CardboardShulkerBox;
+import org.cardboardpowered.impl.block.CardboardSign;
+import org.cardboardpowered.impl.block.CardboardSkull;
+import org.cardboardpowered.impl.block.CardboardSmoker;
+import org.cardboardpowered.impl.block.CardboardStructureBlock;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
+
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BarrelBlockEntity;
@@ -36,14 +74,6 @@ import net.minecraft.block.entity.StructureBlockBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.DyeColor;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Material;
-import org.bukkit.block.BlockState;
-import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.block.*;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.cardboardpowered.impl.block.*;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta {
@@ -290,7 +320,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             return new CardboardHopper(material, (HopperBlockEntity) te);
         case SPAWNER:
             if (te == null) te = new MobSpawnerBlockEntity();
-            return new CraftCreatureSpawner(material, (MobSpawnerBlockEntity) te);
+            return new CardboardMobspawner(material, (MobSpawnerBlockEntity) te);
         case JUKEBOX:
             if (te == null) te = new JukeboxBlockEntity();
             return new CardboardJukebox(material, (JukeboxBlockEntity) te);
@@ -480,7 +510,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             valid = blockState instanceof CardboardHopper;
             break;
         case SPAWNER:
-            valid = blockState instanceof CraftCreatureSpawner;
+            valid = blockState instanceof CardboardMobspawner;
             break;
         case JUKEBOX:
             valid = blockState instanceof CardboardJukebox;

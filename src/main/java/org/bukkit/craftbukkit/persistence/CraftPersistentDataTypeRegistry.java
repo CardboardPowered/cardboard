@@ -61,17 +61,6 @@ public final class CraftPersistentDataTypeRegistry {
 
     private final Map<Class, TagAdapter> adapters = new HashMap<>();
 
-    /**
-     * Creates a suitable adapter instance for the primitive class type
-     *
-     * @param type the type to create an adapter for
-     * @param <T> the generic type of that class
-     *
-     * @return the created adapter instance
-     *
-     * @throws IllegalArgumentException if no suitable tag type adapter for this
-     * type was found
-     */
     private <T> TagAdapter createAdapter(Class<T> type) {
         if (!Primitives.isWrapperType(type))
             type = Primitives.wrap(type); // Make sure we will always "switch" over the wrapper types
