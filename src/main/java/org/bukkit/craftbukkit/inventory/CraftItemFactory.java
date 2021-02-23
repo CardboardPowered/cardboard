@@ -290,16 +290,7 @@ public final class CraftItemFactory implements ItemFactory {
         return equals((CraftMetaItem) meta1, (CraftMetaItem) meta2);
     }
 
-    boolean equals(CraftMetaItem meta1, CraftMetaItem meta2) {
-        /*
-         * This couldn't be done inside of the objects themselves, else force recursion.
-         * This is a fairly clean way of implementing it, by dividing the methods into purposes and letting each method perform its own function.
-         *
-         * The common and uncommon were split, as both could have variables not applicable to the other, like a skull and book.
-         * Each object needs its chance to say "hey wait a minute, we're not equal," but without the redundancy of using the 1.equals(2) && 2.equals(1) checking the 'commons' twice.
-         *
-         * Doing it this way fills all conditions of the .equals() method.
-         */
+    public boolean equals(CraftMetaItem meta1, CraftMetaItem meta2) {
         return meta1.equalsCommon(meta2) && meta1.notUncommon(meta2) && meta2.notUncommon(meta1);
     }
 

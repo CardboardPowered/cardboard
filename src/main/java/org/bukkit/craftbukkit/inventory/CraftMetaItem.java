@@ -1161,13 +1161,12 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     void serializeInternal(final Map<String, Tag> unhandledTags) {
     }
 
-    Material updateMaterial(Material material) {
+    public Material updateMaterial(Material material) {
         return material;
     }
 
-    static void serializeEnchantments(Map<Enchantment, Integer> enchantments, ImmutableMap.Builder<String, Object> builder, ItemMetaKey key) {
-        if (enchantments == null || enchantments.isEmpty())
-            return;
+    public static void serializeEnchantments(Map<Enchantment, Integer> enchantments, ImmutableMap.Builder<String, Object> builder, ItemMetaKey key) {
+        if (enchantments == null || enchantments.isEmpty()) return;
 
         ImmutableMap.Builder<String, Integer> enchants = ImmutableMap.builder();
         for (Map.Entry<? extends Enchantment, Integer> enchant : enchantments.entrySet())
@@ -1176,55 +1175,46 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         builder.put(key.BUKKIT, enchants.build());
     }
 
-    static void serializeModifiers(Multimap<Attribute, AttributeModifier> modifiers, ImmutableMap.Builder<String, Object> builder, ItemMetaKey key) {
-        if (modifiers == null || modifiers.isEmpty())
-            return;
+    public static void serializeModifiers(Multimap<Attribute, AttributeModifier> modifiers, ImmutableMap.Builder<String, Object> builder, ItemMetaKey key) {
+        if (modifiers == null || modifiers.isEmpty()) return;
 
         Map<String, List<Object>> mods = new LinkedHashMap<>();
         for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
-            if (entry.getKey() == null)
-                continue;
+            if (entry.getKey() == null) continue;
 
             Collection<AttributeModifier> modCollection = modifiers.get(entry.getKey());
-            if (modCollection == null || modCollection.isEmpty())
-                continue;
+            if (modCollection == null || modCollection.isEmpty()) continue;
             mods.put(entry.getKey().name(), new ArrayList<>(modCollection));
         }
         builder.put(key.BUKKIT, mods);
     }
 
-    static void safelyAdd(Iterable<?> addFrom, Collection<Text> addTo, int maxItemLength) {
-        if (addFrom == null)
-            return;
+    public static void safelyAdd(Iterable<?> addFrom, Collection<Text> addTo, int maxItemLength) {
+        if (addFrom == null) return;
 
         for (Object object : addFrom) {
             if (!(object instanceof String)) {
                 if (object != null)
                     throw new IllegalArgumentException(addFrom + " cannot contain non-string " + object.getClass().getName());
-
                 addTo.add(new LiteralText(""));
             } else {
                 String page = object.toString();
-
-                if (page.length() > maxItemLength)
-                    page = page.substring(0, maxItemLength);
+                if (page.length() > maxItemLength) page = page.substring(0, maxItemLength);
                 addTo.add(CraftChatMessage.wrapOrEmpty(page));
             }
         }
     }
 
-    static boolean checkConflictingEnchants(Map<Enchantment, Integer> enchantments, Enchantment ench) {
-        if (enchantments == null || enchantments.isEmpty())
-            return false;
+    public static boolean checkConflictingEnchants(Map<Enchantment, Integer> enchantments, Enchantment ench) {
+        if (enchantments == null || enchantments.isEmpty()) return false;
 
-        for (Enchantment enchant : enchantments.keySet())
-            if (enchant.conflictsWith(ench)) return true;
+        for (Enchantment enchant : enchantments.keySet()) if (enchant.conflictsWith(ench)) return true;
         return false;
     }
 
     @Override
     public final String toString() {
-        return SerializableMeta.classMap.get(getClass()) + "_META:" + serialize(); // TODO: cry
+        return SerializableMeta.classMap.get(getClass()) + "_META:" + serialize();
     }
 
     public int getVersion() {
@@ -1336,37 +1326,31 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     @Override
     public void setCanDestroy(Set<Material> arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setCanPlaceOn(Set<Material> arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setDestroyableKeys(Collection<Namespaced> arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setDisplayNameComponent(BaseComponent[] arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setLoreComponents(List<BaseComponent[]> arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setPlaceableKeys(Collection<Namespaced> arg0) {
         // TODO Auto-generated method stub
-        
     }
 
 }
