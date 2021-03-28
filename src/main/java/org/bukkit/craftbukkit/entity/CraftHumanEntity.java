@@ -1,4 +1,4 @@
-package org.cardboardpowered.impl.entity;
+package org.bukkit.craftbukkit.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
@@ -69,14 +71,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.BlockPos;
 
-public class HumanEntityImpl extends LivingEntityImpl implements HumanEntity {
+public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
     private CardboardPlayerInventory inventory;
     protected GameMode gm;
     protected final PermissibleBase perm = new PermissibleBase(this);
     private boolean op;
 
-    public HumanEntityImpl(PlayerEntity entity) {
+    public CraftHumanEntity(PlayerEntity entity) {
         super(entity);
         this.nms = entity;
         this.gm = CraftServer.INSTANCE.getDefaultGameMode();

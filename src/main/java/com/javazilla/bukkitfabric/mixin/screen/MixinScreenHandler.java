@@ -2,6 +2,7 @@ package com.javazilla.bukkitfabric.mixin.screen;
 
 import java.util.List;
 
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.inventory.CustomInventoryView;
@@ -39,7 +40,7 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     public List<Slot> slots;
 
     @Override
-    public void transferTo(ScreenHandler other, org.cardboardpowered.impl.entity.HumanEntityImpl player) {
+    public void transferTo(ScreenHandler other, CraftHumanEntity player) {
         CardboardInventoryView source = this.getBukkitView(), destination = ((IMixinScreenHandler)other).getBukkitView();
         source.setPlayerIfNotSet(player);
         destination.setPlayerIfNotSet(player);

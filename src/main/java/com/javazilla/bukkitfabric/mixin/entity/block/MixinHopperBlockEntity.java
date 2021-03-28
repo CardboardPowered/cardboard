@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
@@ -42,11 +42,11 @@ public class MixinHopperBlockEntity implements IMixinInventory {
         return this.inventory;
     }
 
-    public void onOpen(HumanEntityImpl who) {
+    public void onOpen(CraftHumanEntity who) {
         transaction.add(who);
     }
 
-    public void onClose(HumanEntityImpl who) {
+    public void onClose(CraftHumanEntity who) {
         transaction.remove(who);
     }
 

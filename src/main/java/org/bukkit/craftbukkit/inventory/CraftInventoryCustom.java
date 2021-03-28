@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
@@ -139,12 +139,12 @@ public class CraftInventoryCustom extends CraftInventory {
         }
 
         @Override
-        public void onOpen(HumanEntityImpl who) {
+        public void onOpen(CraftHumanEntity who) {
             viewers.add(who);
         }
 
         @Override
-        public void onClose(HumanEntityImpl who) {
+        public void onClose(CraftHumanEntity who) {
             viewers.remove(who);
         }
 

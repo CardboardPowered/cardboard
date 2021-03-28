@@ -47,6 +47,7 @@ dependencies {
     extraLibs fileTree(dir: 'libs', include: 'paper-api-1.16.4-416.jar')
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     extraLibs fileTree(dir: 'libs', include: 'slf4j.jar')
+	extraLibs fileTree(dir: 'libs', include: 'jline-3.19.jar')
     compile   fileTree(dir: 'libs', include: 'material-compile-only.jar')
     extraLibs group: "org.jetbrains", name: "annotations", version: "18.0.0"
     extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,8 +29,8 @@ public class MixinCraftingResultInventory implements IMixinInventory {
     }
 
     // MixinCraftingInventory takes care of this
-    @Override public void onOpen(HumanEntityImpl who) {}
-    @Override public void onClose(HumanEntityImpl who) {}
+    @Override public void onOpen(CraftHumanEntity who) {}
+    @Override public void onClose(CraftHumanEntity who) {}
     @Override public List<HumanEntity> getViewers() {return new ArrayList<HumanEntity>();}
 
     @Override

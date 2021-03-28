@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
@@ -32,12 +32,12 @@ public class MixinPlayerInventory implements IMixinInventory, IMixinPlayerInvent
     }
 
     @Override
-    public void onOpen(HumanEntityImpl who) {
+    public void onOpen(CraftHumanEntity who) {
         get().onOpen((PlayerEntity) who.nms);
     }
 
     @Override
-    public void onClose(HumanEntityImpl who) {
+    public void onClose(CraftHumanEntity who) {
         get().onClose((PlayerEntity) who.nms);
     }
 

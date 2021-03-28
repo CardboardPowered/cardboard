@@ -1,7 +1,7 @@
 package org.cardboardpowered.impl.inventory;
 
 import org.bukkit.GameMode;
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -18,18 +18,18 @@ import net.minecraft.screen.ScreenHandler;
 public class CardboardInventoryView extends InventoryView {
 
     private final ScreenHandler container;
-    private HumanEntityImpl player;
+    private CraftHumanEntity player;
     private final CraftInventory viewing;
 
     public CardboardInventoryView(HumanEntity player, Inventory viewing, ScreenHandler container) {
-        this.player = (null !=player) ? (HumanEntityImpl) player : null;
+        this.player = (null !=player) ? (CraftHumanEntity) player : null;
         this.viewing = (CraftInventory) viewing;
         this.container = container;
     }
 
     public void setPlayerIfNotSet(HumanEntity player) {
         if (null == this.player)
-            this.player = (HumanEntityImpl) player;
+            this.player = (CraftHumanEntity) player;
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.javazilla.bukkitfabric.mixin.entity.block;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,12 +29,12 @@ public class MixinDispenserBlockEntity implements IMixinInventory {
     }
 
     @Override
-    public void onOpen(HumanEntityImpl who) {
+    public void onOpen(CraftHumanEntity who) {
         transaction.add(who);
     }
 
     @Override
-    public void onClose(HumanEntityImpl who) {
+    public void onClose(CraftHumanEntity who) {
         transaction.remove(who);
     }
 

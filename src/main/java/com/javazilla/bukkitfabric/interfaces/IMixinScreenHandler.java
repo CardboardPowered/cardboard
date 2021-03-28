@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard - CardboardPowered.org
+ * Copyright (C) 2020 CardboardPowered.org and contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@ package com.javazilla.bukkitfabric.interfaces;
 
 import java.util.List;
 
-import org.cardboardpowered.impl.entity.HumanEntityImpl;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 
 import net.minecraft.item.ItemStack;
@@ -37,7 +37,7 @@ public interface IMixinScreenHandler {
 
     void setTitle(Text title);
 
-    void transferTo(ScreenHandler other, HumanEntityImpl player);
+    void transferTo(ScreenHandler other, CraftHumanEntity player);
 
     DefaultedList<ItemStack> getTrackedStacksBF();
 

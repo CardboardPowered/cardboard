@@ -59,6 +59,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -135,7 +136,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.network.PacketByteBuf;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
-public class PlayerImpl extends HumanEntityImpl implements Player {
+public class PlayerImpl extends CraftHumanEntity implements Player {
 
     private final Set<String> channels = new HashSet<String>();
     public ServerPlayerEntity nms;
