@@ -5,12 +5,12 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -104,8 +104,8 @@ public class MixinHopperBlockEntity implements IMixinInventory {
         try {
             if (!itemstack.isEmpty() && canExtract(iinventory, itemstack, i, enumdirection)) {
                 ItemStack itemstack1 = itemstack.copy();
-                CraftItemStack oitemstack = CraftItemStack.asCraftMirror(iinventory.removeStack(i, 1));
                 if (iinventory instanceof IMixinInventory && ihopper instanceof IMixinInventory) {
+                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(iinventory.removeStack(i, 1));
                     org.bukkit.inventory.Inventory sourceInventory;
                     if (iinventory instanceof DoubleInventory) {
                         sourceInventory = new CardboardDoubleChestInventory((DoubleInventory) iinventory);
@@ -115,15 +115,23 @@ public class MixinHopperBlockEntity implements IMixinInventory {
                     Bukkit.getServer().getPluginManager().callEvent(event);
                     if (event.isCancelled()) {
                         iinventory.setStack(i, itemstack1);
+                        // TODO: Somehow this breaks Mixin?
+                       // if (ihopper instanceof HopperBlockEntity) {
+                        //  ((HopperBlockEntity) ihopper).setCooldown(8); // Delay hopper checks
+                       // } //else if (ihopper instanceof HopperMinecartEntity) {
+                         //   ((HopperMinecartEntity) ihopper).setTransferCooldown(4); // Delay hopper minecart checks
+                        //}
                         ci.setReturnValue(false);
+                        return;
                     }
-                    int origCount = event.getItem().getAmount();
+                  //  int origCount = event.getItem().getAmount();
                     ItemStack itemstack2 = transfer(iinventory, ihopper, CraftItemStack.asNMSCopy(event.getItem()), null);
                     if (itemstack2.isEmpty()) {
                         iinventory.markDirty();
                         ci.setReturnValue(true);
+                        return;
                     }
-                    itemstack1.decrement(origCount - itemstack2.getCount());
+                   // itemstack1.decrement(origCount - itemstack2.getCount());
                     iinventory.setStack(i, itemstack1);
                 } else {
                     error = true;

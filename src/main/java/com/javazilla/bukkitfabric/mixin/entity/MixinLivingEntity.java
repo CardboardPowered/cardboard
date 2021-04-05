@@ -3,16 +3,16 @@ package com.javazilla.bukkitfabric.mixin.entity;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
@@ -27,8 +27,8 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity {
@@ -37,41 +37,38 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
         return (LivingEntity)(Object)this;
     }
 
-    /**
-     * @reason .
-     * @author .
-     */
-    @Overwrite
-    public void consumeItem() {
-        Hand enumhand = get().getActiveHand();
-        if (!get().activeItemStack.equals(get().getStackInHand(enumhand))) {
-            get().stopUsingItem();
-        } else {
-            if (!get().activeItemStack.isEmpty() && get().isUsingItem()) {
-                get().spawnConsumptionEffects(get().activeItemStack, 16);
-                ItemStack itemstack;
-                if (get() instanceof ServerPlayerEntity) {
-                    org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(get().activeItemStack);
-                    PlayerItemConsumeEvent event = new PlayerItemConsumeEvent((Player) ((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity(), craftItem);
-                    Bukkit.getServer().getPluginManager().callEvent(event);
+    private boolean PICE_canceled = false;
 
-                    if (event.isCancelled()) {
-                        ((Player)((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity()).updateInventory();
-                        ((PlayerImpl)((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity()).updateScaledHealth();
-                        return;
-                    }
-                    itemstack = (craftItem.equals(event.getItem())) ? get().activeItemStack.finishUsing(get().world, get()) : CraftItemStack.asNMSCopy(event.getItem()).finishUsing(get().world, get());
-                } else itemstack = get().activeItemStack.finishUsing(get().world, get());
-                // CraftBukkit end
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;finishUsing(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;"), 
+            method = "consumeItem")
+    public ItemStack doBukkitEvent_PlayerItemConsumeEvent(ItemStack s, World w, LivingEntity e) {
+        PICE_canceled = false;
+        if (get() instanceof ServerPlayerEntity) {
+            org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(get().activeItemStack);
+            PlayerItemConsumeEvent event = new PlayerItemConsumeEvent((Player) ((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity(), craftItem);
+            Bukkit.getServer().getPluginManager().callEvent(event);
 
-                if (itemstack != get().activeItemStack) get().setStackInHand(enumhand, itemstack);
-                get().clearActiveItem();
+            if (event.isCancelled()) {
+                ((Player)((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity()).updateInventory();
+                ((PlayerImpl)((IMixinServerEntityPlayer)((ServerPlayerEntity) get())).getBukkitEntity()).updateScaledHealth();
+                PICE_canceled = true;
+                return null;
             }
+            return (craftItem.equals(event.getItem())) ? get().activeItemStack.finishUsing(get().world, get()) : CraftItemStack.asNMSCopy(event.getItem()).finishUsing(get().world, get());
+        } else return get().activeItemStack.finishUsing(get().world, get());
+    }
+
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setStackInHand(Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;)V"),
+            method = "consumeItem", cancellable = true)
+    public void doBukkitEvent_PlayerItemConsumeEvent_FixCancel(CallbackInfo ci) {
+        if (PICE_canceled) {
+            ci.cancel();
+            return;
         }
     }
 
     @Inject(at = @At("HEAD"), method = "drop", cancellable = true)
-    public void drop(DamageSource damagesource, CallbackInfo ci) {
+    public void cardboard_doDrop(DamageSource damagesource, CallbackInfo ci) {
         Entity entity = damagesource.getAttacker();
 
         boolean flag = get().playerHitTimer > 0;

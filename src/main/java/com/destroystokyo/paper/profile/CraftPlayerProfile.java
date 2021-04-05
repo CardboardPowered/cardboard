@@ -181,9 +181,8 @@ public class CraftPlayerProfile implements PlayerProfile {
         boolean isCompleteFromCache = this.completeFromCache(true, onlineMode);
         if (onlineMode && (!isCompleteFromCache || textures && !hasTextures())) {
             GameProfile result = server.getSessionService().fillProfileProperties(profile, true);
-            if (result != null) {
+            if (result != null)
                 copyProfileProperties(result, this.profile, true);
-            }
             if (this.profile.isComplete()) {
                 server.getUserCache().add(this.profile);
                 server.getUserCache().save();
@@ -200,9 +199,7 @@ public class CraftPlayerProfile implements PlayerProfile {
         PropertyMap sourceProperties = source.getProperties();
         PropertyMap targetProperties = target.getProperties();
         if (clearTarget) targetProperties.clear();
-        if (sourceProperties.isEmpty()) {
-            return;
-        }
+        if (sourceProperties.isEmpty()) return;
 
         for (Property property : sourceProperties.values()) {
             targetProperties.removeAll(property.getName());
@@ -256,9 +253,9 @@ public class CraftPlayerProfile implements PlayerProfile {
             return true;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public boolean addAll(Collection<? extends ProfileProperty> c) {
-            //noinspection unchecked
             setProperties((Collection<ProfileProperty>) c);
             return true;
         }
@@ -291,4 +288,5 @@ public class CraftPlayerProfile implements PlayerProfile {
             }
         }
     }
+
 }
