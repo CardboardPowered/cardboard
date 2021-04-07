@@ -54,7 +54,6 @@ public class BukkitFabricMod implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("");
         LOGGER.info("Cardboard Mod - CardboardPowered.org");
-        LOGGER.info("(formerly known as Bukkit4Fabric)");
         LOGGER.info("");
 
         loadLibs();

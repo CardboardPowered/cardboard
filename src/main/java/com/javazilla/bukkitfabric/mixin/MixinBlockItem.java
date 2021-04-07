@@ -22,6 +22,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.event.block.BlockCanBuildEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,10 +31,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
-
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
@@ -66,7 +63,7 @@ public class MixinBlockItem {
      * @author BukkitFabric
      * @reason Bukkit Overwrite
      */
-    @Inject(at = @At("HEAD"), method = "place", cancellable = true)
+   /* @Inject(at = @At("HEAD"), method = "place", cancellable = true)
     public void place1(ItemPlacementContext blockactioncontext, CallbackInfoReturnable<ActionResult> ci) {
         if (!blockactioncontext.canPlace()) {
             ci.setReturnValue(ActionResult.FAIL);
@@ -129,6 +126,36 @@ public class MixinBlockItem {
             }
         }
         ci.setReturnValue(ActionResult.PASS);
+    }*/
+
+    private org.bukkit.block.BlockState bukkit_state;
+
+    @Inject(at = @At(value = "INVOKE_ASSIGN", target = 
+            "Lnet/minecraft/item/BlockItem;getPlacementState(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/block/BlockState;"), 
+            method = "place", cancellable = true)
+    public void bukkitWaterlilyPlacementFix(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> ci) {
+        bukkit_state = null;
+        if (((BlockItem)(Object)this) instanceof LilyPadItem)
+            bukkit_state = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(context.getWorld(), context.getBlockPos());
+
+    }
+
+    @Inject(at = @At(value = "INVOKE_ASSIGN", target =
+            "Lnet/minecraft/item/BlockItem;postPlacement(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/block/BlockState;)Z"),
+            method = "place", cancellable = true)
+    public void doBukkitEvent_DoBlockPlaceEventForWaterlilies(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> ci) {
+        if (bukkit_state != null) {
+            BlockPos pos = context.getBlockPos();
+            World world = context.getWorld();
+            PlayerEntity entityhuman = context.getPlayer();
+
+            BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld) world, entityhuman, context.getHand(), bukkit_state, pos.getX(), pos.getY(), pos.getZ());
+            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
+                bukkit_state.update(true, false);
+                ci.setReturnValue(ActionResult.FAIL);
+                return;
+            }
+        }
     }
 
     /**
