@@ -75,6 +75,7 @@
     "entity.MixinSheepEntity",
     "entity.MixinMooshroomEntity",
     "entity.MixinLeashKnotEntity",
+    "entity.MixinPProjecttileEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",

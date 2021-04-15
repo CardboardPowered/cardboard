@@ -19,6 +19,7 @@ import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -77,6 +78,7 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
             this.dropLoot(damagesource, flag);
             this.dropEquipment(damagesource, ((entity instanceof PlayerEntity) ? EnchantmentHelper.getLooting((LivingEntity) entity) : 0), flag);
         }
+
         BukkitEventFactory.callEntityDeathEvent(get(), ((IMixinEntity)this).cardboard_getDrops());
         ((IMixinEntity)this).cardboard_setDrops(new ArrayList<>());
         get().dropXp();

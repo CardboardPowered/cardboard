@@ -545,6 +545,12 @@ public class BukkitEventFactory {
         LivingEntityImpl entity = (LivingEntityImpl) ((IMixinEntity)victim).getBukkitEntity();
         EntityDeathEvent event = new EntityDeathEvent(entity, drops, ((IMixinLivingEntity)victim).getExpReward());
 
+        if ((null == entity) || (null == entity.getWorld())) {
+            boolean e = (null == entity);
+            BukkitFabricMod.LOGGER.info("WARNING: Null " + (e ? "entity" : "world") + "!");
+            return event;
+        }
+
         WorldImpl world = (WorldImpl) entity.getWorld();
         Bukkit.getServer().getPluginManager().callEvent(event);
 

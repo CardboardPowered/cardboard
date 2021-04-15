@@ -344,7 +344,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public World getWorld() {
-        return (World) ((IMixinWorld)nms.world).getWorldImpl();
+        return ((IMixinWorld)nms.getEntityWorld()).getWorldImpl();
     }
 
     @Override

@@ -56,7 +56,7 @@ public class MixinWorld implements IMixinWorld {
         String name = ((ServerWorldProperties) nms.getLevelProperties()).getLevelName();
         if (CraftServer.INSTANCE.worlds.containsKey(name)) {
             if (nms.getRegistryKey() == World.NETHER) name = name + "_nether";
-            if (nms.getRegistryKey() == World.END) name = name + "_the_end";
+            if (nms.getRegistryKey() == World.END)    name = name + "_the_end";
         }
         this.bukkit = new WorldImpl(name, nms);
         ((CraftServer)Bukkit.getServer()).addWorldToMap(getWorldImpl());
