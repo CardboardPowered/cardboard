@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -43,10 +42,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -163,7 +164,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         String joinMessage = CraftChatMessage.fromComponent(new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}));
 
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(CraftServer.INSTANCE.getPlayer(player), joinMessage);
-        Bukkit.getServer().getPluginManager().callEvent(playerJoinEvent);
+        BukkitEventFactory.callEvent(playerJoinEvent);
         if (!player.networkHandler.connection.isOpen()) return;
 
         joinMessage = playerJoinEvent.getJoinMessage();
@@ -183,7 +184,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     }
 
     @Inject(at = @At("HEAD"), method = "broadcastChatMessage", cancellable = true)
-    public void broadcastChatMessage(Text message, MessageType type, UUID senderUuid, CallbackInfo ci) {
+    public void broadcastChatMessage_cardboard(Text message, MessageType type, UUID senderUuid, CallbackInfo ci) {
         String s = CraftChatMessage.toJSON(message);
         if (s.startsWith("{\"color\":\"yellow\",\"translate\":\"multiplayer.player.joined\"")) {
             // Cancel vanilla's join message. We do this so we don't have to overwrite onPlayerConnect
@@ -246,7 +247,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
                 event.disallow(PlayerLoginEvent.Result.KICK_FULL, "Server is full"); // Spigot
         }
 
-        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        BukkitEventFactory.callEvent(event);
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
             loginlistener.disconnect(new LiteralText(event.getKickMessage()));
             return null;

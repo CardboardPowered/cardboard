@@ -67,6 +67,7 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
+import net.minecraft.network.packet.c2s.play.TeleportConfirmC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdatePlayerAbilitiesC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
@@ -263,8 +264,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      * @reason Bukkit AsyncChat
      * @author Bukkit4Fabric
      */
-    @Overwrite
-    public void method_31286(String message) {
+    //@Overwrite
+    public void method_31286_0(String message) {
         if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
             this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED), MessageType.CHAT, player.getUuid()));
         } else {

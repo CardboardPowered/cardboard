@@ -41,7 +41,7 @@ public class MakeMaterial {
     // TODO: This needs to be kept updated when Spigot updates
     // It is the value of Material.values().length
     public static int MATERIAL_LENGTH = 1540;
-    public static int MODDED_LENGTH = 0;
+    public static int MODDED_LENGTH = 1540;
 
     /**
      * Due to the limitation of the length we use reflection
@@ -52,7 +52,7 @@ public class MakeMaterial {
     public static int JVM_LIMIT = 450;
 
     public static void make() throws IOException {
-        Path p = FabricLoader.getInstance().getModContainer("cardboard").get().getPath("org/bukkit/Material.java1");
+       /* Path p = FabricLoader.getInstance().getModContainer("cardboard").get().getPath("org/bukkit/Material.java1");
         File f = new File("lib", "Material.java");
         Files.copy(p, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
@@ -93,7 +93,7 @@ public class MakeMaterial {
         //f.delete();
         LOGGER.info("Adding \"" + f2.getName() + "\" to Knot.");
         if (!FabricLoader.getInstance().isDevelopmentEnvironment())
-        Knot.getLauncher().propose(f2.toURI().toURL());
+        Knot.getLauncher().propose(f2.toURI().toURL());*/
         CraftMagicNumbers.test();
     }
 

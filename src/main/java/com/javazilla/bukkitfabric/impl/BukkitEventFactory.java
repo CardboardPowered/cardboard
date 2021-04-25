@@ -114,6 +114,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLootManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
@@ -151,6 +152,19 @@ import net.minecraft.world.explosion.Explosion;
 public class BukkitEventFactory {
 
     public static Entity entityDamage;
+
+    /**
+     * TODO: Figure out why using ProtocolLib makes some events asynchronous
+     */
+    public static void callEvent(Event e) {
+        if (!e.isAsynchronous() && !Bukkit.isPrimaryThread()) {
+            ((IMixinMinecraftServer)CraftServer.server).cardboard_runOnMainThread(() -> {
+                CraftServer.INSTANCE.getPluginManager().callEvent(e);
+            });
+            return;
+        }
+        CraftServer.INSTANCE.getPluginManager().callEvent(e);
+    }
 
     public static ServerListPingEvent callServerListPingEvent(Server craftServer, InetAddress address, String motd, int numPlayers, int maxPlayers) {
         ServerListPingEvent event = new ServerListPingEvent(address, motd, numPlayers, maxPlayers);

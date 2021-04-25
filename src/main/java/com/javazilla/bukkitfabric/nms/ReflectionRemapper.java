@@ -124,6 +124,23 @@ public class ReflectionRemapper {
         return CraftServer.server;
     }
 
+    public static Method[] getMethods(Class<?> calling) {
+        Method[] r = calling.getMethods();
+        if (calling.getSimpleName().contains("MinecraftServer")) {
+            Method[] nr = new Method[r.length+1];
+            for (int i = 0; i < r.length; i++) {
+                nr[i] = r[i];
+            }
+            try {
+                nr[r.length] = ReflectionRemapper.class.getMethod("getNmsServer");
+            } catch (NoSuchMethodException | SecurityException e) {
+                e.printStackTrace();
+            }
+            return nr;
+        }
+        return r;
+    }
+
     public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchMethodException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
             return BukkitFabricMod.GET_SERVER;

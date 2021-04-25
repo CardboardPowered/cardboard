@@ -121,7 +121,7 @@ public class IngotReader {
     public static void start() {
         classes_S2F.put("org.bukkit.craftbukkit.CraftWorld", "org.cardboardpowered.impl.world.WorldImpl");
         classes_S2F.put("org.bukkit.craftbukkit.entity.CraftPlayer", "org.cardboardpowered.impl.entity.PlayerImpl");
-        classes_S2F.put("org.bukkit.craftbukkit.entity.CraftHumanEntity", "org.cardboardpowered.impl.entity.HumanEntityImpl");
+        //classes_S2F.put("org.bukkit.craftbukkit.entity.CraftHumanEntity", "org.cardboardpowered.impl.entity.HumanEntityImpl");
         classes_S2F.put("org.bukkit.craftbukkit.entity.CraftLivingEntity", "org.cardboardpowered.impl.entity.LivingEntityImpl");
         classes_S2F.put("org.bukkit.craftbukkit.entity.CraftArmorStand", "org.cardboardpowered.impl.entity.ArmorStandImpl");
 

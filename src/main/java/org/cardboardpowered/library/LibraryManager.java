@@ -12,14 +12,16 @@ import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-import com.javazilla.bukkitfabric.BukkitFabricMod;
+//import com.javazilla.bukkitfabric.BukkitFabricMod;
 
 import net.fabricmc.loader.launch.knot.Knot;
 
@@ -27,6 +29,8 @@ import net.fabricmc.loader.launch.knot.Knot;
  * Simple library manager which downloads external dependencies.
  */
 public final class LibraryManager {
+
+    private final Logger logger = LogManager.getLogger("Cardboard");
 
     /**
      * The Maven repository to download from.
@@ -76,7 +80,7 @@ public final class LibraryManager {
      */
     public void run() {
         if (!directory.isDirectory() && !directory.mkdirs())
-            BukkitFabricMod.LOGGER.log(Level.SEVERE, "Could not create libraries directory: " + directory);
+            logger.error("Could not create libraries directory: " + directory);
 
         for (Library library : libraries) downloaderService.execute(new LibraryDownloader(library));
 
@@ -84,7 +88,7 @@ public final class LibraryManager {
         try {
             if (!downloaderService.awaitTermination(1, TimeUnit.MINUTES)) downloaderService.shutdownNow();
         } catch (InterruptedException e) {
-            BukkitFabricMod.LOGGER.log(Level.SEVERE, "Library Manager thread interrupted: ", e);
+            logger.error("Library Manager thread interrupted: ", e);
         }
     }
 
@@ -115,7 +119,7 @@ public final class LibraryManager {
                 while (attempts < maxDownloadAttempts) {
                     attempts++;
                     // download it
-                    BukkitFabricMod.LOGGER.info("Downloading " + library.toString() + "...");
+                    logger.info("Downloading " + library.toString() + "...");
                     try {
                         URL downloadUrl;
                         if (null == library.libraryKey.spigotJarVersion) {
@@ -130,11 +134,11 @@ public final class LibraryManager {
 
                         try (ReadableByteChannel input = Channels.newChannel(connection.getInputStream()); FileOutputStream output = new FileOutputStream(file)) {
                             output.getChannel().transferFrom(input, 0, Long.MAX_VALUE);
-                            BukkitFabricMod.LOGGER.info("Downloaded " + library.toString() + '.');
+                            logger.info("Downloaded " + library.toString() + '.');
                         }
 
                         if (validateChecksum && library.checksumType != null && library.checksumValue != null && !checksum(file, library)) {
-                            BukkitFabricMod.LOGGER.severe("The checksum for the library '" + getLibrary() + "' does not match. " + (attempts == maxDownloadAttempts ?
+                            logger.error("The checksum for the library '" + getLibrary() + "' does not match. " + (attempts == maxDownloadAttempts ?
                                     "Restart the server to attempt downloading it again." : "Attempting download again ("+ (attempts+1) +"/"+ maxDownloadAttempts +")"));
                             file.delete();
                             if (attempts == maxDownloadAttempts) return;
@@ -143,25 +147,25 @@ public final class LibraryManager {
                         // everything's fine
                         break;
                     } catch (IOException e) {
-                        BukkitFabricMod.LOGGER.log(Level.WARNING, "Failed to download: " + library.toString(), e);
+                        logger.warn( "Failed to download: " + library.toString(), e);
                         file.delete();
                         if (attempts == maxDownloadAttempts) {
-                            BukkitFabricMod.LOGGER.warning("Restart the server to attempt downloading '" + getLibrary() + "' again.");
+                            logger.warn("Restart the server to attempt downloading '" + getLibrary() + "' again.");
                             return;
                         }
-                        BukkitFabricMod.LOGGER.warning("Attempting download of '" + getLibrary() + "' again (" + (attempts + 1) + "/" + maxDownloadAttempts + ")");
+                        logger.warn("Attempting download of '" + getLibrary() + "' again (" + (attempts + 1) + "/" + maxDownloadAttempts + ")");
                     }
                 }
             } else if (validateChecksum && library.checksumType != null && library.checksumValue != null && !checksum(file, library)) {
                 // The file is already downloaded, but validate the checksum as a warning only
-                BukkitFabricMod.LOGGER.warning("The checksum for the library '" + getLibrary() + "' does not match. Remove the library and restart the server to download it again.");
+                logger.warn("The checksum for the library '" + getLibrary() + "' does not match. Remove the library and restart the server to download it again.");
             }
 
             // Add to KnotClassLoader
             try {
                 Knot.getLauncher().propose(file.toURI().toURL());
             } catch (Exception e) {
-                BukkitFabricMod.LOGGER.log(Level.WARNING, "Failed to add to classpath: " + library.toString(), e);
+                logger.warn( "Failed to add to classpath: " + library.toString(), e);
             }
         }
 
@@ -197,7 +201,7 @@ public final class LibraryManager {
             try {
                 digest = Files.hash(file, algorithm.function).toString();
             } catch (IOException ex) {
-                BukkitFabricMod.LOGGER.log(Level.SEVERE, "Failed to compute digest for '" + file.getName() + "'", ex);
+                logger.error("Failed to compute digest for '" + file.getName() + "'", ex);
                 return false;
             }
             //System.out.println(file.getName() + ": " + digest);

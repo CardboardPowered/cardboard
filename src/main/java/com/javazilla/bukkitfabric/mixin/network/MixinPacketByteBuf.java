@@ -2,10 +2,9 @@ package com.javazilla.bukkitfabric.mixin.network;
 
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-
-import net.minecraft.item.Item;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.PacketByteBuf;
@@ -14,17 +13,13 @@ import net.minecraft.network.PacketByteBuf;
 public class MixinPacketByteBuf {
 
     /**
-     * @reason .
-     * @author .
+     * @reason Set org.bukkit.item.ItemStack metadata
      */
-    @Overwrite
-    public ItemStack readItemStack() {
-        if (!this.readBoolean()) return ItemStack.EMPTY;
-
-        ItemStack itemstack = new ItemStack(Item.byRawId(this.readVarInt()), this.readByte());
-        itemstack.setTag(this.readCompoundTag());
-        if (itemstack.getTag() != null) CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
-        return itemstack;
+    @Redirect(at = @At(value = "INVOKE", target="Lnet/minecraft/item/ItemStack;setTag(Lnet/minecraft/nbt/CompoundTag;)V"), 
+            method = { "readItemStack" })
+    public void t(ItemStack stack, CompoundTag tag) {
+        stack.setTag(tag);
+        if (stack.getTag() != null) CraftItemStack.setItemMeta(stack, CraftItemStack.getItemMeta(stack));
     }
 
     @Shadow

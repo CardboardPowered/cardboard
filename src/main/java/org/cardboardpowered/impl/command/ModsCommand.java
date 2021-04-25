@@ -7,6 +7,8 @@ import net.fabricmc.loader.api.ModContainer;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -28,7 +30,10 @@ public class ModsCommand extends Command {
         if (sender.hasPermission("cardboard.command.mods")) {
             String mods = "";
             for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
-                mods += ", " + mod.getMetadata().getName();
+                String name = mod.getMetadata().getName();
+                if (name.startsWith("Fabric") && name.endsWith(")"))
+                    continue; // Don't list all modules of FAPI
+                mods += ", " + ChatColor.GREEN + name + ChatColor.WHITE;
             }
             sender.sendMessage("Mods: " + mods.substring(2));
         } else {

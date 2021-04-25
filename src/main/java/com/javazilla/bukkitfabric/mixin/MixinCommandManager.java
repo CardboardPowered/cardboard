@@ -31,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Maps;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -72,7 +73,7 @@ public class MixinCommandManager {
             bukkit.add(node.getName());
 
         PlayerCommandSendEvent event = new PlayerCommandSendEvent((Player) ((IMixinServerEntityPlayer)entityplayer).getBukkitEntity(), new LinkedHashSet<>(bukkit));
-        event.getPlayer().getServer().getPluginManager().callEvent(event);
+        BukkitEventFactory.callEvent(event);
 
         // Remove labels that were removed during the event
         //for (String orig : bukkit)

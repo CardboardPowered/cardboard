@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * CardboardPowered - Bukkit/Spigot for Fabric
+ * Copyright (C) CardboardPowered.org and contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.javazilla.bukkitfabric.mixin.enchantment;
+package com.javazilla.bukkitfabric.mixin;
 
 import java.util.Iterator;
 
@@ -41,7 +41,7 @@ import net.minecraft.world.World;
 public class MixinFrostWalkerEnchantment {
 
     /**
-     * @reason .
+     * @reason BlockFormEvent
      * @author .
      */
     @Overwrite

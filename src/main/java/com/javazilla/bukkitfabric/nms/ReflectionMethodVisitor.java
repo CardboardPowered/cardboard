@@ -71,6 +71,14 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             }
         }
 
+        if (owner.equalsIgnoreCase("com/comphenix/protocol/utility/MinecraftReflection")) {
+            System.out.println("PROTOCOLLIB REFLECTION: " + name);
+            if (name.equals("getCraftBukkitClass") || name.equals("getMinecraftClass")) {
+                super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ProtocolLibMapper", name, desc, false );
+                return;
+            }
+        }
+
         for (String str : SKIP) {
             if (this.pln.equalsIgnoreCase(str) || owner.startsWith("org/bukkit")) {
                 // Skip Vault cause weird things happen
@@ -79,8 +87,17 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             }
         }
 
+        //if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;"))
+        //    super.visitMethodInsn(Opcodes.INVOKESTATIC, "com/comphenix/protocol/reflect/FuzzyReflection", "getMethod", "(Ljava/lang/String;)Ljava/lang/String;", false);
+
+
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;"))
             super.visitMethodInsn(Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "mapClassName", "(Ljava/lang/String;)Ljava/lang/String;", false);
+
+        if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getMethods")) {
+            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getMethods", "(Ljava/lang/Class;)[Ljava/lang/reflect/Method;", false );
+            return;
+        }
 
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getField") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/reflect/Field;")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getFieldByName", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/reflect/Field;", false );

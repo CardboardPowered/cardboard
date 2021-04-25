@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.javazilla.bukkitfabric.mixin;
+package com.javazilla.bukkitfabric.mixin.item;
 
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -55,81 +55,12 @@ public class MixinBlockItem {
     @Shadow public boolean postPlacement(BlockPos blockposition, World world, PlayerEntity entityhuman, ItemStack itemstack, BlockState iblockdata) {return false;}
     @Shadow protected boolean checkStatePlacement() {return false;}
 
-    /**
-     * We basically @Overwrite the whole method but
-     * we use @Inject to allow other mods to not crash when injecting code
-     * (ex. Carpet Mod)
-     * 
-     * @author BukkitFabric
-     * @reason Bukkit Overwrite
-     */
-   /* @Inject(at = @At("HEAD"), method = "place", cancellable = true)
-    public void place1(ItemPlacementContext blockactioncontext, CallbackInfoReturnable<ActionResult> ci) {
-        if (!blockactioncontext.canPlace()) {
-            ci.setReturnValue(ActionResult.FAIL);
-            return;
-        } else {
-            ItemPlacementContext blockactioncontext1 = this.getPlacementContext(blockactioncontext);
-
-            if (blockactioncontext1 == null) {
-                ci.setReturnValue(ActionResult.FAIL);
-                return;
-            } else {
-                BlockState iblockdata = this.getPlacementState(blockactioncontext1);
-                org.bukkit.block.BlockState blockstate = null;
-                if (((BlockItem)(Object)this) instanceof LilyPadItem)
-                    blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(blockactioncontext1.getWorld(), blockactioncontext1.getBlockPos());
-
-                boolean no = ((IMixinServerPlayerInteractionManager)((ServerPlayerEntity)blockactioncontext1.getPlayer()).interactionManager).getFiredInteractBF();
-                if (!no) {
-                    System.out.println("NO!");
-                    ((IMixinServerPlayerInteractionManager)((ServerPlayerEntity)blockactioncontext1.getPlayer()).interactionManager).setFiredInteractBF(false);
-                    ci.setReturnValue(ActionResult.FAIL);
-                    return;
-                }
-
-                if (iblockdata == null) {
-                    ci.setReturnValue(ActionResult.FAIL);
-                    return;
-                } else if (!this.place(blockactioncontext1, iblockdata)) {
-                    ci.setReturnValue(ActionResult.FAIL);
-                    return;
-                } else {
-                    BlockPos blockposition = blockactioncontext1.getBlockPos();
-                    World world = blockactioncontext1.getWorld();
-                    PlayerEntity entityhuman = blockactioncontext1.getPlayer();
-                    ItemStack itemstack = blockactioncontext1.getStack();
-                    BlockState iblockdata1 = world.getBlockState(blockposition);
-                    Block block = iblockdata1.getBlock();
-
-                    if (block == iblockdata.getBlock()) {
-                        iblockdata1 = this.placeFromTag(blockposition, world, itemstack, iblockdata1);
-                        this.postPlacement(blockposition, world, entityhuman, itemstack, iblockdata1);
-                        block.onPlaced(world, blockposition, iblockdata1, entityhuman, itemstack);
-
-                        if (blockstate != null) {
-                            org.bukkit.event.block.BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld) world, entityhuman, blockactioncontext1.getHand(), blockstate, blockposition.getX(), blockposition.getY(), blockposition.getZ());
-                            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
-                                blockstate.update(true, false);
-                                ci.setReturnValue(ActionResult.FAIL);
-                                return;
-                            }
-                        }
-                        if (entityhuman instanceof ServerPlayerEntity)
-                            Criteria.PLACED_BLOCK.trigger((ServerPlayerEntity) entityhuman, blockposition, itemstack);
-                    }
-                    if ((entityhuman == null || !entityhuman.abilities.creativeMode) && itemstack != ItemStack.EMPTY)
-                        itemstack.decrement(1);
-
-                    ci.setReturnValue(ActionResult.success(world.isClient));
-                }
-            }
-        }
-        ci.setReturnValue(ActionResult.PASS);
-    }*/
-
     private org.bukkit.block.BlockState bukkit_state;
 
+    /**
+     * @author Cardboard
+     * @reason Fix LilyPad BlockState
+     */
     @Inject(at = @At(value = "INVOKE_ASSIGN", target = 
             "Lnet/minecraft/item/BlockItem;getPlacementState(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/block/BlockState;"), 
             method = "place", cancellable = true)
@@ -137,9 +68,11 @@ public class MixinBlockItem {
         bukkit_state = null;
         if (((BlockItem)(Object)this) instanceof LilyPadItem)
             bukkit_state = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(context.getWorld(), context.getBlockPos());
-
     }
 
+    /**
+     * @reason BlockPlaceEvent for LilyPad
+     */
     @Inject(at = @At(value = "INVOKE_ASSIGN", target =
             "Lnet/minecraft/item/BlockItem;postPlacement(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/block/BlockState;)Z"),
             method = "place", cancellable = true)

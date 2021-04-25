@@ -46,6 +46,7 @@ import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.network.ServerLoginNetworkHandler.State;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -218,6 +219,15 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
         }
         ci.cancel();
+    }
+
+    @Inject(at = @At("HEAD"), method="onHello", cancellable = true)
+    public void spigotHello1(LoginHelloC2SPacket p, CallbackInfo ci) {
+        System.out.println("What is state during onHello: " + state.toString());
+        if (state != State.HELLO) {
+            ((ServerLoginNetworkHandler)(Object)this).acceptPlayer();
+            ci.cancel();
+        }
     }
 
     @Inject(at = @At("TAIL"), method="onHello")

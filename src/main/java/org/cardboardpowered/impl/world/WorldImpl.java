@@ -168,6 +168,7 @@ public class WorldImpl implements World {
     private ServerWorld nms;
     private String name;
     private WorldBorder worldBorder;
+    private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
 
     private static final Random rand = new Random();
 
@@ -774,8 +775,7 @@ public class WorldImpl implements World {
 
     @Override
     public List<BlockPopulator> getPopulators() {
-        // TODO Auto-generated method stub
-        return null;
+        return populators;
     }
 
     @Override

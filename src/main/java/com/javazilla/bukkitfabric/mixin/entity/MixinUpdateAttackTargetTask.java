@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.mixin.behavior;
+package com.javazilla.bukkitfabric.mixin.entity;
 
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.event.entity.EntityTargetEvent;

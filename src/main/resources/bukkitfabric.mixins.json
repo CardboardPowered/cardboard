@@ -1,6 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
+  "plugin": "org.cardboardpowered.mixin.CardboardMixinPlugin",
   "package": "com.javazilla.bukkitfabric.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
@@ -9,7 +10,6 @@
     "MixinMinecraftServer",
     "MixinServerCommandSource",
     "MixinCommandOutput",
-    "MixinBlockItem",
     "MixinExplosion",
     "MixinPlayerManager",
     "MixinServerPlayerInteractionManager",
@@ -31,9 +31,6 @@
     "loot.MixinLootTable",
     "loot.MixinLootManager",
     "loot.MixinLootingEnchantLootFunction",
-
-    "behavior.MixinForgetAttackTargetTask",
-    "behavior.MixinUpdateAttackTargetTask",
 
     "world.MixinServerWorld",
     "world.MixinWorld",
@@ -75,7 +72,8 @@
     "entity.MixinSheepEntity",
     "entity.MixinMooshroomEntity",
     "entity.MixinLeashKnotEntity",
-    "entity.MixinPProjecttileEntity",
+    "entity.MixinForgetAttackTargetTask",
+    "entity.MixinUpdateAttackTargetTask",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
@@ -99,11 +97,14 @@
     "network.MixinServerQueryNetworkHandler",
     "network.MixinLegacyQueryHandler",
     "network.MixinServerPlayNetworkHandler",
+    "network.MixinServerPlayNetworkHandler_ChatEvent",
     "network.MixinServerNetworkIo",
     "network.MixinClientConnection",
     "network.MixinServerHandshakeNetworkHandler",
     "network.MixinPacketByteBuf",
     "network.MixinResourcePackStatusC2SPacket",
+    "network.MixinDecoderHandler",
+    "network.MixinPlayerManager_ChatEvent",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",
@@ -165,12 +166,13 @@
     "item.MixinFirechargeItem",
     "item.MixinFlintAndSteelItem",
     "item.MixinTridentItem",
+    "item.MixinBlockItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",
     "block.MixinEndPortalBlock",
 
-    "enchantment.MixinFrostWalkerEnchantment"
+    "MixinFrostWalkerEnchantment"
   ],
   "injectors": {
     "defaultRequire": 1
