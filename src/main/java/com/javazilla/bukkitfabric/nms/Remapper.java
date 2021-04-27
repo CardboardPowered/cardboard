@@ -9,8 +9,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cardboardpowered.ingot.IngotReader;
-
 import com.javazilla.bukkitfabric.BukkitLogger;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -107,7 +105,7 @@ public class Remapper {
         // Spigot -> Intermediary
         File finalJar = new File(remappedDir, jarName + "-intermediary.jar");
         //System.out.println(IngotReader.finishedSetup);
-        runSpecialSource(IngotReader.finishedSetup ? IngotReader.outFile : spigot2inter, deversionify, finalJar);
+        runSpecialSource(spigot2inter, deversionify, finalJar);
 
         // Cleanup
         deversionify.delete();
