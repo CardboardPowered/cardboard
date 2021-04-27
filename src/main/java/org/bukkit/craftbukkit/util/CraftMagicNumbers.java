@@ -29,7 +29,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
-import com.javazilla.bukkitfabric.MakeMaterial;
 import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
@@ -130,7 +129,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public static void test() {
         // Because I don't want to use ASM hacks more than necessary, we use the id of
         // the last modded material field. This allows switch statements to still work.
-        int i = MakeMaterial.MODDED_LENGTH - 1;
+        int MATERIAL_LENGTH = 1540;
+        int i = MATERIAL_LENGTH - 1;
 
         List<String> names = new ArrayList<>();
         List<Material> list = new ArrayList<>();

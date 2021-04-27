@@ -61,17 +61,12 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     CraftMetaBook(CompoundTag tag, boolean handlePages) {
         super(tag);
 
-        if (tag.contains(BOOK_TITLE.NBT))
-            this.title = limit(tag.getString(BOOK_TITLE.NBT), 1024);
-        if (tag.contains(BOOK_AUTHOR.NBT))
-            this.author = limit(tag.getString(BOOK_AUTHOR.NBT), 1024);
+        if (tag.contains(BOOK_TITLE.NBT))  this.title = limit(tag.getString(BOOK_TITLE.NBT), 1024);
+        if (tag.contains(BOOK_AUTHOR.NBT)) this.author = limit(tag.getString(BOOK_AUTHOR.NBT), 1024);
 
         boolean resolved = false;
-        if (tag.contains(RESOLVED.NBT))
-            resolved = tag.getBoolean(RESOLVED.NBT);
-
-        if (tag.contains(GENERATION.NBT))
-            generation = tag.getInt(GENERATION.NBT);
+        if (tag.contains(RESOLVED.NBT))   resolved = tag.getBoolean(RESOLVED.NBT);
+        if (tag.contains(GENERATION.NBT)) generation = tag.getInt(GENERATION.NBT);
 
         if (tag.contains(BOOK_PAGES.NBT) && handlePages) {
             ListTag pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
@@ -82,9 +77,9 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                     try {
                         this.pages.add(Serializer.fromJson(page));
                         continue;
-                    } catch (Exception ignore) {/*PreJSON book*/}
+                    } catch (Exception ignore) {/*1.7 book*/}
                 }
-                addPage(limit(page, 2048 )); // Spigot
+                addPage(limit(page, 2048));
             }
         }
     }
@@ -93,14 +88,12 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         super(map);
 
         setAuthor(SerializableMeta.getString(map, BOOK_AUTHOR.BUKKIT, true));
-
-        setTitle(SerializableMeta.getString(map, BOOK_TITLE.BUKKIT, true));
+        setTitle( SerializableMeta.getString(map, BOOK_TITLE.BUKKIT, true));
 
         Iterable<?> pages = SerializableMeta.getObject(Iterable.class, map, BOOK_PAGES.BUKKIT, true);
         if (pages != null)
             for (Object page : pages)
-                if (page instanceof String)
-                    addPage((String) page);
+                if (page instanceof String) addPage((String) page);
 
         generation = SerializableMeta.getObject(Integer.class, map, GENERATION.BUKKIT, true);
     }
@@ -130,8 +123,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
             itemData.remove(RESOLVED.NBT);
         }
 
-        if (generation != null)
-            itemData.putInt(GENERATION.NBT, generation);
+        if (generation != null) itemData.putInt(GENERATION.NBT, generation);
     }
 
     @Override
