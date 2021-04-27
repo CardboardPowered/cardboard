@@ -13,7 +13,7 @@ import net.minecraft.loot.context.LootContextParameters;
 public class MixinSurvivesExplosionLootCondition {
 
     @Inject(at = @At("HEAD"), method = "test", cancellable = true)
-    public void test(LootContext loottableinfo, CallbackInfoReturnable<Boolean> ci) {
+    public void cardboard_test(LootContext loottableinfo, CallbackInfoReturnable<Boolean> ci) {
         Float ofloat = (Float) loottableinfo.get(LootContextParameters.EXPLOSION_RADIUS);
         if (null == ofloat) {
             ci.setReturnValue(true);

@@ -19,7 +19,7 @@ public class AnimalsImpl extends AgeableImpl implements Animals {
 
     @Override
     public String toString() {
-        return "CraftAnimals";
+        return "Animal";
     }
 
     @Override

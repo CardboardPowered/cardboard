@@ -14,7 +14,7 @@ import net.minecraft.block.DispenserBlock;
 public class MixinDispenserBlock implements IMixinDispenserBlock {
 
     /**
-     * @author CardboardPowered.org
+     * @author Cardboard
      * @reason Set event fired to false
      */
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/block/DispenserBlock;getBehaviorForItem(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/block/dispenser/DispenserBehavior;"), method = "Lnet/minecraft/block/DispenserBlock;dispense(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V")

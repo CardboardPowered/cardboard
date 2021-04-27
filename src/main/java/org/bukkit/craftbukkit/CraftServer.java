@@ -45,6 +45,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -151,11 +152,12 @@ import org.cardboardpowered.impl.inventory.recipe.CardboardSmokingRecipe;
 import org.cardboardpowered.impl.inventory.recipe.CardboardStonecuttingRecipe;
 import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
 import org.cardboardpowered.impl.inventory.recipe.RecipeIterator;
-import org.cardboardpowered.impl.inventory.util.InventoryCreator;
+import org.cardboardpowered.impl.inventory.InventoryCreator;
 import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.tag.BlockTagImpl;
-import org.cardboardpowered.impl.tag.FluidTagImpl;
 import org.cardboardpowered.impl.tag.ItemTagImpl;
+import org.cardboardpowered.impl.tag.TagImpl;
+import org.cardboardpowered.impl.tag.Tags;
 import org.cardboardpowered.impl.util.CommandPermissions;
 import org.cardboardpowered.impl.util.IconCacheImpl;
 import org.cardboardpowered.impl.util.SimpleHelpMap;
@@ -1214,7 +1216,7 @@ public class CraftServer implements Server {
                 return (org.bukkit.Tag<T>) new ItemTagImpl(server.getTagManager().getItems(), key);
             case org.bukkit.Tag.REGISTRY_FLUIDS:
                 Preconditions.checkArgument(clazz == org.bukkit.Fluid.class, "Fluid namespace must have fluid type");
-                return (org.bukkit.Tag<T>) new FluidTagImpl(server.getTagManager().getFluids(), key);
+                return (org.bukkit.Tag<T>) new Tags.FluidTagImpl(server.getTagManager().getFluids(), key);
             default:
                 throw new IllegalArgumentException();
         }
@@ -1237,7 +1239,7 @@ public class CraftServer implements Server {
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Fluid namespace must have fluid type");
 
                 TagGroup<Fluid> fluidTags = server.getTagManager().getFluids();
-                return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new FluidTagImpl(fluidTags, key)).collect(ImmutableList.toImmutableList());
+                return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new Tags.FluidTagImpl(fluidTags, key)).collect(ImmutableList.toImmutableList());
             default:
                 throw new IllegalArgumentException();
         }

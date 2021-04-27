@@ -20,9 +20,9 @@ import net.minecraft.world.World;
 public class MixinNetherPortalBlock {
 
     @Inject(at = @At("HEAD"), method = "onEntityCollision")
-    public void callBukkitEvent(BlockState iblockdata, World world, BlockPos blockposition, Entity entity, CallbackInfo ci) {
+    public void callBukkitEvent(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci) {
         if (!entity.hasVehicle() && !entity.hasPassengers() && entity.canUsePortals()) {
-            EntityPortalEnterEvent event = new EntityPortalEnterEvent(((IMixinEntity)entity).getBukkitEntity(), new org.bukkit.Location(((IMixinWorld)world).getWorldImpl(), blockposition.getX(), blockposition.getY(), blockposition.getZ()));
+            EntityPortalEnterEvent event = new EntityPortalEnterEvent(((IMixinEntity)entity).getBukkitEntity(), new org.bukkit.Location(((IMixinWorld)world).getWorldImpl(), pos.getX(), pos.getY(), pos.getZ()));
             Bukkit.getPluginManager().callEvent(event);
         }
     }

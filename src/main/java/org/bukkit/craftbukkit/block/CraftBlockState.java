@@ -177,8 +177,7 @@ public class CraftBlockState implements BlockState {
         if (!isPlaced()) return true;
         CraftBlock block = getBlock();
 
-        if (block.getType() != getType())
-            if (!force) return false;
+        if (block.getType() != getType() && !force) return false;
 
         net.minecraft.block.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
@@ -220,12 +219,9 @@ public class CraftBlockState implements BlockState {
         if (obj == null || getClass() != obj.getClass()) return false;
 
         final CraftBlockState other = (CraftBlockState) obj;
-        if (this.world != other.world && (this.world == null || !this.world.equals(other.world)))
-            return false;
-        if (this.position != other.position && (this.position == null || !this.position.equals(other.position)))
-            return false;
-        if (this.data != other.data && (this.data == null || !this.data.equals(other.data)))
-            return false;
+        if (world != other.world && (world == null || !this.world.equals(other.world))) return false;
+        if (position != other.position && (position == null || !this.position.equals(other.position))) return false;
+        if (data != other.data && (data == null || !this.data.equals(other.data))) return false;
 
         return true;
     }
@@ -269,7 +265,7 @@ public class CraftBlockState implements BlockState {
     }
 
     protected void requirePlaced() {
-        if (!isPlaced()) throw new IllegalStateException("The blockState must be placed to call this method");
+        if (!isPlaced()) throw new IllegalStateException("The state must be placed to call this method");
     }
 
 }

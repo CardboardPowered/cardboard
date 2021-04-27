@@ -1,6 +1,8 @@
 package org.cardboardpowered.impl.entity;
 
 import com.google.common.base.Preconditions;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+
 import net.minecraft.entity.passive.CatEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.CraftServer;
@@ -35,7 +37,10 @@ public class CardboardCat extends TameableAnimalImpl implements Cat {
 
     @Override
     public void setCatType(Type type) {
-        Preconditions.checkArgument(type != null, "Cannot have null Type");
+        if (null == type) {
+            BukkitFabricMod.LOGGER.info("Error: Cannot have null Cat Type, defaulting to ALL_BLACK");
+            type = Type.ALL_BLACK;
+        }
 
         getHandle().setCatType(type.ordinal());
     }

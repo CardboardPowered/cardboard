@@ -30,9 +30,7 @@ public class BukkitLogger extends Logger {
     private static BukkitLogger inst;
 
     public static BukkitLogger getLogger() {
-        if (inst == null)
-            new BukkitLogger();
-        return inst;
+        return (inst == null) ? (inst = new BukkitLogger()) : inst;
     }
 
     public static BukkitLogger getPluginLogger(String pluginName) {

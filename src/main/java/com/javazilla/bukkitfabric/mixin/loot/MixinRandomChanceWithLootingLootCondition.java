@@ -18,7 +18,7 @@ public class MixinRandomChanceWithLootingLootCondition {
     @Shadow private float lootingMultiplier;
 
     @Inject(at = @At("RETURN"), method = "test", cancellable = true)
-    public void test(LootContext loottableinfo, CallbackInfoReturnable<Boolean> ci) {
+    public void cardboard_test(LootContext loottableinfo, CallbackInfoReturnable<Boolean> ci) {
         if (loottableinfo.hasParameter(IMixinLootContextParameters.LOOTING_MOD)) {
             int i = loottableinfo.get(IMixinLootContextParameters.LOOTING_MOD);
             ci.setReturnValue(loottableinfo.getRandom().nextFloat() < this.chance + (float) i * this.lootingMultiplier);

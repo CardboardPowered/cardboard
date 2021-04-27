@@ -1,6 +1,7 @@
 package org.cardboardpowered.impl.entity;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.util.Hand;
 
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -33,7 +35,7 @@ public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
 
     @Override
     public String toString() {
-        return "CraftArmorStand";
+        return "ArmorStand";
     }
 
     @Override
@@ -372,13 +374,13 @@ public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
     @Override
     public Chunk getChunk() {
         // TODO Auto-generated method stub
-        return null;
+        return super.getChunk();
     }
 
     @Override
     public SpawnReason getEntitySpawnReason() {
         // TODO Auto-generated method stub
-        return null;
+        return SpawnReason.DEFAULT;
     }
 
     @Override
@@ -408,7 +410,6 @@ public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
     @Override
     public void addDisabledSlots(EquipmentSlot... arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -424,8 +425,11 @@ public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
     }
 
     @Override
-    public ItemStack getItem(EquipmentSlot arg0) {
+    public ItemStack getItem(EquipmentSlot slot) {
         // TODO Auto-generated method stub
+        if (slot == EquipmentSlot.HAND) {
+            CraftItemStack.asCraftMirror(nms.getStackInHand(Hand.MAIN_HAND));
+        }
         return null;
     }
 
@@ -438,25 +442,21 @@ public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
     @Override
     public void removeDisabledSlots(EquipmentSlot... arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setCanTick(boolean arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setDisabledSlots(EquipmentSlot... arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
-    public void setItem(EquipmentSlot arg0, ItemStack arg1) {
+    public void setItem(EquipmentSlot slot, ItemStack stack) {
         // TODO Auto-generated method stub
-        
     }
 
 }

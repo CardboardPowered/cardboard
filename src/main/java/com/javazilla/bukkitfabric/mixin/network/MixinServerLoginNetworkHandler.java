@@ -223,7 +223,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     @Inject(at = @At("HEAD"), method="onHello", cancellable = true)
     public void spigotHello1(LoginHelloC2SPacket p, CallbackInfo ci) {
-        System.out.println("What is state during onHello: " + state.toString());
         if (state != State.HELLO) {
             ((ServerLoginNetworkHandler)(Object)this).acceptPlayer();
             ci.cancel();

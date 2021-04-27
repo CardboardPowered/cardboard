@@ -18,7 +18,7 @@ public class CardboardCaveSpider extends SpiderImpl implements CaveSpider {
 
     @Override
     public String toString() {
-        return "CaveSpiderImpl";
+        return "Cavespider";
     }
 
     @Override

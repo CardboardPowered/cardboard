@@ -1,4 +1,4 @@
-package org.cardboardpowered.impl.inventory.util;
+package org.cardboardpowered.impl.inventory;
 
 import org.bukkit.craftbukkit.inventory.CraftInventoryCustom;
 import org.bukkit.event.inventory.InventoryType;
