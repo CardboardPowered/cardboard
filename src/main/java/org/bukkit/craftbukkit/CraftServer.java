@@ -85,7 +85,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager;
+import org.bukkit.craftbukkit.scoreboard.CardboardScoreboardManager;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -138,7 +138,7 @@ import org.cardboardpowered.impl.IpBanList;
 import org.cardboardpowered.impl.ProfileBanList;
 import org.cardboardpowered.impl.command.BukkitCommandWrapper;
 import org.cardboardpowered.impl.command.CommandMapImpl;
-import org.cardboardpowered.impl.command.ConsoleCommandSenderImpl;
+import org.cardboardpowered.impl.command.CardboardConsoleCommandSender;
 import org.cardboardpowered.impl.command.MinecraftCommandWrapper;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.recipe.CardboardBlastingRecipe;
@@ -260,7 +260,7 @@ public class CraftServer implements Server {
     private final CraftMagicNumbers unsafe = (CraftMagicNumbers) CraftMagicNumbers.INSTANCE;
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final BukkitSchedulerImpl scheduler = new BukkitSchedulerImpl();
-    private final ConsoleCommandSender consoleCommandSender = new ConsoleCommandSenderImpl();
+    private final ConsoleCommandSender consoleCommandSender = new CardboardConsoleCommandSender();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
     public final List<PlayerImpl> playerView;
     private WarningState warningState = WarningState.DEFAULT;
@@ -273,7 +273,7 @@ public class CraftServer implements Server {
     public static MinecraftDedicatedServer server;
     public static MinecraftDedicatedServer console;
     public static CraftServer INSTANCE;
-    public CraftScoreboardManager scoreboardManager;
+    public CardboardScoreboardManager scoreboardManager;
 
     private final MetadataStoreBase<Entity> entityMetadata = MetadataStoreImpl.newEntityMetadataStore();
     private final MetaDataStoreBase<OfflinePlayer> playerMetadata = MetadataStoreImpl.newPlayerMetadataStore();
@@ -287,7 +287,7 @@ public class CraftServer implements Server {
         console = nms;
         commandMap = new CommandMapImpl(this);
         pluginManager = new SimplePluginManager(this, commandMap);
-        scoreboardManager = new CraftScoreboardManager(nms, server.getScoreboard());
+        scoreboardManager = new CardboardScoreboardManager(nms, server.getScoreboard());
 
         configuration = YamlConfiguration.loadConfiguration(new File("bukkit.yml"));
         configuration.options().copyDefaults(true);
@@ -1176,7 +1176,7 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public CraftScoreboardManager getScoreboardManager() {
+    public CardboardScoreboardManager getScoreboardManager() {
         return scoreboardManager;
     }
 

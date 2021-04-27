@@ -16,7 +16,10 @@ import org.bukkit.plugin.Plugin;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 
-public class ConsoleCommandSenderImpl implements ConsoleCommandSender, CommandSender {
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+
+public class CardboardConsoleCommandSender implements ConsoleCommandSender, CommandSender {
 
     @Override
     public String getName() {
@@ -29,14 +32,13 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender, CommandSe
     }
 
     @Override
-    public void sendMessage(String arg0) {
-        BukkitLogger.getLogger().info(arg0);
+    public void sendMessage(String msg) {
+        BukkitLogger.getLogger().info(msg);
     }
 
     @Override
     public void sendMessage(String[] arg0) {
-        for (String str : arg0)
-            sendMessage(str);
+        for (String str : arg0) sendMessage(str);
     }
 
     @Override
@@ -126,8 +128,8 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender, CommandSe
     }
 
     @Override
-    public void sendRawMessage(String arg0) {
-        Bukkit.getLogger().info(arg0);
+    public void sendRawMessage(String msg) {
+        Bukkit.getLogger().info(msg);
     }
 
     public void sendMessage(UUID uuid, String[] msg) {
@@ -142,10 +144,32 @@ public class ConsoleCommandSenderImpl implements ConsoleCommandSender, CommandSe
         sendRawMessage(msg);
     }
 
+    private final CommandSender.Spigot spigot = new CommandSender.Spigot() {
+
+        @Override
+        public void sendMessage(BaseComponent component) {
+            CardboardConsoleCommandSender.this.sendMessage(TextComponent.toLegacyText(component));
+        }
+
+        @Override
+        public void sendMessage(BaseComponent... components) {
+            CardboardConsoleCommandSender.this.sendMessage(TextComponent.toLegacyText(components));
+        }
+
+        @Override
+        public void sendMessage(UUID sender, BaseComponent... components) {
+            this.sendMessage(components);
+        }
+
+        @Override
+        public void sendMessage(UUID sender, BaseComponent component) {
+            this.sendMessage(component);
+        }
+    };
+
     @Override
-    public Spigot spigot() {
-        // TODO Auto-generated method stub
-        return null;
+    public org.bukkit.command.CommandSender.Spigot spigot() {
+        return spigot;
     }
 
 }

@@ -9,12 +9,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
-public final class CraftScore implements Score {
+public final class CardboardScore implements Score {
 
     private final String entry;
-    private final CraftObjective objective;
+    private final CardboardObjective objective;
 
-    public CraftScore(CraftObjective objective, String entry) {
+    public CardboardScore(CardboardObjective objective, String entry) {
         this.objective = objective;
         this.entry = entry;
     }
@@ -57,7 +57,7 @@ public final class CraftScore implements Score {
     }
 
     @Override
-    public CraftScoreboard getScoreboard() {
+    public CardboardScoreboard getScoreboard() {
         return objective.getScoreboard();
     }
 

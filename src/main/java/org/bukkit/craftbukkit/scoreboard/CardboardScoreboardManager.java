@@ -24,42 +24,42 @@ import org.bukkit.scoreboard.ScoreboardManager;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 
-public final class CraftScoreboardManager implements ScoreboardManager {
+public final class CardboardScoreboardManager implements ScoreboardManager {
 
-    private final CraftScoreboard mainScoreboard;
+    private final CardboardScoreboard mainScoreboard;
     private final MinecraftServer server;
-    private final Collection<CraftScoreboard> scoreboards = new WeakCollection<CraftScoreboard>();
-    private final Map<PlayerImpl, CraftScoreboard> playerBoards = new HashMap<PlayerImpl, CraftScoreboard>();
+    private final Collection<CardboardScoreboard> scoreboards = new WeakCollection<CardboardScoreboard>();
+    private final Map<PlayerImpl, CardboardScoreboard> playerBoards = new HashMap<PlayerImpl, CardboardScoreboard>();
 
-    public CraftScoreboardManager(MinecraftServer minecraftserver, net.minecraft.scoreboard.Scoreboard scoreboardServer) {
-        mainScoreboard = new CraftScoreboard(scoreboardServer);
+    public CardboardScoreboardManager(MinecraftServer minecraftserver, net.minecraft.scoreboard.Scoreboard scoreboardServer) {
+        mainScoreboard = new CardboardScoreboard(scoreboardServer);
         server = minecraftserver;
         scoreboards.add(mainScoreboard);
     }
 
     @Override
-    public CraftScoreboard getMainScoreboard() {
+    public CardboardScoreboard getMainScoreboard() {
         return mainScoreboard;
     }
 
     @Override
-    public CraftScoreboard getNewScoreboard() {
-        CraftScoreboard scoreboard = new CraftScoreboard(new ServerScoreboard(server));
+    public CardboardScoreboard getNewScoreboard() {
+        CardboardScoreboard scoreboard = new CardboardScoreboard(new ServerScoreboard(server));
         scoreboards.add(scoreboard);
         return scoreboard;
     }
 
-    // CraftBukkit method
-    public CraftScoreboard getPlayerBoard(PlayerImpl player) {
-        CraftScoreboard board = playerBoards.get(player);
-        return (CraftScoreboard) (board == null ? getMainScoreboard() : board);
+    // CardboardBukkit method
+    public CardboardScoreboard getPlayerBoard(PlayerImpl player) {
+        CardboardScoreboard board = playerBoards.get(player);
+        return (CardboardScoreboard) (board == null ? getMainScoreboard() : board);
     }
 
-    // CraftBukkit method
+    // CardboardBukkit method
     public void setPlayerBoard(PlayerImpl player, org.bukkit.scoreboard.Scoreboard bukkitScoreboard) throws IllegalArgumentException {
-        Validate.isTrue(bukkitScoreboard instanceof CraftScoreboard, "Cannot set player scoreboard to an unregistered Scoreboard");
+        Validate.isTrue(bukkitScoreboard instanceof CardboardScoreboard, "Cannot set player scoreboard to an unregistered Scoreboard");
 
-        CraftScoreboard scoreboard = (CraftScoreboard) bukkitScoreboard;
+        CardboardScoreboard scoreboard = (CardboardScoreboard) bukkitScoreboard;
         net.minecraft.scoreboard.Scoreboard oldboard = getPlayerBoard(player).getHandle();
         net.minecraft.scoreboard.Scoreboard newboard = scoreboard.getHandle();
         ServerPlayerEntity entityplayer = player.getHandle();
@@ -68,7 +68,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
 
         if (scoreboard == mainScoreboard) {
             playerBoards.remove(player);
-        } else playerBoards.put(player, (CraftScoreboard) scoreboard);
+        } else playerBoards.put(player, (CardboardScoreboard) scoreboard);
 
         // Old objective tracking
         HashSet<ScoreboardObjective> removed = new HashSet<ScoreboardObjective>();
@@ -89,14 +89,14 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         ((IMixinPlayerManager)server.getPlayerManager()).sendScoreboardBF((ServerScoreboard) newboard, player.getHandle());
     }
 
-    // CraftBukkit method
+    // CardboardBukkit method
     public void removePlayer(Player player) {
         playerBoards.remove(player);
     }
 
-    // CraftBukkit method
+    // CardboardBukkit method
     public void getScoreboardScores(ScoreboardCriterion criteria, String name, Consumer<ScoreboardPlayerScore> consumer) {
-        for (CraftScoreboard scoreboard : scoreboards) {
+        for (CardboardScoreboard scoreboard : scoreboards) {
             Scoreboard board = scoreboard.board;
             board.forEachScore(criteria, name, (score) -> consumer.accept(score));
         }

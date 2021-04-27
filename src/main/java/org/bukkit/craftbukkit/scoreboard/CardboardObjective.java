@@ -10,15 +10,15 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 
-public class CraftObjective extends CraftScoreboardComponent implements Objective {
+public class CardboardObjective extends CardboardScoreboardComponent implements Objective {
 
     private final ScoreboardObjective objective;
-    private final CraftCriteria criteria;
+    private final CardboardCriteria criteria;
 
-    CraftObjective(CraftScoreboard scoreboard, ScoreboardObjective objective) {
+    CardboardObjective(CardboardScoreboard scoreboard, ScoreboardObjective objective) {
         super(scoreboard);
         this.objective = objective;
-        this.criteria = CraftCriteria.getFromNMS(objective);
+        this.criteria = CardboardCriteria.getFromNMS(objective);
     }
 
     ScoreboardObjective getHandle() {
@@ -59,25 +59,25 @@ public class CraftObjective extends CraftScoreboardComponent implements Objectiv
 
     @Override
     public void setDisplaySlot(DisplaySlot slot) throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+        CardboardScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
         ScoreboardObjective objective = this.objective;
 
-        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
+        for (int i = 0; i < CardboardScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
             if (board.getObjectiveForSlot(i) == objective) board.setObjectiveSlot(i, null);
 
         if (slot != null)
-            board.setObjectiveSlot(CraftScoreboardTranslations.fromBukkitSlot(slot), getHandle());
+            board.setObjectiveSlot(CardboardScoreboardTranslations.fromBukkitSlot(slot), getHandle());
     }
 
     @Override
     public DisplaySlot getDisplaySlot() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+        CardboardScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
         ScoreboardObjective objective = this.objective;
-        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
+        for (int i = 0; i < CardboardScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
             if (board.getObjectiveForSlot(i) == objective)
-                return CraftScoreboardTranslations.toBukkitSlot(i);
+                return CardboardScoreboardTranslations.toBukkitSlot(i);
         return null;
     }
 
@@ -85,20 +85,20 @@ public class CraftObjective extends CraftScoreboardComponent implements Objectiv
     public void setRenderType(RenderType renderType) throws IllegalStateException {
         Validate.notNull(renderType, "RenderType cannot be null");
         checkState();
-        this.objective.setRenderType(CraftScoreboardTranslations.fromBukkitRender(renderType));
+        this.objective.setRenderType(CardboardScoreboardTranslations.fromBukkitRender(renderType));
     }
 
     @Override
     public RenderType getRenderType() throws IllegalStateException {
         checkState();
-        return CraftScoreboardTranslations.toBukkitRender(this.objective.getRenderType());
+        return CardboardScoreboardTranslations.toBukkitRender(this.objective.getRenderType());
     }
 
     @Override
     public Score getScore(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(player, "Player cannot be null");
         checkState();
-        return new CraftScore(this, player.getName());
+        return new CardboardScore(this, player.getName());
     }
 
     @Override
@@ -106,17 +106,17 @@ public class CraftObjective extends CraftScoreboardComponent implements Objectiv
         Validate.notNull(entry, "Entry cannot be null");
         Validate.isTrue(entry.length() <= 40, "Score '" + entry + "' is longer than the limit of 40 characters");
         checkState();
-        return new CraftScore(this, entry);
+        return new CardboardScore(this, entry);
     }
 
     @Override
     public void unregister() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
+        CardboardScoreboard scoreboard = checkState();
         scoreboard.board.removeObjective(objective);
     }
 
     @Override
-    public CraftScoreboard checkState() throws IllegalStateException {
+    public CardboardScoreboard checkState() throws IllegalStateException {
         if (getScoreboard().board.getNullableObjective(objective.getName()) == null)
             throw new IllegalStateException("Unregistered scoreboard component");
         return getScoreboard();
@@ -133,7 +133,7 @@ public class CraftObjective extends CraftScoreboardComponent implements Objectiv
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass())
             return false;
-        final CraftObjective other = (CraftObjective) obj;
+        final CardboardObjective other = (CardboardObjective) obj;
         return !(this.objective != other.objective && (this.objective == null || !this.objective.equals(other.objective)));
     }
 

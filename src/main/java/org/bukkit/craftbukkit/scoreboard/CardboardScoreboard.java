@@ -16,26 +16,26 @@ import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
 
-public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
+public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboard {
 
     final Scoreboard board;
 
-    CraftScoreboard(Scoreboard board) {
+    CardboardScoreboard(Scoreboard board) {
         this.board = board;
     }
 
     @Override
-    public CraftObjective registerNewObjective(String name, String criteria) throws IllegalArgumentException {
+    public CardboardObjective registerNewObjective(String name, String criteria) throws IllegalArgumentException {
         return registerNewObjective(name, criteria, name);
     }
 
     @Override
-    public CraftObjective registerNewObjective(String name, String criteria, String displayName) throws IllegalArgumentException {
+    public CardboardObjective registerNewObjective(String name, String criteria, String displayName) throws IllegalArgumentException {
         return registerNewObjective(name, criteria, displayName, RenderType.INTEGER);
     }
 
     @Override
-    public CraftObjective registerNewObjective(String name, String criteria, String displayName, RenderType renderType) throws IllegalArgumentException {
+    public CardboardObjective registerNewObjective(String name, String criteria, String displayName, RenderType renderType) throws IllegalArgumentException {
         Validate.notNull(name, "Objective name cannot be null");
         Validate.notNull(criteria, "Criteria cannot be null");
         Validate.notNull(displayName, "Display name cannot be null");
@@ -44,16 +44,16 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         Validate.isTrue(displayName.length() <= 128, "The display name '" + displayName + "' is longer than the limit of 128 characters");
         Validate.isTrue(board.getNullableObjective(name) == null, "An objective of name '" + name + "' already exists");
 
-        CraftCriteria craftCriteria = CraftCriteria.getFromBukkit(criteria);
-        ScoreboardObjective objective = board.addObjective(name, craftCriteria.criteria, CraftChatMessage.fromStringOrNull(displayName), CraftScoreboardTranslations.fromBukkitRender(renderType));
-        return new CraftObjective(this, objective);
+        CardboardCriteria craftCriteria = CardboardCriteria.getFromBukkit(criteria);
+        ScoreboardObjective objective = board.addObjective(name, craftCriteria.criteria, CraftChatMessage.fromStringOrNull(displayName), CardboardScoreboardTranslations.fromBukkitRender(renderType));
+        return new CardboardObjective(this, objective);
     }
 
     @Override
     public Objective getObjective(String name) throws IllegalArgumentException {
         Validate.notNull(name, "Name cannot be null");
         ScoreboardObjective nms = board.getNullableObjective(name);
-        return nms == null ? null : new CraftObjective(this, nms);
+        return nms == null ? null : new CardboardObjective(this, nms);
     }
 
     @Override
@@ -62,7 +62,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
 
         ImmutableSet.Builder<Objective> objectives = ImmutableSet.builder();
         for (ScoreboardObjective netObjective : (Collection<ScoreboardObjective>) this.board.getObjectives()) {
-            CraftObjective objective = new CraftObjective(this, netObjective);
+            CardboardObjective objective = new CardboardObjective(this, netObjective);
             if (objective.getCriteria().equals(criteria)) objectives.add(objective);
         }
         return objectives.build();
@@ -73,7 +73,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         return ImmutableSet.copyOf(Iterables.transform((Collection<ScoreboardObjective>) this.board.getObjectives(), new Function<ScoreboardObjective, Objective>() {
             @Override
             public Objective apply(ScoreboardObjective input) {
-                return new CraftObjective(CraftScoreboard.this, input);
+                return new CardboardObjective(CardboardScoreboard.this, input);
             }
         }));
     }
@@ -81,8 +81,8 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     @Override
     public Objective getObjective(DisplaySlot slot) throws IllegalArgumentException {
         Validate.notNull(slot, "Display slot cannot be null");
-        ScoreboardObjective objective = board.getObjectiveForSlot(CraftScoreboardTranslations.fromBukkitSlot(slot));
-        return (objective == null) ? null : new CraftObjective(this, objective);
+        ScoreboardObjective objective = board.getObjectiveForSlot(CardboardScoreboardTranslations.fromBukkitSlot(slot));
+        return (objective == null) ? null : new CardboardObjective(this, objective);
     }
 
     @Override
@@ -96,7 +96,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         Validate.notNull(entry, "Entry cannot be null");
         ImmutableSet.Builder<Score> scores = ImmutableSet.builder();
         for (ScoreboardObjective objective : (Collection<ScoreboardObjective>) this.board.getObjectives())
-            scores.add(new CraftScore(new CraftObjective(this, objective), entry));
+            scores.add(new CardboardScore(new CardboardObjective(this, objective), entry));
         return scores.build();
     }
 
@@ -118,21 +118,21 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         Validate.notNull(player, "OfflinePlayer cannot be null");
 
         net.minecraft.scoreboard.Team team = board.getPlayerTeam(player.getName());
-        return team == null ? null : new CraftTeam(this, team);
+        return team == null ? null : new CardboardTeam(this, team);
     }
 
     @Override
     public Team getEntryTeam(String entry) throws IllegalArgumentException {
         Validate.notNull(entry, "Entry cannot be null");
         net.minecraft.scoreboard.Team team = board.getPlayerTeam(entry);
-        return team == null ? null : new CraftTeam(this, team);
+        return team == null ? null : new CardboardTeam(this, team);
     }
 
     @Override
     public Team getTeam(String teamName) throws IllegalArgumentException {
         Validate.notNull(teamName, "Team name cannot be null");
         net.minecraft.scoreboard.Team team = board.getTeam(teamName);
-        return team == null ? null : new CraftTeam(this, team);
+        return team == null ? null : new CardboardTeam(this, team);
     }
 
     @Override
@@ -140,7 +140,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         return ImmutableSet.copyOf(Iterables.transform((Collection<net.minecraft.scoreboard.Team>) this.board.getTeams(), new Function<net.minecraft.scoreboard.Team, Team>() {
             @Override
             public Team apply(net.minecraft.scoreboard.Team input) {
-                return new CraftTeam(CraftScoreboard.this, input);
+                return new CardboardTeam(CardboardScoreboard.this, input);
             }
         }));
     }
@@ -150,7 +150,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
         Validate.notNull(name, "Team name cannot be null");
         Validate.isTrue(name.length() <= 16, "Team name '" + name + "' is longer than the limit of 16 characters");
         Validate.isTrue(board.getTeam(name) == null, "Team name '" + name + "' is already in use");
-        return new CraftTeam(this, board.addTeam(name));
+        return new CardboardTeam(this, board.addTeam(name));
     }
 
     @Override
@@ -171,7 +171,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     @Override
     public void clearSlot(DisplaySlot slot) throws IllegalArgumentException {
         Validate.notNull(slot, "Slot cannot be null");
-        board.setObjectiveSlot(CraftScoreboardTranslations.fromBukkitSlot(slot), null);
+        board.setObjectiveSlot(CardboardScoreboardTranslations.fromBukkitSlot(slot), null);
     }
 
     public Scoreboard getHandle() {

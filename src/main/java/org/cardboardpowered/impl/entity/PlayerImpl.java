@@ -60,7 +60,7 @@ import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
+import org.bukkit.craftbukkit.scoreboard.CardboardScoreboard;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
@@ -515,7 +515,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public CraftScoreboard getScoreboard() {
+    public CardboardScoreboard getScoreboard() {
         return server.getScoreboardManager().getPlayerBoard(this);
     }
 
