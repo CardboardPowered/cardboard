@@ -1,21 +1,13 @@
 package org.cardboardpowered.impl.hooks;
 
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-
-import cyber.permissions.v1.CyberPermissions;
-import cyber.permissions.v1.Permissible;
-import cyber.permissions.v1.Permission;
-import cyber.permissions.v1.PermissionDefaults;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PermissionHook {
 
-    public static HashMap<String, Permission> perms = new HashMap<>();
+   // public static HashMap<String, Permission> perms = new HashMap<>();
 
     public static boolean hasPermission(ServerPlayerEntity plr, String permission) {
-        if (null == perms.get(permission)) {
+        /*if (null == perms.get(permission)) {
             org.bukkit.permissions.Permission bu = Bukkit.getPluginManager().getPermission(permission);
             if (null == bu)
                 return false;
@@ -44,7 +36,7 @@ public class PermissionHook {
         Permission cyber = perms.get(permission);
         Permissible perm = CyberPermissions.getPermissible(plr);
 
-        return perm.hasPermission(cyber);
+        return perm.hasPermission(cyber);*/return false;
     }
 
 }

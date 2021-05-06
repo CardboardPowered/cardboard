@@ -6,9 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import org.apache.commons.lang.Validate;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNBTTagConfigSerializer;
@@ -18,11 +17,11 @@ import org.bukkit.persistence.PersistentDataType;
 
 public final class CraftPersistentDataContainer implements PersistentDataContainer {
 
-    private final Map<String, Tag> customDataTags = new HashMap<>();
+    private final Map<String, NbtElement> customDataTags = new HashMap<>();
     private final CraftPersistentDataTypeRegistry registry;
     private final CraftPersistentDataAdapterContext adapterContext;
 
-    public CraftPersistentDataContainer(Map<String, Tag> customTags, CraftPersistentDataTypeRegistry registry) {
+    public CraftPersistentDataContainer(Map<String, NbtElement> customTags, CraftPersistentDataTypeRegistry registry) {
         this(registry);
         this.customDataTags.putAll(customTags);
     }
@@ -39,14 +38,14 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
 
     @Override
     public <T, Z> boolean has(NamespacedKey key, PersistentDataType<T, Z> type) {
-        Tag value = this.customDataTags.get(key.toString());
+        NbtElement value = this.customDataTags.get(key.toString());
         if (value == null) return false;
         return registry.isInstanceOf(type.getPrimitiveType(), value);
     }
 
     @Override
     public <T, Z> Z get(NamespacedKey key, PersistentDataType<T, Z> type) {
-        Tag value = this.customDataTags.get(key.toString());
+        NbtElement value = this.customDataTags.get(key.toString());
         if (value == null) return null;
 
         return type.fromPrimitive(registry.extract(type.getPrimitiveType(), value), adapterContext);
@@ -80,26 +79,26 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         return Objects.equals(getRaw(), ((CraftPersistentDataContainer) obj).getRaw());
     }
 
-    public CompoundTag toTagCompound() {
-        CompoundTag tag = new CompoundTag();
-        for (Entry<String, Tag> entry : this.customDataTags.entrySet())
+    public NbtCompound toTagCompound() {
+        NbtCompound tag = new NbtCompound();
+        for (Entry<String, NbtElement> entry : this.customDataTags.entrySet())
             tag.put(entry.getKey(), entry.getValue());
         return tag;
     }
 
-    public void put(String key, Tag base) {
+    public void put(String key, NbtElement base) {
         this.customDataTags.put(key, base);
     }
 
-    public void putAll(Map<String, Tag> map) {
+    public void putAll(Map<String, NbtElement> map) {
         this.customDataTags.putAll(map);
     }
 
-    public void putAll(CompoundTag compound) {
+    public void putAll(NbtCompound compound) {
         for (String key : compound.getKeys()) this.customDataTags.put(key, compound.get(key));
     }
 
-    public Map<String, Tag> getRaw() {
+    public Map<String, NbtElement> getRaw() {
         return this.customDataTags;
     }
 

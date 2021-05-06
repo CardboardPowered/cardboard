@@ -27,9 +27,9 @@ import net.minecraft.datafixer.fix.BlockStateFlattening;
 import net.minecraft.datafixer.fix.ItemIdFix;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
@@ -311,9 +311,9 @@ public final class CraftLegacyMaterials {
                     BlockState blockData = block.getDefaultState();
                     StateManager states = block.getStateManager();
 
-                    Optional<CompoundTag> propMap = blockTag.getElement("Properties").result();
+                    Optional<NbtCompound> propMap = blockTag.getElement("Properties").result();
                     if (propMap.isPresent()) {
-                        CompoundTag properties = propMap.get();
+                        NbtCompound properties = propMap.get();
                         for (String dataKey : properties.getKeys()) {
                             Property state = states.getProperty(dataKey);
 
@@ -361,11 +361,11 @@ public final class CraftLegacyMaterials {
 
                 MaterialData matData = new MaterialData(material, data);
 
-                CompoundTag stack = new CompoundTag();
+                NbtCompound stack = new NbtCompound();
                 stack.putInt("id", material.getId());
                 stack.putShort("Damage", data);
 
-                Dynamic<Tag> converted = Schemas.getFixer().update(TypeReferences.ITEM_STACK, new Dynamic<Tag>(NbtOps.INSTANCE, stack), -1, CraftMagicNumbers.INSTANCE.getDataVersion());
+                Dynamic<NbtElement> converted = Schemas.getFixer().update(TypeReferences.ITEM_STACK, new Dynamic<NbtElement>(NbtOps.INSTANCE, stack), -1, CraftMagicNumbers.INSTANCE.getDataVersion());
 
                 String newId = converted.get("id").asString("");
                 // Recover spawn eggs with invalid data

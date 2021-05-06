@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 
 @Mixin(PacketByteBuf.class)
@@ -17,7 +17,7 @@ public class MixinPacketByteBuf {
      */
     @Redirect(at = @At(value = "INVOKE", target="Lnet/minecraft/item/ItemStack;setTag(Lnet/minecraft/nbt/CompoundTag;)V"), 
             method = { "readItemStack" })
-    public void t(ItemStack stack, CompoundTag tag) {
+    public void t(ItemStack stack, NbtCompound tag) {
         stack.setTag(tag);
         if (stack.getTag() != null) CraftItemStack.setItemMeta(stack, CraftItemStack.getItemMeta(stack));
     }
@@ -33,7 +33,7 @@ public class MixinPacketByteBuf {
     }
 
     @Shadow
-    public CompoundTag readCompoundTag() {
+    public NbtCompound readNbt() {
         return null;
     }
 

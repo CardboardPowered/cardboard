@@ -8,9 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -53,7 +52,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
             this.customEffects = new ArrayList<PotionEffect>(potionMeta.customEffects);
     }
 
-    CraftMetaPotion(CompoundTag tag) {
+    CraftMetaPotion(NbtCompound tag) {
         super(tag);
         if (tag.contains(DEFAULT_POTION.NBT))
             type = CardboardPotionUtil.toBukkit(tag.getString(DEFAULT_POTION.NBT));
@@ -64,12 +63,12 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
             } catch (IllegalArgumentException ex) {/* Invalid color */ }
         }
         if (tag.contains(POTION_EFFECTS.NBT)) {
-            ListTag list = tag.getList(POTION_EFFECTS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+            NbtList list = tag.getList(POTION_EFFECTS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
             int length = list.size();
             customEffects = new ArrayList<PotionEffect>(length);
 
             for (int i = 0; i < length; i++) {
-                CompoundTag effect = list.getCompound(i);
+                NbtCompound effect = list.getCompound(i);
                 PotionEffectType type = PotionEffectType.getById(effect.getByte(ID.NBT));
                 if (type == null) continue; // SPIGOT-4047: Vanilla just disregards these
 
@@ -103,7 +102,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
 
         tag.putString(DEFAULT_POTION.NBT, CardboardPotionUtil.fromBukkit(type));
@@ -112,11 +111,11 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
             tag.putInt(POTION_COLOR.NBT, color.asRGB());
 
         if (customEffects != null) {
-            ListTag effectList = new ListTag();
+            NbtList effectList = new NbtList();
             tag.put(POTION_EFFECTS.NBT, effectList);
 
             for (PotionEffect effect : customEffects) {
-                CompoundTag effectData = new CompoundTag();
+                NbtCompound effectData = new NbtCompound();
                 effectData.putByte(ID.NBT, (byte) effect.getType().getId());
                 effectData.putByte(AMPLIFIER.NBT, (byte) effect.getAmplifier());
                 effectData.putInt(DURATION.NBT, effect.getDuration());

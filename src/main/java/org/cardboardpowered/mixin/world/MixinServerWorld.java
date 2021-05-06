@@ -32,8 +32,8 @@ import net.minecraft.world.level.storage.LevelStorage;
 @Mixin(ServerWorld.class)
 public class MixinServerWorld extends MixinWorld {
 
-    @Shadow
-    public boolean inEntityTick;
+   // @Shadow
+   // public boolean inEntityTick;
 
     @SuppressWarnings("rawtypes")
     @Inject(at = @At("TAIL"), method = "<init>")
@@ -53,31 +53,33 @@ public class MixinServerWorld extends MixinWorld {
      * @reason MapInitalizeEvent
      * @author BukkitFabricMod
      */
-    @Overwrite
-    public MapState getMapState(String s) {
-        return (MapState) CraftServer.INSTANCE.getServer().getOverworld().getPersistentStateManager().get(() -> {
-            MapState newMap = new MapState(s);
+    //@Overwrite
+   // public MapState getMapState(String s) {
+        // TODO 1.17ify
+       // return null; return (MapState) CraftServer.INSTANCE.getServer().getOverworld().getPersistentStateManager().get(() -> {
+           /*MapState newMap = new MapState(s);
             MapInitializeEvent event = new MapInitializeEvent(((IMixinMapState)newMap).getMapViewBF());
             Bukkit.getServer().getPluginManager().callEvent(event);
             return newMap;
-        }, s);
-    }
+        }, s);*/
+  //  }
 
-    @Inject(at = @At("TAIL"), method = "unloadEntity")
+    // TODO 1.17ify
+   /* @Inject(at = @At("TAIL"), method = "unloadEntity")
     public void unvalidateEntityBF(Entity entity, CallbackInfo ci) {
         ((IMixinEntity)entity).setValid(false);
     } 
 
     @Inject(at = @At("TAIL"), method = "loadEntityUnchecked")
     public void validateEntityBF(Entity entity, CallbackInfo ci) {
-        if (!this.inEntityTick) {
+        //if (!this.inEntityTick) {
             IMixinEntity bf = (IMixinEntity) entity;
             bf.setValid(true);
             if (null == bf.getOriginBF() && null != bf.getBukkitEntity()) {
                 // Paper's Entity Origin API
                 bf.setOriginBF(bf.getBukkitEntity().getLocation());
             }
-        }
-    } 
+       // }
+    }*/ 
 
 }

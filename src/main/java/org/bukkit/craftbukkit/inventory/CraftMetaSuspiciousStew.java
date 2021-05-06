@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -34,15 +34,15 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
             this.customEffects = new ArrayList<PotionEffect>(stewMeta.customEffects);
     }
 
-    CraftMetaSuspiciousStew(CompoundTag tag) {
+    CraftMetaSuspiciousStew(NbtCompound tag) {
         super(tag);
         if (tag.contains(EFFECTS.NBT)) {
-            ListTag list = tag.getList(EFFECTS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+            NbtList list = tag.getList(EFFECTS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
             int length = list.size();
             customEffects = new ArrayList<PotionEffect>(length);
 
             for (int i = 0; i < length; i++) {
-                CompoundTag effect = list.getCompound(i);
+                NbtCompound effect = list.getCompound(i);
                 PotionEffectType type = PotionEffectType.getById(effect.getByte(ID.NBT));
                 if (type == null) {
                     continue;
@@ -70,15 +70,15 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
 
         if (customEffects != null) {
-            ListTag effectList = new ListTag();
+            NbtList effectList = new NbtList();
             tag.put(EFFECTS.NBT, effectList);
 
             for (PotionEffect effect : customEffects) {
-                CompoundTag effectData = new CompoundTag();
+                NbtCompound effectData = new NbtCompound();
                 effectData.putByte(ID.NBT, ((byte) effect.getType().getId()));
                 effectData.putInt(DURATION.NBT, effect.getDuration());
                 effectList.add(effectData);

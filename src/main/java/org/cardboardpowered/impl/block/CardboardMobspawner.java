@@ -5,9 +5,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
 @SuppressWarnings("deprecation")
 public class CardboardMobspawner extends CardboardBlockEntityState<MobSpawnerBlockEntity> implements CreatureSpawner {
@@ -22,7 +24,9 @@ public class CardboardMobspawner extends CardboardBlockEntityState<MobSpawnerBlo
 
     @Override
     public EntityType getSpawnedType() {
-        Identifier key = this.getSnapshot().getLogic().getEntityId();
+        //Identifier key = this.getSnapshot().getLogic().getEntityId(((WorldImpl)this.getWorld()).getHandle(), 
+       //         new BlockPos(this.getBlock().getPosition().x, this.getBlock().getPosition().y, this.getBlock().getPosition().z));
+        Identifier key = null;
         return (key == null) ? EntityType.PIG : EntityType.fromName(key.getPath());
     }
 
@@ -35,7 +39,7 @@ public class CardboardMobspawner extends CardboardBlockEntityState<MobSpawnerBlo
 
     @Override
     public String getCreatureTypeName() {
-        return this.getSnapshot().getLogic().getEntityId().getPath();
+        return "PIG";// TODO 1.17ify this.getSnapshot().getLogic().getEntityId().getPath();
     }
 
     @Override

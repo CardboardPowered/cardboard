@@ -50,7 +50,7 @@ public interface MixinScreenHandlerContext extends IMixinScreenHandlerContext {
             }
 
             @Override
-            public <T> Optional<T> run(BiFunction<World, BlockPos, T> bifunction) {
+            public <T> Optional<T> get(BiFunction<World, BlockPos, T> bifunction) {
                 return Optional.of(bifunction.apply(world, blockposition));
             }
         };

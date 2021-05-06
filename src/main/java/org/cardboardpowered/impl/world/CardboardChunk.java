@@ -19,6 +19,7 @@
 package org.cardboardpowered.impl.world;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -46,7 +47,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -122,6 +123,16 @@ public class CardboardChunk implements Chunk {
     public Entity[] getEntities() {
         if (!isLoaded()) getWorld().getChunkAt(x, z);
         int count = 0, index = 0;
+        ArrayList<Entity> list = new ArrayList<>();
+        for (Entity e : getWorld().getEntities()) {
+            if (e.getChunk() == this) {
+                count++;
+                list.add(e);
+            }
+        }
+        return list.toArray(new Entity[list.size()]);
+
+        /*
         net.minecraft.world.chunk.WorldChunk chunk = getHandle();
 
         for (int i = 0; i < 16; i++)
@@ -135,7 +146,7 @@ public class CardboardChunk implements Chunk {
                 entities[index++] = ((IMixinEntity)(Object)((net.minecraft.entity.Entity) obj)).getBukkitEntity();
             }
         }
-        return entities;
+        return entities;*/
     }
 
     @Override
@@ -256,7 +267,7 @@ public class CardboardChunk implements Chunk {
                 sectionEmitLights[i] = emptyLight;
                 sectionEmpty[i] = true;
             } else { // Not empty
-                CompoundTag data = new CompoundTag();
+                NbtCompound data = new NbtCompound();
                 cs[i].getContainer().write(data, "Palette", "BlockStates");
 
                 PalettedContainer<net.minecraft.block.BlockState> blockids = new PalettedContainer<>(ChunkSection.PALETTE, net.minecraft.block.Block.STATE_IDS, NbtHelper::toBlockState, NbtHelper::fromBlockState, Blocks.AIR.getDefaultState()); // TODO: snapshot whole ChunkSection
@@ -302,7 +313,7 @@ public class CardboardChunk implements Chunk {
         BiomeArray biome = null;
 
         if (includeBiome || includeBiomeTempRain)
-            biome = new BiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
+            biome = new BiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY), world.getHandle(), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
 
         // Fill with empty data
         int hSection = world.getMaxHeight() >> 4;

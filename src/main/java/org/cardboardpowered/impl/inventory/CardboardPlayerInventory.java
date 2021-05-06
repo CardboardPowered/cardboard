@@ -4,7 +4,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.google.common.base.Preconditions;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.HeldItemChangeS2CPacket;
+import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
@@ -143,7 +143,7 @@ public class CardboardPlayerInventory extends CraftInventory implements org.bukk
     public void setHeldItemSlot(int slot) {
         Validate.isTrue(slot >= 0 && slot < PlayerInventory.getHotbarSize(), "Slot is not between 0 and 8 inclusive");
         this.getInventory().selectedSlot = slot;
-        ((PlayerImpl) this.getHolder()).getHandle().networkHandler.sendPacket(new HeldItemChangeS2CPacket(slot));
+        ((PlayerImpl) this.getHolder()).getHandle().networkHandler.sendPacket(new UpdateSelectedSlotS2CPacket(slot));
     }
 
     @Override

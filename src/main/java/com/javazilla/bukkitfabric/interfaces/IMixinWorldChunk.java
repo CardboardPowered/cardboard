@@ -30,7 +30,7 @@ public interface IMixinWorldChunk {
 
     Map<Heightmap.Type, Heightmap> getHeightMaps();
 
-    TypeFilterableList<Entity>[] getEntitySections();
+    //TypeFilterableList<Entity>[] getEntitySections();
 
     Chunk getBukkitChunk();
 

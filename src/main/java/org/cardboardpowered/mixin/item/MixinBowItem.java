@@ -48,7 +48,7 @@ public class MixinBowItem {
         PersistentProjectileEntity entityarrow = itemarrow.createArrow(world, itemstack1, (LivingEntity) entityhuman);
         cancel_BF = false;
 
-        boolean flag = entityhuman.abilities.creativeMode || EnchantmentHelper.getLevel(Enchantments.INFINITY, itemstack) > 0;
+        boolean flag = entityhuman.getAbilities().creativeMode || EnchantmentHelper.getLevel(Enchantments.INFINITY, itemstack) > 0;
         boolean flag1 = flag && itemstack1.getItem() == Items.ARROW;
 
         entityarrow.setProperties(entityhuman, entityhuman.pitch, entityhuman.yaw, 0.0F, 3.0F, 1.0F);

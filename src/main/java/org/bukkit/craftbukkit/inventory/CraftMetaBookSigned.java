@@ -2,9 +2,9 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 import net.minecraft.text.Text.Serializer;
 import org.bukkit.Material;
@@ -20,7 +20,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
         super(meta);
     }
 
-    CraftMetaBookSigned(CompoundTag tag) {
+    CraftMetaBookSigned(NbtCompound tag) {
         super(tag, false);
 
         boolean resolved = true;
@@ -28,7 +28,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
             resolved = tag.getBoolean(RESOLVED.NBT);
 
         if (tag.contains(BOOK_PAGES.NBT)) {
-            ListTag pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
+            NbtList pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
 
             for (int i = 0; i < Math.min(pages.size(), MAX_PAGES); i++) {
                 String page = pages.getString(i);
@@ -48,7 +48,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
     }
 
     @Override
-    void applyToItem(CompoundTag itemData) {
+    void applyToItem(NbtCompound itemData) {
         super.applyToItem(itemData, false);
 
         if (hasTitle())
@@ -58,9 +58,9 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
             itemData.putString(BOOK_AUTHOR.NBT, this.author);
 
         if (hasPages()) {
-            ListTag list = new ListTag();
+            NbtList list = new NbtList();
             for (Text page : pages)
-                list.add(StringTag.of(Serializer.toJson(page)));
+                list.add(NbtString.of(Serializer.toJson(page)));
 
             itemData.put(BOOK_PAGES.NBT, list);
         }

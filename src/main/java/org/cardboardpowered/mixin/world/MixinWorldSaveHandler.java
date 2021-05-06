@@ -18,7 +18,7 @@ import com.mojang.datafixers.DataFixer;
 
 import net.minecraft.datafixer.DataFixTypes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -40,8 +40,8 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
      * @author BukkitFabric
      */
     @Overwrite
-    public CompoundTag loadPlayerData(PlayerEntity entityhuman) {
-        CompoundTag nbttagcompound = null;
+    public NbtCompound loadPlayerData(PlayerEntity entityhuman) {
+        NbtCompound nbttagcompound = null;
 
         try {
             File file = new File(this.playerDataDir, entityhuman.getUuidAsString() + ".dat");
@@ -77,7 +77,7 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
             // CraftBukkit end
             int i = nbttagcompound.contains("DataVersion", 3) ? nbttagcompound.getInt("DataVersion") : -1;
 
-            entityhuman.fromTag(NbtHelper.update(this.dataFixer, DataFixTypes.PLAYER, nbttagcompound, i));
+            entityhuman.readNbt(NbtHelper.update(this.dataFixer, DataFixTypes.PLAYER, nbttagcompound, i));
         }
 
         return nbttagcompound;
@@ -85,7 +85,7 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
 
     @SuppressWarnings("resource")
     @Override
-    public CompoundTag getPlayerData(String s) {
+    public NbtCompound getPlayerData(String s) {
         try {
             File file1 = new File(this.playerDataDir, s + ".dat");
             if (file1.exists())

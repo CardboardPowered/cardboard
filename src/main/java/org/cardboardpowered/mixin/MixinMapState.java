@@ -27,16 +27,23 @@ import org.cardboardpowered.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
 
 import net.minecraft.item.map.MapState;
+import net.minecraft.util.registry.RegistryKey;
 
 @Mixin(MapState.class)
 public class MixinMapState implements IMixinMapState {
 
     public MapViewImpl mapView;
 
+    //@Inject(at = @At("TAIL"), method="<init>*")
+    //public void setMapView(String s, CallbackInfo ci) {
+    //    mapView = new MapViewImpl((MapState)(Object)this);
+    //}
+
     @Inject(at = @At("TAIL"), method="<init>*")
-    public void setMapView(String s, CallbackInfo ci) {
+    public void setMapView(int a, int b, byte c, boolean d, boolean e, boolean f, RegistryKey key, CallbackInfo ci) {
         mapView = new MapViewImpl((MapState)(Object)this);
     }
+
 
     @Override
     public MapViewImpl getMapViewBF() {

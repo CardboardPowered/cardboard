@@ -58,7 +58,7 @@ dependencies {
     extraLibs group: "com.github.OrionMinecraft", name: "SrgLib", version: "master-SNAPSHOT"
 
     // (Optional) Fabric Permissions API.
-    modImplementation "com.javazilla.mods:permissions:1.1"
+    // modImplementation "com.javazilla.mods:permissions:1.1"
 
     // Remove parts that are included with Minecraft or Downloaded
     removeLibs group: "com.google.guava", name: "guava", version: "21.0"

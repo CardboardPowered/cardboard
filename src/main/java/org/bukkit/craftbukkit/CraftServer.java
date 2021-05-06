@@ -208,8 +208,8 @@ import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resource.DataPackSettings;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.server.BannedIpEntry;
@@ -661,7 +661,7 @@ public class CraftServer implements Server {
         FilledMapItem.fillExplorationMap(worldServer, stack);
         // "+" map ID taken from EntityVillager
 
-        FilledMapItem.getOrCreateMapState(stack, worldServer).addDecorationsTag(stack, structurePosition, "+", net.minecraft.item.map.MapIcon.Type.byId(structureType.getMapIcon().getValue()));
+        FilledMapItem.getOrCreateMapState(stack, worldServer).addDecorationsNbt(stack, structurePosition, "+", net.minecraft.item.map.MapIcon.Type.byId(structureType.getMapIcon().getValue()));
 
         return CraftItemStack.asBukkitCopy(stack);
     }
@@ -760,8 +760,8 @@ public class CraftServer implements Server {
         boolean hardcore = creator.hardcore();
 
         server.getRegistryManager();
-        RegistryOps<Tag> registryreadops = RegistryOps.of((DynamicOps<Tag>) NbtOps.INSTANCE, server.serverResourceManager.getResourceManager(), DynamicRegistryManager.create());
-        LevelProperties worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps<Tag>) registryreadops, method_29735(server.dataPackManager));
+        RegistryOps<NbtElement> registryreadops = RegistryOps.of((DynamicOps<NbtElement>) NbtOps.INSTANCE, server.serverResourceManager.getResourceManager(), DynamicRegistryManager.create());
+        LevelProperties worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps<NbtElement>) registryreadops, method_29735(server.dataPackManager));
 
         LevelInfo worldSettings;
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)
@@ -787,14 +787,15 @@ public class CraftServer implements Server {
         net.minecraft.world.gen.chunk.ChunkGenerator chunkgenerator;
 
         if (worlddimension == null) {
-            dimensionmanager = (DimensionType) server.getRegistryManager().getDimensionTypes().getOrThrow(DimensionType.OVERWORLD_REGISTRY_KEY);
-            chunkgenerator = GeneratorOptions.createOverworldGenerator(server.getRegistryManager().get(Registry.BIOME_KEY), server.getRegistryManager().get(Registry.NOISE_SETTINGS_WORLDGEN), (new Random()).nextLong());
+            dimensionmanager = //(DimensionType) server.getRegistryManager().getDimensionTypes().getOrThrow(DimensionType.OVERWORLD_REGISTRY_KEY);
+            server.getOverworld().getDimension();
+            chunkgenerator = GeneratorOptions.createOverworldGenerator(server.getRegistryManager().get(Registry.BIOME_KEY), server.getRegistryManager().get(Registry.CHUNK_GENERATOR_SETTINGS_KEY), (new Random()).nextLong());
         } else {
             dimensionmanager = worlddimension.getDimensionType();
             chunkgenerator = worlddimension.getChunkGenerator();
         }
 
-        RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.of(Registry.DIMENSION, new Identifier(name.toLowerCase(java.util.Locale.ENGLISH)));
+        RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.of(Registry.WORLD_KEY, new Identifier(name.toLowerCase(java.util.Locale.ENGLISH)));
 
         ServerWorld internal = (ServerWorld) new ServerWorld(server, server.workerExecutor, worldSession, worlddata, worldKey, dimensionmanager, getServer().worldGenerationProgressListenerFactory.create(11),
                 chunkgenerator, worlddata.getGeneratorOptions().isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true/*, creator.environment(), generator*/);
@@ -1210,13 +1211,13 @@ public class CraftServer implements Server {
         switch (registry) {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-                return (org.bukkit.Tag<T>) new BlockTagImpl(server.getTagManager().getBlocks(), key);
+                return (org.bukkit.Tag<T>) new BlockTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY), key);
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
-                return (org.bukkit.Tag<T>) new ItemTagImpl(server.getTagManager().getItems(), key);
+                return (org.bukkit.Tag<T>) new ItemTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY), key);
             case org.bukkit.Tag.REGISTRY_FLUIDS:
                 Preconditions.checkArgument(clazz == org.bukkit.Fluid.class, "Fluid namespace must have fluid type");
-                return (org.bukkit.Tag<T>) new Tags.FluidTagImpl(server.getTagManager().getFluids(), key);
+                return (org.bukkit.Tag<T>) new Tags.FluidTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.FLUID_KEY), key);
             default:
                 throw new IllegalArgumentException();
         }
@@ -1228,17 +1229,17 @@ public class CraftServer implements Server {
         switch (registry) {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-                TagGroup<Block> blockTags = server.getTagManager().getBlocks();
+                TagGroup<Block> blockTags = server.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
                 return blockTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new BlockTagImpl(blockTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
 
-                TagGroup<Item> itemTags = server.getTagManager().getItems();
+                TagGroup<Item> itemTags = server.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY);
                 return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new ItemTagImpl(itemTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_FLUIDS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Fluid namespace must have fluid type");
 
-                TagGroup<Fluid> fluidTags = server.getTagManager().getFluids();
+                TagGroup<Fluid> fluidTags = server.getTagManager().getOrCreateTagGroup(Registry.FLUID_KEY);
                 return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new Tags.FluidTagImpl(fluidTags, key)).collect(ImmutableList.toImmutableList());
             default:
                 throw new IllegalArgumentException();

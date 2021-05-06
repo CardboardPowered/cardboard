@@ -15,7 +15,7 @@ public final class CraftEndRod extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.property.EnumProperty<?> FACING = getEnum(net.minecraft.block.EndRodBlock.class, "facing");
+    private static final net.minecraft.state.property.EnumProperty<?> FACING = getEnum(net.minecraft.block.RodBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

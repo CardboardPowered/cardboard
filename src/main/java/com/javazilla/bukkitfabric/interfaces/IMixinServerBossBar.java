@@ -1,9 +1,9 @@
 package com.javazilla.bukkitfabric.interfaces;
 
-import net.minecraft.network.packet.s2c.play.BossBarS2CPacket.Type;
+//TODO 1.17ify import net.minecraft.network.packet.s2c.play.BossBarS2CPacket.Type;
 
 public interface IMixinServerBossBar {
 
-    void sendPacketBF(Type updateName);
+ // TODO 1.17ify void sendPacketBF(Type updateName);
 
 }

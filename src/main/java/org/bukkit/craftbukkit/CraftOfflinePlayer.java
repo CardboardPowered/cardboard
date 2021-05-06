@@ -8,8 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.world.WorldSaveHandler;
 
@@ -60,7 +59,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         if (profile.getName() != null)
             return profile.getName();
 
-        CompoundTag data = getBukkitData();
+        NbtCompound data = getBukkitData();
         return (data != null && data.contains("lastKnownName")) ? data.getString("lastKnownName") : null;
     }
 
@@ -164,16 +163,16 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         return hash;
     }
 
-    private CompoundTag getData() {
+    private NbtCompound getData() {
         return ((IMixinWorldSaveHandler)storage).getPlayerData(getUniqueId().toString());
     }
 
-    private CompoundTag getBukkitData() {
-        CompoundTag result = getData();
+    private NbtCompound getBukkitData() {
+        NbtCompound result = getData();
 
         if (result != null) {
             if (!result.contains("bukkit"))
-                result.put("bukkit", new CompoundTag());
+                result.put("bukkit", new NbtCompound());
             result = result.getCompound("bukkit");
         }
 
@@ -189,7 +188,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         Player player = getPlayer();
         if (player != null) return player.getFirstPlayed();
 
-        CompoundTag data = getBukkitData();
+        NbtCompound data = getBukkitData();
 
         if (data != null) {
             if (data.contains("firstPlayed")) {
@@ -206,7 +205,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         Player player = getPlayer();
         if (player != null) return player.getLastPlayed();
 
-        CompoundTag data = getBukkitData();
+        NbtCompound data = getBukkitData();
         return data != null ? ((data.contains("lastPlayed")) ? data.getLong("lastPlayed") : getDataFile().lastModified()) : 0;
     }
 
@@ -217,7 +216,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public Location getBedSpawnLocation() {
-        CompoundTag data = getData();
+        NbtCompound data = getData();
         if (data == null) return null;
 
         if (data.contains("SpawnX") && data.contains("SpawnY") && data.contains("SpawnZ")) {

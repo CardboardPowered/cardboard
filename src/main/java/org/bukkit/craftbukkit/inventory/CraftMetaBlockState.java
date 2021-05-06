@@ -71,8 +71,8 @@ import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.block.entity.SmokerBlockEntity;
 import net.minecraft.block.entity.StructureBlockBlockEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.DyeColor;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
@@ -82,7 +82,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     static final ItemMetaKey BLOCK_ENTITY_TAG = new ItemMetaKey("BlockEntityTag");
 
     final Material material;
-    CompoundTag blockEntityTag;
+    NbtCompound blockEntityTag;
 
     CraftMetaBlockState(CraftMetaItem meta, Material material) {
         super(meta);
@@ -97,7 +97,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         this.blockEntityTag = te.blockEntityTag;
     }
 
-    CraftMetaBlockState(CompoundTag tag, Material material) {
+    CraftMetaBlockState(NbtCompound tag, Material material) {
         super(tag);
         this.material = material;
 
@@ -116,21 +116,21 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
         if (blockEntityTag != null)
             tag.put(BLOCK_ENTITY_TAG.NBT, blockEntityTag);
     }
 
     @Override
-    void deserializeInternal(CompoundTag tag, Object context) {
+    void deserializeInternal(NbtCompound tag, Object context) {
         super.deserializeInternal(tag, context);
         if (tag.contains(BLOCK_ENTITY_TAG.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND))
             blockEntityTag = tag.getCompound(BLOCK_ENTITY_TAG.NBT);
     }
 
     @Override
-    void serializeInternal(final Map<String, Tag> internalTags) {
+    void serializeInternal(final Map<String, NbtElement> internalTags) {
         if (blockEntityTag != null)
             internalTags.put(BLOCK_ENTITY_TAG.NBT, blockEntityTag);
     }
@@ -282,7 +282,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
                     break;
             }
         }
-        BlockEntity te = (blockEntityTag == null) ? null : BlockEntity.createFromTag(null, blockEntityTag);
+        BlockEntity te = (blockEntityTag == null) ? null : BlockEntity.createFromNbt(null, null, blockEntityTag);
 
         switch (material) {
         case ACACIA_SIGN:
@@ -297,35 +297,35 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case OAK_WALL_SIGN:
         case SPRUCE_SIGN:
         case SPRUCE_WALL_SIGN:
-            if (te == null) te = new SignBlockEntity();
+            if (te == null) te = new SignBlockEntity(null,null);
             return new CardboardSign(material, (SignBlockEntity) te);
         case CHEST:
         case TRAPPED_CHEST:
-            if (te == null) te = new ChestBlockEntity();
+            if (te == null) te = new ChestBlockEntity(null,null);
             return new CardboardChest(material, (ChestBlockEntity) te);
         case FURNACE:
-            if (te == null) te = new FurnaceBlockEntity();
+            if (te == null) te = new FurnaceBlockEntity(null,null);
             return new CardboardFurnace(material, (AbstractFurnaceBlockEntity) te);
         case DISPENSER:
-            if (te == null) te = new DispenserBlockEntity();
+            if (te == null) te = new DispenserBlockEntity(null,null);
             return new CardboardDispenser(material, (DispenserBlockEntity) te);
         case DROPPER:
-            if (te == null) te = new DropperBlockEntity();
+            if (te == null) te = new DropperBlockEntity(null,null);
             return new CardboardDropper(material, (DropperBlockEntity) te);
         case END_GATEWAY:
-            if (te == null) te = new EndGatewayBlockEntity();
+            if (te == null) te = new EndGatewayBlockEntity(null,null);
             return new CardboardEndGateway(material, (EndGatewayBlockEntity) te);
         case HOPPER:
-            if (te == null) te = new HopperBlockEntity();
+            if (te == null) te = new HopperBlockEntity(null,null);
             return new CardboardHopper(material, (HopperBlockEntity) te);
         case SPAWNER:
-            if (te == null) te = new MobSpawnerBlockEntity();
+            if (te == null) te = new MobSpawnerBlockEntity(null,null);
             return new CardboardMobspawner(material, (MobSpawnerBlockEntity) te);
         case JUKEBOX:
-            if (te == null) te = new JukeboxBlockEntity();
+            if (te == null) te = new JukeboxBlockEntity(null,null);
             return new CardboardJukebox(material, (JukeboxBlockEntity) te);
         case BREWING_STAND:
-            if (te == null) te = new BrewingStandBlockEntity();
+            if (te == null) te = new BrewingStandBlockEntity(null,null);
             return new CardboardBrewingStand(material, (BrewingStandBlockEntity) te);
         case CREEPER_HEAD:
         case CREEPER_WALL_HEAD:
@@ -339,23 +339,23 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case WITHER_SKELETON_WALL_SKULL:
         case ZOMBIE_HEAD:
         case ZOMBIE_WALL_HEAD:
-            if (te == null) te = new SkullBlockEntity();
+            if (te == null) te = new SkullBlockEntity(null,null);
             return new CardboardSkull(material, (SkullBlockEntity) te);
         case COMMAND_BLOCK:
         case REPEATING_COMMAND_BLOCK:
         case CHAIN_COMMAND_BLOCK:
             if (te == null) {
-                te = new CommandBlockBlockEntity();
+                te = new CommandBlockBlockEntity(null,null);
             }
             return new CardboardCommandBlock(material, (CommandBlockBlockEntity) te);
         case BEACON:
             if (te == null) {
-                te = new BeaconBlockEntity();
+                te = new BeaconBlockEntity(null,null);
             }
             return new CardboardBeacon(material, (BeaconBlockEntity) te);
         case SHIELD:
             if (te == null) {
-                te = new BannerBlockEntity();
+                te = new BannerBlockEntity(null,null);
             }
             ((BannerBlockEntity) te).baseColor = (blockEntityTag == null) ? DyeColor.WHITE : DyeColor.byId(blockEntityTag.getInt(CraftMetaBanner.BASE.NBT));
         case BLACK_BANNER:
@@ -391,11 +391,11 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case YELLOW_BANNER:
         case YELLOW_WALL_BANNER:
             if (te == null)
-                te = new BannerBlockEntity();
+                te = new BannerBlockEntity(null,null);
 
             return new CardboardBanner(material == Material.SHIELD ? shieldToBannerHack(blockEntityTag) : material, (BannerBlockEntity) te);
         case STRUCTURE_BLOCK:
-            if (te == null) te = new StructureBlockBlockEntity();
+            if (te == null) te = new StructureBlockBlockEntity(null,null);
             return new CardboardStructureBlock(material, (StructureBlockBlockEntity) te);
         case SHULKER_BOX:
         case WHITE_SHULKER_BOX:
@@ -415,55 +415,55 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
         case RED_SHULKER_BOX:
         case BLACK_SHULKER_BOX:
             if (te == null)
-                te = new ShulkerBoxBlockEntity();
+                te = new ShulkerBoxBlockEntity(null,null);
             return new CardboardShulkerBox(material, (ShulkerBoxBlockEntity) te);
         case ENCHANTING_TABLE:
             if (te == null)
-                te = new EnchantingTableBlockEntity();
+                te = new EnchantingTableBlockEntity(null,null);
             return new CardboardEnchantingTable(material, (EnchantingTableBlockEntity) te);
         case ENDER_CHEST:
             if (te == null)
-                te = new EnderChestBlockEntity();
+                te = new EnderChestBlockEntity(null,null);
             return new CardboardEnderchest(material, (EnderChestBlockEntity) te);
         case DAYLIGHT_DETECTOR:
             if (te == null)
-                te = new DaylightDetectorBlockEntity();
+                te = new DaylightDetectorBlockEntity(null,null);
             return new CardboardDaylightDetector(material, (DaylightDetectorBlockEntity) te);
         case COMPARATOR:
             if (te == null)
-                te = new ComparatorBlockEntity();
+                te = new ComparatorBlockEntity(null,null);
             return new CardboardComparator(material, (ComparatorBlockEntity) te);
         case BARREL:
             if (te == null)
-                te = new BarrelBlockEntity();
+                te = new BarrelBlockEntity(null,null);
             return new CardboardBarrel(material, (BarrelBlockEntity) te);
         case BELL:
             if (te == null)
-                te = new BellBlockEntity();
+                te = new BellBlockEntity(null,null);
             return new CardboardBell(material, (BellBlockEntity) te);
         case BLAST_FURNACE:
             if (te == null)
-                te = new BlastFurnaceBlockEntity();
+                te = new BlastFurnaceBlockEntity(null,null);
             return new CardboardBlastFurnace(material, (BlastFurnaceBlockEntity) te);
         case CAMPFIRE:
             if (te == null)
-                te = new CampfireBlockEntity();
+                te = new CampfireBlockEntity(null,null);
             return new CardboardCampfire(material, (CampfireBlockEntity) te);
         case JIGSAW:
             if (te == null)
-                te = new JigsawBlockEntity();
+                te = new JigsawBlockEntity(null,null);
             return new CardboardJigsaw(material, (JigsawBlockEntity) te);
         case LECTERN:
             if (te == null)
-                te = new LecternBlockEntity();
+                te = new LecternBlockEntity(null,null);
             return new CardboardLectern(material, (LecternBlockEntity) te);
         case SMOKER:
-            if (te == null) te = new SmokerBlockEntity();
+            if (te == null) te = new SmokerBlockEntity(null,null);
             return new CardboardSmoker(material, (SmokerBlockEntity) te);
         case BEE_NEST:
         case BEEHIVE:
             if (te == null)
-                te = new BeehiveBlockEntity();
+                te = new BeehiveBlockEntity(null,null);
             return new CardboardBeehive(material, (BeehiveBlockEntity) te);
         default:
             throw new IllegalStateException("Missing blockState for " + material);
@@ -647,7 +647,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             blockEntityTag.putInt(CraftMetaBanner.BASE.NBT, ((CardboardBanner) blockState).getBaseColor().getWoolData());
     }
 
-    private static Material shieldToBannerHack(CompoundTag tag) {
+    private static Material shieldToBannerHack(NbtCompound tag) {
         if (tag == null || !tag.contains(CraftMetaBanner.BASE.NBT, CraftMagicNumbers.NBT.TAG_INT)) {
             return Material.WHITE_BANNER;
         }

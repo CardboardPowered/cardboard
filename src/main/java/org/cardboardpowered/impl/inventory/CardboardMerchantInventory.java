@@ -20,7 +20,7 @@ public class CardboardMerchantInventory extends CraftInventory implements org.bu
 
     @Override
     public int getSelectedRecipeIndex() {
-        return getInventory().recipeIndex;
+        return 0; // TODO 1.17ify getInventory().offerIndex;
     }
 
     @Override

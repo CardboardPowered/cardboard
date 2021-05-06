@@ -3,8 +3,8 @@ package org.bukkit.craftbukkit.inventory;
 import static org.bukkit.craftbukkit.inventory.CraftItemFactory.*;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtInt;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -27,10 +27,10 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
         this.color = armorMeta.color;
     }
 
-    CraftMetaLeatherArmor(CompoundTag tag) {
+    CraftMetaLeatherArmor(NbtCompound tag) {
         super(tag);
         if (tag.contains(DISPLAY.NBT)) {
-            CompoundTag display = tag.getCompound(DISPLAY.NBT);
+            NbtCompound display = tag.getCompound(DISPLAY.NBT);
             if (display.contains(COLOR.NBT)) {
                 try {
                     color = Color.fromRGB(display.getInt(COLOR.NBT));
@@ -47,11 +47,11 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
     }
 
     @Override
-    void applyToItem(CompoundTag itemTag) {
+    void applyToItem(NbtCompound itemTag) {
         super.applyToItem(itemTag);
 
         if (hasColor()) {
-            setDisplayTag(itemTag, COLOR.NBT, IntTag.of(color.asRGB()));
+            setDisplayTag(itemTag, COLOR.NBT, NbtInt.of(color.asRGB()));
         }
     }
 

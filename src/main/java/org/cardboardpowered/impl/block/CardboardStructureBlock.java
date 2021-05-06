@@ -64,12 +64,12 @@ public class CardboardStructureBlock extends CardboardBlockEntityState<Structure
 
     @Override
     public BlockVector getStructureSize() {
-        return new BlockVector(getSnapshot().size.getX(), getSnapshot().size.getY(), getSnapshot().size.getZ());
+        return new BlockVector(getSnapshot().getSize().getX(), getSnapshot().getSize().getY(), getSnapshot().getSize().getZ());
     }
 
     @Override
     public void setStructureSize(BlockVector vector) {
-        getSnapshot().size = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+        // TODO 1.17ify getSnapshot().size = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
     }
 
     @Override

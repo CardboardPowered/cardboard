@@ -42,8 +42,9 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
 
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Texts;
@@ -209,7 +210,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public int getEntityId() {
-        return nms.getEntityId();
+        return nms.getId();
     }
 
     @Override
@@ -274,12 +275,12 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Entity getPassenger() {
-        return isEmpty() ? null : ((IMixinEntity)getHandle().passengerList.get(0)).getBukkitEntity();
+        return isEmpty() ? null : ((IMixinEntity)getHandle().getFirstPassenger()).getBukkitEntity();
     }
 
     @Override
     public List<Entity> getPassengers() {
-        return Lists.newArrayList(Lists.transform(getHandle().passengerList, new Function<net.minecraft.entity.Entity, org.bukkit.entity.Entity>() {
+        return Lists.newArrayList(Lists.transform(getHandle().getPassengerList(), new Function<net.minecraft.entity.Entity, org.bukkit.entity.Entity>() {
             @Override
             public org.bukkit.entity.Entity apply(net.minecraft.entity.Entity input) {
                 return ((IMixinEntity)input).getBukkitEntity();
@@ -423,7 +424,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public void remove() {
-        nms.remove();
+        nms.remove(RemovalReason.DISCARDED);
     }
 
     @Override
@@ -534,7 +535,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         location.checkFinite();
         BukkitFabricMod.LOGGER.info("ENTITY TELEPORT DEBUG!!!");
 
-        if (nms.hasPassengers() || nms.removed)
+        if (nms.hasPassengers() || nms.isRemoved())
             return false;
 
         nms.stopRiding();
@@ -595,11 +596,11 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         return spigot;
     }
 
-    public CompoundTag save() {
-        CompoundTag nbttagcompound = new CompoundTag();
+    public NbtCompound save() {
+        NbtCompound nbttagcompound = new NbtCompound();
 
         nbttagcompound.putString("id", getHandle().getSavedEntityId());
-        getHandle().toTag(nbttagcompound);
+        getHandle().writeNbt(nbttagcompound);
 
         return nbttagcompound;
     }
@@ -621,7 +622,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
     public boolean isTicking() {
-        return nms.getEntityWorld().getChunkManager().shouldTickEntity(nms);
+        return true; // TODO: 1.17ify: nms.getEntityWorld().getChunkManager().shouldTickEntity(nms);
     }
 
     public boolean isInLava() {

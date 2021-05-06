@@ -94,7 +94,7 @@ public class MixinExplosion {
     @Shadow @Final private Random random;
     @Shadow @Final private Map<PlayerEntity, Vec3d> affectedPlayers = Maps.newHashMap();
 
-    @Shadow private static void method_24023(ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist, ItemStack itemstack, BlockPos blockposition) {}
+    @Shadow private static void tryMergeStack(ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist, ItemStack itemstack, BlockPos blockposition) {}
     @Shadow public DamageSource getDamageSource() {return null;}
 
     public boolean wasCanceled = false; // Added by Bukkit
@@ -176,13 +176,13 @@ public class MixinExplosion {
 
                     this.world.getProfiler().push("explosion_blocks");
                     if (block.shouldDropItemsOnExplosion((Explosion)(Object)this) && this.world instanceof ServerWorld) {
-                        BlockEntity tileentity = block.hasBlockEntity() ? this.world.getBlockEntity(blockposition) : null;
+                        BlockEntity tileentity = true/*block.hasBlockEntity()*/ ? this.world.getBlockEntity(blockposition) : null;
                         LootContext.Builder loottableinfo_builder = (new LootContext.Builder((ServerWorld) this.world)).random(this.world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter((Vec3i) blockposition)).parameter(LootContextParameters.TOOL, ItemStack.EMPTY).optionalParameter(LootContextParameters.BLOCK_ENTITY, tileentity).optionalParameter(LootContextParameters.THIS_ENTITY, this.entity);
 
                         if (this.destructionType ==Explosion.DestructionType.DESTROY || yield < 1.0F)
                             loottableinfo_builder.parameter(LootContextParameters.EXPLOSION_RADIUS, 1.0F / yield);
 
-                        iblockdata.getDroppedStacks(loottableinfo_builder).forEach((itemstack) -> method_24023(objectarraylist, itemstack, blockposition1));
+                        iblockdata.getDroppedStacks(loottableinfo_builder).forEach((itemstack) -> tryMergeStack(objectarraylist, itemstack, blockposition1));
                     }
 
                     this.world.setBlockState(blockposition, Blocks.AIR.getDefaultState(), 3);
@@ -302,7 +302,7 @@ public class MixinExplosion {
                         if (entity instanceof PlayerEntity) {
                             PlayerEntity entityhuman = (PlayerEntity) entity;
 
-                            if (!entityhuman.isSpectator() && (!entityhuman.isCreative() || !entityhuman.abilities.flying))
+                            if (!entityhuman.isSpectator() && (!entityhuman.isCreative() || !entityhuman.getAbilities().flying))
                                 this.affectedPlayers.put(entityhuman, new Vec3d(d8 * d13, d9 * d13, d10 * d13));
                         }
                     }

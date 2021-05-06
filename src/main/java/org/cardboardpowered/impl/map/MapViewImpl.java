@@ -29,7 +29,7 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public int getId() {
-        String text = worldMap.getId();
+        String text = worldMap.toString();//// TODO: 1.17ify //.getId();
         if (text.startsWith("map_")) {
             try {
                 return Integer.parseInt(text.substring("map_".length()));
@@ -53,7 +53,7 @@ public final class MapViewImpl implements MapView {
     @Override
     @Deprecated
     public void setScale(Scale scale) {
-        worldMap.scale = scale.getValue();
+       // worldMap.scale = scale.getValue();
     }
 
     @Override
@@ -65,7 +65,7 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public void setWorld(World world) {
-        worldMap.dimension = ((WorldImpl) world).getHandle().getRegistryKey();
+        //worldMap.dimension = ((WorldImpl) world).getHandle().getRegistryKey();
     }
 
     @Override
@@ -80,12 +80,12 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public void setCenterX(int x) {
-        worldMap.xCenter = x;
+        //worldMap.xCenter = x;
     }
 
     @Override
     public void setCenterZ(int z) {
-        worldMap.zCenter = z;
+        //worldMap.zCenter = z;
     }
 
     @Override
@@ -167,22 +167,22 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public boolean isTrackingPosition() {
-        return worldMap.showIcons;
+        return false;// TODO: 1.17ify worldMap.showIcons;
     }
 
     @Override
     public void setTrackingPosition(boolean trackingPosition) {
-        worldMap.showIcons = trackingPosition;
+        //worldMap.showIcons = trackingPosition;
     }
 
     @Override
     public boolean isUnlimitedTracking() {
-        return worldMap.unlimitedTracking;
+       return false;// return worldMap.unlimitedTracking;
     }
 
     @Override
     public void setUnlimitedTracking(boolean unlimited) {
-        worldMap.unlimitedTracking = unlimited;
+       // worldMap.unlimitedTracking = unlimited;
     }
 
     @Override
@@ -192,7 +192,7 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public void setLocked(boolean locked) {
-        worldMap.locked = locked;
+       // worldMap.locked = locked;
     }
 
 }

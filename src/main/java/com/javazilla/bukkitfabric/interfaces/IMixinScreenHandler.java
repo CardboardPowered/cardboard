@@ -43,7 +43,7 @@ public interface IMixinScreenHandler {
 
     void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks);
 
-    void setSlots(List<Slot> slots);
+    void setSlots( DefaultedList<Slot> slots);
 
     void setCheckReachable(boolean bl);
 

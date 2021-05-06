@@ -60,15 +60,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
-import net.minecraft.network.packet.s2c.play.CombatEventS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -101,7 +102,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     public int screenHandlerSyncId;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void init(MinecraftServer server, ServerWorld world, GameProfile profile, ServerPlayerInteractionManager interactionManager, CallbackInfo ci) {
+    public void init(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
         if (null != Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid())) {
             this.bukkit = (PlayerImpl) Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid());
             this.bukkit.setHandle((ServerPlayerEntity)(Object)this);
@@ -149,14 +150,24 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @SuppressWarnings("deprecation")
     @Inject(at = @At("HEAD"), method = "setGameMode", cancellable = true)
-    public void setGameMode(net.minecraft.world.GameMode gm, CallbackInfo ci) {
+    public void setGameMode(NbtCompound nbt, CallbackInfo ci) {
+        net.minecraft.world.GameMode gm = gameModeFromNbt(nbt, "playerGameType");
         if (gm == ((ServerPlayerEntity)(Object)this).interactionManager.getGameMode())
             ci.cancel();
+        // TODO: 1.17ify: Figure out why GM is null
+        System.out.println("Cardboard 1.17 Test: Is GM null?: " + (null == gm));
 
-        PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent((Player) getBukkitEntity(), GameMode.getByValue(gm.getId()));
-        CraftServer.INSTANCE.getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            ci.cancel();
+        if (null != gm) {
+            PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent((Player) getBukkitEntity(), GameMode.getByValue(gm.getId()));
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+            if (event.isCancelled())
+                ci.cancel();
+        }
+    }
+
+    @Shadow
+    private static net.minecraft.world.GameMode gameModeFromNbt(NbtCompound tag, String key) {
+        return null;
     }
 
     public String locale_BF = "en_us";
@@ -214,7 +225,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             ci.setReturnValue(OptionalInt.empty());
         } else {
             this.nextContainerCounter();
-            ScreenHandler container = factory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));
+            ScreenHandler container = factory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).getInventory(), ((ServerPlayerEntity)(Object)this));
 
             if (container != null) {
                 ((IMixinScreenHandler)container).setTitle(factory.getDisplayName());
@@ -258,16 +269,16 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
     public void bukkitizeDeath(DamageSource damagesource, CallbackInfo ci) {
         boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
-        if (((ServerPlayerEntity)(Object)this).removed) {
+        if (((ServerPlayerEntity)(Object)this).isRemoved()) {
             ci.cancel();
             return;
         }
 
-        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).inventory.size());
+        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).getInventory().size());
         boolean keepInventory = this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || ((ServerPlayerEntity)(Object)this).isSpectator();
 
         if (!keepInventory)
-            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).inventory.combinedInventory)
+            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).getInventory().combinedInventory)
                 for (ItemStack item : items)
                     if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item))
                         loot.add(CraftItemStack.asCraftMirror(item));
@@ -289,14 +300,14 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
         if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
             Text ichatbasecomponent = deathMessage.equals(deathmessage) ? ((ServerPlayerEntity)(Object)this).getDamageTracker().getDeathMessage() : CraftChatMessage.fromStringOrNull(deathMessage);
-            ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket((Packet<?>) (new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatbasecomponent)), (future) -> {
-                if (!future.isSuccess()) {
+         // TODO 1.17ify  ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket((Packet<?>) (new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatbasecomponent)), (future) -> {
+        /*        if (!future.isSuccess()) {
                     String s = ichatbasecomponent.asTruncatedString(256);
                     TranslatableText chatmessage = new TranslatableText("death.attack.message_too_long", new Object[]{(new LiteralText(s)).formatted(Formatting.GOLD)});
                     MutableText ichatmutablecomponent = (new TranslatableText("death.attack.even_more_magic", new Object[]{((ServerPlayerEntity)(Object)this).getDisplayName()})).styled((chatmodifier) -> {
                         return chatmodifier.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, chatmessage));
                     });
-                    ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatmutablecomponent));
+                 // TODO 1.17ify ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatmutablecomponent));
                 }
 
             });
@@ -308,7 +319,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                 } else if (scoreboardteambase.getDeathMessageVisibilityRule() == AbstractTeam.VisibilityRule.HIDE_FOR_OWN_TEAM)
                     CraftServer.server.getPlayerManager().sendToOtherTeams(((ServerPlayerEntity)(Object)this), ichatbasecomponent);
             } else CraftServer.server.getPlayerManager().broadcastChatMessage(ichatbasecomponent, MessageType.SYSTEM, Util.NIL_UUID);
-        } else ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED));
+        */}// TODO 1.17ify  else ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED));
 
         ((ServerPlayerEntity)(Object)this).dropShoulderEntities();
         if (this.world.getGameRules().getBoolean(GameRules.FORGIVE_DEAD_PLAYERS)) this.forgiveMobAnger();
@@ -316,7 +327,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         // SPIGOT-5478 must be called manually now
         ((ServerPlayerEntity)(Object)this).dropXp();
         // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
-        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).inventory.clear();
+        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).getInventory().clear();
 
         ((ServerPlayerEntity)(Object)this).setCameraEntity(((ServerPlayerEntity)(Object)this)); // Remove spectated target
         // CraftBukkit end
@@ -368,7 +379,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Overwrite
     public void copyFrom(ServerPlayerEntity entityplayer, boolean flag) {
         if (flag) {
-            ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
+            ((ServerPlayerEntity)(Object)this).getInventory().clone(entityplayer.getInventory());
             ((ServerPlayerEntity)(Object)this).setHealth(entityplayer.getHealth());
             ((ServerPlayerEntity)(Object)this).hungerManager = entityplayer.hungerManager;
             ((ServerPlayerEntity)(Object)this).experienceLevel = entityplayer.experienceLevel;
@@ -377,7 +388,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             ((ServerPlayerEntity)(Object)this).setScore(entityplayer.getScore());
             ((ServerPlayerEntity)(Object)this).lastNetherPortalPosition = entityplayer.lastNetherPortalPosition;
         } else if (((ServerPlayerEntity)(Object)this).world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || entityplayer.isSpectator()) {
-            ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
+            ((ServerPlayerEntity)(Object)this).getInventory().clone(entityplayer.getInventory());
             ((ServerPlayerEntity)(Object)this).experienceLevel = entityplayer.experienceLevel;
             ((ServerPlayerEntity)(Object)this).totalExperience = entityplayer.totalExperience;
             ((ServerPlayerEntity)(Object)this).experienceProgress = entityplayer.experienceProgress;
@@ -388,11 +399,11 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         ((ServerPlayerEntity)(Object)this).syncedExperience = -1;
         ((ServerPlayerEntity)(Object)this).syncedHealth = -1.0F;
         ((ServerPlayerEntity)(Object)this).syncedFoodLevel = -1;
-        ((ServerPlayerEntity)(Object)this).removedEntities.addAll(entityplayer.removedEntities);
+        //((ServerPlayerEntity)(Object)this).removedEntities.addAll(entityplayer.removedEntities);
         ((ServerPlayerEntity)(Object)this).seenCredits = entityplayer.seenCredits;
         ((ServerPlayerEntity)(Object)this).enteredNetherPos = entityplayer.enteredNetherPos;
-        ((ServerPlayerEntity)(Object)this).setShoulderEntityLeft(entityplayer.getShoulderEntityLeft());
-        ((ServerPlayerEntity)(Object)this).setShoulderEntityRight(entityplayer.getShoulderEntityRight());
+        //((ServerPlayerEntity)(Object)this).setShoulderEntityLeft(entityplayer.getShoulderEntityLeft());
+        //((ServerPlayerEntity)(Object)this).setShoulderEntityRight(entityplayer.getShoulderEntityRight());
 
     }
 

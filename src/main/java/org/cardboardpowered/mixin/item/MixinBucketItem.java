@@ -24,6 +24,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -46,7 +47,7 @@ public class MixinBucketItem extends Item {
     public Fluid fluid;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FluidDrainable;tryDrainFluid(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/fluid/Fluid;"))
+    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FluidDrainable;tryDrainFluid(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;"))
     public void use_BF(World world, PlayerEntity entityhuman, Hand enumhand, CallbackInfoReturnable<TypedActionResult> ci) {
         BlockHitResult movingobjectpositionblock = raycast(world, entityhuman, this.fluid == Fluids.EMPTY ? RaycastContext.FluidHandling.NONE : RaycastContext.FluidHandling.ANY);
         BlockHitResult movingobjectpositionblock1 = (BlockHitResult) movingobjectpositionblock;
@@ -54,8 +55,8 @@ public class MixinBucketItem extends Item {
         BlockState iblockdata = world.getBlockState(blockposition);
 
         if (iblockdata.getBlock() instanceof FluidDrainable) {
-            Fluid dummyFluid = ((FluidDrainable) iblockdata.getBlock()).tryDrainFluid(FakeWorldAccess.INSTANCE, blockposition, iblockdata);
-            PlayerBucketFillEvent event = BukkitEventFactory.callPlayerBucketFillEvent((ServerWorld) world, entityhuman, blockposition, blockposition, movingobjectpositionblock.getSide(), entityhuman.getStackInHand(enumhand), dummyFluid.getBucketItem(), enumhand); // Paper - add enumhand
+            ItemStack dummyFluid = ((FluidDrainable) iblockdata.getBlock()).tryDrainFluid(FakeWorldAccess.INSTANCE, blockposition, iblockdata);
+            PlayerBucketFillEvent event = BukkitEventFactory.callPlayerBucketFillEvent((ServerWorld) world, entityhuman, blockposition, blockposition, movingobjectpositionblock.getSide(), entityhuman.getStackInHand(enumhand), dummyFluid.getItem(), enumhand); // Paper - add enumhand
     
             if (event.isCancelled()) {
                 ((ServerPlayerEntity) entityhuman).networkHandler.sendPacket(new BlockUpdateS2CPacket(world, blockposition)); // SPIGOT-5163 (see PlayerInteractManager)

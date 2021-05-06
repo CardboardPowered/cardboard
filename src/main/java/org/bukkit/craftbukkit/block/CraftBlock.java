@@ -513,7 +513,7 @@ public class CraftBlock implements Block {
     }
 
     private static int getPower(int i, net.minecraft.block.BlockState iblockdata) {
-        if (!iblockdata.getBlock().is(Blocks.REDSTONE_WIRE)) {
+        if (!iblockdata.getBlock().equals(Blocks.REDSTONE_WIRE)) {
             return i;
         } else {
             int j = iblockdata.get(RedstoneWireBlock.POWER);
@@ -556,7 +556,7 @@ public class CraftBlock implements Block {
         boolean result = false;
 
         // Modeled off EntityHuman#hasBlock
-        if (block != Blocks.AIR && (item == null || !iblockdata.isToolRequired() || nmsItem.isEffectiveOn(iblockdata))) {
+        if (block != Blocks.AIR && (item == null || !iblockdata.isToolRequired() || nmsItem.isSuitableFor(iblockdata))) {
             net.minecraft.block.Block.dropStacks(iblockdata, world, position, world.getBlockEntity(position), null, nmsItem);
             result = true;
         }
@@ -580,7 +580,7 @@ public class CraftBlock implements Block {
         net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
         // Modelled off EntityHuman#hasBlock
-        if (item == null || !iblockdata.isToolRequired() || nms.isEffectiveOn(iblockdata)) {
+        if (item == null || !iblockdata.isToolRequired() || nms.isSuitableFor(iblockdata)) {
             return net.minecraft.block.Block.getDroppedStacks(iblockdata, world, position, world.getBlockEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else return Collections.emptyList();

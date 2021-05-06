@@ -11,9 +11,9 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.block.Block;
 import net.minecraft.item.SkullItem;
 import net.minecraft.item.WallStandingBlockItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtList;
 
 @Mixin(SkullItem.class)
 public class MixinSkullItem extends WallStandingBlockItem {
@@ -27,16 +27,16 @@ public class MixinSkullItem extends WallStandingBlockItem {
      * @author BukkitFabricMod
      */
     @Overwrite
-    public boolean postProcessTag(CompoundTag tag) {
-        super.postProcessTag(tag);
+    public boolean postProcessNbt(NbtCompound tag) {
+        super.postProcessNbt(tag);
         if (tag.contains("SkullOwner", 8) && !StringUtils.isBlank(tag.getString("SkullOwner"))) {
             GameProfile gameprofile = new GameProfile((UUID) null, tag.getString("SkullOwner"));
-            tag.put("SkullOwner", NbtHelper.fromGameProfile(new CompoundTag(), gameprofile));
+            tag.put("SkullOwner", NbtHelper.writeGameProfile(new NbtCompound(), gameprofile));
             return true;
         } else {
-            ListTag textures = tag.getCompound("SkullOwner").getCompound("Properties").getList("textures", 10);
+            NbtList textures = tag.getCompound("SkullOwner").getCompound("Properties").getList("textures", 10);
             for (int i = 0; i < textures.size(); i++) {
-                if (textures.get(i) instanceof CompoundTag && !((CompoundTag) textures.get(i)).contains("Signature", 8) && ((CompoundTag) textures.get(i)).getString("Value").trim().isEmpty()) {
+                if (textures.get(i) instanceof NbtCompound && !((NbtCompound) textures.get(i)).contains("Signature", 8) && ((NbtCompound) textures.get(i)).getString("Value").trim().isEmpty()) {
                     tag.remove("SkullOwner");
                     break;
                 }

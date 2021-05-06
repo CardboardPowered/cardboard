@@ -81,7 +81,7 @@ public class CraftContainer extends ScreenHandler {
         return view.getTopInventory().getSize();
     }
 
-    @Override
+   // @Override
     public boolean isNotRestricted(PlayerEntity entityhuman) {
         if (cachedType == view.getType() && cachedSize == getSize() && cachedTitle.equals(view.getTitle())) return true;
 

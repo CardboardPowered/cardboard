@@ -33,13 +33,13 @@ public class MixinSaddledComponent implements IMixinSaddledComponent {
     @Shadow public DataTracker dataTracker;
     @Shadow public TrackedData<Integer> boostTime;
     @Shadow public boolean boosted;
-    @Shadow public int field_23216;
+    @Shadow public int boostedTime; // field_23216
     @Shadow public int currentBoostTime;
 
     @Override
     public void setBoostTicks(int ticks) {
         this.boosted = true;
-        this.field_23216 = 0;
+        this.boostedTime = 0;
         this.currentBoostTime = ticks;
         this.dataTracker.set(this.boostTime, this.currentBoostTime);
     }

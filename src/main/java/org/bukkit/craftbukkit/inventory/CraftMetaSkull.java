@@ -5,9 +5,9 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
 import java.util.Map;
 import net.minecraft.block.entity.SkullBlockEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.Tag;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -27,7 +27,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     static final int MAX_OWNER_LENGTH = 16;
 
     private GameProfile profile;
-    private CompoundTag serializedProfile;
+    private NbtCompound serializedProfile;
 
     CraftMetaSkull(CraftMetaItem meta) {
         super(meta);
@@ -38,7 +38,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         this.setProfile(skullMeta.profile);
     }
 
-    CraftMetaSkull(CompoundTag tag) {
+    CraftMetaSkull(NbtCompound tag) {
         super(tag);
 
         if (tag.contains(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
@@ -55,7 +55,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     }
 
     @Override
-    void deserializeInternal(CompoundTag tag, Object context) {
+    void deserializeInternal(NbtCompound tag, Object context) {
         super.deserializeInternal(tag, context);
 
         if (tag.contains(SKULL_PROFILE.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND))
@@ -63,18 +63,18 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     }
 
     @Override
-    void serializeInternal(final Map<String, Tag> internalTags) {
+    void serializeInternal(final Map<String, NbtElement> internalTags) {
         if (profile != null)
             internalTags.put(SKULL_PROFILE.NBT, serializedProfile);
     }
 
     private void setProfile(GameProfile profile) {
         this.profile = profile;
-        this.serializedProfile = (profile == null) ? null : NbtHelper.fromGameProfile(new CompoundTag(), profile);
+        this.serializedProfile = (profile == null) ? null : NbtHelper.writeGameProfile(new NbtCompound(), profile);
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
 
         if (profile != null) {
