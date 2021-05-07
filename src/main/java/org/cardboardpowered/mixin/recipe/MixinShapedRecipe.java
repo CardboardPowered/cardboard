@@ -19,7 +19,7 @@ public class MixinShapedRecipe implements IMixinRecipe {
 
     @Shadow public String group;
     @Shadow public ItemStack output;
-    @Shadow public DefaultedList<Ingredient> inputs;
+    @Shadow public DefaultedList<Ingredient> input;
     @Shadow public int width;
     @Shadow public int height;
 
@@ -70,7 +70,7 @@ public class MixinShapedRecipe implements IMixinRecipe {
             break;
         }
         char c = 'a';
-        for (Ingredient list : this.inputs) {
+        for (Ingredient list : this.input) {
             RecipeChoice choice = RecipeInterface.toBukkit(list);
             if (choice != null) recipe.setIngredient(c, choice);
             c++;

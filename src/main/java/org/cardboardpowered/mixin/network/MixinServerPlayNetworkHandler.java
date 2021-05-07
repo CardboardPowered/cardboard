@@ -471,7 +471,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                                 }
                             }
                             this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
-                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.getAbilities().allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.method_29780((Entity) this.player) && !this.player.isUsingRiptide();
+                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.getAbilities().allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.isEntityOnAir((Entity) this.player) && !this.player.isUsingRiptide();
                             this.player.getServerWorld().getChunkManager().updatePosition(this.player);
                             this.player.handleFall(this.player.getY() - d3, packetplayinflying.isOnGround());
                             if (flag) this.player.fallDistance = 0.0F;
@@ -492,7 +492,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void requestTeleport(double d0, double d1, double d2, float f, float f1) {}
 
     @Shadow
-    private boolean method_29780(Entity entity) {return false;}
+    private boolean isEntityOnAir(Entity entity) {return false;}
 
     /**
      * @author BukkitFabricMod
