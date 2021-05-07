@@ -241,7 +241,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Location getLocation() {
-        return new Location(getWorld(), nms.getX(), nms.getY(), nms.getZ(), nms.yaw, nms.pitch);
+        return new Location(getWorld(), nms.getX(), nms.getY(), nms.getZ(), nms.getYaw(), nms.getPitch());
     }
 
     @Override
@@ -251,8 +251,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
             loc.setX(nms.getX());
             loc.setY(nms.getY());
             loc.setZ(nms.getZ());
-            loc.setYaw(nms.yaw);
-            loc.setPitch(nms.pitch);
+            loc.setYaw(nms.getYaw());
+            loc.setPitch(nms.getPitch());
         }
 
         return loc;
@@ -497,8 +497,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         yaw = Location.normalizeYaw(yaw);
         pitch = Location.normalizePitch(pitch);
 
-        nms.yaw = yaw;
-        nms.pitch = pitch;
+        nms.setYaw(yaw);
+        nms.setPitch(pitch);
         nms.prevYaw = yaw;
         nms.prevPitch = pitch;
         nms.setHeadYaw(yaw);

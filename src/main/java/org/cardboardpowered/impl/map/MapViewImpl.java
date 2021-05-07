@@ -70,12 +70,12 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public int getCenterX() {
-        return worldMap.xCenter;
+        return worldMap.centerX;
     }
 
     @Override
     public int getCenterZ() {
-        return worldMap.zCenter;
+        return worldMap.centerZ;
     }
 
     @Override

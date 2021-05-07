@@ -971,17 +971,17 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void setResourcePack(String url) {
-        nms.sendResourcePackUrl(url, "null", false);
+        nms.sendResourcePackUrl(url, "null", false, null);
     }
 
     @Override
     public void setResourcePack(String url, byte[] hash) {
-        nms.sendResourcePackUrl(url, new String(hash), false);
+        nms.sendResourcePackUrl(url, new String(hash), false, null);
     }
 
     @Override
     public void setSaturation(float arg0) {
-        nms.getHungerManager().setSaturationLevelClient(arg0);
+        nms.getHungerManager().setSaturationLevel(arg0);
     }
 
     @Override

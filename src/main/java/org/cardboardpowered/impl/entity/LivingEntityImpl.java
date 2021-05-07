@@ -177,13 +177,13 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
         if (Snowball.class.isAssignableFrom(projectile)) {
             launch = new SnowballEntity(world, getHandle());
-            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 1.5F, 1.0F); // ItemSnowball
+            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().getPitch(), getHandle().getYaw(), 0.0F, 1.5F, 1.0F); // ItemSnowball
         } else if (Egg.class.isAssignableFrom(projectile)) {
             launch = new EggEntity(world, getHandle());
-            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 1.5F, 1.0F); // ItemEgg
+            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().getPitch(), getHandle().getYaw(), 0.0F, 1.5F, 1.0F); // ItemEgg
         } else if (EnderPearl.class.isAssignableFrom(projectile)) {
             launch = new EnderPearlEntity(world, getHandle());
-            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 1.5F, 1.0F); // ItemEnderPearl
+            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().getPitch(), getHandle().getYaw(), 0.0F, 1.5F, 1.0F); // ItemEnderPearl
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
                 launch = new ArrowEntity(world, getHandle());
@@ -195,7 +195,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
             } else {
                 launch = new ArrowEntity(world, getHandle());
             }
-            ((PersistentProjectileEntity) launch).setProperties(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 3.0F, 1.0F); // ItemBow
+            ((PersistentProjectileEntity) launch).setProperties(getHandle(), getHandle().getPitch(), getHandle().getYaw(), 0.0F, 3.0F, 1.0F); // ItemBow
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             if (LingeringPotion.class.isAssignableFrom(projectile)) {
                 launch = new PotionEntity(world, getHandle());
@@ -204,10 +204,10 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
                 launch = new PotionEntity(world, getHandle());
                 ((PotionEntity) launch).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.SPLASH_POTION, 1)));
             }
-            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().pitch, getHandle().yaw, -20.0F, 0.5F, 1.0F); // ItemSplashPotion
+            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().getPitch(), getHandle().getYaw(), -20.0F, 0.5F, 1.0F); // ItemSplashPotion
         } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
             launch = new ExperienceBottleEntity(world, getHandle());
-            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().pitch, getHandle().yaw, -20.0F, 0.7F, 1.0F); // ItemExpBottle
+            ((ThrownEntity) launch).setProperties(getHandle(), getHandle().getPitch(), getHandle().getYaw(), -20.0F, 0.7F, 1.0F); // ItemExpBottle
         } else if (FishHook.class.isAssignableFrom(projectile) && getHandle() instanceof PlayerEntity) {
             launch = new FishingBobberEntity((PlayerEntity) getHandle(), world, 0, 0);
         } else if (Fireball.class.isAssignableFrom(projectile)) {
