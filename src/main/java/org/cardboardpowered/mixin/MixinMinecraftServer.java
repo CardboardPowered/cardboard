@@ -150,7 +150,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         return saveHandler;
     }
 
-    @Inject(at = @At("HEAD"), method = "getServerModName", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getServerModName", remap=false, cancellable = true)
     public void getServerModName_cardboard(CallbackInfoReturnable<String> ci) {
         if (null != Bukkit.getServer())
             ci.setReturnValue("CardboardPowered.org (Spigot+Fabric)");
