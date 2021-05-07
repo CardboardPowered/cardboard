@@ -270,8 +270,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         double d3 = set.contains(PlayerPositionLookS2CPacket.Flag.X) ? this.player.getX() : 0.0D;
         double d4 = set.contains(PlayerPositionLookS2CPacket.Flag.Y) ? this.player.getY() : 0.0D;
         double d5 = set.contains(PlayerPositionLookS2CPacket.Flag.Z) ? this.player.getZ() : 0.0D;
-        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.yaw : 0.0F;
-        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.pitch : 0.0F;
+        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.getYaw() : 0.0F;
+        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.getPitch() : 0.0F;
 
         this.requestedTeleportPos = new Vec3d(d0, d1, d2);
         if (++this.requestedTeleportId == Integer.MAX_VALUE)
@@ -355,21 +355,21 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 if (this.requestedTeleportPos != null) {
                     if (this.ticks - this.teleportRequestTick > 20) {
                         this.teleportRequestTick = this.ticks;
-                        this.requestTeleport(this.requestedTeleportPos.x, this.requestedTeleportPos.y, this.requestedTeleportPos.z, this.player.yaw, this.player.pitch);
+                        this.requestTeleport(this.requestedTeleportPos.x, this.requestedTeleportPos.y, this.requestedTeleportPos.z, this.player.getYaw(), this.player.getPitch());
                     }
                     this.allowedPlayerTicks = 20;
                 } else {
                     this.teleportRequestTick = this.ticks;
                     if (this.player.hasVehicle()) {
-                        this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.yaw), packetplayinflying.getPitch(this.player.pitch));
+                        this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.getYaw()), packetplayinflying.getPitch(this.player.getPitch()));
                         this.player.getServerWorld().getChunkManager().updatePosition(this.player);
                         this.allowedPlayerTicks = 20;
                     } else {
                         double prevX = player.getX();
                         double prevY = player.getY();
                         double prevZ = player.getZ();
-                        float prevYaw = player.yaw;
-                        float prevPitch = player.pitch;
+                        float prevYaw = player.getYaw();
+                        float prevPitch = player.getPitch();
                         double d0 = this.player.getX();
                         double d1 = this.player.getY();
                         double d2 = this.player.getZ();
@@ -377,8 +377,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                         double d4 = packetplayinflying.getX(this.player.getX());
                         double d5 = packetplayinflying.getY(this.player.getY());
                         double d6 = packetplayinflying.getZ(this.player.getZ());
-                        float f = packetplayinflying.getYaw(this.player.yaw);
-                        float f1 = packetplayinflying.getPitch(this.player.pitch);
+                        float f = packetplayinflying.getYaw(this.player.getYaw());
+                        float f1 = packetplayinflying.getPitch(this.player.getPitch());
                         double d7 = d4 - this.lastTickX;
                         double d8 = d5 - this.lastTickY;
                         double d9 = d6 - this.lastTickZ;
@@ -386,7 +386,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                         double d11 = d7 * d7 + d8 * d8 + d9 * d9;
 
                         if (this.player.isSleeping()) {
-                            if (d11 > 1.0D) this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.yaw), packetplayinflying.getPitch(this.player.pitch));
+                            if (d11 > 1.0D) this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.getYaw()), packetplayinflying.getPitch(this.player.getPitch()));
                         } else {
                             ++this.movePacketsCount;
                             int i = this.movePacketsCount - this.lastTickMovePacketsCount;
@@ -402,7 +402,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                             if (!this.player.isInTeleportationState() && (!this.player.getServerWorld().getGameRules().getBoolean(GameRules.DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isFallFlying())) {
                                 float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
                                 if (d11 - d10 > Math.max(f2, Math.pow((double) ((float) i * speed), 2))) {
-                                    this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.yaw, this.player.pitch);
+                                    this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYaw(), this.player.getPitch());
                                     ci.cancel();
                                     return;
                                 }
@@ -502,8 +502,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void onHandSwingBF(HandSwingC2SPacket packet, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
         this.player.updateLastActionTime();
-        float f1 = this.player.pitch;
-        float f2 = this.player.yaw;
+        float f1 = this.player.getPitch();
+        float f2 = this.player.getYaw();
         double d0 = this.player.getX();
         double d1 = this.player.getY() + (double) this.player.getStandingEyeHeight();
         double d2 = this.player.getZ();
@@ -542,8 +542,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
         this.player.updateLastActionTime();
         if (!itemstack.isEmpty()) {
-            float f1 = this.player.pitch;
-            float f2 = this.player.yaw;
+            float f1 = this.player.getPitch();
+            float f2 = this.player.getYaw();
             double d0 = this.player.getX();
             double d1 = this.player.getY() + (double) this.player.getStandingEyeHeight();
             double d2 = this.player.getZ();

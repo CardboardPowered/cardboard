@@ -51,7 +51,7 @@ public class MixinBowItem {
         boolean flag = entityhuman.getAbilities().creativeMode || EnchantmentHelper.getLevel(Enchantments.INFINITY, itemstack) > 0;
         boolean flag1 = flag && itemstack1.getItem() == Items.ARROW;
 
-        entityarrow.setProperties(entityhuman, entityhuman.pitch, entityhuman.yaw, 0.0F, 3.0F, 1.0F);
+        entityarrow.setProperties(entityhuman, entityhuman.getPitch(), entityhuman.getYaw(), 0.0F, 3.0F, 1.0F);
         int k = EnchantmentHelper.getLevel(Enchantments.POWER, itemstack);
         if (k > 0) entityarrow.setDamage(entityarrow.getDamage() + (double) k * 0.5D + 0.5D);
 
