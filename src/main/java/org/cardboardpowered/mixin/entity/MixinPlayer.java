@@ -42,6 +42,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -182,8 +183,10 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         if (itileinventory == null) {
             ci.setReturnValue(OptionalInt.empty());
         } else {
-            if (((ServerPlayerEntity)(Object)this).currentScreenHandler != ((ServerPlayerEntity)(Object)this).playerScreenHandler)
+            if (((ServerPlayerEntity)(Object)this).currentScreenHandler != ((ServerPlayerEntity)(Object)this).playerScreenHandler) {
+                BukkitFabricMod.LOGGER.info("Debug: closing screen.");
                 this.closeHandledScreen();
+            }
 
             this.nextContainerCounter();
             ScreenHandler container = itileinventory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));

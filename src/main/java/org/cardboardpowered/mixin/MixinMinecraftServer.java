@@ -67,6 +67,7 @@ import net.minecraft.server.ServerTask;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.network.SpawnLocating;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerChunkManager;
@@ -130,9 +131,9 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Shadow private int ticks;
 
     @Shadow public void initScoreboard(PersistentStateManager arg0) {}
-    @Shadow public void method_27731() {}
-    @Shadow public void updateMobSpawnOptions() {}
-    @Shadow public void setToDebugWorldProperties(SaveProperties saveProperties2) {}
+  //  @Shadow public void method_27731() {}
+ //   @Shadow public void updateMobSpawnOptions() {}
+ //   @Shadow public void setToDebugWorldProperties(SaveProperties saveProperties2) {}
 
     public void setDataCommandStorage(DataCommandStorage data) {
         this.dataCommandStorage = data;
@@ -186,15 +187,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     public MinecraftServer getServer() {
         return (MinecraftServer) (Object) this;
     }
-
-    @Shadow
-    public void loadWorldResourcePack() {
-    }
-
-    @Shadow
-    public void createWorlds(WorldGenerationProgressListener worldGenerationProgressListener) {
-    }
-
 
     /**
      * @reason Bukkit's Custom Multiworld handling
@@ -350,7 +342,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             if (worlddata.getCustomBossEvents() != null)
                 ((MinecraftServer)(Object)this).getBossBarManager().fromTag(worlddata.getCustomBossEvents());
         }
-        this.method_27731();
+        this.method_27731_1_15_2();
         for (ServerWorld worldserver : ((MinecraftServer)(Object)this).getWorlds()) {
             this.loadSpawn(worldserver.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, worldserver);
             CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getWorldImpl()));
@@ -364,6 +356,11 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         fixBukkitWorldEdit();
         BukkitFabricMod.isAfterWorldLoad = true;
     }
+
+    public void method_27731_1_15_2() {
+        ((MinecraftServer)(Object)this).setDifficulty(((DedicatedServer)(Object)this).getProperties().difficulty, true);
+    }
+
 
     private void fixBukkitWorldEdit() {
         try {
@@ -446,9 +443,21 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         this.executeModerately();
         worldloadlistener.stop();
         chunkproviderserver.getLightingProvider().setTaskBatchSize(5);
-        this.updateMobSpawnOptions();
+        this.updateMobSpawnOptions_1_15_2();
 
         this.forceTicks = false;
+    }
+
+    private void updateMobSpawnOptions_1_15_2() {
+        Iterator iterator = ((MinecraftServer)(Object)this).getWorlds().iterator();
+
+        while (iterator.hasNext()) {
+            ServerWorld worldserver = (ServerWorld) iterator.next();
+
+            worldserver.setMobSpawnOptions(((MinecraftServer)(Object)this).isMonsterSpawningEnabled(),
+                    ((MinecraftServer)(Object)this).shouldSpawnAnimals());
+        }
+
     }
 
     private void executeModerately() {
@@ -504,8 +513,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             try {
                 setupSpawn(worldserver, worldProperties, generatorsettings.hasBonusChest(), flag, true);
                 worldProperties.setInitialized(true);
-                if (flag)
-                    this.setToDebugWorldProperties(this.saveProperties);
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.create(throwable, "Exception initializing level");
                 throw new CrashException(crashreport);

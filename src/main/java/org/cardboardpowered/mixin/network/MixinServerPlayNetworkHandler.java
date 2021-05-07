@@ -260,48 +260,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         consumer.accept(text); // Skip filtering so we can stay off the primary server thread.
     }
 
-    /**
-     * @reason Bukkit AsyncChat
-     * @author Bukkit4Fabric
-     */
-    //@Overwrite
-    public void method_31286_0(String message) {
-        if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
-            this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED), MessageType.CHAT, player.getUuid()));
-        } else {
-            boolean isSync = message.startsWith("/");
-            this.player.updateLastActionTime();
-
-            if (isSync)
-                get().executeCommand(message);
-            else if (message.isEmpty())
-                BukkitLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
-            else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
-                TranslatableText chatmessage = new TranslatableText("chat.cannotSend", new Object[0]);
-
-                chatmessage.getStyle().withColor(Formatting.RED);
-                this.sendPacket(new GameMessageS2CPacket(chatmessage, MessageType.CHAT, player.getUuid()));
-            } else this.chat(message, true);
-
-            if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
-                if (!isSync) {
-                    Waitable<?> waitable = new WaitableImpl(() -> get().disconnect(new TranslatableText("disconnect.spam", new Object[0])));
-
-                    ((IMixinMinecraftServer)(Object)server).getProcessQueue().add(waitable);
-
-                    try {
-                        waitable.get();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    } catch (ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                } else get().disconnect(new TranslatableText("disconnect.spam", new Object[0]));
-
-            }
-        }
-    }
-
     @Override
     public void teleport(Location location) {
         double d0 = location.getX();

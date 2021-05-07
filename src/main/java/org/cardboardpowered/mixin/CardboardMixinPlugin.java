@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cardboardpowered.CardboardConfig;
 import org.cardboardpowered.library.Library;
 import org.cardboardpowered.library.LibraryKey;
 import org.cardboardpowered.library.LibraryManager;
@@ -28,6 +29,11 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void onLoad(String mixinPackage) {
+        try {
+            CardboardConfig.setup();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         logger.info("Loading Libraries...");
         loadLibs();
     }
@@ -72,6 +78,11 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         String mixin = mixinClassName.substring(MIXIN_PACKAGE_ROOT.length());
+        if (CardboardConfig.disabledMixins.contains(mixinClassName)) {
+            logger.info("Disabling mixin '" + mixin + "', was forced disabled in config.");
+            return false;
+        }
+
         if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent") && 
                 FabricLoader.getInstance().getModContainer("architectury").isPresent()) {
             logger.info("Architectury Mod detected! Disabling async chat from NetworkHandler.");
@@ -82,6 +93,11 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                 logger.info("Architectury Mod detected! Using alternative async chat from PlayerManager");
                 return true;
             } else return false;
+        }
+        if (CardboardConfig.ALT_CHAT) {
+            logger.info("Alternative ChatEvent Mixin enabled in config. Changing status on: " + mixin);
+            if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent")) return false;
+            if (mixin.equals("network.MixinPlayerManager_ChatEvent")) return true;
         }
         return true;
     }
