@@ -11,9 +11,11 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 
 import com.google.common.base.Preconditions;
+import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerBlockEntity;
+import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 
@@ -38,13 +40,10 @@ public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity
         base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
         patterns = new ArrayList<Pattern>();
 
-        // TODO: 1.17ify
-      /*  if (banner.patternListTag != null) {
-            for (int i = 0; i < banner.patternListTag.size(); i++) {
-                NbtCompound p = (NbtCompound) banner.patternListTag.get(i);
-                patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.getInt("Color")), PatternType.getByIdentifier(p.getString("Pattern"))));
-            }
-        }*/
+        for (int i = 0; i < banner.getPatterns().size(); i++) {
+        	Pair<BannerPattern, net.minecraft.util.DyeColor> pair = banner.getPatterns().get(i);
+            patterns.add(new Pattern(DyeColor.getByWoolData((byte) pair.getSecond().getId()), PatternType.getByIdentifier(pair.getFirst().getId())));
+        }
     }
 
     @Override
@@ -98,6 +97,7 @@ public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity
         super.applyTo(banner);
 
         banner.baseColor = net.minecraft.util.DyeColor.byId(base.getWoolData());
+        NbtCompound bannerNbt = new NbtCompound();
         NbtList newPatterns = new NbtList();
 
         for (Pattern p : patterns) {
@@ -106,7 +106,8 @@ public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity
             compound.putString("Pattern", p.getPattern().getIdentifier());
             newPatterns.add(compound);
         }
-        // TODO 1.17ify: banner.patternListTag = newPatterns;
+        bannerNbt.put("Patterns", newPatterns);
+        banner.readNbt(bannerNbt);
     }
 
 }
