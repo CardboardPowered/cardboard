@@ -1080,7 +1080,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     DARK_OAK_STAIRS(22921, Stairs.class),
     SLIME_BLOCK(31892),
-    GRASS_PATH(8604),
+    DIRT_PATH(8604),
     /**
      * BlockData: {@link Bisected}
      */
@@ -3008,7 +3008,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     @Deprecated
     LEGACY_BEETROOT_BLOCK(207, org.bukkit.material.Crops.class),
     @Deprecated
-    LEGACY_GRASS_PATH(208),
+    LEGACY_DIRT_PATH(208),
     @Deprecated
     LEGACY_END_GATEWAY(209),
     @Deprecated
@@ -4089,7 +4089,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case GRANITE_STAIRS:
             case GRANITE_WALL:
             case GRASS_BLOCK:
-            case GRASS_PATH:
+            case DIRT_PATH:
             case GRAVEL:
             case GRAY_BANNER:
             case GRAY_BED:
@@ -4606,7 +4606,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case LEGACY_PURPUR_DOUBLE_SLAB:
             case LEGACY_PURPUR_SLAB:
             case LEGACY_END_BRICKS:
-            case LEGACY_GRASS_PATH:
+            case LEGACY_DIRT_PATH:
             case LEGACY_STRUCTURE_BLOCK:
             case LEGACY_COMMAND_REPEATING:
             case LEGACY_COMMAND_CHAIN:
