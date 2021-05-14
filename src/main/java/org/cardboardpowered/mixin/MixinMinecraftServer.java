@@ -39,6 +39,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -127,7 +128,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Shadow public LevelStorage.Session session;
     @Shadow private long timeReference;
     @Shadow public DataCommandStorage dataCommandStorage;
-    @Shadow public SaveProperties saveProperties;
+    @Shadow @Mutable SaveProperties saveProperties;
     @Shadow private int ticks;
 
     @Shadow public void initScoreboard(PersistentStateManager arg0) {}
