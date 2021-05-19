@@ -79,6 +79,13 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             }
         }
 
+        if (owner.equalsIgnoreCase("com/comphenix/protocol/injector/netty/ChannelInjector")) {
+            if (name.equals("guessCompression")) {
+                super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ProtocolLibMapper", name, desc, false );
+                return;
+            }
+        }
+
         for (String str : SKIP) {
             if (this.pln.equalsIgnoreCase(str) || owner.startsWith("org/bukkit")) {
                 // Skip Vault cause weird things happen

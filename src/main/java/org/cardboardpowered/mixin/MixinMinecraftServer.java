@@ -131,9 +131,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Shadow private int ticks;
 
     @Shadow public void initScoreboard(PersistentStateManager arg0) {}
-  //  @Shadow public void method_27731() {}
- //   @Shadow public void updateMobSpawnOptions() {}
- //   @Shadow public void setToDebugWorldProperties(SaveProperties saveProperties2) {}
 
     public void setDataCommandStorage(DataCommandStorage data) {
         this.dataCommandStorage = data;

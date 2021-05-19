@@ -27,7 +27,7 @@ public class Remapper {
 
     public static int MAPPINGS_VERSION = 24;
 
-    public static BukkitLogger LOGGER = new BukkitLogger("BukkitNmsRemapper", null);
+    public static BukkitLogger LOGGER = new BukkitLogger("CardboardNmsMapper", null);
 
     public static File configDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), "bukkit4fabric");
     public static File remappedDir = new File(configDir, "remapped-plugins");

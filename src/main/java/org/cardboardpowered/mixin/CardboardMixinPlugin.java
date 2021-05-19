@@ -49,7 +49,6 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                 new Library("commons-collections", "commons-collections", "3.2.1", SHA1, "761ea405b9b37ced573d2df0d1e3a4e0f9edc668", null),
                 new Library("com.google.code.gson", "gson", "2.8.6", SHA1, "9180733b7df8542621dc12e21e87557e8c99b8cb", null),
                 new Library("org.jline", "jline", "3.19.0", SHA1, "27edf6497c4fac20b63ca4cd8788581ca86cb83e", null)
-               // new Library("org.apache.logging.log4j", "log4j-core", "2.8.1", SHA1, "4ac28ff2f1ddf05dae3043a190451e8c46b73c31", null)
             ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
         new LibraryManager(repository, "lib", true, 2, libraries.values()).run();
 

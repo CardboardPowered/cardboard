@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
@@ -42,10 +43,9 @@ import net.minecraft.network.NetworkEncryptionUtils;
 import net.minecraft.network.encryption.NetworkEncryptionException;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
-import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerLoginNetworkHandler.State;
@@ -207,10 +207,11 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
      * @author BukkitFabricMod
      * @reason Fire PlayerLoginEvent
      */
-    @Inject(at = @At("HEAD"), method = "acceptPlayer", cancellable = true)
+   /* @Inject(at = @At("HEAD"), method = "acceptPlayer", cancellable = true)
     public void acceptPlayer_BF(CallbackInfo ci) {
         if (connection.getAddress() instanceof LocalAddress)
             return;
+
         ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
 
         if (s != null) {
@@ -229,6 +230,25 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
         }
         ci.cancel();
+    }*/
+
+    private ServerPlayerEntity cardboard_player;
+
+    @Redirect(at = @At(value = "INVOKE", 
+            target = "Lnet/minecraft/server/PlayerManager;checkCanJoin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/text/Text;"),
+            method = "acceptPlayer")
+    public Text acceptPlayer_checkCanJoin(PlayerManager man, SocketAddress a, GameProfile b) {
+        ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
+        cardboard_player = s;
+
+        return null;
+    }
+
+    @Redirect(at = @At(value = "INVOKE", 
+            target = "Lnet/minecraft/server/PlayerManager;createPlayer(Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/server/network/ServerPlayerEntity;"),
+            method = "acceptPlayer")
+    public ServerPlayerEntity acceptPlayer_createPlayer(PlayerManager man, GameProfile a) {
+        return cardboard_player;
     }
 
     @Inject(at = @At("HEAD"), method="onHello", cancellable = true)

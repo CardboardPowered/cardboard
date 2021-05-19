@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
+import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
+
 import net.fabricmc.loader.api.FabricLoader;
 
 /**
@@ -18,7 +20,13 @@ public class CardboardConfig {
              "# This is the configuration file for Cardboard.\n\n" +
              "# Invoke ChatEvent from PlayerManager instead of NetworkHandler. This may solve conflicts with\n" +
              "# mods that inject into the chat method, but will not invoke the deprecated sync chat event\n" +
-             "use_alternative_chat_mixin=false"
+             "use_alternative_chat_mixin=false\n" +
+             "\n"+
+             "# Reflection Remapper Skip\n" +
+             "# Our current Reflection remapper might cause issues with some plugins\n" +
+             "# You can add plugin names here (that dont use Reflection) to our SKIP array\n" +
+             "skip_reflection_for_plugin=vault\n" +
+             "skip_reflection_for_plugin=worldguard\n"
              ;
 
     public static ArrayList<String> disabledMixins = new ArrayList<>();
@@ -42,6 +50,7 @@ public class CardboardConfig {
                         disabledMixins.add(val);
                     else disabledMixins.add("org.cardboardpowered.mixin." + val);
                 }
+                if (line.startsWith("skip_reflection_for_plugin")) ReflectionMethodVisitor.SKIP.add(val);
             }
         }
     }

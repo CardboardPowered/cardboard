@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-//import com.javazilla.bukkitfabric.BukkitFabricMod;
 
 import net.fabricmc.loader.launch.knot.Knot;
 
@@ -130,7 +129,7 @@ public final class LibraryManager {
                                     + '/' + library.libraryKey.spigotJarVersion + ".jar");
                         }
                         HttpsURLConnection connection = (HttpsURLConnection) downloadUrl.openConnection();
-                        connection.setRequestProperty("User-Agent", "Mozilla/5.0 Chrome/80");
+                        connection.setRequestProperty("User-Agent", "Mozilla/5.0 Chrome/90.0.4430.212");
 
                         try (ReadableByteChannel input = Channels.newChannel(connection.getInputStream()); FileOutputStream output = new FileOutputStream(file)) {
                             output.getChannel().transferFrom(input, 0, Long.MAX_VALUE);
