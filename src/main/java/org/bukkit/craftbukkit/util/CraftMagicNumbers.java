@@ -35,6 +35,7 @@ import com.mojang.serialization.Dynamic;
 
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -87,8 +88,14 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final Map<net.minecraft.fluid.Fluid, org.bukkit.Fluid> FLUID_MATERIAL = new HashMap<>();
     private static final Map<Material, net.minecraft.fluid.Fluid> MATERIAL_FLUID = new HashMap<>();
 
+    private static boolean dev = false;
 
     static {
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            System.out.println(dev);
+            
+        } else {
+        
         for (Block block : Registry.BLOCK)
             BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getId(block).getPath().toUpperCase(Locale.ROOT)));
 
@@ -105,6 +112,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
             Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
             Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
             Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
+        }
         }
     }
 
@@ -129,12 +137,13 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public static void test() {
         // Because I don't want to use ASM hacks more than necessary, we use the id of
         // the last modded material field. This allows switch statements to still work.
-        int MATERIAL_LENGTH = 1540;
+        int MATERIAL_LENGTH = 1300;
         int i = MATERIAL_LENGTH - 1;
 
         List<String> names = new ArrayList<>();
         List<Material> list = new ArrayList<>();
 
+        String lastMod = "";
         for (Block block : Registry.BLOCK) {
             Identifier id = Registry.BLOCK.getId(block);
             String name = standardize(id);
@@ -149,7 +158,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 list.add(material);
                 MODDED_MATERIALS.put(name, material);
                 
-                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
+                if (!(lastMod.equalsIgnoreCase(id.namespace)))
+                    BukkitFabricMod.LOGGER.info("Registering modded blocks from mod '" + (lastMod = id.namespace) + "'..");
+               // BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
             }
             Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
             BLOCK_MATERIAL.put(block, m);

@@ -133,7 +133,6 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -330,22 +329,12 @@ public class BukkitEventFactory {
     }
 
     public static ScreenHandler callInventoryOpenEvent(ServerPlayerEntity player, ScreenHandler container, boolean cancelled) {
-        if (player.currentScreenHandler != player.playerScreenHandler)
-            player.networkHandler.onCloseHandledScreen(new CloseHandledScreenC2SPacket(player.currentScreenHandler.syncId));
-
         PlayerImpl PlayerImpl = (PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity();
-        if (!(player.currentScreenHandler instanceof IMixinScreenHandler)) {
-            System.out.println("FAILED TO FIRE InventoryOpenEvent! SCREEN HANDLER != IMixinInventory");
+        if (!(player.currentScreenHandler instanceof IMixinScreenHandler))
             return container;
-        }
 
         CardboardInventoryView bv = ((IMixinScreenHandler)container).getBukkitView();
         bv.setPlayerIfNotSet((PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity());
-        if (bv instanceof CustomInventoryView) {
-            // Bug: Modded inventories do not like us 
-            return container;
-        }
-
 
         try {
             ((IMixinScreenHandler)player.currentScreenHandler).transferTo(container, PlayerImpl);

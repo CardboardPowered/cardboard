@@ -9,7 +9,6 @@ import org.cardboardpowered.impl.inventory.CustomInventoryView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 
@@ -25,10 +24,8 @@ import net.minecraft.util.collection.DefaultedList;
 public abstract class MixinScreenHandler implements IMixinScreenHandler {
 
     public boolean checkReachable = true;
-    //public abstract InventoryView getBukkitView();
 
     public CardboardInventoryView getBukkitView() {
-        BukkitFabricMod.LOGGER.info("Using generic InventoryView for ScreenHandler (inventory provided by a mod?)");
         CraftInventory cbi = new CraftInventory(new SimpleInventory( ((ScreenHandler)(Object)this).getStacks().toArray(new ItemStack[0]) ));
         return new CustomInventoryView(null, cbi, ((ScreenHandler)(Object)this));
     }

@@ -37,12 +37,11 @@ import org.bukkit.inventory.MainHand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -51,6 +50,9 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.impl.screenhandler.Networking;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -69,6 +71,7 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
@@ -79,9 +82,11 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -174,45 +179,80 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         return screenHandlerSyncId; // CraftBukkit
     }
 
+    /**/
+    @Unique
+    private final ThreadLocal<ScreenHandler> fabric_openedScreenHandler = new ThreadLocal<>();
+
+    private void fabric_replaceVanillaScreenPacket_include(ServerPlayNetworkHandler networkHandler, Packet<?> packet, NamedScreenHandlerFactory factory) {
+        if (factory instanceof ExtendedScreenHandlerFactory) {
+            ScreenHandler handler = fabric_openedScreenHandler.get();
+
+            if (handler.getType() instanceof ExtendedScreenHandlerType<?>) {
+                Networking.sendOpenPacket((ServerPlayerEntity) (Object) this, (ExtendedScreenHandlerFactory) factory, handler, screenHandlerSyncId);
+            } else {
+                Identifier id = Registry.SCREEN_HANDLER.getId(handler.getType());
+                throw new IllegalArgumentException("[Fabric] Non-extended screen handler " + id + " must not be opened with an ExtendedScreenHandlerFactory!");
+            }
+        } else {
+            // Use vanilla logic for non-extended screen handlers
+            networkHandler.sendPacket(packet);
+        }
+    }
+
+    @Inject(method = "openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;", at = @At("RETURN"))
+    private void fabric_clearStoredScreenHandler_include(NamedScreenHandlerFactory factory, CallbackInfoReturnable<OptionalInt> info) {
+        fabric_openedScreenHandler.remove();
+    }
+
     /**
      * @reason Inventory Open Event
-     * @author BukkitFabricMod
+     * @author Cardboard
      */
     @Inject(at = @At("HEAD"), method = "openHandledScreen", cancellable = true)
-    public void openHandledScreen(NamedScreenHandlerFactory itileinventory, CallbackInfoReturnable<OptionalInt> ci) {
-        if (itileinventory == null) {
+    public void openHandledScreen_c(NamedScreenHandlerFactory factory, CallbackInfoReturnable<OptionalInt> ci) {
+        if (factory == null) {
             ci.setReturnValue(OptionalInt.empty());
         } else {
-            if (((ServerPlayerEntity)(Object)this).currentScreenHandler != ((ServerPlayerEntity)(Object)this).playerScreenHandler) {
-                BukkitFabricMod.LOGGER.info("Debug: closing screen.");
-                this.closeHandledScreen();
-            }
-
             this.nextContainerCounter();
-            ScreenHandler container = itileinventory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));
+            ScreenHandler container = factory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));
 
             if (container != null) {
-                ((IMixinScreenHandler)container).setTitle(itileinventory.getDisplayName());
+                ((IMixinScreenHandler)container).setTitle(factory.getDisplayName());
 
                 boolean cancelled = false;
                 container = BukkitEventFactory.callInventoryOpenEvent((ServerPlayerEntity)(Object)this, container, cancelled);
                 if (container == null && !cancelled) {
-                    if (itileinventory instanceof Inventory) {
-                        ((Inventory) itileinventory).onClose((ServerPlayerEntity)(Object)this);
-                    } else if (itileinventory instanceof DoubleInventory)
-                        ((DoubleInventory) itileinventory).first.onClose((ServerPlayerEntity)(Object)this);
+                    if (factory instanceof Inventory) {
+                        ((Inventory) factory).onClose((ServerPlayerEntity)(Object)this);
+                    } else if (factory instanceof DoubleInventory)
+                        ((DoubleInventory) factory).first.onClose((ServerPlayerEntity)(Object)this);
+
                     ci.setReturnValue(OptionalInt.empty());
                 }
             }
-            if (container == null)
+            if (container == null) {
                 ci.setReturnValue(OptionalInt.empty());
-            else {
+            } else {
                 ((ServerPlayerEntity)(Object)this).currentScreenHandler = container;
-                ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, container.getType(), ((IMixinScreenHandler)container).getTitle()));
+                
+                /*From FabricAPI*/
+                if (factory instanceof ExtendedScreenHandlerFactory) {
+                    fabric_openedScreenHandler.set(container);
+                } else if (container.getType() instanceof ExtendedScreenHandlerType<?>) {
+                    Identifier id = Registry.SCREEN_HANDLER.getId(container.getType());
+                    throw new IllegalArgumentException("[Fabric] Extended screen handler " + id + " must be opened with an ExtendedScreenHandlerFactory!");
+                }
+                
+                fabric_replaceVanillaScreenPacket_include(((ServerPlayerEntity)(Object)this).networkHandler,
+                        new OpenScreenS2CPacket(container.syncId, container.getType(), factory.getDisplayName()),
+                        factory);
+                /*End*/
                 container.addListener(((ServerPlayerEntity)(Object)this));
+                fabric_openedScreenHandler.remove();
                 ci.setReturnValue(OptionalInt.of(this.screenHandlerSyncId));
             }
         }
+        ci.cancel();
     }
 
     @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
