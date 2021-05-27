@@ -39,7 +39,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
-import com.javazilla.bukkitfabric.MakeMaterial;
 import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
 
 import net.minecraft.enchantment.Enchantment;
@@ -70,12 +69,7 @@ public abstract class MixinDedicatedServer extends MixinMinecraftServer implemen
         for (Enchantment enchantment : Registry.ENCHANTMENT)
             org.bukkit.enchantments.Enchantment.registerEnchantment(new CardboardEnchantment(enchantment));
 
-        try {
-            MakeMaterial.make();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
+        CraftMagicNumbers.test();
         CraftMagicNumbers.setupUnknownModdedMaterials();
 
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));

@@ -32,7 +32,7 @@ public class MixinPlayerManager_ChatEvent {
         if (null != player) {
             AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, player, message.asString(), new LazyPlayerSet(CraftServer.server));
             Bukkit.getServer().getPluginManager().callEvent(event);
-            
+
             if (event.isCancelled()) return;
 
             String s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());

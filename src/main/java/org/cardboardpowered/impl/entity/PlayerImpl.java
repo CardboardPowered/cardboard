@@ -435,7 +435,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public String getDisplayName() {
-        return nms.getDisplayName().asString();
+        return nms.getCustomName().asString();
     }
 
     @Override

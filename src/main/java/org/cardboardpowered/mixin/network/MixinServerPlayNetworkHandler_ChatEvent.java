@@ -45,7 +45,6 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
     @Shadow
     public abstract void sendPacket(Packet<?> packet);
 
-    private volatile int messageCooldownBukkit;
     private static final AtomicIntegerFieldUpdater<ServerPlayNetworkHandler> chatSpamField = AtomicIntegerFieldUpdater.newUpdater(ServerPlayNetworkHandler.class, "messageCooldownBukkit");
 
     @Shadow
@@ -97,7 +96,7 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
 
                 chatmessage.getStyle().withColor(Formatting.RED);
                 this.sendPacket(new GameMessageS2CPacket(chatmessage, MessageType.CHAT, player.getUuid()));
-            } else this.chat(message, true);
+            } else this.chat_(message, true);
 
             if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
                 if (!isSync) {
@@ -122,7 +121,7 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
         return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
     }
 
-    public void chat(String s, boolean async) {
+    public void chat_(String s, boolean async) {
         if (s.isEmpty() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN)
             return;
 
