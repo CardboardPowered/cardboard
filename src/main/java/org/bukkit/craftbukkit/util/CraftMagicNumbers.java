@@ -91,11 +91,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static boolean dev = false;
 
     static {
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            System.out.println(dev);
-            
-        } else {
-        
         for (Block block : Registry.BLOCK)
             BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getId(block).getPath().toUpperCase(Locale.ROOT)));
 
@@ -112,7 +107,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
             Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
             Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
             Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
-        }
         }
     }
 
@@ -135,9 +129,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static void test() {
-        // Because I don't want to use ASM hacks more than necessary, we use the id of
-        // the last modded material field. This allows switch statements to still work.
-        int MATERIAL_LENGTH = 1300;
+        // TODO: This needs to be kept updated when Spigot updates
+        // It is the value of Material.values().length
+        int MATERIAL_LENGTH = 1525;
         int i = MATERIAL_LENGTH - 1;
 
         List<String> names = new ArrayList<>();
@@ -160,7 +154,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 
                 if (!(lastMod.equalsIgnoreCase(id.namespace)))
                     BukkitFabricMod.LOGGER.info("Registering modded blocks from mod '" + (lastMod = id.namespace) + "'..");
-               // BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
             }
             Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
             BLOCK_MATERIAL.put(block, m);
@@ -180,7 +173,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
                 BY_NAME.put(name, material);
                 list.add(material);
                 MODDED_MATERIALS.put(name, material);
-                BukkitFabricMod.LOGGER.info("Registered modded '" + id + "' as Material '" + material + "'");
+
+                if (!(lastMod.equalsIgnoreCase(id.namespace)))
+                    BukkitFabricMod.LOGGER.info("Registering modded items from mod '" + (lastMod = id.namespace) + "'..");
             }
             Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
             ITEM_MATERIAL.put(item, m);

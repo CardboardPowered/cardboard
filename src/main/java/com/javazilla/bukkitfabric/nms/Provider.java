@@ -2,6 +2,7 @@ package com.javazilla.bukkitfabric.nms;
 
 import java.io.File;
 
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
 public interface Provider {
@@ -13,5 +14,7 @@ public interface Provider {
     public boolean shouldReplaceASM();
 
     public MethodVisitor newMethodVisitor(int api, MethodVisitor visitMethod, String aname);
+
+    public ClassVisitor getClassVisitor(int api, ClassVisitor classVisitor);
 
 }
