@@ -27,12 +27,13 @@ public class MixinSkullItem extends WallStandingBlockItem {
      * @author BukkitFabricMod
      */
     @Overwrite
-    public boolean postProcessNbt(NbtCompound tag) {
+    // TODO on 1.17 return type is void now, also the method seems to be empty
+    public void postProcessNbt(NbtCompound tag) {
         super.postProcessNbt(tag);
         if (tag.contains("SkullOwner", 8) && !StringUtils.isBlank(tag.getString("SkullOwner"))) {
             GameProfile gameprofile = new GameProfile((UUID) null, tag.getString("SkullOwner"));
             tag.put("SkullOwner", NbtHelper.writeGameProfile(new NbtCompound(), gameprofile));
-            return true;
+            return;
         } else {
             NbtList textures = tag.getCompound("SkullOwner").getCompound("Properties").getList("textures", 10);
             for (int i = 0; i < textures.size(); i++) {
@@ -41,7 +42,7 @@ public class MixinSkullItem extends WallStandingBlockItem {
                     break;
                 }
             }
-            return false;
+            return;
         }
     }
 

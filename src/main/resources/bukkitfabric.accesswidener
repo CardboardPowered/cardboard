@@ -2142,3 +2142,4 @@ accessible	field	net/minecraft/state/AbstractBlockState	PROPERTY_MAP_PRINTER	Lja
 accessible method net/minecraft/nbt/StringNbtReader parsePrimitive (Ljava/lang/String;)Lnet/minecraft/nbt/NbtElement;
 accessible method net/minecraft/nbt/StringNbtReader parseElementPrimitiveArray ()Lnet/minecraft/nbt/NbtElement;
 accessible class net/minecraft/entity/mob/SpellcastingIllagerEntity$Spell
+accessible field net/minecraft/scoreboard/ScoreboardCriterion CRITERIA Ljava/util/Map;

@@ -273,13 +273,13 @@ public class MixinExplosion {
         for (int l1 = 0; l1 < list.size(); ++l1) {
             Entity entity = (Entity) list.get(l1);
             if (!entity.isImmuneToExplosion()) {
-                double d7 = (double) (MathHelper.sqrt(entity.squaredDistanceTo(vec3d)) / f2);
+                double d7 = (double) (MathHelper.sqrt((float) entity.squaredDistanceTo(vec3d)) / f2);
 
                 if (d7 <= 1.0D) {
                     double d8 = entity.getX() - this.x;
                     double d9 = (entity instanceof TntEntity ? entity.getY() : entity.getEyeY()) - this.y;
                     double d10 = entity.getZ() - this.z;
-                    double d11 = (double) MathHelper.sqrt(d8 * d8 + d9 * d9 + d10 * d10);
+                    double d11 = (double) MathHelper.sqrt((float) (d8 * d8 + d9 * d9 + d10 * d10));
 
                     if (d11 != 0.0D) {
                         d8 /= d11;
