@@ -79,7 +79,8 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
         if (profile != null) {
             // Fill in textures
-            setProfile(SkullBlockEntity.loadProperties(profile));
+        	// TODO 1.17ify consumer parameter added
+            // setProfile(SkullBlockEntity.loadProperties(profile));
             tag.put(SKULL_OWNER.NBT, serializedProfile);
         }
     }

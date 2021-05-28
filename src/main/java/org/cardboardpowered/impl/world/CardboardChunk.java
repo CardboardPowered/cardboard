@@ -297,7 +297,7 @@ public class CardboardChunk implements Chunk {
 
         if (includeMaxBlockY) {
             hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
-            hmap.setTo(chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
+            hmap.setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
         }
 
         BiomeArray biome = null;
