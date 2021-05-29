@@ -42,6 +42,19 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    // modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+    
+    // Make a collection of all api modules we wish to use
+    Set<String> apiModules = [
+    	"fabric-api-base",
+    	"fabric-networking-api-v1",
+    	"fabric-screen-handler-api-v1"
+    ]
+    
+    // Add each module as a dependency
+    apiModules.forEach {
+    	include(modImplementation(fabricApi.module(it, "${project.fabric_version}")))
+    }
 
     // Spigot API
     extraLibs fileTree(dir: 'libs', include: 'paper-api-1.16.4-416.jar')
