@@ -258,7 +258,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                         new OpenScreenS2CPacket(container.syncId, container.getType(), factory.getDisplayName()),
                         factory);
                 /*End*/
-                container.addListener(((ServerPlayerEntity)(Object)this));
+                container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
                 fabric_openedScreenHandler.remove();
                 ci.setReturnValue(OptionalInt.of(this.screenHandlerSyncId));
             }
