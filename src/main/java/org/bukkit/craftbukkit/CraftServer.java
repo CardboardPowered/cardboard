@@ -1273,7 +1273,8 @@ public class CraftServer implements Server {
 
     @Override
     public String getVersion() {
-        return serverVersion + " (MC: " + server.getVersion() + ")";
+    	// Some plugins like WorldEdit use PaperLib.getMinecraftVersion() for version checks
+        return serverVersion + " (MC: 1.16.4)";
     }
 
     public String getShortVersion() {
