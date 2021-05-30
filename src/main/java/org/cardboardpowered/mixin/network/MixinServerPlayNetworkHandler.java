@@ -623,31 +623,4 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         Bukkit.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal()]));
     }
 
-    // TODO: Fabric does not map this correctly at runtime
-    // TODO: currently only works in dev.
-    /*@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;getStackInHand(Lnet/minecraft/util/Hand;)Lnet/minecraft/item/ItemStack;"),
-            method = "onPlayerAction", cancellable = true)
-    public void doBukkitEvent_PlayerSwapHandItemsEvent(PlayerActionC2SPacket packet, CallbackInfo ci) {
-        ItemStack itemstack = this.player.getStackInHand(Hand.OFF_HAND);
-        CraftItemStack mainHand = CraftItemStack.asCraftMirror(itemstack);
-        CraftItemStack offHand = CraftItemStack.asCraftMirror(this.player.getStackInHand(Hand.MAIN_HAND));
-
-        PlayerSwapHandItemsEvent swapItemsEvent = new PlayerSwapHandItemsEvent(getPlayer(), mainHand.clone(), offHand.clone());
-        Bukkit.getPluginManager().callEvent(swapItemsEvent);
-        if (swapItemsEvent.isCancelled()) {
-            ci.cancel();
-            return;
-        }
-        if (swapItemsEvent.getOffHandItem().equals(offHand)) {
-            this.player.setStackInHand(Hand.OFF_HAND, this.player.getStackInHand(Hand.MAIN_HAND));
-        } else this.player.setStackInHand(Hand.OFF_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getOffHandItem()));
-
-        if (swapItemsEvent.getMainHandItem().equals(mainHand)) {
-            this.player.setStackInHand(Hand.MAIN_HAND, itemstack);
-        } else this.player.setStackInHand(Hand.MAIN_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getMainHandItem()));
-
-        // Cancel to not set item twice.
-        ci.cancel();
-    }*/
-
 }
