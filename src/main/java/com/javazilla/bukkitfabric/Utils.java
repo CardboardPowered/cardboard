@@ -48,7 +48,7 @@ public class Utils {
             Class<?> version = Class.forName("com.javazilla.bukkitfabric.GitVersion");
             return (String) version.getField("GIT_SHA").get(null);
         } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            return "dev";
+            return "-unknown-";
         }
     }
 

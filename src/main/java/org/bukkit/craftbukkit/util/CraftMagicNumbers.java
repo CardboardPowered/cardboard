@@ -146,6 +146,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
             Material material = BY_NAME.get(name);
             if (null == material && !names.contains(name)) {
                 material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
+                if (!(material instanceof IMixinMaterial)) {
+                    BukkitFabricMod.LOGGER.warning("Material not instanceof IMixinMaterial");
+                    return;
+                }
+
                 ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedBlock(id.toString()));
                 MATERIAL_BLOCK.put(material, block);
                 BY_NAME.put(name, material);
@@ -168,6 +173,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
             Material material = BY_NAME.get(name);
             if (null == material && !names.contains(name)) {
                 material = EnumHelper.makeEnum(Material.class, name, i, MAT_CTOR, ImmutableList.of(i));
+                if (!(material instanceof IMixinMaterial)) {
+                    BukkitFabricMod.LOGGER.warning("Material not instanceof IMixinMaterial");
+                    return;
+                }
+
                 ((IMixinMaterial)(Object)material).setModdedData(new CardboardModdedItem(id.toString()));
                 MATERIAL_ITEM.put(material, item);
                 BY_NAME.put(name, material);
