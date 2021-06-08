@@ -38,7 +38,7 @@ public class IpBanList implements org.bukkit.BanList {
         try {
             list.save();
         } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-ips.json, {0}", ex.getMessage());
+            Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned ips, " + ex.getMessage());
         }
         return new IpBanEntry(target, entry, list);
     }
@@ -73,7 +73,7 @@ public class IpBanList implements org.bukkit.BanList {
         public IpBanEntry(String target, BannedIpEntry entry, BannedIpList list) {
             this.list = list;
             this.target = target;
-            this.created = null; // TODO Bukkit4Fabric
+            this.created = null; // TODO Cardboard
             this.source = entry.getSource();
             this.expiration = entry.getExpiryDate() != null ? new Date(entry.getExpiryDate().getTime()) : null;
             this.reason = entry.getReason();
@@ -112,7 +112,7 @@ public class IpBanList implements org.bukkit.BanList {
         @SuppressWarnings("deprecation")
         @Override
         public void setExpiration(Date expiration) {
-            if (expiration != null && expiration.getTime() == new Date(0, 0, 0, 0, 0, 0).getTime()) expiration = null; // Forces "forever"
+            if (expiration != null && expiration.getTime() == new Date(0,0,0,0,0,0).getTime()) expiration = null; // Forces "forever"
             this.expiration = expiration;
         }
 
@@ -133,7 +133,7 @@ public class IpBanList implements org.bukkit.BanList {
             try {
                 this.list.save();
             } catch (IOException ex) {
-                Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-ips.json, {0}", ex.getMessage());
+                Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned ips json, " + ex.getMessage());
             }
         }
 

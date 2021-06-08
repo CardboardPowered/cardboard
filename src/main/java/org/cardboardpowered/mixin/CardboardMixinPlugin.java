@@ -52,21 +52,8 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
         new LibraryManager(repository, "lib", true, 2, libraries.values()).run();
 
-        String internalVer = System.getProperty("java.class.version");
-        double javaVer = Double.valueOf(internalVer) - 44;
-
-        if (javaVer <= 8) {
-            // The JDK and JRE are not separate post Java 8
-            // So we don't need to worry about it.
-            Map<LibraryKey, Library> libraries3 = Stream.of(
-                    new Library("com.google.errorprone", "javac", "1.8.0-u20", SHA1, "b23b2b0e3f79e3f737496a9eca5bab65cdca791d", null)
-                ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
-            new LibraryManager(repository, "lib", true, 2, libraries3.values()).run();
-        } else {
-            File jdk = new File("lib", "javac-1.8.0-u20.jar");
-            if (jdk.exists())
-                jdk.delete();
-        }
+        File jdk = new File("lib", "javac-1.8.0-u20.jar");
+        if (jdk.exists()) jdk.delete(); // From old version of Cardboard
     }
 
     @Override
@@ -111,11 +98,11 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
     }
 
     @Override
-    public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+    public void preApply(String target, ClassNode targetClass, String mixinClass, IMixinInfo info) {
     }
 
     @Override
-    public void postApply(String targetClassName, ClassNode target, String mixinClassName, IMixinInfo info) {
+    public void postApply(String targetClass, ClassNode target, String mixinClass, IMixinInfo info) {
     }
 
 }

@@ -157,6 +157,7 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
+import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import net.minecraft.world.level.ServerWorldProperties;
 
 @SuppressWarnings("deprecation")
@@ -363,9 +364,70 @@ public class WorldImpl implements World {
         return gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public boolean generateTree(Location arg0, TreeType arg1, BlockChangeDelegate arg2) {
-        // TODO Auto-generated method stub
+    public boolean generateTree(Location loc, TreeType arg1, BlockChangeDelegate arg2) {
+        BlockPos pos = new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        ConfiguredFeature gen = null;
+        switch (arg1) {
+            case ACACIA:
+                gen = ConfiguredFeatures.ACACIA;
+                break;
+            case BIG_TREE:
+                gen = ConfiguredFeatures.FANCY_OAK;
+                break;
+            case BIRCH:
+                gen = ConfiguredFeatures.BIRCH;
+                break;
+            case BROWN_MUSHROOM:
+                gen = ConfiguredFeatures.BROWN_MUSHROOM_NORMAL;
+                break;
+            case CHORUS_PLANT:
+                break;
+            case COCOA_TREE:
+                gen = ConfiguredFeatures.JUNGLE_TREE;
+                break;
+            case CRIMSON_FUNGUS:
+                break;
+            case DARK_OAK:
+                gen = ConfiguredFeatures.DARK_OAK;
+                break;
+            case JUNGLE:
+                gen = ConfiguredFeatures.JUNGLE_TREE;
+                break;
+            case JUNGLE_BUSH:
+                gen = ConfiguredFeatures.JUNGLE_BUSH;
+                break;
+            case MEGA_REDWOOD:
+                gen = ConfiguredFeatures.MEGA_SPRUCE;
+                break;
+            case REDWOOD:
+                gen = ConfiguredFeatures.SPRUCE;
+                break;
+            case RED_MUSHROOM:
+                break;
+            case SMALL_JUNGLE:
+                gen = ConfiguredFeatures.JUNGLE_TREE_NO_VINE;
+                break;
+            case SWAMP:
+                break;
+            case TALL_BIRCH:
+                gen = ConfiguredFeatures.BIRCH_TALL;
+                break;
+            case TALL_REDWOOD:
+                gen = ConfiguredFeatures.TREES_GIANT_SPRUCE;
+                break;
+            case TREE:
+                gen = ConfiguredFeatures.OAK;
+                break;
+            case WARPED_FUNGUS:
+                break;
+            default:
+                gen = ConfiguredFeatures.OAK;
+                break;
+            
+        }
+        gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
         return false;
     }
 

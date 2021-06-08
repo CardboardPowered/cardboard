@@ -28,8 +28,7 @@ public class ProfileBanList implements org.bukkit.BanList {
     @Override
     public org.bukkit.BanEntry getBanEntry(String target) {
         GameProfile profile = getProfile(target);
-        if (profile == null)
-            return null;
+        if (profile == null) return null;
 
         BannedPlayerEntry entry = list.get(profile);
         return (entry == null) ? null : new ProfileBanEntry(profile, entry, list);
@@ -46,7 +45,7 @@ public class ProfileBanList implements org.bukkit.BanList {
         try {
             list.save();
         } catch (IOException ex) {
-            Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-players.json, {0}", ex.getMessage());
+            Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned players, " + ex.getMessage());
         }
 
         return new ProfileBanEntry(profile, entry, list);

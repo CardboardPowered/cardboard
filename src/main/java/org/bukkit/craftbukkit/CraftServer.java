@@ -166,6 +166,7 @@ import org.cardboardpowered.impl.world.WorldImpl;
 import org.spigotmc.SpigotConfig;
 
 import com.destroystokyo.paper.entity.ai.MobGoals;
+import com.destroystokyo.paper.profile.CraftPlayerProfile;
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -1726,10 +1727,7 @@ public class CraftServer implements Server {
     @Override
     public com.destroystokyo.paper.profile.PlayerProfile createProfile(UUID uuid, String name) {
         Player player = uuid != null ? Bukkit.getPlayer(uuid) : (name != null ? Bukkit.getPlayerExact(name) : null);
-        if (player != null) {
-            return new com.destroystokyo.paper.profile.CraftPlayerProfile((PlayerImpl) player);
-        }
-        return new com.destroystokyo.paper.profile.CraftPlayerProfile(uuid, name);
+        return (player != null) ? new CraftPlayerProfile((PlayerImpl) player) : new CraftPlayerProfile(uuid, name);
     }
 
 

@@ -219,7 +219,6 @@ public class CardboardChunk implements Chunk {
 
     @Override
     public void setInhabitedTime(long ticks) {
-        Preconditions.checkArgument(ticks >= 0, "ticks cannot be negative");
         getHandle().setInhabitedTime(ticks);
     }
 
@@ -250,7 +249,7 @@ public class CardboardChunk implements Chunk {
         boolean[] sectionEmpty = new boolean[cs.length];
 
         for (int i = 0; i < cs.length; i++) {
-            if (cs[i] == null) { // Section is empty?
+            if (cs[i] == null) { // Section empty?
                 sectionBlockIDs[i] = emptyBlockIDs;
                 sectionSkyLights[i] = emptyLight;
                 sectionEmitLights[i] = emptyLight;

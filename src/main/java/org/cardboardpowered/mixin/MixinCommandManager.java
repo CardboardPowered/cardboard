@@ -77,8 +77,7 @@ public class MixinCommandManager {
 
         // Remove labels that were removed during the event
         //for (String orig : bukkit)
-        //    if (!event.getCommands().contains(orig))
-        //        rootcommandnode.removeCommand(orig);
+        //    if (!event.getCommands().contains(orig)) rootcommandnode.removeCommand(orig);
     }
 
 }

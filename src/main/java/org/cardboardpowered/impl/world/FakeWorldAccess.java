@@ -70,127 +70,127 @@ public class FakeWorldAccess implements WorldAccess {
 
     @Override
     public WorldProperties getLevelProperties() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public LocalDifficulty getLocalDifficulty(BlockPos blockposition) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public ChunkManager getChunkManager() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public Random getRandom() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public void playSound(PlayerEntity entityhuman, BlockPos blockposition, SoundEvent soundeffect, SoundCategory soundcategory, float f, float f1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public void addParticle(ParticleEffect particleparam, double d0, double d1, double d2, double d3, double d4, double d5) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public void syncWorldEvent(PlayerEntity entityhuman, int i, BlockPos blockposition, int j) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public DynamicRegistryManager getRegistryManager() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public List<Entity> getOtherEntities(Entity entity, Box aabb, Predicate<? super Entity> prdct) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public <T extends Entity> List<T> getEntitiesByClass(Class<? extends T> type, Box aabb, Predicate<? super T> prdct) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public List<? extends PlayerEntity> getPlayers() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public Chunk getChunk(int i, int i1, ChunkStatus cs, boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public int getTopY(Heightmap.Type type, int i, int i1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public int getAmbientDarkness() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public BiomeAccess getBiomeAccess() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public Biome getGeneratorStoredBiome(int i, int i1, int i2) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public boolean isClient() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public int getSeaLevel() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public DimensionType getDimension() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public LightingProvider getLightingProvider() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public BlockEntity getBlockEntity(BlockPos blockposition) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public BlockState getBlockState(BlockPos blockposition) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public FluidState getFluidState(BlockPos blockposition) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public WorldBorder getWorldBorder() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public boolean testBlockState(BlockPos bp, Predicate<BlockState> prdct) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
@@ -200,12 +200,12 @@ public class FakeWorldAccess implements WorldAccess {
 
     @Override
     public boolean removeBlock(BlockPos blockposition, boolean flag) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public boolean breakBlock(BlockPos blockposition, boolean flag, Entity entity, int i) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
