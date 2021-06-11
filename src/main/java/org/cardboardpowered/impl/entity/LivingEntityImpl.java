@@ -221,11 +221,13 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
             } else if (DragonFireball.class.isAssignableFrom(projectile)) {
                 launch = new DragonFireballEntity(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
             } else {
-                launch = new FireballEntity(world, getHandle(), direction.getX(), direction.getY(), direction.getZ(), 0); // TODO 1.17: check last value
+               // launch = new FireballEntity(world, getHandle(), direction.getX(), direction.getY(), direction.getZ(), 0); // TODO 1.17: check last value
             }
 
-            ((IMixinEntity) launch).setProjectileSourceBukkit(this);
-            launch.refreshPositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            if (null != launch) {
+                ((IMixinEntity) launch).setProjectileSourceBukkit(this);
+                launch.refreshPositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            }
         } else if (LlamaSpit.class.isAssignableFrom(projectile)) {
             Location location = getEyeLocation();
             Vector direction = location.getDirection();

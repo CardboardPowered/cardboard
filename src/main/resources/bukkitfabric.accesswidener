@@ -2143,3 +2143,7 @@ accessible method net/minecraft/nbt/StringNbtReader parsePrimitive (Ljava/lang/S
 accessible method net/minecraft/nbt/StringNbtReader parseElementPrimitiveArray ()Lnet/minecraft/nbt/NbtElement;
 accessible class net/minecraft/entity/mob/SpellcastingIllagerEntity$Spell
 accessible field net/minecraft/scoreboard/ScoreboardCriterion CRITERIA Ljava/util/Map;
+accessible field net/minecraft/screen/PlayerScreenHandler craftingResult Lnet/minecraft/inventory/CraftingResultInventory;
+mutable field net/minecraft/screen/PlayerScreenHandler craftingResult Lnet/minecraft/inventory/CraftingResultInventory;
+accessible field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/minecraft/inventory/CraftingInventory;
+mutable field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/minecraft/inventory/CraftingInventory;

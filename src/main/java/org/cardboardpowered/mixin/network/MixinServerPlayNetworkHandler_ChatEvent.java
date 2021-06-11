@@ -19,6 +19,8 @@ import org.cardboardpowered.impl.util.WaitableImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -27,6 +29,9 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import net.minecraft.client.option.ChatVisibility;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.Packet;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -76,6 +81,50 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
     public PlayerImpl getPlayer_0() {
         return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
     }
+
+    /**
+     * @reason Bukkit AsyncChat
+     * @author Bukkit4Fabric
+     */
+    @Overwrite
+    public void handleMessage(TextStream.Message messag) {
+        if (this.player.isRemoved() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
+            this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED), MessageType.CHAT, player.getUuid()));
+        } else {
+            String message = messag.getRaw();
+            boolean isSync = message.startsWith("/");
+            this.player.updateLastActionTime();
+
+            if (isSync)
+                get().executeCommand(message);
+            else if (message.isEmpty())
+                BukkitLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
+            else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
+                TranslatableText chatmessage = new TranslatableText("chat.cannotSend", new Object[0]);
+
+                chatmessage.getStyle().withColor(Formatting.RED);
+                this.sendPacket(new GameMessageS2CPacket(chatmessage, MessageType.CHAT, player.getUuid()));
+            } else this.chat_(message, true);
+
+            if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
+                if (!isSync) {
+                    Waitable<?> waitable = new WaitableImpl(() -> get().disconnect(new TranslatableText("disconnect.spam", new Object[0])));
+
+                    ((IMixinMinecraftServer)(Object)server).getProcessQueue().add(waitable);
+
+                    try {
+                        waitable.get();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else get().disconnect(new TranslatableText("disconnect.spam", new Object[0]));
+
+            }
+        }
+    }
+          
 
     public void chat_(String s, boolean async) {
         if (s.isEmpty() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN)
@@ -136,14 +185,19 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
         }
     }
 
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;filterText(Ljava/lang/String;Ljava/util/function/Consumer;)V"), method = "onGameMessage")
+    public void onGameMessage_patch(ServerPlayNetworkHandler a, String s, Consumer con) {
+        handleMessage(TextStream.Message.permitted(s));
+    }
+
     /**
      * @reason Fixes AsyncChatEvent
      * @author Bukkit4Fabric
      */
-    @Overwrite
-    public void filterText(String text, Consumer<String> consumer) {
-        consumer.accept(text); // Skip filtering so we can stay off the primary server thread.
-    }
+   // @Overwrite
+   // public void filterText(String text, Consumer<TextStream.Message> consumer) {
+   //     consumer.accept(text); // Skip filtering so we can stay off the primary server thread.
+   // }
 
 
 }

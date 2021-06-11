@@ -4,6 +4,7 @@ import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.entity.Player;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,12 +24,12 @@ import net.minecraft.text.TranslatableText;
 @Mixin(PlayerScreenHandler.class)
 public class MixinPlayerScreenHandler extends MixinScreenHandler implements NamedScreenHandlerFactory {
 
-    private CraftingInventory craftingInput;
-    private CraftingResultInventory craftingResult;
+    @Shadow private CraftingInventory craftingInput;
+    @Shadow private CraftingResultInventory craftingResult;
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>", at = @At("TAIL"))
     public void setPlayerInv(PlayerInventory playerinventory, boolean flag, PlayerEntity entityhuman, CallbackInfo ci) {
         this.craftingResult = new CraftingResultInventory();
         this.craftingInput = new CraftingInventory((PlayerScreenHandler)(Object)this, 2, 2);
