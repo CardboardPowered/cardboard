@@ -69,7 +69,7 @@ public class MixinWorld implements IMixinWorld {
 
     @Inject(at = @At("HEAD"), method = "setBlockState", cancellable = true)
     public void setBlockState1(BlockPos blockposition, BlockState iblockdata, int i, CallbackInfoReturnable<Boolean> ci) {
-        if (!ServerWorld.isOutOfBuildLimitVertically(blockposition)) {
+        // TODO 1.17ify: if (!ServerWorld.isOutOfBuildLimitVertically(blockposition)) {
             WorldChunk chunk = ((ServerWorld)(Object)this).getWorldChunk(blockposition);
             boolean captured = false;
             if (this.captureBlockStates && !this.capturedBlockStates.containsKey(blockposition)) {
@@ -77,7 +77,7 @@ public class MixinWorld implements IMixinWorld {
                 this.capturedBlockStates.put(blockposition.toImmutable(), blockstate);
                 captured = true;
             }
-        }
+        //}
     }
 
     @Override

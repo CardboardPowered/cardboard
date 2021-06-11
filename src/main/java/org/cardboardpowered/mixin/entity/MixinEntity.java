@@ -28,8 +28,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.cardboardpowered.impl.entity.LivingEntityImpl;
-import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
@@ -46,6 +44,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.FallingBlockEntity;
@@ -469,7 +468,36 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
             ci.cancel();
             return;
         }
-        Bukkit.getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), Pose.values()[entitypose.ordinal()]));
+        Pose b = Pose.STANDING;
+        switch (entitypose) {
+            case CROUCHING:
+                b = Pose.SNEAKING;
+                break;
+            case DYING:
+                b = Pose.DYING;
+                break;
+            case FALL_FLYING:
+                b = Pose.FALL_FLYING;
+                break;
+            case LONG_JUMPING:
+                // TODO 1.17ify
+                break;
+            case SLEEPING:
+                b = Pose.SLEEPING;
+                break;
+            case SPIN_ATTACK:
+                b = Pose.SPIN_ATTACK;
+                break;
+            case STANDING:
+                b = Pose.STANDING;
+                break;
+            case SWIMMING:
+                b = Pose.SWIMMING;
+                break;
+            default:
+                break;  
+        }
+        Bukkit.getPluginManager().callEvent(new EntityPoseChangeEvent(this.getBukkitEntity(), b));
     }
 
     @Inject(at = @At("HEAD"), method = "setAir", cancellable = true)
@@ -490,8 +518,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     @Shadow
-    public void remove() {}
-    public void removeBF() {remove();} // Helper
+    public void remove(RemovalReason r) {}
+    public void removeBF() {remove(RemovalReason.DISCARDED);} // Helper
 
     @Shadow
     public void move(MovementType moveType, Vec3d vec3d) {

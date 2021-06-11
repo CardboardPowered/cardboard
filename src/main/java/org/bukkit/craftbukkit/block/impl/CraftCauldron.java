@@ -15,7 +15,7 @@ public final class CraftCauldron extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftLevelled
 
-    private static final net.minecraft.state.property.IntProperty LEVEL = getInteger(net.minecraft.block.CauldronBlock.class, "level");
+    private static final net.minecraft.state.property.IntProperty LEVEL = getInteger(net.minecraft.block.AbstractCauldronBlock.class, "level");
 
     @Override
     public int getLevel() {

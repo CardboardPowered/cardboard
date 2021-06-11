@@ -2,8 +2,8 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -20,7 +20,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     static final ItemMetaKey ENTITY_ID = new ItemMetaKey("id");
 
     private EntityType spawnedType;
-    private CompoundTag entityTag;
+    private NbtCompound entityTag;
 
     public CraftMetaSpawnEgg(CraftMetaItem meta) {
         super(meta);
@@ -33,7 +33,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
         updateMaterial(null); // Trigger type population
     }
 
-    public CraftMetaSpawnEgg(CompoundTag tag) {
+    public CraftMetaSpawnEgg(NbtCompound tag) {
         super(tag);
 
         if (tag.contains(ENTITY_TAG.NBT)) entityTag = tag.getCompound(ENTITY_TAG.NBT);
@@ -47,7 +47,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     }
 
     @Override
-    public void deserializeInternal(CompoundTag tag, Object context) {
+    public void deserializeInternal(NbtCompound tag, Object context) {
         super.deserializeInternal(tag, context);
 
         if (tag.contains(ENTITY_TAG.NBT)) {
@@ -69,15 +69,15 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     }
 
     @Override
-    void serializeInternal(Map<String, Tag> internalTags) {
+    void serializeInternal(Map<String, NbtElement> internalTags) {
         if (entityTag != null && !entityTag.isEmpty()) internalTags.put(ENTITY_TAG.NBT, entityTag);
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
 
-        if (!isSpawnEggEmpty() && entityTag == null) entityTag = new CompoundTag();
+        if (!isSpawnEggEmpty() && entityTag == null) entityTag = new NbtCompound();
         if (entityTag != null) tag.put(ENTITY_TAG.NBT, entityTag);
     }
 

@@ -21728,6 +21728,7 @@ net/minecraft/server/NBTCompressedStreamTools b (Ljava/io/File;)Lnet/minecraft/s
 net/minecraft/server/NBTCompressedStreamTools b (Lnet/minecraft/server/NBTTagCompound;Ljava/io/File;)V method_10630
 net/minecraft/server/NBTCompressedStreamTools net/minecraft/class_2507
 net/minecraft/server/NBTList a (ILnet/minecraft/server/NBTBase;)Z method_10535
+net/minecraft/server/NBTList add (ILnet/minecraft/server/NBTBase;)V method_10531
 net/minecraft/server/NBTList b (ILnet/minecraft/server/NBTBase;)Z method_10533
 net/minecraft/server/NBTList c (I)Lnet/minecraft/server/NBTBase; method_10536
 net/minecraft/server/NBTList c (ILnet/minecraft/server/NBTBase;)V method_10531

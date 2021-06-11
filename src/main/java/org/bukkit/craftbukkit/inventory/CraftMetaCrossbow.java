@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.item.ArrowItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -39,21 +39,21 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
         }
     }
 
-    CraftMetaCrossbow(CompoundTag tag) {
+    CraftMetaCrossbow(NbtCompound tag) {
         super(tag);
 
         charged = tag.getBoolean(CHARGED.NBT);
 
         if (tag.contains(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_LIST)) {
-            ListTag list = tag.getList(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+            NbtList list = tag.getList(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
 
             if (list != null && !list.isEmpty()) {
                 chargedProjectiles = new ArrayList<>();
 
                 for (int i = 0; i < list.size(); i++) {
-                    CompoundTag nbttagcompound1 = list.getCompound(i);
+                    NbtCompound nbttagcompound1 = list.getCompound(i);
 
-                    chargedProjectiles.add(CraftItemStack.asCraftMirror(net.minecraft.item.ItemStack.fromTag(nbttagcompound1)));
+                    chargedProjectiles.add(CraftItemStack.asCraftMirror(net.minecraft.item.ItemStack.fromNbt(nbttagcompound1)));
                 }
             }
         }
@@ -78,16 +78,16 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
     }
 
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
 
         tag.putBoolean(CHARGED.NBT, charged);
         if (hasChargedProjectiles()) {
-            ListTag list = new ListTag();
+            NbtList list = new NbtList();
 
             for (ItemStack item : chargedProjectiles) {
-                CompoundTag saved = new CompoundTag();
-                CraftItemStack.asNMSCopy(item).toTag(saved);
+                NbtCompound saved = new NbtCompound();
+                CraftItemStack.asNMSCopy(item).writeNbt(saved);
                 list.add(saved);
             }
 

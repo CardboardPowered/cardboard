@@ -24,7 +24,7 @@ import net.minecraft.block.AbstractBlock.AbstractBlockState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.argument.BlockArgumentParser;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
@@ -261,8 +261,8 @@ public class CraftBlockData implements BlockData {
     }
 
     @SuppressWarnings("rawtypes")
-    public CompoundTag toStates() {
-        CompoundTag compound = new CompoundTag();
+    public NbtCompound toStates() {
+        NbtCompound compound = new NbtCompound();
 
         for (Map.Entry<Property<?>, Comparable<?>> entry : state.getEntries().entrySet()) {
             Property Property = (Property) entry.getKey();
@@ -371,7 +371,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.CakeBlock.class, org.bukkit.craftbukkit.block.impl.CraftCake::new);
         register(net.minecraft.block.CampfireBlock.class, org.bukkit.craftbukkit.block.impl.CraftCampfire::new);
         register(net.minecraft.block.CarrotsBlock.class, org.bukkit.craftbukkit.block.impl.CraftCarrots::new);
-        register(net.minecraft.block.CauldronBlock.class, org.bukkit.craftbukkit.block.impl.CraftCauldron::new);
+        register(net.minecraft.block.AbstractCauldronBlock.class, org.bukkit.craftbukkit.block.impl.CraftCauldron::new);
         register(net.minecraft.block.ChainBlock.class, org.bukkit.craftbukkit.block.impl.CraftChain::new);
         register(net.minecraft.block.ChestBlock.class, org.bukkit.craftbukkit.block.impl.CraftChest::new);
         register(net.minecraft.block.TrappedChestBlock.class, org.bukkit.craftbukkit.block.impl.CraftChestTrapped::new);
@@ -394,7 +394,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.DispenserBlock.class, org.bukkit.craftbukkit.block.impl.CraftDispenser::new);
         register(net.minecraft.block.DoorBlock.class, org.bukkit.craftbukkit.block.impl.CraftDoor::new);
         register(net.minecraft.block.DropperBlock.class, org.bukkit.craftbukkit.block.impl.CraftDropper::new);
-        register(net.minecraft.block.EndRodBlock.class, org.bukkit.craftbukkit.block.impl.CraftEndRod::new);
+        register(net.minecraft.block.RodBlock.class, org.bukkit.craftbukkit.block.impl.CraftEndRod::new);
         register(net.minecraft.block.EnderChestBlock.class, org.bukkit.craftbukkit.block.impl.CraftEnderChest::new);
         register(net.minecraft.block.EndPortalFrameBlock.class, org.bukkit.craftbukkit.block.impl.CraftEnderPortalFrame::new);
         register(net.minecraft.block.FenceBlock.class, org.bukkit.craftbukkit.block.impl.CraftFence::new);

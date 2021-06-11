@@ -81,12 +81,12 @@ public class WorldBorderImpl implements WorldBorder {
 
     @Override
     public double getDamageBuffer() {
-        return this.handle.getBuffer();
+        return this.handle.getSafeZone();
     }
 
     @Override
     public void setDamageBuffer(double blocks) {
-        this.handle.setBuffer(blocks);
+        this.handle.setSafeZone(blocks);
     }
 
     @Override

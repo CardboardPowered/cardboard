@@ -332,7 +332,7 @@ public class WorldImpl implements World {
                 gen = ConfiguredFeatures.HUGE_BROWN_MUSHROOM;
                 break;
             case SWAMP:
-                gen = ConfiguredFeatures.SWAMP_TREE;
+                gen = ConfiguredFeatures.TREES_SWAMP;
                 break;
             case ACACIA:
                 gen = ConfiguredFeatures.ACACIA;
@@ -361,7 +361,7 @@ public class WorldImpl implements World {
                 break;
         }
 
-        return gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
+        return false; // TODO 1.17ify: return gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -427,7 +427,7 @@ public class WorldImpl implements World {
                 break;
             
         }
-        gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
+        // TODO 1.17ify gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
         return false;
     }
 
@@ -510,6 +510,8 @@ public class WorldImpl implements World {
     public List<Entity> getEntities() {
         List<Entity> list = new ArrayList<Entity>();
 
+     // TODO 1.17ify
+        /*
         for (Object object : nms.entitiesById.values()) {
             if (object instanceof net.minecraft.entity.Entity) {
                 net.minecraft.entity.Entity mc = (net.minecraft.entity.Entity) object;
@@ -517,7 +519,7 @@ public class WorldImpl implements World {
 
                 if (bukkit != null && bukkit.isValid()) list.add(bukkit);
             }
-        }
+        }*/
         return list;
     }
 
@@ -532,7 +534,9 @@ public class WorldImpl implements World {
     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T> arg0) {
         Collection<T> list = new ArrayList<T>();
 
-        for (Object entity: nms.entitiesById.values()) {
+        // TODO 1.17ify
+        /*
+        for (Object entity: nms.iterateEntities().entitiesById.values()) {
             if (entity instanceof net.minecraft.entity.Entity) {
                 Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
 
@@ -544,7 +548,7 @@ public class WorldImpl implements World {
                 if (arg0.isAssignableFrom(bukkitClass) && bukkitEntity.isValid())
                     list.add((T) bukkitEntity);
             }
-        }
+        }*/
 
         return list;
     }
@@ -553,6 +557,7 @@ public class WorldImpl implements World {
     public Collection<Entity> getEntitiesByClasses(Class<?>... arg0) {
         Collection<Entity> list = new ArrayList<Entity>();
 
+        /*
         for (Object entity: nms.entitiesById.values()) {
             if (entity instanceof net.minecraft.entity.Entity) {
                 Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
@@ -570,7 +575,7 @@ public class WorldImpl implements World {
                     }
                 }
             }
-        }
+        }*/
 
         return list;
     }
@@ -735,6 +740,8 @@ public class WorldImpl implements World {
     public List<LivingEntity> getLivingEntities() {
         List<LivingEntity> list = new ArrayList<LivingEntity>();
 
+     // TODO 1.17ify
+        /*
         for (Object o : nms.entitiesById.values()) {
             if (o instanceof net.minecraft.entity.Entity) {
                 net.minecraft.entity.Entity mcEnt = (net.minecraft.entity.Entity) o;
@@ -744,7 +751,7 @@ public class WorldImpl implements World {
                 if (bukkitEntity != null && bukkitEntity instanceof LivingEntity && bukkitEntity.isValid())
                     list.add((LivingEntity) bukkitEntity);
             }
-        }
+        }*/
 
         return list;
     }
@@ -1633,7 +1640,7 @@ public class WorldImpl implements World {
 
             if (LeashHitch.class.isAssignableFrom(clazz)) {
                 entity = new LeashKnotEntity(nms, new BlockPos(x, y, z));
-                entity.teleporting = true;
+             // TODO 1.17ify entity.teleporting = true;
             } else {
                 // No valid face found
                 Preconditions.checkArgument(face != BlockFace.SELF, "Cannot spawn hanging entity for %s at %s (no free face)", clazz.getName(), location);
@@ -1952,7 +1959,7 @@ public class WorldImpl implements World {
 
     @Override
     public int getEntityCount() {
-        return nms.entitiesByUuid.size();
+        return (int)nms.iterateEntities().spliterator().getExactSizeIfKnown();//.entitiesByUuid.size();
     }
 
     @Override
@@ -1977,12 +1984,12 @@ public class WorldImpl implements World {
 
     @Override
     public int getTickableTileEntityCount() {
-        return nms.tickingBlockEntities.size();
+        return 0; // TODO: 1.17ify return nms.tickingBlockEntities.size();
     }
 
     @Override
     public int getTileEntityCount() {
-        return nms.blockEntities.size();
+        return 0; // TODO: 1.17ify return nms.blockEntities.size();
     }
 
     @Override

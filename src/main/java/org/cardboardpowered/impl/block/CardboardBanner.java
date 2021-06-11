@@ -11,11 +11,13 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 
 import com.google.common.base.Preconditions;
+import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerBlockEntity;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.block.entity.BannerPattern;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 
 @SuppressWarnings("deprecation")
 public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity> implements Banner {
@@ -38,11 +40,9 @@ public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity
         base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
         patterns = new ArrayList<Pattern>();
 
-        if (banner.patternListTag != null) {
-            for (int i = 0; i < banner.patternListTag.size(); i++) {
-                CompoundTag p = (CompoundTag) banner.patternListTag.get(i);
-                patterns.add(new Pattern(DyeColor.getByWoolData((byte) p.getInt("Color")), PatternType.getByIdentifier(p.getString("Pattern"))));
-            }
+        for (int i = 0; i < banner.getPatterns().size(); i++) {
+        	Pair<BannerPattern, net.minecraft.util.DyeColor> pair = banner.getPatterns().get(i);
+            patterns.add(new Pattern(DyeColor.getByWoolData((byte) pair.getSecond().getId()), PatternType.getByIdentifier(pair.getFirst().getId())));
         }
     }
 
@@ -97,15 +97,17 @@ public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity
         super.applyTo(banner);
 
         banner.baseColor = net.minecraft.util.DyeColor.byId(base.getWoolData());
-        ListTag newPatterns = new ListTag();
+        NbtCompound bannerNbt = new NbtCompound();
+        NbtList newPatterns = new NbtList();
 
         for (Pattern p : patterns) {
-            CompoundTag compound = new CompoundTag();
+            NbtCompound compound = new NbtCompound();
             compound.putInt("Color", p.getColor().getWoolData());
             compound.putString("Pattern", p.getPattern().getIdentifier());
             newPatterns.add(compound);
         }
-        banner.patternListTag = newPatterns;
+        bannerNbt.put("Patterns", newPatterns);
+        banner.readNbt(bannerNbt);
     }
 
 }

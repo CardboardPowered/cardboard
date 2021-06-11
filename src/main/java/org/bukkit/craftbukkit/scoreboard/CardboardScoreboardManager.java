@@ -82,8 +82,8 @@ public final class CardboardScoreboardManager implements ScoreboardManager {
 
         // Old team tracking
         Iterator<?> iterator = oldboard.getTeams().iterator();
-        while (iterator.hasNext())
-            entityplayer.networkHandler.sendPacket(new TeamS2CPacket((Team) iterator.next(), 1));
+        //while (iterator.hasNext())
+        // TODO: 1.17ify    entityplayer.networkHandler.sendPacket(new TeamS2CPacket((Team) iterator.next(), 1));
 
         // The above is the reverse of the below method. 
         ((IMixinPlayerManager)server.getPlayerManager()).sendScoreboardBF((ServerScoreboard) newboard, player.getHandle());

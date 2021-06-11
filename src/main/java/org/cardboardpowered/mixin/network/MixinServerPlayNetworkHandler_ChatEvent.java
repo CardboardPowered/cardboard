@@ -24,10 +24,9 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
-import net.minecraft.client.options.ChatVisibility;
+import net.minecraft.client.option.ChatVisibility;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -72,49 +71,6 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
 
     private ServerPlayNetworkHandler get() {
         return (ServerPlayNetworkHandler) (Object) this;
-    }
-
-
-    /**
-     * @reason Bukkit AsyncChat
-     * @author Bukkit4Fabric
-     */
-    @Overwrite
-    public void method_31286(String message) {
-        if (this.player.removed || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
-            this.sendPacket(new GameMessageS2CPacket((new TranslatableText("chat.cannotSend")).formatted(Formatting.RED), MessageType.CHAT, player.getUuid()));
-        } else {
-            boolean isSync = message.startsWith("/");
-            this.player.updateLastActionTime();
-
-            if (isSync)
-                get().executeCommand(message);
-            else if (message.isEmpty())
-                BukkitLogger.getLogger().warning(this.player.getEntityName() + " tried to send an empty message");
-            else if (this.player.getClientChatVisibility() == ChatVisibility.SYSTEM) {
-                TranslatableText chatmessage = new TranslatableText("chat.cannotSend", new Object[0]);
-
-                chatmessage.getStyle().withColor(Formatting.RED);
-                this.sendPacket(new GameMessageS2CPacket(chatmessage, MessageType.CHAT, player.getUuid()));
-            } else this.chat_(message, true);
-
-            if (chatSpamField.addAndGet((ServerPlayNetworkHandler)(Object)this, 20) > 200 && !server.getPlayerManager().isOperator(this.player.getGameProfile())) {
-                if (!isSync) {
-                    Waitable<?> waitable = new WaitableImpl(() -> get().disconnect(new TranslatableText("disconnect.spam", new Object[0])));
-
-                    ((IMixinMinecraftServer)(Object)server).getProcessQueue().add(waitable);
-
-                    try {
-                        waitable.get();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    } catch (ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-                } else get().disconnect(new TranslatableText("disconnect.spam", new Object[0]));
-
-            }
-        }
     }
 
     public PlayerImpl getPlayer_0() {

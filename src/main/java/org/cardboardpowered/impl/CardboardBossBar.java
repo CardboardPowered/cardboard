@@ -62,9 +62,9 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
     private void initialize() {
         this.flags = new HashMap<>();
 
-        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::getDarkenSky, handle::setDarkenSky));
+        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::shouldDarkenSky, handle::setDarkenSky));
         this.flags.put(BarFlag.PLAY_BOSS_MUSIC, new FlagContainer(handle::hasDragonMusic, handle::setDragonMusic));
-        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::getThickenFog, handle::setThickenFog));
+        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::shouldThickenFog, handle::setThickenFog));
     }
 
     private BarColor convertColor(net.minecraft.entity.boss.BossBar.Color color) {
@@ -117,7 +117,7 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
     @Override
     public void setTitle(String title) {
         handle.name = CraftChatMessage.fromString(title, true)[0];
-        ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_NAME);
+     // TODO 1.17ify   ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_NAME);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
     @Override
     public void setColor(BarColor color) {
         handle.color = convertColor(color);
-        ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_STYLE);
+     // TODO 1.17ify   ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_STYLE);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class CardboardBossBar implements BossBar, KeyedBossBar {
     @Override
     public void setStyle(BarStyle style) {
         handle.style = convertStyle(style);
-        ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_STYLE);
+     // TODO 1.17ify ((IMixinServerBossBar)handle).sendPacketBF(BossBarS2CPacket.Type.UPDATE_STYLE);
     }
 
     @Override

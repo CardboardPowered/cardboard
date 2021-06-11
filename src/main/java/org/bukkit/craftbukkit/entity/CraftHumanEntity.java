@@ -59,13 +59,14 @@ import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerListener;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Arm;
@@ -82,7 +83,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         super(entity);
         this.nms = entity;
         this.gm = CraftServer.INSTANCE.getDefaultGameMode();
-        this.inventory = new CardboardPlayerInventory(entity.inventory);
+        this.inventory = new CardboardPlayerInventory(entity.getInventory());
     }
 
     @Override
@@ -169,7 +170,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
     @Override
     public ItemStack getItemOnCursor() {
-        return CraftItemStack.asCraftMirror(getHandle().inventory.getCursorStack());
+      return null; // return CraftItemStack.asCraftMirror(getHandle().getInventory().getCursorStack());
     }
 
     @Override
@@ -185,7 +186,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public org.bukkit.entity.Entity getShoulderEntityLeft() {
         if (!getHandle().getShoulderEntityLeft().isEmpty()) {
-            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromTag(getHandle().getShoulderEntityLeft(), getHandle().world);
+            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromNbt(getHandle().getShoulderEntityLeft(), getHandle().world);
             return (!shoulder.isPresent()) ? null : ((IMixinEntity)shoulder.get()).getBukkitEntity();
         }
         return null;
@@ -194,7 +195,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public org.bukkit.entity.Entity getShoulderEntityRight() {
         if (!getHandle().getShoulderEntityRight().isEmpty()) {
-            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromTag(getHandle().getShoulderEntityRight(), getHandle().world);
+            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromNbt(getHandle().getShoulderEntityRight(), getHandle().world);
             return (!shoulder.isPresent()) ? null : ((IMixinEntity)shoulder.get()).getBukkitEntity();
         }
         return null;
@@ -258,8 +259,11 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         if (iinventory instanceof NamedScreenHandlerFactory) {
             if (iinventory instanceof BlockEntity) {
                 BlockEntity te = (BlockEntity) iinventory;
-                if (!te.hasWorld())
-                    te.setLocation(getHandle().world, getHandle().getBlockPos());
+                if (!te.hasWorld()) {
+                   // te.setLocation(getHandle().world, getHandle().getBlockPos());
+                    te.setWorld(getHandle().world);
+                    te.pos = getHandle().getBlockPos();
+                }
             }
         }
 
@@ -286,7 +290,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
         player.networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, windowType, CraftChatMessage.fromString(title)[0]));
         getHandle().currentScreenHandler = container;
-        getHandle().currentScreenHandler.addListener(player);
+        getHandle().currentScreenHandler.addListener((ScreenHandlerListener) player);
     }
 
     @Override
@@ -313,7 +317,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         String title = inventory.getTitle();
         player.networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, windowType, CraftChatMessage.fromString(title)[0]));
         player.currentScreenHandler = container;
-        player.currentScreenHandler.addListener(player);
+        player.currentScreenHandler.addListener((ScreenHandlerListener) player);
     }
 
     @Override
@@ -362,20 +366,20 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public void setItemOnCursor(ItemStack item) {
         net.minecraft.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
-        getHandle().inventory.setCursorStack(stack);
-        if (this instanceof PlayerImpl)
-            ((ServerPlayerEntity) getHandle()).updateCursorStack();
+      //  getHandle().getInventory().setCursorStack(stack);
+      //  if (this instanceof PlayerImpl)
+     //       ((ServerPlayerEntity) getHandle()).updateCursorStack();
     }
 
     @Override
     public void setShoulderEntityLeft(Entity entity) {
-        getHandle().setShoulderEntityLeft(entity == null ? new CompoundTag() : ((CraftEntity) entity).save());
+       // getHandle().setShoulderEntityLeft(entity == null ? new NbtCompound() : ((CraftEntity) entity).save());
         if (entity != null) entity.remove();
     }
 
     @Override
     public void setShoulderEntityRight(Entity entity) {
-        getHandle().setShoulderEntityRight(entity == null ? new CompoundTag() : ((CraftEntity) entity).save());
+      //  getHandle().setShoulderEntityRight(entity == null ? new NbtCompound() : ((CraftEntity) entity).save());
         if (entity != null) entity.remove();
     }
 

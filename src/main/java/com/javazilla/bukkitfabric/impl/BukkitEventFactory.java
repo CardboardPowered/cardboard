@@ -20,6 +20,7 @@ package com.javazilla.bukkitfabric.impl;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -381,6 +382,12 @@ public class BukkitEventFactory {
     public static Cancellable handleStatisticsIncrease(PlayerEntity entityHuman, net.minecraft.stat.Stat<?> statistic, int current, int newValue) {
         Player player = (Player) ((IMixinServerEntityPlayer) entityHuman).getBukkitEntity();
         Event event;
+		// Handle stats, which are missing in Bukkit API
+		if (!Arrays.asList(Statistic.values()).contains(statistic)) {
+			// This is very spammy
+			// System.out.println("Missing statistic in bukkit API: " + statistic);
+			return null;
+		}
         Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
         if (stat == null) {
             System.err.println("Unhandled statistic: " + statistic);

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
+import org.bukkit.craftbukkit.CraftServer;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -31,8 +33,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -50,6 +54,7 @@ import net.minecraft.world.chunk.ChunkManager;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.event.GameEvent;
 
 public class FakeWorldAccess implements WorldAccess {
 
@@ -113,10 +118,10 @@ public class FakeWorldAccess implements WorldAccess {
         throw new UnsupportedOperationException("Not supported");
     }
 
-    @Override
-    public <T extends Entity> List<T> getEntitiesByClass(Class<? extends T> type, Box aabb, Predicate<? super T> prdct) {
-        throw new UnsupportedOperationException("Not supported");
-    }
+   //@Override
+   // public <T extends Entity> List<T> getEntitiesByClass(Class<? extends T> type, Box aabb, Predicate<? super T> prdct) {
+   //     throw new UnsupportedOperationException("Not supported yet.");
+   // }
 
     @Override
     public List<? extends PlayerEntity> getPlayers() {
@@ -211,6 +216,31 @@ public class FakeWorldAccess implements WorldAccess {
     @Override
     public float getBrightness(Direction arg0, boolean arg1) {
         return 0;
+    }
+
+    @Override
+    public <T extends Entity> List<T> getEntitiesByType(TypeFilter<Entity, T> filter, Box box,
+            Predicate<? super T> predicate) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean testFluidState(BlockPos pos, Predicate<FluidState> state) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void emitGameEvent(Entity arg0, GameEvent arg1, BlockPos arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public MinecraftServer getServer() {
+        // TODO Auto-generated method stub
+        return CraftServer.server;
     }
 
 }

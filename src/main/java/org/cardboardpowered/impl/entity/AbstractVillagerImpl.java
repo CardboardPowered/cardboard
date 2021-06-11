@@ -211,7 +211,7 @@ public class AbstractVillagerImpl extends AgeableImpl implements AbstractVillage
     @Override
     public Chunk getChunk() {
         // TODO Auto-generated method stub
-        return this.getWorld().getChunkAt(nms.chunkX, nms.chunkZ);
+        return this.getWorld().getChunkAt(nms.getChunkPos().x, nms.getChunkPos().z);
     }
 
     @Override

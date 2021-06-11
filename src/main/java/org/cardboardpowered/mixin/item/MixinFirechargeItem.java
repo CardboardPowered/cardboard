@@ -24,11 +24,11 @@ public class MixinFirechargeItem {
         BlockPos blockpos = context.getBlockPos();
         BlockState state = world.getBlockState(blockpos);
 
-        if (!CampfireBlock.method_30035(state))
+        if (!CampfireBlock.canBeLit(state))
             blockpos = blockpos.offset(context.getSide());
 
         if (BukkitEventFactory.callBlockIgniteEvent(world, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, context.getPlayer()).isCancelled()) {
-            if (!context.getPlayer().abilities.creativeMode)
+            if (!context.getPlayer().getAbilities().creativeMode)
                 context.getStack().decrement(1);
             ci.setReturnValue(ActionResult.PASS);
         }

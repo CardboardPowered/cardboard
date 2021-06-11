@@ -51,7 +51,7 @@ public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
     @Inject(at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"), method = "remove", cancellable = true)
     public void doBukkitEvent_SlimeSplitEvent_2(CallbackInfo ci) {
         if (cancelRemove_B) {
-            super.remove();
+            super.removeBF();
             ci.cancel();
             return;
         }

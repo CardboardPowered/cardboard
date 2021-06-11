@@ -42,11 +42,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.datafixer.Schemas;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -346,8 +346,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
         // Fastpath up to date materials
         if (version == this.getDataVersion()) return Material.getMaterial(material);
 
-        Dynamic<Tag> name = new Dynamic<>(NbtOps.INSTANCE, StringTag.of("minecraft:" + material.toLowerCase(Locale.ROOT)));
-        Dynamic<Tag> converted = Schemas.getFixer().update(TypeReferences.ITEM_NAME, name, version, this.getDataVersion());
+        Dynamic<NbtElement> name = new Dynamic<>(NbtOps.INSTANCE, NbtString.of("minecraft:" + material.toLowerCase(Locale.ROOT)));
+        Dynamic<NbtElement> converted = Schemas.getFixer().update(TypeReferences.ITEM_NAME, name, version, this.getDataVersion());
 
         if (name.equals(converted)) converted = Schemas.getFixer().update(TypeReferences.BLOCK_NAME, name, version, this.getDataVersion());
         return Material.matchMaterial(converted.asString(""));
@@ -368,7 +368,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTag((CompoundTag) StringNbtReader.parse(arguments));
+            nmsStack.setTag((NbtCompound) StringNbtReader.parse(arguments));
         } catch (CommandSyntaxException ex) {
             BukkitLogger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }

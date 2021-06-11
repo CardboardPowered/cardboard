@@ -62,7 +62,7 @@ public abstract class MixinPersistentProjectileEntity implements IMixinPersisten
                 }
                 itemstack = item.getStack();
             }
-            boolean flag = this.pickupType == PersistentProjectileEntity.PickupPermission.ALLOWED || this.pickupType == PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY && entityhuman.abilities.creativeMode || getBF().isNoClip() && getBF().getOwner().getUuid() == entityhuman.getUuid();
+            boolean flag = this.pickupType == PersistentProjectileEntity.PickupPermission.ALLOWED || this.pickupType == PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY && entityhuman.getAbilities().creativeMode || getBF().isNoClip() && getBF().getOwner().getUuid() == entityhuman.getUuid();
             if (!flag) {
                 ci.cancel();
                 return;

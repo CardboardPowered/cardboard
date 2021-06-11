@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.LeashKnotEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -53,10 +54,10 @@ public class MixinLeashKnotEntity {
                     die = false;
                     continue;
                 }
-                entityinsentient.detachLeash(true, !entityhuman.abilities.creativeMode);
+                entityinsentient.detachLeash(true, !entityhuman.getAbilities().creativeMode);
             }
         }
-        if (die) getBF().remove();
+        if (die) getBF().remove(RemovalReason.KILLED);
         return ActionResult.CONSUME;
     }
 

@@ -48,7 +48,7 @@ public class ItemEntityImpl extends CraftEntity implements Item {
     @Override
     public void setTicksLived(int value) {
         super.setTicksLived(value);
-        item.age = value;
+     // TODO 1.17ify item.itemAge = value;
     }
 
     @Override

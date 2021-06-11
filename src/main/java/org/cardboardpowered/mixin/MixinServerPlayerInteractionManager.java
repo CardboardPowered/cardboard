@@ -99,7 +99,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
             if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) {
                 if (!this.world.canPlayerModifyAt((PlayerEntity) this.player, blockposition)) {
                     // CraftBukkit start - fire PlayerInteractEvent
-                    BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
+                    BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.getInventory().getMainHandStack(), Hand.MAIN_HAND);
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "may not interact"));
                     // Update any tile entity data for this block
                     BlockEntity tileentity = world.getBlockEntity(blockposition);
@@ -109,7 +109,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                     return;
                 }
 
-                PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
+                PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.getInventory().getMainHandStack(), Hand.MAIN_HAND);
                 if (event.isCancelled()) {
                     // Let the client know the block still exists
                     this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
@@ -159,7 +159,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                         this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
                     return;
                 }
-                org.bukkit.event.block.BlockDamageEvent blockEvent = BukkitEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.inventory.getMainHandStack(), f >= 1.0f);
+                org.bukkit.event.block.BlockDamageEvent blockEvent = BukkitEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.getInventory().getMainHandStack(), f >= 1.0f);
 
                 if (blockEvent.isCancelled()) {
                     // Let the client know the block still exists
@@ -181,7 +181,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                     this.miningPos = blockposition.toImmutable();
                     int j = (int) (f * 10.0F);
 
-                    this.world.setBlockBreakingInfo(this.player.getEntityId(), blockposition, j);
+                    this.world.setBlockBreakingInfo(this.player.getId(), blockposition, j);
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, true, "actual start of destroying"));
                     this.blockBreakingProgress = j;
                 }
@@ -195,7 +195,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
 
                         if (f1 >= 0.7F) {
                             this.mining = false;
-                            this.world.setBlockBreakingInfo(this.player.getEntityId(), blockposition, -1);
+                            this.world.setBlockBreakingInfo(this.player.getId(), blockposition, -1);
                             this.finishMining(blockposition, packetplayinblockdig_enumplayerdigtype, "destroyed");
                             return;
                         }
@@ -213,11 +213,11 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
             } else if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK) {
                 this.mining = false;
                 if (!Objects.equals(this.miningPos, blockposition)) {
-                    this.world.setBlockBreakingInfo(this.player.getEntityId(), this.miningPos, -1);
+                    this.world.setBlockBreakingInfo(this.player.getId(), this.miningPos, -1);
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(this.miningPos, this.world.getBlockState(this.miningPos), packetplayinblockdig_enumplayerdigtype, true, "aborted mismatched destroying"));
                 }
 
-                this.world.setBlockBreakingInfo(this.player.getEntityId(), blockposition, -1);
+                this.world.setBlockBreakingInfo(this.player.getId(), blockposition, -1);
                 this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, true, "aborted destroying"));
             }
 
@@ -233,7 +233,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
         boolean isSwordNoBreak = !this.player.getMainHandStack().getItem().canMine(this.world.getBlockState(blockposition), this.world, blockposition, this.player);
         if (world.getBlockEntity(blockposition) == null && !isSwordNoBreak) {
             BlockUpdateS2CPacket packet = new BlockUpdateS2CPacket(this.world, blockposition);
-            packet.state = Blocks.AIR.getDefaultState();
+            // TODO 1.17ify packet.state = Blocks.AIR.getDefaultState();
             this.player.networkHandler.sendPacket(packet);
         }
         BlockBreakEvent event = new BlockBreakEvent(bblock, (Player) ((IMixinServerEntityPlayer)this.player).getBukkitEntity());

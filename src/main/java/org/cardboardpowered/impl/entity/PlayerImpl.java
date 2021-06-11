@@ -112,6 +112,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.map.MapIcon;
 import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
@@ -419,7 +420,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public boolean getAllowFlight() {
-        return getHandle().abilities.allowFlying;
+        return getHandle().getAbilities().allowFlying;
     }
 
     @Override
@@ -557,7 +558,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isFlying() {
-        return nms.abilities.flying;
+        return nms.getAbilities().flying;
     }
 
     @Override
@@ -602,7 +603,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     public void openBook(ItemStack book) {
         ItemStack hand = getInventory().getItemInMainHand();
         getInventory().setItemInMainHand(book);
-        getHandle().openEditBookScreen(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(book), net.minecraft.util.Hand.MAIN_HAND);
+        getHandle().useBook(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(book), net.minecraft.util.Hand.MAIN_HAND);
         getInventory().setItemInMainHand(hand);
     }
 
@@ -768,7 +769,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void resetTitle() {
-        nms.networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.RESET, null));
+        nms.networkHandler.sendPacket(new ClearTitleS2CPacket(true));
     }
 
     @Override
@@ -812,7 +813,8 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void sendMap(MapView map) {
-        if (getHandle().networkHandler == null) return;
+      // TODO 1.17ify
+        /*if (getHandle().networkHandler == null) return;
 
         RenderData data = ((MapViewImpl) map).render(this);
         Collection<MapIcon> icons = new ArrayList<MapIcon>();
@@ -822,7 +824,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         }
 
         MapUpdateS2CPacket packet = new MapUpdateS2CPacket(map.getId(), map.getScale().getValue(), true, map.isLocked(), icons, data.buffer, 0, 0, 128, 128);
-        getHandle().networkHandler.sendPacket(packet);
+        getHandle().networkHandler.sendPacket(packet);*/
     }
 
     @Override
@@ -846,8 +848,8 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
             throw new IllegalArgumentException("Must have at least 4 lines");
 
         Text[] components = CardboardSign.sanitizeLines(lines);
-        SignBlockEntity sign = new SignBlockEntity();
-        sign.setPos(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+        SignBlockEntity sign = new SignBlockEntity(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), null);
+        //sign.setPos(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         sign.setTextColor(net.minecraft.util.DyeColor.byId(dyeColor.getWoolData()));
         System.arraycopy(components, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, ((IMixinSignBlockEntity)sign).getTextBF().length);
 
@@ -861,6 +863,8 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void sendTitle(String arg0, String arg1, int arg2, int arg3, int arg4) {
+        // TODO 1.17ify
+        /*
         TitleS2CPacket times = new TitleS2CPacket(arg2, arg3, arg4);
         nms.networkHandler.sendPacket(times);
 
@@ -869,14 +873,14 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
         if (arg1 != null)
             nms.networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.SUBTITLE, CraftChatMessage.fromStringOrNull(arg1)));
-    }
+    */}
 
     @Override
     public void setAllowFlight(boolean arg0) {
         if (isFlying() && !arg0)
-            getHandle().abilities.flying = false;
+            getHandle().getAbilities().flying = false;
 
-        getHandle().abilities.allowFlying = arg0;
+        getHandle().getAbilities().allowFlying = arg0;
         getHandle().sendAbilitiesUpdate();
     }
 
@@ -911,7 +915,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         if (!getAllowFlight() && arg0)
             throw new IllegalArgumentException("getAllowFlight() is false, cannot set player flying");
 
-        getHandle().abilities.flying = arg0;
+        getHandle().getAbilities().flying = arg0;
         getHandle().sendAbilitiesUpdate();
     }
 
@@ -967,17 +971,17 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void setResourcePack(String url) {
-        nms.sendResourcePackUrl(url, "null");
+        nms.sendResourcePackUrl(url, "null", false, null);
     }
 
     @Override
     public void setResourcePack(String url, byte[] hash) {
-        nms.sendResourcePackUrl(url, new String(hash));
+        nms.sendResourcePackUrl(url, new String(hash), false, null);
     }
 
     @Override
     public void setSaturation(float arg0) {
-        nms.getHungerManager().setSaturationLevelClient(arg0);
+        nms.getHungerManager().setSaturationLevel(arg0);
     }
 
     @Override
@@ -1022,7 +1026,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void setWalkSpeed(float arg0) throws IllegalArgumentException {
-        nms.abilities.setWalkSpeed(arg0);
+        nms.getAbilities().setWalkSpeed(arg0);
     }
 
     @Override
@@ -1130,7 +1134,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void updateInventory() {
-        nms.onHandlerRegistered(nms.currentScreenHandler, nms.currentScreenHandler.getStacks());
+       // TODO 1.17ify nms.onHandlerRegistered(nms.currentScreenHandler, nms.currentScreenHandler.getStacks());
     }
 
     @SuppressWarnings("deprecation")
@@ -1147,7 +1151,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         if (mode == null)
             throw new IllegalArgumentException("GameMode cannot be null");
 
-        getHandle().setGameMode(net.minecraft.world.GameMode.byId(mode.getValue()));
+        getHandle().changeGameMode(net.minecraft.world.GameMode.byId(mode.getValue()));
     }
 
     public GameProfile getProfile() {
@@ -1186,7 +1190,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         location.checkFinite();
         ServerPlayerEntity entity = getHandle();
 
-        if (getHealth() == 0 || entity.removed || entity.networkHandler == null || entity.hasPassengers())
+        if (getHealth() == 0 || entity.isRemoved() || entity.networkHandler == null || entity.hasPassengers())
             return false;
 
         Location from = this.getLocation();
@@ -1205,7 +1209,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
         ServerWorld toWorld = (ServerWorld) ((WorldImpl) to.getWorld()).getHandle();
 
-        if (getHandle().inventory != getHandle().inventory)
+        if (getHandle().getInventory() != getHandle().getInventory())
             getHandle().closeHandledScreen();
 
         if (from.getWorld().equals(to.getWorld()))
@@ -1377,15 +1381,15 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     // PaperAPI - START
     public void setTitleTimes(int fadeInTicks, int stayTicks, int fadeOutTicks) {
-        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TIMES, null, 0, 0, 0));
+     // TODO 1.17ify getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TIMES, null, 0, 0, 0));
     }
 
     public void showTitle(BaseComponent[] title) {
-        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(title)), 0, 0, 0));
+     // TODO 1.17ify   getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(title)), 0, 0, 0));
     }
 
     public void setSubtitle(BaseComponent[] subtitle) {
-        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.SUBTITLE, Text.of(ComponentSerializer.toString(subtitle)), 0, 0, 0));
+     // TODO 1.17ify   getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.SUBTITLE, Text.of(ComponentSerializer.toString(subtitle)), 0, 0, 0));
     }
 
     public void showTitle(BaseComponent title) {
@@ -1426,12 +1430,12 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     public void sendActionBar(BaseComponent[] message) {
         if (getHandle().networkHandler == null) return;
-        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(message)), 0, 0, 0));
+     // TODO 1.17ify getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(message)), 0, 0, 0));
     }
 
     public void sendActionBar(String message) {
         if (getHandle().networkHandler == null || message == null || message.isEmpty()) return;
-        getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, CraftChatMessage.fromStringOrNull(message), 0, 0, 0));
+     // TODO 1.17ifygetHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, CraftChatMessage.fromStringOrNull(message), 0, 0, 0));
     }
 
     public void sendActionBar(char alternateChar, String message) {

@@ -76,11 +76,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.item.BlockItem;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.LiteralText;
@@ -242,7 +242,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     private Text locName;
     private List<Text> lore;
     private Integer customModelData;
-    private CompoundTag blockData;
+    private NbtCompound blockData;
     private Map<Enchantment, Integer> enchantments;
     private Multimap<Attribute, AttributeModifier> attributeModifiers;
     private int repairCost;
@@ -253,8 +253,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     private static final Set<String> HANDLED_TAGS = Sets.newHashSet();
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
 
-    private CompoundTag internalTag;
-    private final Map<String, Tag> unhandledTags = new HashMap<String, Tag>();
+    private NbtCompound internalTag;
+    private final Map<String, NbtElement> unhandledTags = new HashMap<String, NbtElement>();
     private CraftPersistentDataContainer persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
 
     private int version = CraftMagicNumbers.INSTANCE.getDataVersion(); // Internal use only
@@ -292,9 +292,9 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         this.version = meta.version;
     }
 
-    CraftMetaItem(CompoundTag tag) {
+    CraftMetaItem(NbtCompound tag) {
         if (tag.contains(DISPLAY.NBT)) {
-            CompoundTag display = tag.getCompound(DISPLAY.NBT);
+            NbtCompound display = tag.getCompound(DISPLAY.NBT);
 
             if (display.contains(NAME.NBT)) {
                 try {
@@ -309,7 +309,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             }
 
             if (display.contains(LORE.NBT)) {
-                ListTag list = display.getList(LORE.NBT, CraftMagicNumbers.NBT.TAG_STRING);
+                NbtList list = display.getList(LORE.NBT, CraftMagicNumbers.NBT.TAG_STRING);
                 lore = new ArrayList<Text>(list.size());
 
                 for (int index = 0; index < list.size(); index++) {
@@ -343,7 +343,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             damage = tag.getInt(DAMAGE.NBT);
 
         if (tag.contains(BUKKIT_CUSTOM_TAG.NBT)) {
-            CompoundTag compound = tag.getCompound(BUKKIT_CUSTOM_TAG.NBT);
+            NbtCompound compound = tag.getCompound(BUKKIT_CUSTOM_TAG.NBT);
             Set<String> keys = compound.getKeys();
             for (String key : keys)
                 persistentDataContainer.put(key, compound.get(key));
@@ -354,15 +354,15 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (!getHandledTags().contains(key)) unhandledTags.put(key, tag.get(key));
     }
 
-    static Map<Enchantment, Integer> buildEnchantments(CompoundTag tag, ItemMetaKey key) {
+    static Map<Enchantment, Integer> buildEnchantments(NbtCompound tag, ItemMetaKey key) {
         if (!tag.contains(key.NBT)) return null;
 
-        ListTag ench = tag.getList(key.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+        NbtList ench = tag.getList(key.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
         Map<Enchantment, Integer> enchantments = new LinkedHashMap<Enchantment, Integer>(ench.size());
 
         for (int i = 0; i < ench.size(); i++) {
-            String id = ((CompoundTag) ench.get(i)).getString(ENCHANTMENTS_ID.NBT);
-            int level = 0xffff & ((CompoundTag) ench.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
+            String id = ((NbtCompound) ench.get(i)).getString(ENCHANTMENTS_ID.NBT);
+            int level = 0xffff & ((NbtCompound) ench.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
 
             Enchantment enchant = Enchantment.getByKey(CraftNamespacedKey.fromStringOrNull(id));
             if (enchant != null) enchantments.put(enchant, level);
@@ -370,19 +370,19 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return enchantments;
     }
 
-    static Multimap<Attribute, AttributeModifier> buildModifiers(CompoundTag tag, ItemMetaKey key) {
+    static Multimap<Attribute, AttributeModifier> buildModifiers(NbtCompound tag, ItemMetaKey key) {
         Multimap<Attribute, AttributeModifier> modifiers = LinkedHashMultimap.create();
         if (!tag.contains(key.NBT, CraftMagicNumbers.NBT.TAG_LIST))
             return modifiers;
 
-        ListTag mods = tag.getList(key.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+        NbtList mods = tag.getList(key.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
         int size = mods.size();
 
         for (int i = 0; i < size; i++) {
-            CompoundTag entry = mods.getCompound(i);
+            NbtCompound entry = mods.getCompound(i);
             if (entry.isEmpty()) continue; // entry is not an actual CompoundTag. getCompound returns empty CompoundTag in that case
 
-            EntityAttributeModifier nmsModifier = EntityAttributeModifier.fromTag(entry);
+            EntityAttributeModifier nmsModifier = EntityAttributeModifier.fromNbt(entry);
             if (nmsModifier == null) continue;
 
             AttributeModifier attribMod = CardboardAttributeInstance.convert(nmsModifier);
@@ -433,7 +433,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         Map blockData = SerializableMeta.getObject(Map.class, map, BLOCK_DATA.BUKKIT, true);
         if (blockData != null)
-            this.blockData = (CompoundTag) CraftNBTTagConfigSerializer.deserialize(blockData);
+            this.blockData = (NbtCompound) CraftNBTTagConfigSerializer.deserialize(blockData);
 
         enchantments = buildEnchantments(map, ENCHANTMENTS);
         attributeModifiers = buildModifiers(map, ATTRIBUTES);
@@ -480,10 +480,10 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         Map nbtMap = SerializableMeta.getObject(Map.class, map, BUKKIT_CUSTOM_TAG.BUKKIT, true);
         if (nbtMap != null)
-            this.persistentDataContainer.putAll((CompoundTag) CraftNBTTagConfigSerializer.deserialize(nbtMap));
+            this.persistentDataContainer.putAll((NbtCompound) CraftNBTTagConfigSerializer.deserialize(nbtMap));
     }
 
-    void deserializeInternal(CompoundTag tag, Object context) {
+    void deserializeInternal(NbtCompound tag, Object context) {
         // SPIGOT-4576: Need to migrate from internal to proper data
         if (tag.contains(ATTRIBUTES.NBT, CraftMagicNumbers.NBT.TAG_LIST))
             this.attributeModifiers = buildModifiers(tag, ATTRIBUTES);
@@ -537,12 +537,12 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return result;
     }
 
-    void applyToItem(CompoundTag itemTag) {
+    void applyToItem(NbtCompound itemTag) {
         if (hasDisplayName())
-            setDisplayTag(itemTag, NAME.NBT, StringTag.of(CraftChatMessage.toJSON(displayName)));
+            setDisplayTag(itemTag, NAME.NBT, NbtString.of(CraftChatMessage.toJSON(displayName)));
 
         if (hasLocalizedName())
-            setDisplayTag(itemTag, LOCNAME.NBT, StringTag.of(CraftChatMessage.toJSON(locName)));
+            setDisplayTag(itemTag, LOCNAME.NBT, NbtString.of(CraftChatMessage.toJSON(locName)));
 
         if (hasLore())
             setDisplayTag(itemTag, LORE.NBT, createStringList(lore));
@@ -568,37 +568,37 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         if (hasDamage())
             itemTag.putInt(DAMAGE.NBT, damage);
 
-        for (Map.Entry<String, Tag> e : unhandledTags.entrySet())
+        for (Map.Entry<String, NbtElement> e : unhandledTags.entrySet())
             itemTag.put(e.getKey(), e.getValue());
 
         if (!persistentDataContainer.isEmpty()) {
-            CompoundTag bukkitCustomCompound = new CompoundTag();
-            Map<String, Tag> rawPublicMap = persistentDataContainer.getRaw();
+            NbtCompound bukkitCustomCompound = new NbtCompound();
+            Map<String, NbtElement> rawPublicMap = persistentDataContainer.getRaw();
 
-            for (Map.Entry<String, Tag> TagEntry : rawPublicMap.entrySet())
+            for (Map.Entry<String, NbtElement> TagEntry : rawPublicMap.entrySet())
                 bukkitCustomCompound.put(TagEntry.getKey(), TagEntry.getValue());
 
             itemTag.put(BUKKIT_CUSTOM_TAG.NBT, bukkitCustomCompound);
         }
     }
 
-    ListTag createStringList(List<Text> list) {
+    NbtList createStringList(List<Text> list) {
         if (list == null || list.isEmpty()) return null;
 
-        ListTag tagList = new ListTag();
+        NbtList tagList = new NbtList();
         for (Text value : list)
-            tagList.add(StringTag.of(version <= 0 || version >= 1803 ? CraftChatMessage.toJSON(value) : CraftChatMessage.fromComponent(value, Formatting.DARK_PURPLE))); // SPIGOT-4935
+            tagList.add(NbtString.of(version <= 0 || version >= 1803 ? CraftChatMessage.toJSON(value) : CraftChatMessage.fromComponent(value, Formatting.DARK_PURPLE))); // SPIGOT-4935
 
         return tagList;
     }
 
-    static void applyEnchantments(Map<Enchantment, Integer> enchantments, CompoundTag tag, ItemMetaKey key) {
+    static void applyEnchantments(Map<Enchantment, Integer> enchantments, NbtCompound tag, ItemMetaKey key) {
         if (enchantments == null) return;
 
-        ListTag list = new ListTag();
+        NbtList list = new NbtList();
 
         for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-            CompoundTag subtag = new CompoundTag();
+            NbtCompound subtag = new NbtCompound();
 
             subtag.putString(ENCHANTMENTS_ID.NBT, entry.getKey().getKey().toString());
             subtag.putShort(ENCHANTMENTS_LVL.NBT, entry.getValue().shortValue());
@@ -608,16 +608,16 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         tag.put(key.NBT, list);
     }
 
-    static void applyModifiers(Multimap<Attribute, AttributeModifier> modifiers, CompoundTag tag, ItemMetaKey key) {
+    static void applyModifiers(Multimap<Attribute, AttributeModifier> modifiers, NbtCompound tag, ItemMetaKey key) {
         if (modifiers == null || modifiers.isEmpty())
             return;
 
-        ListTag list = new ListTag();
+        NbtList list = new NbtList();
         for (Map.Entry<Attribute, AttributeModifier> entry : modifiers.entries()) {
             if (entry.getKey() == null || entry.getValue() == null)
                 continue;
             net.minecraft.entity.attribute.EntityAttributeModifier nmsModifier = CardboardAttributeInstance.convert(entry.getValue());
-            CompoundTag sub = nmsModifier.toTag();
+            NbtCompound sub = nmsModifier.toNbt();
             if (sub.isEmpty()) continue;
 
             String name = entry.getKey().getKey().toString();
@@ -633,8 +633,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         tag.put(key.NBT, list);
     }
 
-    void setDisplayTag(CompoundTag tag, String key, Tag value) {
-        final CompoundTag display = tag.getCompound(DISPLAY.NBT);
+    void setDisplayTag(NbtCompound tag, String key, NbtElement value) {
+        final NbtCompound display = tag.getCompound(DISPLAY.NBT);
         if (!tag.contains(DISPLAY.NBT)) tag.put(DISPLAY.NBT, display);
         display.put(key, value);
     }
@@ -811,7 +811,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     /**
      * Ported functionality from ItemBlock.patch
      */
-    public static BlockState getBlockState(BlockState iblockdata, CompoundTag nbttagcompound1) {
+    public static BlockState getBlockState(BlockState iblockdata, NbtCompound nbttagcompound1) {
         BlockState iblockdata1 = iblockdata;
         {
             StateManager<Block, BlockState> blockstatelist = iblockdata.getBlock().getStateManager();
@@ -1136,11 +1136,11 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         if (hasDamage())
             builder.put(DAMAGE.BUKKIT, damage);
 
-        final Map<String, Tag> internalTags = new HashMap<String, Tag>(unhandledTags);
+        final Map<String, NbtElement> internalTags = new HashMap<String, NbtElement>(unhandledTags);
         serializeInternal(internalTags);
         if (!internalTags.isEmpty()) {
-            CompoundTag internal = new CompoundTag();
-            for (Map.Entry<String, Tag> e : internalTags.entrySet())
+            NbtCompound internal = new NbtCompound();
+            for (Map.Entry<String, NbtElement> e : internalTags.entrySet())
                 internal.put(e.getKey(), e.getValue());
 
             try {
@@ -1158,7 +1158,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         return builder;
     }
 
-    void serializeInternal(final Map<String, Tag> unhandledTags) {
+    void serializeInternal(final Map<String, NbtElement> unhandledTags) {
     }
 
     public Material updateMaterial(Material material) {

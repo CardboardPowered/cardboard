@@ -21,7 +21,7 @@ public class MixinGameMessageS2CPacket implements IMixinGameMessagePacket {
 
     @Shadow private Text message;
     @Shadow private MessageType location;
-    @Shadow private UUID senderUuid;
+    @Shadow private UUID sender;
 
     public net.md_5.bungee.api.chat.BaseComponent[] bungeeComponents;
 
@@ -35,7 +35,7 @@ public class MixinGameMessageS2CPacket implements IMixinGameMessagePacket {
         if (bungeeComponents != null) {
             buf.writeString(net.md_5.bungee.chat.ComponentSerializer.toString(bungeeComponents));
             buf.writeByte(this.location.getId());
-            buf.writeUuid(this.senderUuid);
+            buf.writeUuid(this.sender);
             ci.cancel();
         }
     }

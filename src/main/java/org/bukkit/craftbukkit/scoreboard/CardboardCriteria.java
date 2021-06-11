@@ -12,7 +12,7 @@ public class CardboardCriteria {
 
     static {
         ImmutableMap.Builder<String, CardboardCriteria> defaults = ImmutableMap.builder();
-        for (Map.Entry<?, ?> entry : ((Map<?, ?>) ScoreboardCriterion.OBJECTIVES).entrySet())
+        for (Map.Entry<?, ?> entry : ((Map<?, ?>) ScoreboardCriterion.CRITERIA).entrySet())
             defaults.put(entry.getKey().toString(), new CardboardCriteria((ScoreboardCriterion) entry.getValue()));
         DEFAULTS = defaults.build();
         DUMMY = DEFAULTS.get("dummy");

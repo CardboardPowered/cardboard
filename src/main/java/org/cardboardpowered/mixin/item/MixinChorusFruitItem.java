@@ -38,7 +38,7 @@ public class MixinChorusFruitItem extends Item {
 
         for (int i = 0; i < 16; ++i) {
             double d3 = entity.getX() + (entity.getRandom().nextDouble() - 0.5D) * 16.0D;
-            double d4 = MathHelper.clamp(entity.getY() + (double) (entity.getRandom().nextInt(16) - 8), 0.0D, (double) (world.getDimensionHeight() - 1));
+            double d4 = MathHelper.clamp(entity.getY() + (double) (entity.getRandom().nextInt(16) - 8), 0.0D, (double) (world.getHeight() - 1));
             double d5 = entity.getZ() + (entity.getRandom().nextDouble() - 0.5D) * 16.0D;
 
             if (entity instanceof ServerPlayerEntity) {

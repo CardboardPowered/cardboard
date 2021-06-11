@@ -36,7 +36,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.EnchantmentScreenHandler;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -170,9 +170,9 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
         ItemStack itemstack1 = this.inventory.getStack(1);
         int j = i + 1;
 
-        if ((itemstack1.isEmpty() || itemstack1.getCount() < j) && !entityhuman.abilities.creativeMode) {
+        if ((itemstack1.isEmpty() || itemstack1.getCount() < j) && !entityhuman.getAbilities().creativeMode) {
             return false;
-        } else if (this.enchantmentPower[i] > 0 && !itemstack.isEmpty() && (entityhuman.experienceLevel >= j && entityhuman.experienceLevel >= this.enchantmentPower[i] || entityhuman.abilities.creativeMode)) {
+        } else if (this.enchantmentPower[i] > 0 && !itemstack.isEmpty() && (entityhuman.experienceLevel >= j && entityhuman.experienceLevel >= this.enchantmentPower[i] || entityhuman.getAbilities().creativeMode)) {
             this.context.run((world, blockposition) -> {
                 ItemStack itemstack2 = itemstack;
                 List<EnchantmentLevelEntry> list = this.generateEnchantments(itemstack, i, this.enchantmentPower[i]);
@@ -189,11 +189,11 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
                 Bukkit.getPluginManager().callEvent(event);
 
                 int level = event.getExpLevelCost();
-                if (event.isCancelled() || (level > entityhuman.experienceLevel && !entityhuman.abilities.creativeMode) || event.getEnchantsToAdd().isEmpty()) return;
+                if (event.isCancelled() || (level > entityhuman.experienceLevel && !entityhuman.getAbilities().creativeMode) || event.getEnchantsToAdd().isEmpty()) return;
 
                 if (flag) {
                     itemstack2 = new ItemStack(Items.ENCHANTED_BOOK);
-                    CompoundTag nbttagcompound = itemstack.getTag();
+                    NbtCompound nbttagcompound = itemstack.getTag();
                     if (nbttagcompound != null) itemstack2.setTag(nbttagcompound.copy());
 
                     this.inventory.setStack(0, itemstack2);
@@ -213,7 +213,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
                 }
                 entityhuman.applyEnchantmentCosts(itemstack, j);
 
-                if (!entityhuman.abilities.creativeMode) {
+                if (!entityhuman.getAbilities().creativeMode) {
                     itemstack1.decrement(j);
                     if (itemstack1.isEmpty()) this.inventory.setStack(1, ItemStack.EMPTY);
                 }

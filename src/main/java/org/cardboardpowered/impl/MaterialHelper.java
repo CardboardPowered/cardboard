@@ -287,7 +287,7 @@ public class MaterialHelper {
             case GRANITE_WALL:
             case GRASS:
             case GRASS_BLOCK:
-            case GRASS_PATH:
+            // TODO 1.17ify case DIRT_PATH:
             case GRAVEL:
             case GRAY_BANNER:
             case GRAY_BED:
@@ -1043,8 +1043,8 @@ public class MaterialHelper {
             case SPONGE:
             case WET_SPONGE:
                 return 0.6F;
-            case GRASS_PATH:
-                return 0.65F;
+            // TODO 1.17ify case DIRT_PATH:
+            // TODO 1.17ify     return 0.65F;
             case ACTIVATOR_RAIL:
             case DETECTOR_RAIL:
             case POWERED_RAIL:
@@ -1681,8 +1681,8 @@ public class MaterialHelper {
             case SPONGE:
             case WET_SPONGE:
                 return 0.6F;
-            case GRASS_PATH:
-                return 0.65F;
+            // TODO 1.17ify case DIRT_PATH:
+            // TODO 1.17ify     return 0.65F;
             case ACTIVATOR_RAIL:
             case DETECTOR_RAIL:
             case POWERED_RAIL:

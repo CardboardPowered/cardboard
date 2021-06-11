@@ -34,7 +34,7 @@ public class MixinServerHandshakeNetworkHandler {
                 if (org.spigotmc.SpigotConfig.bungee) {
                     String[] split = packethandshakinginsetprotocol.address.split("\00");
                     if ( split.length == 3 || split.length == 4 ) {
-                        packethandshakinginsetprotocol.address = split[0];
+                       // TODO 1.17ify packethandshakinginsetprotocol.address = split[0];
                         connection.address = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) connection.getAddress()).getPort());
                         ((IMixinClientConnection)connection).setSpoofedUUID(com.mojang.util.UUIDTypeAdapter.fromString( split[2] ));
                     } else {

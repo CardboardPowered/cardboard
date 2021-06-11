@@ -18,10 +18,10 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 public interface IMixinWorldSaveHandler {
 
-    CompoundTag getPlayerData(String s);
+    NbtCompound getPlayerData(String s);
 
 }

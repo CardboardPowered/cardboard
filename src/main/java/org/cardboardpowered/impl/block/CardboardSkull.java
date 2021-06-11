@@ -144,7 +144,7 @@ public class CardboardSkull extends CardboardBlockEntityState<SkullBlockEntity> 
     public void applyTo(SkullBlockEntity skull) {
         super.applyTo(skull);
         if (getSkullType() == SkullType.PLAYER)
-            skull.setOwnerAndType(profile);
+            skull.setOwner(profile);
     }
 
     @Override

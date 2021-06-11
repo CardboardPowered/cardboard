@@ -94,7 +94,7 @@ public class MixinBoatDispenserBehavior {
         BoatEntity entityboat = new BoatEntity(worldserver, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 
         entityboat.setBoatType(this.boatType);
-        entityboat.yaw = enumdirection.asRotation();
+        entityboat.setYaw(enumdirection.asRotation());
         if (!worldserver.spawnEntity(entityboat)) itemstack.increment(1); // CraftBukkit
         return itemstack;
     }

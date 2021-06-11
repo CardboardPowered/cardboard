@@ -4,7 +4,7 @@ import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.google.common.base.Preconditions;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -42,16 +42,17 @@ public class CardboardBlockEntityState<T extends BlockEntity> extends CraftBlock
     private T createSnapshot(T tileEntity) {
         if (tileEntity == null) return null;
 
-        CompoundTag nbtTagCompound = tileEntity.toTag(new CompoundTag());
-        T snapshot = (T) BlockEntity.createFromTag(data, nbtTagCompound);
+        NbtCompound nbtTagCompound = tileEntity.writeNbt(new NbtCompound());
+        T snapshot = (T) BlockEntity.createFromNbt(getPosition(), data, nbtTagCompound);
         return snapshot;
     }
 
     private void copyData(T from, T to) {
         BlockPos pos = to.getPos();
-        CompoundTag nbtTagCompound = from.toTag(new CompoundTag());
-        to.fromTag(data, nbtTagCompound);
-        to.setPos(pos);
+        NbtCompound nbtTagCompound = from.writeNbt(new NbtCompound());
+        to.setCachedState(data);
+        to.readNbt(nbtTagCompound);
+        to.pos = (pos);
     }
 
     public T getTileEntity() {
@@ -67,9 +68,9 @@ public class CardboardBlockEntityState<T extends BlockEntity> extends CraftBlock
         return ((WorldImpl) getWorld()).getHandle().getBlockEntity(getPosition());
     }
 
-    public CompoundTag getSnapshotNBT() {
+    public NbtCompound getSnapshotNBT() {
         applyTo(snapshot);
-        return snapshot.toTag(new CompoundTag());
+        return snapshot.writeNbt(new NbtCompound());
     }
 
     public void load(T blockEntity) {

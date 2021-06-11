@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
@@ -38,21 +38,21 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
         patterns = new ArrayList<Pattern>(banner.patterns);
     }
 
-    CraftMetaBanner(CompoundTag tag) {
+    CraftMetaBanner(NbtCompound tag) {
         super(tag);
 
         if (!tag.contains("BlockEntityTag")) {
             return;
         }
 
-        CompoundTag entityTag = tag.getCompound("BlockEntityTag");
+        NbtCompound entityTag = tag.getCompound("BlockEntityTag");
 
         base = entityTag.contains(BASE.NBT) ? DyeColor.getByWoolData((byte) entityTag.getInt(BASE.NBT)) : null;
 
         if (entityTag.contains(PATTERNS.NBT)) {
-            ListTag patterns = entityTag.getList(PATTERNS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+            NbtList patterns = entityTag.getList(PATTERNS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
             for (int i = 0; i < Math.min(patterns.size(), 20); i++) {
-                CompoundTag p = patterns.getCompound(i);
+                NbtCompound p = patterns.getCompound(i);
                 DyeColor color = DyeColor.getByWoolData((byte) p.getInt(COLOR.NBT));
                 PatternType pattern = PatternType.getByIdentifier(p.getString(PATTERN.NBT));
 
@@ -84,18 +84,18 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
         }
     }
     @Override
-    void applyToItem(CompoundTag tag) {
+    void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
 
-        CompoundTag entityTag = new CompoundTag();
+        NbtCompound entityTag = new NbtCompound();
         if (base != null) {
             entityTag.putInt(BASE.NBT, base.getWoolData());
         }
 
-        ListTag newPatterns = new ListTag();
+        NbtList newPatterns = new NbtList();
 
         for (Pattern p : patterns) {
-            CompoundTag compound = new CompoundTag();
+            NbtCompound compound = new NbtCompound();
             compound.putInt(COLOR.NBT, p.getColor().getWoolData());
             compound.putString(PATTERN.NBT, p.getPattern().getIdentifier());
             newPatterns.add(compound);

@@ -2139,3 +2139,7 @@ accessible	field	net/minecraft/block/entity/EndGatewayBlockEntity	age	J
 accessible	field	net/minecraft/network/packet/s2c/play/BlockUpdateS2CPacket	state	Lnet/minecraft/block/BlockState;
 accessible	field	net/minecraft/state/State	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
 accessible	field	net/minecraft/state/AbstractBlockState	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
+accessible method net/minecraft/nbt/StringNbtReader parsePrimitive (Ljava/lang/String;)Lnet/minecraft/nbt/NbtElement;
+accessible method net/minecraft/nbt/StringNbtReader parseElementPrimitiveArray ()Lnet/minecraft/nbt/NbtElement;
+accessible class net/minecraft/entity/mob/SpellcastingIllagerEntity$Spell
+accessible field net/minecraft/scoreboard/ScoreboardCriterion CRITERIA Ljava/util/Map;

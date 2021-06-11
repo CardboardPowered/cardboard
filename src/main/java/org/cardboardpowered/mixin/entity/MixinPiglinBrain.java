@@ -26,6 +26,7 @@ import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.mob.PiglinBrain;
 import net.minecraft.entity.mob.PiglinEntity;
@@ -48,19 +49,17 @@ public class MixinPiglinBrain {
         if (entityitem.getStack().getItem() == Items.GOLD_NUGGET && !BukkitEventFactory.callEntityPickupItemEvent(entitypiglin, entityitem, 0, false).isCancelled()) {
             entitypiglin.sendPickup(entityitem, entityitem.getStack().getCount());
             itemstack = entityitem.getStack();
-            entityitem.remove();
+            entityitem.remove(RemovalReason.DISCARDED);
         } else if (!BukkitEventFactory.callEntityPickupItemEvent(entitypiglin, entityitem, entityitem.getStack().getCount() - 1, false).isCancelled()) {
             entitypiglin.sendPickup(entityitem, 1);
             itemstack = getItemFromStack(entityitem);
         } else return;
 
-        Item item = itemstack.getItem();
-
-        if (isGoldenItem(item)) {
+        if (isGoldenItem(itemstack)) {
             entitypiglin.getBrain().forget(MemoryModuleType.TIME_TRYING_TO_REACH_ADMIRE_ITEM);
             swapItemWithOffHand(entitypiglin, itemstack);
             setAdmiringItem((LivingEntity) entitypiglin);
-        } else if (isFood(item) && !hasAteRecently(entitypiglin)) {
+        } else if (isFood(itemstack) && !hasAteRecently(entitypiglin)) {
             setEatenRecently(entitypiglin);
         } else {
             if (!entitypiglin.tryEquip(itemstack)) barterItem(entitypiglin, itemstack);
@@ -68,11 +67,11 @@ public class MixinPiglinBrain {
     }
 
     // This class likes static methods
-    @Shadow public static boolean isGoldenItem(Item item) {return false;}
+    @Shadow public static boolean isGoldenItem(ItemStack item) {return false;}
     @Shadow public static void setEatenRecently(PiglinEntity entitypiglin) {}
     @Shadow public static void setAdmiringItem(LivingEntity entityliving) {}
     @Shadow public static boolean hasAteRecently(PiglinEntity entitypiglin) {return false;}
-    @Shadow public static boolean isFood(Item item) {return false;}
+    @Shadow public static boolean isFood(ItemStack item) {return false;}
     @Shadow public static ItemStack getItemFromStack(ItemEntity entityitem) {return null;}
     @Shadow public static void swapItemWithOffHand(PiglinEntity entitypiglin, ItemStack itemstack) {}
     @Shadow public static void stopWalking(PiglinEntity entitypiglin) {}

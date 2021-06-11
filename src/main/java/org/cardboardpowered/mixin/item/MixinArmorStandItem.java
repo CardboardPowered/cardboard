@@ -49,7 +49,7 @@ public class MixinArmorStandItem {
             BlockPos blockposition = blockactioncontext.getBlockPos();
             ItemStack itemstack = itemactioncontext.getStack();
             Vec3d vec3d = Vec3d.ofBottomCenter((Vec3i) blockposition);
-            Box axisalignedbb = EntityType.ARMOR_STAND.getDimensions().method_30231(vec3d.getX(), vec3d.getY(), vec3d.getZ());
+            Box axisalignedbb = EntityType.ARMOR_STAND.getDimensions().getBoxAt(vec3d.getX(), vec3d.getY(), vec3d.getZ());
 
             if (world.getOtherEntities((Entity) null, axisalignedbb).isEmpty()) {
                 if (world instanceof ServerWorld) {

@@ -39,6 +39,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -59,8 +60,8 @@ import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.minecraft.block.Block;
 import net.minecraft.command.DataCommandStorage;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resource.ServerResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
@@ -127,7 +128,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Shadow public LevelStorage.Session session;
     @Shadow private long timeReference;
     @Shadow public DataCommandStorage dataCommandStorage;
-    @Shadow public SaveProperties saveProperties;
+    @Shadow @Mutable SaveProperties saveProperties;
     @Shadow private int ticks;
 
     @Shadow public void initScoreboard(PersistentStateManager arg0) {}
@@ -150,7 +151,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         return saveHandler;
     }
 
-    @Inject(at = @At("HEAD"), method = "getServerModName", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getServerModName", remap=false, cancellable = true)
     public void getServerModName_cardboard(CallbackInfoReturnable<String> ci) {
         if (null != Bukkit.getServer())
             ci.setReturnValue("CardboardPowered.org (Spigot+Fabric)");
@@ -277,7 +278,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
             DynamicRegistryManager.Impl iregistrycustom_dimension = this.registryManager;
 
-            RegistryOps<Tag> registryreadops = RegistryOps.of((DynamicOps) NbtOps.INSTANCE, this.serverResourceManager.getResourceManager(), iregistrycustom_dimension);
+            RegistryOps<NbtElement> registryreadops = RegistryOps.of((DynamicOps) NbtOps.INSTANCE, this.serverResourceManager.getResourceManager(), iregistrycustom_dimension);
             worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps) registryreadops, CraftServer.method_29735(CraftServer.server.dataPackManager));
             if (worlddata == null) {
                 LevelInfo worldsettings;
@@ -304,14 +305,14 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             ChunkGenerator chunkgenerator;
 
             if (worlddimension == null) {
-                dimensionmanager = (DimensionType) this.registryManager.getDimensionTypes().getOrThrow(DimensionType.OVERWORLD_REGISTRY_KEY);
-                chunkgenerator = GeneratorOptions.createOverworldGenerator(this.registryManager.get(Registry.BIOME_KEY), this.registryManager.get(Registry.NOISE_SETTINGS_WORLDGEN), (new Random()).nextLong());
+                dimensionmanager = CraftServer.server.getOverworld().getDimension(); // TODO 1.17ify (DimensionType) this.registryManager.getDimensionTypes().getOrThrow(DimensionType.OVERWORLD_REGISTRY_KEY);
+                chunkgenerator = GeneratorOptions.createOverworldGenerator(this.registryManager.get(Registry.BIOME_KEY), this.registryManager.get(Registry.CHUNK_GENERATOR_SETTINGS_KEY), (new Random()).nextLong());
             } else {
                 dimensionmanager = worlddimension.getDimensionType();
                 chunkgenerator = worlddimension.getChunkGenerator();
             }
 
-            RegistryKey<World> worldKey = RegistryKey.of(Registry.DIMENSION, dimensionKey.getValue());
+            RegistryKey<World> worldKey = RegistryKey.of(Registry.WORLD_KEY, dimensionKey.getValue());
 
             if (worldId == 0) {
                 this.saveProperties = worlddata;
@@ -337,9 +338,9 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             ((MinecraftServer)(Object)this).getPlayerManager().setMainWorld(world);
 
             if (worlddata.getCustomBossEvents() != null)
-                ((MinecraftServer)(Object)this).getBossBarManager().fromTag(worlddata.getCustomBossEvents());
+                ((MinecraftServer)(Object)this).getBossBarManager().readNbt(worlddata.getCustomBossEvents());
         }
-        this.method_27731_1_15_2();
+        this.updateDifficulty();
         for (ServerWorld worldserver : ((MinecraftServer)(Object)this).getWorlds()) {
             this.loadSpawn(worldserver.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, worldserver);
             CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getWorldImpl()));
@@ -354,7 +355,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         BukkitFabricMod.isAfterWorldLoad = true;
     }
 
-    public void method_27731_1_15_2() {
+    public void updateDifficulty() {
         ((MinecraftServer)(Object)this).setDifficulty(((DedicatedServer)(Object)this).getProperties().difficulty, true);
     }
 
@@ -424,7 +425,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
         if (true) {
             ServerWorld worldserver1 = worldserver;
-            ForcedChunkState forcedchunk = (ForcedChunkState) worldserver.getPersistentStateManager().get(ForcedChunkState::new, "chunks");
+            ForcedChunkState forcedchunk = (ForcedChunkState) worldserver.getPersistentStateManager().get(ForcedChunkState::fromNbt, "chunks");
 
             if (forcedchunk != null) {
                 LongIterator longiterator = forcedchunk.getChunks().iterator();
@@ -523,7 +524,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         ChunkGenerator chunkgenerator = worldserver.getChunkManager().getChunkGenerator();
 
         if (!flag2) {
-            worldProperties.setSpawnPos(BlockPos.ORIGIN.up(chunkgenerator.getSpawnHeight()), 0.0F);
+            worldProperties.setSpawnPos(BlockPos.ORIGIN.up(chunkgenerator.getSpawnHeight(worldserver)), 0.0F);
         } else if (flag1) {
             worldProperties.setSpawnPos(BlockPos.ORIGIN.up(), 0.0F);
         } else {
@@ -552,7 +553,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
             }
 
             BlockPos start = new BlockPos(chunkcoordintpair.getStartX(), 1, chunkcoordintpair.getStartZ());
-            worldProperties.setSpawnPos(start.add(8, chunkgenerator.getSpawnHeight(), 8), 0.0F);
+            worldProperties.setSpawnPos(start.add(8, chunkgenerator.getSpawnHeight(worldserver), 8), 0.0F);
             int i = 0, j = 0, k = 0, l = -1;
 
             for (int i1 = 0; i1 < 1024; ++i1) {

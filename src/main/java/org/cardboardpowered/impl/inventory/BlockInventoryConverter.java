@@ -47,8 +47,8 @@ public abstract class BlockInventoryConverter implements InventoryCreator.Invent
 
         @Override
         public Inventory getTileEntity() {
-            AbstractFurnaceBlockEntity furnace = new FurnaceBlockEntity();
-            furnace.setLocation(CraftServer.server.getWorld(World.OVERWORLD), BlockPos.ORIGIN);
+            AbstractFurnaceBlockEntity furnace = new FurnaceBlockEntity(BlockPos.ORIGIN, null);
+            furnace.setWorld(CraftServer.server.getWorld(World.OVERWORLD));
             return furnace;
         }
 
@@ -69,7 +69,7 @@ public abstract class BlockInventoryConverter implements InventoryCreator.Invent
 
         @Override
         public Inventory getTileEntity() {
-            return new BrewingStandBlockEntity();
+            return new BrewingStandBlockEntity(BlockPos.ORIGIN, null);
         }
 
         @Override
@@ -87,28 +87,45 @@ public abstract class BlockInventoryConverter implements InventoryCreator.Invent
     }
 
     public static class Dispenser extends BlockInventoryConverter {
-        public Inventory getTileEntity() { return new DispenserBlockEntity(); }
+        @Override
+        public Inventory getTileEntity() {
+            return new DispenserBlockEntity(BlockPos.ORIGIN, null);
+        }
     }
 
     public static class Dropper extends BlockInventoryConverter {
         @Override
-        public Inventory getTileEntity() { return new DropperBlockEntity(); }
+        public Inventory getTileEntity() {
+            return new DropperBlockEntity(BlockPos.ORIGIN, null);
+        }
     }
 
     public static class Hopper extends BlockInventoryConverter {
-        public Inventory getTileEntity() { return new HopperBlockEntity(); }
+        @Override
+        public Inventory getTileEntity() {
+            return new HopperBlockEntity(BlockPos.ORIGIN, null);
+        }
     }
 
     public static class BlastFurnace extends BlockInventoryConverter {
-        public Inventory getTileEntity() { return new BlastFurnaceBlockEntity(); }
+        @Override
+        public Inventory getTileEntity() {
+            return new BlastFurnaceBlockEntity(BlockPos.ORIGIN, null);
+        }
     }
 
     public static class Lectern extends BlockInventoryConverter {
-        public Inventory getTileEntity() { return new LecternBlockEntity().inventory; }
+        @Override
+        public Inventory getTileEntity() {
+            return new LecternBlockEntity(BlockPos.ORIGIN, null).inventory;
+        }
     }
 
     public static class Smoker extends BlockInventoryConverter {
-        public Inventory getTileEntity() { return new SmokerBlockEntity(); }
+        @Override
+        public Inventory getTileEntity() {
+            return new SmokerBlockEntity(BlockPos.ORIGIN, null);
+        }
     }
 
 }
