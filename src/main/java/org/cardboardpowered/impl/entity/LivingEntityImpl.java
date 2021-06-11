@@ -221,7 +221,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
             } else if (DragonFireball.class.isAssignableFrom(projectile)) {
                 launch = new DragonFireballEntity(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
             } else {
-                launch = new FireballEntity(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
+                launch = new FireballEntity(world, getHandle(), direction.getX(), direction.getY(), direction.getZ(), 0); // TODO 1.17: check last value
             }
 
             ((IMixinEntity) launch).setProjectileSourceBukkit(this);
