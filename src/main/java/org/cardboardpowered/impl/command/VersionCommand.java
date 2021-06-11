@@ -195,7 +195,7 @@ public class VersionCommand extends Command {
 
     public static int check() {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/bukkitfabric/bukkit4fabric/compare/" + BRANCH + "..." + Utils.getGitHash()).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL("https://api.github.com/repos/CardboardPowered/cardboard/compare/" + BRANCH + "..." + Utils.getGitHash()).openConnection();
             connection.connect();
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) return -2; // Unknown commit

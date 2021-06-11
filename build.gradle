@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.7-SNAPSHOT' //'0.8-SNAPSHOT'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'java-library'
@@ -24,6 +24,7 @@ configurations {
     extraLibs
     removeLibs
 }
+
 
 minecraft {
     accessWidener = file("src/main/resources/bukkitfabric.accesswidener")
@@ -80,34 +81,32 @@ dependencies {
     configurations.runtimeClasspath.extendsFrom(configurations.extraLibs)
 }
 
-/*compileJava {
-    copy {
-        from(zipTree(fileTree(dir: 'libs', include: ['paper-api-1.16.4-416.jar', 'commons-lang-2.6.jar']).getSingleFile()))
-        into("$buildDir/classes/java/main")
-    }
-}*/
+
+
 
 processResources {
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
+    /*from(sourceSets.main.resources.srcDirs) {
+        //include "fabric.mod.json"
         if(System.env.BUILD_NUMBER){
             expand "version": System.env.BUILD_NUMBER
         }
-    }
+    }*/
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
+    //from(sourceSets.main.resources.srcDirs) {
+        //exclude "fabric.mod.json"
+    //}
 }
 
 tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 
 jar {
     from "LICENSE"
-    from {
-        (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+    //from {
+    //    (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
+    //}
     exclude("**/mojang-translations/")
+
+	exclude("*.jar") // WHY GRADLE, WHY?
 }
