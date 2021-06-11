@@ -13,8 +13,8 @@ gversion {
 }
 project.compileJava.dependsOn(createVersionFile)
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -87,26 +87,38 @@ dependencies {
 processResources {
     inputs.property "version", project.version
 
-    /*from(sourceSets.main.resources.srcDirs) {
-        //include "fabric.mod.json"
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
         if(System.env.BUILD_NUMBER){
             expand "version": System.env.BUILD_NUMBER
         }
-    }*/
+    }
 
-    //from(sourceSets.main.resources.srcDirs) {
-        //exclude "fabric.mod.json"
-    //}
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
 }
 
 tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 
 jar {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from "LICENSE"
-    //from {
-    //    (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
-    //}
+    from {
+        (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
+    }
     exclude("**/mojang-translations/")
 
 	exclude("*.jar") // WHY GRADLE, WHY?
+}
+
+
+shadowJar {
+    configurations = [project.configurations.api]
+    dependencies {
+      exclude(dependency('com.mojang:minecraft:*'))
+      exclude(dependency('org.objectweb:asm:*'))
+      exclude(dependency('com.google.guava:guava:*'))
+    }
 }
