@@ -2578,17 +2578,27 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     POTTED_CRIMSON_ROOTS(13852),
     POTTED_WARPED_ROOTS(6403),
 
-    // ----- MODDED MATERIALS-START -----
+    // ----- CARDBOARD-START -----
 
 
 
 
-    // CARDBOARD MATERIAL START PLACE
+    // 1.17 Materials
+	GLOW_INK_SAC(9686),
+	SPYGLASS(27490, 1),
+	BUNDLE(16835, 1),
+	AXOLOTL_BUCKET(20669, 1),
+	GOAT_SPAWN_EGG(30639),
+	POWDER_SNOW_BUCKET(31101, 1),
+	RAW_COPPER(6162),
+    COPPER_INGOT(12611),
+    RAW_GOLD(19564),
+	AMETHYST_SHARD(7613),
+    RAW_IRON(5329),
 
 
 
-
-    // ----- MODDED MATERIALS-END   -----
+    // ----- CARDBOARD-END   -----
 
     // ----- Legacy Separator -----
     @Deprecated

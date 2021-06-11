@@ -1,0 +1,1 @@
+javac Material.java -cp ../paper-api-1.16.4-416.jar;../../build/libs/CardboardMod-1.17.jar
