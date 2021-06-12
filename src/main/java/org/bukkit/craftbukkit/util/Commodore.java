@@ -27,7 +27,7 @@ import com.javazilla.bukkitfabric.nms.Remapper;
  * This file is imported from Commodore.
  *
  * @author md_5
- * @author Bukkit4Fabric Mod
+ * @author Cardboard
  */
 @SuppressWarnings("deprecation")
 public class Commodore {
