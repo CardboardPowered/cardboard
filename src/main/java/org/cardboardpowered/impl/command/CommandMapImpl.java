@@ -14,7 +14,7 @@ public class CommandMapImpl extends SimpleCommandMap {
         // Register our commands
         for (String s : new String[] {"version", "ver", "about"})
             register("bukkit", new VersionCommand(s));
-        for (String s : new String[] {"fabricmods", "mods"})
+        for (String s : new String[] {"fabricmods"})
             register("cardboard", new ModsCommand(s));
     }
 

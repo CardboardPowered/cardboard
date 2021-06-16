@@ -57,7 +57,7 @@ dependencies {
     }
 
     // Spigot API
-    extraLibs fileTree(dir: 'libs', include: 'paper-api-1.16.4-416.jar')
+    extraLibs fileTree(dir: 'libs', include: "${project.paper_jar}")
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
 
     // extraLibs fileTree(dir: 'libs', include: 'slf4j.jar')
@@ -69,7 +69,7 @@ dependencies {
     extraLibs "org.yaml:snakeyaml:1.27"
     
     // 
-    compileOnly fileTree(dir: 'libs', include: 'paper-api-1.16.4-416.jar')
+    compileOnly fileTree(dir: 'libs', include: "${project.paper_jar}")
     compileOnly fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     compileOnly fileTree(dir: 'libs', include: 'slf4j.jar')
     compileOnly fileTree(dir: 'libs', include: 'jline-3.19.jar')

@@ -64,4 +64,10 @@ public class CardboardWitch extends CardboardRaider implements Witch {
         
     }
 
+    @Override
+    public void setPotionUseTimeLeft(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

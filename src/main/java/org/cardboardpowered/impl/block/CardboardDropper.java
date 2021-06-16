@@ -8,7 +8,9 @@ import org.bukkit.block.Dropper;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.Nullable;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.DropperBlock;
 import net.minecraft.block.entity.DropperBlockEntity;
@@ -97,6 +99,18 @@ public class CardboardDropper extends CardboardLootableBlock<DropperBlockEntity>
     public long setNextRefill(long arg0) {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

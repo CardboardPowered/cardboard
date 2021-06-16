@@ -48,8 +48,7 @@ public class VersionCommand extends Command {
 
         if (args.length == 0) {
             String ver = FabricLoader.getInstance().getModContainer("cardboard").get().getMetadata().getVersion().getFriendlyString();
-            if (ver.contains("version"))
-                ver = CraftServer.INSTANCE.getShortVersion(); // Dev ENV
+            if (ver.contains("version")) ver = CraftServer.INSTANCE.getShortVersion(); // Dev ENV
 
             sender.sendMessage("This server is running " + Bukkit.getName() + " version " + ver + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
             sendVersion(sender);
@@ -89,14 +88,9 @@ public class VersionCommand extends Command {
         PluginDescriptionFile desc = plugin.getDescription();
         sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.WHITE + " version " + ChatColor.GREEN + desc.getVersion());
 
-        if (desc.getDescription() != null)
-            sender.sendMessage(desc.getDescription());
-
-        if (desc.getWebsite() != null)
-            sender.sendMessage("Website: " + ChatColor.GREEN + desc.getWebsite());
-
-        if (!desc.getAuthors().isEmpty())
-            sender.sendMessage((desc.getAuthors().size() == 1 ? ("Author: ") : ("Authors: ")) + getAuthors(desc));
+        if (desc.getDescription() != null) sender.sendMessage(desc.getDescription());
+        if (desc.getWebsite() != null)     sender.sendMessage("Website: " + ChatColor.GREEN + desc.getWebsite());
+        if (!desc.getAuthors().isEmpty())  sender.sendMessage((desc.getAuthors().size() == 1 ? ("Author: ") : ("Authors: ")) + getAuthors(desc));
     }
 
     private String getAuthors(final PluginDescriptionFile desc) {

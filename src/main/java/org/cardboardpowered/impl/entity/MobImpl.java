@@ -7,10 +7,13 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftServer;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.jetbrains.annotations.NotNull;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.loot.LootTable;
@@ -19,7 +22,7 @@ import com.destroystokyo.paper.entity.Pathfinder;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
-public abstract class MobImpl extends LivingEntityImpl implements Mob {
+public class MobImpl extends LivingEntityImpl implements Mob {
 
     protected final Random random = new Random();
 
@@ -97,6 +100,54 @@ public abstract class MobImpl extends LivingEntityImpl implements Mob {
     public Pathfinder getPathfinder() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public int getHeadRotationSpeed() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getMaxHeadPitch() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void lookAt(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(@NotNull Entity arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(@NotNull Location arg0, float arg1, float arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(@NotNull Entity arg0, float arg1, float arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(double arg0, double arg1, double arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(double arg0, double arg1, double arg2, float arg3, float arg4) {
+        // TODO Auto-generated method stub
+        
     }
 
     

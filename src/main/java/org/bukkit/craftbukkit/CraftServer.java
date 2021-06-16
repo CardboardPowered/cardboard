@@ -163,6 +163,9 @@ import org.cardboardpowered.impl.util.IconCacheImpl;
 import org.cardboardpowered.impl.util.SimpleHelpMap;
 import org.cardboardpowered.impl.world.ChunkDataImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spigotmc.SpigotConfig;
 
 import com.destroystokyo.paper.entity.ai.MobGoals;
@@ -200,6 +203,9 @@ import com.mojang.serialization.Lifecycle;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import io.papermc.paper.datapack.DatapackManager;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -251,8 +257,8 @@ import net.minecraft.world.level.storage.LevelStorage;
 @SuppressWarnings("deprecation")
 public class CraftServer implements Server {
 
-    public final String serverName = "CardboardPowered.org";
-    public final String bukkitVersion = "1.16.4-R0.1-SNAPSHOT";
+    public final String serverName = "Cardboard";
+    public final String bukkitVersion = "1.16.5-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -284,7 +290,7 @@ public class CraftServer implements Server {
 
     public CraftServer(MinecraftDedicatedServer nms) {
         INSTANCE = this;
-        serverVersion = "git-Bukkit4Fabric-" + Utils.getGitHash().substring(0,7); // use short hash
+        serverVersion = "git-Cardboard-" + Utils.getGitHash().substring(0,7); // use short hash
         shortVersion = "git-" + Utils.getGitHash().substring(0,7);
         server = nms;
         console = nms;
@@ -1275,7 +1281,7 @@ public class CraftServer implements Server {
     @Override
     public String getVersion() {
     	// Some plugins like WorldEdit use PaperLib.getMinecraftVersion() for version checks
-        return serverVersion + " (MC: 1.16.4)";
+        return serverVersion + " (MC: 1.16.5)";
     }
 
     public String getShortVersion() {
@@ -1809,5 +1815,67 @@ public class CraftServer implements Server {
         return false;
     }
     // PaperAPI - end
+
+    @Override
+    public @NonNull Iterable<? extends Audience> audiences() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int broadcast(@NotNull Component arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int broadcast(@NotNull Component arg0, @NotNull String arg1) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public @NotNull Inventory createInventory(@Nullable InventoryHolder arg0, @NotNull InventoryType arg1,
+            @NotNull Component arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Inventory createInventory(@Nullable InventoryHolder arg0, int arg1, @NotNull Component arg2)
+            throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Merchant createMerchant(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull DatapackManager getDatapackManager() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable World getWorld(@NotNull NamespacedKey arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Component motd() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Component shutdownMessage() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

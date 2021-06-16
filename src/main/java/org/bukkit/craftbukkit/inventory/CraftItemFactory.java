@@ -2,10 +2,15 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableSet;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.event.HoverEvent.ShowItem;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.hover.content.Content;
 
 import java.util.Collection;
+import java.util.function.UnaryOperator;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -15,6 +20,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 public final class CraftItemFactory implements ItemFactory {
 
@@ -360,6 +366,18 @@ public final class CraftItemFactory implements ItemFactory {
 
     @Override
     public Content hoverContentOf(Entity arg0, BaseComponent[] arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public HoverEvent<ShowItem> asHoverEvent(@NotNull ItemStack arg0, @NotNull UnaryOperator<ShowItem> arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Component displayName(@NotNull ItemStack arg0) {
         // TODO Auto-generated method stub
         return null;
     }

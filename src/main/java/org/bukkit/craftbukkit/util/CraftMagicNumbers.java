@@ -14,19 +14,25 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.UnsafeValues;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.cardboardpowered.adventure.CardboardAdventure;
 import org.cardboardpowered.impl.CardboardModdedBlock;
 import org.cardboardpowered.impl.CardboardModdedItem;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
@@ -35,7 +41,12 @@ import com.mojang.serialization.Dynamic;
 
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
+import io.papermc.paper.inventory.ItemRarity;
 import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.text.flattener.ComponentFlattener;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -502,5 +513,69 @@ public final class CraftMagicNumbers implements UnsafeValues {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public @NotNull Multimap<Attribute, AttributeModifier> getItemAttributes(@NotNull Material arg0,
+            @NotNull EquipmentSlot arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ItemRarity getItemRarity(Material arg0) {
+        // TODO Auto-generated method stub
+        return ItemRarity.COMMON;
+    }
+
+    @Override
+    public ItemRarity getItemStackRarity(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return ItemRarity.COMMON;
+    }
+
+    @Override
+    public int getProtocolVersion() {
+        // TODO Auto-generated method stub
+        return SharedConstants.getProtocolVersion();
+    }
+
+    @Override
+    public String getTranslationKey(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isValidRepairItemStack(@NotNull ItemStack arg0, @NotNull ItemStack arg1) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    // Paper start
+    @Override
+    public net.kyori.adventure.text.flattener.ComponentFlattener componentFlattener() {
+        return CardboardAdventure.FLATTENER;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer colorDownsamplingGsonComponentSerializer() {
+        return CardboardAdventure.COLOR_DOWNSAMPLING_GSON;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.gson.GsonComponentSerializer gsonComponentSerializer() {
+        return CardboardAdventure.GSON;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.plain.PlainComponentSerializer plainComponentSerializer() {
+        return CardboardAdventure.PLAIN;
+    }
+
+    @Override
+    public net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer legacyComponentSerializer() {
+        return CardboardAdventure.LEGACY_SECTION_UXRC;
+    }
+    // Paper end
 
 }

@@ -1,10 +1,12 @@
 package org.cardboardpowered.impl.block;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.EnchantingTableBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.EnchantingTable;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardEnchantingTable extends CardboardBlockEntityState<EnchantingTableBlockEntity> implements EnchantingTable {
 
@@ -31,6 +33,18 @@ public class CardboardEnchantingTable extends CardboardBlockEntityState<Enchanti
     public void applyTo(EnchantingTableBlockEntity enchantingTable) {
         super.applyTo(enchantingTable);
         if (!this.getSnapshot().hasCustomName()) enchantingTable.setCustomName(null);
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

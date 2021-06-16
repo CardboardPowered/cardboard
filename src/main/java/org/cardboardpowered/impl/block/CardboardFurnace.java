@@ -1,5 +1,6 @@
 package org.cardboardpowered.impl.block;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.craftbukkit.block.CraftContainer;
 import org.bukkit.inventory.FurnaceInventory;
 import org.cardboardpowered.impl.inventory.CardboardFurnaceInventory;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardFurnace<T extends AbstractFurnaceBlockEntity> extends CraftContainer<T> implements Furnace {
 
@@ -68,6 +70,18 @@ public class CardboardFurnace<T extends AbstractFurnaceBlockEntity> extends Craf
 
     @Override
     public void setCookSpeedMultiplier(double arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
         // TODO Auto-generated method stub
         
     }

@@ -485,4 +485,10 @@ public class CraftInventory implements Inventory {
         return null;
     }
 
+    @Override
+    public int close() {
+        // TODO Auto-generated method stub (1.16.5 API)
+        return 0;
+    }
+
 }

@@ -69,4 +69,10 @@ public class CardboardBeehive extends CardboardBlockEntityState<BeehiveBlockEnti
         // TODO Bukkit4Fabirc: auto-generated method stub
     }
 
+    @Override
+    public void clearEntities() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

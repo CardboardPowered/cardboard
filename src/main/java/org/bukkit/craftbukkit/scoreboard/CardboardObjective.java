@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.scoreboard;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import org.apache.commons.lang.Validate;
@@ -9,6 +10,8 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardObjective extends CardboardScoreboardComponent implements Objective {
 
@@ -135,6 +138,18 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
             return false;
         final CardboardObjective other = (CardboardObjective) obj;
         return !(this.objective != other.objective && (this.objective == null || !this.objective.equals(other.objective)));
+    }
+
+    @Override
+    public @NotNull Component displayName() throws IllegalStateException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void displayName(@Nullable Component arg0) throws IllegalStateException, IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

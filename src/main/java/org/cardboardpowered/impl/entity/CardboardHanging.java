@@ -1,5 +1,6 @@
 package org.cardboardpowered.impl.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.util.math.Direction;
 import org.bukkit.block.BlockFace;
@@ -8,6 +9,7 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardHanging extends CraftEntity implements Hanging {
 
@@ -71,6 +73,18 @@ public class CardboardHanging extends CraftEntity implements Hanging {
     @Override
     public EntityType getType() {
         return EntityType.UNKNOWN;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

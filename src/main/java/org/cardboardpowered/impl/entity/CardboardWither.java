@@ -49,4 +49,34 @@ public class CardboardWither extends MonsterImpl implements Wither {
         
     }
 
+    @Override
+    public boolean canTravelThroughPortals() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public int getInvulnerableTicks() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isCharged() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setCanTravelThroughPortals(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setInvulnerableTicks(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

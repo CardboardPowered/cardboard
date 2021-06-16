@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.Validate;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.jetbrains.annotations.NotNull;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
@@ -344,6 +345,24 @@ public class CardboardPlayerInventory extends CraftInventory implements org.bukk
 
     @Override
     public void setLeggings(ItemStack arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int close() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getDropChance(@NotNull EquipmentSlot arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setDropChance(@NotNull EquipmentSlot arg0, float arg1) {
         // TODO Auto-generated method stub
         
     }

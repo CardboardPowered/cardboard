@@ -6,9 +6,11 @@ import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.ComplexLivingEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.jetbrains.annotations.Nullable;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 
 public class CardboardComplexPart extends CraftEntity implements ComplexEntityPart {
@@ -45,6 +47,18 @@ public class CardboardComplexPart extends CraftEntity implements ComplexEntityPa
     @Override
     public EntityType getType() {
         return EntityType.UNKNOWN;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

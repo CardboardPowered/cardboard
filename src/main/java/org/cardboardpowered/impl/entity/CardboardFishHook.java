@@ -1,12 +1,16 @@
 package org.cardboardpowered.impl.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardFishHook extends ProjectileImpl implements FishHook {
 
@@ -80,6 +84,48 @@ public class CardboardFishHook extends ProjectileImpl implements FishHook {
 
     @Override
     public void setMinWaitTime(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable Entity getHookedEntity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull HookState getState() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isInOpenWater() {
+        // TODO Auto-generated method stub
+        return nms.isTouchingWater();
+    }
+
+    @Override
+    public boolean pullHookedEntity() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setHookedEntity(@Nullable Entity arg0) {
         // TODO Auto-generated method stub
         
     }

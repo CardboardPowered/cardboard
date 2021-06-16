@@ -2,6 +2,8 @@ package org.cardboardpowered.impl.block;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.BeaconBlockEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.inventory.ContainerLock;
@@ -12,6 +14,7 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity> implements Beacon {
 
@@ -96,6 +99,18 @@ public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity
     @Override
     public void setEffectRange(double arg0) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

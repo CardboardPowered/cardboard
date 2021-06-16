@@ -4,7 +4,9 @@ import org.bukkit.Chunk;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.jetbrains.annotations.Nullable;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.Entity;
 
 public class UnknownEntity extends CraftEntity {
@@ -58,6 +60,18 @@ public class UnknownEntity extends CraftEntity {
     public boolean isInWaterOrRainOrBubbleColumn() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

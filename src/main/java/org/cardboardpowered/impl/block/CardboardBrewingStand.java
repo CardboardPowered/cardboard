@@ -1,5 +1,6 @@
 package org.cardboardpowered.impl.block;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.BrewingStandBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -7,6 +8,7 @@ import org.bukkit.block.BrewingStand;
 import org.bukkit.craftbukkit.block.CraftContainer;
 import org.bukkit.inventory.BrewerInventory;
 import org.cardboardpowered.impl.inventory.CardboardBrewerInventory;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardBrewingStand extends CraftContainer<BrewingStandBlockEntity> implements BrewingStand {
 
@@ -46,6 +48,18 @@ public class CardboardBrewingStand extends CraftContainer<BrewingStandBlockEntit
     @Override
     public void setFuelLevel(int level) {
         this.getSnapshot().fuel = level;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

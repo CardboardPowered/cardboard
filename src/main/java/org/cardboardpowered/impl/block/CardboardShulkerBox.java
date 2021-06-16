@@ -9,7 +9,9 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Nullable;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 
@@ -101,6 +103,24 @@ public class CardboardShulkerBox extends CardboardLootableBlock<ShulkerBoxBlockE
     public long setNextRefill(long arg0) {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean isOpen() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

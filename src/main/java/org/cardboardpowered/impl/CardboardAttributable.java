@@ -5,6 +5,7 @@ import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -30,6 +31,11 @@ public class CardboardAttributable implements Attributable {
 
     public static Attribute fromMinecraft(String nms) {
         return Registry.ATTRIBUTE.get(CraftNamespacedKey.fromString(nms));
+    }
+
+    @Override
+    public void registerAttribute(Attribute attribute) {
+        // TODO Paper API
     }
 
 }

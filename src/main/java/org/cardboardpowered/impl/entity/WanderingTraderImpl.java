@@ -26,4 +26,40 @@ public class WanderingTraderImpl extends AbstractVillagerImpl implements Wanderi
         return EntityType.WANDERING_TRADER;
     }
 
+    @Override
+    public boolean canDrinkMilk() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean canDrinkPotion() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public int getDespawnDelay() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setCanDrinkMilk(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setCanDrinkPotion(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDespawnDelay(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

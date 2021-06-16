@@ -45,6 +45,8 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameRule;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Raid;
 import org.bukkit.Sound;
@@ -90,6 +92,8 @@ import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.destroystokyo.paper.HeightmapType;
 import com.google.common.base.Preconditions;
@@ -2022,6 +2026,121 @@ public class WorldImpl implements World {
     public <T> void spawnParticle(Particle arg0, List<Player> arg1, Player arg2, double arg3, double arg4, double arg5,
             int arg6, double arg7, double arg8, double arg9, double arg10, T arg11, boolean arg12) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public boolean doesBedWork() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean doesRespawnAnchorWork() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public @NotNull Item dropItem(@NotNull Location arg0, @NotNull ItemStack arg1, @Nullable Consumer<Item> arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Item dropItemNaturally(@NotNull Location arg0, @NotNull ItemStack arg1,
+            @Nullable Consumer<Item> arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public double getCoordinateScale() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public long getGameTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public @NotNull Collection<Material> getInfiniburn() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull NamespacedKey getKey() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getMinHeight() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean hasBedrockCeiling() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasRaids() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasSkylight() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isFixedTime() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isNatural() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isPiglinSafe() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isUltrawarm() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean lineOfSightExists(@NotNull Location arg0, @NotNull Location arg1) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public @Nullable Location locateNearestBiome(@NotNull Location arg0, @NotNull Biome arg1, int arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Location locateNearestBiome(@NotNull Location arg0, @NotNull Biome arg1, int arg2, int arg3) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

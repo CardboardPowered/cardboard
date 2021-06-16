@@ -14,8 +14,6 @@ import org.bukkit.command.CommandSender;
 
 public class ModsCommand extends Command {
 
-    public static String BRANCH = "master";
-
     public ModsCommand(String name) {
         super(name);
 

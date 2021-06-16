@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,6 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
+import org.jetbrains.annotations.NotNull;
 
 public class BukkitSchedulerImpl implements BukkitScheduler {
 
@@ -482,6 +484,12 @@ public class BukkitSchedulerImpl implements BukkitScheduler {
     @Override
     public BukkitTask runTaskTimerAsynchronously(Plugin plugin, BukkitRunnable task, long delay, long period) throws IllegalArgumentException {
         throw new UnsupportedOperationException("Use BukkitRunnable#runTaskTimerAsynchronously(Plugin, long, long)");
+    }
+
+    // Paper API
+    @Override
+    public Executor getMainThreadExecutor(Plugin plugin) {
+        return command -> { this.runTask(plugin, command); };
     }
 
 }

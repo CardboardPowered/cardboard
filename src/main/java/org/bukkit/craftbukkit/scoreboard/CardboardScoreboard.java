@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
+
+import net.kyori.adventure.text.Component;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import org.apache.commons.lang.Validate;
@@ -15,6 +17,8 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboard {
 
@@ -176,6 +180,20 @@ public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboa
 
     public Scoreboard getHandle() {
         return board;
+    }
+
+    @Override
+    public @NotNull Objective registerNewObjective(@NotNull String arg0, @NotNull String arg1, @Nullable Component arg2)
+            throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Objective registerNewObjective(@NotNull String arg0, @NotNull String arg1, @Nullable Component arg2,
+            @NotNull RenderType arg3) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

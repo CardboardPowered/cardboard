@@ -50,4 +50,16 @@ public class SkeletonImpl extends MonsterImpl implements Skeleton {
         
     }
 
+    @Override
+    public void setShouldBurnInDay(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean shouldBurnInDay() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

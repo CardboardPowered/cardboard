@@ -9,15 +9,19 @@ import java.util.Set;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.boss.dragon.phase.PhaseType;
+
+import org.bukkit.Location;
 import org.bukkit.boss.BossBar;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.loot.LootTable;
 import org.cardboardpowered.impl.CardboardDragonBattle;
+import org.jetbrains.annotations.NotNull;
 
 public class CardboardEnderdragon extends CardboardComplexEntity implements EnderDragon {
 
@@ -137,6 +141,54 @@ public class CardboardEnderdragon extends CardboardComplexEntity implements Ende
 
     @Override
     public void setSeed(long arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int getHeadRotationSpeed() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getMaxHeadPitch() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void lookAt(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(@NotNull Entity arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(@NotNull Location arg0, float arg1, float arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(@NotNull Entity arg0, float arg1, float arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(double arg0, double arg1, double arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void lookAt(double arg0, double arg1, double arg2, float arg3, float arg4) {
         // TODO Auto-generated method stub
         
     }

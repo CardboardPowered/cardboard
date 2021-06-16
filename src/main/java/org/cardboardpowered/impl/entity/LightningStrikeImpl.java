@@ -1,10 +1,12 @@
 package org.cardboardpowered.impl.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.LightningEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LightningStrike;
+import org.jetbrains.annotations.Nullable;
 
 public class LightningStrikeImpl extends CraftEntity implements LightningStrike {
 
@@ -64,6 +66,18 @@ public class LightningStrikeImpl extends CraftEntity implements LightningStrike 
 
     @Override
     public void setLifeTicks(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
         // TODO Auto-generated method stub
         
     }

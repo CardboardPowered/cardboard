@@ -2,6 +2,8 @@ package org.cardboardpowered.impl.entity;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.potion.PotionUtil;
@@ -14,6 +16,7 @@ import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.cardboardpowered.impl.CardboardPotionUtil;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardThrownPotion extends ProjectileImpl implements ThrownPotion {
 
@@ -50,6 +53,18 @@ public class CardboardThrownPotion extends ProjectileImpl implements ThrownPotio
     @Override
     public EntityType getType() {
         return EntityType.SPLASH_POTION;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

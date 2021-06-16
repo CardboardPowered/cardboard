@@ -1,5 +1,6 @@
 package org.cardboardpowered.impl.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
@@ -13,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardMinecart extends VehicleImpl implements Minecart {
 
@@ -129,6 +131,18 @@ public class CardboardMinecart extends VehicleImpl implements Minecart {
     @Override
     public Material getMinecartMaterial() {
         return Material.MINECART;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

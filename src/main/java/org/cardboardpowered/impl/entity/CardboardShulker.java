@@ -6,9 +6,11 @@ import net.minecraft.entity.mob.ShulkerEntity;
 import java.lang.reflect.Field;
 
 import org.bukkit.DyeColor;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Shulker;
+import org.jetbrains.annotations.NotNull;
 
 public class CardboardShulker extends CardboardGolem implements Shulker {
 
@@ -55,6 +57,30 @@ public class CardboardShulker extends CardboardGolem implements Shulker {
         } catch (Exception e) {
         }
         getHandle().getDataTracker().set(d, (color == null) ? 16 : color.getWoolData());
+    }
+
+    @Override
+    public @NotNull BlockFace getAttachedFace() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public float getPeek() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setAttachedFace(@NotNull BlockFace arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPeek(float arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

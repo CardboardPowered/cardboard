@@ -9,7 +9,9 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.Nullable;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.ChestBlockEntity;
@@ -111,6 +113,24 @@ public class CardboardChest extends CardboardLootableBlock<ChestBlockEntity> imp
     public long setNextRefill(long arg0) {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean isOpen() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

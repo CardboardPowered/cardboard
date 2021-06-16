@@ -47,6 +47,7 @@ import org.bukkit.entity.WitherSkull;
 import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
@@ -62,10 +63,13 @@ import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.Utils;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.cardboardpowered.impl.CardboardPotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
@@ -777,5 +781,35 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
         // TODO Auto-generated method stub
     }
     // PaperAPI - end
+
+    @Override
+    public void registerAttribute(@NotNull Attribute arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull EquipmentSlot getHandRaised() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasLineOfSight(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

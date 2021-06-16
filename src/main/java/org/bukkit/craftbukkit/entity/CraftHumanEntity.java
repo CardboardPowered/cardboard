@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.CraftServer;
@@ -19,6 +20,8 @@ import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.bukkit.craftbukkit.inventory.CraftContainer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -30,6 +33,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.InventoryView.Property;
@@ -51,6 +55,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -580,6 +585,114 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     public Entity releaseRightShoulderEntity() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public @NotNull EquipmentSlot getHandRaised() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasLineOfSight(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void registerAttribute(@NotNull Attribute arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public float getExhaustion() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getFoodLevel() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getSaturatedRegenRate() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getSaturation() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getStarvationRate() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getUnsaturatedRegenRate() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isDeeplySleeping() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setExhaustion(float arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setFoodLevel(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSaturatedRegenRate(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSaturation(float arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setStarvationRate(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setUnsaturatedRegenRate(int arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

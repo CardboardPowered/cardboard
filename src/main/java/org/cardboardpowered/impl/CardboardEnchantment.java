@@ -1,14 +1,23 @@
 package org.cardboardpowered.impl;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.enchantment.BindingCurseEnchantment;
 import net.minecraft.enchantment.VanishingCurseEnchantment;
 import net.minecraft.util.registry.Registry;
+
+import java.util.Set;
+
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.enchantments.EnchantmentWrapper;
+import org.bukkit.entity.EntityCategory;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import io.papermc.paper.enchantments.EnchantmentRarity;
 
 public class CardboardEnchantment extends Enchantment {
 
@@ -178,6 +187,42 @@ public class CardboardEnchantment extends Enchantment {
 
     public net.minecraft.enchantment.Enchantment getHandle() {
         return target;
+    }
+
+    @Override
+    public @NotNull Component displayName(int arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Set<EquipmentSlot> getActiveSlots() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public float getDamageIncrease(int arg0, @NotNull EntityCategory arg1) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public @NotNull EnchantmentRarity getRarity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isDiscoverable() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isTradeable() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

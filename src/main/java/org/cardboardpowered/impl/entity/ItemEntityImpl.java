@@ -1,5 +1,6 @@
 package org.cardboardpowered.impl.entity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 
@@ -11,6 +12,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemEntityImpl extends CraftEntity implements Item {
 
@@ -113,6 +115,18 @@ public class ItemEntityImpl extends CraftEntity implements Item {
     public boolean willAge() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

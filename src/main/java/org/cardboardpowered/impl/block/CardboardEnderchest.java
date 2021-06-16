@@ -15,4 +15,22 @@ public class CardboardEnderchest extends CardboardBlockEntityState<EnderChestBlo
         super(material, te);
     }
 
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean isOpen() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void open() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

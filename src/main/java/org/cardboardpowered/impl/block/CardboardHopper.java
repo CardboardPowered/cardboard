@@ -7,7 +7,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Hopper;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Nullable;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.HopperBlockEntity;
 
 public class CardboardHopper extends CardboardLootableBlock<HopperBlockEntity> implements Hopper {
@@ -82,6 +84,18 @@ public class CardboardHopper extends CardboardLootableBlock<HopperBlockEntity> i
     public long setNextRefill(long arg0) {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

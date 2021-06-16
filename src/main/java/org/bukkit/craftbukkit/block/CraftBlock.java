@@ -34,6 +34,8 @@ import com.google.common.base.Preconditions;
 
 import org.cardboardpowered.impl.block.*;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.NotNull;
+
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.block.BlockState;
@@ -684,6 +686,24 @@ public class CraftBlock implements Block {
     @Override
     public boolean isSolid() {
         return getBlockData().getMaterial().isSolid();
+    }
+
+    @Override
+    public float getDestroySpeed(@NotNull ItemStack arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isPreferredTool(@NotNull ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isValidTool(@NotNull ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

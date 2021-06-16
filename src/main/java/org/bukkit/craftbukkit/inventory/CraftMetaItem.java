@@ -55,6 +55,7 @@ import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.cardboardpowered.impl.CardboardAttributable;
 import org.cardboardpowered.impl.CardboardAttributeInstance;
+import org.jetbrains.annotations.Nullable;
 
 import com.destroystokyo.paper.Namespaced;
 import com.google.common.base.Preconditions;
@@ -70,6 +71,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonParseException;
 import com.javazilla.bukkitfabric.Utils;
 
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -1351,6 +1353,30 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     @Override
     public void setPlaceableKeys(Collection<Namespaced> arg0) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public @Nullable Component displayName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void displayName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable List<Component> lore() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void lore(@Nullable List<Component> arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

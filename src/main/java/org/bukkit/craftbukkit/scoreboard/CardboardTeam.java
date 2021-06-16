@@ -2,6 +2,10 @@ package org.bukkit.craftbukkit.scoreboard;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.scoreboard.AbstractTeam.VisibilityRule;
 import org.apache.commons.lang.Validate;
@@ -11,6 +15,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardTeam extends CardboardScoreboardComponent implements Team {
     private final net.minecraft.scoreboard.Team team;
@@ -300,6 +306,54 @@ public class CardboardTeam extends CardboardScoreboardComponent implements Team 
         if (getClass() != obj.getClass()) return false;
         final CardboardTeam other = (CardboardTeam) obj;
         return !(this.team != other.team && (this.team == null || !this.team.equals(other.team)));
+    }
+
+    @Override
+    public @NotNull TextColor color() throws IllegalStateException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void color(@Nullable NamedTextColor arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull Component displayName() throws IllegalStateException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void displayName(@Nullable Component arg0) throws IllegalStateException, IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull Component prefix() throws IllegalStateException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void prefix(@Nullable Component arg0) throws IllegalStateException, IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull Component suffix() throws IllegalStateException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void suffix(@Nullable Component arg0) throws IllegalStateException, IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

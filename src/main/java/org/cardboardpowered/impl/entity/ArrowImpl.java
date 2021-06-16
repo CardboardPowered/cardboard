@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinPersistentProjectileEntity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang.Validate;
@@ -17,6 +18,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.Nullable;
 
 public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
 
@@ -186,6 +188,18 @@ public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
     public ItemStack getItemStack() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

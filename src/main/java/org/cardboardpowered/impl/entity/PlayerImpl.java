@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -68,6 +70,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
+import org.bukkit.event.player.PlayerKickEvent.Cause;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -90,6 +93,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.map.RenderData;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
@@ -104,6 +109,7 @@ import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.advancement.PlayerAdvancementTracker;
@@ -1652,6 +1658,97 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void setResourcePack(String arg0, String arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull Component displayName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void displayName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int getPing() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public @NotNull Set<Player> getTrackedPlayers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void kick(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void kick(@Nullable Component arg0, @NotNull Cause arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull Locale locale() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Component playerListFooter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Component playerListHeader() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Component playerListName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void playerListName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void sendBlockDamage(@NotNull Location arg0, float arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void sendOpLevel(byte arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1, @NotNull DyeColor arg2)
+            throws IllegalArgumentException {
         // TODO Auto-generated method stub
         
     }

@@ -1,13 +1,17 @@
 package org.cardboardpowered.impl.block;
 
+import java.util.List;
+
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.jetbrains.annotations.NotNull;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -90,6 +94,24 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
         for (int i = 0; i < lines.length; i++)
             lines[i] = CraftChatMessage.fromComponent(components[i]);
         return lines;
+    }
+
+    @Override
+    public Component line(int arg0) throws IndexOutOfBoundsException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void line(int arg0, @NotNull Component arg1) throws IndexOutOfBoundsException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public List<Component> lines() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
