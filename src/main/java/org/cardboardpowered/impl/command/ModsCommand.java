@@ -29,8 +29,12 @@ public class ModsCommand extends Command {
             String mods = "";
             for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
                 String name = mod.getMetadata().getName();
-                if (name.startsWith("Fabric") && name.endsWith(")"))
-                    continue; // Don't list all modules of FAPI
+
+                if (name.startsWith("Fabric") && name.endsWith(")")) continue; // Don't list all modules of FAPI
+                if (name.startsWith("Fabric API Base")) name = "Fabric API";
+                if (name.startsWith("OpenJDK")) name = name.replace("64-Bit Server VM",""); // Shorten
+                if (name.startsWith("Minecraft") || name.startsWith("Fabric Loader")) continue;
+
                 mods += ", " + ChatColor.GREEN + name + ChatColor.WHITE;
             }
             sender.sendMessage("Mods: " + mods.substring(2));
