@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.property.BooleanProperty;
+
 public final class CraftMinecartTrack extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Rail {
 
     public CraftMinecartTrack() {
@@ -31,4 +33,19 @@ public final class CraftMinecartTrack extends org.bukkit.craftbukkit.block.data.
     public java.util.Set<Shape> getShapes() {
         return getValues(SHAPE, Shape.class);
     }
+
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final BooleanProperty WATERLOGGED = getBoolean(net.minecraft.block.RailBlock.class, "waterlogged");
+
+    @Override
+    public boolean isWaterlogged() {
+        return get(CraftMinecartTrack.WATERLOGGED);
+    }
+
+    @Override
+    public void setWaterlogged(boolean waterlogged) {
+        set(CraftMinecartTrack.WATERLOGGED, waterlogged);
+    }
+
 }

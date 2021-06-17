@@ -45,4 +45,19 @@ public final class CraftMinecartDetector extends org.bukkit.craftbukkit.block.da
     public java.util.Set<Shape> getShapes() {
         return getValues(SHAPE, Shape.class);
     }
+
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.state.property.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.block.DetectorRailBlock.class, "waterlogged");
+
+    @Override
+    public boolean isWaterlogged() {
+        return get(CraftMinecartDetector.WATERLOGGED);
+    }
+
+    @Override
+    public void setWaterlogged(boolean waterlogged) {
+        set(CraftMinecartDetector.WATERLOGGED, waterlogged);
+    }
+
 }

@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.block.PoweredRailBlock;
+import net.minecraft.state.property.BooleanProperty;
+
 public final class CraftPoweredRail extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.RedstoneRail, org.bukkit.block.data.Powerable, org.bukkit.block.data.Rail {
 
     public CraftPoweredRail() {
@@ -45,4 +48,20 @@ public final class CraftPoweredRail extends org.bukkit.craftbukkit.block.data.Cr
     public java.util.Set<Shape> getShapes() {
         return getValues(SHAPE, Shape.class);
     }
+
+
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final BooleanProperty WATERLOGGED = getBoolean(PoweredRailBlock.class, "waterlogged");
+
+    @Override
+    public boolean isWaterlogged() {
+        return get(CraftPoweredRail.WATERLOGGED);
+    }
+
+    @Override
+    public void setWaterlogged(boolean waterlogged) {
+        set(CraftPoweredRail.WATERLOGGED, waterlogged);
+    }
+
 }
