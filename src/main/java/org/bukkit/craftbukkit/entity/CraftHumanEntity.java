@@ -692,7 +692,55 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public void setUnsaturatedRegenRate(int arg0) {
         // TODO Auto-generated method stub
+    }
+    
+    // 1.17 API Start
+
+    @Override
+    public boolean isClimbing() {
+        return nms.isClimbing();
+    }
+
+    @Override
+    public int getFreezeTicks() {
+        return nms.getFrozenTicks();
+    }
+
+    @Override
+    public int getMaxFreezeTicks() {
+        return nms.getFrozenTicks();
+    }
+
+    @Override
+    public boolean isFrozen() {
+        // TODO Auto-generated method stub
+        return nms.isFreezing();
+    }
+
+    @Override
+    public boolean isVisualFire() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setFreezeTicks(int arg0) {
+        // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public void setVisualFire(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @Nullable ItemStack getItemInUse() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    // 1.17 API Start
 
 }
