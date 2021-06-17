@@ -35,16 +35,18 @@ import org.bukkit.material.MaterialData;
 @SuppressWarnings("deprecation")
 public final class ChunkDataImpl implements ChunkGenerator.ChunkData {
 
+    private final int minHeight;
     private final int maxHeight;
     private final ChunkSection[] sections;
     private Set<BlockPos> tiles;
 
     public ChunkDataImpl(World world) {
-        this(world.getMaxHeight());
+        this(world.getMinHeight(), world.getMaxHeight());
     }
 
-    ChunkDataImpl(int maxHeight) {
+    ChunkDataImpl(int min, int maxHeight) {
         if (maxHeight > 256) throw new IllegalArgumentException("World height exceeded max chunk height");
+        this.minHeight = min;
         this.maxHeight = maxHeight;
         sections = new ChunkSection[maxHeight >> 4];
     }
@@ -152,6 +154,13 @@ public final class ChunkDataImpl implements ChunkGenerator.ChunkData {
 
     public Set<BlockPos> getTiles() {
         return tiles;
+    }
+
+    // 1.17 API Start
+
+    @Override
+    public int getMinHeight() {
+        return minHeight;
     }
 
 }
