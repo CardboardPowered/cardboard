@@ -50,6 +50,7 @@ import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -60,6 +61,7 @@ import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.CraftStatistic;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.scoreboard.CardboardScoreboard;
@@ -1751,6 +1753,13 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
             throws IllegalArgumentException {
         // TODO Auto-generated method stub
         
+    }
+
+    // 1.17 API Start
+
+    @Override
+    public boolean breakBlock(@NotNull Block b) {
+        return nms.interactionManager.tryBreakBlock(new BlockPos(b.getX(), b.getY(), b.getZ()));
     }
 
 }

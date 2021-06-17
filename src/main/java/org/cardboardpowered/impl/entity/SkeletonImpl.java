@@ -62,4 +62,22 @@ public class SkeletonImpl extends MonsterImpl implements Skeleton {
         return false;
     }
 
+    @Override
+    public int getConversionTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isConverting() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setConversionTime(int arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

@@ -812,4 +812,10 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
         return false;
     }
 
+    // 1.17 API START
+    @Override
+    public boolean isClimbing() {
+        return nms.isClimbing();
+    }
+
 }

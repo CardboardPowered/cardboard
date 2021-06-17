@@ -18,6 +18,7 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -32,6 +33,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -42,6 +45,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.brigadier.LiteralMessage;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -679,5 +683,47 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         return false;
     }
     // PaperAPI - END
+
+    @Override
+    public @Nullable Component customName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void customName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int getFreezeTicks() {
+        return nms.getFrozenTicks();
+    }
+
+    @Override
+    public int getMaxFreezeTicks() {
+        return nms.getFrozenTicks();
+    }
+
+    @Override
+    public boolean isFrozen() {
+        return nms.isFreezing();
+    }
+
+    @Override
+    public boolean isVisualFire() {
+        return nms.doesRenderOnFire();
+    }
+
+    @Override
+    public void setFreezeTicks(int arg0) {
+        nms.setFrozenTicks(arg0);
+    }
+
+    @Override
+    public void setVisualFire(boolean arg0) {
+        nms.setOnFire(arg0);
+    }
 
 }

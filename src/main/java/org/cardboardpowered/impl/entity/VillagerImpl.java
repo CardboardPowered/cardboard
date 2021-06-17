@@ -151,4 +151,10 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
     }
     // Paper end
 
+    // 1.17 API
+    @Override
+    public void shakeHead() {
+        // TODO Auto-generated method stub
+    }
+
 }

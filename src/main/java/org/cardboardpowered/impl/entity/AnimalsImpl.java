@@ -3,8 +3,13 @@ package org.cardboardpowered.impl.entity;
 import com.google.common.base.Preconditions;
 import java.util.UUID;
 import net.minecraft.entity.passive.AnimalEntity;
+
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Animals;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class AnimalsImpl extends AgeableImpl implements Animals {
 
@@ -49,4 +54,15 @@ public class AnimalsImpl extends AgeableImpl implements Animals {
         return getHandle().getLoveTicks();
     }
 
+    // 1.17 API Start
+
+    @Override
+    public boolean isBreedItem(ItemStack itemStack) {
+        return this.getHandle().isBreedingItem(CraftItemStack.asNMSCopy(itemStack));
+    }
+
+    @Override
+    public boolean isBreedItem(Material material) {
+        return this.isBreedItem(new ItemStack(material));
+    }
 }

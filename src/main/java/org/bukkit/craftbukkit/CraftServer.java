@@ -258,7 +258,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.16.5-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.17-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -1281,7 +1281,8 @@ public class CraftServer implements Server {
     @Override
     public String getVersion() {
     	// Some plugins like WorldEdit use PaperLib.getMinecraftVersion() for version checks
-        return serverVersion + " (MC: 1.16.5)";
+        // Update: WorldEdit now has a preview 1.17 build
+        return serverVersion + " (MC: 1.17)";
     }
 
     public String getShortVersion() {

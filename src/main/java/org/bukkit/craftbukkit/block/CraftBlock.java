@@ -21,6 +21,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -704,6 +705,20 @@ public class CraftBlock implements Block {
     public boolean isValidTool(@NotNull ItemStack arg0) {
         // TODO Auto-generated method stub
         return false;
+    }
+    
+    // 1.17 API Start
+
+    @Override
+    public float getBreakSpeed(@NotNull Player arg0) {
+        // TODO Auto-generated method stub
+        return 1;
+    }
+
+    @Override
+    public org.bukkit.util.@NotNull VoxelShape getCollisionShape() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

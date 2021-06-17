@@ -697,41 +697,6 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     // 1.17 API Start
 
     @Override
-    public boolean isClimbing() {
-        return nms.isClimbing();
-    }
-
-    @Override
-    public int getFreezeTicks() {
-        return nms.getFrozenTicks();
-    }
-
-    @Override
-    public int getMaxFreezeTicks() {
-        return nms.getFrozenTicks();
-    }
-
-    @Override
-    public boolean isFrozen() {
-        return nms.isFreezing();
-    }
-
-    @Override
-    public boolean isVisualFire() {
-        return nms.doesRenderOnFire();
-    }
-
-    @Override
-    public void setFreezeTicks(int arg0) {
-        nms.setFrozenTicks(arg0);
-    }
-
-    @Override
-    public void setVisualFire(boolean arg0) {
-        nms.setOnFire(arg0);
-    }
-
-    @Override
     public @Nullable ItemStack getItemInUse() {
         return CraftItemStack.asBukkitCopy(nms.getActiveItem());
     }
