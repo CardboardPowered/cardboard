@@ -114,4 +114,16 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
         return null;
     }
 
+    // 1.17 API Start
+    
+    @Override
+    public boolean isGlowingText() {
+        return getSnapshot().isGlowingText();
+    }
+
+    @Override
+    public void setGlowingText(boolean arg0) {
+        getSnapshot().setGlowingText(arg0);
+    }
+
 }
