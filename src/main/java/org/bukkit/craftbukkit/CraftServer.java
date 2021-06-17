@@ -45,8 +45,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.Validate;
@@ -156,7 +154,6 @@ import org.cardboardpowered.impl.inventory.InventoryCreator;
 import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.tag.BlockTagImpl;
 import org.cardboardpowered.impl.tag.ItemTagImpl;
-import org.cardboardpowered.impl.tag.TagImpl;
 import org.cardboardpowered.impl.tag.Tags;
 import org.cardboardpowered.impl.util.CommandPermissions;
 import org.cardboardpowered.impl.util.IconCacheImpl;

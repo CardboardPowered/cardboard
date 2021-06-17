@@ -42,11 +42,6 @@ import com.mojang.serialization.Dynamic;
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
 import io.papermc.paper.inventory.ItemRarity;
-import net.fabricmc.loader.api.FabricLoader;
-import net.kyori.adventure.text.flattener.ComponentFlattener;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -98,8 +93,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
     private static final Map<net.minecraft.fluid.Fluid, org.bukkit.Fluid> FLUID_MATERIAL = new HashMap<>();
     private static final Map<Material, net.minecraft.fluid.Fluid> MATERIAL_FLUID = new HashMap<>();
-
-    private static boolean dev = false;
 
     static {
         for (Block block : Registry.BLOCK)
@@ -400,7 +393,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return false;
     }
 
-    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16");
+    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17");
 
     @Override
     public void checkSupported(PluginDescriptionFile pdf) throws InvalidPluginException {
