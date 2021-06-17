@@ -713,34 +713,27 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
     @Override
     public boolean isFrozen() {
-        // TODO Auto-generated method stub
         return nms.isFreezing();
     }
 
     @Override
     public boolean isVisualFire() {
-        // TODO Auto-generated method stub
-        return false;
+        return nms.doesRenderOnFire();
     }
 
     @Override
     public void setFreezeTicks(int arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setFrozenTicks(arg0);
     }
 
     @Override
     public void setVisualFire(boolean arg0) {
-        // TODO Auto-generated method stub
-        
+        nms.setOnFire(arg0);
     }
 
     @Override
     public @Nullable ItemStack getItemInUse() {
-        // TODO Auto-generated method stub
-        return null;
+        return CraftItemStack.asBukkitCopy(nms.getActiveItem());
     }
-    
-    // 1.17 API Start
 
 }
