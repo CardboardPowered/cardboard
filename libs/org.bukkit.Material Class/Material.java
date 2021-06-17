@@ -1,5 +1,6 @@
 package org.bukkit;
 
+import com.google.common.collect.Maps;
 import java.lang.reflect.Constructor;
 import java.util.Locale;
 import java.util.Map;
@@ -19,14 +20,19 @@ import org.bukkit.block.data.Rail;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.Snowable;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.AmethystCluster;
 import org.bukkit.block.data.type.Bamboo;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Beehive;
 import org.bukkit.block.data.type.Bell;
+import org.bukkit.block.data.type.BigDripleaf;
 import org.bukkit.block.data.type.BrewingStand;
 import org.bukkit.block.data.type.BubbleColumn;
 import org.bukkit.block.data.type.Cake;
 import org.bukkit.block.data.type.Campfire;
+import org.bukkit.block.data.type.Candle;
+import org.bukkit.block.data.type.CaveVines;
+import org.bukkit.block.data.type.CaveVinesPlant;
 import org.bukkit.block.data.type.Chain;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Cocoa;
@@ -36,6 +42,7 @@ import org.bukkit.block.data.type.CoralWallFan;
 import org.bukkit.block.data.type.DaylightDetector;
 import org.bukkit.block.data.type.Dispenser;
 import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.Dripleaf;
 import org.bukkit.block.data.type.EndPortalFrame;
 import org.bukkit.block.data.type.EnderChest;
 import org.bukkit.block.data.type.Farmland;
@@ -44,6 +51,7 @@ import org.bukkit.block.data.type.Fire;
 import org.bukkit.block.data.type.Furnace;
 import org.bukkit.block.data.type.Gate;
 import org.bukkit.block.data.type.GlassPane;
+import org.bukkit.block.data.type.GlowLichen;
 import org.bukkit.block.data.type.Grindstone;
 import org.bukkit.block.data.type.Hopper;
 import org.bukkit.block.data.type.Jigsaw;
@@ -52,10 +60,13 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.Lantern;
 import org.bukkit.block.data.type.Leaves;
 import org.bukkit.block.data.type.Lectern;
+import org.bukkit.block.data.type.Light;
+import org.bukkit.block.data.type.LightningRod;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Observer;
 import org.bukkit.block.data.type.Piston;
 import org.bukkit.block.data.type.PistonHead;
+import org.bukkit.block.data.type.PointedDripstone;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.block.data.type.RedstoneWallTorch;
 import org.bukkit.block.data.type.RedstoneWire;
@@ -63,9 +74,11 @@ import org.bukkit.block.data.type.Repeater;
 import org.bukkit.block.data.type.RespawnAnchor;
 import org.bukkit.block.data.type.Sapling;
 import org.bukkit.block.data.type.Scaffolding;
+import org.bukkit.block.data.type.SculkSensor;
 import org.bukkit.block.data.type.SeaPickle;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.SmallDripleaf;
 import org.bukkit.block.data.type.Snow;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.block.data.type.StructureBlock;
@@ -78,6 +91,7 @@ import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.block.data.type.TurtleEgg;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,6 +99,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * An enum of all material IDs accepted by the official server and client
  */
+@SuppressWarnings({"DeprecatedIsStillUsed", "deprecation"}) // Paper
 public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMixinMaterial {
     //<editor-fold desc="Materials" defaultstate="collapsed">
     AIR(9648, 0),
@@ -96,6 +111,15 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     ANDESITE(25975),
     POLISHED_ANDESITE(8335),
     /**
+     * BlockData: {@link Orientable}
+     */
+    DEEPSLATE(26842, Orientable.class),
+    COBBLED_DEEPSLATE(8021),
+    POLISHED_DEEPSLATE(31772),
+    CALCITE(20311),
+    TUFF(24364),
+    DRIPSTONE_BLOCK(26227),
+    /**
      * BlockData: {@link Snowable}
      */
     GRASS_BLOCK(28346, Snowable.class),
@@ -105,6 +129,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Snowable}
      */
     PODZOL(24068, Snowable.class),
+    ROOTED_DIRT(11410),
     CRIMSON_NYLIUM(18139),
     WARPED_NYLIUM(26396),
     COBBLESTONE(32147),
@@ -144,10 +169,121 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     SAND(11542),
     RED_SAND(16279),
     GRAVEL(7804),
-    GOLD_ORE(32625),
-    IRON_ORE(19834),
     COAL_ORE(30965),
+    DEEPSLATE_COAL_ORE(16823),
+    IRON_ORE(19834),
+    DEEPSLATE_IRON_ORE(26021),
+    COPPER_ORE(32666),
+    DEEPSLATE_COPPER_ORE(6588),
+    GOLD_ORE(32625),
+    DEEPSLATE_GOLD_ORE(13582),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    REDSTONE_ORE(10887, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    DEEPSLATE_REDSTONE_ORE(6331, Lightable.class),
+    EMERALD_ORE(16630),
+    DEEPSLATE_EMERALD_ORE(5299),
+    LAPIS_ORE(22934),
+    DEEPSLATE_LAPIS_ORE(13598),
+    DIAMOND_ORE(9292),
+    DEEPSLATE_DIAMOND_ORE(17792),
     NETHER_GOLD_ORE(4185),
+    NETHER_QUARTZ_ORE(4807),
+    ANCIENT_DEBRIS(18198),
+    COAL_BLOCK(27968),
+    RAW_IRON_BLOCK(32210),
+    RAW_COPPER_BLOCK(17504),
+    RAW_GOLD_BLOCK(23246),
+    AMETHYST_BLOCK(18919),
+    BUDDING_AMETHYST(13963),
+    IRON_BLOCK(24754),
+    COPPER_BLOCK(12880),
+    GOLD_BLOCK(27392),
+    DIAMOND_BLOCK(5944),
+    NETHERITE_BLOCK(6527),
+    EXPOSED_COPPER(28488),
+    WEATHERED_COPPER(19699),
+    OXIDIZED_COPPER(19490),
+    CUT_COPPER(32519),
+    EXPOSED_CUT_COPPER(18000),
+    WEATHERED_CUT_COPPER(21158),
+    OXIDIZED_CUT_COPPER(5382),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    CUT_COPPER_STAIRS(25925, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    EXPOSED_CUT_COPPER_STAIRS(31621, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    WEATHERED_CUT_COPPER_STAIRS(5851, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    OXIDIZED_CUT_COPPER_STAIRS(25379, Stairs.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    CUT_COPPER_SLAB(28988, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    EXPOSED_CUT_COPPER_SLAB(26694, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    WEATHERED_CUT_COPPER_SLAB(4602, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    OXIDIZED_CUT_COPPER_SLAB(29642, Slab.class),
+    WAXED_COPPER_BLOCK(14638),
+    WAXED_EXPOSED_COPPER(27989),
+    WAXED_WEATHERED_COPPER(5960),
+    WAXED_OXIDIZED_COPPER(25626),
+    WAXED_CUT_COPPER(11030),
+    WAXED_EXPOSED_CUT_COPPER(30043),
+    WAXED_WEATHERED_CUT_COPPER(13823),
+    WAXED_OXIDIZED_CUT_COPPER(22582),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    WAXED_CUT_COPPER_STAIRS(23125, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    WAXED_EXPOSED_CUT_COPPER_STAIRS(15532, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    WAXED_WEATHERED_CUT_COPPER_STAIRS(29701, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    WAXED_OXIDIZED_CUT_COPPER_STAIRS(9842, Stairs.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    WAXED_CUT_COPPER_SLAB(6271, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    WAXED_EXPOSED_CUT_COPPER_SLAB(22091, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    WAXED_WEATHERED_CUT_COPPER_SLAB(20035, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    WAXED_OXIDIZED_CUT_COPPER_SLAB(11202, Slab.class),
     /**
      * BlockData: {@link Orientable}
      */
@@ -300,47 +436,33 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Leaves}
      */
     DARK_OAK_LEAVES(22254, Leaves.class),
+    /**
+     * BlockData: {@link Leaves}
+     */
+    AZALEA_LEAVES(23001, Leaves.class),
+    /**
+     * BlockData: {@link Leaves}
+     */
+    FLOWERING_AZALEA_LEAVES(20893, Leaves.class),
     SPONGE(15860),
     WET_SPONGE(9043),
     GLASS(6195),
-    LAPIS_ORE(22934),
+    TINTED_GLASS(19154),
     LAPIS_BLOCK(14485),
-    /**
-     * BlockData: {@link Dispenser}
-     */
-    DISPENSER(20871, Dispenser.class),
     SANDSTONE(13141),
     CHISELED_SANDSTONE(31763),
     CUT_SANDSTONE(6118),
-    /**
-     * BlockData: {@link NoteBlock}
-     */
-    NOTE_BLOCK(20979, NoteBlock.class),
-    /**
-     * BlockData: {@link RedstoneRail}
-     */
-    POWERED_RAIL(11064, RedstoneRail.class),
-    /**
-     * BlockData: {@link RedstoneRail}
-     */
-    DETECTOR_RAIL(13475, RedstoneRail.class),
-    /**
-     * BlockData: {@link Piston}
-     */
-    STICKY_PISTON(18127, Piston.class),
     COBWEB(9469),
     GRASS(6155),
     FERN(15794),
+    AZALEA(29386),
+    FLOWERING_AZALEA(28270),
     DEAD_BUSH(22888),
     SEAGRASS(23942),
     /**
      * BlockData: {@link SeaPickle}
      */
     SEA_PICKLE(19562, SeaPickle.class),
-    /**
-     * BlockData: {@link Piston}
-     */
-    PISTON(21130, Piston.class),
     WHITE_WOOL(8624),
     ORANGE_WOOL(23957),
     MAGENTA_WOOL(11853),
@@ -370,6 +492,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     CORNFLOWER(15405),
     LILY_OF_THE_VALLEY(7185),
     WITHER_ROSE(8619),
+    SPORE_BLOSSOM(20627),
     BROWN_MUSHROOM(9665),
     RED_MUSHROOM(19728),
     CRIMSON_FUNGUS(26268),
@@ -393,12 +516,24 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Ageable}
      */
     KELP(21916, Ageable.class),
+    MOSS_CARPET(8221),
+    MOSS_BLOCK(9175),
+    /**
+     * BlockData: {@link Waterlogged}
+     */
+    HANGING_ROOTS(15498, Waterlogged.class),
+    /**
+     * BlockData: {@link BigDripleaf}
+     */
+    BIG_DRIPLEAF(26173, BigDripleaf.class),
+    /**
+     * BlockData: {@link SmallDripleaf}
+     */
+    SMALL_DRIPLEAF(17540, SmallDripleaf.class),
     /**
      * BlockData: {@link Bamboo}
      */
     BAMBOO(18728, Bamboo.class),
-    GOLD_BLOCK(27392),
-    IRON_BLOCK(24754),
     /**
      * BlockData: {@link Slab}
      */
@@ -500,15 +635,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     SMOOTH_SANDSTONE(30039),
     SMOOTH_STONE(21910),
     BRICKS(14165),
-    /**
-     * BlockData: {@link TNT}
-     */
-    TNT(7896, TNT.class),
     BOOKSHELF(10069),
-    /**
-     * BlockData: {@link MultipleFacing}
-     */
-    MOSSY_COBBLESTONE(21900, MultipleFacing.class),
+    MOSSY_COBBLESTONE(21900),
     OBSIDIAN(32723),
     TORCH(6063),
     /**
@@ -541,8 +669,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Chest}
      */
     CHEST(22969, Chest.class),
-    DIAMOND_ORE(9292),
-    DIAMOND_BLOCK(5944),
     CRAFTING_TABLE(20706),
     /**
      * BlockData: {@link Farmland}
@@ -557,65 +683,9 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     LADDER(23599, Ladder.class),
     /**
-     * BlockData: {@link Rail}
-     */
-    RAIL(13285, Rail.class),
-    /**
      * BlockData: {@link Stairs}
      */
     COBBLESTONE_STAIRS(24715, Stairs.class),
-    /**
-     * BlockData: {@link Switch}
-     */
-    LEVER(15319, Switch.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    STONE_PRESSURE_PLATE(22591, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    OAK_PRESSURE_PLATE(20108, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    SPRUCE_PRESSURE_PLATE(15932, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    BIRCH_PRESSURE_PLATE(9664, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    JUNGLE_PRESSURE_PLATE(11376, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    ACACIA_PRESSURE_PLATE(17586, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    DARK_OAK_PRESSURE_PLATE(31375, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    CRIMSON_PRESSURE_PLATE(18316, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    WARPED_PRESSURE_PLATE(29516, Powerable.class),
-    /**
-     * BlockData: {@link Powerable}
-     */
-    POLISHED_BLACKSTONE_PRESSURE_PLATE(32340, Powerable.class),
-    /**
-     * BlockData: {@link Lightable}
-     */
-    REDSTONE_ORE(10887, Lightable.class),
-    /**
-     * BlockData: {@link Lightable}
-     */
-    REDSTONE_TORCH(22547, Lightable.class),
     /**
      * BlockData: {@link Snow}
      */
@@ -668,6 +738,10 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Directional}
      */
     CARVED_PUMPKIN(25833, Directional.class),
+    /**
+     * BlockData: {@link Directional}
+     */
+    JACK_O_LANTERN(13758, Directional.class),
     NETHERRACK(23425),
     SOUL_SAND(16841),
     SOUL_SOIL(31140),
@@ -679,57 +753,31 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Orientable}
      */
     POLISHED_BASALT(11659, Orientable.class),
+    SMOOTH_BASALT(13617),
     /**
      * BlockData: {@link Lightable}
      */
     SOUL_TORCH(14292, Lightable.class),
     GLOWSTONE(32713),
-    /**
-     * BlockData: {@link Directional}
-     */
-    JACK_O_LANTERN(13758, Directional.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    OAK_TRAPDOOR(16927, TrapDoor.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    SPRUCE_TRAPDOOR(10289, TrapDoor.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    BIRCH_TRAPDOOR(32585, TrapDoor.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    JUNGLE_TRAPDOOR(8626, TrapDoor.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    ACACIA_TRAPDOOR(18343, TrapDoor.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    DARK_OAK_TRAPDOOR(10355, TrapDoor.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    CRIMSON_TRAPDOOR(25056, TrapDoor.class),
-    /**
-     * BlockData: {@link TrapDoor}
-     */
-    WARPED_TRAPDOOR(7708, TrapDoor.class),
     INFESTED_STONE(18440),
     INFESTED_COBBLESTONE(4348),
     INFESTED_STONE_BRICKS(19749),
     INFESTED_MOSSY_STONE_BRICKS(9850),
     INFESTED_CRACKED_STONE_BRICKS(7476),
     INFESTED_CHISELED_STONE_BRICKS(4728),
+    /**
+     * BlockData: {@link Orientable}
+     */
+    INFESTED_DEEPSLATE(9472, Orientable.class),
     STONE_BRICKS(6962),
     MOSSY_STONE_BRICKS(16415),
     CRACKED_STONE_BRICKS(27869),
     CHISELED_STONE_BRICKS(9087),
+    DEEPSLATE_BRICKS(13193),
+    CRACKED_DEEPSLATE_BRICKS(17105),
+    DEEPSLATE_TILES(11250),
+    CRACKED_DEEPSLATE_TILES(26249),
+    CHISELED_DEEPSLATE(23825),
     /**
      * BlockData: {@link MultipleFacing}
      */
@@ -760,37 +808,9 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     VINE(14564, MultipleFacing.class),
     /**
-     * BlockData: {@link Gate}
+     * BlockData: {@link GlowLichen}
      */
-    OAK_FENCE_GATE(16689, Gate.class),
-    /**
-     * BlockData: {@link Gate}
-     */
-    SPRUCE_FENCE_GATE(26423, Gate.class),
-    /**
-     * BlockData: {@link Gate}
-     */
-    BIRCH_FENCE_GATE(6322, Gate.class),
-    /**
-     * BlockData: {@link Gate}
-     */
-    JUNGLE_FENCE_GATE(21360, Gate.class),
-    /**
-     * BlockData: {@link Gate}
-     */
-    ACACIA_FENCE_GATE(14145, Gate.class),
-    /**
-     * BlockData: {@link Gate}
-     */
-    DARK_OAK_FENCE_GATE(10679, Gate.class),
-    /**
-     * BlockData: {@link Gate}
-     */
-    CRIMSON_FENCE_GATE(15602, Gate.class),
-    /**
-     * BlockData: {@link Gate}
-     */
-    WARPED_FENCE_GATE(11115, Gate.class),
+    GLOW_LICHEN(19165, GlowLichen.class),
     /**
      * BlockData: {@link Stairs}
      */
@@ -824,22 +844,13 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     END_STONE_BRICKS(20314),
     DRAGON_EGG(29946),
     /**
-     * BlockData: {@link Lightable}
-     */
-    REDSTONE_LAMP(8217, Lightable.class),
-    /**
      * BlockData: {@link Stairs}
      */
     SANDSTONE_STAIRS(18474, Stairs.class),
-    EMERALD_ORE(16630),
     /**
      * BlockData: {@link EnderChest}
      */
     ENDER_CHEST(32349, EnderChest.class),
-    /**
-     * BlockData: {@link TripwireHook}
-     */
-    TRIPWIRE_HOOK(8130, TripwireHook.class),
     EMERALD_BLOCK(9914),
     /**
      * BlockData: {@link Stairs}
@@ -935,45 +946,21 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     POLISHED_BLACKSTONE_BRICK_WALL(9540, Wall.class),
     /**
-     * BlockData: {@link Switch}
+     * BlockData: {@link Wall}
      */
-    STONE_BUTTON(12279, Switch.class),
+    COBBLED_DEEPSLATE_WALL(21893, Wall.class),
     /**
-     * BlockData: {@link Switch}
+     * BlockData: {@link Wall}
      */
-    OAK_BUTTON(13510, Switch.class),
+    POLISHED_DEEPSLATE_WALL(6574, Wall.class),
     /**
-     * BlockData: {@link Switch}
+     * BlockData: {@link Wall}
      */
-    SPRUCE_BUTTON(23281, Switch.class),
+    DEEPSLATE_BRICK_WALL(13304, Wall.class),
     /**
-     * BlockData: {@link Switch}
+     * BlockData: {@link Wall}
      */
-    BIRCH_BUTTON(26934, Switch.class),
-    /**
-     * BlockData: {@link Switch}
-     */
-    JUNGLE_BUTTON(25317, Switch.class),
-    /**
-     * BlockData: {@link Switch}
-     */
-    ACACIA_BUTTON(13993, Switch.class),
-    /**
-     * BlockData: {@link Switch}
-     */
-    DARK_OAK_BUTTON(6214, Switch.class),
-    /**
-     * BlockData: {@link Switch}
-     */
-    CRIMSON_BUTTON(26799, Switch.class),
-    /**
-     * BlockData: {@link Switch}
-     */
-    WARPED_BUTTON(25264, Switch.class),
-    /**
-     * BlockData: {@link Switch}
-     */
-    POLISHED_BLACKSTONE_BUTTON(20760, Switch.class),
+    DEEPSLATE_TILE_WALL(17077, Wall.class),
     /**
      * BlockData: {@link Directional}
      */
@@ -986,28 +973,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Directional}
      */
     DAMAGED_ANVIL(10274, Directional.class),
-    /**
-     * BlockData: {@link Chest}
-     */
-    TRAPPED_CHEST(18970, Chest.class),
-    /**
-     * BlockData: {@link AnaloguePowerable}
-     */
-    LIGHT_WEIGHTED_PRESSURE_PLATE(14875, AnaloguePowerable.class),
-    /**
-     * BlockData: {@link AnaloguePowerable}
-     */
-    HEAVY_WEIGHTED_PRESSURE_PLATE(16970, AnaloguePowerable.class),
-    /**
-     * BlockData: {@link DaylightDetector}
-     */
-    DAYLIGHT_DETECTOR(8864, DaylightDetector.class),
-    REDSTONE_BLOCK(19496),
-    NETHER_QUARTZ_ORE(4807),
-    /**
-     * BlockData: {@link Hopper}
-     */
-    HOPPER(31974, Hopper.class),
     CHISELED_QUARTZ_BLOCK(30964),
     QUARTZ_BLOCK(11987),
     QUARTZ_BRICKS(23358),
@@ -1019,14 +984,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Stairs}
      */
     QUARTZ_STAIRS(24079, Stairs.class),
-    /**
-     * BlockData: {@link RedstoneRail}
-     */
-    ACTIVATOR_RAIL(5834, RedstoneRail.class),
-    /**
-     * BlockData: {@link Dispenser}
-     */
-    DROPPER(31273, Dispenser.class),
     WHITE_TERRACOTTA(20975),
     ORANGE_TERRACOTTA(18684),
     MAGENTA_TERRACOTTA(25900),
@@ -1045,9 +1002,9 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     BLACK_TERRACOTTA(26691),
     BARRIER(26453),
     /**
-     * BlockData: {@link TrapDoor}
+     * BlockData: {@link Light}
      */
-    IRON_TRAPDOOR(17095, TrapDoor.class),
+    LIGHT(17829, Light.class),
     /**
      * BlockData: {@link Orientable}
      */
@@ -1069,7 +1026,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     RED_CARPET(5424),
     BLACK_CARPET(6056),
     TERRACOTTA(16544),
-    COAL_BLOCK(27968),
     PACKED_ICE(28993),
     /**
      * BlockData: {@link Stairs}
@@ -1079,8 +1035,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Stairs}
      */
     DARK_OAK_STAIRS(22921, Stairs.class),
-    SLIME_BLOCK(31892),
-    DIRT_PATH(8604),
+    DIRT_PATH(10846),
     /**
      * BlockData: {@link Bisected}
      */
@@ -1203,7 +1158,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     SEA_LANTERN(20780),
     RED_SANDSTONE(9092),
     CHISELED_RED_SANDSTONE(15529),
-    CUT_RED_SANDSTONE(26842),
+    CUT_RED_SANDSTONE(29108),
     /**
      * BlockData: {@link Stairs}
      */
@@ -1225,10 +1180,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     BONE_BLOCK(17312, Orientable.class),
     STRUCTURE_VOID(30806),
-    /**
-     * BlockData: {@link Observer}
-     */
-    OBSERVER(10726, Observer.class),
     /**
      * BlockData: {@link Directional}
      */
@@ -1549,6 +1500,22 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     DIORITE_STAIRS(13134, Stairs.class),
     /**
+     * BlockData: {@link Stairs}
+     */
+    COBBLED_DEEPSLATE_STAIRS(20699, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    POLISHED_DEEPSLATE_STAIRS(19513, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    DEEPSLATE_BRICK_STAIRS(29624, Stairs.class),
+    /**
+     * BlockData: {@link Stairs}
+     */
+    DEEPSLATE_TILE_STAIRS(6361, Stairs.class),
+    /**
      * BlockData: {@link Slab}
      */
     POLISHED_GRANITE_SLAB(4521, Slab.class),
@@ -1601,9 +1568,197 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     DIORITE_SLAB(10715, Slab.class),
     /**
+     * BlockData: {@link Slab}
+     */
+    COBBLED_DEEPSLATE_SLAB(17388, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    POLISHED_DEEPSLATE_SLAB(32201, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    DEEPSLATE_BRICK_SLAB(23910, Slab.class),
+    /**
+     * BlockData: {@link Slab}
+     */
+    DEEPSLATE_TILE_SLAB(13315, Slab.class),
+    /**
      * BlockData: {@link Scaffolding}
      */
     SCAFFOLDING(15757, Scaffolding.class),
+    REDSTONE(11233),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    REDSTONE_TORCH(22547, Lightable.class),
+    REDSTONE_BLOCK(19496),
+    /**
+     * BlockData: {@link Repeater}
+     */
+    REPEATER(28823, Repeater.class),
+    /**
+     * BlockData: {@link Comparator}
+     */
+    COMPARATOR(18911, Comparator.class),
+    /**
+     * BlockData: {@link Piston}
+     */
+    PISTON(21130, Piston.class),
+    /**
+     * BlockData: {@link Piston}
+     */
+    STICKY_PISTON(18127, Piston.class),
+    SLIME_BLOCK(31892),
+    HONEY_BLOCK(30615),
+    /**
+     * BlockData: {@link Observer}
+     */
+    OBSERVER(10726, Observer.class),
+    /**
+     * BlockData: {@link Hopper}
+     */
+    HOPPER(31974, Hopper.class),
+    /**
+     * BlockData: {@link Dispenser}
+     */
+    DISPENSER(20871, Dispenser.class),
+    /**
+     * BlockData: {@link Dispenser}
+     */
+    DROPPER(31273, Dispenser.class),
+    /**
+     * BlockData: {@link Lectern}
+     */
+    LECTERN(23490, Lectern.class),
+    /**
+     * BlockData: {@link AnaloguePowerable}
+     */
+    TARGET(22637, AnaloguePowerable.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    LEVER(15319, Switch.class),
+    /**
+     * BlockData: {@link LightningRod}
+     */
+    LIGHTNING_ROD(30770, LightningRod.class),
+    /**
+     * BlockData: {@link DaylightDetector}
+     */
+    DAYLIGHT_DETECTOR(8864, DaylightDetector.class),
+    /**
+     * BlockData: {@link SculkSensor}
+     */
+    SCULK_SENSOR(5598, SculkSensor.class),
+    /**
+     * BlockData: {@link TripwireHook}
+     */
+    TRIPWIRE_HOOK(8130, TripwireHook.class),
+    /**
+     * BlockData: {@link Chest}
+     */
+    TRAPPED_CHEST(18970, Chest.class),
+    /**
+     * BlockData: {@link TNT}
+     */
+    TNT(7896, TNT.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    REDSTONE_LAMP(8217, Lightable.class),
+    /**
+     * BlockData: {@link NoteBlock}
+     */
+    NOTE_BLOCK(20979, NoteBlock.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    STONE_BUTTON(12279, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    POLISHED_BLACKSTONE_BUTTON(20760, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    OAK_BUTTON(13510, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    SPRUCE_BUTTON(23281, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    BIRCH_BUTTON(26934, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    JUNGLE_BUTTON(25317, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    ACACIA_BUTTON(13993, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    DARK_OAK_BUTTON(6214, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    CRIMSON_BUTTON(26799, Switch.class),
+    /**
+     * BlockData: {@link Switch}
+     */
+    WARPED_BUTTON(25264, Switch.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    STONE_PRESSURE_PLATE(22591, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    POLISHED_BLACKSTONE_PRESSURE_PLATE(32340, Powerable.class),
+    /**
+     * BlockData: {@link AnaloguePowerable}
+     */
+    LIGHT_WEIGHTED_PRESSURE_PLATE(14875, AnaloguePowerable.class),
+    /**
+     * BlockData: {@link AnaloguePowerable}
+     */
+    HEAVY_WEIGHTED_PRESSURE_PLATE(16970, AnaloguePowerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    OAK_PRESSURE_PLATE(20108, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    SPRUCE_PRESSURE_PLATE(15932, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    BIRCH_PRESSURE_PLATE(9664, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    JUNGLE_PRESSURE_PLATE(11376, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    ACACIA_PRESSURE_PLATE(17586, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    DARK_OAK_PRESSURE_PLATE(31375, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    CRIMSON_PRESSURE_PLATE(18316, Powerable.class),
+    /**
+     * BlockData: {@link Powerable}
+     */
+    WARPED_PRESSURE_PLATE(29516, Powerable.class),
     /**
      * BlockData: {@link Door}
      */
@@ -1641,13 +1796,104 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     WARPED_DOOR(15062, Door.class),
     /**
-     * BlockData: {@link Repeater}
+     * BlockData: {@link TrapDoor}
      */
-    REPEATER(28823, Repeater.class),
+    IRON_TRAPDOOR(17095, TrapDoor.class),
     /**
-     * BlockData: {@link Comparator}
+     * BlockData: {@link TrapDoor}
      */
-    COMPARATOR(18911, Comparator.class),
+    OAK_TRAPDOOR(16927, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    SPRUCE_TRAPDOOR(10289, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    BIRCH_TRAPDOOR(32585, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    JUNGLE_TRAPDOOR(8626, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    ACACIA_TRAPDOOR(18343, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    DARK_OAK_TRAPDOOR(10355, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    CRIMSON_TRAPDOOR(25056, TrapDoor.class),
+    /**
+     * BlockData: {@link TrapDoor}
+     */
+    WARPED_TRAPDOOR(7708, TrapDoor.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    OAK_FENCE_GATE(16689, Gate.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    SPRUCE_FENCE_GATE(26423, Gate.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    BIRCH_FENCE_GATE(6322, Gate.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    JUNGLE_FENCE_GATE(21360, Gate.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    ACACIA_FENCE_GATE(14145, Gate.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    DARK_OAK_FENCE_GATE(10679, Gate.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    CRIMSON_FENCE_GATE(15602, Gate.class),
+    /**
+     * BlockData: {@link Gate}
+     */
+    WARPED_FENCE_GATE(11115, Gate.class),
+    /**
+     * BlockData: {@link RedstoneRail}
+     */
+    POWERED_RAIL(11064, RedstoneRail.class),
+    /**
+     * BlockData: {@link RedstoneRail}
+     */
+    DETECTOR_RAIL(13475, RedstoneRail.class),
+    /**
+     * BlockData: {@link Rail}
+     */
+    RAIL(13285, Rail.class),
+    /**
+     * BlockData: {@link RedstoneRail}
+     */
+    ACTIVATOR_RAIL(5834, RedstoneRail.class),
+    SADDLE(30206, 1),
+    MINECART(14352, 1),
+    CHEST_MINECART(4497, 1),
+    FURNACE_MINECART(14196, 1),
+    TNT_MINECART(4277, 1),
+    HOPPER_MINECART(19024, 1),
+    CARROT_ON_A_STICK(27809, 1, 25),
+    WARPED_FUNGUS_ON_A_STICK(11706, 1, 100),
+    ELYTRA(23829, 1, 432),
+    OAK_BOAT(17570, 1),
+    SPRUCE_BOAT(31427, 1),
+    BIRCH_BOAT(28104, 1),
+    JUNGLE_BOAT(4495, 1),
+    ACACIA_BOAT(27326, 1),
+    DARK_OAK_BOAT(28618, 1),
     /**
      * BlockData: {@link StructureBlock}
      */
@@ -1665,7 +1911,15 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     COAL(29067),
     CHARCOAL(5390),
     DIAMOND(20865),
+    EMERALD(5654),
+    LAPIS_LAZULI(11075),
+    QUARTZ(23608),
+    AMETHYST_SHARD(7613),
+    RAW_IRON(5329),
     IRON_INGOT(24895),
+    RAW_COPPER(6162),
+    COPPER_INGOT(12611),
+    RAW_GOLD(19564),
     GOLD_INGOT(28927),
     NETHERITE_INGOT(32457),
     NETHERITE_SCRAP(29331),
@@ -1725,7 +1979,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     IRON_BOOTS(8531, 1, 195),
     DIAMOND_HELMET(10755, 1, 363),
     DIAMOND_CHESTPLATE(32099, 1, 528),
-    DIAMOND_LEGGINGS(11202, 1, 495),
+    DIAMOND_LEGGINGS(26500, 1, 495),
     DIAMOND_BOOTS(16522, 1, 429),
     GOLDEN_HELMET(7945, 1, 77),
     GOLDEN_CHESTPLATE(4507, 1, 112),
@@ -1776,29 +2030,27 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     BUCKET(15215, 16),
     WATER_BUCKET(8802, 1),
     LAVA_BUCKET(9228, 1),
-    MINECART(14352, 1),
-    SADDLE(30206, 1),
-    REDSTONE(11233),
+    POWDER_SNOW_BUCKET(31101, 1),
     SNOWBALL(19487, 16),
-    OAK_BOAT(17570, 1),
     LEATHER(16414),
     MILK_BUCKET(9680, 1),
     PUFFERFISH_BUCKET(8861, 1),
-    SALMON_BUCKET(31427, 1),
+    SALMON_BUCKET(9606, 1),
     COD_BUCKET(28601, 1),
     TROPICAL_FISH_BUCKET(29995, 1),
+    AXOLOTL_BUCKET(20669, 1),
     BRICK(6820),
     CLAY_BALL(24603),
     DRIED_KELP_BLOCK(12966),
     PAPER(9923),
     BOOK(23097),
     SLIME_BALL(5242),
-    CHEST_MINECART(4497, 1),
-    FURNACE_MINECART(14196, 1),
     EGG(21603, 16),
     COMPASS(24139),
+    BUNDLE(16835, 1),
     FISHING_ROD(4167, 1, 64),
     CLOCK(14980),
+    SPYGLASS(27490, 1),
     GLOWSTONE_DUST(6665),
     COD(24691),
     SALMON(18516),
@@ -1807,8 +2059,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     COOKED_COD(9681),
     COOKED_SALMON(5615),
     INK_SAC(7184),
+    GLOW_INK_SAC(9686),
     COCOA_BEANS(30186),
-    LAPIS_LAZULI(11075),
     WHITE_DYE(10758),
     ORANGE_DYE(13866),
     MAGENTA_DYE(11788),
@@ -1926,12 +2178,10 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link BrewingStand}
      */
     BREWING_STAND(14539, BrewingStand.class),
-    /**
-     * BlockData: {@link Levelled}
-     */
-    CAULDRON(26531, Levelled.class),
+    CAULDRON(26531),
     ENDER_EYE(24860),
     GLISTERING_MELON_SLICE(20158),
+    AXOLOTL_SPAWN_EGG(30381),
     BAT_SPAWN_EGG(14607),
     BEE_SPAWN_EGG(22924),
     BLAZE_SPAWN_EGG(4759),
@@ -1950,6 +2200,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     EVOKER_SPAWN_EGG(21271),
     FOX_SPAWN_EGG(22376),
     GHAST_SPAWN_EGG(9970),
+    GLOW_SQUID_SPAWN_EGG(31578),
+    GOAT_SPAWN_EGG(30639),
     GUARDIAN_SPAWN_EGG(20113),
     HOGLIN_SPAWN_EGG(14088),
     HORSE_SPAWN_EGG(25981),
@@ -2000,8 +2252,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     FIRE_CHARGE(4842),
     WRITABLE_BOOK(13393, 1),
     WRITTEN_BOOK(24164, 16),
-    EMERALD(5654),
     ITEM_FRAME(27318),
+    GLOW_ITEM_FRAME(26473),
     FLOWER_POT(30567),
     CARROT(22824),
     POTATO(21088),
@@ -2033,17 +2285,12 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Rotatable}
      */
     DRAGON_HEAD(20084, Rotatable.class),
-    CARROT_ON_A_STICK(27809, 1, 25),
-    WARPED_FUNGUS_ON_A_STICK(11706, 1, 100),
     NETHER_STAR(12469),
     PUMPKIN_PIE(28725),
     FIREWORK_ROCKET(23841),
     FIREWORK_STAR(12190),
     ENCHANTED_BOOK(11741, 1),
     NETHER_BRICK(19996),
-    QUARTZ(23608),
-    TNT_MINECART(4277, 1),
-    HOPPER_MINECART(19024, 1),
     PRISMARINE_SHARD(10993),
     PRISMARINE_CRYSTALS(31546),
     RABBIT(23068),
@@ -2137,12 +2384,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     TIPPED_ARROW(25164),
     LINGERING_POTION(25857, 1),
     SHIELD(29943, 1, 336),
-    ELYTRA(23829, 1, 432),
-    SPRUCE_BOAT(9606, 1),
-    BIRCH_BOAT(28104, 1),
-    JUNGLE_BOAT(4495, 1),
-    ACACIA_BOAT(27326, 1),
-    DARK_OAK_BOAT(28618, 1),
     TOTEM_OF_UNDYING(10139, 1),
     SHULKER_SHELL(27848),
     IRON_NUGGET(13715),
@@ -2152,7 +2393,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     MUSIC_DISC_CAT(16246, 1),
     MUSIC_DISC_BLOCKS(26667, 1),
     MUSIC_DISC_CHIRP(19436, 1),
-    MUSIC_DISC_FAR(13823, 1),
+    MUSIC_DISC_FAR(31742, 1),
     MUSIC_DISC_MALL(11517, 1),
     MUSIC_DISC_MELLOHI(26117, 1),
     MUSIC_DISC_STAL(14989, 1),
@@ -2199,10 +2440,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Grindstone}
      */
     GRINDSTONE(26260, Grindstone.class),
-    /**
-     * BlockData: {@link Lectern}
-     */
-    LECTERN(23490, Lectern.class),
     SMITHING_TABLE(9082),
     /**
      * BlockData: {@link Directional}
@@ -2221,6 +2458,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     SOUL_LANTERN(27778, Lantern.class),
     SWEET_BERRIES(19747),
+    GLOW_BERRIES(11584),
     /**
      * BlockData: {@link Campfire}
      */
@@ -2240,15 +2478,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     BEEHIVE(11830, Beehive.class),
     HONEY_BOTTLE(22927, 16),
-    HONEY_BLOCK(30615),
     HONEYCOMB_BLOCK(28780),
     LODESTONE(23127),
-    NETHERITE_BLOCK(6527),
-    ANCIENT_DEBRIS(18198),
-    /**
-     * BlockData: {@link AnaloguePowerable}
-     */
-    TARGET(22637, AnaloguePowerable.class),
     CRYING_OBSIDIAN(31545),
     BLACKSTONE(7354),
     /**
@@ -2284,6 +2515,94 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link RespawnAnchor}
      */
     RESPAWN_ANCHOR(4099, RespawnAnchor.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    CANDLE(16122, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    WHITE_CANDLE(26410, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    ORANGE_CANDLE(22668, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    MAGENTA_CANDLE(25467, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    LIGHT_BLUE_CANDLE(28681, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    YELLOW_CANDLE(14351, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    LIME_CANDLE(21778, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    PINK_CANDLE(28259, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    GRAY_CANDLE(10721, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    LIGHT_GRAY_CANDLE(10031, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    CYAN_CANDLE(24765, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    PURPLE_CANDLE(19606, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    BLUE_CANDLE(29047, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    BROWN_CANDLE(26145, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    GREEN_CANDLE(29756, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    RED_CANDLE(4214, Candle.class),
+    /**
+     * BlockData: {@link Candle}
+     */
+    BLACK_CANDLE(12617, Candle.class),
+    /**
+     * BlockData: {@link AmethystCluster}
+     */
+    SMALL_AMETHYST_BUD(14958, AmethystCluster.class),
+    /**
+     * BlockData: {@link AmethystCluster}
+     */
+    MEDIUM_AMETHYST_BUD(8429, AmethystCluster.class),
+    /**
+     * BlockData: {@link AmethystCluster}
+     */
+    LARGE_AMETHYST_BUD(7279, AmethystCluster.class),
+    /**
+     * BlockData: {@link AmethystCluster}
+     */
+    AMETHYST_CLUSTER(13142, AmethystCluster.class),
+    /**
+     * BlockData: {@link PointedDripstone}
+     */
+    POINTED_DRIPSTONE(18755, PointedDripstone.class),
     /**
      * BlockData: {@link Levelled}
      */
@@ -2372,6 +2691,18 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * BlockData: {@link Ageable}
      */
     MELON_STEM(8247, Ageable.class),
+    /**
+     * BlockData: {@link Levelled}
+     */
+    WATER_CAULDRON(32008, Levelled.class),
+    /**
+     * BlockData: {@link Levelled}
+     */
+    LAVA_CAULDRON(4514, Levelled.class),
+    /**
+     * BlockData: {@link Levelled}
+     */
+    POWDER_SNOW_CAULDRON(31571, Levelled.class),
     END_PORTAL(16782),
     /**
      * BlockData: {@link Cocoa}
@@ -2577,29 +2908,89 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     POTTED_WARPED_FUNGUS(30800),
     POTTED_CRIMSON_ROOTS(13852),
     POTTED_WARPED_ROOTS(6403),
-
-    // ----- CARDBOARD-START -----
-
-
-
-
-    // 1.17 Materials
-	GLOW_INK_SAC(9686),
-	SPYGLASS(27490, 1),
-	BUNDLE(16835, 1),
-	AXOLOTL_BUCKET(20669, 1),
-	GOAT_SPAWN_EGG(30639),
-	POWDER_SNOW_BUCKET(31101, 1),
-	RAW_COPPER(6162),
-    COPPER_INGOT(12611),
-    RAW_GOLD(19564),
-	AMETHYST_SHARD(7613),
-    RAW_IRON(5329),
-
-
-
-    // ----- CARDBOARD-END   -----
-
+    /**
+     * BlockData: {@link Lightable}
+     */
+    CANDLE_CAKE(25423, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    WHITE_CANDLE_CAKE(12674, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    ORANGE_CANDLE_CAKE(24982, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    MAGENTA_CANDLE_CAKE(11022, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    LIGHT_BLUE_CANDLE_CAKE(7787, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    YELLOW_CANDLE_CAKE(17157, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    LIME_CANDLE_CAKE(14309, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    PINK_CANDLE_CAKE(20405, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    GRAY_CANDLE_CAKE(6777, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    LIGHT_GRAY_CANDLE_CAKE(11318, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    CYAN_CANDLE_CAKE(21202, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    PURPLE_CANDLE_CAKE(22663, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    BLUE_CANDLE_CAKE(26425, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    BROWN_CANDLE_CAKE(26024, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    GREEN_CANDLE_CAKE(16334, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    RED_CANDLE_CAKE(24151, Lightable.class),
+    /**
+     * BlockData: {@link Lightable}
+     */
+    BLACK_CANDLE_CAKE(15191, Lightable.class),
+    POWDER_SNOW(24077),
+    /**
+     * BlockData: {@link CaveVines}
+     */
+    CAVE_VINES(7339, CaveVines.class),
+    /**
+     * BlockData: {@link CaveVinesPlant}
+     */
+    CAVE_VINES_PLANT(30645, CaveVinesPlant.class),
+    /**
+     * BlockData: {@link Dripleaf}
+     */
+    BIG_DRIPLEAF_STEM(13167, Dripleaf.class),
+    POTTED_AZALEA_BUSH(20430),
+    POTTED_FLOWERING_AZALEA_BUSH(10609),
     // ----- Legacy Separator -----
     @Deprecated
     LEGACY_AIR(0, 0),
@@ -3018,7 +3409,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     @Deprecated
     LEGACY_BEETROOT_BLOCK(207, org.bukkit.material.Crops.class),
     @Deprecated
-    LEGACY_DIRT_PATH(208),
+    LEGACY_GRASS_PATH(208),
     @Deprecated
     LEGACY_END_GATEWAY(209),
     @Deprecated
@@ -3531,7 +3922,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     LEGACY_RECORD_11(2266, 1),
     @Deprecated
     LEGACY_RECORD_12(2267, 1),
-
     ;
     //</editor-fold>
 
@@ -3540,12 +3930,13 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
 
     private final int id;
     private final Constructor<? extends MaterialData> ctor;
-    private static final Map<String, Material> BY_NAME = new java.util.HashMap<>();
+    private static final Map<String, Material> BY_NAME = Maps.newHashMap();
     private final int maxStack;
     private final short durability;
     public final Class<?> data;
     private final boolean legacy;
     private final NamespacedKey key;
+    private boolean isBlock; // Paper
 
     // Modded Data - start
     private org.cardboardpowered.impl.CardboardModdedMaterial moddedData;
@@ -3600,6 +3991,56 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
         }
     }
 
+    // Paper start
+
+    /**
+     * @return If the type is either AIR, CAVE_AIR or VOID_AIR
+     */
+    public boolean isEmpty() {
+        switch (this) {
+            case AIR:
+            case CAVE_AIR:
+            case VOID_AIR:
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return the translation key for the Material, so the client can translate it into the active
+     * locale when using a TranslatableComponent.
+     * @return the translation key
+     */
+    @NotNull
+    public String getTranslationKey() {
+        return Bukkit.getUnsafe().getTranslationKey(this);
+    }
+
+    /**
+     * Returns the item rarity for the item. The Material <b>MUST</b> be an Item not a block.
+     * Use {@link #isItem()} before this.
+     *
+     * @return the item rarity
+     */
+    @NotNull
+    public io.papermc.paper.inventory.ItemRarity getItemRarity() {
+        return Bukkit.getUnsafe().getItemRarity(this);
+    }
+
+    /**
+     * Returns an immutable multimap of attributes for the slot.
+     * {@link #isItem()} must be true for this material.
+     *
+     * @param equipmentSlot the slot to get the attributes for
+     * @throws IllegalArgumentException if {@link #isItem()} is false
+     * @return an immutable multimap of attributes
+     */
+    @NotNull
+    public com.google.common.collect.Multimap<org.bukkit.attribute.Attribute, org.bukkit.attribute.AttributeModifier> getItemAttributes(@NotNull EquipmentSlot equipmentSlot) {
+        return Bukkit.getUnsafe().getItemAttributes(this, equipmentSlot);
+    }
+    // Paper end
+
     /**
      * Do not use for any reason.
      *
@@ -3608,7 +4049,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      */
     @Deprecated
     public int getId() {
-        // cardboard removed: Validate.isTrue(legacy, "Cannot get ID of Modern Material");
+        // CARDBOARD REMOVED: Validate.isTrue(legacy, "Cannot get ID of Modern Material");
         return id;
     }
 
@@ -3644,8 +4085,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @return Maximum durability for this material
      */
     public short getMaxDurability() {
-        if (isModded())
-            return moddedData.getDamage();
+		if (isModded()) return moddedData.getDamage(); // CARDBOARD
         return durability;
     }
 
@@ -3731,10 +4171,919 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @return true if this material is a block
      */
     public boolean isBlock() {
-        if (isModded()) {
-            return moddedData.isBlock();
+    // Paper start - cache isBlock
+        return this.isBlock;
+    }
+    private boolean isBlock0() {
+		if (isModded()) {
+            return moddedData.isBlock(); // CARDBOARD
         }
-        return org.cardboardpowered.impl.MaterialHelper.isBlock(this);
+    // Paper end
+        switch (this) {
+            //<editor-fold defaultstate="collapsed" desc="isBlock">
+            case ACACIA_BUTTON:
+            case ACACIA_DOOR:
+            case ACACIA_FENCE:
+            case ACACIA_FENCE_GATE:
+            case ACACIA_LEAVES:
+            case ACACIA_LOG:
+            case ACACIA_PLANKS:
+            case ACACIA_PRESSURE_PLATE:
+            case ACACIA_SAPLING:
+            case ACACIA_SIGN:
+            case ACACIA_SLAB:
+            case ACACIA_STAIRS:
+            case ACACIA_TRAPDOOR:
+            case ACACIA_WALL_SIGN:
+            case ACACIA_WOOD:
+            case ACTIVATOR_RAIL:
+            case AIR:
+            case ALLIUM:
+            case AMETHYST_BLOCK:
+            case AMETHYST_CLUSTER:
+            case ANCIENT_DEBRIS:
+            case ANDESITE:
+            case ANDESITE_SLAB:
+            case ANDESITE_STAIRS:
+            case ANDESITE_WALL:
+            case ANVIL:
+            case ATTACHED_MELON_STEM:
+            case ATTACHED_PUMPKIN_STEM:
+            case AZALEA:
+            case AZALEA_LEAVES:
+            case AZURE_BLUET:
+            case BAMBOO:
+            case BAMBOO_SAPLING:
+            case BARREL:
+            case BARRIER:
+            case BASALT:
+            case BEACON:
+            case BEDROCK:
+            case BEEHIVE:
+            case BEETROOTS:
+            case BEE_NEST:
+            case BELL:
+            case BIG_DRIPLEAF:
+            case BIG_DRIPLEAF_STEM:
+            case BIRCH_BUTTON:
+            case BIRCH_DOOR:
+            case BIRCH_FENCE:
+            case BIRCH_FENCE_GATE:
+            case BIRCH_LEAVES:
+            case BIRCH_LOG:
+            case BIRCH_PLANKS:
+            case BIRCH_PRESSURE_PLATE:
+            case BIRCH_SAPLING:
+            case BIRCH_SIGN:
+            case BIRCH_SLAB:
+            case BIRCH_STAIRS:
+            case BIRCH_TRAPDOOR:
+            case BIRCH_WALL_SIGN:
+            case BIRCH_WOOD:
+            case BLACKSTONE:
+            case BLACKSTONE_SLAB:
+            case BLACKSTONE_STAIRS:
+            case BLACKSTONE_WALL:
+            case BLACK_BANNER:
+            case BLACK_BED:
+            case BLACK_CANDLE:
+            case BLACK_CANDLE_CAKE:
+            case BLACK_CARPET:
+            case BLACK_CONCRETE:
+            case BLACK_CONCRETE_POWDER:
+            case BLACK_GLAZED_TERRACOTTA:
+            case BLACK_SHULKER_BOX:
+            case BLACK_STAINED_GLASS:
+            case BLACK_STAINED_GLASS_PANE:
+            case BLACK_TERRACOTTA:
+            case BLACK_WALL_BANNER:
+            case BLACK_WOOL:
+            case BLAST_FURNACE:
+            case BLUE_BANNER:
+            case BLUE_BED:
+            case BLUE_CANDLE:
+            case BLUE_CANDLE_CAKE:
+            case BLUE_CARPET:
+            case BLUE_CONCRETE:
+            case BLUE_CONCRETE_POWDER:
+            case BLUE_GLAZED_TERRACOTTA:
+            case BLUE_ICE:
+            case BLUE_ORCHID:
+            case BLUE_SHULKER_BOX:
+            case BLUE_STAINED_GLASS:
+            case BLUE_STAINED_GLASS_PANE:
+            case BLUE_TERRACOTTA:
+            case BLUE_WALL_BANNER:
+            case BLUE_WOOL:
+            case BONE_BLOCK:
+            case BOOKSHELF:
+            case BRAIN_CORAL:
+            case BRAIN_CORAL_BLOCK:
+            case BRAIN_CORAL_FAN:
+            case BRAIN_CORAL_WALL_FAN:
+            case BREWING_STAND:
+            case BRICKS:
+            case BRICK_SLAB:
+            case BRICK_STAIRS:
+            case BRICK_WALL:
+            case BROWN_BANNER:
+            case BROWN_BED:
+            case BROWN_CANDLE:
+            case BROWN_CANDLE_CAKE:
+            case BROWN_CARPET:
+            case BROWN_CONCRETE:
+            case BROWN_CONCRETE_POWDER:
+            case BROWN_GLAZED_TERRACOTTA:
+            case BROWN_MUSHROOM:
+            case BROWN_MUSHROOM_BLOCK:
+            case BROWN_SHULKER_BOX:
+            case BROWN_STAINED_GLASS:
+            case BROWN_STAINED_GLASS_PANE:
+            case BROWN_TERRACOTTA:
+            case BROWN_WALL_BANNER:
+            case BROWN_WOOL:
+            case BUBBLE_COLUMN:
+            case BUBBLE_CORAL:
+            case BUBBLE_CORAL_BLOCK:
+            case BUBBLE_CORAL_FAN:
+            case BUBBLE_CORAL_WALL_FAN:
+            case BUDDING_AMETHYST:
+            case CACTUS:
+            case CAKE:
+            case CALCITE:
+            case CAMPFIRE:
+            case CANDLE:
+            case CANDLE_CAKE:
+            case CARROTS:
+            case CARTOGRAPHY_TABLE:
+            case CARVED_PUMPKIN:
+            case CAULDRON:
+            case CAVE_AIR:
+            case CAVE_VINES:
+            case CAVE_VINES_PLANT:
+            case CHAIN:
+            case CHAIN_COMMAND_BLOCK:
+            case CHEST:
+            case CHIPPED_ANVIL:
+            case CHISELED_DEEPSLATE:
+            case CHISELED_NETHER_BRICKS:
+            case CHISELED_POLISHED_BLACKSTONE:
+            case CHISELED_QUARTZ_BLOCK:
+            case CHISELED_RED_SANDSTONE:
+            case CHISELED_SANDSTONE:
+            case CHISELED_STONE_BRICKS:
+            case CHORUS_FLOWER:
+            case CHORUS_PLANT:
+            case CLAY:
+            case COAL_BLOCK:
+            case COAL_ORE:
+            case COARSE_DIRT:
+            case COBBLED_DEEPSLATE:
+            case COBBLED_DEEPSLATE_SLAB:
+            case COBBLED_DEEPSLATE_STAIRS:
+            case COBBLED_DEEPSLATE_WALL:
+            case COBBLESTONE:
+            case COBBLESTONE_SLAB:
+            case COBBLESTONE_STAIRS:
+            case COBBLESTONE_WALL:
+            case COBWEB:
+            case COCOA:
+            case COMMAND_BLOCK:
+            case COMPARATOR:
+            case COMPOSTER:
+            case CONDUIT:
+            case COPPER_BLOCK:
+            case COPPER_ORE:
+            case CORNFLOWER:
+            case CRACKED_DEEPSLATE_BRICKS:
+            case CRACKED_DEEPSLATE_TILES:
+            case CRACKED_NETHER_BRICKS:
+            case CRACKED_POLISHED_BLACKSTONE_BRICKS:
+            case CRACKED_STONE_BRICKS:
+            case CRAFTING_TABLE:
+            case CREEPER_HEAD:
+            case CREEPER_WALL_HEAD:
+            case CRIMSON_BUTTON:
+            case CRIMSON_DOOR:
+            case CRIMSON_FENCE:
+            case CRIMSON_FENCE_GATE:
+            case CRIMSON_FUNGUS:
+            case CRIMSON_HYPHAE:
+            case CRIMSON_NYLIUM:
+            case CRIMSON_PLANKS:
+            case CRIMSON_PRESSURE_PLATE:
+            case CRIMSON_ROOTS:
+            case CRIMSON_SIGN:
+            case CRIMSON_SLAB:
+            case CRIMSON_STAIRS:
+            case CRIMSON_STEM:
+            case CRIMSON_TRAPDOOR:
+            case CRIMSON_WALL_SIGN:
+            case CRYING_OBSIDIAN:
+            case CUT_COPPER:
+            case CUT_COPPER_SLAB:
+            case CUT_COPPER_STAIRS:
+            case CUT_RED_SANDSTONE:
+            case CUT_RED_SANDSTONE_SLAB:
+            case CUT_SANDSTONE:
+            case CUT_SANDSTONE_SLAB:
+            case CYAN_BANNER:
+            case CYAN_BED:
+            case CYAN_CANDLE:
+            case CYAN_CANDLE_CAKE:
+            case CYAN_CARPET:
+            case CYAN_CONCRETE:
+            case CYAN_CONCRETE_POWDER:
+            case CYAN_GLAZED_TERRACOTTA:
+            case CYAN_SHULKER_BOX:
+            case CYAN_STAINED_GLASS:
+            case CYAN_STAINED_GLASS_PANE:
+            case CYAN_TERRACOTTA:
+            case CYAN_WALL_BANNER:
+            case CYAN_WOOL:
+            case DAMAGED_ANVIL:
+            case DANDELION:
+            case DARK_OAK_BUTTON:
+            case DARK_OAK_DOOR:
+            case DARK_OAK_FENCE:
+            case DARK_OAK_FENCE_GATE:
+            case DARK_OAK_LEAVES:
+            case DARK_OAK_LOG:
+            case DARK_OAK_PLANKS:
+            case DARK_OAK_PRESSURE_PLATE:
+            case DARK_OAK_SAPLING:
+            case DARK_OAK_SIGN:
+            case DARK_OAK_SLAB:
+            case DARK_OAK_STAIRS:
+            case DARK_OAK_TRAPDOOR:
+            case DARK_OAK_WALL_SIGN:
+            case DARK_OAK_WOOD:
+            case DARK_PRISMARINE:
+            case DARK_PRISMARINE_SLAB:
+            case DARK_PRISMARINE_STAIRS:
+            case DAYLIGHT_DETECTOR:
+            case DEAD_BRAIN_CORAL:
+            case DEAD_BRAIN_CORAL_BLOCK:
+            case DEAD_BRAIN_CORAL_FAN:
+            case DEAD_BRAIN_CORAL_WALL_FAN:
+            case DEAD_BUBBLE_CORAL:
+            case DEAD_BUBBLE_CORAL_BLOCK:
+            case DEAD_BUBBLE_CORAL_FAN:
+            case DEAD_BUBBLE_CORAL_WALL_FAN:
+            case DEAD_BUSH:
+            case DEAD_FIRE_CORAL:
+            case DEAD_FIRE_CORAL_BLOCK:
+            case DEAD_FIRE_CORAL_FAN:
+            case DEAD_FIRE_CORAL_WALL_FAN:
+            case DEAD_HORN_CORAL:
+            case DEAD_HORN_CORAL_BLOCK:
+            case DEAD_HORN_CORAL_FAN:
+            case DEAD_HORN_CORAL_WALL_FAN:
+            case DEAD_TUBE_CORAL:
+            case DEAD_TUBE_CORAL_BLOCK:
+            case DEAD_TUBE_CORAL_FAN:
+            case DEAD_TUBE_CORAL_WALL_FAN:
+            case DEEPSLATE:
+            case DEEPSLATE_BRICKS:
+            case DEEPSLATE_BRICK_SLAB:
+            case DEEPSLATE_BRICK_STAIRS:
+            case DEEPSLATE_BRICK_WALL:
+            case DEEPSLATE_COAL_ORE:
+            case DEEPSLATE_COPPER_ORE:
+            case DEEPSLATE_DIAMOND_ORE:
+            case DEEPSLATE_EMERALD_ORE:
+            case DEEPSLATE_GOLD_ORE:
+            case DEEPSLATE_IRON_ORE:
+            case DEEPSLATE_LAPIS_ORE:
+            case DEEPSLATE_REDSTONE_ORE:
+            case DEEPSLATE_TILES:
+            case DEEPSLATE_TILE_SLAB:
+            case DEEPSLATE_TILE_STAIRS:
+            case DEEPSLATE_TILE_WALL:
+            case DETECTOR_RAIL:
+            case DIAMOND_BLOCK:
+            case DIAMOND_ORE:
+            case DIORITE:
+            case DIORITE_SLAB:
+            case DIORITE_STAIRS:
+            case DIORITE_WALL:
+            case DIRT:
+            case DIRT_PATH:
+            case DISPENSER:
+            case DRAGON_EGG:
+            case DRAGON_HEAD:
+            case DRAGON_WALL_HEAD:
+            case DRIED_KELP_BLOCK:
+            case DRIPSTONE_BLOCK:
+            case DROPPER:
+            case EMERALD_BLOCK:
+            case EMERALD_ORE:
+            case ENCHANTING_TABLE:
+            case ENDER_CHEST:
+            case END_GATEWAY:
+            case END_PORTAL:
+            case END_PORTAL_FRAME:
+            case END_ROD:
+            case END_STONE:
+            case END_STONE_BRICKS:
+            case END_STONE_BRICK_SLAB:
+            case END_STONE_BRICK_STAIRS:
+            case END_STONE_BRICK_WALL:
+            case EXPOSED_COPPER:
+            case EXPOSED_CUT_COPPER:
+            case EXPOSED_CUT_COPPER_SLAB:
+            case EXPOSED_CUT_COPPER_STAIRS:
+            case FARMLAND:
+            case FERN:
+            case FIRE:
+            case FIRE_CORAL:
+            case FIRE_CORAL_BLOCK:
+            case FIRE_CORAL_FAN:
+            case FIRE_CORAL_WALL_FAN:
+            case FLETCHING_TABLE:
+            case FLOWERING_AZALEA:
+            case FLOWERING_AZALEA_LEAVES:
+            case FLOWER_POT:
+            case FROSTED_ICE:
+            case FURNACE:
+            case GILDED_BLACKSTONE:
+            case GLASS:
+            case GLASS_PANE:
+            case GLOWSTONE:
+            case GLOW_LICHEN:
+            case GOLD_BLOCK:
+            case GOLD_ORE:
+            case GRANITE:
+            case GRANITE_SLAB:
+            case GRANITE_STAIRS:
+            case GRANITE_WALL:
+            case GRASS:
+            case GRASS_BLOCK:
+            case GRAVEL:
+            case GRAY_BANNER:
+            case GRAY_BED:
+            case GRAY_CANDLE:
+            case GRAY_CANDLE_CAKE:
+            case GRAY_CARPET:
+            case GRAY_CONCRETE:
+            case GRAY_CONCRETE_POWDER:
+            case GRAY_GLAZED_TERRACOTTA:
+            case GRAY_SHULKER_BOX:
+            case GRAY_STAINED_GLASS:
+            case GRAY_STAINED_GLASS_PANE:
+            case GRAY_TERRACOTTA:
+            case GRAY_WALL_BANNER:
+            case GRAY_WOOL:
+            case GREEN_BANNER:
+            case GREEN_BED:
+            case GREEN_CANDLE:
+            case GREEN_CANDLE_CAKE:
+            case GREEN_CARPET:
+            case GREEN_CONCRETE:
+            case GREEN_CONCRETE_POWDER:
+            case GREEN_GLAZED_TERRACOTTA:
+            case GREEN_SHULKER_BOX:
+            case GREEN_STAINED_GLASS:
+            case GREEN_STAINED_GLASS_PANE:
+            case GREEN_TERRACOTTA:
+            case GREEN_WALL_BANNER:
+            case GREEN_WOOL:
+            case GRINDSTONE:
+            case HANGING_ROOTS:
+            case HAY_BLOCK:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case HONEYCOMB_BLOCK:
+            case HONEY_BLOCK:
+            case HOPPER:
+            case HORN_CORAL:
+            case HORN_CORAL_BLOCK:
+            case HORN_CORAL_FAN:
+            case HORN_CORAL_WALL_FAN:
+            case ICE:
+            case INFESTED_CHISELED_STONE_BRICKS:
+            case INFESTED_COBBLESTONE:
+            case INFESTED_CRACKED_STONE_BRICKS:
+            case INFESTED_DEEPSLATE:
+            case INFESTED_MOSSY_STONE_BRICKS:
+            case INFESTED_STONE:
+            case INFESTED_STONE_BRICKS:
+            case IRON_BARS:
+            case IRON_BLOCK:
+            case IRON_DOOR:
+            case IRON_ORE:
+            case IRON_TRAPDOOR:
+            case JACK_O_LANTERN:
+            case JIGSAW:
+            case JUKEBOX:
+            case JUNGLE_BUTTON:
+            case JUNGLE_DOOR:
+            case JUNGLE_FENCE:
+            case JUNGLE_FENCE_GATE:
+            case JUNGLE_LEAVES:
+            case JUNGLE_LOG:
+            case JUNGLE_PLANKS:
+            case JUNGLE_PRESSURE_PLATE:
+            case JUNGLE_SAPLING:
+            case JUNGLE_SIGN:
+            case JUNGLE_SLAB:
+            case JUNGLE_STAIRS:
+            case JUNGLE_TRAPDOOR:
+            case JUNGLE_WALL_SIGN:
+            case JUNGLE_WOOD:
+            case KELP:
+            case KELP_PLANT:
+            case LADDER:
+            case LANTERN:
+            case LAPIS_BLOCK:
+            case LAPIS_ORE:
+            case LARGE_AMETHYST_BUD:
+            case LARGE_FERN:
+            case LAVA:
+            case LAVA_CAULDRON:
+            case LECTERN:
+            case LEVER:
+            case LIGHT:
+            case LIGHTNING_ROD:
+            case LIGHT_BLUE_BANNER:
+            case LIGHT_BLUE_BED:
+            case LIGHT_BLUE_CANDLE:
+            case LIGHT_BLUE_CANDLE_CAKE:
+            case LIGHT_BLUE_CARPET:
+            case LIGHT_BLUE_CONCRETE:
+            case LIGHT_BLUE_CONCRETE_POWDER:
+            case LIGHT_BLUE_GLAZED_TERRACOTTA:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case LIGHT_BLUE_STAINED_GLASS:
+            case LIGHT_BLUE_STAINED_GLASS_PANE:
+            case LIGHT_BLUE_TERRACOTTA:
+            case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_BLUE_WOOL:
+            case LIGHT_GRAY_BANNER:
+            case LIGHT_GRAY_BED:
+            case LIGHT_GRAY_CANDLE:
+            case LIGHT_GRAY_CANDLE_CAKE:
+            case LIGHT_GRAY_CARPET:
+            case LIGHT_GRAY_CONCRETE:
+            case LIGHT_GRAY_CONCRETE_POWDER:
+            case LIGHT_GRAY_GLAZED_TERRACOTTA:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case LIGHT_GRAY_STAINED_GLASS:
+            case LIGHT_GRAY_STAINED_GLASS_PANE:
+            case LIGHT_GRAY_TERRACOTTA:
+            case LIGHT_GRAY_WALL_BANNER:
+            case LIGHT_GRAY_WOOL:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case LILAC:
+            case LILY_OF_THE_VALLEY:
+            case LILY_PAD:
+            case LIME_BANNER:
+            case LIME_BED:
+            case LIME_CANDLE:
+            case LIME_CANDLE_CAKE:
+            case LIME_CARPET:
+            case LIME_CONCRETE:
+            case LIME_CONCRETE_POWDER:
+            case LIME_GLAZED_TERRACOTTA:
+            case LIME_SHULKER_BOX:
+            case LIME_STAINED_GLASS:
+            case LIME_STAINED_GLASS_PANE:
+            case LIME_TERRACOTTA:
+            case LIME_WALL_BANNER:
+            case LIME_WOOL:
+            case LODESTONE:
+            case LOOM:
+            case MAGENTA_BANNER:
+            case MAGENTA_BED:
+            case MAGENTA_CANDLE:
+            case MAGENTA_CANDLE_CAKE:
+            case MAGENTA_CARPET:
+            case MAGENTA_CONCRETE:
+            case MAGENTA_CONCRETE_POWDER:
+            case MAGENTA_GLAZED_TERRACOTTA:
+            case MAGENTA_SHULKER_BOX:
+            case MAGENTA_STAINED_GLASS:
+            case MAGENTA_STAINED_GLASS_PANE:
+            case MAGENTA_TERRACOTTA:
+            case MAGENTA_WALL_BANNER:
+            case MAGENTA_WOOL:
+            case MAGMA_BLOCK:
+            case MEDIUM_AMETHYST_BUD:
+            case MELON:
+            case MELON_STEM:
+            case MOSSY_COBBLESTONE:
+            case MOSSY_COBBLESTONE_SLAB:
+            case MOSSY_COBBLESTONE_STAIRS:
+            case MOSSY_COBBLESTONE_WALL:
+            case MOSSY_STONE_BRICKS:
+            case MOSSY_STONE_BRICK_SLAB:
+            case MOSSY_STONE_BRICK_STAIRS:
+            case MOSSY_STONE_BRICK_WALL:
+            case MOSS_BLOCK:
+            case MOSS_CARPET:
+            case MOVING_PISTON:
+            case MUSHROOM_STEM:
+            case MYCELIUM:
+            case NETHERITE_BLOCK:
+            case NETHERRACK:
+            case NETHER_BRICKS:
+            case NETHER_BRICK_FENCE:
+            case NETHER_BRICK_SLAB:
+            case NETHER_BRICK_STAIRS:
+            case NETHER_BRICK_WALL:
+            case NETHER_GOLD_ORE:
+            case NETHER_PORTAL:
+            case NETHER_QUARTZ_ORE:
+            case NETHER_SPROUTS:
+            case NETHER_WART:
+            case NETHER_WART_BLOCK:
+            case NOTE_BLOCK:
+            case OAK_BUTTON:
+            case OAK_DOOR:
+            case OAK_FENCE:
+            case OAK_FENCE_GATE:
+            case OAK_LEAVES:
+            case OAK_LOG:
+            case OAK_PLANKS:
+            case OAK_PRESSURE_PLATE:
+            case OAK_SAPLING:
+            case OAK_SIGN:
+            case OAK_SLAB:
+            case OAK_STAIRS:
+            case OAK_TRAPDOOR:
+            case OAK_WALL_SIGN:
+            case OAK_WOOD:
+            case OBSERVER:
+            case OBSIDIAN:
+            case ORANGE_BANNER:
+            case ORANGE_BED:
+            case ORANGE_CANDLE:
+            case ORANGE_CANDLE_CAKE:
+            case ORANGE_CARPET:
+            case ORANGE_CONCRETE:
+            case ORANGE_CONCRETE_POWDER:
+            case ORANGE_GLAZED_TERRACOTTA:
+            case ORANGE_SHULKER_BOX:
+            case ORANGE_STAINED_GLASS:
+            case ORANGE_STAINED_GLASS_PANE:
+            case ORANGE_TERRACOTTA:
+            case ORANGE_TULIP:
+            case ORANGE_WALL_BANNER:
+            case ORANGE_WOOL:
+            case OXEYE_DAISY:
+            case OXIDIZED_COPPER:
+            case OXIDIZED_CUT_COPPER:
+            case OXIDIZED_CUT_COPPER_SLAB:
+            case OXIDIZED_CUT_COPPER_STAIRS:
+            case PACKED_ICE:
+            case PEONY:
+            case PETRIFIED_OAK_SLAB:
+            case PINK_BANNER:
+            case PINK_BED:
+            case PINK_CANDLE:
+            case PINK_CANDLE_CAKE:
+            case PINK_CARPET:
+            case PINK_CONCRETE:
+            case PINK_CONCRETE_POWDER:
+            case PINK_GLAZED_TERRACOTTA:
+            case PINK_SHULKER_BOX:
+            case PINK_STAINED_GLASS:
+            case PINK_STAINED_GLASS_PANE:
+            case PINK_TERRACOTTA:
+            case PINK_TULIP:
+            case PINK_WALL_BANNER:
+            case PINK_WOOL:
+            case PISTON:
+            case PISTON_HEAD:
+            case PLAYER_HEAD:
+            case PLAYER_WALL_HEAD:
+            case PODZOL:
+            case POINTED_DRIPSTONE:
+            case POLISHED_ANDESITE:
+            case POLISHED_ANDESITE_SLAB:
+            case POLISHED_ANDESITE_STAIRS:
+            case POLISHED_BASALT:
+            case POLISHED_BLACKSTONE:
+            case POLISHED_BLACKSTONE_BRICKS:
+            case POLISHED_BLACKSTONE_BRICK_SLAB:
+            case POLISHED_BLACKSTONE_BRICK_STAIRS:
+            case POLISHED_BLACKSTONE_BRICK_WALL:
+            case POLISHED_BLACKSTONE_BUTTON:
+            case POLISHED_BLACKSTONE_PRESSURE_PLATE:
+            case POLISHED_BLACKSTONE_SLAB:
+            case POLISHED_BLACKSTONE_STAIRS:
+            case POLISHED_BLACKSTONE_WALL:
+            case POLISHED_DEEPSLATE:
+            case POLISHED_DEEPSLATE_SLAB:
+            case POLISHED_DEEPSLATE_STAIRS:
+            case POLISHED_DEEPSLATE_WALL:
+            case POLISHED_DIORITE:
+            case POLISHED_DIORITE_SLAB:
+            case POLISHED_DIORITE_STAIRS:
+            case POLISHED_GRANITE:
+            case POLISHED_GRANITE_SLAB:
+            case POLISHED_GRANITE_STAIRS:
+            case POPPY:
+            case POTATOES:
+            case POTTED_ACACIA_SAPLING:
+            case POTTED_ALLIUM:
+            case POTTED_AZALEA_BUSH:
+            case POTTED_AZURE_BLUET:
+            case POTTED_BAMBOO:
+            case POTTED_BIRCH_SAPLING:
+            case POTTED_BLUE_ORCHID:
+            case POTTED_BROWN_MUSHROOM:
+            case POTTED_CACTUS:
+            case POTTED_CORNFLOWER:
+            case POTTED_CRIMSON_FUNGUS:
+            case POTTED_CRIMSON_ROOTS:
+            case POTTED_DANDELION:
+            case POTTED_DARK_OAK_SAPLING:
+            case POTTED_DEAD_BUSH:
+            case POTTED_FERN:
+            case POTTED_FLOWERING_AZALEA_BUSH:
+            case POTTED_JUNGLE_SAPLING:
+            case POTTED_LILY_OF_THE_VALLEY:
+            case POTTED_OAK_SAPLING:
+            case POTTED_ORANGE_TULIP:
+            case POTTED_OXEYE_DAISY:
+            case POTTED_PINK_TULIP:
+            case POTTED_POPPY:
+            case POTTED_RED_MUSHROOM:
+            case POTTED_RED_TULIP:
+            case POTTED_SPRUCE_SAPLING:
+            case POTTED_WARPED_FUNGUS:
+            case POTTED_WARPED_ROOTS:
+            case POTTED_WHITE_TULIP:
+            case POTTED_WITHER_ROSE:
+            case POWDER_SNOW:
+            case POWDER_SNOW_CAULDRON:
+            case POWERED_RAIL:
+            case PRISMARINE:
+            case PRISMARINE_BRICKS:
+            case PRISMARINE_BRICK_SLAB:
+            case PRISMARINE_BRICK_STAIRS:
+            case PRISMARINE_SLAB:
+            case PRISMARINE_STAIRS:
+            case PRISMARINE_WALL:
+            case PUMPKIN:
+            case PUMPKIN_STEM:
+            case PURPLE_BANNER:
+            case PURPLE_BED:
+            case PURPLE_CANDLE:
+            case PURPLE_CANDLE_CAKE:
+            case PURPLE_CARPET:
+            case PURPLE_CONCRETE:
+            case PURPLE_CONCRETE_POWDER:
+            case PURPLE_GLAZED_TERRACOTTA:
+            case PURPLE_SHULKER_BOX:
+            case PURPLE_STAINED_GLASS:
+            case PURPLE_STAINED_GLASS_PANE:
+            case PURPLE_TERRACOTTA:
+            case PURPLE_WALL_BANNER:
+            case PURPLE_WOOL:
+            case PURPUR_BLOCK:
+            case PURPUR_PILLAR:
+            case PURPUR_SLAB:
+            case PURPUR_STAIRS:
+            case QUARTZ_BLOCK:
+            case QUARTZ_BRICKS:
+            case QUARTZ_PILLAR:
+            case QUARTZ_SLAB:
+            case QUARTZ_STAIRS:
+            case RAIL:
+            case RAW_COPPER_BLOCK:
+            case RAW_GOLD_BLOCK:
+            case RAW_IRON_BLOCK:
+            case REDSTONE_BLOCK:
+            case REDSTONE_LAMP:
+            case REDSTONE_ORE:
+            case REDSTONE_TORCH:
+            case REDSTONE_WALL_TORCH:
+            case REDSTONE_WIRE:
+            case RED_BANNER:
+            case RED_BED:
+            case RED_CANDLE:
+            case RED_CANDLE_CAKE:
+            case RED_CARPET:
+            case RED_CONCRETE:
+            case RED_CONCRETE_POWDER:
+            case RED_GLAZED_TERRACOTTA:
+            case RED_MUSHROOM:
+            case RED_MUSHROOM_BLOCK:
+            case RED_NETHER_BRICKS:
+            case RED_NETHER_BRICK_SLAB:
+            case RED_NETHER_BRICK_STAIRS:
+            case RED_NETHER_BRICK_WALL:
+            case RED_SAND:
+            case RED_SANDSTONE:
+            case RED_SANDSTONE_SLAB:
+            case RED_SANDSTONE_STAIRS:
+            case RED_SANDSTONE_WALL:
+            case RED_SHULKER_BOX:
+            case RED_STAINED_GLASS:
+            case RED_STAINED_GLASS_PANE:
+            case RED_TERRACOTTA:
+            case RED_TULIP:
+            case RED_WALL_BANNER:
+            case RED_WOOL:
+            case REPEATER:
+            case REPEATING_COMMAND_BLOCK:
+            case RESPAWN_ANCHOR:
+            case ROOTED_DIRT:
+            case ROSE_BUSH:
+            case SAND:
+            case SANDSTONE:
+            case SANDSTONE_SLAB:
+            case SANDSTONE_STAIRS:
+            case SANDSTONE_WALL:
+            case SCAFFOLDING:
+            case SCULK_SENSOR:
+            case SEAGRASS:
+            case SEA_LANTERN:
+            case SEA_PICKLE:
+            case SHROOMLIGHT:
+            case SHULKER_BOX:
+            case SKELETON_SKULL:
+            case SKELETON_WALL_SKULL:
+            case SLIME_BLOCK:
+            case SMALL_AMETHYST_BUD:
+            case SMALL_DRIPLEAF:
+            case SMITHING_TABLE:
+            case SMOKER:
+            case SMOOTH_BASALT:
+            case SMOOTH_QUARTZ:
+            case SMOOTH_QUARTZ_SLAB:
+            case SMOOTH_QUARTZ_STAIRS:
+            case SMOOTH_RED_SANDSTONE:
+            case SMOOTH_RED_SANDSTONE_SLAB:
+            case SMOOTH_RED_SANDSTONE_STAIRS:
+            case SMOOTH_SANDSTONE:
+            case SMOOTH_SANDSTONE_SLAB:
+            case SMOOTH_SANDSTONE_STAIRS:
+            case SMOOTH_STONE:
+            case SMOOTH_STONE_SLAB:
+            case SNOW:
+            case SNOW_BLOCK:
+            case SOUL_CAMPFIRE:
+            case SOUL_FIRE:
+            case SOUL_LANTERN:
+            case SOUL_SAND:
+            case SOUL_SOIL:
+            case SOUL_TORCH:
+            case SOUL_WALL_TORCH:
+            case SPAWNER:
+            case SPONGE:
+            case SPORE_BLOSSOM:
+            case SPRUCE_BUTTON:
+            case SPRUCE_DOOR:
+            case SPRUCE_FENCE:
+            case SPRUCE_FENCE_GATE:
+            case SPRUCE_LEAVES:
+            case SPRUCE_LOG:
+            case SPRUCE_PLANKS:
+            case SPRUCE_PRESSURE_PLATE:
+            case SPRUCE_SAPLING:
+            case SPRUCE_SIGN:
+            case SPRUCE_SLAB:
+            case SPRUCE_STAIRS:
+            case SPRUCE_TRAPDOOR:
+            case SPRUCE_WALL_SIGN:
+            case SPRUCE_WOOD:
+            case STICKY_PISTON:
+            case STONE:
+            case STONECUTTER:
+            case STONE_BRICKS:
+            case STONE_BRICK_SLAB:
+            case STONE_BRICK_STAIRS:
+            case STONE_BRICK_WALL:
+            case STONE_BUTTON:
+            case STONE_PRESSURE_PLATE:
+            case STONE_SLAB:
+            case STONE_STAIRS:
+            case STRIPPED_ACACIA_LOG:
+            case STRIPPED_ACACIA_WOOD:
+            case STRIPPED_BIRCH_LOG:
+            case STRIPPED_BIRCH_WOOD:
+            case STRIPPED_CRIMSON_HYPHAE:
+            case STRIPPED_CRIMSON_STEM:
+            case STRIPPED_DARK_OAK_LOG:
+            case STRIPPED_DARK_OAK_WOOD:
+            case STRIPPED_JUNGLE_LOG:
+            case STRIPPED_JUNGLE_WOOD:
+            case STRIPPED_OAK_LOG:
+            case STRIPPED_OAK_WOOD:
+            case STRIPPED_SPRUCE_LOG:
+            case STRIPPED_SPRUCE_WOOD:
+            case STRIPPED_WARPED_HYPHAE:
+            case STRIPPED_WARPED_STEM:
+            case STRUCTURE_BLOCK:
+            case STRUCTURE_VOID:
+            case SUGAR_CANE:
+            case SUNFLOWER:
+            case SWEET_BERRY_BUSH:
+            case TALL_GRASS:
+            case TALL_SEAGRASS:
+            case TARGET:
+            case TERRACOTTA:
+            case TINTED_GLASS:
+            case TNT:
+            case TORCH:
+            case TRAPPED_CHEST:
+            case TRIPWIRE:
+            case TRIPWIRE_HOOK:
+            case TUBE_CORAL:
+            case TUBE_CORAL_BLOCK:
+            case TUBE_CORAL_FAN:
+            case TUBE_CORAL_WALL_FAN:
+            case TUFF:
+            case TURTLE_EGG:
+            case TWISTING_VINES:
+            case TWISTING_VINES_PLANT:
+            case VINE:
+            case VOID_AIR:
+            case WALL_TORCH:
+            case WARPED_BUTTON:
+            case WARPED_DOOR:
+            case WARPED_FENCE:
+            case WARPED_FENCE_GATE:
+            case WARPED_FUNGUS:
+            case WARPED_HYPHAE:
+            case WARPED_NYLIUM:
+            case WARPED_PLANKS:
+            case WARPED_PRESSURE_PLATE:
+            case WARPED_ROOTS:
+            case WARPED_SIGN:
+            case WARPED_SLAB:
+            case WARPED_STAIRS:
+            case WARPED_STEM:
+            case WARPED_TRAPDOOR:
+            case WARPED_WALL_SIGN:
+            case WARPED_WART_BLOCK:
+            case WATER:
+            case WATER_CAULDRON:
+            case WAXED_COPPER_BLOCK:
+            case WAXED_CUT_COPPER:
+            case WAXED_CUT_COPPER_SLAB:
+            case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER_SLAB:
+            case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+            case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER_SLAB:
+            case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_COPPER:
+            case WEATHERED_CUT_COPPER:
+            case WEATHERED_CUT_COPPER_SLAB:
+            case WEATHERED_CUT_COPPER_STAIRS:
+            case WEEPING_VINES:
+            case WEEPING_VINES_PLANT:
+            case WET_SPONGE:
+            case WHEAT:
+            case WHITE_BANNER:
+            case WHITE_BED:
+            case WHITE_CANDLE:
+            case WHITE_CANDLE_CAKE:
+            case WHITE_CARPET:
+            case WHITE_CONCRETE:
+            case WHITE_CONCRETE_POWDER:
+            case WHITE_GLAZED_TERRACOTTA:
+            case WHITE_SHULKER_BOX:
+            case WHITE_STAINED_GLASS:
+            case WHITE_STAINED_GLASS_PANE:
+            case WHITE_TERRACOTTA:
+            case WHITE_TULIP:
+            case WHITE_WALL_BANNER:
+            case WHITE_WOOL:
+            case WITHER_ROSE:
+            case WITHER_SKELETON_SKULL:
+            case WITHER_SKELETON_WALL_SKULL:
+            case YELLOW_BANNER:
+            case YELLOW_BED:
+            case YELLOW_CANDLE:
+            case YELLOW_CANDLE_CAKE:
+            case YELLOW_CARPET:
+            case YELLOW_CONCRETE:
+            case YELLOW_CONCRETE_POWDER:
+            case YELLOW_GLAZED_TERRACOTTA:
+            case YELLOW_SHULKER_BOX:
+            case YELLOW_STAINED_GLASS:
+            case YELLOW_STAINED_GLASS_PANE:
+            case YELLOW_TERRACOTTA:
+            case YELLOW_WALL_BANNER:
+            case YELLOW_WOOL:
+            case ZOMBIE_HEAD:
+            case ZOMBIE_WALL_HEAD:
+            //</editor-fold>
+                return true;
+            default:
+                return 0 <= id && id < 256;
+        }
     }
 
     /**
@@ -3743,7 +5092,84 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @return true if this Material is edible.
      */
     public boolean isEdible() {
-       return org.cardboardpowered.impl.MaterialHelper.isEdible(this);
+        switch (this) {
+            //<editor-fold defaultstate="collapsed" desc="isEdible">
+            case APPLE:
+            case BAKED_POTATO:
+            case BEEF:
+            case BEETROOT:
+            case BEETROOT_SOUP:
+            case BREAD:
+            case CARROT:
+            case CHICKEN:
+            case CHORUS_FRUIT:
+            case COD:
+            case COOKED_BEEF:
+            case COOKED_CHICKEN:
+            case COOKED_COD:
+            case COOKED_MUTTON:
+            case COOKED_PORKCHOP:
+            case COOKED_RABBIT:
+            case COOKED_SALMON:
+            case COOKIE:
+            case DRIED_KELP:
+            case ENCHANTED_GOLDEN_APPLE:
+            case GLOW_BERRIES:
+            case GOLDEN_APPLE:
+            case GOLDEN_CARROT:
+            case HONEY_BOTTLE:
+            case MELON_SLICE:
+            case MUSHROOM_STEW:
+            case MUTTON:
+            case POISONOUS_POTATO:
+            case PORKCHOP:
+            case POTATO:
+            case PUFFERFISH:
+            case PUMPKIN_PIE:
+            case RABBIT:
+            case RABBIT_STEW:
+            case ROTTEN_FLESH:
+            case SALMON:
+            case SPIDER_EYE:
+            case SUSPICIOUS_STEW:
+            case SWEET_BERRIES:
+            case TROPICAL_FISH:
+            // ----- Legacy Separator -----
+            case LEGACY_BREAD:
+            case LEGACY_CARROT_ITEM:
+            case LEGACY_BAKED_POTATO:
+            case LEGACY_POTATO_ITEM:
+            case LEGACY_POISONOUS_POTATO:
+            case LEGACY_GOLDEN_CARROT:
+            case LEGACY_PUMPKIN_PIE:
+            case LEGACY_COOKIE:
+            case LEGACY_MELON:
+            case LEGACY_MUSHROOM_SOUP:
+            case LEGACY_RAW_CHICKEN:
+            case LEGACY_COOKED_CHICKEN:
+            case LEGACY_RAW_BEEF:
+            case LEGACY_COOKED_BEEF:
+            case LEGACY_RAW_FISH:
+            case LEGACY_COOKED_FISH:
+            case LEGACY_PORK:
+            case LEGACY_GRILLED_PORK:
+            case LEGACY_APPLE:
+            case LEGACY_GOLDEN_APPLE:
+            case LEGACY_ROTTEN_FLESH:
+            case LEGACY_SPIDER_EYE:
+            case LEGACY_RABBIT:
+            case LEGACY_COOKED_RABBIT:
+            case LEGACY_RABBIT_STEW:
+            case LEGACY_MUTTON:
+            case LEGACY_COOKED_MUTTON:
+            case LEGACY_BEETROOT:
+            case LEGACY_CHORUS_FRUIT:
+            case LEGACY_BEETROOT_SOUP:
+            //</editor-fold>
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -3834,6 +5260,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     static {
         for (Material material : values()) {
             BY_NAME.put(material.name(), material);
+            material.isBlock = material.isBlock0(); // Paper
         }
     }
 
@@ -3887,12 +5314,15 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ACACIA_TRAPDOOR:
             case ACACIA_WALL_SIGN:
             case ACACIA_WOOD:
+            case AMETHYST_BLOCK:
+            case AMETHYST_CLUSTER:
             case ANCIENT_DEBRIS:
             case ANDESITE:
             case ANDESITE_SLAB:
             case ANDESITE_STAIRS:
             case ANDESITE_WALL:
             case ANVIL:
+            case AZALEA_LEAVES:
             case BAMBOO:
             case BARREL:
             case BARRIER:
@@ -3921,6 +5351,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case BLACKSTONE_WALL:
             case BLACK_BANNER:
             case BLACK_BED:
+            case BLACK_CANDLE_CAKE:
             case BLACK_CONCRETE:
             case BLACK_CONCRETE_POWDER:
             case BLACK_GLAZED_TERRACOTTA:
@@ -3933,6 +5364,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case BLAST_FURNACE:
             case BLUE_BANNER:
             case BLUE_BED:
+            case BLUE_CANDLE_CAKE:
             case BLUE_CONCRETE:
             case BLUE_CONCRETE_POWDER:
             case BLUE_GLAZED_TERRACOTTA:
@@ -3953,6 +5385,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case BRICK_WALL:
             case BROWN_BANNER:
             case BROWN_BED:
+            case BROWN_CANDLE_CAKE:
             case BROWN_CONCRETE:
             case BROWN_CONCRETE_POWDER:
             case BROWN_GLAZED_TERRACOTTA:
@@ -3964,9 +5397,12 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case BROWN_WALL_BANNER:
             case BROWN_WOOL:
             case BUBBLE_CORAL_BLOCK:
+            case BUDDING_AMETHYST:
             case CACTUS:
             case CAKE:
+            case CALCITE:
             case CAMPFIRE:
+            case CANDLE_CAKE:
             case CARTOGRAPHY_TABLE:
             case CARVED_PUMPKIN:
             case CAULDRON:
@@ -3974,6 +5410,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case CHAIN_COMMAND_BLOCK:
             case CHEST:
             case CHIPPED_ANVIL:
+            case CHISELED_DEEPSLATE:
             case CHISELED_NETHER_BRICKS:
             case CHISELED_POLISHED_BLACKSTONE:
             case CHISELED_QUARTZ_BLOCK:
@@ -3984,6 +5421,10 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case COAL_BLOCK:
             case COAL_ORE:
             case COARSE_DIRT:
+            case COBBLED_DEEPSLATE:
+            case COBBLED_DEEPSLATE_SLAB:
+            case COBBLED_DEEPSLATE_STAIRS:
+            case COBBLED_DEEPSLATE_WALL:
             case COBBLESTONE:
             case COBBLESTONE_SLAB:
             case COBBLESTONE_STAIRS:
@@ -3991,6 +5432,10 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case COMMAND_BLOCK:
             case COMPOSTER:
             case CONDUIT:
+            case COPPER_BLOCK:
+            case COPPER_ORE:
+            case CRACKED_DEEPSLATE_BRICKS:
+            case CRACKED_DEEPSLATE_TILES:
             case CRACKED_NETHER_BRICKS:
             case CRACKED_POLISHED_BLACKSTONE_BRICKS:
             case CRACKED_STONE_BRICKS:
@@ -4009,12 +5454,16 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case CRIMSON_TRAPDOOR:
             case CRIMSON_WALL_SIGN:
             case CRYING_OBSIDIAN:
+            case CUT_COPPER:
+            case CUT_COPPER_SLAB:
+            case CUT_COPPER_STAIRS:
             case CUT_RED_SANDSTONE:
             case CUT_RED_SANDSTONE_SLAB:
             case CUT_SANDSTONE:
             case CUT_SANDSTONE_SLAB:
             case CYAN_BANNER:
             case CYAN_BED:
+            case CYAN_CANDLE_CAKE:
             case CYAN_CONCRETE:
             case CYAN_CONCRETE_POWDER:
             case CYAN_GLAZED_TERRACOTTA:
@@ -4062,6 +5511,23 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case DEAD_TUBE_CORAL_BLOCK:
             case DEAD_TUBE_CORAL_FAN:
             case DEAD_TUBE_CORAL_WALL_FAN:
+            case DEEPSLATE:
+            case DEEPSLATE_BRICKS:
+            case DEEPSLATE_BRICK_SLAB:
+            case DEEPSLATE_BRICK_STAIRS:
+            case DEEPSLATE_BRICK_WALL:
+            case DEEPSLATE_COAL_ORE:
+            case DEEPSLATE_COPPER_ORE:
+            case DEEPSLATE_DIAMOND_ORE:
+            case DEEPSLATE_EMERALD_ORE:
+            case DEEPSLATE_GOLD_ORE:
+            case DEEPSLATE_IRON_ORE:
+            case DEEPSLATE_LAPIS_ORE:
+            case DEEPSLATE_REDSTONE_ORE:
+            case DEEPSLATE_TILES:
+            case DEEPSLATE_TILE_SLAB:
+            case DEEPSLATE_TILE_STAIRS:
+            case DEEPSLATE_TILE_WALL:
             case DIAMOND_BLOCK:
             case DIAMOND_ORE:
             case DIORITE:
@@ -4069,9 +5535,11 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case DIORITE_STAIRS:
             case DIORITE_WALL:
             case DIRT:
+            case DIRT_PATH:
             case DISPENSER:
             case DRAGON_EGG:
             case DRIED_KELP_BLOCK:
+            case DRIPSTONE_BLOCK:
             case DROPPER:
             case EMERALD_BLOCK:
             case EMERALD_ORE:
@@ -4083,9 +5551,14 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case END_STONE_BRICK_SLAB:
             case END_STONE_BRICK_STAIRS:
             case END_STONE_BRICK_WALL:
+            case EXPOSED_COPPER:
+            case EXPOSED_CUT_COPPER:
+            case EXPOSED_CUT_COPPER_SLAB:
+            case EXPOSED_CUT_COPPER_STAIRS:
             case FARMLAND:
             case FIRE_CORAL_BLOCK:
             case FLETCHING_TABLE:
+            case FLOWERING_AZALEA_LEAVES:
             case FROSTED_ICE:
             case FURNACE:
             case GILDED_BLACKSTONE:
@@ -4099,10 +5572,10 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case GRANITE_STAIRS:
             case GRANITE_WALL:
             case GRASS_BLOCK:
-            case DIRT_PATH:
             case GRAVEL:
             case GRAY_BANNER:
             case GRAY_BED:
+            case GRAY_CANDLE_CAKE:
             case GRAY_CONCRETE:
             case GRAY_CONCRETE_POWDER:
             case GRAY_GLAZED_TERRACOTTA:
@@ -4114,6 +5587,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case GRAY_WOOL:
             case GREEN_BANNER:
             case GREEN_BED:
+            case GREEN_CANDLE_CAKE:
             case GREEN_CONCRETE:
             case GREEN_CONCRETE_POWDER:
             case GREEN_GLAZED_TERRACOTTA:
@@ -4134,6 +5608,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case INFESTED_CHISELED_STONE_BRICKS:
             case INFESTED_COBBLESTONE:
             case INFESTED_CRACKED_STONE_BRICKS:
+            case INFESTED_DEEPSLATE:
             case INFESTED_MOSSY_STONE_BRICKS:
             case INFESTED_STONE:
             case INFESTED_STONE_BRICKS:
@@ -4161,9 +5636,13 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case LANTERN:
             case LAPIS_BLOCK:
             case LAPIS_ORE:
+            case LARGE_AMETHYST_BUD:
+            case LAVA_CAULDRON:
             case LECTERN:
+            case LIGHTNING_ROD:
             case LIGHT_BLUE_BANNER:
             case LIGHT_BLUE_BED:
+            case LIGHT_BLUE_CANDLE_CAKE:
             case LIGHT_BLUE_CONCRETE:
             case LIGHT_BLUE_CONCRETE_POWDER:
             case LIGHT_BLUE_GLAZED_TERRACOTTA:
@@ -4175,6 +5654,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case LIGHT_BLUE_WOOL:
             case LIGHT_GRAY_BANNER:
             case LIGHT_GRAY_BED:
+            case LIGHT_GRAY_CANDLE_CAKE:
             case LIGHT_GRAY_CONCRETE:
             case LIGHT_GRAY_CONCRETE_POWDER:
             case LIGHT_GRAY_GLAZED_TERRACOTTA:
@@ -4187,6 +5667,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case LIGHT_WEIGHTED_PRESSURE_PLATE:
             case LIME_BANNER:
             case LIME_BED:
+            case LIME_CANDLE_CAKE:
             case LIME_CONCRETE:
             case LIME_CONCRETE_POWDER:
             case LIME_GLAZED_TERRACOTTA:
@@ -4200,6 +5681,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case LOOM:
             case MAGENTA_BANNER:
             case MAGENTA_BED:
+            case MAGENTA_CANDLE_CAKE:
             case MAGENTA_CONCRETE:
             case MAGENTA_CONCRETE_POWDER:
             case MAGENTA_GLAZED_TERRACOTTA:
@@ -4210,6 +5692,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case MAGENTA_WALL_BANNER:
             case MAGENTA_WOOL:
             case MAGMA_BLOCK:
+            case MEDIUM_AMETHYST_BUD:
             case MELON:
             case MOSSY_COBBLESTONE:
             case MOSSY_COBBLESTONE_SLAB:
@@ -4219,6 +5702,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case MOSSY_STONE_BRICK_SLAB:
             case MOSSY_STONE_BRICK_STAIRS:
             case MOSSY_STONE_BRICK_WALL:
+            case MOSS_BLOCK:
             case MOVING_PISTON:
             case MUSHROOM_STEM:
             case MYCELIUM:
@@ -4250,6 +5734,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case OBSIDIAN:
             case ORANGE_BANNER:
             case ORANGE_BED:
+            case ORANGE_CANDLE_CAKE:
             case ORANGE_CONCRETE:
             case ORANGE_CONCRETE_POWDER:
             case ORANGE_GLAZED_TERRACOTTA:
@@ -4259,10 +5744,15 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ORANGE_TERRACOTTA:
             case ORANGE_WALL_BANNER:
             case ORANGE_WOOL:
+            case OXIDIZED_COPPER:
+            case OXIDIZED_CUT_COPPER:
+            case OXIDIZED_CUT_COPPER_SLAB:
+            case OXIDIZED_CUT_COPPER_STAIRS:
             case PACKED_ICE:
             case PETRIFIED_OAK_SLAB:
             case PINK_BANNER:
             case PINK_BED:
+            case PINK_CANDLE_CAKE:
             case PINK_CONCRETE:
             case PINK_CONCRETE_POWDER:
             case PINK_GLAZED_TERRACOTTA:
@@ -4275,6 +5765,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case PISTON:
             case PISTON_HEAD:
             case PODZOL:
+            case POINTED_DRIPSTONE:
             case POLISHED_ANDESITE:
             case POLISHED_ANDESITE_SLAB:
             case POLISHED_ANDESITE_STAIRS:
@@ -4288,12 +5779,17 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POLISHED_BLACKSTONE_SLAB:
             case POLISHED_BLACKSTONE_STAIRS:
             case POLISHED_BLACKSTONE_WALL:
+            case POLISHED_DEEPSLATE:
+            case POLISHED_DEEPSLATE_SLAB:
+            case POLISHED_DEEPSLATE_STAIRS:
+            case POLISHED_DEEPSLATE_WALL:
             case POLISHED_DIORITE:
             case POLISHED_DIORITE_SLAB:
             case POLISHED_DIORITE_STAIRS:
             case POLISHED_GRANITE:
             case POLISHED_GRANITE_SLAB:
             case POLISHED_GRANITE_STAIRS:
+            case POWDER_SNOW_CAULDRON:
             case PRISMARINE:
             case PRISMARINE_BRICKS:
             case PRISMARINE_BRICK_SLAB:
@@ -4304,6 +5800,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case PUMPKIN:
             case PURPLE_BANNER:
             case PURPLE_BED:
+            case PURPLE_CANDLE_CAKE:
             case PURPLE_CONCRETE:
             case PURPLE_CONCRETE_POWDER:
             case PURPLE_GLAZED_TERRACOTTA:
@@ -4322,11 +5819,15 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case QUARTZ_PILLAR:
             case QUARTZ_SLAB:
             case QUARTZ_STAIRS:
+            case RAW_COPPER_BLOCK:
+            case RAW_GOLD_BLOCK:
+            case RAW_IRON_BLOCK:
             case REDSTONE_BLOCK:
             case REDSTONE_LAMP:
             case REDSTONE_ORE:
             case RED_BANNER:
             case RED_BED:
+            case RED_CANDLE_CAKE:
             case RED_CONCRETE:
             case RED_CONCRETE_POWDER:
             case RED_GLAZED_TERRACOTTA:
@@ -4348,17 +5849,21 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case RED_WOOL:
             case REPEATING_COMMAND_BLOCK:
             case RESPAWN_ANCHOR:
+            case ROOTED_DIRT:
             case SAND:
             case SANDSTONE:
             case SANDSTONE_SLAB:
             case SANDSTONE_STAIRS:
             case SANDSTONE_WALL:
+            case SCULK_SENSOR:
             case SEA_LANTERN:
             case SHROOMLIGHT:
             case SHULKER_BOX:
             case SLIME_BLOCK:
+            case SMALL_AMETHYST_BUD:
             case SMITHING_TABLE:
             case SMOKER:
+            case SMOOTH_BASALT:
             case SMOOTH_QUARTZ:
             case SMOOTH_QUARTZ_SLAB:
             case SMOOTH_QUARTZ_STAIRS:
@@ -4419,9 +5924,11 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case STRUCTURE_BLOCK:
             case TARGET:
             case TERRACOTTA:
+            case TINTED_GLASS:
             case TNT:
             case TRAPPED_CHEST:
             case TUBE_CORAL_BLOCK:
+            case TUFF:
             case TURTLE_EGG:
             case WARPED_DOOR:
             case WARPED_FENCE:
@@ -4437,9 +5944,31 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case WARPED_TRAPDOOR:
             case WARPED_WALL_SIGN:
             case WARPED_WART_BLOCK:
+            case WATER_CAULDRON:
+            case WAXED_COPPER_BLOCK:
+            case WAXED_CUT_COPPER:
+            case WAXED_CUT_COPPER_SLAB:
+            case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER_SLAB:
+            case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+            case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER_SLAB:
+            case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_COPPER:
+            case WEATHERED_CUT_COPPER:
+            case WEATHERED_CUT_COPPER_SLAB:
+            case WEATHERED_CUT_COPPER_STAIRS:
             case WET_SPONGE:
             case WHITE_BANNER:
             case WHITE_BED:
+            case WHITE_CANDLE_CAKE:
             case WHITE_CONCRETE:
             case WHITE_CONCRETE_POWDER:
             case WHITE_GLAZED_TERRACOTTA:
@@ -4451,6 +5980,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case WHITE_WOOL:
             case YELLOW_BANNER:
             case YELLOW_BED:
+            case YELLOW_CANDLE_CAKE:
             case YELLOW_CONCRETE:
             case YELLOW_CONCRETE_POWDER:
             case YELLOW_GLAZED_TERRACOTTA:
@@ -4616,7 +6146,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case LEGACY_PURPUR_DOUBLE_SLAB:
             case LEGACY_PURPUR_SLAB:
             case LEGACY_END_BRICKS:
-            case LEGACY_DIRT_PATH:
+            case LEGACY_GRASS_PATH:
             case LEGACY_STRUCTURE_BLOCK:
             case LEGACY_COMMAND_REPEATING:
             case LEGACY_COMMAND_CHAIN:
@@ -4771,6 +6301,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POTATOES:
             case POTTED_ACACIA_SAPLING:
             case POTTED_ALLIUM:
+            case POTTED_AZALEA_BUSH:
             case POTTED_AZURE_BLUET:
             case POTTED_BIRCH_SAPLING:
             case POTTED_BLUE_ORCHID:
@@ -4780,6 +6311,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POTTED_DARK_OAK_SAPLING:
             case POTTED_DEAD_BUSH:
             case POTTED_FERN:
+            case POTTED_FLOWERING_AZALEA_BUSH:
             case POTTED_JUNGLE_SAPLING:
             case POTTED_OAK_SAPLING:
             case POTTED_ORANGE_TULIP:
@@ -4908,6 +6440,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ACACIA_TRAPDOOR:
             case ACACIA_WALL_SIGN:
             case ACACIA_WOOD:
+            case AZALEA_LEAVES:
             case BAMBOO:
             case BAMBOO_SAPLING:
             case BARREL:
@@ -4970,6 +6503,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case DEAD_BUSH:
             case FERN:
             case FLETCHING_TABLE:
+            case FLOWERING_AZALEA_LEAVES:
+            case GLOW_LICHEN:
             case GRASS:
             case GRAY_BANNER:
             case GRAY_BED:
@@ -4981,6 +6516,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case GREEN_CARPET:
             case GREEN_WALL_BANNER:
             case GREEN_WOOL:
+            case HANGING_ROOTS:
             case JUKEBOX:
             case JUNGLE_DOOR:
             case JUNGLE_FENCE:
@@ -5182,10 +6718,14 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ACACIA_STAIRS:
             case ACACIA_WOOD:
             case ALLIUM:
+            case AZALEA:
+            case AZALEA_LEAVES:
             case AZURE_BLUET:
             case BAMBOO:
             case BEEHIVE:
             case BEE_NEST:
+            case BIG_DRIPLEAF:
+            case BIG_DRIPLEAF_STEM:
             case BIRCH_FENCE:
             case BIRCH_FENCE_GATE:
             case BIRCH_LEAVES:
@@ -5202,6 +6742,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case BOOKSHELF:
             case BROWN_CARPET:
             case BROWN_WOOL:
+            case CAVE_VINES:
+            case CAVE_VINES_PLANT:
             case COAL_BLOCK:
             case COMPOSTER:
             case CORNFLOWER:
@@ -5219,11 +6761,15 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case DEAD_BUSH:
             case DRIED_KELP_BLOCK:
             case FERN:
+            case FLOWERING_AZALEA:
+            case FLOWERING_AZALEA_LEAVES:
+            case GLOW_LICHEN:
             case GRASS:
             case GRAY_CARPET:
             case GRAY_WOOL:
             case GREEN_CARPET:
             case GREEN_WOOL:
+            case HANGING_ROOTS:
             case HAY_BLOCK:
             case JUNGLE_FENCE:
             case JUNGLE_FENCE_GATE:
@@ -5269,6 +6815,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case RED_WOOL:
             case ROSE_BUSH:
             case SCAFFOLDING:
+            case SMALL_DRIPLEAF:
+            case SPORE_BLOSSOM:
             case SPRUCE_FENCE:
             case SPRUCE_FENCE_GATE:
             case SPRUCE_LEAVES:
@@ -5368,6 +6916,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ACACIA_STAIRS:
             case ACACIA_TRAPDOOR:
             case ACACIA_WOOD:
+            case AZALEA:
             case BAMBOO:
             case BARREL:
             case BIRCH_BOAT:
@@ -5427,6 +6976,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case DRIED_KELP_BLOCK:
             case FISHING_ROD:
             case FLETCHING_TABLE:
+            case FLOWERING_AZALEA:
             case GRAY_BANNER:
             case GRAY_CARPET:
             case GRAY_WOOL:
@@ -5617,6 +7167,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ACACIA_LOG:
             case ACACIA_PLANKS:
             case ACACIA_WOOD:
+            case AMETHYST_BLOCK:
             case ANCIENT_DEBRIS:
             case ANDESITE:
             case BARREL:
@@ -5655,9 +7206,12 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case BROWN_TERRACOTTA:
             case BROWN_WOOL:
             case BUBBLE_CORAL_BLOCK:
+            case BUDDING_AMETHYST:
+            case CALCITE:
             case CARTOGRAPHY_TABLE:
             case CARVED_PUMPKIN:
             case CHAIN_COMMAND_BLOCK:
+            case CHISELED_DEEPSLATE:
             case CHISELED_NETHER_BRICKS:
             case CHISELED_POLISHED_BLACKSTONE:
             case CHISELED_QUARTZ_BLOCK:
@@ -5668,8 +7222,13 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case COAL_BLOCK:
             case COAL_ORE:
             case COARSE_DIRT:
+            case COBBLED_DEEPSLATE:
             case COBBLESTONE:
             case COMMAND_BLOCK:
+            case COPPER_BLOCK:
+            case COPPER_ORE:
+            case CRACKED_DEEPSLATE_BRICKS:
+            case CRACKED_DEEPSLATE_TILES:
             case CRACKED_NETHER_BRICKS:
             case CRACKED_POLISHED_BLACKSTONE_BRICKS:
             case CRACKED_STONE_BRICKS:
@@ -5679,6 +7238,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case CRIMSON_PLANKS:
             case CRIMSON_STEM:
             case CRYING_OBSIDIAN:
+            case CUT_COPPER:
             case CUT_RED_SANDSTONE:
             case CUT_SANDSTONE:
             case CYAN_CONCRETE:
@@ -5696,17 +7256,31 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case DEAD_FIRE_CORAL_BLOCK:
             case DEAD_HORN_CORAL_BLOCK:
             case DEAD_TUBE_CORAL_BLOCK:
+            case DEEPSLATE:
+            case DEEPSLATE_BRICKS:
+            case DEEPSLATE_COAL_ORE:
+            case DEEPSLATE_COPPER_ORE:
+            case DEEPSLATE_DIAMOND_ORE:
+            case DEEPSLATE_EMERALD_ORE:
+            case DEEPSLATE_GOLD_ORE:
+            case DEEPSLATE_IRON_ORE:
+            case DEEPSLATE_LAPIS_ORE:
+            case DEEPSLATE_REDSTONE_ORE:
+            case DEEPSLATE_TILES:
             case DIAMOND_BLOCK:
             case DIAMOND_ORE:
             case DIORITE:
             case DIRT:
             case DISPENSER:
             case DRIED_KELP_BLOCK:
+            case DRIPSTONE_BLOCK:
             case DROPPER:
             case EMERALD_BLOCK:
             case EMERALD_ORE:
             case END_STONE:
             case END_STONE_BRICKS:
+            case EXPOSED_COPPER:
+            case EXPOSED_CUT_COPPER:
             case FIRE_CORAL_BLOCK:
             case FLETCHING_TABLE:
             case FURNACE:
@@ -5734,6 +7308,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case INFESTED_CHISELED_STONE_BRICKS:
             case INFESTED_COBBLESTONE:
             case INFESTED_CRACKED_STONE_BRICKS:
+            case INFESTED_DEEPSLATE:
             case INFESTED_MOSSY_STONE_BRICKS:
             case INFESTED_STONE:
             case INFESTED_STONE_BRICKS:
@@ -5777,6 +7352,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case MELON:
             case MOSSY_COBBLESTONE:
             case MOSSY_STONE_BRICKS:
+            case MOSS_BLOCK:
             case MUSHROOM_STEM:
             case MYCELIUM:
             case NETHERITE_BLOCK:
@@ -5796,6 +7372,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ORANGE_SHULKER_BOX:
             case ORANGE_TERRACOTTA:
             case ORANGE_WOOL:
+            case OXIDIZED_COPPER:
+            case OXIDIZED_CUT_COPPER:
             case PACKED_ICE:
             case PINK_CONCRETE:
             case PINK_CONCRETE_POWDER:
@@ -5808,6 +7386,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POLISHED_BASALT:
             case POLISHED_BLACKSTONE:
             case POLISHED_BLACKSTONE_BRICKS:
+            case POLISHED_DEEPSLATE:
             case POLISHED_DIORITE:
             case POLISHED_GRANITE:
             case PRISMARINE:
@@ -5824,6 +7403,9 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case QUARTZ_BLOCK:
             case QUARTZ_BRICKS:
             case QUARTZ_PILLAR:
+            case RAW_COPPER_BLOCK:
+            case RAW_GOLD_BLOCK:
+            case RAW_IRON_BLOCK:
             case REDSTONE_LAMP:
             case REDSTONE_ORE:
             case RED_CONCRETE:
@@ -5838,6 +7420,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case RED_WOOL:
             case REPEATING_COMMAND_BLOCK:
             case RESPAWN_ANCHOR:
+            case ROOTED_DIRT:
             case SAND:
             case SANDSTONE:
             case SHROOMLIGHT:
@@ -5845,6 +7428,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case SLIME_BLOCK:
             case SMITHING_TABLE:
             case SMOKER:
+            case SMOOTH_BASALT:
             case SMOOTH_QUARTZ:
             case SMOOTH_RED_SANDSTONE:
             case SMOOTH_SANDSTONE:
@@ -5879,11 +7463,22 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case TARGET:
             case TERRACOTTA:
             case TUBE_CORAL_BLOCK:
+            case TUFF:
             case WARPED_HYPHAE:
             case WARPED_NYLIUM:
             case WARPED_PLANKS:
             case WARPED_STEM:
             case WARPED_WART_BLOCK:
+            case WAXED_COPPER_BLOCK:
+            case WAXED_CUT_COPPER:
+            case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER:
+            case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER:
+            case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER:
+            case WEATHERED_COPPER:
+            case WEATHERED_CUT_COPPER:
             case WET_SPONGE:
             case WHITE_CONCRETE:
             case WHITE_CONCRETE_POWDER:
@@ -6053,8 +7648,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @return true if this material is an item
      */
     public boolean isItem() {
-        if (isModded()) {
-            return moddedData.isItem();
+		 if (isModded()) {
+            return moddedData.isItem();  // CARDBOARD
         }
         switch (this) {
             //<editor-fold defaultstate="collapsed" desc="isItem">
@@ -6063,18 +7658,26 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ATTACHED_PUMPKIN_STEM:
             case BAMBOO_SAPLING:
             case BEETROOTS:
+            case BIG_DRIPLEAF_STEM:
             case BIRCH_WALL_SIGN:
+            case BLACK_CANDLE_CAKE:
             case BLACK_WALL_BANNER:
+            case BLUE_CANDLE_CAKE:
             case BLUE_WALL_BANNER:
             case BRAIN_CORAL_WALL_FAN:
+            case BROWN_CANDLE_CAKE:
             case BROWN_WALL_BANNER:
             case BUBBLE_COLUMN:
             case BUBBLE_CORAL_WALL_FAN:
+            case CANDLE_CAKE:
             case CARROTS:
             case CAVE_AIR:
+            case CAVE_VINES:
+            case CAVE_VINES_PLANT:
             case COCOA:
             case CREEPER_WALL_HEAD:
             case CRIMSON_WALL_SIGN:
+            case CYAN_CANDLE_CAKE:
             case CYAN_WALL_BANNER:
             case DARK_OAK_WALL_SIGN:
             case DEAD_BRAIN_CORAL_WALL_FAN:
@@ -6088,27 +7691,37 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case FIRE:
             case FIRE_CORAL_WALL_FAN:
             case FROSTED_ICE:
+            case GRAY_CANDLE_CAKE:
             case GRAY_WALL_BANNER:
+            case GREEN_CANDLE_CAKE:
             case GREEN_WALL_BANNER:
             case HORN_CORAL_WALL_FAN:
             case JUNGLE_WALL_SIGN:
             case KELP_PLANT:
             case LAVA:
+            case LAVA_CAULDRON:
+            case LIGHT_BLUE_CANDLE_CAKE:
             case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_GRAY_CANDLE_CAKE:
             case LIGHT_GRAY_WALL_BANNER:
+            case LIME_CANDLE_CAKE:
             case LIME_WALL_BANNER:
+            case MAGENTA_CANDLE_CAKE:
             case MAGENTA_WALL_BANNER:
             case MELON_STEM:
             case MOVING_PISTON:
             case NETHER_PORTAL:
             case OAK_WALL_SIGN:
+            case ORANGE_CANDLE_CAKE:
             case ORANGE_WALL_BANNER:
+            case PINK_CANDLE_CAKE:
             case PINK_WALL_BANNER:
             case PISTON_HEAD:
             case PLAYER_WALL_HEAD:
             case POTATOES:
             case POTTED_ACACIA_SAPLING:
             case POTTED_ALLIUM:
+            case POTTED_AZALEA_BUSH:
             case POTTED_AZURE_BLUET:
             case POTTED_BAMBOO:
             case POTTED_BIRCH_SAPLING:
@@ -6122,6 +7735,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POTTED_DARK_OAK_SAPLING:
             case POTTED_DEAD_BUSH:
             case POTTED_FERN:
+            case POTTED_FLOWERING_AZALEA_BUSH:
             case POTTED_JUNGLE_SAPLING:
             case POTTED_LILY_OF_THE_VALLEY:
             case POTTED_OAK_SAPLING:
@@ -6136,10 +7750,14 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POTTED_WARPED_ROOTS:
             case POTTED_WHITE_TULIP:
             case POTTED_WITHER_ROSE:
+            case POWDER_SNOW:
+            case POWDER_SNOW_CAULDRON:
             case PUMPKIN_STEM:
+            case PURPLE_CANDLE_CAKE:
             case PURPLE_WALL_BANNER:
             case REDSTONE_WALL_TORCH:
             case REDSTONE_WIRE:
+            case RED_CANDLE_CAKE:
             case RED_WALL_BANNER:
             case SKELETON_WALL_SKULL:
             case SOUL_FIRE:
@@ -6154,9 +7772,12 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case WALL_TORCH:
             case WARPED_WALL_SIGN:
             case WATER:
+            case WATER_CAULDRON:
             case WEEPING_VINES_PLANT:
+            case WHITE_CANDLE_CAKE:
             case WHITE_WALL_BANNER:
             case WITHER_SKELETON_WALL_SKULL:
+            case YELLOW_CANDLE_CAKE:
             case YELLOW_WALL_BANNER:
             case ZOMBIE_WALL_HEAD:
             // ----- Legacy Separator -----
@@ -6263,21 +7884,32 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case BIRCH_WALL_SIGN:
             case BLACKSTONE_STAIRS:
             case BLACK_BED:
+            case BLACK_CANDLE:
+            case BLACK_CANDLE_CAKE:
             case BLACK_SHULKER_BOX:
             case BLAST_FURNACE:
             case BLUE_BED:
+            case BLUE_CANDLE:
+            case BLUE_CANDLE_CAKE:
             case BLUE_SHULKER_BOX:
             case BREWING_STAND:
             case BRICK_STAIRS:
             case BROWN_BED:
+            case BROWN_CANDLE:
+            case BROWN_CANDLE_CAKE:
             case BROWN_SHULKER_BOX:
             case CAKE:
             case CAMPFIRE:
+            case CANDLE:
+            case CANDLE_CAKE:
             case CARTOGRAPHY_TABLE:
             case CAULDRON:
+            case CAVE_VINES:
+            case CAVE_VINES_PLANT:
             case CHAIN_COMMAND_BLOCK:
             case CHEST:
             case CHIPPED_ANVIL:
+            case COBBLED_DEEPSLATE_STAIRS:
             case COBBLESTONE_STAIRS:
             case COMMAND_BLOCK:
             case COMPARATOR:
@@ -6291,7 +7923,10 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case CRIMSON_STAIRS:
             case CRIMSON_TRAPDOOR:
             case CRIMSON_WALL_SIGN:
+            case CUT_COPPER_STAIRS:
             case CYAN_BED:
+            case CYAN_CANDLE:
+            case CYAN_CANDLE_CAKE:
             case CYAN_SHULKER_BOX:
             case DAMAGED_ANVIL:
             case DARK_OAK_BUTTON:
@@ -6304,6 +7939,9 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case DARK_OAK_WALL_SIGN:
             case DARK_PRISMARINE_STAIRS:
             case DAYLIGHT_DETECTOR:
+            case DEEPSLATE_BRICK_STAIRS:
+            case DEEPSLATE_REDSTONE_ORE:
+            case DEEPSLATE_TILE_STAIRS:
             case DIORITE_STAIRS:
             case DISPENSER:
             case DRAGON_EGG:
@@ -6311,13 +7949,18 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case ENCHANTING_TABLE:
             case ENDER_CHEST:
             case END_STONE_BRICK_STAIRS:
+            case EXPOSED_CUT_COPPER_STAIRS:
             case FLETCHING_TABLE:
             case FLOWER_POT:
             case FURNACE:
             case GRANITE_STAIRS:
             case GRAY_BED:
+            case GRAY_CANDLE:
+            case GRAY_CANDLE_CAKE:
             case GRAY_SHULKER_BOX:
             case GREEN_BED:
+            case GREEN_CANDLE:
+            case GREEN_CANDLE_CAKE:
             case GREEN_SHULKER_BOX:
             case GRINDSTONE:
             case HOPPER:
@@ -6333,16 +7976,26 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case JUNGLE_STAIRS:
             case JUNGLE_TRAPDOOR:
             case JUNGLE_WALL_SIGN:
+            case LAVA_CAULDRON:
             case LECTERN:
             case LEVER:
+            case LIGHT:
             case LIGHT_BLUE_BED:
+            case LIGHT_BLUE_CANDLE:
+            case LIGHT_BLUE_CANDLE_CAKE:
             case LIGHT_BLUE_SHULKER_BOX:
             case LIGHT_GRAY_BED:
+            case LIGHT_GRAY_CANDLE:
+            case LIGHT_GRAY_CANDLE_CAKE:
             case LIGHT_GRAY_SHULKER_BOX:
             case LIME_BED:
+            case LIME_CANDLE:
+            case LIME_CANDLE_CAKE:
             case LIME_SHULKER_BOX:
             case LOOM:
             case MAGENTA_BED:
+            case MAGENTA_CANDLE:
+            case MAGENTA_CANDLE_CAKE:
             case MAGENTA_SHULKER_BOX:
             case MOSSY_COBBLESTONE_STAIRS:
             case MOSSY_STONE_BRICK_STAIRS:
@@ -6359,17 +8012,24 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case OAK_TRAPDOOR:
             case OAK_WALL_SIGN:
             case ORANGE_BED:
+            case ORANGE_CANDLE:
+            case ORANGE_CANDLE_CAKE:
             case ORANGE_SHULKER_BOX:
+            case OXIDIZED_CUT_COPPER_STAIRS:
             case PINK_BED:
+            case PINK_CANDLE:
+            case PINK_CANDLE_CAKE:
             case PINK_SHULKER_BOX:
             case POLISHED_ANDESITE_STAIRS:
             case POLISHED_BLACKSTONE_BRICK_STAIRS:
             case POLISHED_BLACKSTONE_BUTTON:
             case POLISHED_BLACKSTONE_STAIRS:
+            case POLISHED_DEEPSLATE_STAIRS:
             case POLISHED_DIORITE_STAIRS:
             case POLISHED_GRANITE_STAIRS:
             case POTTED_ACACIA_SAPLING:
             case POTTED_ALLIUM:
+            case POTTED_AZALEA_BUSH:
             case POTTED_AZURE_BLUET:
             case POTTED_BAMBOO:
             case POTTED_BIRCH_SAPLING:
@@ -6383,6 +8043,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POTTED_DARK_OAK_SAPLING:
             case POTTED_DEAD_BUSH:
             case POTTED_FERN:
+            case POTTED_FLOWERING_AZALEA_BUSH:
             case POTTED_JUNGLE_SAPLING:
             case POTTED_LILY_OF_THE_VALLEY:
             case POTTED_OAK_SAPLING:
@@ -6397,16 +8058,21 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case POTTED_WARPED_ROOTS:
             case POTTED_WHITE_TULIP:
             case POTTED_WITHER_ROSE:
+            case POWDER_SNOW_CAULDRON:
             case PRISMARINE_BRICK_STAIRS:
             case PRISMARINE_STAIRS:
             case PUMPKIN:
             case PURPLE_BED:
+            case PURPLE_CANDLE:
+            case PURPLE_CANDLE_CAKE:
             case PURPLE_SHULKER_BOX:
             case PURPUR_STAIRS:
             case QUARTZ_STAIRS:
             case REDSTONE_ORE:
             case REDSTONE_WIRE:
             case RED_BED:
+            case RED_CANDLE:
+            case RED_CANDLE_CAKE:
             case RED_NETHER_BRICK_STAIRS:
             case RED_SANDSTONE_STAIRS:
             case RED_SHULKER_BOX:
@@ -6445,9 +8111,19 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
             case WARPED_STAIRS:
             case WARPED_TRAPDOOR:
             case WARPED_WALL_SIGN:
+            case WATER_CAULDRON:
+            case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_CUT_COPPER_STAIRS:
             case WHITE_BED:
+            case WHITE_CANDLE:
+            case WHITE_CANDLE_CAKE:
             case WHITE_SHULKER_BOX:
             case YELLOW_BED:
+            case YELLOW_CANDLE:
+            case YELLOW_CANDLE_CAKE:
             case YELLOW_SHULKER_BOX:
                 // </editor-fold>
                 return true;
@@ -6466,7 +8142,792 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @return the hardness of that material.
      */
     public float getHardness() {
-        return org.cardboardpowered.impl.MaterialHelper.getHardness(this);
+        Validate.isTrue(isBlock(), "The Material is not a block!");
+        switch (this) {
+            // <editor-fold defaultstate="collapsed" desc="getBlockHardness">
+            case BARRIER:
+            case BEDROCK:
+            case CHAIN_COMMAND_BLOCK:
+            case COMMAND_BLOCK:
+            case END_GATEWAY:
+            case END_PORTAL:
+            case END_PORTAL_FRAME:
+            case JIGSAW:
+            case LIGHT:
+            case MOVING_PISTON:
+            case NETHER_PORTAL:
+            case REPEATING_COMMAND_BLOCK:
+            case STRUCTURE_BLOCK:
+                return -1.0F;
+            case BIG_DRIPLEAF:
+            case BIG_DRIPLEAF_STEM:
+            case BLACK_CANDLE:
+            case BLACK_CARPET:
+            case BLUE_CANDLE:
+            case BLUE_CARPET:
+            case BROWN_CANDLE:
+            case BROWN_CARPET:
+            case CANDLE:
+            case CYAN_CANDLE:
+            case CYAN_CARPET:
+            case GRAY_CANDLE:
+            case GRAY_CARPET:
+            case GREEN_CANDLE:
+            case GREEN_CARPET:
+            case LIGHT_BLUE_CANDLE:
+            case LIGHT_BLUE_CARPET:
+            case LIGHT_GRAY_CANDLE:
+            case LIGHT_GRAY_CARPET:
+            case LIME_CANDLE:
+            case LIME_CARPET:
+            case MAGENTA_CANDLE:
+            case MAGENTA_CARPET:
+            case MOSS_BLOCK:
+            case MOSS_CARPET:
+            case ORANGE_CANDLE:
+            case ORANGE_CARPET:
+            case PINK_CANDLE:
+            case PINK_CARPET:
+            case PURPLE_CANDLE:
+            case PURPLE_CARPET:
+            case RED_CANDLE:
+            case RED_CARPET:
+            case SNOW:
+            case WHITE_CANDLE:
+            case WHITE_CARPET:
+            case YELLOW_CANDLE:
+            case YELLOW_CARPET:
+                return 0.1F;
+            case ACACIA_LEAVES:
+            case AZALEA_LEAVES:
+            case BIRCH_LEAVES:
+            case BLACK_BED:
+            case BLUE_BED:
+            case BROWN_BED:
+            case BROWN_MUSHROOM_BLOCK:
+            case COCOA:
+            case CYAN_BED:
+            case DARK_OAK_LEAVES:
+            case DAYLIGHT_DETECTOR:
+            case FLOWERING_AZALEA_LEAVES:
+            case GLOW_LICHEN:
+            case GRAY_BED:
+            case GREEN_BED:
+            case JUNGLE_LEAVES:
+            case LIGHT_BLUE_BED:
+            case LIGHT_GRAY_BED:
+            case LIME_BED:
+            case MAGENTA_BED:
+            case MUSHROOM_STEM:
+            case OAK_LEAVES:
+            case ORANGE_BED:
+            case PINK_BED:
+            case PURPLE_BED:
+            case RED_BED:
+            case RED_MUSHROOM_BLOCK:
+            case SNOW_BLOCK:
+            case SPRUCE_LEAVES:
+            case VINE:
+            case WHITE_BED:
+            case YELLOW_BED:
+                return 0.2F;
+            case POWDER_SNOW:
+                return 0.25F;
+            case BEE_NEST:
+            case BLACK_STAINED_GLASS:
+            case BLACK_STAINED_GLASS_PANE:
+            case BLUE_STAINED_GLASS:
+            case BLUE_STAINED_GLASS_PANE:
+            case BROWN_STAINED_GLASS:
+            case BROWN_STAINED_GLASS_PANE:
+            case CYAN_STAINED_GLASS:
+            case CYAN_STAINED_GLASS_PANE:
+            case GLASS:
+            case GLASS_PANE:
+            case GLOWSTONE:
+            case GRAY_STAINED_GLASS:
+            case GRAY_STAINED_GLASS_PANE:
+            case GREEN_STAINED_GLASS:
+            case GREEN_STAINED_GLASS_PANE:
+            case LIGHT_BLUE_STAINED_GLASS:
+            case LIGHT_BLUE_STAINED_GLASS_PANE:
+            case LIGHT_GRAY_STAINED_GLASS:
+            case LIGHT_GRAY_STAINED_GLASS_PANE:
+            case LIME_STAINED_GLASS:
+            case LIME_STAINED_GLASS_PANE:
+            case MAGENTA_STAINED_GLASS:
+            case MAGENTA_STAINED_GLASS_PANE:
+            case ORANGE_STAINED_GLASS:
+            case ORANGE_STAINED_GLASS_PANE:
+            case PINK_STAINED_GLASS:
+            case PINK_STAINED_GLASS_PANE:
+            case PURPLE_STAINED_GLASS:
+            case PURPLE_STAINED_GLASS_PANE:
+            case REDSTONE_LAMP:
+            case RED_STAINED_GLASS:
+            case RED_STAINED_GLASS_PANE:
+            case SEA_LANTERN:
+            case TINTED_GLASS:
+            case WHITE_STAINED_GLASS:
+            case WHITE_STAINED_GLASS_PANE:
+            case YELLOW_STAINED_GLASS:
+            case YELLOW_STAINED_GLASS_PANE:
+                return 0.3F;
+            case CACTUS:
+            case CHORUS_FLOWER:
+            case CHORUS_PLANT:
+            case CRIMSON_NYLIUM:
+            case LADDER:
+            case NETHERRACK:
+            case WARPED_NYLIUM:
+                return 0.4F;
+            case ACACIA_BUTTON:
+            case ACACIA_PRESSURE_PLATE:
+            case BIRCH_BUTTON:
+            case BIRCH_PRESSURE_PLATE:
+            case BLACK_CANDLE_CAKE:
+            case BLACK_CONCRETE_POWDER:
+            case BLUE_CANDLE_CAKE:
+            case BLUE_CONCRETE_POWDER:
+            case BREWING_STAND:
+            case BROWN_CANDLE_CAKE:
+            case BROWN_CONCRETE_POWDER:
+            case CAKE:
+            case CANDLE_CAKE:
+            case COARSE_DIRT:
+            case CRIMSON_BUTTON:
+            case CRIMSON_PRESSURE_PLATE:
+            case CYAN_CANDLE_CAKE:
+            case CYAN_CONCRETE_POWDER:
+            case DARK_OAK_BUTTON:
+            case DARK_OAK_PRESSURE_PLATE:
+            case DIRT:
+            case DRIED_KELP_BLOCK:
+            case FROSTED_ICE:
+            case GRAY_CANDLE_CAKE:
+            case GRAY_CONCRETE_POWDER:
+            case GREEN_CANDLE_CAKE:
+            case GREEN_CONCRETE_POWDER:
+            case HAY_BLOCK:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case ICE:
+            case JUNGLE_BUTTON:
+            case JUNGLE_PRESSURE_PLATE:
+            case LEVER:
+            case LIGHT_BLUE_CANDLE_CAKE:
+            case LIGHT_BLUE_CONCRETE_POWDER:
+            case LIGHT_GRAY_CANDLE_CAKE:
+            case LIGHT_GRAY_CONCRETE_POWDER:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case LIME_CANDLE_CAKE:
+            case LIME_CONCRETE_POWDER:
+            case MAGENTA_CANDLE_CAKE:
+            case MAGENTA_CONCRETE_POWDER:
+            case MAGMA_BLOCK:
+            case OAK_BUTTON:
+            case OAK_PRESSURE_PLATE:
+            case ORANGE_CANDLE_CAKE:
+            case ORANGE_CONCRETE_POWDER:
+            case PACKED_ICE:
+            case PINK_CANDLE_CAKE:
+            case PINK_CONCRETE_POWDER:
+            case PODZOL:
+            case POLISHED_BLACKSTONE_BUTTON:
+            case POLISHED_BLACKSTONE_PRESSURE_PLATE:
+            case PURPLE_CANDLE_CAKE:
+            case PURPLE_CONCRETE_POWDER:
+            case RED_CANDLE_CAKE:
+            case RED_CONCRETE_POWDER:
+            case RED_SAND:
+            case ROOTED_DIRT:
+            case SAND:
+            case SOUL_SAND:
+            case SOUL_SOIL:
+            case SPRUCE_BUTTON:
+            case SPRUCE_PRESSURE_PLATE:
+            case STONE_BUTTON:
+            case STONE_PRESSURE_PLATE:
+            case TARGET:
+            case TURTLE_EGG:
+            case WARPED_BUTTON:
+            case WARPED_PRESSURE_PLATE:
+            case WHITE_CANDLE_CAKE:
+            case WHITE_CONCRETE_POWDER:
+            case YELLOW_CANDLE_CAKE:
+            case YELLOW_CONCRETE_POWDER:
+                return 0.5F;
+            case BEEHIVE:
+            case CLAY:
+            case COMPOSTER:
+            case FARMLAND:
+            case GRASS_BLOCK:
+            case GRAVEL:
+            case HONEYCOMB_BLOCK:
+            case MYCELIUM:
+            case SPONGE:
+            case WET_SPONGE:
+                return 0.6F;
+            case DIRT_PATH:
+                return 0.65F;
+            case ACTIVATOR_RAIL:
+            case DETECTOR_RAIL:
+            case POWERED_RAIL:
+            case RAIL:
+                return 0.7F;
+            case CALCITE:
+            case INFESTED_CHISELED_STONE_BRICKS:
+            case INFESTED_CRACKED_STONE_BRICKS:
+            case INFESTED_MOSSY_STONE_BRICKS:
+            case INFESTED_STONE:
+            case INFESTED_STONE_BRICKS:
+                return 0.75F;
+            case BLACK_WOOL:
+            case BLUE_WOOL:
+            case BROWN_WOOL:
+            case CHISELED_QUARTZ_BLOCK:
+            case CHISELED_RED_SANDSTONE:
+            case CHISELED_SANDSTONE:
+            case CUT_RED_SANDSTONE:
+            case CUT_SANDSTONE:
+            case CYAN_WOOL:
+            case GRAY_WOOL:
+            case GREEN_WOOL:
+            case LIGHT_BLUE_WOOL:
+            case LIGHT_GRAY_WOOL:
+            case LIME_WOOL:
+            case MAGENTA_WOOL:
+            case NOTE_BLOCK:
+            case ORANGE_WOOL:
+            case PINK_WOOL:
+            case PURPLE_WOOL:
+            case QUARTZ_BLOCK:
+            case QUARTZ_BRICKS:
+            case QUARTZ_PILLAR:
+            case QUARTZ_STAIRS:
+            case RED_SANDSTONE:
+            case RED_SANDSTONE_STAIRS:
+            case RED_SANDSTONE_WALL:
+            case RED_WOOL:
+            case SANDSTONE:
+            case SANDSTONE_STAIRS:
+            case SANDSTONE_WALL:
+            case WHITE_WOOL:
+            case YELLOW_WOOL:
+                return 0.8F;
+            case ACACIA_SIGN:
+            case ACACIA_WALL_SIGN:
+            case BAMBOO:
+            case BAMBOO_SAPLING:
+            case BIRCH_SIGN:
+            case BIRCH_WALL_SIGN:
+            case BLACK_BANNER:
+            case BLACK_WALL_BANNER:
+            case BLUE_BANNER:
+            case BLUE_WALL_BANNER:
+            case BROWN_BANNER:
+            case BROWN_WALL_BANNER:
+            case CARVED_PUMPKIN:
+            case CREEPER_HEAD:
+            case CREEPER_WALL_HEAD:
+            case CRIMSON_SIGN:
+            case CRIMSON_WALL_SIGN:
+            case CYAN_BANNER:
+            case CYAN_WALL_BANNER:
+            case DARK_OAK_SIGN:
+            case DARK_OAK_WALL_SIGN:
+            case DRAGON_HEAD:
+            case DRAGON_WALL_HEAD:
+            case GRAY_BANNER:
+            case GRAY_WALL_BANNER:
+            case GREEN_BANNER:
+            case GREEN_WALL_BANNER:
+            case INFESTED_COBBLESTONE:
+            case JACK_O_LANTERN:
+            case JUNGLE_SIGN:
+            case JUNGLE_WALL_SIGN:
+            case LIGHT_BLUE_BANNER:
+            case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_GRAY_BANNER:
+            case LIGHT_GRAY_WALL_BANNER:
+            case LIME_BANNER:
+            case LIME_WALL_BANNER:
+            case MAGENTA_BANNER:
+            case MAGENTA_WALL_BANNER:
+            case MELON:
+            case NETHER_WART_BLOCK:
+            case OAK_SIGN:
+            case OAK_WALL_SIGN:
+            case ORANGE_BANNER:
+            case ORANGE_WALL_BANNER:
+            case PINK_BANNER:
+            case PINK_WALL_BANNER:
+            case PLAYER_HEAD:
+            case PLAYER_WALL_HEAD:
+            case PUMPKIN:
+            case PURPLE_BANNER:
+            case PURPLE_WALL_BANNER:
+            case RED_BANNER:
+            case RED_WALL_BANNER:
+            case SHROOMLIGHT:
+            case SKELETON_SKULL:
+            case SKELETON_WALL_SKULL:
+            case SPRUCE_SIGN:
+            case SPRUCE_WALL_SIGN:
+            case WARPED_SIGN:
+            case WARPED_WALL_SIGN:
+            case WARPED_WART_BLOCK:
+            case WHITE_BANNER:
+            case WHITE_WALL_BANNER:
+            case WITHER_SKELETON_SKULL:
+            case WITHER_SKELETON_WALL_SKULL:
+            case YELLOW_BANNER:
+            case YELLOW_WALL_BANNER:
+            case ZOMBIE_HEAD:
+            case ZOMBIE_WALL_HEAD:
+                return 1.0F;
+            case BASALT:
+            case BLACK_TERRACOTTA:
+            case BLUE_TERRACOTTA:
+            case BROWN_TERRACOTTA:
+            case CYAN_TERRACOTTA:
+            case GRAY_TERRACOTTA:
+            case GREEN_TERRACOTTA:
+            case LIGHT_BLUE_TERRACOTTA:
+            case LIGHT_GRAY_TERRACOTTA:
+            case LIME_TERRACOTTA:
+            case MAGENTA_TERRACOTTA:
+            case ORANGE_TERRACOTTA:
+            case PINK_TERRACOTTA:
+            case POLISHED_BASALT:
+            case PURPLE_TERRACOTTA:
+            case RED_TERRACOTTA:
+            case SMOOTH_BASALT:
+            case TERRACOTTA:
+            case WHITE_TERRACOTTA:
+            case YELLOW_TERRACOTTA:
+                return 1.25F;
+            case BLACK_GLAZED_TERRACOTTA:
+            case BLUE_GLAZED_TERRACOTTA:
+            case BROWN_GLAZED_TERRACOTTA:
+            case CYAN_GLAZED_TERRACOTTA:
+            case GRAY_GLAZED_TERRACOTTA:
+            case GREEN_GLAZED_TERRACOTTA:
+            case LIGHT_BLUE_GLAZED_TERRACOTTA:
+            case LIGHT_GRAY_GLAZED_TERRACOTTA:
+            case LIME_GLAZED_TERRACOTTA:
+            case MAGENTA_GLAZED_TERRACOTTA:
+            case ORANGE_GLAZED_TERRACOTTA:
+            case PINK_GLAZED_TERRACOTTA:
+            case PURPLE_GLAZED_TERRACOTTA:
+            case RED_GLAZED_TERRACOTTA:
+            case WHITE_GLAZED_TERRACOTTA:
+            case YELLOW_GLAZED_TERRACOTTA:
+                return 1.4F;
+            case AMETHYST_BLOCK:
+            case AMETHYST_CLUSTER:
+            case ANDESITE:
+            case ANDESITE_SLAB:
+            case ANDESITE_STAIRS:
+            case ANDESITE_WALL:
+            case BLACKSTONE:
+            case BLACKSTONE_STAIRS:
+            case BLACKSTONE_WALL:
+            case BOOKSHELF:
+            case BRAIN_CORAL_BLOCK:
+            case BUBBLE_CORAL_BLOCK:
+            case BUDDING_AMETHYST:
+            case CHISELED_POLISHED_BLACKSTONE:
+            case CHISELED_STONE_BRICKS:
+            case CRACKED_POLISHED_BLACKSTONE_BRICKS:
+            case CRACKED_STONE_BRICKS:
+            case DARK_PRISMARINE:
+            case DARK_PRISMARINE_SLAB:
+            case DARK_PRISMARINE_STAIRS:
+            case DEAD_BRAIN_CORAL_BLOCK:
+            case DEAD_BUBBLE_CORAL_BLOCK:
+            case DEAD_FIRE_CORAL_BLOCK:
+            case DEAD_HORN_CORAL_BLOCK:
+            case DEAD_TUBE_CORAL_BLOCK:
+            case DIORITE:
+            case DIORITE_SLAB:
+            case DIORITE_STAIRS:
+            case DIORITE_WALL:
+            case DRIPSTONE_BLOCK:
+            case FIRE_CORAL_BLOCK:
+            case GILDED_BLACKSTONE:
+            case GRANITE:
+            case GRANITE_SLAB:
+            case GRANITE_STAIRS:
+            case GRANITE_WALL:
+            case HORN_CORAL_BLOCK:
+            case INFESTED_DEEPSLATE:
+            case LARGE_AMETHYST_BUD:
+            case MEDIUM_AMETHYST_BUD:
+            case MOSSY_STONE_BRICKS:
+            case MOSSY_STONE_BRICK_SLAB:
+            case MOSSY_STONE_BRICK_STAIRS:
+            case MOSSY_STONE_BRICK_WALL:
+            case PISTON:
+            case PISTON_HEAD:
+            case POINTED_DRIPSTONE:
+            case POLISHED_ANDESITE:
+            case POLISHED_ANDESITE_SLAB:
+            case POLISHED_ANDESITE_STAIRS:
+            case POLISHED_BLACKSTONE_BRICKS:
+            case POLISHED_BLACKSTONE_BRICK_STAIRS:
+            case POLISHED_BLACKSTONE_BRICK_WALL:
+            case POLISHED_DIORITE:
+            case POLISHED_DIORITE_SLAB:
+            case POLISHED_DIORITE_STAIRS:
+            case POLISHED_GRANITE:
+            case POLISHED_GRANITE_SLAB:
+            case POLISHED_GRANITE_STAIRS:
+            case PRISMARINE:
+            case PRISMARINE_BRICKS:
+            case PRISMARINE_BRICK_SLAB:
+            case PRISMARINE_BRICK_STAIRS:
+            case PRISMARINE_SLAB:
+            case PRISMARINE_STAIRS:
+            case PRISMARINE_WALL:
+            case PURPUR_BLOCK:
+            case PURPUR_PILLAR:
+            case PURPUR_STAIRS:
+            case SCULK_SENSOR:
+            case SMALL_AMETHYST_BUD:
+            case STICKY_PISTON:
+            case STONE:
+            case STONE_BRICKS:
+            case STONE_BRICK_STAIRS:
+            case STONE_BRICK_WALL:
+            case STONE_STAIRS:
+            case TUBE_CORAL_BLOCK:
+            case TUFF:
+                return 1.5F;
+            case BLACK_CONCRETE:
+            case BLUE_CONCRETE:
+            case BROWN_CONCRETE:
+            case CYAN_CONCRETE:
+            case GRAY_CONCRETE:
+            case GREEN_CONCRETE:
+            case LIGHT_BLUE_CONCRETE:
+            case LIGHT_GRAY_CONCRETE:
+            case LIME_CONCRETE:
+            case MAGENTA_CONCRETE:
+            case ORANGE_CONCRETE:
+            case PINK_CONCRETE:
+            case PURPLE_CONCRETE:
+            case RED_CONCRETE:
+            case WHITE_CONCRETE:
+            case YELLOW_CONCRETE:
+                return 1.8F;
+            case ACACIA_FENCE:
+            case ACACIA_FENCE_GATE:
+            case ACACIA_LOG:
+            case ACACIA_PLANKS:
+            case ACACIA_SLAB:
+            case ACACIA_STAIRS:
+            case ACACIA_WOOD:
+            case BIRCH_FENCE:
+            case BIRCH_FENCE_GATE:
+            case BIRCH_LOG:
+            case BIRCH_PLANKS:
+            case BIRCH_SLAB:
+            case BIRCH_STAIRS:
+            case BIRCH_WOOD:
+            case BLACKSTONE_SLAB:
+            case BLACK_SHULKER_BOX:
+            case BLUE_SHULKER_BOX:
+            case BONE_BLOCK:
+            case BRICKS:
+            case BRICK_SLAB:
+            case BRICK_STAIRS:
+            case BRICK_WALL:
+            case BROWN_SHULKER_BOX:
+            case CAMPFIRE:
+            case CAULDRON:
+            case CHISELED_NETHER_BRICKS:
+            case COBBLESTONE:
+            case COBBLESTONE_SLAB:
+            case COBBLESTONE_STAIRS:
+            case COBBLESTONE_WALL:
+            case CRACKED_NETHER_BRICKS:
+            case CRIMSON_FENCE:
+            case CRIMSON_FENCE_GATE:
+            case CRIMSON_HYPHAE:
+            case CRIMSON_PLANKS:
+            case CRIMSON_SLAB:
+            case CRIMSON_STAIRS:
+            case CRIMSON_STEM:
+            case CUT_RED_SANDSTONE_SLAB:
+            case CUT_SANDSTONE_SLAB:
+            case CYAN_SHULKER_BOX:
+            case DARK_OAK_FENCE:
+            case DARK_OAK_FENCE_GATE:
+            case DARK_OAK_LOG:
+            case DARK_OAK_PLANKS:
+            case DARK_OAK_SLAB:
+            case DARK_OAK_STAIRS:
+            case DARK_OAK_WOOD:
+            case GRAY_SHULKER_BOX:
+            case GREEN_SHULKER_BOX:
+            case GRINDSTONE:
+            case JUKEBOX:
+            case JUNGLE_FENCE:
+            case JUNGLE_FENCE_GATE:
+            case JUNGLE_LOG:
+            case JUNGLE_PLANKS:
+            case JUNGLE_SLAB:
+            case JUNGLE_STAIRS:
+            case JUNGLE_WOOD:
+            case LAVA_CAULDRON:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case LIME_SHULKER_BOX:
+            case MAGENTA_SHULKER_BOX:
+            case MOSSY_COBBLESTONE:
+            case MOSSY_COBBLESTONE_SLAB:
+            case MOSSY_COBBLESTONE_STAIRS:
+            case MOSSY_COBBLESTONE_WALL:
+            case NETHER_BRICKS:
+            case NETHER_BRICK_FENCE:
+            case NETHER_BRICK_SLAB:
+            case NETHER_BRICK_STAIRS:
+            case NETHER_BRICK_WALL:
+            case OAK_FENCE:
+            case OAK_FENCE_GATE:
+            case OAK_LOG:
+            case OAK_PLANKS:
+            case OAK_SLAB:
+            case OAK_STAIRS:
+            case OAK_WOOD:
+            case ORANGE_SHULKER_BOX:
+            case PETRIFIED_OAK_SLAB:
+            case PINK_SHULKER_BOX:
+            case POLISHED_BLACKSTONE:
+            case POLISHED_BLACKSTONE_BRICK_SLAB:
+            case POLISHED_BLACKSTONE_SLAB:
+            case POLISHED_BLACKSTONE_STAIRS:
+            case POLISHED_BLACKSTONE_WALL:
+            case POWDER_SNOW_CAULDRON:
+            case PURPLE_SHULKER_BOX:
+            case PURPUR_SLAB:
+            case QUARTZ_SLAB:
+            case RED_NETHER_BRICKS:
+            case RED_NETHER_BRICK_SLAB:
+            case RED_NETHER_BRICK_STAIRS:
+            case RED_NETHER_BRICK_WALL:
+            case RED_SANDSTONE_SLAB:
+            case RED_SHULKER_BOX:
+            case SANDSTONE_SLAB:
+            case SHULKER_BOX:
+            case SMOOTH_QUARTZ:
+            case SMOOTH_QUARTZ_SLAB:
+            case SMOOTH_QUARTZ_STAIRS:
+            case SMOOTH_RED_SANDSTONE:
+            case SMOOTH_RED_SANDSTONE_SLAB:
+            case SMOOTH_RED_SANDSTONE_STAIRS:
+            case SMOOTH_SANDSTONE:
+            case SMOOTH_SANDSTONE_SLAB:
+            case SMOOTH_SANDSTONE_STAIRS:
+            case SMOOTH_STONE:
+            case SMOOTH_STONE_SLAB:
+            case SOUL_CAMPFIRE:
+            case SPRUCE_FENCE:
+            case SPRUCE_FENCE_GATE:
+            case SPRUCE_LOG:
+            case SPRUCE_PLANKS:
+            case SPRUCE_SLAB:
+            case SPRUCE_STAIRS:
+            case SPRUCE_WOOD:
+            case STONE_BRICK_SLAB:
+            case STONE_SLAB:
+            case STRIPPED_ACACIA_LOG:
+            case STRIPPED_ACACIA_WOOD:
+            case STRIPPED_BIRCH_LOG:
+            case STRIPPED_BIRCH_WOOD:
+            case STRIPPED_CRIMSON_HYPHAE:
+            case STRIPPED_CRIMSON_STEM:
+            case STRIPPED_DARK_OAK_LOG:
+            case STRIPPED_DARK_OAK_WOOD:
+            case STRIPPED_JUNGLE_LOG:
+            case STRIPPED_JUNGLE_WOOD:
+            case STRIPPED_OAK_LOG:
+            case STRIPPED_OAK_WOOD:
+            case STRIPPED_SPRUCE_LOG:
+            case STRIPPED_SPRUCE_WOOD:
+            case STRIPPED_WARPED_HYPHAE:
+            case STRIPPED_WARPED_STEM:
+            case WARPED_FENCE:
+            case WARPED_FENCE_GATE:
+            case WARPED_HYPHAE:
+            case WARPED_PLANKS:
+            case WARPED_SLAB:
+            case WARPED_STAIRS:
+            case WARPED_STEM:
+            case WATER_CAULDRON:
+            case WHITE_SHULKER_BOX:
+            case YELLOW_SHULKER_BOX:
+                return 2.0F;
+            case BARREL:
+            case CARTOGRAPHY_TABLE:
+            case CHEST:
+            case CRAFTING_TABLE:
+            case FLETCHING_TABLE:
+            case LECTERN:
+            case LOOM:
+            case SMITHING_TABLE:
+            case TRAPPED_CHEST:
+                return 2.5F;
+            case BLUE_ICE:
+                return 2.8F;
+            case ACACIA_DOOR:
+            case ACACIA_TRAPDOOR:
+            case BEACON:
+            case BIRCH_DOOR:
+            case BIRCH_TRAPDOOR:
+            case COAL_ORE:
+            case CONDUIT:
+            case COPPER_BLOCK:
+            case COPPER_ORE:
+            case CRIMSON_DOOR:
+            case CRIMSON_TRAPDOOR:
+            case CUT_COPPER:
+            case CUT_COPPER_SLAB:
+            case CUT_COPPER_STAIRS:
+            case DARK_OAK_DOOR:
+            case DARK_OAK_TRAPDOOR:
+            case DEEPSLATE:
+            case DIAMOND_ORE:
+            case DRAGON_EGG:
+            case EMERALD_ORE:
+            case END_STONE:
+            case END_STONE_BRICKS:
+            case END_STONE_BRICK_SLAB:
+            case END_STONE_BRICK_STAIRS:
+            case END_STONE_BRICK_WALL:
+            case EXPOSED_COPPER:
+            case EXPOSED_CUT_COPPER:
+            case EXPOSED_CUT_COPPER_SLAB:
+            case EXPOSED_CUT_COPPER_STAIRS:
+            case GOLD_BLOCK:
+            case GOLD_ORE:
+            case HOPPER:
+            case IRON_ORE:
+            case JUNGLE_DOOR:
+            case JUNGLE_TRAPDOOR:
+            case LAPIS_BLOCK:
+            case LAPIS_ORE:
+            case LIGHTNING_ROD:
+            case NETHER_GOLD_ORE:
+            case NETHER_QUARTZ_ORE:
+            case OAK_DOOR:
+            case OAK_TRAPDOOR:
+            case OBSERVER:
+            case OXIDIZED_COPPER:
+            case OXIDIZED_CUT_COPPER:
+            case OXIDIZED_CUT_COPPER_SLAB:
+            case OXIDIZED_CUT_COPPER_STAIRS:
+            case REDSTONE_ORE:
+            case SPRUCE_DOOR:
+            case SPRUCE_TRAPDOOR:
+            case WARPED_DOOR:
+            case WARPED_TRAPDOOR:
+            case WAXED_COPPER_BLOCK:
+            case WAXED_CUT_COPPER:
+            case WAXED_CUT_COPPER_SLAB:
+            case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER_SLAB:
+            case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+            case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER_SLAB:
+            case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_COPPER:
+            case WEATHERED_CUT_COPPER:
+            case WEATHERED_CUT_COPPER_SLAB:
+            case WEATHERED_CUT_COPPER_STAIRS:
+                return 3.0F;
+            case BLAST_FURNACE:
+            case CHISELED_DEEPSLATE:
+            case COBBLED_DEEPSLATE:
+            case COBBLED_DEEPSLATE_SLAB:
+            case COBBLED_DEEPSLATE_STAIRS:
+            case COBBLED_DEEPSLATE_WALL:
+            case CRACKED_DEEPSLATE_BRICKS:
+            case CRACKED_DEEPSLATE_TILES:
+            case DEEPSLATE_BRICKS:
+            case DEEPSLATE_BRICK_SLAB:
+            case DEEPSLATE_BRICK_STAIRS:
+            case DEEPSLATE_BRICK_WALL:
+            case DEEPSLATE_TILES:
+            case DEEPSLATE_TILE_SLAB:
+            case DEEPSLATE_TILE_STAIRS:
+            case DEEPSLATE_TILE_WALL:
+            case DISPENSER:
+            case DROPPER:
+            case FURNACE:
+            case LANTERN:
+            case LODESTONE:
+            case POLISHED_DEEPSLATE:
+            case POLISHED_DEEPSLATE_SLAB:
+            case POLISHED_DEEPSLATE_STAIRS:
+            case POLISHED_DEEPSLATE_WALL:
+            case SMOKER:
+            case SOUL_LANTERN:
+            case STONECUTTER:
+                return 3.5F;
+            case COBWEB:
+                return 4.0F;
+            case DEEPSLATE_COAL_ORE:
+            case DEEPSLATE_COPPER_ORE:
+            case DEEPSLATE_DIAMOND_ORE:
+            case DEEPSLATE_EMERALD_ORE:
+            case DEEPSLATE_GOLD_ORE:
+            case DEEPSLATE_IRON_ORE:
+            case DEEPSLATE_LAPIS_ORE:
+            case DEEPSLATE_REDSTONE_ORE:
+                return 4.5F;
+            case ANVIL:
+            case BELL:
+            case CHAIN:
+            case CHIPPED_ANVIL:
+            case COAL_BLOCK:
+            case DAMAGED_ANVIL:
+            case DIAMOND_BLOCK:
+            case EMERALD_BLOCK:
+            case ENCHANTING_TABLE:
+            case IRON_BARS:
+            case IRON_BLOCK:
+            case IRON_DOOR:
+            case IRON_TRAPDOOR:
+            case RAW_COPPER_BLOCK:
+            case RAW_GOLD_BLOCK:
+            case RAW_IRON_BLOCK:
+            case REDSTONE_BLOCK:
+            case SPAWNER:
+                return 5.0F;
+            case ENDER_CHEST:
+                return 22.5F;
+            case ANCIENT_DEBRIS:
+                return 30.0F;
+            case CRYING_OBSIDIAN:
+            case NETHERITE_BLOCK:
+            case OBSIDIAN:
+            case RESPAWN_ANCHOR:
+                return 50.0F;
+            case LAVA:
+            case WATER:
+                return 100.0F;
+            default:
+                return 0F;
+            // </editor-fold>
+        }
     }
 
     /**
@@ -6480,7 +8941,822 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @return the blast resistance of that material.
      */
     public float getBlastResistance() {
-        return org.cardboardpowered.impl.MaterialHelper.getBlastResistance(this);
+        Validate.isTrue(isBlock(), "The Material is not a block!");
+        switch (this) {
+            // <editor-fold defaultstate="collapsed" desc="getBlastResistance">
+            case BIG_DRIPLEAF:
+            case BIG_DRIPLEAF_STEM:
+            case BLACK_CANDLE:
+            case BLACK_CARPET:
+            case BLUE_CANDLE:
+            case BLUE_CARPET:
+            case BROWN_CANDLE:
+            case BROWN_CARPET:
+            case CANDLE:
+            case CYAN_CANDLE:
+            case CYAN_CARPET:
+            case GRAY_CANDLE:
+            case GRAY_CARPET:
+            case GREEN_CANDLE:
+            case GREEN_CARPET:
+            case LIGHT_BLUE_CANDLE:
+            case LIGHT_BLUE_CARPET:
+            case LIGHT_GRAY_CANDLE:
+            case LIGHT_GRAY_CARPET:
+            case LIME_CANDLE:
+            case LIME_CARPET:
+            case MAGENTA_CANDLE:
+            case MAGENTA_CARPET:
+            case MOSS_BLOCK:
+            case MOSS_CARPET:
+            case ORANGE_CANDLE:
+            case ORANGE_CARPET:
+            case PINK_CANDLE:
+            case PINK_CARPET:
+            case PURPLE_CANDLE:
+            case PURPLE_CARPET:
+            case RED_CANDLE:
+            case RED_CARPET:
+            case SNOW:
+            case WHITE_CANDLE:
+            case WHITE_CARPET:
+            case YELLOW_CANDLE:
+            case YELLOW_CARPET:
+                return 0.1F;
+            case ACACIA_LEAVES:
+            case AZALEA_LEAVES:
+            case BIRCH_LEAVES:
+            case BLACK_BED:
+            case BLUE_BED:
+            case BROWN_BED:
+            case BROWN_MUSHROOM_BLOCK:
+            case CYAN_BED:
+            case DARK_OAK_LEAVES:
+            case DAYLIGHT_DETECTOR:
+            case FLOWERING_AZALEA_LEAVES:
+            case GLOW_LICHEN:
+            case GRAY_BED:
+            case GREEN_BED:
+            case JUNGLE_LEAVES:
+            case LIGHT_BLUE_BED:
+            case LIGHT_GRAY_BED:
+            case LIME_BED:
+            case MAGENTA_BED:
+            case MUSHROOM_STEM:
+            case OAK_LEAVES:
+            case ORANGE_BED:
+            case PINK_BED:
+            case PURPLE_BED:
+            case RED_BED:
+            case RED_MUSHROOM_BLOCK:
+            case SNOW_BLOCK:
+            case SPRUCE_LEAVES:
+            case VINE:
+            case WHITE_BED:
+            case YELLOW_BED:
+                return 0.2F;
+            case POWDER_SNOW:
+                return 0.25F;
+            case BEE_NEST:
+            case BLACK_STAINED_GLASS:
+            case BLACK_STAINED_GLASS_PANE:
+            case BLUE_STAINED_GLASS:
+            case BLUE_STAINED_GLASS_PANE:
+            case BROWN_STAINED_GLASS:
+            case BROWN_STAINED_GLASS_PANE:
+            case CYAN_STAINED_GLASS:
+            case CYAN_STAINED_GLASS_PANE:
+            case GLASS:
+            case GLASS_PANE:
+            case GLOWSTONE:
+            case GRAY_STAINED_GLASS:
+            case GRAY_STAINED_GLASS_PANE:
+            case GREEN_STAINED_GLASS:
+            case GREEN_STAINED_GLASS_PANE:
+            case LIGHT_BLUE_STAINED_GLASS:
+            case LIGHT_BLUE_STAINED_GLASS_PANE:
+            case LIGHT_GRAY_STAINED_GLASS:
+            case LIGHT_GRAY_STAINED_GLASS_PANE:
+            case LIME_STAINED_GLASS:
+            case LIME_STAINED_GLASS_PANE:
+            case MAGENTA_STAINED_GLASS:
+            case MAGENTA_STAINED_GLASS_PANE:
+            case ORANGE_STAINED_GLASS:
+            case ORANGE_STAINED_GLASS_PANE:
+            case PINK_STAINED_GLASS:
+            case PINK_STAINED_GLASS_PANE:
+            case PURPLE_STAINED_GLASS:
+            case PURPLE_STAINED_GLASS_PANE:
+            case REDSTONE_LAMP:
+            case RED_STAINED_GLASS:
+            case RED_STAINED_GLASS_PANE:
+            case SEA_LANTERN:
+            case TINTED_GLASS:
+            case WHITE_STAINED_GLASS:
+            case WHITE_STAINED_GLASS_PANE:
+            case YELLOW_STAINED_GLASS:
+            case YELLOW_STAINED_GLASS_PANE:
+                return 0.3F;
+            case CACTUS:
+            case CHORUS_FLOWER:
+            case CHORUS_PLANT:
+            case CRIMSON_NYLIUM:
+            case LADDER:
+            case NETHERRACK:
+            case WARPED_NYLIUM:
+                return 0.4F;
+            case ACACIA_BUTTON:
+            case ACACIA_PRESSURE_PLATE:
+            case BIRCH_BUTTON:
+            case BIRCH_PRESSURE_PLATE:
+            case BLACK_CANDLE_CAKE:
+            case BLACK_CONCRETE_POWDER:
+            case BLUE_CANDLE_CAKE:
+            case BLUE_CONCRETE_POWDER:
+            case BREWING_STAND:
+            case BROWN_CANDLE_CAKE:
+            case BROWN_CONCRETE_POWDER:
+            case CAKE:
+            case CANDLE_CAKE:
+            case COARSE_DIRT:
+            case CRIMSON_BUTTON:
+            case CRIMSON_PRESSURE_PLATE:
+            case CYAN_CANDLE_CAKE:
+            case CYAN_CONCRETE_POWDER:
+            case DARK_OAK_BUTTON:
+            case DARK_OAK_PRESSURE_PLATE:
+            case DIRT:
+            case FROSTED_ICE:
+            case GRAY_CANDLE_CAKE:
+            case GRAY_CONCRETE_POWDER:
+            case GREEN_CANDLE_CAKE:
+            case GREEN_CONCRETE_POWDER:
+            case HAY_BLOCK:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case ICE:
+            case JUNGLE_BUTTON:
+            case JUNGLE_PRESSURE_PLATE:
+            case LEVER:
+            case LIGHT_BLUE_CANDLE_CAKE:
+            case LIGHT_BLUE_CONCRETE_POWDER:
+            case LIGHT_GRAY_CANDLE_CAKE:
+            case LIGHT_GRAY_CONCRETE_POWDER:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case LIME_CANDLE_CAKE:
+            case LIME_CONCRETE_POWDER:
+            case MAGENTA_CANDLE_CAKE:
+            case MAGENTA_CONCRETE_POWDER:
+            case MAGMA_BLOCK:
+            case OAK_BUTTON:
+            case OAK_PRESSURE_PLATE:
+            case ORANGE_CANDLE_CAKE:
+            case ORANGE_CONCRETE_POWDER:
+            case PACKED_ICE:
+            case PINK_CANDLE_CAKE:
+            case PINK_CONCRETE_POWDER:
+            case PODZOL:
+            case POLISHED_BLACKSTONE_BUTTON:
+            case POLISHED_BLACKSTONE_PRESSURE_PLATE:
+            case PURPLE_CANDLE_CAKE:
+            case PURPLE_CONCRETE_POWDER:
+            case RED_CANDLE_CAKE:
+            case RED_CONCRETE_POWDER:
+            case RED_SAND:
+            case ROOTED_DIRT:
+            case SAND:
+            case SOUL_SAND:
+            case SOUL_SOIL:
+            case SPRUCE_BUTTON:
+            case SPRUCE_PRESSURE_PLATE:
+            case STONE_BUTTON:
+            case STONE_PRESSURE_PLATE:
+            case TARGET:
+            case TURTLE_EGG:
+            case WARPED_BUTTON:
+            case WARPED_PRESSURE_PLATE:
+            case WHITE_CANDLE_CAKE:
+            case WHITE_CONCRETE_POWDER:
+            case YELLOW_CANDLE_CAKE:
+            case YELLOW_CONCRETE_POWDER:
+                return 0.5F;
+            case BEEHIVE:
+            case CLAY:
+            case COMPOSTER:
+            case FARMLAND:
+            case GRASS_BLOCK:
+            case GRAVEL:
+            case HONEYCOMB_BLOCK:
+            case MYCELIUM:
+            case SPONGE:
+            case WET_SPONGE:
+                return 0.6F;
+            case DIRT_PATH:
+                return 0.65F;
+            case ACTIVATOR_RAIL:
+            case DETECTOR_RAIL:
+            case POWERED_RAIL:
+            case RAIL:
+                return 0.7F;
+            case CALCITE:
+            case INFESTED_CHISELED_STONE_BRICKS:
+            case INFESTED_COBBLESTONE:
+            case INFESTED_CRACKED_STONE_BRICKS:
+            case INFESTED_DEEPSLATE:
+            case INFESTED_MOSSY_STONE_BRICKS:
+            case INFESTED_STONE:
+            case INFESTED_STONE_BRICKS:
+                return 0.75F;
+            case BLACK_WOOL:
+            case BLUE_WOOL:
+            case BROWN_WOOL:
+            case CHISELED_QUARTZ_BLOCK:
+            case CHISELED_RED_SANDSTONE:
+            case CHISELED_SANDSTONE:
+            case CUT_RED_SANDSTONE:
+            case CUT_SANDSTONE:
+            case CYAN_WOOL:
+            case GRAY_WOOL:
+            case GREEN_WOOL:
+            case LIGHT_BLUE_WOOL:
+            case LIGHT_GRAY_WOOL:
+            case LIME_WOOL:
+            case MAGENTA_WOOL:
+            case NOTE_BLOCK:
+            case ORANGE_WOOL:
+            case PINK_WOOL:
+            case PURPLE_WOOL:
+            case QUARTZ_BLOCK:
+            case QUARTZ_BRICKS:
+            case QUARTZ_PILLAR:
+            case QUARTZ_STAIRS:
+            case RED_SANDSTONE:
+            case RED_SANDSTONE_STAIRS:
+            case RED_SANDSTONE_WALL:
+            case RED_WOOL:
+            case SANDSTONE:
+            case SANDSTONE_STAIRS:
+            case SANDSTONE_WALL:
+            case WHITE_WOOL:
+            case YELLOW_WOOL:
+                return 0.8F;
+            case ACACIA_SIGN:
+            case ACACIA_WALL_SIGN:
+            case BAMBOO:
+            case BAMBOO_SAPLING:
+            case BIRCH_SIGN:
+            case BIRCH_WALL_SIGN:
+            case BLACK_BANNER:
+            case BLACK_WALL_BANNER:
+            case BLUE_BANNER:
+            case BLUE_WALL_BANNER:
+            case BROWN_BANNER:
+            case BROWN_WALL_BANNER:
+            case CARVED_PUMPKIN:
+            case CREEPER_HEAD:
+            case CREEPER_WALL_HEAD:
+            case CRIMSON_SIGN:
+            case CRIMSON_WALL_SIGN:
+            case CYAN_BANNER:
+            case CYAN_WALL_BANNER:
+            case DARK_OAK_SIGN:
+            case DARK_OAK_WALL_SIGN:
+            case DRAGON_HEAD:
+            case DRAGON_WALL_HEAD:
+            case DRIPSTONE_BLOCK:
+            case GRAY_BANNER:
+            case GRAY_WALL_BANNER:
+            case GREEN_BANNER:
+            case GREEN_WALL_BANNER:
+            case JACK_O_LANTERN:
+            case JUNGLE_SIGN:
+            case JUNGLE_WALL_SIGN:
+            case LIGHT_BLUE_BANNER:
+            case LIGHT_BLUE_WALL_BANNER:
+            case LIGHT_GRAY_BANNER:
+            case LIGHT_GRAY_WALL_BANNER:
+            case LIME_BANNER:
+            case LIME_WALL_BANNER:
+            case MAGENTA_BANNER:
+            case MAGENTA_WALL_BANNER:
+            case MELON:
+            case NETHER_WART_BLOCK:
+            case OAK_SIGN:
+            case OAK_WALL_SIGN:
+            case ORANGE_BANNER:
+            case ORANGE_WALL_BANNER:
+            case PINK_BANNER:
+            case PINK_WALL_BANNER:
+            case PLAYER_HEAD:
+            case PLAYER_WALL_HEAD:
+            case PUMPKIN:
+            case PURPLE_BANNER:
+            case PURPLE_WALL_BANNER:
+            case RED_BANNER:
+            case RED_WALL_BANNER:
+            case SHROOMLIGHT:
+            case SKELETON_SKULL:
+            case SKELETON_WALL_SKULL:
+            case SPRUCE_SIGN:
+            case SPRUCE_WALL_SIGN:
+            case WARPED_SIGN:
+            case WARPED_WALL_SIGN:
+            case WARPED_WART_BLOCK:
+            case WHITE_BANNER:
+            case WHITE_WALL_BANNER:
+            case WITHER_SKELETON_SKULL:
+            case WITHER_SKELETON_WALL_SKULL:
+            case YELLOW_BANNER:
+            case YELLOW_WALL_BANNER:
+            case ZOMBIE_HEAD:
+            case ZOMBIE_WALL_HEAD:
+                return 1.0F;
+            case BLACK_GLAZED_TERRACOTTA:
+            case BLUE_GLAZED_TERRACOTTA:
+            case BROWN_GLAZED_TERRACOTTA:
+            case CYAN_GLAZED_TERRACOTTA:
+            case GRAY_GLAZED_TERRACOTTA:
+            case GREEN_GLAZED_TERRACOTTA:
+            case LIGHT_BLUE_GLAZED_TERRACOTTA:
+            case LIGHT_GRAY_GLAZED_TERRACOTTA:
+            case LIME_GLAZED_TERRACOTTA:
+            case MAGENTA_GLAZED_TERRACOTTA:
+            case ORANGE_GLAZED_TERRACOTTA:
+            case PINK_GLAZED_TERRACOTTA:
+            case PURPLE_GLAZED_TERRACOTTA:
+            case RED_GLAZED_TERRACOTTA:
+            case WHITE_GLAZED_TERRACOTTA:
+            case YELLOW_GLAZED_TERRACOTTA:
+                return 1.4F;
+            case AMETHYST_BLOCK:
+            case AMETHYST_CLUSTER:
+            case BOOKSHELF:
+            case BUDDING_AMETHYST:
+            case LARGE_AMETHYST_BUD:
+            case MEDIUM_AMETHYST_BUD:
+            case PISTON:
+            case PISTON_HEAD:
+            case SCULK_SENSOR:
+            case SMALL_AMETHYST_BUD:
+            case STICKY_PISTON:
+                return 1.5F;
+            case BLACK_CONCRETE:
+            case BLUE_CONCRETE:
+            case BROWN_CONCRETE:
+            case CYAN_CONCRETE:
+            case GRAY_CONCRETE:
+            case GREEN_CONCRETE:
+            case LIGHT_BLUE_CONCRETE:
+            case LIGHT_GRAY_CONCRETE:
+            case LIME_CONCRETE:
+            case MAGENTA_CONCRETE:
+            case ORANGE_CONCRETE:
+            case PINK_CONCRETE:
+            case PURPLE_CONCRETE:
+            case RED_CONCRETE:
+            case WHITE_CONCRETE:
+            case YELLOW_CONCRETE:
+                return 1.8F;
+            case ACACIA_LOG:
+            case ACACIA_WOOD:
+            case BIRCH_LOG:
+            case BIRCH_WOOD:
+            case BLACK_SHULKER_BOX:
+            case BLUE_SHULKER_BOX:
+            case BONE_BLOCK:
+            case BROWN_SHULKER_BOX:
+            case CAMPFIRE:
+            case CAULDRON:
+            case CRIMSON_HYPHAE:
+            case CRIMSON_STEM:
+            case CYAN_SHULKER_BOX:
+            case DARK_OAK_LOG:
+            case DARK_OAK_WOOD:
+            case GRAY_SHULKER_BOX:
+            case GREEN_SHULKER_BOX:
+            case JUNGLE_LOG:
+            case JUNGLE_WOOD:
+            case LAVA_CAULDRON:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case LIME_SHULKER_BOX:
+            case MAGENTA_SHULKER_BOX:
+            case OAK_LOG:
+            case OAK_WOOD:
+            case ORANGE_SHULKER_BOX:
+            case PINK_SHULKER_BOX:
+            case POWDER_SNOW_CAULDRON:
+            case PURPLE_SHULKER_BOX:
+            case RED_SHULKER_BOX:
+            case SHULKER_BOX:
+            case SOUL_CAMPFIRE:
+            case SPRUCE_LOG:
+            case SPRUCE_WOOD:
+            case STRIPPED_ACACIA_LOG:
+            case STRIPPED_ACACIA_WOOD:
+            case STRIPPED_BIRCH_LOG:
+            case STRIPPED_BIRCH_WOOD:
+            case STRIPPED_CRIMSON_HYPHAE:
+            case STRIPPED_CRIMSON_STEM:
+            case STRIPPED_DARK_OAK_LOG:
+            case STRIPPED_DARK_OAK_WOOD:
+            case STRIPPED_JUNGLE_LOG:
+            case STRIPPED_JUNGLE_WOOD:
+            case STRIPPED_OAK_LOG:
+            case STRIPPED_OAK_WOOD:
+            case STRIPPED_SPRUCE_LOG:
+            case STRIPPED_SPRUCE_WOOD:
+            case STRIPPED_WARPED_HYPHAE:
+            case STRIPPED_WARPED_STEM:
+            case WARPED_HYPHAE:
+            case WARPED_STEM:
+            case WATER_CAULDRON:
+            case WHITE_SHULKER_BOX:
+            case YELLOW_SHULKER_BOX:
+                return 2.0F;
+            case BARREL:
+            case CARTOGRAPHY_TABLE:
+            case CHEST:
+            case CRAFTING_TABLE:
+            case DRIED_KELP_BLOCK:
+            case FLETCHING_TABLE:
+            case LECTERN:
+            case LOOM:
+            case SMITHING_TABLE:
+            case TRAPPED_CHEST:
+                return 2.5F;
+            case BLUE_ICE:
+                return 2.8F;
+            case ACACIA_DOOR:
+            case ACACIA_FENCE:
+            case ACACIA_FENCE_GATE:
+            case ACACIA_PLANKS:
+            case ACACIA_SLAB:
+            case ACACIA_STAIRS:
+            case ACACIA_TRAPDOOR:
+            case BEACON:
+            case BIRCH_DOOR:
+            case BIRCH_FENCE:
+            case BIRCH_FENCE_GATE:
+            case BIRCH_PLANKS:
+            case BIRCH_SLAB:
+            case BIRCH_STAIRS:
+            case BIRCH_TRAPDOOR:
+            case COAL_ORE:
+            case COCOA:
+            case CONDUIT:
+            case COPPER_ORE:
+            case CRIMSON_DOOR:
+            case CRIMSON_FENCE:
+            case CRIMSON_FENCE_GATE:
+            case CRIMSON_PLANKS:
+            case CRIMSON_SLAB:
+            case CRIMSON_STAIRS:
+            case CRIMSON_TRAPDOOR:
+            case DARK_OAK_DOOR:
+            case DARK_OAK_FENCE:
+            case DARK_OAK_FENCE_GATE:
+            case DARK_OAK_PLANKS:
+            case DARK_OAK_SLAB:
+            case DARK_OAK_STAIRS:
+            case DARK_OAK_TRAPDOOR:
+            case DEEPSLATE_COAL_ORE:
+            case DEEPSLATE_COPPER_ORE:
+            case DEEPSLATE_DIAMOND_ORE:
+            case DEEPSLATE_EMERALD_ORE:
+            case DEEPSLATE_GOLD_ORE:
+            case DEEPSLATE_IRON_ORE:
+            case DEEPSLATE_LAPIS_ORE:
+            case DEEPSLATE_REDSTONE_ORE:
+            case DIAMOND_ORE:
+            case EMERALD_ORE:
+            case GOLD_ORE:
+            case IRON_ORE:
+            case JUNGLE_DOOR:
+            case JUNGLE_FENCE:
+            case JUNGLE_FENCE_GATE:
+            case JUNGLE_PLANKS:
+            case JUNGLE_SLAB:
+            case JUNGLE_STAIRS:
+            case JUNGLE_TRAPDOOR:
+            case LAPIS_BLOCK:
+            case LAPIS_ORE:
+            case NETHER_GOLD_ORE:
+            case NETHER_QUARTZ_ORE:
+            case OAK_DOOR:
+            case OAK_FENCE:
+            case OAK_FENCE_GATE:
+            case OAK_PLANKS:
+            case OAK_SLAB:
+            case OAK_STAIRS:
+            case OAK_TRAPDOOR:
+            case OBSERVER:
+            case POINTED_DRIPSTONE:
+            case REDSTONE_ORE:
+            case SPRUCE_DOOR:
+            case SPRUCE_FENCE:
+            case SPRUCE_FENCE_GATE:
+            case SPRUCE_PLANKS:
+            case SPRUCE_SLAB:
+            case SPRUCE_STAIRS:
+            case SPRUCE_TRAPDOOR:
+            case WARPED_DOOR:
+            case WARPED_FENCE:
+            case WARPED_FENCE_GATE:
+            case WARPED_PLANKS:
+            case WARPED_SLAB:
+            case WARPED_STAIRS:
+            case WARPED_TRAPDOOR:
+                return 3.0F;
+            case BLAST_FURNACE:
+            case DISPENSER:
+            case DROPPER:
+            case FURNACE:
+            case LANTERN:
+            case LODESTONE:
+            case SMOKER:
+            case SOUL_LANTERN:
+            case STONECUTTER:
+                return 3.5F;
+            case COBWEB:
+                return 4.0F;
+            case BASALT:
+            case BLACK_TERRACOTTA:
+            case BLUE_TERRACOTTA:
+            case BROWN_TERRACOTTA:
+            case CYAN_TERRACOTTA:
+            case GRAY_TERRACOTTA:
+            case GREEN_TERRACOTTA:
+            case LIGHT_BLUE_TERRACOTTA:
+            case LIGHT_GRAY_TERRACOTTA:
+            case LIME_TERRACOTTA:
+            case MAGENTA_TERRACOTTA:
+            case ORANGE_TERRACOTTA:
+            case PINK_TERRACOTTA:
+            case POLISHED_BASALT:
+            case PURPLE_TERRACOTTA:
+            case RED_TERRACOTTA:
+            case SMOOTH_BASALT:
+            case TERRACOTTA:
+            case WHITE_TERRACOTTA:
+            case YELLOW_TERRACOTTA:
+                return 4.2F;
+            case HOPPER:
+                return 4.8F;
+            case BELL:
+            case IRON_DOOR:
+            case IRON_TRAPDOOR:
+            case SPAWNER:
+                return 5.0F;
+            case ANDESITE:
+            case ANDESITE_SLAB:
+            case ANDESITE_STAIRS:
+            case ANDESITE_WALL:
+            case BLACKSTONE:
+            case BLACKSTONE_SLAB:
+            case BLACKSTONE_STAIRS:
+            case BLACKSTONE_WALL:
+            case BRAIN_CORAL_BLOCK:
+            case BRICKS:
+            case BRICK_SLAB:
+            case BRICK_STAIRS:
+            case BRICK_WALL:
+            case BUBBLE_CORAL_BLOCK:
+            case CHAIN:
+            case CHISELED_DEEPSLATE:
+            case CHISELED_NETHER_BRICKS:
+            case CHISELED_POLISHED_BLACKSTONE:
+            case CHISELED_STONE_BRICKS:
+            case COAL_BLOCK:
+            case COBBLED_DEEPSLATE:
+            case COBBLED_DEEPSLATE_SLAB:
+            case COBBLED_DEEPSLATE_STAIRS:
+            case COBBLED_DEEPSLATE_WALL:
+            case COBBLESTONE:
+            case COBBLESTONE_SLAB:
+            case COBBLESTONE_STAIRS:
+            case COBBLESTONE_WALL:
+            case COPPER_BLOCK:
+            case CRACKED_DEEPSLATE_BRICKS:
+            case CRACKED_DEEPSLATE_TILES:
+            case CRACKED_NETHER_BRICKS:
+            case CRACKED_POLISHED_BLACKSTONE_BRICKS:
+            case CRACKED_STONE_BRICKS:
+            case CUT_COPPER:
+            case CUT_COPPER_SLAB:
+            case CUT_COPPER_STAIRS:
+            case CUT_RED_SANDSTONE_SLAB:
+            case CUT_SANDSTONE_SLAB:
+            case DARK_PRISMARINE:
+            case DARK_PRISMARINE_SLAB:
+            case DARK_PRISMARINE_STAIRS:
+            case DEAD_BRAIN_CORAL_BLOCK:
+            case DEAD_BUBBLE_CORAL_BLOCK:
+            case DEAD_FIRE_CORAL_BLOCK:
+            case DEAD_HORN_CORAL_BLOCK:
+            case DEAD_TUBE_CORAL_BLOCK:
+            case DEEPSLATE:
+            case DEEPSLATE_BRICKS:
+            case DEEPSLATE_BRICK_SLAB:
+            case DEEPSLATE_BRICK_STAIRS:
+            case DEEPSLATE_BRICK_WALL:
+            case DEEPSLATE_TILES:
+            case DEEPSLATE_TILE_SLAB:
+            case DEEPSLATE_TILE_STAIRS:
+            case DEEPSLATE_TILE_WALL:
+            case DIAMOND_BLOCK:
+            case DIORITE:
+            case DIORITE_SLAB:
+            case DIORITE_STAIRS:
+            case DIORITE_WALL:
+            case EMERALD_BLOCK:
+            case EXPOSED_COPPER:
+            case EXPOSED_CUT_COPPER:
+            case EXPOSED_CUT_COPPER_SLAB:
+            case EXPOSED_CUT_COPPER_STAIRS:
+            case FIRE_CORAL_BLOCK:
+            case GILDED_BLACKSTONE:
+            case GOLD_BLOCK:
+            case GRANITE:
+            case GRANITE_SLAB:
+            case GRANITE_STAIRS:
+            case GRANITE_WALL:
+            case GRINDSTONE:
+            case HORN_CORAL_BLOCK:
+            case IRON_BARS:
+            case IRON_BLOCK:
+            case JUKEBOX:
+            case LIGHTNING_ROD:
+            case MOSSY_COBBLESTONE:
+            case MOSSY_COBBLESTONE_SLAB:
+            case MOSSY_COBBLESTONE_STAIRS:
+            case MOSSY_COBBLESTONE_WALL:
+            case MOSSY_STONE_BRICKS:
+            case MOSSY_STONE_BRICK_SLAB:
+            case MOSSY_STONE_BRICK_STAIRS:
+            case MOSSY_STONE_BRICK_WALL:
+            case NETHER_BRICKS:
+            case NETHER_BRICK_FENCE:
+            case NETHER_BRICK_SLAB:
+            case NETHER_BRICK_STAIRS:
+            case NETHER_BRICK_WALL:
+            case OXIDIZED_COPPER:
+            case OXIDIZED_CUT_COPPER:
+            case OXIDIZED_CUT_COPPER_SLAB:
+            case OXIDIZED_CUT_COPPER_STAIRS:
+            case PETRIFIED_OAK_SLAB:
+            case POLISHED_ANDESITE:
+            case POLISHED_ANDESITE_SLAB:
+            case POLISHED_ANDESITE_STAIRS:
+            case POLISHED_BLACKSTONE:
+            case POLISHED_BLACKSTONE_BRICKS:
+            case POLISHED_BLACKSTONE_BRICK_SLAB:
+            case POLISHED_BLACKSTONE_BRICK_STAIRS:
+            case POLISHED_BLACKSTONE_BRICK_WALL:
+            case POLISHED_BLACKSTONE_SLAB:
+            case POLISHED_BLACKSTONE_STAIRS:
+            case POLISHED_BLACKSTONE_WALL:
+            case POLISHED_DEEPSLATE:
+            case POLISHED_DEEPSLATE_SLAB:
+            case POLISHED_DEEPSLATE_STAIRS:
+            case POLISHED_DEEPSLATE_WALL:
+            case POLISHED_DIORITE:
+            case POLISHED_DIORITE_SLAB:
+            case POLISHED_DIORITE_STAIRS:
+            case POLISHED_GRANITE:
+            case POLISHED_GRANITE_SLAB:
+            case POLISHED_GRANITE_STAIRS:
+            case PRISMARINE:
+            case PRISMARINE_BRICKS:
+            case PRISMARINE_BRICK_SLAB:
+            case PRISMARINE_BRICK_STAIRS:
+            case PRISMARINE_SLAB:
+            case PRISMARINE_STAIRS:
+            case PRISMARINE_WALL:
+            case PURPUR_BLOCK:
+            case PURPUR_PILLAR:
+            case PURPUR_SLAB:
+            case PURPUR_STAIRS:
+            case QUARTZ_SLAB:
+            case RAW_COPPER_BLOCK:
+            case RAW_GOLD_BLOCK:
+            case RAW_IRON_BLOCK:
+            case REDSTONE_BLOCK:
+            case RED_NETHER_BRICKS:
+            case RED_NETHER_BRICK_SLAB:
+            case RED_NETHER_BRICK_STAIRS:
+            case RED_NETHER_BRICK_WALL:
+            case RED_SANDSTONE_SLAB:
+            case SANDSTONE_SLAB:
+            case SMOOTH_QUARTZ:
+            case SMOOTH_QUARTZ_SLAB:
+            case SMOOTH_QUARTZ_STAIRS:
+            case SMOOTH_RED_SANDSTONE:
+            case SMOOTH_RED_SANDSTONE_SLAB:
+            case SMOOTH_RED_SANDSTONE_STAIRS:
+            case SMOOTH_SANDSTONE:
+            case SMOOTH_SANDSTONE_SLAB:
+            case SMOOTH_SANDSTONE_STAIRS:
+            case SMOOTH_STONE:
+            case SMOOTH_STONE_SLAB:
+            case STONE:
+            case STONE_BRICKS:
+            case STONE_BRICK_SLAB:
+            case STONE_BRICK_STAIRS:
+            case STONE_BRICK_WALL:
+            case STONE_SLAB:
+            case STONE_STAIRS:
+            case TUBE_CORAL_BLOCK:
+            case TUFF:
+            case WAXED_COPPER_BLOCK:
+            case WAXED_CUT_COPPER:
+            case WAXED_CUT_COPPER_SLAB:
+            case WAXED_CUT_COPPER_STAIRS:
+            case WAXED_EXPOSED_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER:
+            case WAXED_EXPOSED_CUT_COPPER_SLAB:
+            case WAXED_EXPOSED_CUT_COPPER_STAIRS:
+            case WAXED_OXIDIZED_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER:
+            case WAXED_OXIDIZED_CUT_COPPER_SLAB:
+            case WAXED_OXIDIZED_CUT_COPPER_STAIRS:
+            case WAXED_WEATHERED_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER:
+            case WAXED_WEATHERED_CUT_COPPER_SLAB:
+            case WAXED_WEATHERED_CUT_COPPER_STAIRS:
+            case WEATHERED_COPPER:
+            case WEATHERED_CUT_COPPER:
+            case WEATHERED_CUT_COPPER_SLAB:
+            case WEATHERED_CUT_COPPER_STAIRS:
+                return 6.0F;
+            case DRAGON_EGG:
+            case END_STONE:
+            case END_STONE_BRICKS:
+            case END_STONE_BRICK_SLAB:
+            case END_STONE_BRICK_STAIRS:
+            case END_STONE_BRICK_WALL:
+                return 9.0F;
+            case LAVA:
+            case WATER:
+                return 100.0F;
+            case ENDER_CHEST:
+                return 600.0F;
+            case ANCIENT_DEBRIS:
+            case ANVIL:
+            case CHIPPED_ANVIL:
+            case CRYING_OBSIDIAN:
+            case DAMAGED_ANVIL:
+            case ENCHANTING_TABLE:
+            case NETHERITE_BLOCK:
+            case OBSIDIAN:
+            case RESPAWN_ANCHOR:
+                return 1200.0F;
+            case BEDROCK:
+            case CHAIN_COMMAND_BLOCK:
+            case COMMAND_BLOCK:
+            case END_GATEWAY:
+            case END_PORTAL:
+            case END_PORTAL_FRAME:
+            case JIGSAW:
+            case REPEATING_COMMAND_BLOCK:
+            case STRUCTURE_BLOCK:
+                return 3600000.0F;
+            case BARRIER:
+            case LIGHT:
+                return 3600000.8F;
+            default:
+                return 0;
+            // </editor-fold>
+        }
+    }
+
+    /**
+     * Returns a value that represents how 'slippery' the block is.
+     *
+     * Blocks with higher slipperiness, like {@link Material#ICE} can be slid on
+     * further by the player and other entities.
+     *
+     * Most blocks have a default slipperiness of {@code 0.6f}.
+     *
+     * Only available when {@link #isBlock()} is true.
+     *
+     * @return the slipperiness of this block
+     */
+    public float getSlipperiness() {
+        Validate.isTrue(isBlock(), "The Material is not a block!");
+        switch (this) {
+            // <editor-fold defaultstate="collapsed" desc="getSlipperiness">
+            default:
+                return 0.6F;
+            case SLIME_BLOCK:
+                return 0.8F;
+            case FROSTED_ICE:
+            case ICE:
+            case PACKED_ICE:
+                return 0.98F;
+            case BLUE_ICE:
+                return 0.989F;
+            // </editor-fold>
+        }
     }
 
     /**
@@ -6495,6 +9771,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
     public Material getCraftingRemainingItem() {
         Validate.isTrue(isItem(), "The Material is not an item!");
         switch (this) {
+            // <editor-fold defaultstate="collapsed" desc="getCraftingRemainingItem">
             case WATER_BUCKET:
             case LAVA_BUCKET:
             case MILK_BUCKET:
@@ -6504,7 +9781,64 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
                 return GLASS_BOTTLE;
             default:
                 return null;
+            // </editor-fold>
         }
     }
 
+    /**
+     * Get the best suitable slot for this Material.
+     *
+     * For most items this will be {@link EquipmentSlot#HAND}.
+     *
+     * @return the best EquipmentSlot for this Material
+     */
+    @NotNull
+    public EquipmentSlot getEquipmentSlot() {
+        Validate.isTrue(isItem(), "The Material is not an item!");
+        switch (this) {
+            // <editor-fold defaultstate="collapsed" desc="getEquipmentSlot">
+            case CARVED_PUMPKIN:
+            case CHAINMAIL_HELMET:
+            case CREEPER_HEAD:
+            case DIAMOND_HELMET:
+            case DRAGON_HEAD:
+            case GOLDEN_HELMET:
+            case IRON_HELMET:
+            case LEATHER_HELMET:
+            case NETHERITE_HELMET:
+            case PLAYER_HEAD:
+            case SKELETON_SKULL:
+            case TURTLE_HELMET:
+            case WITHER_SKELETON_SKULL:
+            case ZOMBIE_HEAD:
+                return EquipmentSlot.HEAD;
+            case CHAINMAIL_CHESTPLATE:
+            case DIAMOND_CHESTPLATE:
+            case ELYTRA:
+            case GOLDEN_CHESTPLATE:
+            case IRON_CHESTPLATE:
+            case LEATHER_CHESTPLATE:
+            case NETHERITE_CHESTPLATE:
+                return EquipmentSlot.CHEST;
+            case CHAINMAIL_LEGGINGS:
+            case DIAMOND_LEGGINGS:
+            case GOLDEN_LEGGINGS:
+            case IRON_LEGGINGS:
+            case LEATHER_LEGGINGS:
+            case NETHERITE_LEGGINGS:
+                return EquipmentSlot.LEGS;
+            case CHAINMAIL_BOOTS:
+            case DIAMOND_BOOTS:
+            case GOLDEN_BOOTS:
+            case IRON_BOOTS:
+            case LEATHER_BOOTS:
+            case NETHERITE_BOOTS:
+                return EquipmentSlot.FEET;
+            case SHIELD:
+                return EquipmentSlot.OFF_HAND;
+            default:
+                return EquipmentSlot.HAND;
+            // </editor-fold>
+        }
+    }
 }

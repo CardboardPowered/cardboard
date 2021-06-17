@@ -1,1 +1,2 @@
-javac Material.java -cp ../paper-api-1.16.4-416.jar;../../build/libs/CardboardMod-1.17.jar
+javac Material.java -cp ../paper-api-1.17-test.jar;../../build/libs/CardboardMod-1.17.jar;C:\Users\admin\Desktop\Paper-17\Paper-Server\build\libs\Paper-Server-1.17-R0.1-SNAPSHOT-all.jar
+pause
