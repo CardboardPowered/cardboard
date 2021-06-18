@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard
+ * Copyright (C) 2020-2021
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,12 @@
 package com.javazilla.bukkitfabric.interfaces;
 
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+import org.bukkit.inventory.InventoryHolder;
 
 public interface IMixinBlockEntity {
 
     CraftPersistentDataContainer getPersistentDataContainer();
+
+    InventoryHolder getOwner_();
 
 }

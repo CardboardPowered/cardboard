@@ -34,6 +34,7 @@ public interface IMixinInventory {
 
     java.util.List<org.bukkit.entity.HumanEntity> getViewers();
 
+  
     org.bukkit.inventory.InventoryHolder getOwner();
 
     void setMaxStackSize(int size);
