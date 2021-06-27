@@ -105,6 +105,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         } catch (NetworkEncryptionException networkEncryptionException) {
             throw new IllegalStateException("Protocol error", networkEncryptionException);
         }
+        SecretKey key2 = secretKey;
 
         Thread thread = new Thread("User Authenticator #" + ServerLoginNetworkHandler.authenticatorThreadId.incrementAndGet()) {
             @Override
@@ -112,7 +113,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                 GameProfile gameprofile = profile;
 
                 try {
-                    String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
+                    String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), key2))).toString(16);
                     profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
                     if (profile != null) {
                         // Fire PlayerPreLoginEvent
