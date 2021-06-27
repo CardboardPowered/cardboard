@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "plugin": "org.cardboardpowered.mixin.CardboardMixinPlugin",
   "package": "org.cardboardpowered.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "mixins": [
     "MixinPluginLogger",
     "MixinDedicatedServer",
