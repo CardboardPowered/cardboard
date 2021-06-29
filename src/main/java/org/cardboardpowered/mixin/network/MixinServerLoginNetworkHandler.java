@@ -61,9 +61,9 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
     @Shadow private byte[] nonce = new byte[4];
     @Shadow private MinecraftServer server;
     @Shadow public ClientConnection connection;
-    @Shadow private ServerLoginNetworkHandler.State state;
-    @Shadow private GameProfile profile;
-    @Shadow private SecretKey secretKey;
+    @Shadow public ServerLoginNetworkHandler.State state;
+    @Shadow public GameProfile profile;
+    @Shadow public SecretKey secretKey;
     @Shadow public ServerPlayerEntity player;
 
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
@@ -83,10 +83,15 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
     public void setHostname(String s) {
         this.hostname = s;
     }
+    
+    public void card_setState(State state) {
+        this.state = state;
+    }
+    
 
     /**
      * @reason Spigot basically overwrites this whole method.
-     * @author BukkitFabric
+     * @author Cardboard
      */
     @Overwrite
     public void onKey(LoginKeyC2SPacket keyPacket) {
@@ -100,7 +105,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, this.secretKey);
             Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, this.secretKey);
             String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), this.secretKey)).toString(16);
-            this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
+            this.card_setState(ServerLoginNetworkHandler.State.AUTHENTICATING);
             connection.setupEncryption(cipher, cipher2);
         } catch (NetworkEncryptionException networkEncryptionException) {
             throw new IllegalStateException("Protocol error", networkEncryptionException);
@@ -122,7 +127,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                     } else if (server.isSinglePlayer()) {
                         LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
                         profile = toOfflineProfile(gameprofile);
-                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                        card_setState( ServerLoginNetworkHandler.State.READY_TO_ACCEPT);
                     } else {
                         disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
                         LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
@@ -131,7 +136,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                     if (server.isSinglePlayer()) {
                         LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
                         profile = toOfflineProfile(gameprofile);
-                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                        card_setState( ServerLoginNetworkHandler.State.READY_TO_ACCEPT);
                     } else {
                         disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
                         LOGGER_BF.error("Couldn't verify username because servers are unavailable");
@@ -203,35 +208,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             LOGGER_BF.error("Error whilst disconnecting player", exception);
         }
     }
-
-    /**
-     * @author BukkitFabricMod
-     * @reason Fire PlayerLoginEvent
-     */
-   /* @Inject(at = @At("HEAD"), method = "acceptPlayer", cancellable = true)
-    public void acceptPlayer_BF(CallbackInfo ci) {
-        if (connection.getAddress() instanceof LocalAddress)
-            return;
-
-        ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
-
-        if (s != null) {
-            this.state = ServerLoginNetworkHandler.State.ACCEPTED;
-            if (this.server.getNetworkCompressionThreshold() >= 0 && !this.connection.isLocal()) {
-                this.connection.send(new LoginCompressionS2CPacket(this.server.getNetworkCompressionThreshold()), (channelfuture) -> {
-                    this.connection.setCompressionThreshold(this.server.getNetworkCompressionThreshold());
-                });
-            }
-            this.connection.send(new LoginSuccessS2CPacket(this.profile));
-            ServerPlayerEntity entityplayer = this.server.getPlayerManager().getPlayer(this.profile.getId());
-
-            if (entityplayer != null) {
-                this.state = ServerLoginNetworkHandler.State.DELAY_ACCEPT;
-                this.player = s;
-            } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
-        }
-        ci.cancel();
-    }*/
 
     private ServerPlayerEntity cardboard_player;
 

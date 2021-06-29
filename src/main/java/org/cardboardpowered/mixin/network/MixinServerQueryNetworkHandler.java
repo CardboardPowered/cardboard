@@ -1,12 +1,14 @@
 package org.cardboardpowered.mixin.network;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import org.cardboardpowered.impl.CardboardServerListPingEvent;
 import org.cardboardpowered.impl.util.IconCacheImpl;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,6 +16,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.mojang.authlib.GameProfile;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.network.ClientConnection;
@@ -36,7 +39,7 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
     @Shadow private boolean responseSent;
 
     /**
-     * @author BukkitFabric
+     * @author Cardboard
      * @reason ServerListPingEvent
      */
     @Overwrite
@@ -47,51 +50,24 @@ public class MixinServerQueryNetworkHandler implements ServerQueryPacketListener
             this.responseSent = true;
             MinecraftServer server = CraftServer.server;
 
-            class ServerListPingEvent extends org.bukkit.event.server.ServerListPingEvent {
+            CardboardServerListPingEvent event = new CardboardServerListPingEvent(connection, server);
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
-                ServerListPingEvent() {
-                    super(((InetSocketAddress) connection.getAddress()).getAddress(), server.getServerMotd(), server.getPlayerManager().getCurrentPlayerCount(), server.getPlayerManager().getMaxPlayerCount());
-                }
-
-                @Override
-                public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
-                    if (!(icon instanceof IconCacheImpl)) throw new IllegalArgumentException(icon + " was not created by Bukkit");
-                }
-
-                /*@Override
-                public Iterator<Player> iterator() throws UnsupportedOperationException {
-                    return new Iterator<Player>() {
-
-                        @Override
-                        public boolean hasNext() {
-                            return false;
-                        }
-
-                        @Override
-                        public Player next() {
-                            throw new java.util.NoSuchElementException();
-                        }
-
-                        @Override
-                        public void remove() {
-                        }
-                    };
-                }*/
-
+            ArrayList<GameProfile> profiles = new ArrayList<GameProfile>(event.players.length);
+            for (Object player : event.players) {
+                if (player != null)
+                    profiles.add(((ServerPlayerEntity) player).getGameProfile());
             }
 
-            ServerListPingEvent event = new ServerListPingEvent();
-            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+            ServerMetadata.Players samp = new ServerMetadata.Players(event.getMaxPlayers(), profiles.size());
+            samp.setSample(profiles.toArray(new GameProfile[profiles.size()]));
 
             ServerMetadata ping = new ServerMetadata();
             ping.setDescription(CraftChatMessage.fromString(event.getMotd(), true)[0]);
 
-            try {
-                ping.setFavicon(server.getServerMetadata().getFavicon());
-            } catch (Exception e) {}
-            ping.setPlayers(server.getServerMetadata().players);
-            int version = SharedConstants.getGameVersion().getProtocolVersion();
-            ping.setVersion(new ServerMetadata.Version("Paper " + server.getVersion(), version));
+            ping.setFavicon(event.icon.value);
+            ping.setPlayers(samp);
+            ping.setVersion(new ServerMetadata.Version("Cardboard " + server.getVersion(), SharedConstants.getGameVersion().getProtocolVersion()));
 
             this.connection.send(new QueryResponseS2CPacket(ping));
         }
