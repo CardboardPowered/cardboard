@@ -152,73 +152,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         thread.start();
     }
 
-    /**
-     * @reason Spigot basically overwrites this whole method.
-     * @author BukkitFabric
-     */
-  /*  @Overwrite
-    public void onKey(LoginKeyC2SPacket keyPacket) {
-        Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);
-        PrivateKey privatekey = this.server.getKeyPair().getPrivate();
-
-        try {
-            if (!Arrays.equals(nonce, keyPacket.decryptNonce(privatekey))) throw new IllegalStateException("Protocol error");
-
-            this.secretKey = keyPacket.decryptSecretKey(privatekey);
-            Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, this.secretKey);
-            Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, this.secretKey);
-            String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), this.secretKey)).toString(16);
-            this.state = ServerLoginNetworkHandler.State.AUTHENTICATING;
-            connection.setupEncryption(cipher, cipher2);
-        } catch (NetworkEncryptionException networkEncryptionException) {
-            throw new IllegalStateException("Protocol error", networkEncryptionException);
-        }
-
-        Thread thread = new Thread("User Authenticator #" + theid++) {
-            @Override
-            public void run() {
-                GameProfile gameprofile = profile;
-
-                try {
-                    String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
-                    profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
-                    if (profile != null) {
-                        // Fire PlayerPreLoginEvent
-                        if (!connection.isOpen()) return;
-                        fireEvents();
-                    } else if (server.isSinglePlayer()) {
-                        LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
-                        profile = toOfflineProfile(gameprofile);
-                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
-                    } else {
-                        disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
-                        LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
-                    }
-                } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                    if (server.isSinglePlayer()) {
-                        LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
-                        profile = toOfflineProfile(gameprofile);
-                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
-                    } else {
-                        disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
-                        LOGGER_BF.error("Couldn't verify username because servers are unavailable");
-                    }
-                } catch (Exception exception) {
-                    disconnect("Failed to verify username!");
-                    LOGGER_BF.log(Level.WARN, "Exception verifying " + gameprofile.getName(), exception);
-                }
-            }
-
-            @Nullable
-            private InetAddress a() {
-                SocketAddress socketaddress = connection.getAddress();
-                return server.shouldPreventProxyConnections() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
-            }
-        };
-        thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
-        thread.start();
-    }*/
-
     public void fireEvents() throws Exception {
         String playerName = profile.getName();
         java.net.InetAddress address;
@@ -270,35 +203,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             LOGGER_BF.error("Error whilst disconnecting player", exception);
         }
     }
-
-    /**
-     * @author BukkitFabricMod
-     * @reason Fire PlayerLoginEvent
-     */
-   /* @Inject(at = @At("HEAD"), method = "acceptPlayer", cancellable = true)
-    public void acceptPlayer_BF(CallbackInfo ci) {
-        if (connection.getAddress() instanceof LocalAddress)
-            return;
-
-        ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
-
-        if (s != null) {
-            this.state = ServerLoginNetworkHandler.State.ACCEPTED;
-            if (this.server.getNetworkCompressionThreshold() >= 0 && !this.connection.isLocal()) {
-                this.connection.send(new LoginCompressionS2CPacket(this.server.getNetworkCompressionThreshold()), (channelfuture) -> {
-                    this.connection.setCompressionThreshold(this.server.getNetworkCompressionThreshold());
-                });
-            }
-            this.connection.send(new LoginSuccessS2CPacket(this.profile));
-            ServerPlayerEntity entityplayer = this.server.getPlayerManager().getPlayer(this.profile.getId());
-
-            if (entityplayer != null) {
-                this.state = ServerLoginNetworkHandler.State.DELAY_ACCEPT;
-                this.delayedPlayer = s;
-            } else this.server.getPlayerManager().onPlayerConnect(this.connection, s);
-        }
-        ci.cancel();
-    }*/
 
     private ServerPlayerEntity cardboard_player;
 

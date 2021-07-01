@@ -46,6 +46,7 @@
     "world.MixinChunkTicketType",
     "world.MixinChunkRegion",
     "world.MixinBlockView",
+    "world.MixinServerEntityHandler",
 
     "entity.MixinEntity",
     "entity.MixinPlayer",

@@ -246,15 +246,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         }
     }
 
-    /**
-     * @reason Fixes AsyncChatEvent
-     * @author Bukkit4Fabric
-     */
-    //@Overwrite
-    //public void filterText(String text, Consumer<String> consumer) {
-    //    consumer.accept(text); // Skip filtering so we can stay off the primary server thread.
-    //}
-
     @Override
     public void teleport(Location location) {
         double d0 = location.getX();
