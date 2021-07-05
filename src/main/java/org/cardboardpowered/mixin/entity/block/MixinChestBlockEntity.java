@@ -3,9 +3,9 @@ package org.cardboardpowered.mixin.entity.block;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,9 +16,9 @@ import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
+import me.isaiah.common.cmixin.IMixinChestBlockEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.block.entity.ChestStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
@@ -28,9 +28,6 @@ import net.minecraft.util.math.BlockPos;
 public class MixinChestBlockEntity implements IMixinInventory {
 
     @Shadow public DefaultedList<ItemStack> inventory;
-    
-    @Shadow
-    private ChestStateManager stateManager;
 
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     private int maxStack = MAX_STACK;
@@ -84,7 +81,7 @@ public class MixinChestBlockEntity implements IMixinInventory {
      */
     @Inject(at = @At("HEAD"), method = "onOpen")
     public void doBukkitEvent_RedstoneChange_1(PlayerEntity e, CallbackInfo ci) {
-        oldPower_B = Math.max(0, Math.min(15, stateManager.getViewerCount())); // CraftBukkit - Get power before new viewer is added
+        oldPower_B = Math.max(0, Math.min(15, ((IMixinChestBlockEntity)this).I_getViewCount())); // CraftBukkit - Get power before new viewer is added
     }
 
     /**
@@ -93,7 +90,7 @@ public class MixinChestBlockEntity implements IMixinInventory {
     @Inject(at = @At("TAIL"), method = "onOpen")
     public void doBukkitEvent_RedstoneChange_2(PlayerEntity e, CallbackInfo ci) {
         if (((ChestBlockEntity)(Object)this).getCachedState().getBlock() == Blocks.TRAPPED_CHEST) {
-            int newPower = Math.max(0, Math.min(15, stateManager.getViewerCount()));
+            int newPower = Math.max(0, Math.min(15, ((IMixinChestBlockEntity)this).I_getViewCount()));
             if (oldPower_B != newPower)
                 BukkitEventFactory.callRedstoneChange(((ChestBlockEntity)(Object)this).world, ((ChestBlockEntity)(Object)this).pos, oldPower_B, newPower);
         }
