@@ -1,3 +1,5 @@
+import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+
 plugins {
     id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
@@ -50,6 +52,7 @@ dependencies {
     	"fabric-networking-api-v1",
     	"fabric-screen-handler-api-v1"
     ]
+    include(modImplementation(new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.17", "1.17", null)))
     
     // Add each module as a dependency
     apiModules.forEach {

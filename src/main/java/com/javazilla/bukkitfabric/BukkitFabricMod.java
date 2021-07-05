@@ -28,6 +28,7 @@ import com.javazilla.bukkitfabric.nms.MappingsReader;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 
+
 @SuppressWarnings("deprecation")
 public class BukkitFabricMod implements ModInitializer {
 
