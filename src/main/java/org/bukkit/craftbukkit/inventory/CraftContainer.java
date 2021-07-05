@@ -242,7 +242,7 @@ public class CraftContainer extends ScreenHandler {
 
         if (delegate != null) {
             ((IMixinScreenHandler)this).setTrackedStacksBF(((IMixinScreenHandler)delegate).getTrackedStacksBF());
-            ((IMixinScreenHandler)this).setSlots(delegate.slots);
+            ((me.isaiah.common.cmixin.IMixinScreenHandler)this).ic_setSlots(delegate.slots);
         }
 
         if (cachedType == InventoryType.WORKBENCH) delegate = new CraftingScreenHandler(windowId, bottom); // SPIGOT-4598 bug

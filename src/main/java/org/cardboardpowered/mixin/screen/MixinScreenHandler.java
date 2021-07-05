@@ -1,7 +1,5 @@
 package org.cardboardpowered.mixin.screen;
 
-import java.util.List;
-
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
@@ -15,7 +13,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
@@ -32,9 +29,6 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
 
     @Shadow
     public DefaultedList<ItemStack> trackedStacks;
-
-    @Shadow
-    public DefaultedList<Slot> slots;
 
     @Override
     public void transferTo(ScreenHandler other, CraftHumanEntity player) {
@@ -75,11 +69,6 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     @Override
     public void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks) {
         this.trackedStacks = trackedStacks;
-    }
-
-    @Override
-    public void setSlots( DefaultedList<Slot> slots) {
-        this.slots = slots;
     }
 
     @Override

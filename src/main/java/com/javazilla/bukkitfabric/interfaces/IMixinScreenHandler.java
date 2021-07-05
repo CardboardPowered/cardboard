@@ -18,14 +18,11 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import java.util.List;
-
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -42,8 +39,6 @@ public interface IMixinScreenHandler {
     DefaultedList<ItemStack> getTrackedStacksBF();
 
     void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks);
-
-    void setSlots( DefaultedList<Slot> slots);
 
     void setCheckReachable(boolean bl);
 
