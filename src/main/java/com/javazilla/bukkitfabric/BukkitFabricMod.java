@@ -24,8 +24,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
+
+import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+
+import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
+
+import me.isaiah.common.event.EventHandler;
+import me.isaiah.common.event.EventRegistery;
+import me.isaiah.common.event.entity.BlockEntityLoadEvent;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 
 
@@ -42,8 +52,11 @@ public class BukkitFabricMod implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("");
-        LOGGER.info("Cardboard Mod - CardboardPowered.org");
+        LOGGER.info("Cardboard - CardboardPowered.org");
         LOGGER.info("");
+
+        int r = EventRegistery.registerAll(this);
+        LOGGER.info("Registered '" + r + "' iCommon events.");
 
         try {
             MappingsReader.main(null);
@@ -51,6 +64,18 @@ public class BukkitFabricMod implements ModInitializer {
             e.printStackTrace();
         }
         LOGGER.info("Cardboard mod Loaded.");
+    }
+
+    @EventHandler
+    public void onBlockEntityLoadEnd(BlockEntityLoadEvent ev) {
+        IMixinBlockEntity mc = (IMixinBlockEntity) ((BlockEntity) ev.getMC());
+
+        mc.setCardboardPersistentDataContainer( new CraftPersistentDataContainer(mc.getCardboardDTR()) );
+
+        NbtCompound tag = (NbtCompound) ev.getElement();
+        NbtCompound persistentDataTag = tag.getCompound("PublicBukkitValues");
+        if (persistentDataTag != null)
+            mc.getPersistentDataContainer().putAll(persistentDataTag);
     }
 
 }

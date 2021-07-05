@@ -33,15 +33,6 @@ public class MixinBlockEntity implements IMixinBlockEntity {
         return persistentDataContainer;
     }
 
-    @Inject(at = @At("TAIL"), method = "readNbt")
-    public void loadEnd(NbtCompound tag, CallbackInfo callback) {
-        this.persistentDataContainer = new CraftPersistentDataContainer(DATA_TYPE_REGISTRY);
-
-        NbtCompound persistentDataTag = tag.getCompound("PublicBukkitValues");
-        if (persistentDataTag != null)
-            this.persistentDataContainer.putAll(persistentDataTag);
-    }
-
     @Inject(at = @At("RETURN"), method = "writeNbt")
     public void saveEnd(NbtCompound tag, @SuppressWarnings("rawtypes") CallbackInfoReturnable callback) {
         if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty())
@@ -65,6 +56,16 @@ public class MixinBlockEntity implements IMixinBlockEntity {
         if (state instanceof InventoryHolder) return (InventoryHolder) state;
         System.out.println("STATE NOT INSTANCEOF INVENTORYHOLDER!!");
         return null;
+    }
+
+    @Override
+    public void setCardboardPersistentDataContainer(CraftPersistentDataContainer c) {
+        this.persistentDataContainer = c;
+    }
+
+    @Override
+    public CraftPersistentDataTypeRegistry getCardboardDTR() {
+        return DATA_TYPE_REGISTRY;
     }
 
 }

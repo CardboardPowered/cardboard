@@ -19,6 +19,7 @@
 package com.javazilla.bukkitfabric.interfaces;
 
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.inventory.InventoryHolder;
 
 public interface IMixinBlockEntity {
@@ -26,5 +27,9 @@ public interface IMixinBlockEntity {
     CraftPersistentDataContainer getPersistentDataContainer();
 
     InventoryHolder getOwner_();
+
+    void setCardboardPersistentDataContainer(CraftPersistentDataContainer c);
+
+    CraftPersistentDataTypeRegistry getCardboardDTR();
 
 }
