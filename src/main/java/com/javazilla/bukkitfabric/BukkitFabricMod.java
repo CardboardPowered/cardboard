@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 
+import com.destroystokyo.paper.Metrics;
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
@@ -54,6 +55,8 @@ public class BukkitFabricMod implements ModInitializer {
         LOGGER.info("");
         LOGGER.info("Cardboard - CardboardPowered.org");
         LOGGER.info("");
+
+        PaperMetrics.startMetrics();
 
         int r = EventRegistery.registerAll(this);
         LOGGER.info("Registered '" + r + "' iCommon events.");
