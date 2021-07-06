@@ -31,8 +31,8 @@ public class MixinPlayerScreenHandler extends MixinScreenHandler implements Name
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void setPlayerInv(PlayerInventory playerinventory, boolean flag, PlayerEntity entityhuman, CallbackInfo ci) {
-        this.craftingResult = new CraftingResultInventory();
-        this.craftingInput = new CraftingInventory((PlayerScreenHandler)(Object)this, 2, 2);
+       // this.craftingResult = new CraftingResultInventory();
+       // this.craftingInput = new CraftingInventory((PlayerScreenHandler)(Object)this, 2, 2);
         this.player = playerinventory;
         setTitle(new TranslatableText("container.crafting"));
     }
