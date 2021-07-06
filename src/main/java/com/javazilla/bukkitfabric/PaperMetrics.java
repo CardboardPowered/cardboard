@@ -17,7 +17,7 @@ import org.bukkit.plugin.Plugin;
 import com.destroystokyo.paper.Metrics;
 
 public class PaperMetrics {
-    static void startMetrics() {
+    public static void startMetrics() {
         // Get the config file
         File configFile = new File(new File(new File("plugins"), "bStats"), "config.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);

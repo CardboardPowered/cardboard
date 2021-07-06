@@ -49,6 +49,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.ImmutableList;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.PaperMetrics;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -154,7 +155,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Inject(at = @At("HEAD"), method = "getServerModName", remap=false, cancellable = true)
     public void getServerModName_cardboard(CallbackInfoReturnable<String> ci) {
         if (null != Bukkit.getServer())
-            ci.setReturnValue("CardboardPowered.org (Spigot+Fabric)");
+            ci.setReturnValue("Cardboard (PaperMC+Fabric)");
     }
 
     @Override
@@ -193,6 +194,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @SuppressWarnings({ "deprecation", "resource", "unchecked", "rawtypes", "unused" })
     @Overwrite
     public void loadWorld() {
+        PaperMetrics.startMetrics();
         int worldCount = 3;
 
         // Fix PolyMC mod

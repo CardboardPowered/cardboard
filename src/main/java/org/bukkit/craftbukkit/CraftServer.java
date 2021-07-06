@@ -176,6 +176,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.PaperMetrics;
 import com.javazilla.bukkitfabric.Utils;
 import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
 import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
@@ -348,8 +349,8 @@ public class CraftServer implements Server {
     static IconCacheImpl loadServerIcon0(BufferedImage image) throws Exception {
         ByteBuf bytebuf = Unpooled.buffer();
 
-        Validate.isTrue(image.getWidth() == 64, "Must be 64 pixels wide");
-        Validate.isTrue(image.getHeight() == 64, "Must be 64 pixels high");
+        Validate.isTrue(image.getWidth() == 64, "Error: not 64*64");
+        Validate.isTrue(image.getHeight() == 64, "Error: not 64*64");
         ImageIO.write(image, "PNG", new ByteBufOutputStream(bytebuf));
         ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
 
@@ -366,7 +367,7 @@ public class CraftServer implements Server {
             for (File f : pluginFolder.listFiles()) {
                 if (f.getName().endsWith(".jar")) {
                     try {
-                        com.javazilla.bukkitfabric.nms.Remapper.remap(f); // Bukkit4Fabric: Remap Jar file
+                        com.javazilla.bukkitfabric.nms.Remapper.remap(f); // Cardboard: Remap Jar file
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

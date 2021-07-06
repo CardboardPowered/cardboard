@@ -56,8 +56,6 @@ public class BukkitFabricMod implements ModInitializer {
         LOGGER.info("Cardboard - CardboardPowered.org");
         LOGGER.info("");
 
-        PaperMetrics.startMetrics();
-
         int r = EventRegistery.registerAll(this);
         LOGGER.info("Registered '" + r + "' iCommon events.");
 
@@ -71,6 +69,7 @@ public class BukkitFabricMod implements ModInitializer {
 
     @EventHandler
     public void onBlockEntityLoadEnd(BlockEntityLoadEvent ev) {
+        System.out.println("BlockEntityLoadEvent called: " + ev.getMC());
         IMixinBlockEntity mc = (IMixinBlockEntity) ((BlockEntity) ev.getMC());
 
         mc.setCardboardPersistentDataContainer( new CraftPersistentDataContainer(mc.getCardboardDTR()) );
