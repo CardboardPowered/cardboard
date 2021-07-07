@@ -69,7 +69,6 @@ public class BukkitFabricMod implements ModInitializer {
 
     @EventHandler
     public void onBlockEntityLoadEnd(BlockEntityLoadEvent ev) {
-        System.out.println("BlockEntityLoadEvent called: " + ev.getMC());
         IMixinBlockEntity mc = (IMixinBlockEntity) ((BlockEntity) ev.getMC());
 
         mc.setCardboardPersistentDataContainer( new CraftPersistentDataContainer(mc.getCardboardDTR()) );

@@ -23,6 +23,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.Entity;
@@ -33,7 +35,9 @@ public class MixinServerEntityHandler {
 
     @Inject(at = @At("TAIL"), method = "stopTracking")
     public void unvalidateEntityBF(Entity entity, CallbackInfo ci) {
-        ((IMixinEntity)entity).setValid(false);
+        IMixinEntity bf = (IMixinEntity) entity;
+        bf.setValid(false);
+        new EntityRemoveFromWorldEvent(bf.getBukkitEntity()).callEvent(); // Paper - fire while valid
     }
 
     @Inject(at = @At("TAIL"), method = "startTracking")
@@ -42,6 +46,8 @@ public class MixinServerEntityHandler {
         bf.setValid(true);
         if (null == bf.getOriginBF() && null != bf.getBukkitEntity())
             bf.setOriginBF(bf.getBukkitEntity().getLocation()); // Paper Entity Origin API
+
+        new EntityAddToWorldEvent(bf.getBukkitEntity()).callEvent(); // Paper - fire while valid
     } 
 
 }
