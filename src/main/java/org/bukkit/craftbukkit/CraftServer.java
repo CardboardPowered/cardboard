@@ -256,7 +256,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.17-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.17.1-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -1054,11 +1054,12 @@ public class CraftServer implements Server {
     public OfflinePlayer getOfflinePlayer(String name) {
         OfflinePlayer result = getPlayerExact(name);
         if (result == null) {
-            GameProfile profile = server.getUserCache().findByName(name);
-            if (profile == null) {
+            Optional<GameProfile> profile = server.getUserCache().findByName(name);
+            // TODO Add Profile API to iCommon
+            if (profile.isPresent()) {
                 // Make an OfflinePlayer using an offline mode UUID since the name has no profile
                 result = getOfflinePlayer(new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name));
-            } else result = getOfflinePlayer(profile);// Use the GameProfile even when we get a UUID so we ensure we still have a name
+            } else result = getOfflinePlayer(profile.get());// Use the GameProfile even when we get a UUID so we ensure we still have a name
         } else offlinePlayers.remove(result.getUniqueId());
 
         return result;

@@ -56,7 +56,7 @@ public class MixinBoatDispenserBehavior {
         double d0 = isourceblock.getX() + (double) ((float) enumdirection.getOffsetX() * 1.125F);
         double d1 = isourceblock.getY() + (double) ((float) enumdirection.getOffsetY() * 1.125F);
         double d2 = isourceblock.getZ() + (double) ((float) enumdirection.getOffsetZ() * 1.125F);
-        BlockPos blockposition = isourceblock.getBlockPos().offset(enumdirection);
+        BlockPos blockposition = isourceblock.getPos().offset(enumdirection);
         double d3;
 
         if (worldserver.getFluidState(blockposition).isIn((Tag<Fluid>) FluidTags.WATER)) {
@@ -68,7 +68,7 @@ public class MixinBoatDispenserBehavior {
         }
 
         ItemStack itemstack1 = itemstack.split(1);
-        org.bukkit.block.Block block = ((IMixinWorld)worldserver).getWorldImpl().getBlockAt(isourceblock.getBlockPos().getX(), isourceblock.getBlockPos().getY(), isourceblock.getBlockPos().getZ());
+        org.bukkit.block.Block block = ((IMixinWorld)worldserver).getWorldImpl().getBlockAt(isourceblock.getPos().getX(), isourceblock.getPos().getY(), isourceblock.getPos().getZ());
         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 
         BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));

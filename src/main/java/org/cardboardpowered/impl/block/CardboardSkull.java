@@ -1,5 +1,7 @@
 package org.cardboardpowered.impl.block;
 
+import java.util.Optional;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -72,10 +74,10 @@ public class CardboardSkull extends CardboardBlockEntityState<SkullBlockEntity> 
     public boolean setOwner(String name) {
         if (name == null || name.length() > MAX_OWNER_LENGTH) return false;
 
-        GameProfile profile = CraftServer.server.getUserCache().findByName(name);
-        if (profile == null) return false;
+        Optional<GameProfile> profile = CraftServer.server.getUserCache().findByName(name);
+        if (profile.isEmpty()) return false;
 
-        this.profile = profile;
+        this.profile = profile.get();
         return true;
     }
 

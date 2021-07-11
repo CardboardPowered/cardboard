@@ -40,7 +40,7 @@ public class MixinTimeCommand {
 
     @Inject(at = @At("HEAD"), method = "executeSet", cancellable = true)
     private static void executeSet_Bukkit(ServerCommandSource source, int i, CallbackInfoReturnable<Integer> ci) {
-        Iterator<ServerWorld> iterator = source.getMinecraftServer().getWorlds().iterator();
+        Iterator<ServerWorld> iterator = source.getServer().getWorlds().iterator();
 
         while (iterator.hasNext()) {
             ServerWorld world = (ServerWorld) iterator.next();
@@ -55,7 +55,7 @@ public class MixinTimeCommand {
 
     @Inject(at = @At("HEAD"), method = "executeAdd", cancellable = true)
     private static void executeAdd_Bukkit(ServerCommandSource source, int i, CallbackInfoReturnable<Integer> ci) {
-        Iterator<ServerWorld> iterator = source.getMinecraftServer().getWorlds().iterator();
+        Iterator<ServerWorld> iterator = source.getServer().getWorlds().iterator();
 
         while (iterator.hasNext()) {
             ServerWorld world = (ServerWorld) iterator.next();

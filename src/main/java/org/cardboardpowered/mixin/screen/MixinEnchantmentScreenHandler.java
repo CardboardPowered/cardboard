@@ -193,8 +193,8 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
 
                 if (flag) {
                     itemstack2 = new ItemStack(Items.ENCHANTED_BOOK);
-                    NbtCompound nbttagcompound = itemstack.getTag();
-                    if (nbttagcompound != null) itemstack2.setTag(nbttagcompound.copy());
+                    NbtCompound nbttagcompound = itemstack.getNbt();
+                    if (nbttagcompound != null) itemstack2.setNbt(nbttagcompound.copy());
 
                     this.inventory.setStack(0, itemstack2);
                 }

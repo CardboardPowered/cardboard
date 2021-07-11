@@ -36,7 +36,7 @@ public class MixinArmorItem {
      */
     @Overwrite
     public static boolean dispenseArmor(BlockPointer isourceblock, ItemStack itemstack) {
-        BlockPos blockposition = isourceblock.getBlockPos().offset((Direction) isourceblock.getBlockState().get(DispenserBlock.FACING));
+        BlockPos blockposition = isourceblock.getPos().offset((Direction) isourceblock.getBlockState().get(DispenserBlock.FACING));
         List<LivingEntity> list = isourceblock.getWorld().getEntitiesByClass(LivingEntity.class, new Box(blockposition), EntityPredicates.EXCEPT_SPECTATOR.and(new EntityPredicates.Equipable(itemstack)));
 
         if (list.isEmpty()) {
@@ -47,7 +47,7 @@ public class MixinArmorItem {
             ItemStack itemstack1 = itemstack.split(1);
 
             World world = isourceblock.getWorld();
-            org.bukkit.block.Block block = ((IMixinWorld)world).getWorldImpl().getBlockAt(isourceblock.getBlockPos().getX(), isourceblock.getBlockPos().getY(), isourceblock.getBlockPos().getZ());
+            org.bukkit.block.Block block = ((IMixinWorld)world).getWorldImpl().getBlockAt(isourceblock.getPos().getX(), isourceblock.getPos().getY(), isourceblock.getPos().getZ());
             CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 
             BlockDispenseArmorEvent event = new BlockDispenseArmorEvent(block, craftItem.clone(), (LivingEntityImpl) ((IMixinEntity)entityliving).getBukkitEntity());

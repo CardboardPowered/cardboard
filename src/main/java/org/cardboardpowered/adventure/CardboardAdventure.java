@@ -273,7 +273,7 @@ public class CardboardAdventure {
 
     public static ItemStack asItemStack(final Book book, final Locale locale) {
         final ItemStack item = new ItemStack(Items.WRITTEN_BOOK, 1);
-        final NbtCompound tag = item.getOrCreateTag();
+        final NbtCompound tag = item.getOrCreateNbt();
         tag.putString("title", asJsonString(book.title(), locale));
         tag.putString("author", asJsonString(book.author(), locale));
         final NbtList pages = new NbtList();

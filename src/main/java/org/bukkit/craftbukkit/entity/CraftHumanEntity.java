@@ -513,7 +513,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
     @Override
     public boolean dropItem(boolean dropAll) {
-        return getHandle().dropSelectedItem(dropAll);
+        return ((ServerPlayerEntity)getHandle()).dropSelectedItem(dropAll);
     }
 
     @Override
@@ -524,7 +524,6 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public void closeInventory(Reason arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

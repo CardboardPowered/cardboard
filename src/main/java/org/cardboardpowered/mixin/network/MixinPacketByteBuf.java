@@ -18,8 +18,8 @@ public class MixinPacketByteBuf {
     @Redirect(at = @At(value = "INVOKE", target="Lnet/minecraft/item/ItemStack;setTag(Lnet/minecraft/nbt/NbtCompound;)V"), 
             method = { "readItemStack" })
     public void t(ItemStack stack, NbtCompound tag) {
-        stack.setTag(tag);
-        if (stack.getTag() != null) CraftItemStack.setItemMeta(stack, CraftItemStack.getItemMeta(stack));
+        stack.setNbt(tag);
+        if (stack.getNbt() != null) CraftItemStack.setItemMeta(stack, CraftItemStack.getItemMeta(stack));
     }
 
     @Shadow

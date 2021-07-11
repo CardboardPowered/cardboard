@@ -52,7 +52,14 @@ dependencies {
     	"fabric-networking-api-v1",
     	"fabric-screen-handler-api-v1"
     ]
-    include(modImplementation(new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.17", "1.17", null)))
+    
+    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.17", "1.17", null)
+
+    //
+    // Make sure we get the latest version of iCommon
+    ic.setChanging(true)
+
+    include(modImplementation(ic))
     
     // Add each module as a dependency
     apiModules.forEach {

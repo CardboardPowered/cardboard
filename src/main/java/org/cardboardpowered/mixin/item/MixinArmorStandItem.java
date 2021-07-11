@@ -54,7 +54,7 @@ public class MixinArmorStandItem {
             if (world.getOtherEntities((Entity) null, axisalignedbb).isEmpty()) {
                 if (world instanceof ServerWorld) {
                     ServerWorld worldserver = (ServerWorld) world;
-                    ArmorStandEntity entityarmorstand = (ArmorStandEntity) EntityType.ARMOR_STAND.create(worldserver, itemstack.getTag(), (Text) null, itemactioncontext.getPlayer(), blockposition, SpawnReason.NATURAL, true, true);
+                    ArmorStandEntity entityarmorstand = (ArmorStandEntity) EntityType.ARMOR_STAND.create(worldserver, itemstack.getNbt(), (Text) null, itemactioncontext.getPlayer(), blockposition, SpawnReason.NATURAL, true, true);
 
                     if (entityarmorstand == null)  return ActionResult.FAIL;
                     worldserver.spawnEntityAndPassengers(entityarmorstand);

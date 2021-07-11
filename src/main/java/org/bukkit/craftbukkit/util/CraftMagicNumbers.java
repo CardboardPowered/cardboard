@@ -372,7 +372,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTag((NbtCompound) StringNbtReader.parse(arguments));
+            nmsStack.setNbt((NbtCompound) StringNbtReader.parse(arguments));
         } catch (CommandSyntaxException ex) {
             BukkitLogger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }

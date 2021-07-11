@@ -42,7 +42,7 @@ public class MixinIngredient implements IMixinIngredient {
 
                     // Bukkit start
                     if (exact_BF) {
-                        if (itemstack1.getItem() == itemstack.getItem() && ItemStack.areTagsEqual(itemstack, itemstack1))
+                        if (itemstack1.getItem() == itemstack.getItem() && ItemStack.areNbtEqual(itemstack, itemstack1))
                             return true;
                         continue;
                     }

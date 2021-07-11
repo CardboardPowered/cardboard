@@ -70,7 +70,7 @@ public class MixinCraftingScreenHandler extends MixinScreenHandler {
             }
             itemstack = BukkitEventFactory.callPreCraftEvent(inventorycrafting, inventorycraftresult, itemstack, ((IMixinScreenHandler)container).getBukkitView(), false);
             inventorycraftresult.setStack(0, itemstack);
-            entityplayer.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(i, 0, itemstack));
+            entityplayer.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(i, container.nextRevision(), 0, itemstack));
         }
     }
 

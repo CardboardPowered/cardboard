@@ -186,11 +186,11 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     @Inject(at = @At("HEAD"), method = "broadcastChatMessage", cancellable = true)
     public void broadcastChatMessage_cardboard(Text message, MessageType type, UUID senderUuid, CallbackInfo ci) {
         String s = CraftChatMessage.toJSON(message);
-        if (s.startsWith("{\"color\":\"yellow\",\"translate\":\"multiplayer.player.joined\"")) {
+      /* if (s.startsWith("{\"color\":\"yellow\",\"translate\":\"multiplayer.player.joined\"")) {
             // Cancel vanilla's join message. We do this so we don't have to overwrite onPlayerConnect
             ci.cancel();
             return;
-        }
+        }*/
     }
 
     @Override

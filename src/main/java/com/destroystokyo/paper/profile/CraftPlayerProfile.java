@@ -17,6 +17,7 @@ import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -148,7 +149,7 @@ public class CraftPlayerProfile implements PlayerProfile {
         if (profile.getId() == null) {
             final GameProfile profile;
             if (onlineMode) {
-                profile = lookupUUID ? userCache.findByName(name) : userCache.findByName(name);
+                profile = lookupUUID ? userCache.findByName(name).get() : userCache.findByName(name).get();
             } else {
                 // Make an OfflinePlayer using an offline mode UUID since the name has no profile
                 profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name);
@@ -161,11 +162,14 @@ public class CraftPlayerProfile implements PlayerProfile {
         }
 
         if ((profile.getName() == null || !hasTextures()) && profile.getId() != null) {
-            GameProfile profile = userCache.getByUuid(this.profile.getId());
-            if (profile != null) {
-                // if old has it, assume its newer, so overwrite, else use cached if it was set and ours wasn't
-                copyProfileProperties(this.profile, profile);
-                this.profile = profile;
+            Optional<GameProfile> o = userCache.getByUuid(this.profile.getId());
+            if (!o.isEmpty()) {
+                GameProfile profile = o.get();
+                if (profile != null) {
+                    // if old has it, assume its newer, so overwrite, else use cached if it was set and ours wasn't
+                    copyProfileProperties(this.profile, profile);
+                    this.profile = profile;
+                }
             }
         }
         return this.profile.isComplete();

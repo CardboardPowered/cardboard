@@ -82,7 +82,7 @@ public class CardboardPlayerInventory extends CraftInventory implements org.bukk
         else if (index > 35)
             index = 8 - (index - 36);
 
-        player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(player.playerScreenHandler.syncId, index, CraftItemStack.asNMSCopy(item)));
+        player.networkHandler.sendPacket(new ScreenHandlerSlotUpdateS2CPacket(player.playerScreenHandler.syncId,  player.playerScreenHandler.nextRevision(), index, CraftItemStack.asNMSCopy(item)));
     }
 
     @Override

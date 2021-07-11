@@ -89,7 +89,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
      */
     @Overwrite
     public <C extends Inventory, T extends Recipe<C>> Optional<T> getFirstMatch(RecipeType<T> recipes, C c0, World world) {
-        Optional<T> recipe = this.getAllOfType(recipes).values().stream().flatMap((irecipe) -> Util.stream(recipes.get(irecipe, world, c0))).findFirst();
+        Optional<T> recipe = this.getAllOfType(recipes).values().stream().flatMap((irecipe) -> Util.stream(recipes.match(irecipe, world, c0))).findFirst();
         ((IMixinInventory)c0).setCurrentRecipe(recipe.orElse(null)); // Clear recipe when no recipe is found
         return recipe;
     }
