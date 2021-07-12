@@ -15,7 +15,7 @@ public class MixinPacketByteBuf {
     /**
      * @reason Set org.bukkit.item.ItemStack metadata
      */
-    @Redirect(at = @At(value = "INVOKE", target="Lnet/minecraft/item/ItemStack;setTag(Lnet/minecraft/nbt/NbtCompound;)V"), 
+    @Redirect(at = @At(value = "INVOKE", target="Lnet/minecraft/item/ItemStack;setNbt(Lnet/minecraft/nbt/NbtCompound;)V"), 
             method = { "readItemStack" })
     public void t(ItemStack stack, NbtCompound tag) {
         stack.setNbt(tag);
