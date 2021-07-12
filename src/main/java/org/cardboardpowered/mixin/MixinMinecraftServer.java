@@ -194,7 +194,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @SuppressWarnings({ "deprecation", "resource", "unchecked", "rawtypes", "unused" })
     @Overwrite
     public void loadWorld() {
-        PaperMetrics.startMetrics();
         int worldCount = 3;
 
         // Fix PolyMC mod

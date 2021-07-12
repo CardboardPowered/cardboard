@@ -1,6 +1,8 @@
 package org.spigotmc;
 
 import com.google.common.base.Throwables;
+import com.javazilla.bukkitfabric.PaperMetrics;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -57,7 +59,9 @@ public class SpigotConfig {
         config.options().copyDefaults( true );
 
         commands = new HashMap<String, Command>();
-        //commands.put( "spigot", new SpigotCommand( "spigot" ) );
+        commands.put( "spigot", new SpigotCommand( "spigot" ) );
+        
+        PaperMetrics.startMetrics_Cardboard();
 
         version = getInt( "config-version", 12 );
         set( "config-version", 12 );
@@ -198,7 +202,7 @@ public class SpigotConfig {
     {
         int count = getInt( "settings.netty-threads", 4 );
         System.setProperty( "io.netty.eventLoopThreads", Integer.toString( count ) );
-        Bukkit.getLogger().log( Level.INFO, "Using {0} threads for Netty based IO", count );
+        Bukkit.getLogger().info( "Using " + count + " threads for Netty based IO" );
     }
 
     public static boolean disableStatSaving;
@@ -213,7 +217,7 @@ public class SpigotConfig {
     private static void playerSample()
     {
         playerSample = Math.max( getInt( "settings.sample-count", 12 ), 0 ); // Paper - Avoid negative counts
-        Bukkit.getLogger().log( Level.INFO, "Server Ping Player Sample Count: {0}", playerSample ); // Paper - Use logger
+        Bukkit.getLogger().info( "Server Ping Player Sample Count: " + playerSample ); // Paper - Use logger
     }
 
     public static int playerShuffle;

@@ -1281,7 +1281,7 @@ public class CraftServer implements Server {
     public String getVersion() {
     	// Some plugins like WorldEdit use PaperLib.getMinecraftVersion() for version checks
         // Update: WorldEdit now has a preview 1.17 build
-        return serverVersion + " (MC: 1.17)";
+        return serverVersion + " (MC: 1.17.1)";
     }
 
     public String getShortVersion() {

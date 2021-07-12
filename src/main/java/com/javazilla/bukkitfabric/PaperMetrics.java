@@ -14,10 +14,10 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.plugin.Plugin;
 
-import com.destroystokyo.paper.Metrics;
+import com.destroystokyo.paper.Metrics_Cardboard;
 
 public class PaperMetrics {
-    public static void startMetrics() {
+    public static void startMetrics_Cardboard() {
         // Get the config file
         File configFile = new File(new File(new File("plugins"), "bStats"), "config.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
@@ -47,22 +47,22 @@ public class PaperMetrics {
         // Load the data
         String serverUUID = config.getString("serverUuid");
         boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
-        // Only start Metrics, if it's enabled in the config
+        // Only start Metrics_Cardboard, if it's enabled in the config
         if (config.getBoolean("enabled", true)) {
-            Metrics metrics = new Metrics("Paper", serverUUID, logFailedRequests, Bukkit.getLogger());
+            Metrics_Cardboard Metrics_Cardboard = new Metrics_Cardboard("Paper", serverUUID, logFailedRequests, Bukkit.getLogger());
 
-            metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
+            Metrics_Cardboard.addCustomChart(new Metrics_Cardboard.SimplePie("minecraft_version", () -> {
                 String minecraftVersion = Bukkit.getVersion();
                 minecraftVersion = minecraftVersion.substring(minecraftVersion.indexOf("MC: ") + 4, minecraftVersion.length() - 1);
                 return minecraftVersion;
             }));
 
-            metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
-            metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
-            metrics.addCustomChart(new Metrics.SimplePie("paper_version", () -> "git-Cardboard-Fabric"));
+            Metrics_Cardboard.addCustomChart(new Metrics_Cardboard.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
+            Metrics_Cardboard.addCustomChart(new Metrics_Cardboard.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
+            Metrics_Cardboard.addCustomChart(new Metrics_Cardboard.SimplePie("paper_version", () -> "git-Cardboard-" + CraftServer.server.getVersion()));
 
             
-            metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
+            Metrics_Cardboard.addCustomChart(new Metrics_Cardboard.DrilldownPie("java_version", () -> {
                 Map<String, Map<String, Integer>> map = new HashMap<>();
                 String javaVersion = System.getProperty("java.version");
                 Map<String, Integer> entry = new HashMap<>();
@@ -93,7 +93,7 @@ public class PaperMetrics {
                 return map;
             }));
 
-            metrics.addCustomChart(new Metrics.DrilldownPie("legacy_plugins", () -> {
+            Metrics_Cardboard.addCustomChart(new Metrics_Cardboard.DrilldownPie("legacy_plugins", () -> {
                 Map<String, Map<String, Integer>> map = new HashMap<>();
 
                 // count legacy plugins
