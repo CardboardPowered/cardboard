@@ -85,6 +85,14 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                 return;
             }
         }
+        
+        if (owner.equalsIgnoreCase("com/sk89q/worldguard/bukkit/util/Materials")) {
+            if (name.equals("isSpawnEgg") || name.equals("getEntitySpawnEgg") || name.equals("isArmor") ||
+                    name.equals("isToolApplicable") || name.equals("isWaxedCopper")) {
+                super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/WorldGuardMaterialHelper", name, desc, false );
+                return;
+            }
+        }
 
         for (String str : SKIP) {
             if (this.pln.equalsIgnoreCase(str) || owner.startsWith("org/bukkit")) {

@@ -1,5 +1,6 @@
 package org.cardboardpowered.mixin.world;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -14,6 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.cardboardpowered.impl.block.CapturedBlockState;
 import org.cardboardpowered.impl.world.WorldImpl;
+
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.block.BlockState;
@@ -54,6 +57,45 @@ public class MixinWorld implements IMixinWorld {
 
         ServerWorld nms = ((ServerWorld)(Object)this);
         String name = ((ServerWorldProperties) nms.getLevelProperties()).getLevelName();
+
+        File fi = new File(name + "_the_end");
+        File van = new File(new File(name), "DIM1");
+
+        if (fi.exists()) {
+            File dim = new File(fi, "DIM1");
+            if (dim.exists()) {
+                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + name + "_the_end !");
+                BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
+                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
+                if (dim.renameTo(van)) {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
+                } else {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
+                    BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
+                }
+            }
+            fi.delete();
+        }
+        
+        File fi2 = new File(name + "_nether");
+        File van2 = new File(new File(name), "DIM-1");
+
+        if (fi2.exists()) {
+            File dim = new File(fi, "DIM-1");
+            if (dim.exists()) {
+                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + name + "_the_end !");
+                BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
+                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
+                if (dim.renameTo(van2)) {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
+                } else {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
+                    BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
+                }
+            }
+            fi.delete();
+        }
+
         if (CraftServer.INSTANCE.worlds.containsKey(name)) {
             if (nms.getRegistryKey() == World.NETHER) name = name + "_nether";
             if (nms.getRegistryKey() == World.END)    name = name + "_the_end";

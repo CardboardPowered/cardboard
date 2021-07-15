@@ -43,6 +43,7 @@ import org.cardboardpowered.impl.entity.*;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
+import me.isaiah.common.entity.IRemoveReason;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.EntityPose;
@@ -517,9 +518,12 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         i = event.getAmount();
     }
 
-    @Shadow
-    public void remove(RemovalReason r) {}
-    public void removeBF() {remove(RemovalReason.DISCARDED);} // Helper
+   // @Shadow
+   // public void remove(RemovalReason r) {}
+    //public void removeBF() {remove(RemovalReason.DISCARDED);} // Helper
+    public void removeBF() {
+        ((me.isaiah.common.cmixin.IMixinEntity)this).Iremove(IRemoveReason.DISCARDED);
+    }
 
     @Shadow
     public void move(MovementType moveType, Vec3d vec3d) {

@@ -40,6 +40,11 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    // Check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -57,7 +62,7 @@ dependencies {
 
     //
     // Make sure we get the latest version of iCommon
-    ic.setChanging(true)
+    ic.setChanging(true) 
 
     include(modImplementation(ic))
     

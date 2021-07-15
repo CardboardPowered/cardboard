@@ -725,6 +725,7 @@ public class CraftServer implements Server {
     @SuppressWarnings("resource")
     @Override
     public World createWorld(WorldCreator creator) {
+        System.out.println("Bukkit#createWorld 0");
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
         File folder = new File(getWorldContainer(), name);
@@ -764,10 +765,11 @@ public class CraftServer implements Server {
 
         boolean hardcore = creator.hardcore();
 
-        server.getRegistryManager();
+        System.out.println("Bukkit#createWorld 1");
         RegistryOps<NbtElement> registryreadops = RegistryOps.of((DynamicOps<NbtElement>) NbtOps.INSTANCE, server.serverResourceManager.getResourceManager(), DynamicRegistryManager.create());
         LevelProperties worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps<NbtElement>) registryreadops, method_29735(server.dataPackManager));
 
+        System.out.println("Bukkit#createWorld 2");
         LevelInfo worldSettings;
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)
         if (worlddata == null) {
