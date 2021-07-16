@@ -505,8 +505,6 @@ accessible	field	net/minecraft/entity/EntityCategory	name	Ljava/lang/String;
 mutable	field	net/minecraft/entity/EntityCategory	name	Ljava/lang/String;
 extendable	class	net/minecraft/entity/SpawnType
 extendable	class	net/minecraft/entity/MovementType
-accessible	method	net/minecraft/entity/mob/MobEntityWithAi	getRunFromLeashSpeed	()D
-accessible	method	net/minecraft/entity/mob/MobEntityWithAi	updateForLeashLength	(F)V
 extendable	class	net/minecraft/entity/EntityPose
 extendable	class	net/minecraft/entity/EntityInteraction$1
 accessible	field	net/minecraft/entity/FallingBlockEntity	block	Lnet/minecraft/block/BlockState;
@@ -941,18 +939,6 @@ accessible	field	net/minecraft/world/MobSpawnerLogic	requiredPlayerRange	I
 mutable	field	net/minecraft/world/MobSpawnerLogic	requiredPlayerRange	I
 accessible	field	net/minecraft/world/MobSpawnerLogic	spawnRange	I
 mutable	field	net/minecraft/world/MobSpawnerLogic	spawnRange	I
-accessible	method	net/minecraft/world/MobSpawnerLogic	getEntityId	()Lnet/minecraft/util/Identifier;
-accessible	method	net/minecraft/world/MobSpawnerLogic	isPlayerInRange	()Z
-accessible	method	net/minecraft/world/MobSpawnerLogic	spawnEntity	(Lnet/minecraft/entity/Entity;)V
-accessible	method	net/minecraft/world/MobSpawnerLogic	updateSpawns	()V
-mutable	field	net/minecraft/block/entity/ChestBlockEntity	animationAngle	F
-accessible	field	net/minecraft/block/entity/ChestBlockEntity	lastAnimationAngle	F
-mutable	field	net/minecraft/block/entity/ChestBlockEntity	lastAnimationAngle	F
-accessible	field	net/minecraft/block/entity/ChestBlockEntity	viewerCount	I
-mutable	field	net/minecraft/block/entity/ChestBlockEntity	viewerCount	I
-accessible	field	net/minecraft/block/entity/ChestBlockEntity	ticksOpen	I
-mutable	field	net/minecraft/block/entity/ChestBlockEntity	ticksOpen	I
-accessible	method	net/minecraft/block/entity/ChestBlockEntity	onInvOpenOrClose	()V
 extendable	class	net/minecraft/util/math/ChunkPos$1
 accessible	field	net/minecraft/util/math/ChunkPos$1	position	Lnet/minecraft/util/math/ChunkPos;
 mutable	field	net/minecraft/util/math/ChunkPos$1	position	Lnet/minecraft/util/math/ChunkPos;
@@ -1352,25 +1338,6 @@ accessible	field	net/minecraft/block/entity/EnchantingTableBlockEntity	customNam
 mutable	field	net/minecraft/block/entity/EnchantingTableBlockEntity	customName	Lnet/minecraft/text/Text;
 accessible	field	net/minecraft/block/entity/EnderChestBlockEntity	ticks	I
 mutable	field	net/minecraft/block/entity/EnderChestBlockEntity	ticks	I
-accessible	field	net/minecraft/block/entity/HopperBlockEntity	transferCooldown	I
-mutable	field	net/minecraft/block/entity/HopperBlockEntity	transferCooldown	I
-accessible	field	net/minecraft/block/entity/HopperBlockEntity	lastTickTime	J
-mutable	field	net/minecraft/block/entity/HopperBlockEntity	lastTickTime	J
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	insertAndExtract	(Ljava/util/function/Supplier;)Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	isFull	()Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	insert	()Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	getAvailableSlots	(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/util/math/Direction;)Ljava/util/stream/IntStream;
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	isInventoryFull	(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/util/math/Direction;)Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	isInventoryEmpty	(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/util/math/Direction;)Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	extract	(Lnet/minecraft/block/entity/Hopper;Lnet/minecraft/inventory/Inventory;ILnet/minecraft/util/math/Direction;)Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	canInsert	(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/item/ItemStack;ILnet/minecraft/util/math/Direction;)Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	canExtract	(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/item/ItemStack;ILnet/minecraft/util/math/Direction;)Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	transfer	(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/inventory/Inventory;Lnet/minecraft/item/ItemStack;ILnet/minecraft/util/math/Direction;)Lnet/minecraft/item/ItemStack;
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	getOutputInventory	()Lnet/minecraft/inventory/Inventory;
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	canMergeItems	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	setCooldown	(I)V
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	needsCooldown	()Z
-accessible	method	net/minecraft/block/entity/HopperBlockEntity	isDisabled	()Z
 accessible	class	net/minecraft/block/entity/LecternBlockEntity$1
 accessible	class	net/minecraft/block/entity/LecternBlockEntity$2
 accessible	field	net/minecraft/block/entity/LecternBlockEntity	inventory	Lnet/minecraft/inventory/Inventory;

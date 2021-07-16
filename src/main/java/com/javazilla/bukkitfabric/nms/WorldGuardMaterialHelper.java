@@ -9,20 +9,16 @@ public class WorldGuardMaterialHelper {
     /**
      * @see {@link com.sk89q.worldguard.bukkit.util.Materials}
      */
-    public static boolean isSpawnEgg(Material material) {
-        return (material.name().contains("SPAWN_EGG"));
+    public static boolean isSpawnEgg(Material mat) {
+        return (mat.name().contains("SPAWN_EGG"));
     }
 
     /**
      * @see {@link com.sk89q.worldguard.bukkit.util.Materials}
      */
-    public static boolean isArmor(Material type) {
-        String name = type.name();
-        if (name.contains("HELMENT") || name.contains("CHESTPLATE") 
-                || name.contains("LEGGINGS") || name.contains("BOOTS")) {
-            return true;
-        }
-        return (type == Material.ELYTRA);
+    public static boolean isArmor(Material mat) {
+        String n = mat.name();
+        return (n.contains("HELMENT")||n.contains("CHESTPLATE")||n.contains("LEGGINGS")||n.contains("BOOTS")) || mat==Material.ELYTRA;
     }
 
     /**
@@ -58,8 +54,8 @@ public class WorldGuardMaterialHelper {
     /**
      * @see {@link com.sk89q.worldguard.bukkit.util.Materials}
      */
-    public static EntityType getEntitySpawnEgg(Material material) {
-        String name = material.name().replace("_SPAWN_EGG", "");
+    public static EntityType getEntitySpawnEgg(Material mat) {
+        String name = mat.name().replace("_SPAWN_EGG", "");
         try {
             return EntityType.valueOf(name);
         } catch (Exception e) {
