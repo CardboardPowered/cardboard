@@ -1,6 +1,5 @@
 package org.bukkit.plugin.java;
 
-import com.google.common.base.Charsets;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -24,7 +24,9 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginBase;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
-import org.bukkit.plugin.PluginLogger;
+
+import com.google.common.base.Charsets;
+import com.javazilla.bukkitfabric.BukkitLogger;
 
 /**
  * Represents a Java plugin
@@ -41,7 +43,7 @@ public abstract class JavaPlugin extends PluginBase {
     private boolean naggable = true;
     private FileConfiguration newConfig = null;
     private File configFile = null;
-    private PluginLogger logger = null;
+    private Logger logger = null;
 
     public JavaPlugin() {
         final ClassLoader classLoader = this.getClass().getClassLoader();
@@ -266,7 +268,9 @@ public abstract class JavaPlugin extends PluginBase {
         this.dataFolder = dataFolder;
         this.classLoader = classLoader;
         this.configFile = new File(dataFolder, "config.yml");
-        this.logger = new PluginLogger(this);
+
+        // Cardboard Fix Paper's Logger.
+        this.logger = BukkitLogger.getPluginLogger(description.getPrefix() != null ? description.getPrefix() : description.getName());
     }
 
     /**
