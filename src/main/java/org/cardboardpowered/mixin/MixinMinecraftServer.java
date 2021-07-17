@@ -48,6 +48,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinNetworkIo;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import me.isaiah.common.cmixin.IMixinChunkGenerator;
+import me.isaiah.common.cmixin.IMixinPersistentStateManager;
 import net.minecraft.block.Block;
 import net.minecraft.command.DataCommandStorage;
 import net.minecraft.resource.ServerResourceManager;
@@ -265,7 +266,8 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
         if (true) {
             ServerWorld worldserver1 = worldserver;
-            ForcedChunkState forcedchunk = (ForcedChunkState) worldserver.getPersistentStateManager().get(ForcedChunkState::fromNbt, "chunks");
+            //ForcedChunkState forcedchunk = (ForcedChunkState) worldserver.getPersistentStateManager().get(ForcedChunkState::fromNbt, "chunks");
+            ForcedChunkState forcedchunk = ((IMixinPersistentStateManager)worldserver.getPersistentStateManager()).Iget();
 
             if (forcedchunk != null) {
                 LongIterator longiterator = forcedchunk.getChunks().iterator();
