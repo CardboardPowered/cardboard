@@ -26,6 +26,9 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.MappingResolver;
+
 public class ReflectionMethodVisitor extends MethodVisitor {
 
     public static ArrayList<String> SKIP = new ArrayList<>();
@@ -35,10 +38,12 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         //SKIP.add("essentials");
     }
     private String pln;
+    private MappingResolver mr;
 
     public ReflectionMethodVisitor(int api, MethodVisitor visitMethod, String pln) {
         super(api, visitMethod);
         this.pln = pln;
+        this.mr = FabricLoader.getInstance().getMappingResolver();
     }
 
     @Override
@@ -61,8 +66,25 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         }
     }
 
+
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+        if (owner.startsWith("net/minecraft") && name.length() < 4) {
+            String cl = mr.unmapClassName("official", owner.replace('/','.'));
+            String name2 = mr.mapMethodName("official", cl.replace('/', '.'), name, desc);
+            // Debug: System.out.println(owner + "/=/" + name + " /=/ " + name2);
+            super.visitMethodInsn( opcode, owner, name2, desc, false );
+            return;
+        }
+        if (owner.contains("NbtCompound") || owner.contains("class_2487")) {
+            if (name.startsWith("setString")) {
+                String cl = mr.unmapClassName("intermediary", owner.replace('/','.'));
+                String name2 = mr.mapMethodName("intermediary", cl.replace('/', '.'), "method_10582", desc);
+                super.visitMethodInsn( opcode, owner, name2, desc, false );
+                return;
+            }
+        }
+
         if (owner.equalsIgnoreCase("org/bukkit/Material")) {
             if (name.equalsIgnoreCase("getField")) {
                 System.out.println("\nGET MATERIAL FIELD!!!!!\n");

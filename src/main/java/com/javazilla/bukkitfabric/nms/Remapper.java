@@ -25,7 +25,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 24;
+    public static int MAPPINGS_VERSION = 38;
 
     public static BukkitLogger LOGGER = new BukkitLogger("Cardboard", null);
 

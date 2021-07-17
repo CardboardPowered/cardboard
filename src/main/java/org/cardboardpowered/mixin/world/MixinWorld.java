@@ -81,9 +81,9 @@ public class MixinWorld implements IMixinWorld {
         File van2 = new File(new File(name), "DIM-1");
 
         if (fi2.exists()) {
-            File dim = new File(fi, "DIM-1");
+            File dim = new File(fi2, "DIM-1");
             if (dim.exists()) {
-                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + name + "_the_end !");
+                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + fi2.getName() + " !");
                 BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
                 BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
                 if (dim.renameTo(van2)) {
