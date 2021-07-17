@@ -8,6 +8,7 @@
     "MixinPluginLogger",
     "MixinDedicatedServer",
     "MixinMinecraftServer",
+    "MixinMCServer",
     "MixinServerCommandSource",
     "MixinCommandOutput",
     "MixinExplosion",

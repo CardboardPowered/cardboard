@@ -48,11 +48,7 @@ import net.minecraft.server.dedicated.PendingServerCommand;
 import net.minecraft.util.registry.Registry;
 
 @Mixin(MinecraftDedicatedServer.class)
-public abstract class MixinDedicatedServer extends MixinMinecraftServer implements IMixinDedicatedServer {
-
-    public MixinDedicatedServer(String string) {
-        super(string);
-    }
+public abstract class MixinDedicatedServer extends MixinMCServer implements IMixinDedicatedServer {
 
     @Shadow
     @Final

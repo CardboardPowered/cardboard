@@ -1,15 +1,16 @@
 
-<img align="right" alt="logo" width="100" src="https://avatars.githubusercontent.com/u/69881494?s=400&u=bb23160685d98cbe7641f4ea428d3591ab210dd6&v=4">
+<img align="right" alt="logo" width="120" src="https://cardboardpowered.org/assets/cardboard-box.png">
 
 # Cardboard
 Cardboard is an implementation of the popular Bukkit/Spigot/Paper Modding API for FabricMC. This mod lets you use plugins that are made for Bukkit and it's derivatives (Spigot & Paper) on a Fabric modded server.
 
 [![Join Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&style=flat-square)](https://discord.gg/Qp4a2Nj)
 
-| Minecraft       | Supported?                | Download      | Build Status |
+| Supported? | Minecraft       | Download      | Build Status |
 |-----------------|---------------------------|---------------|----------------------|
-| 1.16.4 / 1.16.5 | &#x2705; SUPPORTED        | [Download for 1.16.x](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
-| 1.16.3 and below | &#x274C; UNSUPPORTED      |            | |
+| &#x2705; | Fabric 1.17.1 | [Download for 1.17.x](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download#1.17) |
+| &#x2705; | Fabric 1.16.4/1.16.5 | [Download for 1.16.x](https://cardboardpowered.org/download#1.16) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
+| &#x274C; | &#8804; 1.16.3 | |            | |
 
 
 ## License
@@ -32,4 +33,5 @@ Progress can be determined by the completeness of the to-do lists on the two pin
 
 # Apex Hosting 
 This project is partnered with ApexHosting! Join our test server, 51.81.106.34:25592, or get a Minecraft server by clicking on the banner below:
+
 [![Apex Hosting](https://cdn.apexminecrafthosting.com/img/theme/apex-hosting-mobile.png)](https://billing.apexminecrafthosting.com/aff.php?aff=3548)

@@ -1163,9 +1163,10 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     public GameProfile getProfile() {
-        
+        Optional<GameProfile> opt = CraftServer.server.getUserCache().getByUuid(getUniqueId());
+
         // TODO Add a GameProfile API to iCommon
-        return CraftServer.server.getUserCache().getByUuid(getUniqueId()).get();
+        return opt.isEmpty() ? null : opt.get();
     }
 
     @Override
