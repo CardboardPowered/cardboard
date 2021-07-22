@@ -25,19 +25,27 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+import org.bukkit.event.block.BlockCookEvent;
 
-import com.destroystokyo.paper.Metrics;
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import me.isaiah.common.event.EventHandler;
 import me.isaiah.common.event.EventRegistery;
 import me.isaiah.common.event.entity.BlockEntityLoadEvent;
+import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 
 @SuppressWarnings("deprecation")
@@ -77,6 +85,29 @@ public class BukkitFabricMod implements ModInitializer {
         NbtCompound persistentDataTag = tag.getCompound("PublicBukkitValues");
         if (persistentDataTag != null)
             mc.getPersistentDataContainer().putAll(persistentDataTag);
+    }
+
+    @EventHandler
+    public void onCampfireCook(CampfireBlockEntityCookEvent ev) {
+        Object[] ob = ev.getMcObjects();
+        World w = (World) ob[0];
+        BlockPos pos = (BlockPos) ob[1];
+        ItemStack itemstack = (ItemStack) ob[2];
+        ItemStack itemstack1 = (ItemStack) ob[3];
+        
+        CraftItemStack source = CraftItemStack.asCraftMirror(itemstack);
+        org.bukkit.inventory.ItemStack result = CraftItemStack.asBukkitCopy(itemstack1);
+
+        BlockCookEvent blockCookEvent = new BlockCookEvent(CraftBlock.at((ServerWorld) w, pos), source, result);
+        CraftServer.INSTANCE.getPluginManager().callEvent(blockCookEvent);
+
+        if (blockCookEvent.isCancelled()) {
+            ev.setCanceled(true);
+            return;
+        }
+
+        result = blockCookEvent.getResult();
+        ev.setResult( CraftItemStack.asNMSCopy(result) );
     }
 
 }

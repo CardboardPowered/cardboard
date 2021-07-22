@@ -83,7 +83,6 @@
     "entity.block.MixinChestBlockEntity",
     "entity.block.MixinLockableContainerBlockEntity",
     "entity.block.MixinDispenserBlockEntity",
-    "entity.block.MixinCampfireBlockEntity",
     "entity.block.MixinBrewingStandBlockEntity",
     "entity.block.MixinAbstractFurnaceBlockEntity",
     "entity.block.MixinSignBlockEntity",
