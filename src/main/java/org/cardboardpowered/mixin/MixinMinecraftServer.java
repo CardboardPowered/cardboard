@@ -166,11 +166,15 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
      */
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/ServerWorldProperties;getWorldBorder()Lnet/minecraft/world/border/WorldBorder$Properties;"), method = "createWorlds")
     public void onBeginCreateWorld(WorldGenerationProgressListener p, CallbackInfo ci) {
-        System.out.println("DEBUG: onBeginCreateWorld");
+       // System.out.println("DEBUG: onBeginCreateWorld");
         Collection<ServerWorld> worldz = this.worlds.values();
-        ServerWorld world = worldz.toArray(new ServerWorld[0])[worldz.size()-1];
 
-        CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)world).getWorldImpl()));
+        for (ServerWorld world : worldz) {
+            //ServerWorld world = worldz.toArray(new ServerWorld[0])[worldz.size()-1];
+
+           // System.out.println( "WORLDw:" + ((IMixinWorld)world).getWorldImpl().getName() );
+            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)world).getWorldImpl()));
+        }
     }
 
     /**
@@ -183,6 +187,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Inject(at = @At("TAIL"), method = "loadWorld")
     public void afterWorldLoad(CallbackInfo ci) {
         for (ServerWorld worldserver : ((MinecraftServer)(Object)this).getWorlds()) {
+            System.out.println("AFTER WORLD LOAD: " + worldserver);
             this.loadSpawn(worldserver.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, worldserver);
             CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getWorldImpl()));
         }

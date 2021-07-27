@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard - Spigot/Paper API for Fabric
+ * Copyright (C) 2020-2021 Cardboard contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ package org.cardboardpowered.mixin.entity;
 import java.util.OptionalInt;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
@@ -31,7 +30,6 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedMainHandEvent;
-import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.MainHand;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,23 +48,20 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
+import me.isaiah.common.ICommonMod;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.impl.screenhandler.Networking;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.MessageType;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerListener;
@@ -74,17 +69,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Arm;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -139,6 +127,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(at = @At("HEAD"), method = "teleport", cancellable = true)
     public void teleport(ServerWorld worldserver, double x, double y, double z, float f, float f1, CallbackInfo ci) {
+        System.out.println("DEBUG: Player teleport!");
         PlayerTeleportEvent event = new PlayerTeleportEvent((Player) this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(((IMixinWorld)worldserver).getWorldImpl(), x,y,z,f,f1), PlayerTeleportEvent.TeleportCause.UNKNOWN);
         Bukkit.getPluginManager().callEvent(event);
 
@@ -146,28 +135,6 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             ci.cancel();
             return;
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Inject(at = @At("HEAD"), method = "setGameMode", cancellable = true)
-    public void setGameMode(NbtCompound nbt, CallbackInfo ci) {
-        net.minecraft.world.GameMode gm = gameModeFromNbt(nbt, "playerGameType");
-        if (gm == ((ServerPlayerEntity)(Object)this).interactionManager.getGameMode())
-            ci.cancel();
-        // TODO: 1.17ify: Figure out why GM is null
-        System.out.println("Cardboard 1.17 Test: Is GM null?: " + (null == gm));
-
-        if (null != gm) {
-            PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent((Player) getBukkitEntity(), GameMode.getByValue(gm.getId()));
-            CraftServer.INSTANCE.getPluginManager().callEvent(event);
-            if (event.isCancelled())
-                ci.cancel();
-        }
-    }
-
-    @Shadow
-    private static net.minecraft.world.GameMode gameModeFromNbt(NbtCompound tag, String key) {
-        return null;
     }
 
     public String locale_BF = "en_us";
@@ -258,17 +225,20 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                         new OpenScreenS2CPacket(container.syncId, container.getType(), factory.getDisplayName()),
                         factory);
                 /*End*/
-                //container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
-                onSpawn(container);
+
+                if ( CraftServer.INSTANCE.getMinecraftVersion().contains("1.16") ) {
+                    // 1.16.5
+                    container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
+                } else {
+                    // 1.17
+                    ((ServerPlayerEntity)(Object)this).onSpawn(container);
+                }
+
                 fabric_openedScreenHandler.remove();
                 ci.setReturnValue(OptionalInt.of(this.screenHandlerSyncId));
             }
         }
         ci.cancel();
-    }
-
-    @Shadow
-    public void onSpawn(ScreenHandler screenHandler) {
     }
 
     @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)

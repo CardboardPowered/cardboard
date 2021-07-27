@@ -73,8 +73,8 @@ public class MixinWorld implements IMixinWorld {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
                     BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
                 }
+                fi.delete();
             }
-            fi.delete();
         }
         
         File fi2 = new File(name + "_nether");
@@ -92,15 +92,27 @@ public class MixinWorld implements IMixinWorld {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
                     BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
                 }
+                fi.delete();
             }
-            fi.delete();
         }
 
         if (CraftServer.INSTANCE.worlds.containsKey(name)) {
-            if (nms.getRegistryKey() == World.NETHER) name = name + "_nether";
-            if (nms.getRegistryKey() == World.END)    name = name + "_the_end";
+            if (nms.getRegistryKey() == World.NETHER) {
+                name = name + "_nether";
+                // Keep empty directory to fool plugins, ex. Multiverse.
+                fi2.mkdirs();
+            }
+            if (nms.getRegistryKey() == World.END) {
+                name = name + "_the_end";
+                fi.mkdirs();
+            }
+
+            this.bukkit = new WorldImpl(name, nms);
+            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)nms).getWorldImpl()));
+        } else {
+            this.bukkit = new WorldImpl(name, nms);
         }
-        this.bukkit = new WorldImpl(name, nms);
+        System.out.println("WORLD NAME: " + name);
         ((CraftServer)Bukkit.getServer()).addWorldToMap(getWorldImpl());
     }
 

@@ -4,12 +4,16 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.security.Key;
+import java.security.MessageDigest;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.UUID;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
@@ -36,20 +40,14 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.local.LocalAddress;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.encryption.NetworkEncryptionException;
 import net.minecraft.network.encryption.NetworkEncryptionUtils;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
-import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -59,19 +57,18 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.logging.UncaughtExceptionLogger;
-import  net.minecraft.server.network.ServerLoginNetworkHandler.State;
 
 @SuppressWarnings("deprecation")
-@Mixin(value = ServerLoginNetworkHandler.class)
-public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkHandler {
+@Mixin(ServerLoginNetworkHandler.class)
+public class MixinServerLoginNetworkHandler_16 implements IMixinServerLoginNetworkHandler {
 
     @Shadow private byte[] nonce = new byte[4];
     @Shadow private MinecraftServer server;
     @Shadow public ClientConnection connection;
-    @Shadow private ServerLoginNetworkHandler.State state;
-    @Shadow private GameProfile profile;
-    // TODO 1.17ify: @Shadow private SecretKey secretKey;
-    @Shadow public ServerPlayerEntity delayedPlayer;
+    @Shadow public ServerLoginNetworkHandler.State state;
+    @Shadow public GameProfile profile;
+    //@Shadow public SecretKey secretKey;
+    @Shadow public ServerPlayerEntity player;
 
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
     public String hostname = ""; // Bukkit - add field
@@ -91,35 +88,41 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
     public void setHostname(String s) {
         this.hostname = s;
     }
+    
+    public void card_setState(State state) {
+        this.state = state;
+    }
 
+    /**
+     * @reason Spigot basically overwrites this whole method.
+     * @author Cardboard
+     */
     @Overwrite
     public void onKey(LoginKeyC2SPacket packet) {
-        Validate.validState((this.state == State.KEY ? 1 : 0) != 0, (String)"Unexpected key packet", (Object[])new Object[0]);
+        Validate.validState(this.state == ServerLoginNetworkHandler.State.KEY, "Unexpected key packet", new Object[0]);
         PrivateKey privateKey = this.server.getKeyPair().getPrivate();
-        String id = "";
+
+        SecretKey secretKey;
         try {
-            if (!Arrays.equals(this.nonce, packet.decryptNonce(privateKey))) {
-                throw new IllegalStateException("Protocol error");
-            }
-            SecretKey secretKey = packet.decryptSecretKey(privateKey);
+            if (!Arrays.equals(this.nonce, packet.decryptNonce(privateKey))) throw new IllegalStateException("Protocol error");
+
+            secretKey = packet.decryptSecretKey(privateKey);
             Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, secretKey);
             Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, secretKey);
-            String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", this.server.getKeyPair().getPublic(), secretKey)).toString(16);
-            id = string;
-            this.state = State.AUTHENTICATING;
-            this.connection.setupEncryption(cipher, cipher2);
-        }
-        catch (NetworkEncryptionException networkEncryptionException) {
+            String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey)).toString(16);
+            this.card_setState(ServerLoginNetworkHandler.State.AUTHENTICATING);
+            connection.setupEncryption(cipher, cipher2);
+        } catch (NetworkEncryptionException networkEncryptionException) {
             throw new IllegalStateException("Protocol error", networkEncryptionException);
         }
-        final String s = id;
+
         Thread thread = new Thread("User Authenticator #" + theid++) {
             @Override
             public void run() {
                 GameProfile gameprofile = profile;
 
                 try {
-                    //String s = server.serverId;// TODO Check 1.17ify (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
+                    String s = (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
                     profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
                     if (profile != null) {
                         // Fire PlayerPreLoginEvent
@@ -128,7 +131,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                     } else if (server.isSinglePlayer()) {
                         LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
                         profile = toOfflineProfile(gameprofile);
-                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                        card_setState( ServerLoginNetworkHandler.State.READY_TO_ACCEPT);
                     } else {
                         disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
                         LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
@@ -137,7 +140,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                     if (server.isSinglePlayer()) {
                         LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
                         profile = toOfflineProfile(gameprofile);
-                        state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
+                        card_setState( ServerLoginNetworkHandler.State.READY_TO_ACCEPT);
                     } else {
                         disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
                         LOGGER_BF.error("Couldn't verify username because servers are unavailable");

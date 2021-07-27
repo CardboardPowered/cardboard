@@ -98,6 +98,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Override
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity entityplayer, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
+        System.out.println("ENTITY MOVE TO WORLD!");
         boolean flag2 = false;
         BlockPos blockposition = entityplayer.getSpawnPointPosition();
         float f = entityplayer.getSpawnAngle();

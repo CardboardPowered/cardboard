@@ -25,19 +25,24 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import me.isaiah.common.event.EventHandler;
 import me.isaiah.common.event.EventRegistery;
 import me.isaiah.common.event.entity.BlockEntityLoadEvent;
 import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
+import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
@@ -46,7 +51,6 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 
 @SuppressWarnings("deprecation")
 public class BukkitFabricMod implements ModInitializer {
@@ -73,6 +77,15 @@ public class BukkitFabricMod implements ModInitializer {
             e.printStackTrace();
         }
         LOGGER.info("Cardboard mod Loaded.");
+    }
+
+    @EventHandler
+    public void onGamemodeChange(PlayerGamemodeChangeEvent ev) {
+        PlayerGameModeChangeEvent event = new PlayerGameModeChangeEvent((Player) ((IMixinEntity)ev.getPlayer().getMC()).getBukkitEntity(), GameMode.getByValue(ev.getNewGamemode().getId()));
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            ev.setCanceled(true);
+        }
     }
 
     @EventHandler

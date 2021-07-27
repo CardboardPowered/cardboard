@@ -538,6 +538,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     public boolean teleport(Location location, TeleportCause arg1) {
         location.checkFinite();
         BukkitFabricMod.LOGGER.info("ENTITY TELEPORT DEBUG!!!");
+        System.out.println("CraftEntity#teleport");
 
         if (nms.hasPassengers() || nms.isRemoved())
             return false;

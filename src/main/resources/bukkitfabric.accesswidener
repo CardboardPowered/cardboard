@@ -2115,3 +2115,4 @@ mutable field net/minecraft/screen/PlayerScreenHandler craftingResult Lnet/minec
 accessible field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/minecraft/inventory/CraftingInventory;
 mutable field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/minecraft/inventory/CraftingInventory;
 accessible class net/minecraft/server/world/ServerWorld$ServerEntityHandler
+accessible method net/minecraft/server/network/ServerPlayerEntity onSpawn (Lnet/minecraft/screen/ScreenHandler;)V

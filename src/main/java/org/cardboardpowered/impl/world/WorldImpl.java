@@ -182,9 +182,9 @@ public class WorldImpl implements World {
         this.name = name;
     }
 
-    public WorldImpl(ServerWorld world) {
-        this(((ServerWorldProperties) world.getLevelProperties()).getLevelName(), world);
-    }
+   // public WorldImpl(ServerWorld world) {
+   //     this(((ServerWorldProperties) world.getLevelProperties()).getLevelName(), world);
+   // }
 
     @Override
     public Set<String> getListeningPluginChannels() {
