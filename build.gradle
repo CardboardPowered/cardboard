@@ -59,43 +59,33 @@ dependencies {
     ]
 
     DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.17", "1.17", null)
-
-    //
-    // Make sure we get the latest version of iCommon
-    ic.setChanging(true) 
+    ic.setChanging(true) // Make sure we get the latest version of iCommon
 
     include(modImplementation(ic))
-    
+
     // Add each module as a dependency
     apiModules.forEach {
     	include(modImplementation(fabricApi.module(it, "${project.fabric_version}")))
     }
 
-    // Spigot API
-    extraLibs fileTree(dir: 'libs', include: "${project.paper_jar}")
+
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
-
-    // extraLibs fileTree(dir: 'libs', include: 'slf4j.jar')
-    // compile   fileTree(dir: 'libs', include: 'material-compile-only.jar')
-
-    extraLibs fileTree(dir: 'libs', include: 'jline-3.19.jar')
     extraLibs group: "org.jetbrains", name: "annotations", version: "20.1.0"
     extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
-    extraLibs "org.yaml:snakeyaml:1.27"
-    
+
+    include(modImplementation("org.yaml:snakeyaml:1.27"))
+
     // 
     compileOnly fileTree(dir: 'libs', include: "${project.paper_jar}")
     compileOnly fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     compileOnly fileTree(dir: 'libs', include: 'slf4j.jar')
-    compileOnly fileTree(dir: 'libs', include: 'jline-3.19.jar')
     compileOnly group: "org.jetbrains", name: "annotations", version: "18.0.0"
     compileOnly group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
-    compileOnly "org.yaml:snakeyaml:1.27"
 
     // NMS Remapping
-    extraLibs group: "com.github.IsaiahPatton", name: "SpecialSource", version: "31af248ea6"
     extraLibs group: "com.github.OrionMinecraft", name: "SrgLib", version: "master-SNAPSHOT"
-    compileOnly group: "com.github.IsaiahPatton", name: "SpecialSource", version: "31af248ea6"
+    include(modImplementation("com.github.IsaiahPatton:SpecialSource:master-SNAPSHOT"))
+
     compileOnly group: "com.github.OrionMinecraft", name: "SrgLib", version: "master-SNAPSHOT"
 
     // (Optional) Fabric Permissions API.
@@ -108,12 +98,10 @@ dependencies {
     removeLibs group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
     removeLibs group: 'commons-lang', name: 'commons-lang', version: '2.6'
     removeLibs group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+    removeLibs group: 'junit', name: 'junit', version: '4.10'
 
     configurations.api.extendsFrom(configurations.extraLibs)
 }
-
-
-
 
 processResources {
     inputs.property "version", project.version
@@ -140,7 +128,6 @@ jar {
         (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
     }
     exclude("**/mojang-translations/")
-
 	exclude("*.jar") // WHY GRADLE, WHY?
 }
 

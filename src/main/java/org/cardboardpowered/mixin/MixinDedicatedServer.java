@@ -19,7 +19,6 @@
 package org.cardboardpowered.mixin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Bukkit;

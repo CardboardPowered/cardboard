@@ -1,6 +1,7 @@
 package org.cardboardpowered.mixin;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import com.google.common.collect.ImmutableMap;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.launch.knot.Knot;
 
 public class CardboardMixinPlugin implements IMixinConfigPlugin {
 
@@ -48,7 +50,8 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                 new Library("org.apache.commons", "commons-collections4", "4.4", SHA1, "62ebe7544cb7164d87e0637a2a6a2bdc981395e8", null),
                 new Library("commons-collections", "commons-collections", "3.2.1", SHA1, "761ea405b9b37ced573d2df0d1e3a4e0f9edc668", null),
                 new Library("com.google.code.gson", "gson", "2.8.6", SHA1, "9180733b7df8542621dc12e21e87557e8c99b8cb", null),
-                new Library("org.jline", "jline", "3.19.0", SHA1, "27edf6497c4fac20b63ca4cd8788581ca86cb83e", null)
+                new Library("org.jline", "jline", "3.19.0", SHA1, "27edf6497c4fac20b63ca4cd8788581ca86cb83e", null),
+                new Library("io.papermc", "paper-api", "1.17-dev", SHA1, "1011c06b51835ac752e2f0b2a22d9188c566c169", "paper")
             ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
         new LibraryManager(repository, "lib", true, 2, libraries.values()).run();
 

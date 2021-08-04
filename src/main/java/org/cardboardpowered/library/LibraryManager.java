@@ -125,8 +125,9 @@ public final class LibraryManager {
                             downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
                                     + '/' + library.libraryKey.artifactId + '-' + library.version + ".jar");
                         } else {
-                            downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
-                                    + '/' + library.libraryKey.spigotJarVersion + ".jar");
+                            downloadUrl = new URL("https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar");
+                            //downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
+                            //        + '/' + library.libraryKey.spigotJarVersion + ".jar");
                         }
                         HttpsURLConnection connection = (HttpsURLConnection) downloadUrl.openConnection();
                         connection.setRequestProperty("User-Agent", "Mozilla/5.0 Chrome/90.0.4430.212");

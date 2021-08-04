@@ -112,7 +112,6 @@ public class MixinWorld implements IMixinWorld {
         } else {
             this.bukkit = new WorldImpl(name, nms);
         }
-        System.out.println("WORLD NAME: " + name);
         ((CraftServer)Bukkit.getServer()).addWorldToMap(getWorldImpl());
     }
 

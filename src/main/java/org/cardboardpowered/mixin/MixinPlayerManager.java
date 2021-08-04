@@ -98,15 +98,15 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     public Map<UUID, ServerPlayerEntity> playerMap;
 
     @Override
-    public ServerPlayerEntity moveToWorld(ServerPlayerEntity entityplayer, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
+    public ServerPlayerEntity moveToWorld(ServerPlayerEntity player, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
         System.out.println("ENTITY MOVE TO WORLD!");
         boolean flag2 = false;
-        BlockPos blockposition = entityplayer.getSpawnPointPosition();
-        float f = entityplayer.getSpawnAngle();
-        boolean flag1 = entityplayer.isSpawnPointSet();
+        BlockPos blockposition = player.getSpawnPointPosition();
+        float f = player.getSpawnAngle();
+        boolean flag1 = player.isSpawnPointSet();
         if (location == null) {
             boolean isBedSpawn = false;
-            ServerWorld worldserver1 = CraftServer.server.getWorld(entityplayer.getSpawnPointDimension());
+            ServerWorld worldserver1 = CraftServer.server.getWorld(player.getSpawnPointDimension());
             if (worldserver1 != null) {
                 Optional<?> optional;
 
@@ -126,44 +126,43 @@ public class MixinPlayerManager implements IMixinPlayerManager {
                         f1 = (float) MathHelper.wrapDegrees(MathHelper.atan2(vec3d1.z, vec3d1.x) * 57.2957763671875D - 90.0D);
                     }
 
-                    entityplayer.refreshPositionAndAngles(vec3d.x, vec3d.y, vec3d.z, f1, 0.0F);
-                    entityplayer.setSpawnPoint(worldserver1.getRegistryKey(), blockposition, f, flag1, false);
+                    player.refreshPositionAndAngles(vec3d.x, vec3d.y, vec3d.z, f1, 0.0F);
+                    player.setSpawnPoint(worldserver1.getRegistryKey(), blockposition, f, flag1, false);
                     flag2 = !flag && flag3;
                     isBedSpawn = true;
                     location = new Location(((IMixinWorld)worldserver1).getWorldImpl(), vec3d.x, vec3d.y, vec3d.z);
                 } else if (blockposition != null)
-                    entityplayer.networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.NO_RESPAWN_BLOCK, 0.0F));
+                    player.networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.NO_RESPAWN_BLOCK, 0.0F));
             }
 
             if (location == null) {
                 worldserver1 = CraftServer.server.getWorld(World.OVERWORLD);
-                blockposition = entityplayer.getSpawnPointPosition();
+                blockposition = player.getSpawnPointPosition();
                 location = new Location(((IMixinWorld)worldserver1).getWorldImpl(), (double) ((float) blockposition.getX() + 0.5F), (double) ((float) blockposition.getY() + 0.1F), (double) ((float) blockposition.getZ() + 0.5F));
             }
 
-            Player respawnPlayer = CraftServer.INSTANCE.getPlayer(entityplayer);
+            Player respawnPlayer = CraftServer.INSTANCE.getPlayer(player);
             PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(respawnPlayer, location, isBedSpawn && !flag2, flag2);
             CraftServer.INSTANCE.getPluginManager().callEvent(respawnEvent);
 
-            if (entityplayer.isDisconnected())  return entityplayer;
+            if (player.isDisconnected()) return player;
 
             location = respawnEvent.getRespawnLocation();
         } else location.setWorld(((IMixinWorld)worldserver).getWorldImpl());
         ServerWorld worldserver1 = ((WorldImpl) location.getWorld()).getHandle();
-        ServerWorld fromWorld = entityplayer.getServerWorld();
-        entityplayer.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
+        ServerWorld fromWorld = player.getServerWorld();
+        player.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
 
         if (fromWorld != location.getWorld()) {
-            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) ((IMixinServerEntityPlayer)entityplayer).getBukkitEntity(), ((IMixinWorld)fromWorld).getWorldImpl());
+            PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) ((IMixinServerEntityPlayer)player).getBukkitEntity(), ((IMixinWorld)fromWorld).getWorldImpl());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
         }
 
-        return entityplayer;
+        return player;
     }
 
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
-    public void firePlayerJoinEvent(ClientConnection networkmanager, ServerPlayerEntity player, CallbackInfo ci) {
-        //String joinMessage = CraftChatMessage.fromComponent(new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}));
+    public void firePlayerJoinEvent(ClientConnection con, ServerPlayerEntity player, CallbackInfo ci) {
         String joinMessage = new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}).getString();
 
         PlayerImpl plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
@@ -177,8 +176,6 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         plr.setLoginPos(pos);
         player.getServerWorld().getChunk(pos);
 
-        System.out.println("BlPos: " + player.getBlockPos());
-        System.out.println("JOIN MSG: " + joinMessage);
         if (joinMessage != null && joinMessage.length() > 0)
             for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))
                 CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
@@ -193,22 +190,12 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         player.playerTick();
     }
 
-    @Inject(at = @At("HEAD"), method = "broadcastChatMessage", cancellable = true)
-    public void broadcastChatMessage_cardboard(Text message, MessageType type, UUID senderUuid, CallbackInfo ci) {
-        String s = CraftChatMessage.toJSON(message);
-      /* if (s.startsWith("{\"color\":\"yellow\",\"translate\":\"multiplayer.player.joined\"")) {
-            // Cancel vanilla's join message. We do this so we don't have to overwrite onPlayerConnect
-            ci.cancel();
-            return;
-        }*/
-    }
-
     @Override
-    public ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler loginlistener, GameProfile gameprofile, String hostname) {
+    public ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler nethand, GameProfile profile, String hostname) {
         TranslatableText chatmessage;
 
         // Moved from processLogin
-        UUID uuid = PlayerEntity.getUuidFromProfile(gameprofile);
+        UUID uuid = PlayerEntity.getUuidFromProfile(profile);
         List<ServerPlayerEntity> list = Lists.newArrayList();
 
         ServerPlayerEntity entityplayer;
@@ -223,32 +210,28 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         while (iterator.hasNext()) {
             entityplayer = (ServerPlayerEntity) iterator.next();
-            savePlayerData(entityplayer); // CraftBukkit - Force the player's inventory to be saved
+            savePlayerData(entityplayer); // Force the player's inventory to be saved
             entityplayer.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.duplicate_login", new Object[0]));
         }
 
-        // Instead of kicking then returning, we need to store the kick reason
-        // in the event, check with plugins to see if it's ok, and THEN kick
-        // depending on the outcome.
-        SocketAddress socketaddress = loginlistener.connection.getAddress();
+        SocketAddress address = nethand.connection.getAddress();
 
         me.isaiah.common.cmixin.IMixinPlayerManager imixin = (me.isaiah.common.cmixin.IMixinPlayerManager) (Object)this;
-        ServerPlayerEntity entity = imixin.InewPlayer(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), gameprofile);
+        ServerPlayerEntity entity = imixin.InewPlayer(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile);
 
-        // ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), gameprofile);
         Player player = (Player) ((IMixinServerEntityPlayer)entity).getBukkitEntity();
-        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), ((java.net.InetSocketAddress) loginlistener.connection.channel.remoteAddress()).getAddress());
+        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) address).getAddress(), ((java.net.InetSocketAddress) nethand.connection.channel.remoteAddress()).getAddress());
 
-        if (((PlayerManager)(Object)this).getUserBanList().contains(gameprofile) /*&& !((PlayerManager)(Object)this).getUserBanList().get(gameprofile).isInvalid()*/) {
+        if (((PlayerManager)(Object)this).getUserBanList().contains(profile) /*&& !((PlayerManager)(Object)this).getUserBanList().get(gameprofile).isInvalid()*/) {
             chatmessage = new TranslatableText("multiplayer.disconnect.banned.reason", new Object[]{"TODO REASON!"});
             chatmessage.append(new TranslatableText("multiplayer.disconnect.banned.expiration", new Object[] {"TODO EXPIRE!"}));
 
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
-        } else if (!((PlayerManager)(Object)this).isWhitelisted(gameprofile)) {
+        } else if (!((PlayerManager)(Object)this).isWhitelisted(profile)) {
             chatmessage = new TranslatableText("multiplayer.disconnect.not_whitelisted");
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "Server whitelisted!");
-        } else if (((PlayerManager)(Object)this).getIpBanList().isBanned(socketaddress) /*&& !((PlayerManager)(Object)this).getIpBanList().get(socketaddress).isInvalid()*/) {
-            BannedIpEntry ipbanentry = ((PlayerManager)(Object)this).getIpBanList().get(socketaddress);
+        } else if (((PlayerManager)(Object)this).getIpBanList().isBanned(address) /*&& !((PlayerManager)(Object)this).getIpBanList().get(socketaddress).isInvalid()*/) {
+            BannedIpEntry ipbanentry = ((PlayerManager)(Object)this).getIpBanList().get(address);
 
             chatmessage = new TranslatableText("multiplayer.disconnect.banned_ip.reason", new Object[]{ipbanentry.getReason()});
             if (ipbanentry.getExpiryDate() != null)
@@ -256,16 +239,15 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
         } else {
-            if (this.players.size() >= ((PlayerManager)(Object)this).getMaxPlayerCount() && !((PlayerManager)(Object)this).canBypassPlayerLimit(gameprofile))
-                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "Server is full"); // Spigot
+            if (this.players.size() >= ((PlayerManager)(Object)this).getMaxPlayerCount() && !((PlayerManager)(Object)this).canBypassPlayerLimit(profile))
+                event.disallow(PlayerLoginEvent.Result.KICK_FULL, "Server is full");
         }
 
         BukkitEventFactory.callEvent(event);
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-            loginlistener.disconnect(new LiteralText(event.getKickMessage()));
+            nethand.disconnect(new LiteralText(event.getKickMessage()));
             return null;
         }
-        System.out.println("Attempt LOGIN");
         return entity;
     }
 

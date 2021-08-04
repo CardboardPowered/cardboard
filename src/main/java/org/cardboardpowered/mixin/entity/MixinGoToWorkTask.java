@@ -21,6 +21,10 @@ import net.minecraft.util.registry.Registry;
 @Mixin(GoToWorkTask.class)
 public class MixinGoToWorkTask {
 
+    /**
+     * @reason VillagerCareerChangeEvent
+     * @author
+     */
     @Overwrite
     public void run(ServerWorld worldserver, VillagerEntity entityvillager, long i) {
         GlobalPos globalpos = (GlobalPos) entityvillager.getBrain().getOptionalMemory(MemoryModuleType.POTENTIAL_JOB_SITE).get();

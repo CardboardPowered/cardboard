@@ -353,7 +353,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
         // Avoid suffocation on join
         BlockPos saved = bukkit.posAtLogin;
-        if (plr.age < 50) {
+        if (plr.age < 60) {
             if (h == 0) h = plr.getHealth();
             plr.setInvulnerable(true);
             BlockPos pos = plr.getBlockPos();
@@ -365,7 +365,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                 }
             }
             plr.setHealth(h);
-        } else if (plr.age < 60) {
+        } else if (plr.age < 70) {
             plr.setInvulnerable(bukkit.in);
         }
         // end

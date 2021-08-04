@@ -48,6 +48,7 @@ import com.mojang.brigadier.LiteralMessage;
 
 import me.isaiah.common.entity.IRemoveReason;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -182,8 +183,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
     @Override
-    public void setCustomName( String arg0) {
-        nms.setCustomName(Texts.toText(new LiteralMessage(arg0)));
+    public void setCustomName(String name) {
+        nms.setCustomName(Texts.toText(new LiteralMessage(name)));
     }
 
     @Override
@@ -251,7 +252,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
     @Override
-    public  Location getLocation(Location loc) {
+    public Location getLocation(Location loc) {
         if (loc != null) {
             loc.setWorld(getWorld());
             loc.setX(nms.getX());
@@ -260,7 +261,6 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
             loc.setYaw(nms.yaw);
             loc.setPitch(nms.pitch);
         }
-
         return loc;
     }
 
@@ -302,8 +302,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public int getPortalCooldown() {
-        // TODO Auto-generated method stub
-        return 0;
+        return nms.getDefaultNetherPortalCooldown();
     }
 
     @Override
@@ -432,7 +431,6 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     public void remove() {
         me.isaiah.common.cmixin.IMixinEntity common = (me.isaiah.common.cmixin.IMixinEntity)this.nms;
         common.Iremove(IRemoveReason.DISCARDED);
-        //remove(RemovalReason.DISCARDED);
     }
 
     @Override
@@ -541,8 +539,6 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     @Override
     public boolean teleport(Location location, TeleportCause arg1) {
         location.checkFinite();
-        BukkitFabricMod.LOGGER.info("ENTITY TELEPORT DEBUG!!!");
-        System.out.println("CraftEntity#teleport");
 
         if (nms.hasPassengers() || nms.isRemoved())
             return false;
@@ -691,14 +687,15 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public @Nullable Component customName() {
-        // TODO Auto-generated method stub
-        return null;
+        return Component.text(this.getCustomName());
     }
 
     @Override
-    public void customName(@Nullable Component arg0) {
-        // TODO Auto-generated method stub
-        
+    public void customName(@Nullable Component com) {
+        if (com instanceof TextComponent) {
+            TextComponent txt = (TextComponent) com;
+            this.setCustomName(txt.content());
+        }
     }
 
     @Override
