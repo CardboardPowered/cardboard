@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
@@ -33,9 +34,11 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import me.isaiah.common.event.EventHandler;
@@ -43,11 +46,13 @@ import me.isaiah.common.event.EventRegistery;
 import me.isaiah.common.event.entity.BlockEntityLoadEvent;
 import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
 import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
+import me.isaiah.common.event.entity.player.ServerPlayerInitEvent;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -77,6 +82,20 @@ public class BukkitFabricMod implements ModInitializer {
             e.printStackTrace();
         }
         LOGGER.info("Cardboard mod Loaded.");
+    }
+
+    @EventHandler
+    public void onPlayerInit(ServerPlayerInitEvent ev) {
+        ServerPlayerEntity e = (ServerPlayerEntity) ev.getPlayer().getMC();
+        IMixinServerEntityPlayer ie = (IMixinServerEntityPlayer) e;
+
+        if (null != Bukkit.getPlayer(e.getUuid())) {
+            ie.setBukkit( (PlayerImpl) Bukkit.getPlayer(e.getUuid()) );
+            ie.getBukkit().setHandle(e);
+        } else {
+            ie.setBukkit( new PlayerImpl(e) );
+            CraftServer.INSTANCE.playerView.add(ie.getBukkit());
+        }
     }
 
     @EventHandler

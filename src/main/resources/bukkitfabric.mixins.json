@@ -25,6 +25,7 @@
     "MixinTimeCommand",
     "MixinPlayerAdvancementTracker",
     "MixinStyle",
+    "MixinUserCache",
 
     "loot.MixinSurvivesExplosionLootCondition",
     "loot.MixinRandomChanceWithLootingLootCondition",

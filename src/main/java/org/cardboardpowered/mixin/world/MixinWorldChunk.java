@@ -59,6 +59,9 @@ public class MixinWorldChunk implements IMixinWorldChunk {
 
     @Override
     public Chunk getBukkitChunk() {
+        if (null == bukkit) {
+            this.bukkit = new CardboardChunk((WorldChunk)(Object)this);
+        }
         return bukkit;
     }
 

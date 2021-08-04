@@ -46,9 +46,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.mojang.authlib.GameProfile;
-
-import me.isaiah.common.ICommonMod;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.impl.screenhandler.Networking;
@@ -65,7 +62,6 @@ import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerListener;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -89,7 +85,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Shadow
     public int screenHandlerSyncId;
 
-    @Inject(method = "<init>", at = @At("TAIL"))
+    /*@Inject(method = "<init>", at = @At("TAIL"))
     public void init(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
         if (null != Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid())) {
             this.bukkit = (PlayerImpl) Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid());
@@ -98,6 +94,16 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             this.bukkit = new PlayerImpl((ServerPlayerEntity)(Object)this);
             CraftServer.INSTANCE.playerView.add(this.bukkit);
         }
+    }*/
+
+    @Override
+    public void setBukkit(PlayerImpl plr) {
+        this.bukkit = plr;
+    }
+
+    @Override
+    public PlayerImpl getBukkit() {
+        return bukkit;
     }
 
     @Override
@@ -192,7 +198,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             ci.setReturnValue(OptionalInt.empty());
         } else {
             this.nextContainerCounter();
-            ScreenHandler container = factory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).getInventory(), ((ServerPlayerEntity)(Object)this));
+            ScreenHandler container = factory.createMenu(this.screenHandlerSyncId, ((ServerPlayerEntity)(Object)this).inventory, ((ServerPlayerEntity)(Object)this));
 
             if (container != null) {
                 ((IMixinScreenHandler)container).setTitle(factory.getDisplayName());
@@ -249,11 +255,11 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             return;
         }
 
-        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).getInventory().size());
+        java.util.List<org.bukkit.inventory.ItemStack> loot = new java.util.ArrayList<org.bukkit.inventory.ItemStack>(((ServerPlayerEntity)(Object)this).inventory.size());
         boolean keepInventory = this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || ((ServerPlayerEntity)(Object)this).isSpectator();
 
         if (!keepInventory)
-            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).getInventory().combinedInventory)
+            for (DefaultedList<ItemStack> items : ((ServerPlayerEntity)(Object)this).inventory.combinedInventory)
                 for (ItemStack item : items)
                     if (!item.isEmpty() && !EnchantmentHelper.hasVanishingCurse(item))
                         loot.add(CraftItemStack.asCraftMirror(item));
@@ -302,7 +308,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         // SPIGOT-5478 must be called manually now
         ((ServerPlayerEntity)(Object)this).dropXp();
         // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
-        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).getInventory().clear();
+        if (!event.getKeepInventory())  ((ServerPlayerEntity)(Object)this).inventory.clear();
 
         ((ServerPlayerEntity)(Object)this).setCameraEntity(((ServerPlayerEntity)(Object)this)); // Remove spectated target
         // CraftBukkit end
@@ -339,9 +345,31 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     }
 
     private int oldLevel = -1;
+    private float h = 0;
 
     @Inject(at = @At("TAIL"), method = "playerTick")
     public void doBukkitEvent_PlayerLevelChangeEvent(CallbackInfo ci) {
+        ServerPlayerEntity plr = ((ServerPlayerEntity)(Object)this);
+
+        // Avoid suffocation on join
+        BlockPos saved = bukkit.posAtLogin;
+        if (plr.age < 50) {
+            if (h == 0) h = plr.getHealth();
+            plr.setInvulnerable(true);
+            BlockPos pos = plr.getBlockPos();
+            if (Math.abs(saved.x-pos.x) <= 1 && Math.abs(saved.z-pos.z) <= 1) {
+                if (!plr.getServerWorld().getBlockState(new BlockPos(pos.x, pos.y+1, pos.z)).isAir()) {
+                    int ty = saved.getY();
+                    while (!plr.getServerWorld().getBlockState(new BlockPos(pos.x, ty, pos.z)).isAir()) { ty++; }
+                    plr.teleport(saved.x, ty, saved.z);
+                }
+            }
+            plr.setHealth(h);
+        } else if (plr.age < 60) {
+            plr.setInvulnerable(bukkit.in);
+        }
+        // end
+
         try {
             if (this.oldLevel == -1) this.oldLevel = ((ServerPlayerEntity)(Object)this).experienceLevel;
             if (this.oldLevel != ((ServerPlayerEntity)(Object)this).experienceLevel) {
@@ -354,7 +382,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Overwrite
     public void copyFrom(ServerPlayerEntity entityplayer, boolean flag) {
         if (flag) {
-            ((ServerPlayerEntity)(Object)this).getInventory().clone(entityplayer.getInventory());
+            ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
             ((ServerPlayerEntity)(Object)this).setHealth(entityplayer.getHealth());
             ((ServerPlayerEntity)(Object)this).hungerManager = entityplayer.hungerManager;
             ((ServerPlayerEntity)(Object)this).experienceLevel = entityplayer.experienceLevel;
@@ -363,7 +391,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             ((ServerPlayerEntity)(Object)this).setScore(entityplayer.getScore());
             ((ServerPlayerEntity)(Object)this).lastNetherPortalPosition = entityplayer.lastNetherPortalPosition;
         } else if (((ServerPlayerEntity)(Object)this).world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || entityplayer.isSpectator()) {
-            ((ServerPlayerEntity)(Object)this).getInventory().clone(entityplayer.getInventory());
+            ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
             ((ServerPlayerEntity)(Object)this).experienceLevel = entityplayer.experienceLevel;
             ((ServerPlayerEntity)(Object)this).totalExperience = entityplayer.totalExperience;
             ((ServerPlayerEntity)(Object)this).experienceProgress = entityplayer.experienceProgress;

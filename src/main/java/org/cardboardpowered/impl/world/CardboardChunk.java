@@ -41,10 +41,9 @@ import org.bukkit.plugin.Plugin;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 
+import me.isaiah.common.cmixin.IMixinHeightmap;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -296,7 +295,8 @@ public class CardboardChunk implements Chunk {
 
         if (includeMaxBlockY) {
             hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
-            hmap.setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
+            IMixinHeightmap map = (IMixinHeightmap) hmap;
+            map.I_setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
         }
 
         BiomeArray biome = null;
@@ -311,8 +311,10 @@ public class CardboardChunk implements Chunk {
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, WorldImpl world, boolean includeBiome, boolean includeBiomeTempRain) {
         BiomeArray biome = null;
 
-        if (includeBiome || includeBiomeTempRain)
-            biome = new BiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY), world.getHandle(), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
+        if (includeBiome || includeBiomeTempRain) {
+            biome = ((me.isaiah.common.cmixin.IMixinWorld)world.getHandle()).I_newBiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY),
+                    world.getHandle(), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
+        }
 
         // Fill with empty data
         int hSection = world.getMaxHeight() >> 4;

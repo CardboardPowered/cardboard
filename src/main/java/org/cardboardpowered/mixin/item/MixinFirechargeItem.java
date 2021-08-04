@@ -28,7 +28,7 @@ public class MixinFirechargeItem {
             blockpos = blockpos.offset(context.getSide());
 
         if (BukkitEventFactory.callBlockIgniteEvent(world, blockpos, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, context.getPlayer()).isCancelled()) {
-            if (!context.getPlayer().getAbilities().creativeMode)
+            if (!context.getPlayer().abilities.creativeMode)
                 context.getStack().decrement(1);
             ci.setReturnValue(ActionResult.PASS);
         }

@@ -1153,7 +1153,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     public GameProfile getProfile() {
-        Optional<GameProfile> opt = CraftServer.server.getUserCache().getByUuid(getUniqueId());
+        Optional<GameProfile> opt = CraftServer.getUC().card_getByUuid(getUniqueId());
 
         // TODO Add a GameProfile API to iCommon
         return opt.isEmpty() ? null : opt.get();
@@ -1210,14 +1210,19 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
         ServerWorld toWorld = (ServerWorld) ((WorldImpl) to.getWorld()).getHandle();
 
-        if (getHandle().getInventory() != getHandle().getInventory())
+        if (getHandle().inventory != getHandle().inventory)
             getHandle().closeHandledScreen();
         
         System.out.println("Hello! " + from.getWorld() + " / " + to.getWorld());
 
         if (from.getWorld().equals(to.getWorld()))
              ((IMixinPlayNetworkHandler)(Object)entity.networkHandler).teleport(to);
-        else ((IMixinPlayerManager)(PlayerManager)CraftServer.server.getPlayerManager()).moveToWorld(entity, toWorld, true, to, true);
+        else {
+            //entity.moveToWorld(toWorld);
+            //entity.teleport
+            
+            ((IMixinPlayerManager)(PlayerManager)CraftServer.server.getPlayerManager()).moveToWorld(entity, toWorld, true, to, true);
+        }
 
         return true;
     }
@@ -1722,32 +1727,38 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     @Override
     public void playerListName(@Nullable Component arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void sendBlockDamage(@NotNull Location arg0, float arg1) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void sendOpLevel(byte arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1) throws IllegalArgumentException {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1, @NotNull DyeColor arg2)
             throws IllegalArgumentException {
         // TODO Auto-generated method stub
-        
+    }
+
+    public BlockPos posAtLogin;
+    public boolean in;
+
+    /**
+     * Save BlockPos from {@link PlayerManager#onPlayerConnect}
+     */
+    public void setLoginPos(BlockPos pos) {
+        this.posAtLogin = pos;
+        this.in = nms.isInvulnerable();
     }
 
     // 1.17 API Start

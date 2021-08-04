@@ -190,6 +190,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.interfaces.IUserCache;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -303,6 +304,10 @@ public class CraftServer implements Server {
 
         this.playerView = new ArrayList<>();
         loadIcon();
+    }
+ 
+    public static IUserCache getUC() {
+        return (IUserCache) server.getUserCache();
     }
 
     public void saveConfig() {
@@ -1717,11 +1722,11 @@ public class CraftServer implements Server {
 
     // PaperAPI - start
     public long[] getTickTimes() {
-        return new long[] {-1};
+        return new long[] {(long) server.tickTime};
     }
 
     public double getAverageTickTime() {
-        return -1;
+        return server.tickTime;
     }
 
     @Override
@@ -1755,7 +1760,7 @@ public class CraftServer implements Server {
     @Override
     public int getMaxWorldSize() {
         // TODO Auto-generated method stub
-        return 0;
+        return ServerWorld.HORIZONTAL_LIMIT;
     }
 
     @Override
@@ -1863,8 +1868,15 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public @Nullable World getWorld(@NotNull NamespacedKey arg0) {
-        // TODO Auto-generated method stub
+    public @Nullable World getWorld(@NotNull NamespacedKey key) {
+        Identifier id = CraftNamespacedKey.toMinecraft(key);
+
+        for (ServerWorld world : server.worlds.values()) {
+            Identifier name = world.getRegistryKey().getValue();
+            if (name.equals(id))
+                return ((IMixinWorld)world).getWorldImpl();
+        }
+
         return null;
     }
 

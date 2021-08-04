@@ -76,8 +76,8 @@ public class ProfileBanList implements org.bukkit.BanList {
         try {
             uuid = UUID.fromString(target);
         } catch (IllegalArgumentException ex) {/**/}
-        return (uuid != null) ? CraftServer.server.getUserCache().getByUuid(uuid).get()
-                : CraftServer.server.getUserCache().findByName(target).get();
+        return (uuid != null) ? CraftServer.getUC().card_getByUuid(uuid).get()
+                : CraftServer.getUC().card_findByName(target).get();
     }
 
     public static class ProfileBanEntry implements org.bukkit.BanEntry {

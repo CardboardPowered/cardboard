@@ -48,6 +48,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 
+import me.isaiah.common.cmixin.IMixinEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.option.ChatVisibility;
@@ -261,8 +262,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         double d3 = set.contains(PlayerPositionLookS2CPacket.Flag.X) ? this.player.getX() : 0.0D;
         double d4 = set.contains(PlayerPositionLookS2CPacket.Flag.Y) ? this.player.getY() : 0.0D;
         double d5 = set.contains(PlayerPositionLookS2CPacket.Flag.Z) ? this.player.getZ() : 0.0D;
-        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.getYaw() : 0.0F;
-        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.getPitch() : 0.0F;
+        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.yaw : 0.0F;
+        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.pitch : 0.0F;
 
         this.requestedTeleportPos = new Vec3d(d0, d1, d2);
         if (++this.requestedTeleportId == Integer.MAX_VALUE)
@@ -276,7 +277,10 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     @Inject(at = @At("HEAD"), method = "onClientCommand", cancellable = true)
     public void onClientCommand(ClientCommandC2SPacket packetplayinentityaction, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packetplayinentityaction, get(), this.player.getServerWorld());
-        if (this.player.isRemoved()) return;
+        
+        IMixinEntity e = (IMixinEntity) this.player;
+
+        if (e.ic_isRemoved()) return;
         switch (packetplayinentityaction.getMode()) {
             case PRESS_SHIFT_KEY:
             case RELEASE_SHIFT_KEY:
@@ -346,21 +350,21 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 if (this.requestedTeleportPos != null) {
                     if (this.ticks - this.teleportRequestTick > 20) {
                         this.teleportRequestTick = this.ticks;
-                        this.requestTeleport(this.requestedTeleportPos.x, this.requestedTeleportPos.y, this.requestedTeleportPos.z, this.player.getYaw(), this.player.getPitch());
+                        this.requestTeleport(this.requestedTeleportPos.x, this.requestedTeleportPos.y, this.requestedTeleportPos.z, this.player.yaw, this.player.pitch);
                     }
                     this.allowedPlayerTicks = 20;
                 } else {
                     this.teleportRequestTick = this.ticks;
                     if (this.player.hasVehicle()) {
-                        this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.getYaw()), packetplayinflying.getPitch(this.player.getPitch()));
+                        this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.yaw), packetplayinflying.getPitch(this.player.pitch));
                         this.player.getServerWorld().getChunkManager().updatePosition(this.player);
                         this.allowedPlayerTicks = 20;
                     } else {
                         double prevX = player.getX();
                         double prevY = player.getY();
                         double prevZ = player.getZ();
-                        float prevYaw = player.getYaw();
-                        float prevPitch = player.getPitch();
+                        float prevYaw = player.yaw;
+                        float prevPitch = player.pitch;
                         double d0 = this.player.getX();
                         double d1 = this.player.getY();
                         double d2 = this.player.getZ();
@@ -368,8 +372,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                         double d4 = packetplayinflying.getX(this.player.getX());
                         double d5 = packetplayinflying.getY(this.player.getY());
                         double d6 = packetplayinflying.getZ(this.player.getZ());
-                        float f = packetplayinflying.getYaw(this.player.getYaw());
-                        float f1 = packetplayinflying.getPitch(this.player.getPitch());
+                        float f = packetplayinflying.getYaw(this.player.yaw);
+                        float f1 = packetplayinflying.getPitch(this.player.pitch);
                         double d7 = d4 - this.lastTickX;
                         double d8 = d5 - this.lastTickY;
                         double d9 = d6 - this.lastTickZ;
@@ -377,7 +381,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                         double d11 = d7 * d7 + d8 * d8 + d9 * d9;
 
                         if (this.player.isSleeping()) {
-                            if (d11 > 1.0D) this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.getYaw()), packetplayinflying.getPitch(this.player.getPitch()));
+                            if (d11 > 1.0D) this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.yaw), packetplayinflying.getPitch(this.player.pitch));
                         } else {
                             ++this.movePacketsCount;
                             int i = this.movePacketsCount - this.lastTickMovePacketsCount;
@@ -389,11 +393,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                             if (d11 > 0) allowedPlayerTicks -= 1;
                             else allowedPlayerTicks = 20;
 
-                            double speed = player.getAbilities().flying ? (player.getAbilities().getFlySpeed() * 20f) : (player.getAbilities().getWalkSpeed() * 10f);
+                            double speed = player.abilities.flying ? (player.abilities.getFlySpeed() * 20f) : (player.abilities.getWalkSpeed() * 10f);
                             if (!this.player.isInTeleportationState() && (!this.player.getServerWorld().getGameRules().getBoolean(GameRules.DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isFallFlying())) {
                                 float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
                                 if (d11 - d10 > Math.max(f2, Math.pow((double) ((float) i * speed), 2))) {
-                                    this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYaw(), this.player.getPitch());
+                                    this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.yaw, this.player.pitch);
                                     ci.cancel();
                                     return;
                                 }
@@ -462,7 +466,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                                 }
                             }
                             this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
-                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.getAbilities().allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.isEntityOnAir((Entity) this.player) && !this.player.isUsingRiptide();
+                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.abilities.allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.isEntityOnAir((Entity) this.player) && !this.player.isUsingRiptide();
                             this.player.getServerWorld().getChunkManager().updatePosition(this.player);
                             this.player.handleFall(this.player.getY() - d3, packetplayinflying.isOnGround());
                             if (flag) this.player.fallDistance = 0.0F;
@@ -493,8 +497,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void onHandSwingBF(HandSwingC2SPacket packet, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
         this.player.updateLastActionTime();
-        float f1 = this.player.getPitch();
-        float f2 = this.player.getYaw();
+        float f1 = this.player.pitch;
+        float f2 = this.player.yaw;
         double d0 = this.player.getX();
         double d1 = this.player.getY() + (double) this.player.getStandingEyeHeight();
         double d2 = this.player.getZ();
@@ -511,7 +515,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         HitResult movingobjectposition = ((ServerWorld)this.player.world).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
 
         if (movingobjectposition == null || movingobjectposition.getType() != HitResult.Type.BLOCK)
-            BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_AIR, this.player.getInventory().getMainHandStack(), Hand.MAIN_HAND);
+            BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_AIR, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
 
         // Arm swing animation
         PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
@@ -533,8 +537,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
         this.player.updateLastActionTime();
         if (!itemstack.isEmpty()) {
-            float f1 = this.player.getPitch();
-            float f2 = this.player.getYaw();
+            float f1 = this.player.pitch;
+            float f2 = this.player.yaw;
             double d0 = this.player.getX();
             double d1 = this.player.getY() + (double) this.player.getStandingEyeHeight();
             double d2 = this.player.getZ();
@@ -581,15 +585,15 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packetplayinhelditemslot) {
         NetworkThreadUtils.forceMainThread(packetplayinhelditemslot, get(), this.player.getServerWorld());
         if (packetplayinhelditemslot.getSelectedSlot() >= 0 && packetplayinhelditemslot.getSelectedSlot() < PlayerInventory.getHotbarSize()) {
-            PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.player.getInventory().selectedSlot, packetplayinhelditemslot.getSelectedSlot());
+            PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.player.inventory.selectedSlot, packetplayinhelditemslot.getSelectedSlot());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
-                this.sendPacket(new UpdateSelectedSlotS2CPacket(this.player.getInventory().selectedSlot));
+                this.sendPacket(new UpdateSelectedSlotS2CPacket(this.player.inventory.selectedSlot));
                 this.player.updateLastActionTime();
                 return;
             }
-            if (this.player.getInventory().selectedSlot != packetplayinhelditemslot.getSelectedSlot() && this.player.getActiveHand() == Hand.MAIN_HAND) this.player.clearActiveItem();
-            this.player.getInventory().selectedSlot = packetplayinhelditemslot.getSelectedSlot();
+            if (this.player.inventory.selectedSlot != packetplayinhelditemslot.getSelectedSlot() && this.player.getActiveHand() == Hand.MAIN_HAND) this.player.clearActiveItem();
+            this.player.inventory.selectedSlot = packetplayinhelditemslot.getSelectedSlot();
             this.player.updateLastActionTime();
         } else {
             System.out.println(this.player.getName().getString() + " tried to set an invalid carried item");
@@ -599,11 +603,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Inject(at = @At("TAIL"), method = "onPlayerAbilities")
     public void doBukkitEvent_PlayerToggleFlightEvent(UpdatePlayerAbilitiesC2SPacket packet, CallbackInfo ci) {
-        if (this.player.getAbilities().allowFlying && this.player.getAbilities().flying != packet.isFlying()) {
+        if (this.player.abilities.allowFlying && this.player.abilities.flying != packet.isFlying()) {
             PlayerToggleFlightEvent event = new PlayerToggleFlightEvent((Player)(((IMixinServerEntityPlayer)this.player).getBukkitEntity()), packet.isFlying());
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                this.player.getAbilities().flying = packet.isFlying();
+                this.player.abilities.flying = packet.isFlying();
             } else this.player.sendAbilitiesUpdate();
         }
     }

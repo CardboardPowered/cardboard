@@ -2,6 +2,7 @@ package com.destroystokyo.paper.profile;
 
 import com.destroystokyo.paper.PaperConfig;
 import com.google.common.base.Charsets;
+import com.javazilla.bukkitfabric.interfaces.IUserCache;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
@@ -145,11 +146,11 @@ public class CraftPlayerProfile implements PlayerProfile {
     public boolean completeFromCache(boolean lookupUUID, boolean onlineMode) {
         MinecraftServer server = CraftServer.INSTANCE.getServer();
         String name = profile.getName();
-        UserCache userCache = server.getUserCache();
+        IUserCache userCache = CraftServer.getUC();
         if (profile.getId() == null) {
             final GameProfile profile;
             if (onlineMode) {
-                profile = lookupUUID ? userCache.findByName(name).get() : userCache.findByName(name).get();
+                profile = lookupUUID ? userCache.card_findByName(name).get() : userCache.card_findByName(name).get();
             } else {
                 // Make an OfflinePlayer using an offline mode UUID since the name has no profile
                 profile = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name);
@@ -162,7 +163,7 @@ public class CraftPlayerProfile implements PlayerProfile {
         }
 
         if ((profile.getName() == null || !hasTextures()) && profile.getId() != null) {
-            Optional<GameProfile> o = userCache.getByUuid(this.profile.getId());
+            Optional<GameProfile> o = userCache.card_getByUuid(this.profile.getId());
             if (!o.isEmpty()) {
                 GameProfile profile = o.get();
                 if (profile != null) {
@@ -188,8 +189,8 @@ public class CraftPlayerProfile implements PlayerProfile {
             if (result != null)
                 copyProfileProperties(result, this.profile, true);
             if (this.profile.isComplete()) {
-                server.getUserCache().add(this.profile);
-                server.getUserCache().save();
+                CraftServer.server.getUserCache().add(this.profile);
+                CraftServer.server.getUserCache().save();
             }
         }
         return profile.isComplete() && (!onlineMode || !textures || hasTextures());

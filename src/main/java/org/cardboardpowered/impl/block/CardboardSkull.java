@@ -74,7 +74,7 @@ public class CardboardSkull extends CardboardBlockEntityState<SkullBlockEntity> 
     public boolean setOwner(String name) {
         if (name == null || name.length() > MAX_OWNER_LENGTH) return false;
 
-        Optional<GameProfile> profile = CraftServer.server.getUserCache().findByName(name);
+        Optional<GameProfile> profile = CraftServer.getUC().card_findByName(name);
         if (profile.isEmpty()) return false;
 
         this.profile = profile.get();

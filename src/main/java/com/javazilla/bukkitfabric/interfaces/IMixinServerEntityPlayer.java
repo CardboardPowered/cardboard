@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard - Spigot/Paper for Fabric.
+ * Copyright (C) 2020-2021 Cardboard contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package com.javazilla.bukkitfabric.interfaces;
+
+import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.util.math.BlockPos;
@@ -35,5 +37,9 @@ public interface IMixinServerEntityPlayer extends IMixinEntity {
     void setConnectionBF(ClientConnection connection);
 
     ClientConnection getConnectionBF();
+
+    void setBukkit(PlayerImpl plr);
+
+    PlayerImpl getBukkit();
 
 }

@@ -161,7 +161,6 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
-import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import net.minecraft.world.level.ServerWorldProperties;
 
 @SuppressWarnings("deprecation")
@@ -182,9 +181,9 @@ public class WorldImpl implements World {
         this.name = name;
     }
 
-   // public WorldImpl(ServerWorld world) {
-   //     this(((ServerWorldProperties) world.getLevelProperties()).getLevelName(), world);
-   // }
+    public WorldImpl(ServerWorld world) {
+        this(((ServerWorldProperties) world.getLevelProperties()).getLevelName(), world);
+    }
 
     @Override
     public Set<String> getListeningPluginChannels() {
@@ -682,23 +681,26 @@ public class WorldImpl implements World {
 
     @Override
     public Block getHighestBlockAt(Location arg0) {
+        System.out.println("GET HIGH Y!");
         return getHighestBlockAt(arg0.getBlockX(), arg0.getBlockY());
     }
 
     @Override
     public Block getHighestBlockAt(int x, int z) {
+        System.out.println("GET HIGH Y!");
         return getBlockAt(x, getHighestBlockYAt(x, z), z);
     }
 
     @Override
     public Block getHighestBlockAt(Location arg0, HeightMap arg1) {
-        // TODO Auto-generated method stub
-        return null;
+        System.out.println("GET HIGH Y!");
+        return getHighestBlockAt(arg0.getBlockX(), arg0.getBlockY());
     }
 
     @Override
     public Block getHighestBlockAt(int arg0, int arg1, HeightMap arg2) {
         // TODO Auto-generated method stub
+        System.out.println("GET HIGH Y!");
         return null;
     }
 
@@ -715,12 +717,14 @@ public class WorldImpl implements World {
     @Override
     public int getHighestBlockYAt(Location arg0, HeightMap arg1) {
         // TODO Auto-generated method stub
+        System.out.println("GET HIGH Y!");
         return 0;
     }
 
     @Override
     public int getHighestBlockYAt(int arg0, int arg1, HeightMap arg2) {
         // TODO Auto-generated method stub
+        System.out.println("GET HIGH Y!");
         return 0;
     }
 

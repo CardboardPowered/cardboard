@@ -43,8 +43,10 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 import com.mojang.brigadier.LiteralMessage;
 
+import me.isaiah.common.entity.IRemoveReason;
 import net.kyori.adventure.text.Component;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -245,7 +247,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Location getLocation() {
-        return new Location(getWorld(), nms.getX(), nms.getY(), nms.getZ(), nms.getYaw(), nms.getPitch());
+        return new Location(getWorld(), nms.getX(), nms.getY(), nms.getZ(), nms.yaw, nms.pitch);
     }
 
     @Override
@@ -255,8 +257,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
             loc.setX(nms.getX());
             loc.setY(nms.getY());
             loc.setZ(nms.getZ());
-            loc.setYaw(nms.getYaw());
-            loc.setPitch(nms.getPitch());
+            loc.setYaw(nms.yaw);
+            loc.setPitch(nms.pitch);
         }
 
         return loc;
@@ -428,7 +430,9 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public void remove() {
-        nms.remove(RemovalReason.DISCARDED);
+        me.isaiah.common.cmixin.IMixinEntity common = (me.isaiah.common.cmixin.IMixinEntity)this.nms;
+        common.Iremove(IRemoveReason.DISCARDED);
+        //remove(RemovalReason.DISCARDED);
     }
 
     @Override
@@ -644,14 +648,14 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Chunk getChunk() {
-        // TODO Auto-generated method stub
-        return null;
+        IMixinWorldChunk wc = (IMixinWorldChunk) nms.getEntityWorld().getWorldChunk(nms.getBlockPos());
+        return wc.getBukkitChunk();
     }
 
     @Override
     public SpawnReason getEntitySpawnReason() {
         // TODO Auto-generated method stub
-        return null;
+        return SpawnReason.DEFAULT;
     }
 
     @Override
@@ -669,13 +673,13 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     @Override
     public boolean isInWaterOrRain() {
         // TODO Auto-generated method stub
-        return false;
+        return nms.isTouchingWaterOrRain();
     }
 
     @Override
     public boolean isInWaterOrRainOrBubbleColumn() {
         // TODO Auto-generated method stub
-        return false;
+        return nms.isInsideWaterOrBubbleColumn();
     }
 
     @Override

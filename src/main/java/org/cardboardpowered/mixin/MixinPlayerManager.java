@@ -34,6 +34,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -162,14 +163,22 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
     public void firePlayerJoinEvent(ClientConnection networkmanager, ServerPlayerEntity player, CallbackInfo ci) {
-        String joinMessage = CraftChatMessage.fromComponent(new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}));
+        //String joinMessage = CraftChatMessage.fromComponent(new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}));
+        String joinMessage = new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}).getString();
 
-        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(CraftServer.INSTANCE.getPlayer(player), joinMessage);
+        PlayerImpl plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
+        PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(plr, joinMessage);
         BukkitEventFactory.callEvent(playerJoinEvent);
         if (!player.networkHandler.connection.isOpen()) return;
 
         joinMessage = playerJoinEvent.getJoinMessage();
 
+        BlockPos pos = player.getBlockPos();
+        plr.setLoginPos(pos);
+        player.getServerWorld().getChunk(pos);
+
+        System.out.println("BlPos: " + player.getBlockPos());
+        System.out.println("JOIN MSG: " + joinMessage);
         if (joinMessage != null && joinMessage.length() > 0)
             for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))
                 CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
@@ -256,6 +265,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
             loginlistener.disconnect(new LiteralText(event.getKickMessage()));
             return null;
         }
+        System.out.println("Attempt LOGIN");
         return entity;
     }
 

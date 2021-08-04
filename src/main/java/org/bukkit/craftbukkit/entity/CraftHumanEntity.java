@@ -88,7 +88,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         super(entity);
         this.nms = entity;
         this.gm = CraftServer.INSTANCE.getDefaultGameMode();
-        this.inventory = new CardboardPlayerInventory(entity.getInventory());
+        this.inventory = new CardboardPlayerInventory(entity.inventory);
     }
 
     @Override

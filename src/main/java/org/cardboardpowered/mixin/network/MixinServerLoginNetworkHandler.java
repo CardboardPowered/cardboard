@@ -198,7 +198,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
     }
 
-
     public void disconnect(String s) {
         try {
             Text ichatbasecomponent = new LiteralText(s);

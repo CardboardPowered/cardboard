@@ -2116,3 +2116,8 @@ accessible field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/min
 mutable field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/minecraft/inventory/CraftingInventory;
 accessible class net/minecraft/server/world/ServerWorld$ServerEntityHandler
 accessible method net/minecraft/server/network/ServerPlayerEntity onSpawn (Lnet/minecraft/screen/ScreenHandler;)V
+accessible class net/minecraft/util/UserCache$Entry
+accessible field net/minecraft/entity/player/PlayerEntity inventory Lnet/minecraft/entity/player/PlayerInventory;
+accessible field net/minecraft/entity/Entity yaw F
+accessible field net/minecraft/entity/Entity pitch F
+accessible field net/minecraft/entity/player/PlayerEntity abilities Lnet/minecraft/entity/player/PlayerAbilities;

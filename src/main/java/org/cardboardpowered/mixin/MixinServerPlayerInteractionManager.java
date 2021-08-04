@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard - Spigot/Paper for Fabric
+ * Copyright (C) 2020-2021 Cardboard contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License 
@@ -37,7 +37,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManage
 
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.CakeBlock;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.TrapdoorBlock;
@@ -99,7 +98,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
             if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) {
                 if (!this.world.canPlayerModifyAt((PlayerEntity) this.player, blockposition)) {
                     // CraftBukkit start - fire PlayerInteractEvent
-                    BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.getInventory().getMainHandStack(), Hand.MAIN_HAND);
+                    BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
                     this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "may not interact"));
                     // Update any tile entity data for this block
                     BlockEntity tileentity = world.getBlockEntity(blockposition);
@@ -109,7 +108,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                     return;
                 }
 
-                PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.getInventory().getMainHandStack(), Hand.MAIN_HAND);
+                PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
                 if (event.isCancelled()) {
                     // Let the client know the block still exists
                     this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
@@ -159,7 +158,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                         this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
                     return;
                 }
-                org.bukkit.event.block.BlockDamageEvent blockEvent = BukkitEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.getInventory().getMainHandStack(), f >= 1.0f);
+                org.bukkit.event.block.BlockDamageEvent blockEvent = BukkitEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.inventory.getMainHandStack(), f >= 1.0f);
 
                 if (blockEvent.isCancelled()) {
                     // Let the client know the block still exists
