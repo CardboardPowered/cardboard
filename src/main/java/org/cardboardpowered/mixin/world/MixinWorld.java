@@ -99,12 +99,17 @@ public class MixinWorld implements IMixinWorld {
         if (CraftServer.INSTANCE.worlds.containsKey(name)) {
             if (nms.getRegistryKey() == World.NETHER) {
                 name = name + "_nether";
-                // Keep empty directory to fool plugins, ex. Multiverse.
-                fi2.mkdirs();
+                fi2.mkdirs(); // Keep empty directory to fool plugins, ex. Multiverse.
             }
             if (nms.getRegistryKey() == World.END) {
                 name = name + "_the_end";
                 fi.mkdirs();
+            }
+            
+            if (CraftServer.INSTANCE.worlds.containsKey(name)) {
+                // Fabric-mod added world
+                name = nms.getRegistryKey().getValue().toUnderscoreSeparatedString();
+                new File(name).mkdirs();
             }
 
             this.bukkit = new WorldImpl(name, nms);
