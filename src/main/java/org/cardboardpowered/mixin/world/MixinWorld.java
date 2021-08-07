@@ -105,7 +105,7 @@ public class MixinWorld implements IMixinWorld {
                 name = name + "_the_end";
                 fi.mkdirs();
             }
-            
+
             if (CraftServer.INSTANCE.worlds.containsKey(name)) {
                 // Fabric-mod added world
                 name = nms.getRegistryKey().getValue().toUnderscoreSeparatedString();

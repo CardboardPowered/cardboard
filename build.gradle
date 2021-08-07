@@ -1,4 +1,5 @@
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+import com.modrinth.minotaur.TaskModrinthUpload
 
 plugins {
     id 'fabric-loom' version '0.8-SNAPSHOT'
@@ -6,6 +7,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'java-library'
     id "com.peterabeles.gversion" version "1.8.3"
+    id "com.modrinth.minotaur" version "1.2.1"
 }
 
 gversion {
@@ -138,4 +140,18 @@ shadowJar {
       exclude(dependency('org.objectweb:asm:*'))
       exclude(dependency('com.google.guava:guava:*'))
     }
+}
+
+task publishModrinth (type: TaskModrinthUpload){ // Make sure it runs after build!
+    onlyIf {
+        System.getenv("MODRINTH") // Only attempt to run this task if the MODRINTH variable is set, otherwise SKIP it
+    }
+
+    token = System.getenv("MODRINTH") // An environment property called MODRINTH that is your token, set via Gradle CLI, GitHub Actions, Idea Run Configuration, or other
+    projectId = 'MLYQ9VGP'
+    versionNumber = '1.17-' + System.env.BUILD_NUMBER // Will fail if Modrinth has this version already
+    // On fabric, use 'remapJar' instead of 'jar'
+    uploadFile = remapJar // This is the java jar task. If it can't find the jar, try 'jar.outputs.getFiles().asPath' in place of 'jar' 
+    addGameVersion('1.17.1') // Call this multiple times to add multiple game versions. There are tools that can help you generate the list of versions
+    addLoader('fabric')
 }
