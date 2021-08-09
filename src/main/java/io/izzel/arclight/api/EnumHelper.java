@@ -84,8 +84,17 @@ public class EnumHelper {
 
     private static long enumConstantDirectoryOffset;
     private static long enumConstantsOffset;
+    private static long enumVarsOffset;
 
     static {
+        if (System.getProperty("java.vm.name").contains("OpenJ9")) {
+        try {
+              Field enumVars = Class.class.getDeclaredField("enumVars");
+              enumVarsOffset = Unsafe.objectFieldOffset(enumVars);
+          } catch (NoSuchFieldException e) {
+              throw new IllegalStateException(e);
+          }
+       } else {
         try {
             Field enumConstantDirectory = Class.class.getDeclaredField("enumConstantDirectory");
             Field enumConstants = Class.class.getDeclaredField("enumConstants");
@@ -96,10 +105,13 @@ public class EnumHelper {
             throw new IllegalStateException(e);
         }
     }
-
+}
     private static void reset(Class<?> cl) {
+        if (System.getProperty("java.vm.name").contains("OpenJ9")) {
+        Unsafe.putObject(cl, enumVarsOffset, null);
+        } else {
         Unsafe.putObject(cl, enumConstantDirectoryOffset, null);
         Unsafe.putObject(cl, enumConstantsOffset, null);
     }
-
+  }
 }
