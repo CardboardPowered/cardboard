@@ -37,20 +37,28 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Position;
 import net.minecraft.world.World;
 
-@Mixin(FrostWalkerEnchantment.class)
+/**
+ * @implNote Mixin set to priority 999 to allow
+ *          other mods to inject after us. 
+ */
+@Mixin(value = FrostWalkerEnchantment.class, priority = 999)
 public class MixinFrostWalkerEnchantment {
 
     /**
-     * @reason BlockFormEvent
+     * @reason BlockFormEvent - Add call to {@link BukkitEventFactory#handleBlockFormEvent}
      * @author .
+     * 
+     * @param entity - The entity/player
+     * @param world  - the world the entity is in.
+     * @param pos    - The current {@link BlockPos}
      */
     @Overwrite
-    public static void freezeWater(LivingEntity entity, World world, BlockPos blockpos, int i) {
+    public static void freezeWater(LivingEntity entity, World world, BlockPos pos, int i) {
         if (entity.isOnGround()) {
             BlockState state = Blocks.FROSTED_ICE.getDefaultState();
             float f = (float) Math.min(16, 2 + i);
             BlockPos.Mutable mutablePos = new BlockPos.Mutable();
-            Iterator<BlockPos> iterator = BlockPos.iterate(blockpos.add((double) (-f), -1.0D, (double) (-f)), blockpos.add((double) f, -1.0D, (double) f)).iterator();
+            Iterator<BlockPos> iterator = BlockPos.iterate(pos.add((double) (-f), -1.0D, (double) (-f)), pos.add((double) f, -1.0D, (double) f)).iterator();
 
             while (iterator.hasNext()) {
                 BlockPos blockpos1 = (BlockPos) iterator.next();
@@ -66,7 +74,7 @@ public class MixinFrostWalkerEnchantment {
                     }
                 }
             }
-
+            System.out.println("Frost test!");
         }
     }
 

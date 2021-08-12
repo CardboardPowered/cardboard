@@ -340,7 +340,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     //@Overwrite
     @Inject(at = @At("HEAD"), method = "onPlayerMove", cancellable = true)
-    public void onPlayerMove(PlayerMoveC2SPacket packetplayinflying, CallbackInfo ci) {
+    public void onPlayerMove_Cardboard(PlayerMoveC2SPacket packetplayinflying, CallbackInfo ci) {
         NetworkThreadUtils.forceMainThread(packetplayinflying, (ServerPlayNetworkHandler)(Object)this, this.player.getServerWorld());
         if (false /*ServerPlayNetworkHandler.validatePlayerMove(packetplayinflying)*/)
             this.disconnect(new TranslatableText("multiplayer.disconnect.invalid_player_movement"));

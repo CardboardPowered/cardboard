@@ -26,6 +26,7 @@
     "MixinPlayerAdvancementTracker",
     "MixinStyle",
     "MixinUserCache",
+    "MixinYamlConfiguration",
 
     "loot.MixinSurvivesExplosionLootCondition",
     "loot.MixinRandomChanceWithLootingLootCondition",
