@@ -24,7 +24,7 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.WorldSaveHandler;
 
-@Mixin(WorldSaveHandler.class)
+@Mixin(value = WorldSaveHandler.class, priority = 999)
 public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
 
     @Shadow

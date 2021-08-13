@@ -17,8 +17,8 @@ import org.yaml.snakeyaml.error.YAMLException;
 @Mixin(YamlConfiguration.class)
 public abstract class MixinYamlConfiguration extends FileConfiguration {
     
-    @Shadow private LoaderOptions loaderOptions;
-    @Shadow private Yaml yaml;
+    @Shadow(remap = false) private LoaderOptions loaderOptions;
+    @Shadow(remap = false) private Yaml yaml;
 
     public void cardboard_setMaxAliasesForCollections(int max) {
         try {
@@ -34,7 +34,7 @@ public abstract class MixinYamlConfiguration extends FileConfiguration {
      *  class loading works for mods with Fabric we need to make sure we
      *  stay compatible with SnakeYAML pre-1.26
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public void loadFromString(String contents) throws InvalidConfigurationException {
         Validate.notNull(contents, "Contents cannot be null");
 
@@ -54,12 +54,12 @@ public abstract class MixinYamlConfiguration extends FileConfiguration {
         if (input != null) convertMapsToSections(input, (YamlConfiguration)(Object)this);
     }
 
-    @Shadow
+    @Shadow(remap = false)
     protected String parseHeader(String input) {
         return "mixin";
     }
 
-    @Shadow
+    @Shadow(remap = false)
     protected void convertMapsToSections(Map<?, ?> input, ConfigurationSection section) {
     }
 

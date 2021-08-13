@@ -15,7 +15,7 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.LegacyQueryHandler;
 import net.minecraft.server.MinecraftServer;
 
-@Mixin(LegacyQueryHandler.class)
+@Mixin(value = LegacyQueryHandler.class, priority = 999)
 public class MixinLegacyQueryHandler {
 
     @Shadow private ByteBuf toBuffer(String s) {return null;}
