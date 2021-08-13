@@ -74,7 +74,6 @@ public class MixinFrostWalkerEnchantment {
                     }
                 }
             }
-            System.out.println("Frost test!");
         }
     }
 
