@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.util;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.gson.JsonParseException;
-import com.javazilla.bukkitfabric.interfaces.IText;
 
 import java.util.ArrayList;
 import java.util.List;
