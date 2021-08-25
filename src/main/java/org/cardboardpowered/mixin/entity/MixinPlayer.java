@@ -132,7 +132,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     }
 
     @Inject(at = @At("HEAD"), method = "teleport", cancellable = true)
-    public void teleport(ServerWorld worldserver, double x, double y, double z, float f, float f1, CallbackInfo ci) {
+    public void teleport1(ServerWorld worldserver, double x, double y, double z, float f, float f1, CallbackInfo ci) {
         System.out.println("DEBUG: Player teleport!");
         PlayerTeleportEvent event = new PlayerTeleportEvent((Player) this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(((IMixinWorld)worldserver).getWorldImpl(), x,y,z,f,f1), PlayerTeleportEvent.TeleportCause.UNKNOWN);
         Bukkit.getPluginManager().callEvent(event);

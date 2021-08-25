@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.bukkit.plugin.Plugin;
 
+import com.destroystokyo.paper.ServerSchedulerReportingWrapper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 public class PaperAsyncScheduler extends BukkitSchedulerImpl {
@@ -91,7 +92,7 @@ public class PaperAsyncScheduler extends BukkitSchedulerImpl {
     private boolean executeTask(BukkitTaskImpl task) {
         if (isValid(task)) {
             this.runners.put(task.getTaskId(), task);
-            //this.executor.execute(new ServerSchedulerReportingWrapper(task));
+            this.executor.execute(new ServerSchedulerReportingWrapper(task));
             return true;
         }
         return false;

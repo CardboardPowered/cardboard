@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.cardboardpowered.impl.CardboardAttributable;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,6 +24,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -37,7 +39,19 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
         return (LivingEntity)(Object)this;
     }
 
+    @Shadow
+    private AttributeContainer attributes;
+
     private boolean PICE_canceled = false;
+    private CardboardAttributable craftAttributes;
+
+    @Override
+    public CardboardAttributable cardboard_getAttr() {
+        if (null == craftAttributes) {
+            this.craftAttributes = new CardboardAttributable(this.attributes);
+        }
+        return craftAttributes;
+    }
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;finishUsing(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;"), 
             method = "consumeItem")

@@ -186,7 +186,8 @@ public class BukkitSchedulerImpl implements BukkitScheduler {
         if (period == BukkitTaskImpl.ERROR) period = 1L;
         else if (period < BukkitTaskImpl.NO_REPEATING) period = BukkitTaskImpl.NO_REPEATING;
 
-        return handle(new AsyncTaskImpl(runners, plugin, runnable, nextId(), period), delay);
+        return this.handle(new AsyncTaskImpl(this.asyncScheduler.runners, plugin, runnable, this.nextId(), period), delay); // Paper
+        //return handle(new AsyncTaskImpl(runners, plugin, runnable, nextId(), period), delay);
     }
 
     @Override

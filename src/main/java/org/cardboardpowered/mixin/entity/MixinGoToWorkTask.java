@@ -18,7 +18,7 @@ import net.minecraft.village.VillagerProfession;
 
 import net.minecraft.util.registry.Registry;
 
-@Mixin(GoToWorkTask.class)
+@Mixin(value = GoToWorkTask.class, priority = 999)
 public class MixinGoToWorkTask {
 
     /**
