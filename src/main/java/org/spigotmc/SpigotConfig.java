@@ -37,7 +37,6 @@ public class SpigotConfig {
             + "If you need help with the configuration or have any questions related to Spigot,\n"
             + "join us at the IRC or drop by our forums and leave a post.\n"
             + "\n"
-            + "IRC: #spigot @ irc.spi.gt ( http://www.spigotmc.org/pages/irc/ )\n"
             + "Forums: http://www.spigotmc.org/\n";
     public static YamlConfiguration config;
     public static int version;
@@ -58,6 +57,8 @@ public class SpigotConfig {
 
         commands = new HashMap<String, Command>();
         //commands.put( "spigot", new SpigotCommand( "spigot" ) );
+        
+        com.javazilla.bukkitfabric.PaperMetrics.startMetrics_Cardboard();
 
         version = getInt( "config-version", 12 );
         set( "config-version", 12 );

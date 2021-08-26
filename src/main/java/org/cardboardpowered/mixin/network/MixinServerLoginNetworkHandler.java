@@ -55,7 +55,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.logging.UncaughtExceptionLogger;
 
 @SuppressWarnings("deprecation")
-@Mixin(ServerLoginNetworkHandler.class)
+@Mixin(value = ServerLoginNetworkHandler.class, priority = 999)
 public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkHandler {
 
     @Shadow private byte[] nonce = new byte[4];

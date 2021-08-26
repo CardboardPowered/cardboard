@@ -1,21 +1,13 @@
 package org.cardboardpowered.mixin.network;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.entity.Player;
 import org.cardboardpowered.impl.CardboardServerListPingEvent;
-import org.cardboardpowered.impl.util.IconCacheImpl;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.SharedConstants;

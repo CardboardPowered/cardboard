@@ -84,12 +84,35 @@ public class ReflectionRemapper {
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchFieldException | SecurityException e2) {
+                    if (f.contains("B_STATS_VERSION")) {
+                        return getBstatsVersionField();
+                    }
                     e2.printStackTrace();
                 }
                 return null;
             }
         }
     }
+
+    private static int BV_CALLED = 0;
+    public static Field getBstatsVersionField() {
+        Field f = null;
+        int i = 0;
+        for (final Class<?> service : Bukkit.getServicesManager().getKnownServices()) {
+            if (i < BV_CALLED) {
+                i++;
+                continue;
+            }
+            try {
+                f = service.getField("B_STATS_VERSION"); // Identifies bStats classes
+                break;
+            } catch (final NoSuchFieldException ignored) {
+            }
+        }
+        BV_CALLED++;
+        return f;
+    }
+
 
     public static Field getDeclaredFieldByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchFieldException {
         try {

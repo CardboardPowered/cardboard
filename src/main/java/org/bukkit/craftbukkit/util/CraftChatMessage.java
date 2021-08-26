@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.text.ClickEvent;
@@ -222,17 +223,31 @@ public final class CraftChatMessage {
         if (component == null) return "";
         StringBuilder out = new StringBuilder();
 
-        for (Text c : component.getSiblings()) {
-            Style modi = c.getStyle();
+        for (Text c : list(component)) {
+            Style modi = ((Text)c).getStyle();
             out.append(modi.getColor() == null ? defaultColor : modi.getColor());
             if (modi.isBold()) out.append(Formatting.BOLD);
             if (modi.isItalic()) out.append(Formatting.ITALIC);
             if (modi.isUnderlined()) out.append(Formatting.UNDERLINE);
             if (modi.isStrikethrough()) out.append(Formatting.STRIKETHROUGH);
             if (modi.isObfuscated()) out.append(Formatting.OBFUSCATED);
-            out.append(c.asString());
+
+            c.visitSelf((x) -> {
+                out.append(x);
+                return Optional.empty();
+            });
         }
-        return out.toString().replaceFirst("^(" + defaultColor + ")*", "");
+        return out.toString();//.replaceFirst("^(" + defaultColor + ")*", "");
+    }
+    
+    public static ArrayList<Text> list(Text txt) {
+        ArrayList<Text> arr = new ArrayList<>();
+        if (!arr.contains(txt))
+            arr.add( txt );
+        for (Text tx : txt.getSiblings()) {
+            arr.addAll( list(tx) );
+        }
+        return arr;
     }
 
     public static Text fixComponent(Text component) {
