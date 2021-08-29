@@ -68,6 +68,7 @@ import org.jetbrains.annotations.Nullable;
 import org.cardboardpowered.impl.CardboardPotionUtil;
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 
 import net.kyori.adventure.text.Component;
 import net.minecraft.entity.boss.WitherEntity;
@@ -111,9 +112,8 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
     }
 
     @Override
-    public AttributeInstance getAttribute(Attribute arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public AttributeInstance getAttribute(Attribute att) {
+        return ((IMixinLivingEntity) nms).cardboard_getAttr().getAttribute(att);
     }
 
     @Override
@@ -783,27 +783,24 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
     // PaperAPI - end
 
     @Override
-    public void registerAttribute(@NotNull Attribute arg0) {
-        // TODO Auto-generated method stub
-        
+    public void registerAttribute(Attribute att) {
+        ((IMixinLivingEntity) nms).cardboard_getAttr().registerAttribute(att);
     }
 
     @Override
     public @Nullable Component customName() {
-        // TODO Auto-generated method stub
-        return null;
+        return Component.text( this.getCustomName() );
     }
 
     @Override
     public void customName(@Nullable Component arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public @NotNull EquipmentSlot getHandRaised() {
-        // TODO Auto-generated method stub
-        return null;
+        Hand hand = nms.getActiveHand();
+        return hand == Hand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
     }
 
     @Override
