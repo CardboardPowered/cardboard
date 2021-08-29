@@ -139,6 +139,7 @@ import net.minecraft.entity.vehicle.FurnaceMinecartEntity;
 import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.entity.vehicle.TntMinecartEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -219,9 +220,12 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         if (itemstack.isEmpty())
             return false;
 
+        boolean chick = (((Entity)(Object)this) instanceof ChickenEntity && itemstack.getItem() == Items.EGG)
         if (((Entity)(Object)this) instanceof net.minecraft.entity.LivingEntity && !this.forceDrops) {
-            this.drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack));
-            return false;
+            if (!chick) {
+                this.drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack));
+                return false;
+            }
         }
         ItemEntity entityitem = new ItemEntity(this.world, ((Entity) (Object) this).getX(), ((Entity) (Object) this).getY() + (double) f, ((Entity) (Object) this).getZ(), itemstack);
 
