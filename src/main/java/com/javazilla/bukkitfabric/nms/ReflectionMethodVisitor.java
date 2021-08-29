@@ -94,7 +94,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         }
 
         if (owner.equalsIgnoreCase("com/comphenix/protocol/utility/MinecraftReflection")) {
-            System.out.println("PROTOCOLLIB REFLECTION: " + name);
+            // System.out.println("PROTOCOLLIB REFLECTION: " + name);
             if (name.equals("getCraftBukkitClass") || name.equals("getMinecraftClass")) {
                 super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ProtocolLibMapper", name, desc, false );
                 return;

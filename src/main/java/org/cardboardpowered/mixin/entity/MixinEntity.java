@@ -42,6 +42,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.cardboardpowered.impl.entity.*;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 
 import me.isaiah.common.entity.IRemoveReason;
 import net.minecraft.entity.Entity;
@@ -142,9 +143,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 @Mixin(Entity.class)
 public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
@@ -208,11 +213,34 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public void setValid(boolean b) {
         this.valid = b;
     }
+    
+    // TODO
+    private boolean justPortal;
+    private int portalAge = -1;
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
     public void setBukkit(CallbackInfo callbackInfo) {
-        if (null == bukkit)
+        if (null == bukkit) {
             this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
+            this.justPortal = false;
+        }
+        if (this.justPortal) {
+            int age = ((Entity)(Object)this).age;
+            if (portalAge == -1) portalAge = age;
+            if ( (age - portalAge) <= 20) {
+                Entity e = (Entity)(Object)this;
+                Vec3d vec = c_portalTarget.position;
+
+                Chunk c = world.getChunk(new BlockPos(vec.x, vec.y, vec.z));
+                if (!c.isOutOfHeightLimit((int)vec.y)) {
+                    e.teleport(vec.x, vec.y + 1, vec.z);
+                    e.refreshPosition();
+                }  
+            } else {
+                this.justPortal = false;
+                this.portalAge = -1;
+            }
+        }
     }
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;")
@@ -220,7 +248,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         if (itemstack.isEmpty())
             return false;
 
-        boolean chick = (((Entity)(Object)this) instanceof ChickenEntity && itemstack.getItem() == Items.EGG)
+        boolean chick = (((Entity)(Object)this) instanceof ChickenEntity && itemstack.getItem() == Items.EGG);
         if (((Entity)(Object)this) instanceof net.minecraft.entity.LivingEntity && !this.forceDrops) {
             if (!chick) {
                 this.drops.add(org.bukkit.craftbukkit.inventory.CraftItemStack.asBukkitCopy(itemstack));
@@ -531,6 +559,38 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     @Shadow
     public void move(MovementType moveType, Vec3d vec3d) {
+    }
+    
+    @Shadow
+    private TeleportTarget getTeleportTarget(ServerWorld w) {
+        return null;
+    }
+
+    private TeleportTarget c_portalTarget;
+    /**
+     * Correct position on portal teleport.
+     */
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;moveToWorld(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/entity/Entity;"), method = { "tickNetherPortal" })
+    public Entity tickNetherPortal_cardboard_moveToWorld(Entity entity, ServerWorld world) {
+        Entity e = entity;
+        if (entity instanceof PlayerEntity) {
+            TeleportTarget tar = getTeleportTarget(world);
+            Vec3d vec = tar.position;
+            c_portalTarget = tar;
+
+            Chunk c = world.getChunk(new BlockPos(vec.x, vec.y, vec.z));
+            boolean high = c.isOutOfHeightLimit((int)vec.y);
+
+            if (!high) {
+                e = entity.moveToWorld(world);
+                e.teleport(vec.x, vec.y + 1, vec.z);
+                e.refreshPosition();
+            }
+            this.justPortal = true;
+        } else {
+            e = entity.moveToWorld(world);
+        }
+        return e;
     }
 
 }
