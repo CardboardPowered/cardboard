@@ -353,20 +353,22 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
         // Avoid suffocation on join
         BlockPos saved = bukkit.posAtLogin;
-        if (plr.age < 60) {
-            if (h == 0) h = plr.getHealth();
-            plr.setInvulnerable(true);
-            BlockPos pos = plr.getBlockPos();
-            if (Math.abs(saved.x-pos.x) <= 1 && Math.abs(saved.z-pos.z) <= 1) {
-                if (!plr.getServerWorld().getBlockState(new BlockPos(pos.x, pos.y+1, pos.z)).isAir()) {
-                    int ty = saved.getY();
-                    while (!plr.getServerWorld().getBlockState(new BlockPos(pos.x, ty, pos.z)).isAir()) { ty++; }
-                    plr.teleport(saved.x, ty, saved.z);
+        if (null != saved) {
+            if (plr.age < 60) {
+                if (h == 0) h = plr.getHealth();
+                plr.setInvulnerable(true);
+                BlockPos pos = plr.getBlockPos();
+                if (Math.abs(saved.x-pos.x) <= 1 && Math.abs(saved.z-pos.z) <= 1) {
+                    if (!plr.getServerWorld().getBlockState(new BlockPos(pos.x, pos.y+1, pos.z)).isAir()) {
+                        int ty = saved.getY();
+                        while (!plr.getServerWorld().getBlockState(new BlockPos(pos.x, ty, pos.z)).isAir()) { ty++; }
+                        plr.teleport(saved.x, ty, saved.z);
+                    }
                 }
+                plr.setHealth(h);
+            } else if (plr.age < 70) {
+                plr.setInvulnerable(bukkit.in);
             }
-            plr.setHealth(h);
-        } else if (plr.age < 70) {
-            plr.setInvulnerable(bukkit.in);
         }
         // end
 
