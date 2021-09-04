@@ -176,6 +176,7 @@
     "block.MixinNetherPortalBlock",
     "block.MixinEndPortalBlock",
     "block.MixinPistonBlock",
+    "block.MixinShearsDispenserBehavior",
 
     "MixinFrostWalkerEnchantment"
   ],
