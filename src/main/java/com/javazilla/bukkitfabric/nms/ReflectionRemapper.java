@@ -87,7 +87,7 @@ public class ReflectionRemapper {
                     if (f.contains("B_STATS_VERSION")) {
                         return getBstatsVersionField();
                     }
-                    System.out.println("DeBug:" + calling.getName() + " / " + getCallerClassName());
+                    //System.out.println("DeBug:" + calling.getName() + " / " + getCallerClassName());
                     e2.printStackTrace();
                 }
                 return null;
@@ -141,6 +141,10 @@ public class ReflectionRemapper {
         Method m = getDeclaredMethodByName(calling, f);
         m.setAccessible(true);
         return m;
+    }
+    
+    public static CraftServer getCraftServer() {
+        return CraftServer.INSTANCE;
     }
 
     public static MinecraftServer getNmsServer() {
@@ -264,7 +268,7 @@ public class ReflectionRemapper {
             }
             return jpl;
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            BukkitFabricMod.LOGGER.warning("SOMETHING EVERY WRONG! PLEASE REPORT THE EXCEPTION BELOW TO BUKKIT4FABRIC:");
+            BukkitFabricMod.LOGGER.warning("SOMETHING EVERY WRONG! PLEASE REPORT THE EXCEPTION BELOW TO CARDBOARD:");
             e.printStackTrace();
             return null;
         }

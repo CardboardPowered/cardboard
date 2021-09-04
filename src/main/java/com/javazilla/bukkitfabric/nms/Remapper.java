@@ -55,6 +55,11 @@ public class Remapper {
             boolean b = p.remap(jarFile);
             if (b) return;
         }
+        
+        // TODO: Don't remap worldedit in dev; Testing of new remapper
+        if (jarFile.getName().contains("worldedit") && FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            return;
+        }
 
         if (versionFix == null) {
             if (md5info.exists()) {

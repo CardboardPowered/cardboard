@@ -78,6 +78,7 @@
     "entity.MixinLeashKnotEntity",
     "entity.MixinForgetAttackTargetTask",
     "entity.MixinUpdateAttackTargetTask",
+    "entity.MixinBreakDoorGoal",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
@@ -106,7 +107,6 @@
     "network.MixinServerHandshakeNetworkHandler",
     "network.MixinPacketByteBuf",
     "network.MixinResourcePackStatusC2SPacket",
-    "network.MixinDecoderHandler",
     "network.MixinPlayerManager_ChatEvent",
 
     "recipe.MixinRecipeManager",

@@ -67,6 +67,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreeperPowerEvent;
+import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEnterLoveModeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
@@ -690,6 +691,16 @@ public class BukkitEventFactory {
     public static PlayerLevelChangeEvent callPlayerLevelChangeEvent(Player player, int oldLevel, int newLevel) {
         PlayerLevelChangeEvent event = new PlayerLevelChangeEvent(player, oldLevel, newLevel);
         Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+    
+    public static EntityBreakDoorEvent callEntityBreakDoorEvent(Entity entity, BlockPos pos) {
+        org.bukkit.entity.Entity entity1 = ((IMixinEntity)entity).getBukkitEntity();
+        Block block = CraftBlock.at((ServerWorld) entity.getEntityWorld(), pos);
+
+        EntityBreakDoorEvent event = new EntityBreakDoorEvent((LivingEntity) entity1, block);
+        entity1.getServer().getPluginManager().callEvent(event);
+
         return event;
     }
 

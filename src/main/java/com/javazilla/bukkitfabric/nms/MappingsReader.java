@@ -47,7 +47,7 @@ public class MappingsReader {
     public static HashMap<String, String> METHODS2;
     public static HashMap<String, String> METHODS3;
 
-    public static Logger LOGGER = LogManager.getLogger("BukkitNmsRemapper");
+    public static Logger LOGGER = LogManager.getLogger("CardboardRemapper");
 
     public static String dev(String s) {
         if (!FabricLoader.getInstance().isDevelopmentEnvironment()) return s;

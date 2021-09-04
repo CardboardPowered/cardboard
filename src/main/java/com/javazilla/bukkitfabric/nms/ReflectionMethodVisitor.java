@@ -18,8 +18,12 @@
  */
 package com.javazilla.bukkitfabric.nms;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -28,6 +32,7 @@ import org.objectweb.asm.Opcodes;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
+import net.minecraft.block.BlockState;
 
 public class ReflectionMethodVisitor extends MethodVisitor {
 
@@ -39,11 +44,36 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     }
     private String pln;
     private MappingResolver mr;
+    
+    public static HashMap<String,String> spigot2obf;
 
     public ReflectionMethodVisitor(int api, MethodVisitor visitMethod, String pln) {
         super(api, visitMethod);
         this.pln = pln;
         this.mr = FabricLoader.getInstance().getMappingResolver();
+        if (null == spigot2obf) {
+            spigot2obf = new HashMap<>();
+            try {
+                if (new File("builddata.txt").isFile()) {
+                    for (String s : Files.readAllLines(new File("builddata.txt").toPath())) {
+                        if (s.indexOf('#') != -1) continue;
+                        
+                        String[] spl = s.split(" ");
+                        spigot2obf.put(spl[1], spl[0]);
+                     //   System.out.println("MAP: " + spl[1] + " | " + spl[0]);
+                    }
+                    System.out.println("Loaded 1.17 Obf Class Map: " + spigot2obf.size());
+                    for (String s : Files.readAllLines(new File("bd-m.txt").toPath())) {
+                        if (s.indexOf('#') != -1) continue;
+        
+                        String[] spl = s.split(" ");
+                        spigot2obf.put(spl[0] + "#" + spl[3], spl[1]);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -66,15 +96,40 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         }
     }
 
+    public static int fixed = 0; // max so far: 484
+    public static int lastF = 484;
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (owner.startsWith("net/minecraft") && name.length() < 4) {
-            String cl = mr.unmapClassName("official", owner.replace('/','.'));
-            String name2 = mr.mapMethodName("official", cl.replace('/', '.'), name, desc);
-            // Debug: System.out.println(owner + "/=/" + name + " /=/ " + name2);
-            super.visitMethodInsn( opcode, owner, name2, desc, false );
+        if (name.equals("getCraftServer")) {
+            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", name, desc, false );
             return;
+        }
+        
+        if (owner.startsWith("net/minecraft") && spigot2obf.size() > 1) {
+            String own = spigot2obf.getOrDefault(owner, owner);
+            String cl = mr.mapClassName("official", own.replace('/','.'));
+            String d = desc;
+            String d2 = desc;
+            for (String s : spigot2obf.keySet()) {
+                d = d.replace("L" + s + ";", "L" + spigot2obf.getOrDefault(s, s) + ";");
+                d2 = d2.replace("L" + s + ";", "L" + mr.mapClassName("official", spigot2obf.getOrDefault(s, s).replace('/','.')) + ";");
+            }
+
+            if (!own.contains("v1_1")) {
+                String name2 = mr.mapMethodName("official", own, 
+                        spigot2obf.getOrDefault(owner + "#" + name, name), d);
+
+                if (!own.contains("net.minecraft.server.v1_1") && !name2.equals(name)) {
+                    fixed++;
+                    if (fixed > lastF) System.out.println(fixed);
+                    //System.out.println(cl + "/=/" + name + d + " /=/ " + name2);
+                } /*else if (!own.contains("net.minecraft.server.v1_1")) {
+                    System.out.println(cl + "/=/" + name + d + " /=/ " + name2);
+                }*/
+                super.visitMethodInsn( opcode, cl.replace('.', '/'), name2, d2, false );
+                return;
+            }
         }
         if (owner.contains("NbtCompound") || owner.contains("class_2487")) {
             if (name.startsWith("setString")) {
