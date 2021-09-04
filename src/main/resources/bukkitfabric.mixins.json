@@ -79,6 +79,7 @@
     "entity.MixinForgetAttackTargetTask",
     "entity.MixinUpdateAttackTargetTask",
     "entity.MixinBreakDoorGoal",
+    "entity.MixinBatEntity",
 
     "entity.block.MixinBlockEntity",
     "entity.block.MixinBannerBlockEntity",
