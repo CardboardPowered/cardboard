@@ -178,6 +178,7 @@
     "block.MixinEndPortalBlock",
     "block.MixinPistonBlock",
     "block.MixinShearsDispenserBehavior",
+    "block.MixinLeavesBlock",
 
     "MixinFrostWalkerEnchantment"
   ],
