@@ -92,6 +92,8 @@ import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.util.CardboardFluidRaytraceMode;
+import org.cardboardpowered.impl.util.CardboardRayTraceResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,6 +150,7 @@ import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Unit;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
@@ -155,6 +158,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.ReadOnlyChunk;
 import net.minecraft.world.chunk.WorldChunk;
@@ -1115,21 +1119,36 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public RayTraceResult rayTraceBlocks(Location arg0, Vector arg1, double arg2) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTraceBlocks(Location start, Vector direction, double maxDistance) {
+        return this.rayTraceBlocks(start, direction, maxDistance, FluidCollisionMode.NEVER, false);
     }
 
     @Override
-    public RayTraceResult rayTraceBlocks(Location arg0, Vector arg1, double arg2, FluidCollisionMode arg3) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTraceBlocks(Location start, Vector direction, double maxDistance, FluidCollisionMode fluidCollisionMode) {
+        return this.rayTraceBlocks(start, direction, maxDistance, fluidCollisionMode, false);
     }
 
     @Override
-    public RayTraceResult rayTraceBlocks(Location arg0, Vector arg1, double arg2, FluidCollisionMode arg3, boolean arg4) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTraceBlocks(Location start, Vector direction, double maxDistance, FluidCollisionMode mode, boolean ignorePassableBlocks) {
+        Validate.notNull(start, "Start location equals null");
+        Validate.isTrue(this.equals(start.getWorld()), "Start location a different world");
+        start.checkFinite();
+
+        Validate.notNull(direction, "Direction equals null");
+        direction.checkFinite();
+
+        Validate.isTrue(direction.lengthSquared() > 0, "Direction's magnitude is 0");
+        Validate.notNull(mode, "mode equals null");
+
+        if (maxDistance < 0.0D) return null;
+
+        Vector dir = direction.clone().normalize().multiply(maxDistance);
+        Vec3d startPos = new Vec3d(start.getX(), start.getY(), start.getZ());
+        Vec3d endPos = new Vec3d(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
+        HitResult nmsHitResult = this.getHandle().raycast(new RaycastContext(startPos, endPos, ignorePassableBlocks ? 
+                RaycastContext.ShapeType.COLLIDER : RaycastContext.ShapeType.OUTLINE, CardboardFluidRaytraceMode.toMc(mode), null));
+
+        return CardboardRayTraceResult.fromNMS(this, nmsHitResult);
     }
 
     @Override

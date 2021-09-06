@@ -34,6 +34,7 @@ import net.minecraft.text.Text;
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager_ChatEvent {
 
+    @SuppressWarnings("deprecation")
     @Inject(at = @At("HEAD"), method = "broadcast", cancellable = true)
     public void cardboard_doChatEvent_PLRMGR(Text tmessage, Function<ServerPlayerEntity, Text> playerMessageFactory, MessageType type, UUID sender, CallbackInfo ci) {
         try {
