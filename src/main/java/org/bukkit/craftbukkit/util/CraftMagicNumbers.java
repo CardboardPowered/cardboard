@@ -56,8 +56,14 @@ import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import org.bukkit.craftbukkit.block.data.IMagicNumbers;
+import org.cardboardpowered.BlockImplUtil;
+
 @SuppressWarnings("deprecation")
-public final class CraftMagicNumbers implements UnsafeValues {
+public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
+    
+    public Material IgetMaterial(Block b) {return CraftMagicNumbers.getMaterial(b);}
+    public Block IgetBlock(Material m) {return CraftMagicNumbers.getBlock(m);}
 
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
 
@@ -95,6 +101,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final Map<Material, net.minecraft.fluid.Fluid> MATERIAL_FLUID = new HashMap<>();
 
     static {
+        BlockImplUtil.setMN((IMagicNumbers)INSTANCE);
+        
         for (Block block : Registry.BLOCK)
             BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getId(block).getPath().toUpperCase(Locale.ROOT)));
 

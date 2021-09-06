@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.cardboardpowered.BlockImplUtil;
+
 import org.bukkit.Material;
 import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -48,7 +48,7 @@ public class CraftBlockData implements BlockData {
 
     @Override
     public Material getMaterial() {
-        return CraftMagicNumbers.getMaterial(state.getBlock());
+        return BlockImplUtil.MN.IgetMaterial(state.getBlock());
     }
 
     public BlockState getState() {
@@ -150,7 +150,7 @@ public class CraftBlockData implements BlockData {
                 return (B) converted;
         }
 
-        converted = (nms instanceof Direction) ? CraftBlock.notchToBlockFace((Direction) nms) : bukkit.getEnumConstants()[nms.ordinal()];
+        converted = (nms instanceof Direction) ? BlockImplUtil.notchToBlockFace((Direction) nms) : bukkit.getEnumConstants()[nms.ordinal()];
 
         Preconditions.checkState(converted != null, "Could not convert enum %s->%s", nms, bukkit);
 
@@ -183,7 +183,7 @@ public class CraftBlockData implements BlockData {
                 return (N) converted;
         }
 
-        converted = (bukkit instanceof BlockFace) ? CraftBlock.blockFaceToNotch((BlockFace) bukkit) : nms.getEnumConstants()[bukkit.ordinal()];;
+        converted = (bukkit instanceof BlockFace) ? BlockImplUtil.blockFaceToNotch((BlockFace) bukkit) : nms.getEnumConstants()[bukkit.ordinal()];;
 
         Preconditions.checkState(converted != null, "Could not convert enum %s->%s", nms, bukkit);
 
@@ -489,10 +489,10 @@ public class CraftBlockData implements BlockData {
     }
 
     public static CraftBlockData newData(Material material, String data) {
-        Preconditions.checkArgument(material == null || material.isBlock(), "Cannot get data for not block %s", material);
+        //Preconditions.checkArgument(material == null || material.isBlock(), "Cannot get data for not block %s", material);
 
         BlockState blockData;
-        Block block = CraftMagicNumbers.getBlock(material);
+        Block block = BlockImplUtil.MN.IgetBlock(material);
 
         Map<Property<?>, Comparable<?>> parsed = null;
 

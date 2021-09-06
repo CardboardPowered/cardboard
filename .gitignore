@@ -4,8 +4,10 @@
 
 # gradle
 
+/**/.gradle/
 /.gradle/
 /build/
+/**/build/
 /out/
 /classes/
 /logs/

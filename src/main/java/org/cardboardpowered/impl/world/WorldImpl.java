@@ -113,6 +113,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
 import io.papermc.paper.world.MoonPhase;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import net.minecraft.block.AbstractRedstoneGateBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.ChorusFlowerBlock;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.EntityData;
@@ -165,6 +166,7 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
+import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.level.ServerWorldProperties;
 
 @SuppressWarnings("deprecation")
@@ -1054,9 +1056,10 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public Location locateNearestStructure(Location arg0, StructureType arg1, int arg2, boolean arg3) {
-        // TODO Auto-generated method stub
-        return null;
+    public Location locateNearestStructure(Location origin, StructureType structureType, int radius, boolean findUnexplored) {
+        BlockPos originPos = new BlockPos(origin.getX(), origin.getY(), origin.getZ());
+        BlockPos nearest = this.getHandle().getChunkManager().getChunkGenerator().locateStructure(this.getHandle(), StructureFeature.STRUCTURES.get(structureType.getName()), originPos, radius, findUnexplored);
+        return (nearest == null) ? null : new Location(this, nearest.getX(), nearest.getY(), nearest.getZ());
     }
 
     @Override
@@ -1176,15 +1179,23 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public boolean refreshChunk(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean refreshChunk(int x, int z) {
+        if (!this.isChunkLoaded(x, z)) return false;
+
+        int px = x << 4;
+        int pz = z << 4;
+
+        int height = this.getMaxHeight() / 16;
+        for (int idx = 0; idx < 64; idx++)
+            this.nms.updateListeners(new BlockPos(px + (idx / height), ((idx % height) * 16), pz), Blocks.AIR.getDefaultState(), Blocks.STONE.getDefaultState(), 3);
+        this.nms.updateListeners(new BlockPos(px + 15, (height * 16) - 1, pz + 15), Blocks.AIR.getDefaultState(), Blocks.STONE.getDefaultState(), 3);
+
+        return true;
     }
 
     @Override
     public boolean regenerateChunk(int arg0, int arg1) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException("Not supported in Spigot 1.17");
     }
 
     @Override

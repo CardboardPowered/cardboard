@@ -28,6 +28,7 @@ group = project.maven_group
 configurations { 
     extraLibs
     removeLibs
+    metest
 }
 
 
@@ -65,6 +66,9 @@ dependencies {
     ic.setChanging(true) // Make sure we get the latest version of iCommon
 
     include(modImplementation(ic))
+    include( project(":cardboard-block-impl") )
+    modImplementation(project(":cardboard-block-impl"))
+    metest project(":cardboard-block-impl")
 
     // Add each module as a dependency
     apiModules.forEach {
@@ -103,6 +107,7 @@ dependencies {
     removeLibs group: 'junit', name: 'junit', version: '4.10'
 
     configurations.api.extendsFrom(configurations.extraLibs)
+    project.compileJava.dependsOn(configurations.metest)
 }
 
 processResources {

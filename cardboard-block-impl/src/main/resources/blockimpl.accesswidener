@@ -1,0 +1,3 @@
+accessWidener	v1	named
+accessible	field	net/minecraft/state/State	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
+accessible	field	net/minecraft/state/AbstractBlockState	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
