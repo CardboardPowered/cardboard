@@ -542,9 +542,7 @@ public class WorldImpl implements World {
     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T> arg0) {
         Collection<T> list = new ArrayList<T>();
 
-        // TODO 1.17ify
-        /*
-        for (Object entity: nms.iterateEntities().entitiesById.values()) {
+        for (Object entity: nms.iterateEntities()) {
             if (entity instanceof net.minecraft.entity.Entity) {
                 Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
 
@@ -556,7 +554,7 @@ public class WorldImpl implements World {
                 if (arg0.isAssignableFrom(bukkitClass) && bukkitEntity.isValid())
                     list.add((T) bukkitEntity);
             }
-        }*/
+        }
 
         return list;
     }
@@ -565,8 +563,7 @@ public class WorldImpl implements World {
     public Collection<Entity> getEntitiesByClasses(Class<?>... arg0) {
         Collection<Entity> list = new ArrayList<Entity>();
 
-        /*
-        for (Object entity: nms.entitiesById.values()) {
+        for (Object entity: nms.iterateEntities()) {
             if (entity instanceof net.minecraft.entity.Entity) {
                 Entity bukkitEntity = ((IMixinEntity)(net.minecraft.entity.Entity) entity).getBukkitEntity();
 
@@ -583,8 +580,7 @@ public class WorldImpl implements World {
                     }
                 }
             }
-        }*/
-
+        }
         return list;
     }
 
@@ -703,10 +699,8 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public Block getHighestBlockAt(int arg0, int arg1, HeightMap arg2) {
-        // TODO Auto-generated method stub
-        System.out.println("GET HIGH Y!");
-        return null;
+    public Block getHighestBlockAt(int x, int z, org.bukkit.HeightMap heightMap) {
+        return getBlockAt(x, getHighestBlockYAt(x, z, heightMap), z);
     }
 
     @Override
@@ -753,9 +747,7 @@ public class WorldImpl implements World {
     public List<LivingEntity> getLivingEntities() {
         List<LivingEntity> list = new ArrayList<LivingEntity>();
 
-     // TODO 1.17ify
-        /*
-        for (Object o : nms.entitiesById.values()) {
+        for (Object o : nms.iterateEntities()) {
             if (o instanceof net.minecraft.entity.Entity) {
                 net.minecraft.entity.Entity mcEnt = (net.minecraft.entity.Entity) o;
                 Entity bukkitEntity = ((IMixinEntity)mcEnt).getBukkitEntity();
@@ -764,8 +756,7 @@ public class WorldImpl implements World {
                 if (bukkitEntity != null && bukkitEntity instanceof LivingEntity && bukkitEntity.isValid())
                     list.add((LivingEntity) bukkitEntity);
             }
-        }*/
-
+        }
         return list;
     }
 
@@ -1115,9 +1106,22 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public RayTraceResult rayTrace(Location arg0, Vector arg1, double arg2, FluidCollisionMode arg3, boolean arg4, double arg5, Predicate<Entity> arg6) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTrace(Location start, Vector direction, double maxDistance, FluidCollisionMode mode, boolean ignorePassableBlocks, double raySize, Predicate<Entity> filter) {
+        RayTraceResult blockHit = this.rayTraceBlocks(start, direction, maxDistance, mode, ignorePassableBlocks);
+        Vector startVec = null;
+        double blockHitDistance = maxDistance;
+
+        if (blockHit != null) {
+            startVec = start.toVector();
+            blockHitDistance = startVec.distance(blockHit.getHitPosition());
+        }
+
+        RayTraceResult entityHit = this.rayTraceEntities(start, direction, blockHitDistance, raySize, filter);
+        if (blockHit == null)  return entityHit;
+        if (entityHit == null) return blockHit;
+
+        double entityHitDistanceSquared = startVec.distanceSquared(entityHit.getHitPosition());
+        return (entityHitDistanceSquared < (blockHitDistance * blockHitDistance)) ? entityHit : blockHit;
     }
 
     @Override
