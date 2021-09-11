@@ -295,7 +295,16 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
         player.networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, windowType, CraftChatMessage.fromString(title)[0]));
         getHandle().currentScreenHandler = container;
-        getHandle().currentScreenHandler.addListener((ScreenHandlerListener) player);
+        //getHandle().scree
+        //getHandle().currentScreenHandler.addListener((ScreenHandlerListener) player);
+        
+        if ( CraftServer.INSTANCE.getMinecraftVersion().contains("1.16") ) {
+            // 1.16.5
+            container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
+        } else {
+            // 1.17
+            ((ServerPlayerEntity)getHandle()).onSpawn(container);
+        }
     }
 
     @Override
@@ -322,7 +331,13 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         String title = inventory.getTitle();
         player.networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, windowType, CraftChatMessage.fromString(title)[0]));
         player.currentScreenHandler = container;
-        player.currentScreenHandler.addListener((ScreenHandlerListener) player);
+        if ( CraftServer.INSTANCE.getMinecraftVersion().contains("1.16") ) {
+            // 1.16.5
+            container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
+        } else {
+            // 1.17
+            ((ServerPlayerEntity)getHandle()).onSpawn(container);
+        }
     }
 
     @Override

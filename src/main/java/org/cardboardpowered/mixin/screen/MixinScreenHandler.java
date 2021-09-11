@@ -1,18 +1,25 @@
 package org.cardboardpowered.mixin.screen;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.inventory.CustomInventoryView;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
@@ -28,7 +35,19 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     }
 
     @Shadow
+    @Final
+    @Mutable
     public DefaultedList<ItemStack> trackedStacks;
+
+    @Shadow
+    @Final
+    @Mutable
+    public DefaultedList<ItemStack> previousTrackedStacks;
+    
+    @Shadow
+    @Final
+    @Mutable
+    public DefaultedList<Slot> slots;
 
     @Override
     public void transferTo(ScreenHandler other, CraftHumanEntity player) {
@@ -65,11 +84,41 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     public DefaultedList<ItemStack> getTrackedStacksBF() {
         return trackedStacks;
     }
+    
+    @Override
+    public DefaultedList<ItemStack> cardboard_previousTrackedStacks() {
+        return previousTrackedStacks;
+    }
+    
+    @Override
+    public void cardboard_previousTrackedStacks(DefaultedList<ItemStack> s) {
+        this.previousTrackedStacks = s;
+    }
 
     @Override
     public void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks) {
-        this.trackedStacks = trackedStacks;
+       this.trackedStacks = trackedStacks;
     }
+    
+    @Override
+    public void doStuff(ScreenHandler d) {
+        //d.previousTrackedStacks;
+    }
+
+    @Override
+    public void cardboard_setSlots(DefaultedList<Slot> slots) {
+        this.slots = slots;
+    }
+
+    public void cardboard_setFinal(Field field, Object newValue, ScreenHandler inst) throws Exception {
+        field.setAccessible(true);
+
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        field.set(inst, newValue);
+     }
 
     @Override
     public void setCheckReachable(boolean bl) {

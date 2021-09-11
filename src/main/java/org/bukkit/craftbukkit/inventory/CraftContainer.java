@@ -241,8 +241,11 @@ public class CraftContainer extends ScreenHandler {
         }
 
         if (delegate != null) {
+            //((IMixinScreenHandler)this).doStuff(delegate);
             ((IMixinScreenHandler)this).setTrackedStacksBF(((IMixinScreenHandler)delegate).getTrackedStacksBF());
-            ((me.isaiah.common.cmixin.IMixinScreenHandler)this).ic_setSlots(delegate.slots);
+            ((IMixinScreenHandler)this).cardboard_setSlots(delegate.slots);
+            ((IMixinScreenHandler)this).cardboard_previousTrackedStacks(((IMixinScreenHandler)delegate).cardboard_previousTrackedStacks());
+            //((me.isaiah.common.cmixin.IMixinScreenHandler)this).ic_setSlots(delegate.slots);
         }
 
         if (cachedType == InventoryType.WORKBENCH) delegate = new CraftingScreenHandler(windowId, bottom); // SPIGOT-4598 bug

@@ -4,6 +4,8 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
 import java.util.Map;
+import java.util.UUID;
+
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -57,9 +59,17 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     @Override
     void deserializeInternal(NbtCompound tag, Object context) {
         super.deserializeInternal(tag, context);
+        
+        if (tag.contains(SKULL_PROFILE.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
+            NbtCompound skullTag = tag.getCompound(SKULL_PROFILE.NBT);
+            // convert type of stored Id from String to UUID for backwards compatibility
+            if (skullTag.contains("Id", CraftMagicNumbers.NBT.TAG_STRING)) {
+                UUID uuid = UUID.fromString(skullTag.getString("Id"));
+                skullTag.putUuid("Id", uuid);
+            }
 
-        if (tag.contains(SKULL_PROFILE.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND))
             this.setProfile(NbtHelper.toGameProfile(tag.getCompound(SKULL_PROFILE.NBT)));
+        }
     }
 
     @Override
@@ -78,10 +88,12 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         super.applyToItem(tag);
 
         if (profile != null) {
-            // Fill in textures
-        	// TODO 1.17ify consumer parameter added
-            // setProfile(SkullBlockEntity.loadProperties(profile));
             tag.put(SKULL_OWNER.NBT, serializedProfile);
+            
+            SkullBlockEntity.loadProperties(profile, (filledProfile) -> {
+                setProfile(filledProfile);
+                tag.put(SKULL_OWNER.NBT, serializedProfile);
+            });
         }
     }
 
@@ -139,7 +151,6 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
             if (profile.getName() != null)
                 return Bukkit.getOfflinePlayer(profile.getName());
         }
-
         return null;
     }
 
@@ -156,10 +167,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     public boolean setOwningPlayer(OfflinePlayer owner) {
         if (owner == null)
             setProfile(null);
-        else if (owner instanceof PlayerImpl)
-            setProfile(((PlayerImpl) owner).getProfile());
-        else
-            setProfile(new GameProfile(owner.getUniqueId(), owner.getName()));
+        else setProfile( (owner instanceof PlayerImpl) ? ((PlayerImpl) owner).getProfile() : new GameProfile(owner.getUniqueId(), owner.getName()));
 
         return true;
     }
@@ -168,8 +176,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     int applyHash() {
         final int original;
         int hash = original = super.applyHash();
-        if (hasOwner())
-            hash = 61 * hash + profile.hashCode();
+        if (hasOwner()) hash = 61 * hash + profile.hashCode();
         return original != hash ? CraftMetaSkull.class.hashCode() ^ hash : hash;
     }
 

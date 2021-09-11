@@ -23,6 +23,7 @@ import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -41,5 +42,13 @@ public interface IMixinScreenHandler {
     void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks);
 
     void setCheckReachable(boolean bl);
+
+    void cardboard_setSlots(DefaultedList<Slot> slots);
+
+    void doStuff(ScreenHandler delegate);
+
+    DefaultedList<ItemStack> cardboard_previousTrackedStacks();
+
+    void cardboard_previousTrackedStacks(DefaultedList<ItemStack> s);
 
 }
