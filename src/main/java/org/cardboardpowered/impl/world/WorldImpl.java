@@ -76,6 +76,7 @@ import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.generator.BlockPopulator;
@@ -94,6 +95,7 @@ import org.bukkit.util.Vector;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.util.CardboardFluidRaytraceMode;
 import org.cardboardpowered.impl.util.CardboardRayTraceResult;
+import org.cardboardpowered.interfaces.IServerWorld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,6 +122,7 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -236,7 +239,7 @@ public class WorldImpl implements World {
     @Override
     public boolean canGenerateStructures() {
         // FIXME BROKEN!!!
-        return false;//nms.getLevelProperties().hasStructures();
+        return true;//nms.getLevelProperties().hasStructures();
     }
 
     @Override
@@ -519,16 +522,12 @@ public class WorldImpl implements World {
     public List<Entity> getEntities() {
         List<Entity> list = new ArrayList<Entity>();
 
-     // TODO 1.17ify
-        /*
-        for (Object object : nms.entitiesById.values()) {
-            if (object instanceof net.minecraft.entity.Entity) {
-                net.minecraft.entity.Entity mc = (net.minecraft.entity.Entity) object;
-                Entity bukkit = ((IMixinEntity)mc).getBukkitEntity();
+        nms.iterateEntities().forEach(entity -> {
+            Entity bukkitEntity = ((IMixinEntity)entity).getBukkitEntity();
+            if (bukkitEntity != null && bukkitEntity.isValid())
+                list.add(bukkitEntity);
+        });
 
-                if (bukkit != null && bukkit.isValid()) list.add(bukkit);
-            }
-        }*/
         return list;
     }
 
@@ -1337,12 +1336,12 @@ public class WorldImpl implements World {
 
     @Override
     public void setThunderDuration(int arg0) {
-        // TODO Auto-generated method stub
+        worldProperties().setThunderTime(arg0);
     }
 
     @Override
     public void setThundering(boolean arg0) {
-        // TODO Auto-generated method stub
+        worldProperties().setThundering(arg0);
     }
 
     @Override
@@ -1377,7 +1376,11 @@ public class WorldImpl implements World {
 
     @Override
     public void setWeatherDuration(int arg0) {
-        // TODO Auto-generated method stub
+        worldProperties().setRainTime(arg0);
+    }
+
+    private ServerWorldProperties worldProperties() {
+        return ((IServerWorld)nms).cardboard_worldProperties();
     }
 
     @Override
@@ -1871,10 +1874,13 @@ public class WorldImpl implements World {
                 //force
         );
     }
+
     @Override
-    public LightningStrike strikeLightning(Location arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public LightningStrike strikeLightning(Location loc) {
+        LightningEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(nms);
+        lightning.refreshPositionAfterTeleport(loc.getX(), loc.getY(), loc.getZ());
+        // nms.strikeLightning(lightning);
+        return (LightningStrike) ((IMixinEntity) lightning).getBukkitEntity();
     }
 
     @Override
@@ -1899,8 +1905,13 @@ public class WorldImpl implements World {
     }
 
     private boolean unloadChunk0(int x, int z, boolean save) {
-        // TODO
-        return false;
+        net.minecraft.world.chunk.WorldChunk chunk = nms.getChunk(x, z);
+
+        //chunk.mustNotSave = !save;
+        unloadChunkRequest(x, z);
+
+        nms.getChunkManager().executeQueuedTasks();
+        return !isChunkLoaded(x, z);
     }
 
 
