@@ -2123,7 +2123,7 @@ public class WorldImpl implements World {
     @Override
     public @NotNull NamespacedKey getKey() {
         // TODO Auto-generated method stub
-        return null;
+        return NamespacedKey.minecraft(this.getName());
     }
 
     @Override

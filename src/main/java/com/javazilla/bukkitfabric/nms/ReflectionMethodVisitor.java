@@ -21,6 +21,7 @@ package com.javazilla.bukkitfabric.nms;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,9 @@ import org.objectweb.asm.Opcodes;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.block.BlockState;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.EnumProperty;
 
 public class ReflectionMethodVisitor extends MethodVisitor {
 
@@ -44,15 +48,20 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     }
     private String pln;
     private MappingResolver mr;
+    private MappingResolver mr2;
     
     public static HashMap<String,String> spigot2obf;
+    public static HashMap<String,String> cbm;
 
     public ReflectionMethodVisitor(int api, MethodVisitor visitMethod, String pln) {
         super(api, visitMethod);
         this.pln = pln;
+      //  net.fabricmc.loader.impl.FabricLoaderImpl l;
         this.mr = FabricLoader.getInstance().getMappingResolver();
+        this.mr2 = new Testing("official");
         if (null == spigot2obf) {
             spigot2obf = new HashMap<>();
+            cbm = new HashMap<>();
             try {
                 if (new File("builddata.txt").isFile()) {
                     for (String s : Files.readAllLines(new File("builddata.txt").toPath())) {
@@ -68,6 +77,13 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         
                         String[] spl = s.split(" ");
                         spigot2obf.put(spl[0] + "#" + spl[3], spl[1]);
+                    }
+                    for (String s : Files.readAllLines(new File("cbm.txt").toPath())) {
+                        if (s.indexOf('!') != -1) continue;
+
+                        String[] spl = s.split("=");
+                        System.out.println("SPLIT: " + spl[0] + "," + spl[1]);
+                        cbm.put(spl[0].trim(), spl[1].trim());
                     }
                 }
             } catch (IOException e) {
@@ -106,6 +122,16 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             return;
         }
         
+        if (owner.startsWith("net/minecraft") && name.equals("getMinecraftServer")) {
+            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getNmsServer", desc, false );
+            return;
+        }
+        
+        if (name.equals("getWorld") && desc.contains("org/bukkit/craftbukkit")) {
+            name = "getWorldImpl";
+            desc = desc.replace("/v1_17_R1", "");
+        }
+
         if (owner.startsWith("net/minecraft") && spigot2obf.size() > 1) {
             String own = spigot2obf.getOrDefault(owner, owner);
             String cl = mr.mapClassName("official", own.replace('/','.'));
@@ -113,7 +139,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             String d2 = desc;
             for (String s : spigot2obf.keySet()) {
                 d = d.replace("L" + s + ";", "L" + spigot2obf.getOrDefault(s, s) + ";");
-                d2 = d2.replace("L" + s + ";", "L" + mr.mapClassName("official", spigot2obf.getOrDefault(s, s).replace('/','.')) + ";");
+                d2 = d2.replace("L" + s + ";", "L" + mr.mapClassName("official", spigot2obf.getOrDefault(s, s).replace('/','.')) + ";").replace('.', '/');
             }
 
             if (!own.contains("v1_1")) {
@@ -124,10 +150,44 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                     fixed++;
                     if (fixed > lastF) System.out.println(fixed);
                     //System.out.println(cl + "/=/" + name + d + " /=/ " + name2);
-                } /*else if (!own.contains("net.minecraft.server.v1_1")) {
-                    System.out.println(cl + "/=/" + name + d + " /=/ " + name2);
-                }*/
-                super.visitMethodInsn( opcode, cl.replace('.', '/'), name2, d2, false );
+                } else if (!own.contains("net.minecraft.server.v1_1") && !name.contains("<init>")) {
+                    String key = cl.substring(cl.lastIndexOf('.')+1) + "#" + name + d2;
+                    name2 = cbm.getOrDefault(key, name2);
+                    if (!cbm.containsKey(key) && name.length() < 3) {
+                        System.out.println(cl.substring(cl.lastIndexOf('.')+1) + "#" + name + d2 + " |  " + name2);
+                       
+                        System.out.println(own + " / " + mr.unmapClassName("official", own) + " / " + mr.unmapClassName("official", own.replace('/','.')));
+                        System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, desc));
+                        System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, d2));
+
+                        try {
+                            Class<?> cz = Class.forName(cl);
+                            for (Method m : cz.getDeclaredMethods()) {
+
+                                //if (cl.contains("NbtList")) {
+                                    String tt = "";
+                                    for (Class<?> zz : m.getParameterTypes()) {
+                                        tt += (fixName(zz.getName()) + ";");
+                                    }
+                                    tt = tt.replace("int;","I");
+                                    tt = "(" + tt + ")" + fixName(m.getReturnType().getName() + ";");
+                                    if (tt.equalsIgnoreCase(d2)) {
+                                        System.out.println( "\tPossible Match?: " + m.getName() + tt + "");
+                                        
+                                        String obfn = mr2.mapMethodName("named", mr2.mapClassName("named", cz.getName()), m.getName(), tt);
+                                        System.out.println("OBFN: " + obfn);
+                                    }
+                                    
+                                //}
+                            }
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                super.visitMethodInsn( opcode, cl.replace('.', '/'), name2, d2.replace('.', '/'), false );
                 return;
             }
         }
@@ -249,6 +309,17 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         }
 
         super.visitMethodInsn( opcode, owner, name, desc, itf );
+    }
+
+    private String fixName(String name) {
+        String r = name.replace("boolean;", "Z").replace("byte;", "B").replace("double;", "D").replace("float;", "F").replace("int;", "I")
+                .replace("long;", "J").replace("short;", "S").replace('.','/').replace("Lvoid","");
+
+        if (r.length() > 3) {
+            r = "L" + r;
+        }
+        
+        return r;
     }
 
 }

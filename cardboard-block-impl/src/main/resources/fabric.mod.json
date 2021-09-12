@@ -1,8 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "block-impl",
-  "version": "1.17",
-  "name": "block-impl",
-  "accessWidener" : "blockimpl.accesswidener",
-  "license": "LGPLv3"
-}

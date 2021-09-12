@@ -66,9 +66,9 @@ dependencies {
     ic.setChanging(true) // Make sure we get the latest version of iCommon
 
     include(modImplementation(ic))
-    include( project(":cardboard-block-impl") )
-    modImplementation(project(":cardboard-block-impl"))
-    metest project(":cardboard-block-impl")
+    //include( project(":cardboard-block-impl") )
+    //modImplementation(project(":cardboard-block-impl"))
+    //metest project(":cardboard-block-impl")
 
     // Add each module as a dependency
     apiModules.forEach {
@@ -87,6 +87,10 @@ dependencies {
     compileOnly fileTree(dir: 'libs', include: 'slf4j.jar')
     compileOnly group: "org.jetbrains", name: "annotations", version: "18.0.0"
     compileOnly group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
+
+    compileOnly 'net.fabricmc:tiny-mappings-parser:0.2.2.14'
+	compileOnly 'net.fabricmc:tiny-remapper:0.4.2'
+	compileOnly 'net.fabricmc:access-widener:1.0.0'
 
     // NMS Remapping
     extraLibs group: "com.github.OrionMinecraft", name: "SrgLib", version: "master-SNAPSHOT"
@@ -107,7 +111,7 @@ dependencies {
     removeLibs group: 'junit', name: 'junit', version: '4.10'
 
     configurations.api.extendsFrom(configurations.extraLibs)
-    project.compileJava.dependsOn(configurations.metest)
+    //project.compileJava.dependsOn(configurations.metest)
 }
 
 processResources {
