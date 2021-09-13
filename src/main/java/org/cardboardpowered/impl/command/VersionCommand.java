@@ -31,7 +31,7 @@ import org.bukkit.util.StringUtil;
 
 public class VersionCommand extends Command {
 
-    public static String BRANCH = "master";
+    public static String BRANCH = "1.17-dev";
 
     public VersionCommand(String name) {
         super(name);

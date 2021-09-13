@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
@@ -508,7 +509,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     private boolean isEntityOnAir(Entity entity) {return false;}
 
     /**
-     * @author BukkitFabricMod
+     * @author Cardboard
      * @reason Events
      */
     @Inject(at = @At("HEAD"), method = "onHandSwing", cancellable = true)
@@ -642,6 +643,16 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void doBukkitEvent_InventoryClickedEvent_skipOriginalProcess(ScreenHandler handler, int i, int j, SlotActionType actionType, PlayerEntity playerEntity) {
         //
         if (doCl) handler.onSlotClick(i, j, actionType, playerEntity);
+    }
+
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;closeScreenHandler()V", shift = At.Shift.BEFORE), method = "onCloseHandledScreen")
+    public void doBukkit_InventoryCloseEvent(CallbackInfo ci) {
+        IMixinScreenHandler handler = (IMixinScreenHandler) player.currentScreenHandler;
+        CardboardInventoryView view = handler.getBukkitView();
+        view.setPlayerIfNotSet(((IMixinServerEntityPlayer)player).getBukkit());
+        InventoryCloseEvent event = new InventoryCloseEvent(view);
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        handler.transferTo(player.playerScreenHandler, ((IMixinServerEntityPlayer)player).getBukkit());
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;onSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V", 

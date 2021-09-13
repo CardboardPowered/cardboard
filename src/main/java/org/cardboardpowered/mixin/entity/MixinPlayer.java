@@ -25,10 +25,13 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerChangedMainHandEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.MainHand;
@@ -410,6 +413,16 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         //((ServerPlayerEntity)(Object)this).setShoulderEntityLeft(entityplayer.getShoulderEntityLeft());
         //((ServerPlayerEntity)(Object)this).setShoulderEntityRight(entityplayer.getShoulderEntityRight());
 
+    }
+    
+    @Inject(at = @At("HEAD"), method = "closeHandledScreen")
+    public void cardboard_doInventoryCloseEvent(CallbackInfo ci) {
+        IMixinScreenHandler handler = (IMixinScreenHandler) ((ServerPlayerEntity)(Object)this).currentScreenHandler;
+        CardboardInventoryView view = handler.getBukkitView();
+        view.setPlayerIfNotSet(getBukkit());
+        InventoryCloseEvent event = new InventoryCloseEvent(view);
+        Bukkit.getPluginManager().callEvent(event);
+        handler.transferTo(((ServerPlayerEntity)(Object)this).playerScreenHandler, (CraftHumanEntity) getBukkitEntity());
     }
 
 }

@@ -1,8 +1,8 @@
-package com.javazilla.bukkitfabric.interfaces;
+package org.cardboardpowered.interfaces;
 
 import net.minecraft.entity.LivingEntity;
 
-public interface IMixinTnt {
+public interface ITnt {
 
     void setSourceBF(LivingEntity entity);
 

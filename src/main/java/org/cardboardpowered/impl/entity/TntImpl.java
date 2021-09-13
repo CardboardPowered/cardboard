@@ -12,7 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TNTPrimed;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinTnt;
+import org.cardboardpowered.interfaces.ITnt;
 
 public class TntImpl extends CraftEntity implements TNTPrimed {
 
@@ -73,8 +73,8 @@ public class TntImpl extends CraftEntity implements TNTPrimed {
 
     public void setSource(Entity source) {
         if (source instanceof LivingEntity) {
-            ((IMixinTnt)getHandle()).setSourceBF(((LivingEntityImpl) source).getHandle());
-        } else ((IMixinTnt)getHandle()).setSourceBF(null);
+            ((ITnt)getHandle()).setSourceBF(((LivingEntityImpl) source).getHandle());
+        } else ((ITnt)getHandle()).setSourceBF(null);
     }
 
     @Override

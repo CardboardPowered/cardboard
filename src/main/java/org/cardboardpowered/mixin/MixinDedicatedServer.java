@@ -38,7 +38,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
-import com.javazilla.bukkitfabric.interfaces.IMixinDedicatedServer;
+import org.cardboardpowered.interfaces.IDedicatedServer;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
@@ -47,7 +47,7 @@ import net.minecraft.server.dedicated.PendingServerCommand;
 import net.minecraft.util.registry.Registry;
 
 @Mixin(MinecraftDedicatedServer.class)
-public abstract class MixinDedicatedServer extends MixinMCServer implements IMixinDedicatedServer {
+public abstract class MixinDedicatedServer extends MixinMCServer implements IDedicatedServer {
 
     @Shadow
     @Final
