@@ -60,6 +60,10 @@ public class ReflectionRemapper {
         if (className.startsWith("net.minecraft.server.CraftServer."))
             return MappingsReader.getIntermedClass(className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server."));
 
+        if (className.startsWith("com.sk89q.worldedit.bukkit.adapter.impl.Spigot")) {
+            return "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard";
+        }
+
         return className;
     }
 

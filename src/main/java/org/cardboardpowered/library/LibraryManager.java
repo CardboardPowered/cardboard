@@ -121,6 +121,10 @@ public final class LibraryManager {
                     logger.info("Downloading " + library.toString() + "...");
                     try {
                         URL downloadUrl;
+                        if (library.libraryKey.artifactId.contains("adapter")) {
+                            downloadUrl = new URL("https://github.com/CardboardPowered/worldedit-adapters/releases/download/1.17.1/we-adapter-for-cardboard.jar");
+                        }
+                        else
                         if (null == library.libraryKey.spigotJarVersion) {
                             downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
                                     + '/' + library.libraryKey.artifactId + '-' + library.version + ".jar");
@@ -163,7 +167,8 @@ public final class LibraryManager {
 
             // Add to KnotClassLoader
             try {
-                Knot.getLauncher().propose(file.toURI().toURL());
+                if (!library.libraryKey.artifactId.contains("adapter"))
+                    Knot.getLauncher().propose(file.toURI().toURL());
             } catch (Exception e) {
                 logger.warn( "Failed to add to classpath: " + library.toString(), e);
             }

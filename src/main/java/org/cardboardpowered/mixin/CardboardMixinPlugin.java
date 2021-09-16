@@ -51,9 +51,11 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                 new Library("commons-collections", "commons-collections", "3.2.1", SHA1, "761ea405b9b37ced573d2df0d1e3a4e0f9edc668", null),
                 new Library("com.google.code.gson", "gson", "2.8.6", SHA1, "9180733b7df8542621dc12e21e87557e8c99b8cb", null),
                 new Library("org.jline", "jline", "3.19.0", SHA1, "27edf6497c4fac20b63ca4cd8788581ca86cb83e", null),
-                new Library("io.papermc", "paper-api", "1.17-dev", SHA1, "1011c06b51835ac752e2f0b2a22d9188c566c169", "paper")
+                new Library("io.papermc", "paper-api", "1.17-dev", SHA1, "1011c06b51835ac752e2f0b2a22d9188c566c169", "paper"),
+                new Library("org.cardboardpowered", "intermediary-adapter", "7.3", SHA1, "", null)
             ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
         new LibraryManager(repository, "lib", true, 2, libraries.values()).run();
+        System.setProperty("worldedit.bukkit.adapter", "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard");
 
         File jdk = new File("lib", "javac-1.8.0-u20.jar");
         if (jdk.exists()) jdk.delete(); // From old version of Cardboard

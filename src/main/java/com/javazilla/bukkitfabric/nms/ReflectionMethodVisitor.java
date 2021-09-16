@@ -143,8 +143,8 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             }
 
             if (!own.contains("v1_1")) {
-                String name2 = mr.mapMethodName("official", own, 
-                        spigot2obf.getOrDefault(owner + "#" + name, name), d);
+                String name2 = mr.mapMethodName("official", own.replace('/', '.'), 
+                        spigot2obf.getOrDefault(owner + "#" + name, name).replace('/', '.'), d);
 
                 if (!own.contains("net.minecraft.server.v1_1") && !name2.equals(name)) {
                     fixed++;
@@ -315,10 +315,8 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         String r = name.replace("boolean;", "Z").replace("byte;", "B").replace("double;", "D").replace("float;", "F").replace("int;", "I")
                 .replace("long;", "J").replace("short;", "S").replace('.','/').replace("Lvoid","");
 
-        if (r.length() > 3) {
+        if (r.length() > 3)
             r = "L" + r;
-        }
-        
         return r;
     }
 

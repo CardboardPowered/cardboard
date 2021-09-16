@@ -93,17 +93,17 @@ public class Commodore {
         ClassReader cr = new ClassReader(b);
         ClassWriter cw = new ClassWriter(cr,0);
 
-        cr.accept(node, ClassReader.SKIP_FRAMES);
-        SwitchTableFixer.INSTANCE.processClass(node);
+        //cr.accept(node, ClassReader.SKIP_FRAMES);
+        //SwitchTableFixer.INSTANCE.processClass(node);
 
         boolean skip = false;
         for (Provider p : Remapper.providers) {
             if (p.shouldReplaceASM()) {
-                cr.accept(p.getClassVisitor(Opcodes.ASM7, cw), 0);
+                cr.accept(p.getClassVisitor(Opcodes.ASM8, cw), 0);
                 skip = true;
             }
         }
-        if (!skip) cr.accept(new ClassVisitor(Opcodes.ASM7, cw) {
+        if (!skip) cr.accept(new ClassVisitor(Opcodes.ASM8, node) {
             // Paper start - Rewrite plugins
             @Override
             public FieldVisitor visitField(int access, String name, String desc, String signature, Object value){
@@ -332,6 +332,9 @@ public class Commodore {
                     }
                 };
             }}, 0);
+        SwitchTableFixer.INSTANCE.processClass(node);
+
+        node.accept(cw);
         return cw.toByteArray();
     }
 

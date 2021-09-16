@@ -1,13 +1,27 @@
 package com.javazilla.bukkitfabric.nms;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 
@@ -58,6 +72,14 @@ public class Remapper {
         
         // TODO: Don't remap worldedit in dev; Testing of new remapper
         if (jarFile.getName().contains("worldedit") && FabricLoader.getInstance().isDevelopmentEnvironment()) {
+           // return;
+        }
+        if (jarFile.getName().contains("worldedit")) {
+            try {
+                wea(jarFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
@@ -138,6 +160,40 @@ public class Remapper {
         if (null != md5) hashes.add(md5);
         finalJar.delete();
         saveHashes();
+    }
+
+    private static void wea(File jarFile) throws IOException {
+        Map<String, String> aenv = new HashMap<>(); 
+        aenv.put("create", "true");
+        Path apath = Paths.get("lib/intermediary-adapter-7.3.jar");
+        URI auri = URI.create("jar:" + apath.toUri());
+        byte[] b = null;
+        byte[] c = null; // WorldNativeAccess_Cardboard_1_17.class
+        byte[] d = null; // DataConverters_Cardboard_1_17.class
+        try (FileSystem fs = java.nio.file.FileSystems.newFileSystem(auri, aenv)) {
+            b = Files.readAllBytes( fs.getPath("com/sk89q/worldedit/bukkit/adapter/impl/Spigot_Cardboard.class") );
+            c = Files.readAllBytes( fs.getPath("com/sk89q/worldedit/bukkit/adapter/impl/WorldNativeAccess_Cardboard_1_17.class") );
+            d = Files.readAllBytes( fs.getPath("com/sk89q/worldedit/bukkit/adapter/impl/DataConverters_Cardboard_1_17.class") );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Map<String, String> env = new HashMap<>(); 
+        env.put("create", "true");
+        Path path = jarFile.toPath();
+        URI uri = URI.create("jar:" + path.toUri());
+        try (FileSystem fs = java.nio.file.FileSystems.newFileSystem(uri, env)) {
+            Path nf = fs.getPath("com/sk89q/worldedit/bukkit/adapter/impl/Spigot_Cardboard.class");
+            try (OutputStream writer = Files.newOutputStream(nf, StandardOpenOption.CREATE)) { writer.write(b); }
+
+            Path anf = fs.getPath("com/sk89q/worldedit/bukkit/adapter/impl/WorldNativeAccess_Cardboard_1_17.class");
+            try (OutputStream writer = Files.newOutputStream(anf, StandardOpenOption.CREATE)) { writer.write(c); }
+
+            Path bnf = fs.getPath("com/sk89q/worldedit/bukkit/adapter/impl/DataConverters_Cardboard_1_17.class");
+            try (OutputStream writer = Files.newOutputStream(bnf, StandardOpenOption.CREATE)) { writer.write(d); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void saveHashes() {
