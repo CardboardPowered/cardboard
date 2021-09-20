@@ -4,11 +4,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeArray;
+import net.minecraft.world.biome.source.BiomeCoords;
 import net.minecraft.world.chunk.PalettedContainer;
+import net.minecraft.world.chunk.WorldChunk;
 
 import java.lang.reflect.Field;
 import java.util.function.Predicate;
@@ -31,9 +36,10 @@ public class CardboardChunkSnapshot implements ChunkSnapshot {
     private final boolean[] empty;
     private final Heightmap hmap;
     private final long captureFulltime;
-    private final BiomeArray biome;
+    private final BiomeAccess.Storage biome;
 
-    public CardboardChunkSnapshot(int x, int z, String wname, long wtime, PalettedContainer<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeArray biome) {
+    public CardboardChunkSnapshot(int x, int z, String wname, long wtime, PalettedContainer<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights,
+            byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeAccess.Storage biome) {
         this.x = x;
         this.z = z;
         this.worldname = wname;
@@ -124,8 +130,10 @@ public class CardboardChunkSnapshot implements ChunkSnapshot {
             f.setAccessible(true);
             reg = (Registry<net.minecraft.world.biome.Biome>) f.get(biome);
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {e.printStackTrace();}
+
         return CraftBlock.biomeBaseToBiome(reg, biome.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2));
     }
+
 
     @Override
     public final double getRawBiomeTemperature(int x, int z) {

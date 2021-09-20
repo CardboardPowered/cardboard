@@ -55,7 +55,8 @@ import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
-import net.minecraft.world.biome.source.BiomeArray;
+import net.minecraft.world.biome.source.BiomeAccess;
+import net.minecraft.world.biome.source.BiomeAccess.Storage;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.PalettedContainer;
@@ -299,9 +300,15 @@ public class CardboardChunk implements Chunk {
             map.I_setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
         }
 
-        BiomeArray biome = null;
-        if (includeBiome || includeBiomeTempRain)
-            biome = chunk.getBiomeArray();
+        BiomeAccess.Storage biome = null;
+        if (includeBiome || includeBiomeTempRain) {
+            if (chunk instanceof BiomeAccess.Storage) {
+                // 1.18
+                biome = (BiomeAccess.Storage) chunk;
+            } else {
+                biome = chunk.getBiomeArray();
+            }
+        }
 
         World world = getWorld();
         return new CardboardChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
@@ -309,10 +316,10 @@ public class CardboardChunk implements Chunk {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, WorldImpl world, boolean includeBiome, boolean includeBiomeTempRain) {
-        BiomeArray biome = null;
+        BiomeAccess.Storage biome = null;
 
         if (includeBiome || includeBiomeTempRain) {
-            biome = ((me.isaiah.common.cmixin.IMixinWorld)world.getHandle()).I_newBiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY),
+            biome = (Storage) ((me.isaiah.common.cmixin.IMixinWorld)world.getHandle()).I_newBiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY),
                     world.getHandle(), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
         }
 

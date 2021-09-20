@@ -30,12 +30,13 @@ public class MixinBlockEntity implements IMixinBlockEntity {
     public CraftPersistentDataContainer getPersistentDataContainer() {
         return persistentDataContainer;
     }
-
-    @Inject(at = @At("RETURN"), method = "writeNbt")
+    
+    // Replaced by iCommon event
+    /*@Inject(at = @At("RETURN"), method = "writeIdentifyingData")
     public void saveEnd(NbtCompound tag, @SuppressWarnings("rawtypes") CallbackInfoReturnable callback) {
         if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty())
             tag.put("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
-    }
+    }*/
 
     @Override
     public InventoryHolder getOwner_() {

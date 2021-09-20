@@ -35,6 +35,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
@@ -43,6 +46,7 @@ import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import me.isaiah.common.event.EventHandler;
 import me.isaiah.common.event.EventRegistery;
+import me.isaiah.common.event.block.BlockEntityWriteNbtEvent;
 import me.isaiah.common.event.entity.BlockEntityLoadEvent;
 import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
 import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
@@ -117,6 +121,16 @@ public class BukkitFabricMod implements ModInitializer {
         NbtCompound persistentDataTag = tag.getCompound("PublicBukkitValues");
         if (persistentDataTag != null)
             mc.getPersistentDataContainer().putAll(persistentDataTag);
+    }
+    
+    @EventHandler
+    public void onBlockEntitySaveEnd(BlockEntityWriteNbtEvent ev) {
+        IMixinBlockEntity mc = (IMixinBlockEntity) ((BlockEntity) ev.getMC());
+
+        NbtCompound tag = (NbtCompound) ev.getElement();
+        CraftPersistentDataContainer persistentDataContainer = mc.getPersistentDataContainer();
+        if (persistentDataContainer != null && !persistentDataContainer.isEmpty())
+            tag.put("PublicBukkitValues", persistentDataContainer.toTagCompound());
     }
 
     @EventHandler
