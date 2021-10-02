@@ -45,8 +45,6 @@ public interface IMixinScreenHandler {
 
     void cardboard_setSlots(DefaultedList<Slot> slots);
 
-    void doStuff(ScreenHandler delegate);
-
     DefaultedList<ItemStack> cardboard_previousTrackedStacks();
 
     void cardboard_previousTrackedStacks(DefaultedList<ItemStack> s);

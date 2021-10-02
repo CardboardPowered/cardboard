@@ -66,6 +66,8 @@ import org.cardboardpowered.impl.world.WorldImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.cardboardpowered.impl.CardboardPotionUtil;
+import org.cardboardpowered.impl.inventory.CardboardEntityEquipment;
+
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
@@ -73,6 +75,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import net.kyori.adventure.text.Component;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.MobEntity;
@@ -101,10 +104,14 @@ import net.minecraft.util.Hand;
 public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     public net.minecraft.entity.LivingEntity nms;
+    private CardboardEntityEquipment equipment;
 
     public LivingEntityImpl(net.minecraft.entity.Entity entity) {
         super(entity);
         this.nms = (net.minecraft.entity.LivingEntity) entity;
+        if (entity instanceof MobEntity || entity instanceof ArmorStandEntity) {
+            equipment = new CardboardEntityEquipment(this);
+        }
     }
 
     public LivingEntityImpl(CraftServer server, net.minecraft.entity.Entity entity) {
@@ -298,13 +305,12 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
     @Override
     public boolean getCanPickupItems() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public EntityEquipment getEquipment() {
-        // TODO Auto-generated method stub
-        return null;
+        return equipment;
     }
 
     @Override

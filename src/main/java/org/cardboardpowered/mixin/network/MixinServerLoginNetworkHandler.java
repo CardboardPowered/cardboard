@@ -125,7 +125,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                         // Fire PlayerPreLoginEvent
                         if (!connection.isOpen()) return;
                         fireEvents();
-                    } else if (server.isSinglePlayer()) {
+                    } else if (server.isSingleplayer()) {
                         LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
                         profile = toOfflineProfile(gameprofile);
                         state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
@@ -134,7 +134,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                         LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
                     }
                 } catch (AuthenticationUnavailableException authenticationunavailableexception) {
-                    if (server.isSinglePlayer()) {
+                    if (server.isSingleplayer()) {
                         LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
                         profile = toOfflineProfile(gameprofile);
                         state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;

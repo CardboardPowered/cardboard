@@ -241,11 +241,9 @@ public class CraftContainer extends ScreenHandler {
         }
 
         if (delegate != null) {
-            //((IMixinScreenHandler)this).doStuff(delegate);
             ((IMixinScreenHandler)this).setTrackedStacksBF(((IMixinScreenHandler)delegate).getTrackedStacksBF());
             ((IMixinScreenHandler)this).cardboard_setSlots(delegate.slots);
             ((IMixinScreenHandler)this).cardboard_previousTrackedStacks(((IMixinScreenHandler)delegate).cardboard_previousTrackedStacks());
-            //((me.isaiah.common.cmixin.IMixinScreenHandler)this).ic_setSlots(delegate.slots);
         }
 
         if (cachedType == InventoryType.WORKBENCH) delegate = new CraftingScreenHandler(windowId, bottom); // SPIGOT-4598 bug
@@ -264,8 +262,7 @@ public class CraftContainer extends ScreenHandler {
             for (col = 0; col < 9; ++col)
                 this.addSlot(new Slot(bottom, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
 
-        for (col = 0; col < 9; ++col)
-            this.addSlot(new Slot(bottom, col, 8 + col * 18, 142));
+        for (col=0; col<9; ++col) this.addSlot(new Slot(bottom, col, 8 + col * 18, 142));
     }
 
     @Override

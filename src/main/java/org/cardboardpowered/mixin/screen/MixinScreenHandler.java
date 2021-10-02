@@ -1,8 +1,5 @@
 package org.cardboardpowered.mixin.screen;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
@@ -15,7 +12,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -99,26 +95,11 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     public void setTrackedStacksBF(DefaultedList<ItemStack> trackedStacks) {
        this.trackedStacks = trackedStacks;
     }
-    
-    @Override
-    public void doStuff(ScreenHandler d) {
-        //d.previousTrackedStacks;
-    }
 
     @Override
     public void cardboard_setSlots(DefaultedList<Slot> slots) {
         this.slots = slots;
     }
-
-    public void cardboard_setFinal(Field field, Object newValue, ScreenHandler inst) throws Exception {
-        field.setAccessible(true);
-
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-        field.set(inst, newValue);
-     }
 
     @Override
     public void setCheckReachable(boolean bl) {

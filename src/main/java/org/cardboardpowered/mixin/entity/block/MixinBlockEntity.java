@@ -5,15 +5,10 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.inventory.InventoryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -30,13 +25,6 @@ public class MixinBlockEntity implements IMixinBlockEntity {
     public CraftPersistentDataContainer getPersistentDataContainer() {
         return persistentDataContainer;
     }
-    
-    // Replaced by iCommon event
-    /*@Inject(at = @At("RETURN"), method = "writeIdentifyingData")
-    public void saveEnd(NbtCompound tag, @SuppressWarnings("rawtypes") CallbackInfoReturnable callback) {
-        if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty())
-            tag.put("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
-    }*/
 
     @Override
     public InventoryHolder getOwner_() {

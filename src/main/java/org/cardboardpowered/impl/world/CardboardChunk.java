@@ -43,6 +43,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
+import me.isaiah.common.GameVersion;
 import me.isaiah.common.cmixin.IMixinHeightmap;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
@@ -64,12 +65,12 @@ import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.gen.ChunkRandom;
 
 public class CardboardChunk implements Chunk {
-    
+
     private WeakReference<net.minecraft.world.chunk.WorldChunk> weakChunk;
     private final ServerWorld worldServer;
     private final int x;
     private final int z;
-    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getContainer();
+    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getContainer(); // TODO 1.18: ChunkSection contructor changed
     private static final byte[] emptyLight = new byte[2048];
 
     public CardboardChunk(net.minecraft.world.chunk.WorldChunk chunk) {
@@ -267,10 +268,11 @@ public class CardboardChunk implements Chunk {
                 sectionEmpty[i] = true;
             } else { // Not empty
                 NbtCompound data = new NbtCompound();
-                cs[i].getContainer().write(data, "Palette", "BlockStates");
+                cs[i].getContainer().write(data, "Palette", "BlockStates"); // TODO 1.18 removed
 
+                // TODO 1.18 removed ChunkSection.PALETTE
                 PalettedContainer<net.minecraft.block.BlockState> blockids = new PalettedContainer<>(ChunkSection.PALETTE, net.minecraft.block.Block.STATE_IDS, NbtHelper::toBlockState, NbtHelper::fromBlockState, Blocks.AIR.getDefaultState()); // TODO: snapshot whole ChunkSection
-                blockids.read(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
+                blockids.read(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates")); // TODO 1.18 removed
 
                 sectionBlockIDs[i] = blockids;
 
@@ -297,12 +299,12 @@ public class CardboardChunk implements Chunk {
         if (includeMaxBlockY) {
             hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
             IMixinHeightmap map = (IMixinHeightmap) hmap;
-            map.I_setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
+            //map.I_setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
         }
 
         BiomeAccess.Storage biome = null;
         if (includeBiome || includeBiomeTempRain) {
-            if (chunk instanceof BiomeAccess.Storage) {
+            if (chunk instanceof BiomeAccess.Storage || GameVersion.INSTANCE.getReleaseTarget().contains("1.18")) {
                 // 1.18
                 biome = (BiomeAccess.Storage) chunk;
             } else {

@@ -295,14 +295,12 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
         player.networkHandler.sendPacket(new OpenScreenS2CPacket(container.syncId, windowType, CraftChatMessage.fromString(title)[0]));
         getHandle().currentScreenHandler = container;
-        //getHandle().scree
-        //getHandle().currentScreenHandler.addListener((ScreenHandlerListener) player);
-        
+
         if ( CraftServer.INSTANCE.getMinecraftVersion().contains("1.16") ) {
             // 1.16.5
             container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
         } else {
-            // 1.17
+            // 1.17+
             ((ServerPlayerEntity)getHandle()).onSpawn(container);
         }
     }
@@ -335,7 +333,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
             // 1.16.5
             container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
         } else {
-            // 1.17
+            // 1.17+
             ((ServerPlayerEntity)getHandle()).onSpawn(container);
         }
     }
@@ -694,13 +692,11 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public void setSaturation(float arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override
     public void setStarvationRate(int arg0) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

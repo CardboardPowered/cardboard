@@ -62,7 +62,7 @@ dependencies {
     	"fabric-screen-handler-api-v1"
     ]
 
-    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.17", "1.17", null)
+    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.18", "1.18", null)
     ic.setChanging(true) // Make sure we get the latest version of iCommon
 
     include(modImplementation(ic))
@@ -72,7 +72,8 @@ dependencies {
 
     // Add each module as a dependency
     apiModules.forEach {
-    	include(modImplementation(fabricApi.module(it, "${project.fabric_version}")))
+    	//include(modImplementation(fabricApi.module(it, "${project.fabric_version}")))
+    	modImplementation(fabricApi.module(it, "${project.fabric_version}"))
     }
 
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')

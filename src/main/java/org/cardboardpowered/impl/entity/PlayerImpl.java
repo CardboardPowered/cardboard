@@ -628,42 +628,42 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     public void playNote(Location loc, byte instrument, byte note) {
         if (getHandle().networkHandler == null) return;
 
-        String instrumentName = null;
+        String name = null;
         switch (instrument) {
         case 0:
-            instrumentName = "harp";
+            name = "harp";
             break;
         case 1:
-            instrumentName = "basedrum";
+            name = "basedrum";
             break;
         case 2:
-            instrumentName = "snare";
+            name = "snare";
             break;
         case 3:
-            instrumentName = "hat";
+            name = "hat";
             break;
         case 4:
-            instrumentName = "bass";
+            name = "bass";
             break;
         case 5:
-            instrumentName = "flute";
+            name = "flute";
             break;
         case 6:
-            instrumentName = "bell";
+            name = "bell";
             break;
         case 7:
-            instrumentName = "guitar";
+            name = "guitar";
             break;
         case 8:
-            instrumentName = "chime";
+            name = "chime";
             break;
         case 9:
-            instrumentName = "xylophone";
+            name = "xylophone";
             break;
         }
 
         float f = (float) Math.pow(2.0D, (note - 12.0D) / 12.0D);
-        getHandle().networkHandler.sendPacket(new PlaySoundS2CPacket(CraftSound.getSoundEffect("block.note_block." + instrumentName), net.minecraft.sound.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
+        getHandle().networkHandler.sendPacket(new PlaySoundS2CPacket(CraftSound.getSoundEffect("block.note_block." + name), net.minecraft.sound.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
     }
 
     @SuppressWarnings("deprecation")

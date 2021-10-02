@@ -28,7 +28,7 @@ import net.minecraft.world.Heightmap;
 
 public interface IMixinWorldChunk {
 
-    Map<Heightmap.Type, Heightmap> getHeightMaps();
+    //Map<Heightmap.Type, Heightmap> getHeightMaps();
 
     //TypeFilterableList<Entity>[] getEntitySections();
 

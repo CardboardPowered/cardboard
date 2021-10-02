@@ -329,7 +329,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 enuminteractionresult = iblockdata.onUse(world, entityplayer, enumhand, movingobjectpositionblock);
 
                 if (enuminteractionresult.isAccepted()) {
-                    Criteria.ITEM_USED_ON_BLOCK.test(entityplayer, blockposition, itemstack1);
+                    Criteria.ITEM_USED_ON_BLOCK.trigger(entityplayer, blockposition, itemstack1);
                     ci.setReturnValue(enuminteractionresult);
                     return;
                 }
@@ -346,7 +346,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
                 } else enuminteractionresult1 = itemstack.useOnBlock(itemactioncontext/*, enumhand*/);
 
                 if (enuminteractionresult1.isAccepted())
-                    Criteria.ITEM_USED_ON_BLOCK.test(entityplayer, blockposition, itemstack1);
+                    Criteria.ITEM_USED_ON_BLOCK.trigger(entityplayer, blockposition, itemstack1);
 
                 ci.setReturnValue(enuminteractionresult1);
                 return;
