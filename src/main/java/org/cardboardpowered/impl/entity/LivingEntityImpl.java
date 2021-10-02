@@ -304,8 +304,10 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean getCanPickupItems() {
-        // TODO Auto-generated method stub
-        return true;
+        if (getHandle() instanceof MobEntity) {
+            return ((MobEntity) getHandle()).canPickUpLoot();
+        }
+        return true; // todo
     }
 
     @Override
