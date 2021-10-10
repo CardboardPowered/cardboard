@@ -155,7 +155,6 @@ public class BukkitEventFactory {
     public static Entity entityDamage;
 
     /**
-     * TODO: Figure out why using ProtocolLib makes some events asynchronous
      */
     public static void callEvent(Event e) {
         if (!e.isAsynchronous() && !Bukkit.isPrimaryThread()) {
