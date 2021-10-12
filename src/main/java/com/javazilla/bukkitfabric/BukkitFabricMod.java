@@ -18,6 +18,7 @@
  */
 package com.javazilla.bukkitfabric;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,10 +36,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -86,6 +83,7 @@ public class BukkitFabricMod implements ModInitializer {
             e.printStackTrace();
         }
         LOGGER.info("Cardboard mod Loaded.");
+        new File("plugins").mkdirs();
     }
 
     @EventHandler

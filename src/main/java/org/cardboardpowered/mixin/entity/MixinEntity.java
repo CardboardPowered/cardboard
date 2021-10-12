@@ -30,6 +30,8 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityAirChangeEvent;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPoseChangeEvent;
 import org.bukkit.projectiles.ProjectileSource;
@@ -592,5 +594,28 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         }
         return e;
     }
+
+    /**
+     * EntityCombustByBlockEvent
+     * 
+     * @author Arclight
+     * @author Cardboard
+     */
+    @Redirect(method = "setOnFireFromLava", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setOnFireFor(I)V"))
+    public void arclight_setOnFireFromLava_bukkitEvent(Entity entity, int seconds) {
+        if ((Object) this instanceof LivingEntity && ((Entity) (Object) this).fireTicks <= 0) {
+            org.bukkit.block.Block damager = null;
+            org.bukkit.entity.Entity damagee = this.getBukkitEntity();
+            EntityCombustEvent combustEvent = new EntityCombustByBlockEvent(damager, damagee, 15);
+            Bukkit.getPluginManager().callEvent(combustEvent);
+
+            if (!combustEvent.isCancelled())
+                ((Entity) (Object) this).setOnFireFor(combustEvent.getDuration());
+        } else {
+            // This will be called every single tick the entity is in lava, so don't throw an event
+            ((Entity) (Object) this).setOnFireFor(15);
+        }
+    }
+
 
 }

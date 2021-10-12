@@ -42,7 +42,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 57 + (int)(System.currentTimeMillis()/1000);
+    public static int MAPPINGS_VERSION = 57;
 
     public static BukkitLogger LOGGER = new BukkitLogger("Cardboard", null);
 
@@ -64,6 +64,9 @@ public class Remapper {
      * These steps will hopefully allow plugins to use NMS during snapshots
      */
     public static void remap(File jarFile) {
+        if (!configDir.exists()) {
+            configDir = new File(FabricLoader.getInstance().getConfigDir().toFile(), "cardboard");
+        }
         configDir.mkdirs();
         remappedDir.mkdirs();
         backup.mkdirs();
