@@ -23,10 +23,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.bukkit.craftbukkit.CraftServer;
+
 import com.javazilla.bukkitfabric.BukkitLogger;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.md_5.specialsource.SpecialSource;
+import net.minecraft.network.listener.PacketListener;
 
 /**
  * @deprecated To be replaced with our Ingot remapping tool
@@ -39,7 +42,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 38;
+    public static int MAPPINGS_VERSION = 57 + (int)(System.currentTimeMillis()/1000);
 
     public static BukkitLogger LOGGER = new BukkitLogger("Cardboard", null);
 
@@ -64,7 +67,7 @@ public class Remapper {
         configDir.mkdirs();
         remappedDir.mkdirs();
         backup.mkdirs();
-
+        
         for (Provider p : Remapper.providers) {
             boolean b = p.remap(jarFile);
             if (b) return;
@@ -98,6 +101,10 @@ public class Remapper {
             }
             versionFix = new File(configDir, "deversionify-spigot.srg");
             spigot2inter = new File(configDir, "spigot2intermediary.csrg");
+            
+            if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+                spigot2inter = new File(configDir, "devmappings.csrg");
+            }
 
             // Export Mappings to File
             exportResource("deversionify-spigot.srg", configDir);

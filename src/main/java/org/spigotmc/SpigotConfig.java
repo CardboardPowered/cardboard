@@ -34,13 +34,8 @@ public class SpigotConfig {
             + "As you can see, there's tons to configure. Some options may impact gameplay, so use\n"
             + "with caution, and make sure you know what each option does before configuring.\n"
             + "For a reference for any variable inside this file, check out the Spigot wiki at\n"
-            + "http://www.spigotmc.org/wiki/spigot-configuration/\n"
-            + "\n"
-            + "If you need help with the configuration or have any questions related to Spigot,\n"
-            + "join us at the IRC or drop by our forums and leave a post.\n"
-            + "\n"
-            + "IRC: #spigot @ irc.spi.gt ( http://www.spigotmc.org/pages/irc/ )\n"
-            + "Forums: http://www.spigotmc.org/\n";
+            + "http://spigotmc.org/wiki/spigot-configuration/\n"
+            + "\n";
     public static YamlConfiguration config;
     public static int version;
     public static Map<String, Command> commands;
@@ -59,7 +54,7 @@ public class SpigotConfig {
         config.options().copyDefaults( true );
 
         commands = new HashMap<String, Command>();
-        commands.put( "spigot", new SpigotCommand( "spigot" ) );
+        commands.put("spigot", new SpigotCommand("spigot"));
         
         PaperMetrics.startMetrics_Cardboard();
 
@@ -190,8 +185,7 @@ public class SpigotConfig {
 
     public static boolean bungee;
     private static void bungee() {
-        if ( version < 4 )
-        {
+        if ( version < 4 ) {
             set( "settings.bungeecord", false );
             System.out.println( "Oudated config, disabling BungeeCord support!" );
         }
@@ -202,7 +196,7 @@ public class SpigotConfig {
     {
         int count = getInt( "settings.netty-threads", 4 );
         System.setProperty( "io.netty.eventLoopThreads", Integer.toString( count ) );
-        Bukkit.getLogger().info( "Using " + count + " threads for Netty based IO" );
+        Bukkit.getLogger().config( "Using " + count + " threads for Netty based IO" );
     }
 
     public static boolean disableStatSaving;
@@ -217,7 +211,7 @@ public class SpigotConfig {
     private static void playerSample()
     {
         playerSample = Math.max( getInt( "settings.sample-count", 12 ), 0 ); // Paper - Avoid negative counts
-        Bukkit.getLogger().info( "Server Ping Player Sample Count: " + playerSample ); // Paper - Use logger
+        Bukkit.getLogger().config( "Server Ping Player Sample Count: " + playerSample ); // Paper - Use logger
     }
 
     public static int playerShuffle;
@@ -248,8 +242,7 @@ public class SpigotConfig {
     }
 
     public static int userCacheCap;
-    private static void userCacheCap()
-    {
+    private static void userCacheCap() {
         userCacheCap = getInt( "settings.user-cache-size", 1000 );
     }
 

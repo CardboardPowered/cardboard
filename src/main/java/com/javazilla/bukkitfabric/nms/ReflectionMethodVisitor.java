@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.util.Commodore;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -156,7 +157,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                     if (!cbm.containsKey(key) && name.length() < 3) {
                         System.out.println(cl.substring(cl.lastIndexOf('.')+1) + "#" + name + d2 + " |  " + name2);
                        
-                        System.out.println(own + " / " + mr.unmapClassName("official", own) + " / " + mr.unmapClassName("official", own.replace('/','.')));
+                        System.out.println(own + " / " + mr.unmapClassName("official", own.replace('/','.')) + " / " + mr.unmapClassName("official", own.replace('/','.')));
                         System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, desc));
                         System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, d2));
 
@@ -206,6 +207,14 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                 super.visitFieldInsn( opcode, "com/javazilla/bukkitfabric/nms/ReflectionMethodVisitor", "Material_getField", desc );
                 return;
             }
+        }
+        
+        if (owner.equals("protocolsupport/utils/reflection/ReflectionUtils")) {
+            owner = "com/javazilla/bukkitfabric/nms/Ref";
+        }
+        
+        if (owner.equals("protocolsupport/utils/reflection/FieldWriter")) {
+            owner = "com/javazilla/bukkitfabric/nms/FieldWriter";
         }
 
         if (owner.equalsIgnoreCase("com/comphenix/protocol/utility/MinecraftReflection")) {
@@ -307,6 +316,8 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                 return;
             }
         }
+        
+        owner = Commodore.getOriginalOrRewrite(owner);
 
         super.visitMethodInsn( opcode, owner, name, desc, itf );
     }

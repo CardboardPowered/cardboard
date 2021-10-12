@@ -35,6 +35,7 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerNetworkIo;
 
 /**
  * Very unsafe re-mapping of Reflection.
@@ -129,6 +130,16 @@ public class ReflectionRemapper {
             } catch (NoSuchFieldException | SecurityException e1) {
                 Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
                 try {
+                    if (f.contains("connectedChannels")) {
+                        Field a = ServerNetworkIo.class.getDeclaredField("connections");
+                        a.setAccessible(true);
+                        return a;
+                    }
+                    if (whyIsAsmBroken.getName().equals("protocolsupport.zplatform.impl.spigot.injector.network.SpigotNettyInjector") && f.contains("f")) {
+                        Field a = ServerNetworkIo.class.getDeclaredField("channels");
+                        a.setAccessible(true);
+                        return a;
+                    }
                     Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField(whyIsAsmBroken.getName(), f));
                     a.setAccessible(true);
                     return a;

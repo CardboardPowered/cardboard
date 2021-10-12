@@ -23,6 +23,8 @@ import com.javazilla.bukkitfabric.nms.Provider;
 import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
 import com.javazilla.bukkitfabric.nms.Remapper;
 
+import net.fabricmc.loader.api.FabricLoader;
+
 /**
  * This file is imported from Commodore.
  *
@@ -54,23 +56,35 @@ public class Commodore {
     private static final Map<String, String> SEARCH_AND_REMOVE = initReplacementsMap();
     private static Map<String, String> initReplacementsMap()
     {
+
         Map<String, String> getAndRemove = new HashMap<>();
         // Be wary of maven shade's relocations
+        System.out.println(m("net.minecraft.class_2535"));
         getAndRemove.put( "org/bukkit/".concat( "craftbukkit/libs/it/unimi/dsi/fastutil/" ), "org/bukkit/".concat( "craftbukkit/libs/" ) ); // Remap fastutil to our location
+        getAndRemove.put("net/minecraft/network/NetworkManager", m("net.minecraft.class_2535"));
 
         if ( true )
         {
             // unversion incoming calls for pre-relocate debug work
-            final String NMS_REVISION_PACKAGE = "v1_16_R3/";
+            final String NMS_REVISION_PACKAGE = "v1_17_R1/";
 
        //     getAndRemove.put( "net/minecraft/", NMS_REVISION_PACKAGE );
-       //     getAndRemove.put( "org/bukkit/".concat( "craftbukkit/"), NMS_REVISION_PACKAGE );
+            getAndRemove.put( "org/bukkit/".concat( "craftbukkit/"), NMS_REVISION_PACKAGE );
         }
 
         return getAndRemove;
     }
+    
+    public static String m(String s) {
+        try {
+            return FabricLoader.getInstance().getMappingResolver().mapClassName("intermediary", s).replace('.', '/');
+        } catch (Exception e) {
+            e.printStackTrace();
+            return s;
+        }
+    }
 
-    private static String getOriginalOrRewrite(String original)
+    public static String getOriginalOrRewrite(String original)
     {
         String rewrite = null;
         for ( Map.Entry<String, String> entry : SEARCH_AND_REMOVE.entrySet() )
