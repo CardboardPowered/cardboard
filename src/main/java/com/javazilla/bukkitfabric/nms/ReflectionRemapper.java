@@ -42,7 +42,7 @@ import net.minecraft.server.ServerNetworkIo;
  */
 public class ReflectionRemapper {
 
-    private static final String NMS_VERSION = "v1_16_R3";
+    private static final String NMS_VERSION = "v1_17_R1";
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {
