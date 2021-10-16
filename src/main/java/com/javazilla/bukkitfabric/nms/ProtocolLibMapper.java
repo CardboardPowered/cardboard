@@ -66,7 +66,7 @@ public class ProtocolLibMapper {
             if (className.equals("ServerConnection")) {
                 return Class.forName(ReflectionRemapper.mapClassName("net.minecraft.server.ServerNetworkIo"));
             }
-            return Class.forName(ReflectionRemapper.mapClassName("net.minecraft.server.v1_16_R3." + className));
+            return Class.forName(ReflectionRemapper.mapClassName("net.minecraft.server.v1_17_R1." + className));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Failed to find Minecraft class!!!!: " + className);
         }
