@@ -1,2 +1,45 @@
-net/minecraft/server/v1_16_R3/ net/minecraft/server
-org/bukkit/craftbukkit/v1_16_R3/ org/bukkit/craftbukkit
+#
+# Copyright 2020 Cardboard. All Rights Reserved.
+# Licensed under the General Public Licence.
+#
+
+org/bukkit/craftbukkit/CraftWorld org/cardboardpowered/impl/world/WorldImpl
+org/bukkit/craftbukkit/CraftWorldBorder org/cardboardpowered/impl/world/WorldBorderImpl
+org/bukkit/craftbukkit/entity/CraftAnimals org/cardboardpowered/impl/entity/AnimalsImpl
+org/bukkit/craftbukkit/entity/CraftCaveSpider org/cardboardpowered/impl/entity/CaveSpiderImpl
+org/bukkit/craftbukkit/entity/CraftSlime org/cardboardpowered/impl/entity/SlimeImpl
+org/bukkit/craftbukkit/entity/CraftVehicle org/cardboardpowered/impl/entity/VehicleImpl
+org/bukkit/craftbukkit/entity/CraftFallingBlock org/cardboardpowered/impl/entity/FallingBlockImpl
+org/bukkit/craftbukkit/entity/CraftCreature org/cardboardpowered/impl/entity/CreatureImpl
+org/bukkit/craftbukkit/entity/CraftItem org/cardboardpowered/impl/entity/ItemEntityImpl
+org/bukkit/craftbukkit/entity/CraftAgeable org/cardboardpowered/impl/entity/AgeableImpl
+org/bukkit/craftbukkit/entity/CraftMob org/cardboardpowered/impl/entity/MobImpl
+org/bukkit/craftbukkit/entity/CraftMonster org/cardboardpowered/impl/entity/MonsterImpl
+org/bukkit/craftbukkit/entity/CraftAbstractVillager org/cardboardpowered/impl/entity/AbstractVillagerImpl
+org/bukkit/craftbukkit/entity/CraftVillager org/cardboardpowered/impl/entity/VillagerImpl
+org/bukkit/craftbukkit/scheduler/CraftScheduler com/javazilla/bukkitfabric/impl/BukkitSchedulerImpl
+org/bukkit/craftbukkit/entity/CraftVillager org/cardboardpowered/impl/entity/VillagerImpl
+org/bukkit/craftbukkit/entity/CraftArmorStand org/cardboardpowered/impl/entity/ArmorStandImpl
+org/cardboardpowered/impl/entity/HumanEntityImpl org/bukkit/craftbukkit/entity/CraftHumanEntity
+org/bukkit/craftbukkit/entity/CraftPlayer org/cardboardpowered/impl/entity/PlayerImpl
+org/bukkit/craftbukkit/CraftChunk org/cardboardpowered/impl/world/CardboardChunk
+org/bukkit/craftbukkit/CraftChunkSnapshot org/cardboardpowered/impl/world/CardboardChunkSnapshot
+
+
+#
+# Spigot2Intermediary Mappings auto-generated using "Mapp".
+#
+# "Mapp" Mappings Generator
+# Copyright 2021 by Isaiah. All Rights Reserved.
+# 
+# PRE-RELEASE SOFTWARE. USE AT YOUR OWN RISK.
+# 
+# Inputs:
+#    - Yarn 1.17.1
+#    - Spigot 1.17.1 CL
+#    - Spigot 1.17.1 MEMBERS
+#
+
+# TODO: Does NMS use versioned prefixes with the new 1.17 mappings?
+net/minecraft/server/v1_17_R1/ net/minecraft/server
+org/bukkit/craftbukkit/v1_17_R1/ org/bukkit/craftbukkit

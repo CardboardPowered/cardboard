@@ -94,10 +94,11 @@ dependencies {
 	compileOnly 'net.fabricmc:access-widener:1.0.0'
 
     // NMS Remapping
-    extraLibs group: "com.github.OrionMinecraft", name: "SrgLib", version: "master-SNAPSHOT"
+    // srglib-0.1.2.jar
+    extraLibs fileTree(dir: 'libs', include: "srglib-0.1.2.jar")
     include(modImplementation("com.github.IsaiahPatton:SpecialSource:master-SNAPSHOT"))
 
-    compileOnly group: "com.github.OrionMinecraft", name: "SrgLib", version: "master-SNAPSHOT"
+    compileOnly fileTree(dir: 'libs', include: "srglib-0.1.2.jar")
 
     // (Optional) Fabric Permissions API.
     // modImplementation "com.javazilla.mods:permissions:1.1"

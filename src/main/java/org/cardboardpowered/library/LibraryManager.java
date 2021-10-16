@@ -167,8 +167,9 @@ public final class LibraryManager {
 
             // Add to KnotClassLoader
             try {
-                if (!library.libraryKey.artifactId.contains("adapter"))
+                if (!library.libraryKey.artifactId.contains("adapter")) {
                     Knot.getLauncher().propose(file.toURI().toURL());
+                }
             } catch (Exception e) {
                 logger.warn( "Failed to add to classpath: " + library.toString(), e);
             }
