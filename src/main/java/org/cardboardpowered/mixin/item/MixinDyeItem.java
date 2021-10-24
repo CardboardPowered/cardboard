@@ -17,7 +17,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 
-@Mixin(DyeItem.class)
+@Mixin(value = DyeItem.class, priority = 900)
 public class MixinDyeItem {
 
     @Shadow

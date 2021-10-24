@@ -29,7 +29,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 
-@Mixin(StatHandler.class)
+@Mixin(value = StatHandler.class, priority = 900)
 public class MixinStatHandler {
 
     /**

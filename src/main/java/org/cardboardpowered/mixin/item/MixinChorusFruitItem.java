@@ -20,7 +20,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-@Mixin(ChorusFruitItem.class)
+@Mixin(value = ChorusFruitItem.class, priority = 900)
 public class MixinChorusFruitItem extends Item {
 
     public MixinChorusFruitItem(Settings settings) {

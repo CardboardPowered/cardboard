@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard - Paper API for Fabric
+ * Copyright (C) 2020 Cardboard Contributors
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -9,12 +9,8 @@
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
  */
 package org.cardboardpowered.mixin.entity;
 
@@ -24,17 +20,16 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
+import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.mob.PiglinBrain;
 import net.minecraft.entity.mob.PiglinEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
-@Mixin(PiglinBrain.class)
+@Mixin(value = PiglinBrain.class, priority = 900)
 public class MixinPiglinBrain {
 
     /**

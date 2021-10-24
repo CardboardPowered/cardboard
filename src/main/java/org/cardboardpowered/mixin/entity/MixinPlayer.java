@@ -88,17 +88,6 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Shadow
     public int screenHandlerSyncId;
 
-    /*@Inject(method = "<init>", at = @At("TAIL"))
-    public void init(MinecraftServer server, ServerWorld world, GameProfile profile, CallbackInfo ci) {
-        if (null != Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid())) {
-            this.bukkit = (PlayerImpl) Bukkit.getPlayer(((ServerPlayerEntity)(Object)this).getUuid());
-            this.bukkit.setHandle((ServerPlayerEntity)(Object)this);
-        } else {
-            this.bukkit = new PlayerImpl((ServerPlayerEntity)(Object)this);
-            CraftServer.INSTANCE.playerView.add(this.bukkit);
-        }
-    }*/
-
     @Override
     public void setBukkit(PlayerImpl plr) {
         this.bukkit = plr;
@@ -136,7 +125,6 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(at = @At("HEAD"), method = "teleport", cancellable = true)
     public void teleport1(ServerWorld worldserver, double x, double y, double z, float f, float f1, CallbackInfo ci) {
-        System.out.println("DEBUG: Player teleport!");
         PlayerTeleportEvent event = new PlayerTeleportEvent((Player) this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(((IMixinWorld)worldserver).getWorldImpl(), x,y,z,f,f1), PlayerTeleportEvent.TeleportCause.UNKNOWN);
         Bukkit.getPluginManager().callEvent(event);
 

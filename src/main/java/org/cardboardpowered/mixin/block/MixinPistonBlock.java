@@ -12,8 +12,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.PistonBlock;
@@ -21,8 +22,6 @@ import net.minecraft.block.piston.PistonHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 @Mixin(PistonBlock.class)
 public class MixinPistonBlock {

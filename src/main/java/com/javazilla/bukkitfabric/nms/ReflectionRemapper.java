@@ -55,6 +55,9 @@ public class ReflectionRemapper {
         if (className.startsWith("net.minecraft.server." + NMS_VERSION + "."))
             return MappingsReader.getIntermedClass(className.replace("net.minecraft.server." + NMS_VERSION + ".", "net.minecraft.server."));
 
+        if (className.startsWith("net.minecraft.") && !className.startsWith("class_"))
+            return MappingsReader.getIntermedClass(className);
+
         if (className.startsWith("org.bukkit.craftbukkit."))
             return MappingsReader.getIntermedClass(className); // We are not CraftBukkit, check for our own version of the class.
 

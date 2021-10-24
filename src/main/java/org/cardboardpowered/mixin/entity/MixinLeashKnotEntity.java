@@ -18,7 +18,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 
-@Mixin(LeashKnotEntity.class)
+@Mixin(value = LeashKnotEntity.class, priority = 900)
 public class MixinLeashKnotEntity {
 
     private LeashKnotEntity getBF() {

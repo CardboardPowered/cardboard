@@ -15,7 +15,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 
-@Mixin(SkullItem.class)
+@Mixin(value = SkullItem.class, priority = 900)
 public class MixinSkullItem extends WallStandingBlockItem {
 
     public MixinSkullItem(Block standingBlock, Block wallBlock, Settings settings) {

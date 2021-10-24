@@ -30,7 +30,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
-@Mixin(ArmorStandItem.class)
+@Mixin(value = ArmorStandItem.class, priority = 900)
 public class MixinArmorStandItem {
 
     /**

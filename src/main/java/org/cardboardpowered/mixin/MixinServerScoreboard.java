@@ -20,7 +20,7 @@ import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-@Mixin(ServerScoreboard.class)
+@Mixin(value = ServerScoreboard.class, priority = 900)
 public class MixinServerScoreboard extends Scoreboard {
 
     @Shadow

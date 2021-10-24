@@ -27,7 +27,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-@Mixin(ArmorItem.class)
+@Mixin(value = ArmorItem.class, priority = 900)
 public class MixinArmorItem {
 
     /**

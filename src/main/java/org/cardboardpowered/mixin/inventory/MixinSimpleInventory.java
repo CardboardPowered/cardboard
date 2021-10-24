@@ -47,9 +47,7 @@ public class MixinSimpleInventory implements IMixinInventory {
     @Override
     public InventoryHolder getOwner() {
         // TODO Auto-generated method stub
-        if (transaction.size() >= 1)
-            return transaction.get(0);
-        return null;
+        return (transaction.size() >= 1) ? transaction.get(0) : null;
     }
 
     @Override

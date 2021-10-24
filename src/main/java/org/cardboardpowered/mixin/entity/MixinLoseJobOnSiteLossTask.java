@@ -30,7 +30,7 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.village.VillagerProfession;
 
-@Mixin(LoseJobOnSiteLossTask.class)
+@Mixin(value = LoseJobOnSiteLossTask.class, priority = 900)
 public class MixinLoseJobOnSiteLossTask {
 
     /**

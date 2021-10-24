@@ -6,15 +6,14 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.cardboardpowered.impl.inventory.CardboardEnchantingInventory;
-import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.enchantments.EnchantmentOffer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
-import org.bukkit.inventory.InventoryView;
+import org.cardboardpowered.impl.inventory.CardboardEnchantingInventory;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

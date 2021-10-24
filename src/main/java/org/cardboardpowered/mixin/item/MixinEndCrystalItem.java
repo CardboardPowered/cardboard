@@ -20,14 +20,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
-@Mixin(EndCrystalItem.class)
+@Mixin(value = EndCrystalItem.class, priority = 900)
 public class MixinEndCrystalItem {
 
     /**
      * @reason .
      * @author .
      */
-    @SuppressWarnings("deprecation")
     @Overwrite
     public ActionResult useOnBlock(ItemUsageContext itemactioncontext) {
         World world = itemactioncontext.getWorld();

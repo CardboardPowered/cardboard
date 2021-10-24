@@ -24,10 +24,6 @@ public class MixinExperienceOrbEntity extends MixinEntity {
     @Shadow
     public int amount;
 
-    //@Shadow
-    //public int pickupDelay;
-
-    // TODO 1.17ify
     @Redirect(at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"), method = "repairPlayerGears")
     public int doBukkitEvent_PlayerItemMendEvent(int a, int b, PlayerEntity entityhuman) {
         Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.chooseEquipmentWith(Enchantments.MENDING, (LivingEntity) entityhuman, ItemStack::isDamaged);
@@ -41,11 +37,6 @@ public class MixinExperienceOrbEntity extends MixinEntity {
         } else return 0;
     }
 
-   /* @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addExperience(I)V"), method = "onPlayerCollision")
-    public void doBukkitEvent_PlayerExpChangeEvent(PlayerEntity plr, int a) {
-        plr.addExperience(BukkitEventFactory.callPlayerExpChangeEvent(plr, this.amount).getAmount());
-    }*/
-    
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ExperienceOrbEntity;repairPlayerGears(Lnet/minecraft/entity/player/PlayerEntity;I)I"), method = "onPlayerCollision")
     public int doBukkitEvent_PlayerExpChangeEvent(ExperienceOrbEntity e, PlayerEntity plr, int a) {
         return repairPlayerGears(plr, BukkitEventFactory.callPlayerExpChangeEvent(plr, this.amount).getAmount());

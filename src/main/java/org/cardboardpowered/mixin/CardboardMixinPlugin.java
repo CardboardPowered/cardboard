@@ -1,7 +1,6 @@
 package org.cardboardpowered.mixin;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +21,6 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import com.google.common.collect.ImmutableMap;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.launch.knot.Knot;
 
 public class CardboardMixinPlugin implements IMixinConfigPlugin {
 
@@ -55,10 +53,8 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                 new Library("org.cardboardpowered", "intermediary-adapter", "7.3", SHA1, "", null)
             ).collect(ImmutableMap.toImmutableMap(Library::getLibraryKey, Function.identity()));
         new LibraryManager(repository, "lib", true, 2, libraries.values()).run();
-        System.setProperty("worldedit.bukkit.adapter", "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard");
 
-        File jdk = new File("lib", "javac-1.8.0-u20.jar");
-        if (jdk.exists()) jdk.delete(); // From old version of Cardboard
+        System.setProperty("worldedit.bukkit.adapter", "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard");
     }
 
     @Override
