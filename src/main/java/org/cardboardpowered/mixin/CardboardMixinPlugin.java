@@ -1,6 +1,9 @@
 package org.cardboardpowered.mixin;
 
+import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
+
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,10 +13,10 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cardboardpowered.CardboardConfig;
+import org.cardboardpowered.library.KnotHelper;
 import org.cardboardpowered.library.Library;
 import org.cardboardpowered.library.LibraryKey;
 import org.cardboardpowered.library.LibraryManager;
-import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -32,6 +35,12 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         try {
             CardboardConfig.setup();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            KnotHelper.propose(new File("lib/paper-api-1.17-dev"));
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         logger.info("Loading Libraries...");

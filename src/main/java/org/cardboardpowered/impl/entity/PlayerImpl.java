@@ -1750,16 +1750,16 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         // TODO Auto-generated method stub
     }
 
-    public BlockPos posAtLogin;
-    public boolean in;
+    //public BlockPos posAtLogin;
+    //public boolean in;
 
-    /**
+    /*
      * Save BlockPos from {@link PlayerManager#onPlayerConnect}
-     */
+     *
     public void setLoginPos(BlockPos pos) {
         this.posAtLogin = pos;
         this.in = nms.isInvulnerable();
-    }
+    }*/
 
     // 1.17 API Start
 

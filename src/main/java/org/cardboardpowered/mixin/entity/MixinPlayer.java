@@ -340,10 +340,10 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(at = @At("TAIL"), method = "playerTick")
     public void doBukkitEvent_PlayerLevelChangeEvent(CallbackInfo ci) {
-        ServerPlayerEntity plr = ((ServerPlayerEntity)(Object)this);
+        //ServerPlayerEntity plr = ((ServerPlayerEntity)(Object)this);
 
         // Avoid suffocation on join
-        BlockPos saved = bukkit.posAtLogin;
+        /*BlockPos saved = bukkit.posAtLogin;
         if (null != saved && plr.age > 8) {
             if (plr.age < 60) {
                 if (h == 0) h = plr.getHealth();
@@ -360,7 +360,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             } else if (plr.age < 80) {
                 plr.setInvulnerable(bukkit.in);
             }
-        }
+        }*/
         // end
 
         try {

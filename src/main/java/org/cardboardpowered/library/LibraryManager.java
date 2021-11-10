@@ -22,8 +22,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
-import net.fabricmc.loader.launch.knot.Knot;
-
 /**
  * Simple library manager which downloads external dependencies.
  */
@@ -168,7 +166,8 @@ public final class LibraryManager {
             // Add to KnotClassLoader
             try {
                 if (!library.libraryKey.artifactId.contains("adapter")) {
-                    Knot.getLauncher().propose(file.toURI().toURL());
+                    KnotHelper.propose(file);
+                    //Knot.getLauncher().propose(file.toURI().toURL());
                 }
             } catch (Exception e) {
                 logger.warn( "Failed to add to classpath: " + library.toString(), e);

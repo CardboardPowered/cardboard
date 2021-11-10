@@ -43,6 +43,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -62,7 +63,6 @@ import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.Tag;
@@ -99,7 +99,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Override
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity player, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
-        System.out.println("ENTITY MOVE TO WORLD!");
+        BukkitFabricMod.LOGGER.info("Debug: PlayerManager#moveToWorld");
         boolean flag2 = false;
         BlockPos blockposition = player.getSpawnPointPosition();
         float f = player.getSpawnAngle();
@@ -172,9 +172,9 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         joinMessage = playerJoinEvent.getJoinMessage();
 
-        BlockPos pos = player.getBlockPos();
-        plr.setLoginPos(pos);
-        player.getServerWorld().getChunk(pos);
+        //BlockPos pos = player.getBlockPos();
+        //plr.setLoginPos(pos);
+        //player.getServerWorld().getChunk(pos);
 
         if (joinMessage != null && joinMessage.length() > 0)
             for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))

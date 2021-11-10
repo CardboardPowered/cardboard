@@ -25,7 +25,6 @@ import org.bukkit.plugin.SimplePluginManager;
 import com.google.common.io.ByteStreams;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.launch.knot.Knot;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins

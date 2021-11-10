@@ -1,6 +1,5 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard - Spigot/Paper for Fabric
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,6 +41,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.cardboardpowered.impl.entity.*;
+
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
@@ -217,16 +218,16 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
     
     // TODO
-    private boolean justPortal;
-    private int portalAge = -1;
+    //private boolean justPortal;
+    //private int portalAge = -1;
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
     public void setBukkit(CallbackInfo callbackInfo) {
         if (null == bukkit) {
             this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
-            this.justPortal = false;
+        //    this.justPortal = false;
         }
-        if (this.justPortal) {
+        /*if (this.justPortal) {
             int age = ((Entity)(Object)this).age;
             if (portalAge == -1) portalAge = age;
             if ( (age - portalAge) <= 20) {
@@ -242,7 +243,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 this.justPortal = false;
                 this.portalAge = -1;
             }
-        }
+        }*/
     }
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;")
@@ -575,8 +576,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;moveToWorld(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/entity/Entity;"), method = { "tickNetherPortal" })
     public Entity tickNetherPortal_cardboard_moveToWorld(Entity entity, ServerWorld world) {
         Entity e = entity;
-        if (entity instanceof PlayerEntity) {
-            TeleportTarget tar = getTeleportTarget(world);
+        //if (entity instanceof PlayerEntity) {
+            /*TeleportTarget tar = getTeleportTarget(world);
             Vec3d vec = tar.position;
             c_portalTarget = tar;
 
@@ -588,10 +589,11 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                 e.teleport(vec.x, vec.y + 1, vec.z);
                 e.refreshPosition();
             }
-            this.justPortal = true;
-        } else {
+            this.justPortal = true;*/
+        //} else {
+        BukkitFabricMod.LOGGER.info("Tick portal move to world debug");
             e = entity.moveToWorld(world);
-        }
+        //}
         return e;
     }
 

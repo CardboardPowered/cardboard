@@ -9,9 +9,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
@@ -56,24 +59,38 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
             return;
         }
 
-        ((IMixinInventory)((CraftInventory) source.getTopInventory()).getInventory()).onClose(player);
-        ((IMixinInventory)((CraftInventory) source.getBottomInventory()).getInventory()).onClose(player);
-        ((IMixinInventory)((CraftInventory) destination.getTopInventory()).getInventory()).onOpen(player);
-        ((IMixinInventory)((CraftInventory) destination.getBottomInventory()).getInventory()).onOpen(player);
+        openOrClose( ((CraftInventory) source.getTopInventory()).getInventory(), player, false);
+        openOrClose( ((CraftInventory) source.getBottomInventory()).getInventory(), player, false);
+        openOrClose( ((CraftInventory) destination.getTopInventory()).getInventory(), player, true);
+        openOrClose( ((CraftInventory) destination.getBottomInventory()).getInventory(), player, true);
     }
 
-    private Text title;
+    public void openOrClose(Inventory in, CraftHumanEntity plr, boolean open) {
+        if (in instanceof IMixinInventory) {
+            IMixinInventory imi = (IMixinInventory) in;
+            if (open) {
+                imi.onOpen(plr);
+            } else {
+                imi.onClose(plr);
+            }
+        } else {
+            if (FabricLoader.getInstance().isDevelopmentEnvironment())
+                BukkitFabricMod.LOGGER.info("Debug: " + in + " is not of type IMixinInventory");
+        }
+    }
+
+    private Text title_cb;
 
     @Override
     public final Text getTitle() {
-        if (null == this.title)
-            this.title = new LiteralText("CARDBOARD: TITLE NOT SET!");
-        return this.title;
+        if (null == this.title_cb)
+            this.title_cb = new LiteralText(" nul ");
+        return this.title_cb;
     }
 
     @Override
-    public final void setTitle(Text title) {
-        this.title = title;
+    public void setTitle(Text title) {
+        this.title_cb = title;
     }
 
     @Override

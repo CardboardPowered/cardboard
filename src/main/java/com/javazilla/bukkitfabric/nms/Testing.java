@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 FabricMC
+* Copyright 2016 FabricMC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
 
 package com.javazilla.bukkitfabric.nms;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
 import net.fabricmc.loader.launch.common.MappingConfiguration;
 import net.fabricmc.mapping.tree.ClassDef;

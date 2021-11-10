@@ -49,6 +49,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
@@ -100,14 +101,17 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
+import net.minecraft.world.WorldView;
 
 @SuppressWarnings("deprecation")
-@Mixin(value = ServerPlayNetworkHandler.class, priority = 999)
+@Mixin(value = ServerPlayNetworkHandler.class, priority = 800)
 public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetworkHandler {
 
     @Shadow 
@@ -267,22 +271,70 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     }
 
     @Override
-    public void teleport(Location location) {
-        double d0 = location.getX();
+    public void teleport(Location dest) {
+        requestTeleport(dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch(), Collections.emptySet(), true);
+    }
+
+    @Overwrite
+    public void requestTeleport(double d0, double d1, double d2, float f, float f1, Set<PlayerPositionLookS2CPacket.Flag> set, boolean flag) { // CraftBukkit - Return event status
+        Player player = this.getPlayer();
+        Location from = player.getLocation();
+
+        double x = d0;
+        double y = d1;
+        double z = d2;
+        float yaw = f;
+        float pitch = f1;
+
+        Location to = new Location(this.getPlayer().getWorld(), x, y, z, yaw, pitch);
+        // SPIGOT-5171: Triggered on join
+        if (from.equals(to)) {
+            this.internalTeleport(d0, d1, d2, f, f1, set, flag);
+            return; // CraftBukkit - Return event status
+        }
+
+        PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled() || !to.equals(event.getTo())) {
+            set.clear(); // Can't relative teleport
+            to = event.isCancelled() ? event.getFrom() : event.getTo();
+            d0 = to.getX();
+            d1 = to.getY();
+            d2 = to.getZ();
+            f = to.getYaw();
+            f1 = to.getPitch();
+        }
+
+        this.internalTeleport(d0, d1, d2, f, f1, set, flag);
+        return; // CraftBukkit - Return event status
+    }
+
+
+    public void internalTeleport(double d0, double d1, double d2, float f, float f1, Set<PlayerPositionLookS2CPacket.Flag> set, boolean shouldDismount) {
+        //BukkitFabricMod.LOGGER.info("Debug: SPNH#teleport(Location) called: " + d0 + ", " + d1 + ", " + d2);
+        /*double d0 = location.getX();
         double d1 = location.getY();
         double d2 = location.getZ();
         float f = location.getYaw();
-        float f1 = location.getPitch();
-        Set<PlayerPositionLookS2CPacket.Flag> set = Collections.emptySet();
+        float f1 = location.getPitch();*/
+        //Set<PlayerPositionLookS2CPacket.Flag> set = Collections.emptySet();
 
         if (Float.isNaN(f)) f = 0;
         if (Float.isNaN(f1)) f1 = 0;
+        
+        BlockPos pos = new BlockPos(d0, d1, d2);
+        if (!player.getServerWorld().getBlockState(pos).isAir()) {
+            BukkitFabricMod.LOGGER.info("Safe Teleport stopped teleport.");
+            //return;
+        }
 
+        this.justTeleported = true;
         double d3 = set.contains(PlayerPositionLookS2CPacket.Flag.X) ? this.player.getX() : 0.0D;
         double d4 = set.contains(PlayerPositionLookS2CPacket.Flag.Y) ? this.player.getY() : 0.0D;
         double d5 = set.contains(PlayerPositionLookS2CPacket.Flag.Z) ? this.player.getZ() : 0.0D;
-        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.yaw : 0.0F;
-        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.pitch : 0.0F;
+        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.getYaw() : 0.0F;
+        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.getPitch() : 0.0F;
 
         this.requestedTeleportPos = new Vec3d(d0, d1, d2);
         if (++this.requestedTeleportId == Integer.MAX_VALUE)
@@ -290,7 +342,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
         this.teleportRequestTick = this.ticks;
         this.player.updatePositionAndAngles(d0, d1, d2, f, f1);
-        this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(d0 - d3, d1 - d4, d2 - d5, f - f2, f1 - f3, set, this.requestedTeleportId, false));
+        this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(d0 - d3, d1 - d4, d2 - d5, f - f2, f1 - f3, set, this.requestedTeleportId, shouldDismount));
+        //this.player.refreshPositionAfterTeleport(d0, d1, d2);
     }
 
     @Inject(at = @At("HEAD"), method = "onClientCommand", cancellable = true)
@@ -357,150 +410,203 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         return (ServerPlayNetworkHandler) (Object) this;
     }
 
-    //@Overwrite
-    @Inject(at = @At("HEAD"), method = "onPlayerMove", cancellable = true)
-    public void onPlayerMove_Cardboard(PlayerMoveC2SPacket packetplayinflying, CallbackInfo ci) {
-        NetworkThreadUtils.forceMainThread(packetplayinflying, (ServerPlayNetworkHandler)(Object)this, this.player.getServerWorld());
-        if (false /*ServerPlayNetworkHandler.validatePlayerMove(packetplayinflying)*/)
-            this.disconnect(new TranslatableText("multiplayer.disconnect.invalid_player_movement"));
-        else {
-            if (!this.player.notInAnyWorld) {
+    /**
+     * @author Cardboard
+     * @reason Bukkit just adds too much for us to not do an Overwrite.
+     *         Luckly we can set our priority so other mods will still work  
+     */
+    @Overwrite
+    public void onPlayerMove(PlayerMoveC2SPacket packet) {
+        NetworkThreadUtils.forceMainThread(packet, (ServerPlayNetworkHandler)(Object)this, this.player.getServerWorld());
+        boolean sfly = false;
+        if (sfly/*validateVehicleMove(packet.a(0.0D), packet.isOnGround(0.0D), packet.c(0.0D), packet.a(0.0F), packet.isOnGround(0.0F))*/) {
+            //this.disconnect(new ChatMessage("multiplayer.disconnect.invalid_player_movement"));
+        } else {
+            ServerWorld worldserver = this.player.getServerWorld();
+
+            if (/*!this.player.wonGame &&*/ !this.player.isDead()) { // CraftBukkit
                 if (this.ticks == 0) ((ServerPlayNetworkHandler)(Object)this).syncWithPlayerPosition();
+
                 if (this.requestedTeleportPos != null) {
                     if (this.ticks - this.teleportRequestTick > 20) {
                         this.teleportRequestTick = this.ticks;
-                        this.requestTeleport(this.requestedTeleportPos.x, this.requestedTeleportPos.y, this.requestedTeleportPos.z, this.player.yaw, this.player.pitch);
+                        this.requestTeleport(this.requestedTeleportPos.x, this.requestedTeleportPos.y, this.requestedTeleportPos.z, this.player.getYaw(), this.player.getPitch());
                     }
-                    this.allowedPlayerTicks = 20;
+                    this.allowedPlayerTicks = 20; // CraftBukkit
                 } else {
                     this.teleportRequestTick = this.ticks;
+                    double d0 = packet.getX(this.player.getX()); // clamp
+                    double d1 = packet.getY(this.player.getY());
+                    double d2 = packet.getZ(this.player.getZ());
+                    float f = MathHelper.wrapDegrees(packet.getYaw(this.player.getYaw()));
+                    float f1 = MathHelper.wrapDegrees(packet.getPitch(this.player.getPitch()));
+
                     if (this.player.hasVehicle()) {
-                        this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.yaw), packetplayinflying.getPitch(this.player.pitch));
+                        this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), f, f1);
                         this.player.getServerWorld().getChunkManager().updatePosition(this.player);
-                        this.allowedPlayerTicks = 20;
+                        this.allowedPlayerTicks = 20; // CraftBukkit
                     } else {
+                        // CraftBukkit - Make sure the move is valid but then reset it for plugins to modify
                         double prevX = player.getX();
                         double prevY = player.getY();
                         double prevZ = player.getZ();
-                        float prevYaw = player.yaw;
-                        float prevPitch = player.pitch;
-                        double d0 = this.player.getX();
-                        double d1 = this.player.getY();
-                        double d2 = this.player.getZ();
-                        double d3 = this.player.getY();
-                        double d4 = packetplayinflying.getX(this.player.getX());
-                        double d5 = packetplayinflying.getY(this.player.getY());
-                        double d6 = packetplayinflying.getZ(this.player.getZ());
-                        float f = packetplayinflying.getYaw(this.player.yaw);
-                        float f1 = packetplayinflying.getPitch(this.player.pitch);
-                        double d7 = d4 - this.lastTickX;
-                        double d8 = d5 - this.lastTickY;
-                        double d9 = d6 - this.lastTickZ;
+                        float prevYaw = player.getYaw();
+                        float prevPitch = player.getPitch();
+                        // CraftBukkit end
+                        double d3 = this.player.getX();
+                        double d4 = this.player.getY();
+                        double d5 = this.player.getZ();
+                        double d6 = this.player.getY();
+                        double d7 = d0 - this.lastTickX;
+                        double d8 = d1 - this.lastTickY;
+                        double d9 = d2 - this.lastTickZ;
                         double d10 = this.player.getVelocity().lengthSquared();
                         double d11 = d7 * d7 + d8 * d8 + d9 * d9;
 
                         if (this.player.isSleeping()) {
-                            if (d11 > 1.0D) this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), packetplayinflying.getYaw(this.player.yaw), packetplayinflying.getPitch(this.player.pitch));
+                            if (d11 > 1.0D) {
+                                this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), f, f1);
+                            }
+
                         } else {
                             ++this.movePacketsCount;
                             int i = this.movePacketsCount - this.lastTickMovePacketsCount;
+
+                            // CraftBukkit start - handle custom speeds and skipped ticks
                             this.allowedPlayerTicks += (System.currentTimeMillis() / 50) - this.lastTick;
                             this.allowedPlayerTicks = Math.max(this.allowedPlayerTicks, 1);
                             this.lastTick = (int) (System.currentTimeMillis() / 50);
-                            if (i > Math.max(this.allowedPlayerTicks, 5)) i = 1;
 
-                            if (d11 > 0) allowedPlayerTicks -= 1;
-                            else allowedPlayerTicks = 20;
-
-                            double speed = player.abilities.flying ? (player.abilities.getFlySpeed() * 20f) : (player.abilities.getWalkSpeed() * 10f);
-                            if (!this.player.isInTeleportationState() && (!this.player.getServerWorld().getGameRules().getBoolean(GameRules.DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isFallFlying())) {
-                                float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
-                                if (d11 - d10 > Math.max(f2, Math.pow((double) ((float) i * speed), 2))) {
-                                    this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.yaw, this.player.pitch);
-                                    ci.cancel();
-                                    return;
-                                }
+                            if (i > Math.max(this.allowedPlayerTicks, 5)) {
+                                //ServerPlayNetworkHandler.LOGGER.debug("{} is sending move packets too frequently ({} packets since last tick)", this.player.getDisplayName().getString(), i);
+                                i = 1;
                             }
-                            d7 = d4 - this.updatedX;
-                            d8 = d5 - this.updatedY;
-                            d9 = d6 - this.updatedZ;
+
+                         /*   if (packet.hasRot || d11 > 0) {
+                                allowedPlayerTicks -= 1;
+                            } else {
+                                allowedPlayerTicks = 20;
+                            }*/
+                            double speed;
+                            if (player.getAbilities().flying) {
+                                speed = player.getAbilities().getFlySpeed() * 20f;
+                            } else {
+                                speed = player.getAbilities().getWalkSpeed() * 10f;
+                            }
+                            //double speed = 1;
+
+                            if (!this.player.isInTeleportationState() && (! this.player.getServerWorld().getGameRules().getBoolean(GameRules.DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isFallFlying())) {
+                                float f2 = this.player.isFallFlying() ? 300.0F : 100.0F;
+
+                                /*if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2))) {
+                                // CraftBukkit end
+                                   // ServerPlayNetworkHandler.LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getDisplayName().getString(), d7, d8, d9);
+                                    this.requestTeleport(this.player.getX(), this.player.getY(), this.player.getZ(), this.player.getYaw(), this.player.getPitch());
+                                    return;
+                                }*/
+                            }
+
+                            Box axisalignedbb = this.player.getBoundingBox();
+
+                            d7 = d0 - this.updatedX;
+                            d8 = d1 - this.updatedY;
+                            d9 = d2 - this.updatedZ;
                             boolean flag = d8 > 0.0D;
 
-                            if (this.player.isOnGround() && !packetplayinflying.isOnGround() && flag) this.player.jump();
+                            if (this.player.isOnGround() && !packet.isOnGround() && flag) {
+                                this.player.jump();
+                            }
+
                             this.player.move(MovementType.PLAYER, new Vec3d(d7, d8, d9));
-                            this.player.setOnGround(packetplayinflying.isOnGround());
+                            this.player.setOnGround(packet.isOnGround());
                             double d12 = d8;
 
-                            d7 = d4 - this.player.getX();
-                            d8 = d5 - this.player.getY();
-                            if (d8 > -0.5D || d8 < 0.5D) d8 = 0.0D;
-                            d9 = d6 - this.player.getZ();
+                            d7 = d0 - this.player.getX();
+                            d8 = d1 - this.player.getY();
+                            if (d8 > -0.5D || d8 < 0.5D) {
+                                d8 = 0.0D;
+                            }
+
+                            d9 = d2 - this.player.getZ();
                             d11 = d7 * d7 + d8 * d8 + d9 * d9;
+                            boolean flag1 = false;
 
-                            this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
+                            if (!this.player.isInTeleportationState() && d11 > org.spigotmc.SpigotConfig.movedWronglyThreshold && !this.player.isSleeping() && !this.player.isCreative() && !this.player.isSpectator()) { // Spigot
+                                flag1 = true;
+                            }
 
-                            // Bukkit - fire PlayerMoveEvent
-                            this.player.updatePositionAndAngles(prevX, prevY, prevZ, prevYaw, prevPitch);
+                            this.player.updatePositionAndAngles(d0, d1, d2, f, f1);
+                            if (!this.player.noClip && !this.player.isSleeping() && (flag1 && worldserver.isSpaceEmpty(this.player, axisalignedbb) || this.isPlayerNotCollidingWithBlocks(worldserver, axisalignedbb))) {
+                                this.requestTeleport(d3, d4, d5, f, f1);
+                            } else {
+                                this.player.updatePositionAndAngles(prevX, prevY, prevZ, prevYaw, prevPitch);
 
-                            Player player = this.getPlayer();
-                            Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch);
-                            Location to = player.getLocation().clone();
+                                Player player = this.getPlayer();
+                                Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch);
+                                Location to = player.getLocation().clone();
 
-                            to.setX(packetplayinflying.getX(to.getX()));
-                            to.setY(packetplayinflying.getY(to.getY()));
-                            to.setZ(packetplayinflying.getZ(to.getZ()));
-                            to.setYaw(packetplayinflying.getYaw(to.getYaw()));
-                            to.setPitch(packetplayinflying.getPitch(to.getPitch()));
+                                to.setX( packet.getX( this.player.getX() ) );
+                                to.setY( packet.getY( this.player.getY() ) );
+                                to.setZ( packet.getZ( this.player.getZ() ) );
+                                to.setYaw(packet.getYaw(this.player.getYaw()));
+                                to.setPitch(packet.getPitch(this.player.getPitch()));
 
-                            double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
-                            float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
+                                double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
+                                float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
 
-                            if ((delta > 1f / 256 || deltaAngle > 10f)) {
-                                this.lastPosX = to.getX();
-                                this.lastPosY = to.getY();
-                                this.lastPosZ = to.getZ();
-                                this.lastYaw = to.getYaw();
-                                this.lastPitch = to.getPitch();
+                                if ((delta > 1f / 256 || deltaAngle > 10f) && !this.player.isDead()) {
+                                    this.lastPosX = to.getX();
+                                    this.lastPosY = to.getY();
+                                    this.lastPosZ = to.getZ();
+                                    this.lastYaw = to.getYaw();
+                                    this.lastPitch = to.getPitch();
 
-                                if (from.getX() != Double.MAX_VALUE) {
-                                    Location oldTo = to.clone();
-                                    PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
-                                    CraftServer.INSTANCE.getPluginManager().callEvent(event);
+                                    if (from.getX() != Double.MAX_VALUE) {
+                                        Location oldTo = to.clone();
+                                        PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
+                                        Bukkit.getPluginManager().callEvent(event);
 
-                                    if (event.isCancelled()) {
-                                        teleport(from);
-                                        ci.cancel();
-                                        return;
-                                    }
-                                    if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
-                                        ((IMixinServerEntityPlayer)this.player).getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                                        ci.cancel();
-                                        return;
-                                    }
-                                    if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
-                                        this.justTeleported = false;
-                                        ci.cancel();
-                                        return;
+                                        if (event.isCancelled()) {
+                                            teleport(from);
+                                            return;
+                                        }
+
+                                        if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
+                                            ((Player)((com.javazilla.bukkitfabric.interfaces.IMixinEntity)this.player).getBukkitEntity()).
+                                                    teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                                            return;
+                                        }
+
+                                        if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
+                                            this.justTeleported = false;
+                                            return;
+                                        }
                                     }
                                 }
+                                this.player.updatePositionAndAngles(d0, d1, d2, f, f1); // Copied from above
+
+                                this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.abilities.allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.isEntityOnAir((Entity) this.player) && !this.player.isUsingRiptide();
+                                this.player.getServerWorld().getChunkManager().updatePosition(this.player);
+                                this.player.handleFall(this.player.getY() - d6, packet.isOnGround());
+                                if (flag) this.player.fallDistance = 0.0F;
+
+                                this.player.increaseTravelMotionStats(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5);
+                                this.updatedX = this.player.getX();
+                                this.updatedY = this.player.getY();
+                                this.updatedZ = this.player.getZ();
                             }
-                            this.player.updatePositionAndAngles(d4, d5, d6, f, f1);
-                            this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.abilities.allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.isEntityOnAir((Entity) this.player) && !this.player.isUsingRiptide();
-                            this.player.getServerWorld().getChunkManager().updatePosition(this.player);
-                            this.player.handleFall(this.player.getY() - d3, packetplayinflying.isOnGround());
-                            if (flag) this.player.fallDistance = 0.0F;
-                            this.player.increaseTravelMotionStats(this.player.getX() - d0, this.player.getY() - d1, this.player.getZ() - d2);
-                            this.updatedX = this.player.getX();
-                            this.updatedY = this.player.getY();
-                            this.updatedZ = this.player.getZ();
                         }
                     }
                 }
             }
         }
-        //ci.cancel();
-       // return;
     }
+
+    @Shadow
+    private boolean isPlayerNotCollidingWithBlocks(WorldView world, Box box) {
+        return false;
+    }
+
 
     @Shadow
     public void requestTeleport(double d0, double d1, double d2, float f, float f1) {}
