@@ -37,12 +37,6 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            KnotHelper.propose(new File("lib/paper-api-1.17-dev"));
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         logger.info("Loading Libraries...");
         loadLibs();
     }

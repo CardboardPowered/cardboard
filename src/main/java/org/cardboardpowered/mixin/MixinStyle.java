@@ -11,23 +11,18 @@ public class MixinStyle {
     @Shadow
     public Boolean bold;
 
-    @Shadow
-    public Style withBold(Boolean obool) {
-        return null;
-    }
-
     public Style setStrikethrough(Boolean obool) {
-        Style st = withBold(this.bold);
+        Style st = ((Style)(Object)this).withBold(this.bold);
         st.strikethrough = obool;
         return st;
     }
 
     public Style setUnderline(Boolean obool) {
-        return this.withBold(this.bold).withUnderline(obool);
+        return ((Style)(Object)this).withBold(this.bold).withUnderline(obool);
     }
 
     public Style setRandom(Boolean obool) {
-        Style st = withBold(this.bold);
+        Style st = ((Style)(Object)this).withBold(this.bold);
         st.obfuscated = obool;
         return st;
     }

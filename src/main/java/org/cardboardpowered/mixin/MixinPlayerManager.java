@@ -99,7 +99,6 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Override
     public ServerPlayerEntity moveToWorld(ServerPlayerEntity player, ServerWorld worldserver, boolean flag, Location location, boolean avoidSuffocation) {
-        BukkitFabricMod.LOGGER.info("Debug: PlayerManager#moveToWorld");
         boolean flag2 = false;
         BlockPos blockposition = player.getSpawnPointPosition();
         float f = player.getSpawnAngle();
@@ -157,7 +156,6 @@ public class MixinPlayerManager implements IMixinPlayerManager {
             PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) ((IMixinServerEntityPlayer)player).getBukkitEntity(), ((IMixinWorld)fromWorld).getWorldImpl());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
         }
-
         return player;
     }
 
@@ -171,10 +169,6 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         if (!player.networkHandler.connection.isOpen()) return;
 
         joinMessage = playerJoinEvent.getJoinMessage();
-
-        //BlockPos pos = player.getBlockPos();
-        //plr.setLoginPos(pos);
-        //player.getServerWorld().getChunk(pos);
 
         if (joinMessage != null && joinMessage.length() > 0)
             for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))

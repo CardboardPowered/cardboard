@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 
@@ -28,8 +30,22 @@ public class KnotHelper {
             logger.error("Your version of Fabric is outdated. At least 0.11 is required.");
             logger.error("Update at: https://fabricmc.net/use/");
             logger.error("=======================================");
+            return;
         }
         
+        if (ver < 0.12) {
+            try {
+                Class<?> l = Class.forName("net.fabricmc.loader.launch.knot.Knot");
+                Method m = l.getMethod("getLauncher");
+                Object lb = m.invoke(null, null);
+                Method m2 = lb.getClass().getMethod("propose", URL.class);
+                m2.invoke(lb, file.toURI().toURL());
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.info("ERROR: Got " + e.getClass().getSimpleName() + " while accessing Fabric Loader.");
+            }
+        }
+
         if (ver >= 0.12) {
             // Internals of Fabric changed during 0.12
             try {
@@ -40,19 +56,18 @@ public class KnotHelper {
                 Class<?> lbc = lb.getClass();
                 Method m = lbc.getMethod("addToClassPath", Path.class, String[].class);
                 String[] args = {"org.bukkit"};
-                m.invoke(lb, file.toPath(), getPackages());
+                if (!FabricLoader.getInstance().isDevelopmentEnvironment())
+                    m.invoke(lb, file.toPath(), getPackages());
+                BukkitFabricMod.LOGGER.info("Debug: Loading library " + file.getName());
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.info("ERROR: Got " + e.getClass().getSimpleName() + " while accessing Fabric Loader.");
             }
-        } else {
-            net.fabricmc.loader.launch.knot.Knot.getLauncher().propose(file.toURI().toURL());
         }
-
     }
 
     /**
-     * Why Fabric, why?
+     * Allowed packages.
      */
     private static String[] getPackages() {
         String[] args = 

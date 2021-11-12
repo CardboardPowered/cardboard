@@ -290,7 +290,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         // SPIGOT-5171: Triggered on join
         if (from.equals(to)) {
             this.internalTeleport(d0, d1, d2, f, f1, set, flag);
-            return; // CraftBukkit - Return event status
+            return;
         }
 
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), PlayerTeleportEvent.TeleportCause.UNKNOWN);
@@ -307,26 +307,17 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         }
 
         this.internalTeleport(d0, d1, d2, f, f1, set, flag);
-        return; // CraftBukkit - Return event status
+        return;
     }
 
 
     public void internalTeleport(double d0, double d1, double d2, float f, float f1, Set<PlayerPositionLookS2CPacket.Flag> set, boolean shouldDismount) {
-        //BukkitFabricMod.LOGGER.info("Debug: SPNH#teleport(Location) called: " + d0 + ", " + d1 + ", " + d2);
-        /*double d0 = location.getX();
-        double d1 = location.getY();
-        double d2 = location.getZ();
-        float f = location.getYaw();
-        float f1 = location.getPitch();*/
-        //Set<PlayerPositionLookS2CPacket.Flag> set = Collections.emptySet();
-
         if (Float.isNaN(f)) f = 0;
         if (Float.isNaN(f1)) f1 = 0;
         
         BlockPos pos = new BlockPos(d0, d1, d2);
         if (!player.getServerWorld().getBlockState(pos).isAir()) {
             BukkitFabricMod.LOGGER.info("Safe Teleport stopped teleport.");
-            //return;
         }
 
         this.justTeleported = true;
@@ -343,7 +334,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         this.teleportRequestTick = this.ticks;
         this.player.updatePositionAndAngles(d0, d1, d2, f, f1);
         this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(d0 - d3, d1 - d4, d2 - d5, f - f2, f1 - f3, set, this.requestedTeleportId, shouldDismount));
-        //this.player.refreshPositionAfterTeleport(d0, d1, d2);
     }
 
     @Inject(at = @At("HEAD"), method = "onClientCommand", cancellable = true)
@@ -432,7 +422,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                         this.teleportRequestTick = this.ticks;
                         this.requestTeleport(this.requestedTeleportPos.x, this.requestedTeleportPos.y, this.requestedTeleportPos.z, this.player.getYaw(), this.player.getPitch());
                     }
-                    this.allowedPlayerTicks = 20; // CraftBukkit
+                    this.allowedPlayerTicks = 20; // Bukkit
                 } else {
                     this.teleportRequestTick = this.ticks;
                     double d0 = packet.getX(this.player.getX()); // clamp
@@ -444,15 +434,14 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                     if (this.player.hasVehicle()) {
                         this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), f, f1);
                         this.player.getServerWorld().getChunkManager().updatePosition(this.player);
-                        this.allowedPlayerTicks = 20; // CraftBukkit
+                        this.allowedPlayerTicks = 20; // Bukkit
                     } else {
-                        // CraftBukkit - Make sure the move is valid but then reset it for plugins to modify
                         double prevX = player.getX();
                         double prevY = player.getY();
                         double prevZ = player.getZ();
                         float prevYaw = player.getYaw();
                         float prevPitch = player.getPitch();
-                        // CraftBukkit end
+
                         double d3 = this.player.getX();
                         double d4 = this.player.getY();
                         double d5 = this.player.getZ();
