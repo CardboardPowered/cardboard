@@ -26,11 +26,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.ChunkSection;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.material.MaterialData;
+import org.jetbrains.annotations.NotNull;
 
 import me.isaiah.common.ICommonMod;
 import me.isaiah.common.cmixin.IMixinMinecraftServer;
@@ -166,6 +168,12 @@ public final class ChunkDataImpl implements ChunkGenerator.ChunkData {
     @Override
     public int getMinHeight() {
         return minHeight;
+    }
+
+    @Override
+    public @NotNull Biome getBiome(int arg0, int arg1, int arg2) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

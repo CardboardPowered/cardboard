@@ -132,6 +132,7 @@ import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scheduler.BukkitWorker;
+import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.cardboardpowered.impl.CardboardBossBar;
@@ -1892,6 +1893,51 @@ public class CraftServer implements Server {
     public @Nullable Component shutdownMessage() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public @NotNull ItemStack craftItem(ItemStack[] craftingMatrix, World world, Player player) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Recipe getCraftingRecipe(@NotNull ItemStack[] arg0, @NotNull World arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull File getPluginsFolder() {
+        return new File("plugins");
+    }
+
+    @Override
+    public StructureManager getStructureManager() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getTicksPerWaterUndergroundCreatureSpawns() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getWaterUndergroundCreatureSpawnLimit() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isWhitelistEnforced() {
+        return server.isEnforceWhitelist();
+    }
+
+    @Override
+    public void setWhitelistEnforced(boolean bl) {
+        server.setEnforceWhitelist(bl);
     }
 
 }

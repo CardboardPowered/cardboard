@@ -13,9 +13,11 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import com.javazilla.bukkitfabric.BukkitLogger;
 
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -170,6 +172,11 @@ public class CardboardConsoleCommandSender implements ConsoleCommandSender, Comm
     @Override
     public org.bukkit.command.CommandSender.Spigot spigot() {
         return spigot;
+    }
+
+    @Override
+    public @NotNull Component name() {
+        return Component.text("Console");
     }
 
 }

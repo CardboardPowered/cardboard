@@ -268,4 +268,10 @@ public class CraftBlockState implements BlockState {
         if (!isPlaced()) throw new IllegalStateException("The state must be placed to call this method");
     }
 
+    @Override
+    public boolean isCollidable() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

@@ -17,10 +17,12 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.util.CraftLegacy;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class CraftItemFactory implements ItemFactory {
 
@@ -378,6 +380,12 @@ public final class CraftItemFactory implements ItemFactory {
 
     @Override
     public Component displayName(@NotNull ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable ItemStack getSpawnEgg(EntityType arg0) {
         // TODO Auto-generated method stub
         return null;
     }

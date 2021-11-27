@@ -61,4 +61,9 @@ public final class CardboardScore implements Score {
         return objective.getScoreboard();
     }
 
+    @Override
+    public void resetScore() throws IllegalStateException {
+        // TODO Auto-generated method stub
+    }
+
 }

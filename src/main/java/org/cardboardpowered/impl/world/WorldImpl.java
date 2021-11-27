@@ -42,6 +42,7 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Difficulty;
 import org.bukkit.Effect;
 import org.bukkit.FluidCollisionMode;
+import org.bukkit.GameEvent;
 import org.bukkit.GameRule;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
@@ -58,6 +59,7 @@ import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.CraftParticle;
@@ -79,6 +81,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.world.SpawnChangeEvent;
 import org.bukkit.event.world.TimeSkipEvent;
+import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemStack;
@@ -2192,6 +2195,200 @@ public class WorldImpl implements World {
     public @Nullable Location locateNearestBiome(@NotNull Location arg0, @NotNull Biome arg1, int arg2, int arg3) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public boolean generateTree(@NotNull Location arg0, @NotNull Random arg1, @NotNull TreeType arg2) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean generateTree(@NotNull Location arg0, @NotNull Random arg1, @NotNull TreeType arg2,
+            @Nullable Consumer<BlockState> arg3) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public @NotNull Biome getBiome(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull BlockData getBlockData(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull BlockData getBlockData(int arg0, int arg1, int arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull BlockState getBlockState(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull BlockState getBlockState(int arg0, int arg1, int arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Material getType(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Material getType(int arg0, int arg1, int arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setBiome(@NotNull Location arg0, @NotNull Biome arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setBlockData(@NotNull Location arg0, @NotNull BlockData arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setBlockData(int arg0, int arg1, int arg2, @NotNull BlockData arg3) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setType(@NotNull Location arg0, @NotNull Material arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setType(int arg0, int arg1, int arg2, @NotNull Material arg3) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T extends Entity> @NotNull T spawn(@NotNull Location arg0, @NotNull Class<T> arg1, boolean arg2,
+            @Nullable Consumer<T> arg3) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NotNull Entity spawnEntity(@NotNull Location arg0, @NotNull EntityType arg1, boolean arg2) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Location findLightningRod(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Location findLightningTarget(@NotNull Location arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable BiomeProvider getBiomeProvider() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getLogicalHeight() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getSendViewDistance() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public long getTicksPerWaterUndergroundCreatureSpawns() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getWaterUndergroundCreatureSpawnLimit() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean hasCeiling() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasSkyLight() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isBedWorks() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isRespawnAnchorWorks() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isUltraWarm() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void sendGameEvent(@Nullable Entity arg0, @NotNull GameEvent arg1, @NotNull Vector arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setSendViewDistance(int i) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setTicksPerWaterUndergroundCreatureSpawns(int i) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setWaterUndergroundCreatureSpawnLimit(int i) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

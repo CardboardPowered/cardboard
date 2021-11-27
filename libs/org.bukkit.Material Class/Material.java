@@ -93,8 +93,6 @@ import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.material.MaterialData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * An enum of all material IDs accepted by the official server and client
@@ -3962,15 +3960,15 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
         this(id, stack, durability, MaterialData.class);
     }
 
-    private Material(final int id, /*@NotNull*/ final Class<?> data) {
+    private Material(final int id, /*//NotNull*/ final Class<?> data) {
         this(id, 64, data);
     }
 
-    private Material(final int id, final int stack, /*@NotNull*/ final Class<?> data) {
+    private Material(final int id, final int stack, /*//NotNull*/ final Class<?> data) {
         this(id, stack, 0, data);
     }
 
-    private Material(final int id, final int stack, final int durability, /*@NotNull*/ final Class<?> data) {
+    private Material(final int id, final int stack, final int durability, /*//NotNull*/ final Class<?> data) {
         this.id = id;
         this.durability = (short) durability;
         this.maxStack = stack;
@@ -4011,7 +4009,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * locale when using a TranslatableComponent.
      * @return the translation key
      */
-    @NotNull
     public String getTranslationKey() {
         return Bukkit.getUnsafe().getTranslationKey(this);
     }
@@ -4022,7 +4019,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      *
      * @return the item rarity
      */
-    @NotNull
     public io.papermc.paper.inventory.ItemRarity getItemRarity() {
         return Bukkit.getUnsafe().getItemRarity(this);
     }
@@ -4035,8 +4031,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @throws IllegalArgumentException if {@link #isItem()} is false
      * @return an immutable multimap of attributes
      */
-    @NotNull
-    public com.google.common.collect.Multimap<org.bukkit.attribute.Attribute, org.bukkit.attribute.AttributeModifier> getItemAttributes(@NotNull EquipmentSlot equipmentSlot) {
+    //NotNull
+    public com.google.common.collect.Multimap<org.bukkit.attribute.Attribute, org.bukkit.attribute.AttributeModifier> getItemAttributes( EquipmentSlot equipmentSlot) {
         return Bukkit.getUnsafe().getItemAttributes(this, equipmentSlot);
     }
     // Paper end
@@ -4063,7 +4059,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
         return legacy;
     }
 
-    @NotNull
+    //NotNull
     @Override
     public NamespacedKey getKey() {
         Validate.isTrue(!legacy, "Cannot get key of Legacy Material");
@@ -4095,7 +4091,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      *
      * @return new data instance
      */
-    @NotNull
+    //NotNull
     public BlockData createBlockData() {
         return Bukkit.createBlockData(this);
     }
@@ -4107,8 +4103,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @param consumer consumer to run on new instance before returning
      * @return new data instance
      */
-    @NotNull
-    public BlockData createBlockData(@Nullable Consumer<BlockData> consumer) {
+    //NotNull
+    public BlockData createBlockData( Consumer<BlockData> consumer) {
         return Bukkit.createBlockData(this, consumer);
     }
 
@@ -4121,8 +4117,8 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @return new data instance
      * @throws IllegalArgumentException if the specified data is not valid
      */
-    @NotNull
-    public BlockData createBlockData(@Nullable String data) throws IllegalArgumentException {
+    //NotNull
+    public BlockData createBlockData( String data) throws IllegalArgumentException {
         return Bukkit.createBlockData(this, data);
     }
 
@@ -4131,7 +4127,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      *
      * @return MaterialData associated with this Material
      */
-    @NotNull
+    //NotNull
     public Class<? extends MaterialData> getData() {
         Validate.isTrue(legacy, "Cannot get data class of Modern Material");
         return ctor.getDeclaringClass();
@@ -4146,7 +4142,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @deprecated Magic value
      */
     @Deprecated
-    @NotNull
+    //NotNull
     public MaterialData getNewData(final byte raw) {
         Validate.isTrue(legacy, "Cannot get new data of Modern Material");
         try {
@@ -5181,8 +5177,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @param name Name of the material to get
      * @return Material if found, or null
      */
-    @Nullable
-    public static Material getMaterial(@NotNull final String name) {
+    public static Material getMaterial( final String name) {
         return getMaterial(name, false);
     }
 
@@ -5201,8 +5196,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @param legacyName whether this is a legacy name lookup
      * @return Material if found, or null
      */
-    @Nullable
-    public static Material getMaterial(@NotNull String name, boolean legacyName) {
+    public static Material getMaterial( String name, boolean legacyName) {
         if (legacyName) {
             if (!name.startsWith(LEGACY_PREFIX)) {
                 name = LEGACY_PREFIX + name;
@@ -5225,8 +5219,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * @param name Name of the material to get
      * @return Material if found, or null
      */
-    @Nullable
-    public static Material matchMaterial(@NotNull final String name) {
+    public static Material matchMaterial(final String name) {
         return matchMaterial(name, false);
     }
 
@@ -5242,8 +5235,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      * {@link #getMaterial(java.lang.String, boolean)}
      * @return Material if found, or null
      */
-    @Nullable
-    public static Material matchMaterial(@NotNull final String name, boolean legacyName) {
+    public static Material matchMaterial(final String name, boolean legacyName) {
         Validate.notNull(name, "Name cannot be null");
 
         String filtered = name;
@@ -9767,7 +9759,6 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      *
      * @return the item left behind when crafting, or null if nothing is.
      */
-    @Nullable
     public Material getCraftingRemainingItem() {
         Validate.isTrue(isItem(), "The Material is not an item!");
         switch (this) {
@@ -9792,7 +9783,7 @@ public enum Material implements Keyed, com.javazilla.bukkitfabric.interfaces.IMi
      *
      * @return the best EquipmentSlot for this Material
      */
-    @NotNull
+    //NotNull
     public EquipmentSlot getEquipmentSlot() {
         Validate.isTrue(isItem(), "The Material is not an item!");
         switch (this) {

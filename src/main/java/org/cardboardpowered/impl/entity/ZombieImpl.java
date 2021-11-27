@@ -175,7 +175,11 @@ public class ZombieImpl extends MonsterImpl implements Zombie {
     @Override
     public void stopDrowning() {
         // TODO Auto-generated method stub
-        
+    }
+
+    @Override
+    public boolean supportsBreakingDoors() {
+        return getHandle().canBreakDoors();
     }
 
 }

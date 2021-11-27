@@ -38,4 +38,15 @@ public class OcelotImpl extends AnimalsImpl implements Ocelot {
         return EntityType.OCELOT;
     }
 
+    @Override
+    public boolean isTrusting() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setTrusting(boolean bl) {
+        // TODO Auto-generated method stub
+    }
+
 }

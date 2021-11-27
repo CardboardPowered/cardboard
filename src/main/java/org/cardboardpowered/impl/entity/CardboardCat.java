@@ -57,4 +57,24 @@ public class CardboardCat extends TameableAnimalImpl implements Cat {
         getHandle().setCollarColor(net.minecraft.util.DyeColor.byId(color.getWoolData()));
     }
 
+    @Override
+    public boolean isHeadUp() {
+        return !getHandle().isHeadDown();
+    }
+
+    @Override
+    public boolean isLyingDown() {
+        return getHandle().isSitting();
+    }
+
+    @Override
+    public void setHeadUp(boolean bl) {
+        getHandle().setHeadDown(!bl);
+    }
+
+    @Override
+    public void setLyingDown(boolean bl) {
+        getHandle().setSitting(bl);
+    }
+
 }

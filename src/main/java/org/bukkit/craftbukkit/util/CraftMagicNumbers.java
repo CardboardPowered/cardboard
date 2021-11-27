@@ -13,12 +13,15 @@ import org.bukkit.Fluid;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.UnsafeValues;
+import org.bukkit.World;
 import org.bukkit.advancement.Advancement;
+import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -28,6 +31,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.cardboardpowered.adventure.CardboardAdventure;
 import org.cardboardpowered.impl.CardboardModdedBlock;
 import org.cardboardpowered.impl.CardboardModdedItem;
+import org.cardboardpowered.util.GameVersion;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Preconditions;
@@ -372,7 +376,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 
     @Override
     public int getDataVersion() {
-        return SharedConstants.getGameVersion().getWorldVersion();
+        return GameVersion.create().world_version;
     }
 
     @Override
@@ -578,5 +582,31 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         return CardboardAdventure.LEGACY_SECTION_UXRC;
     }
     // Paper end
+
+    @Override
+    public Entity deserializeEntity(byte[] bs, World world, boolean bl) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public @NotNull Attributable getDefaultEntityAttributes(@NotNull NamespacedKey arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    @Override
+    public boolean hasDefaultEntityAttributes(@NotNull NamespacedKey arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+    @Override
+    public boolean isCollidable(@NotNull Material arg0) {
+        // TODO Auto-generated method stub
+        return true;
+    }
+    @Override
+    public byte[] serializeEntity(Entity entity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

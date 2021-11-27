@@ -431,4 +431,10 @@ public class CardboardChunk implements Chunk {
         return null;
     }
 
+    @Override
+    public boolean isEntitiesLoaded() {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
 }

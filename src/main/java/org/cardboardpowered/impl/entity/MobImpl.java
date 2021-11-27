@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.CraftServer;
-import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
@@ -150,7 +149,16 @@ public class MobImpl extends LivingEntityImpl implements Mob {
         
     }
 
-    
-    // Paper end
+    @Override
+    public boolean isLeftHanded() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setLeftHanded(boolean bl) {
+        // TODO Auto-generated method stub
+    }
+
 
 }

@@ -19,6 +19,7 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -726,6 +727,27 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     @Override
     public void setVisualFire(boolean arg0) {
         nms.setOnFire(arg0);
+    }
+    
+    @Override
+    public boolean spawnAt(@NotNull Location arg0, @NotNull SpawnReason arg1) {
+
+        return this.spawnAt(arg0);
+    }
+
+    @Override
+    public Component teamDisplayName() {
+        return Component.text(this.getCustomName());
+    }
+
+    @Override
+    public Component name() {
+        return Component.text(getName());
+    }
+    
+    @Override
+    public @NotNull Set<Player> getTrackedPlayers() {
+        return null;
     }
 
 }

@@ -192,4 +192,16 @@ public class CardboardEnderdragon extends CardboardComplexEntity implements Ende
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public boolean isLeftHanded() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setLeftHanded(boolean bl) {
+        // TODO Auto-generated method stub
+        
+    }
 }

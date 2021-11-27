@@ -225,4 +225,10 @@ public class CardboardEnchantment extends Enchantment {
         return false;
     }
 
+    @Override
+    public @NotNull String translationKey() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

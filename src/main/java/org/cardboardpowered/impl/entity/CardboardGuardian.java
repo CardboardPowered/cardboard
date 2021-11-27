@@ -31,4 +31,16 @@ public class CardboardGuardian extends MonsterImpl implements Guardian {
         throw new UnsupportedOperationException("Not supported.");
     }
 
+    @Override
+    public boolean hasLaser() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean setLaser(boolean bl) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

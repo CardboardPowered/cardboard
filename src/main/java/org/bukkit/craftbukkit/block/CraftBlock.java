@@ -34,6 +34,7 @@ import com.destroystokyo.paper.block.BlockSoundGroup;
 import com.google.common.base.Preconditions;
 
 import org.cardboardpowered.impl.block.*;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -711,14 +712,31 @@ public class CraftBlock implements Block {
 
     @Override
     public float getBreakSpeed(@NotNull Player arg0) {
-        // TODO Auto-generated method stub
-        return 1;
+        return getNMS().calcBlockBreakingDelta( ((PlayerImpl)arg0).getHandle() , world, position);
     }
 
     @Override
-    public org.bukkit.util.@NotNull VoxelShape getCollisionShape() {
+    public org.bukkit.util.VoxelShape getCollisionShape() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public @NotNull String translationKey() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean breakNaturally(boolean bl) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isCollidable() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

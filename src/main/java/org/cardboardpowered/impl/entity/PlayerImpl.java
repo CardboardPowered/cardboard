@@ -1768,4 +1768,60 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         return nms.interactionManager.tryBreakBlock(new BlockPos(b.getX(), b.getY(), b.getZ()));
     }
 
+    @Override
+    public int getNoTickViewDistance() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getSendViewDistance() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1, @NotNull DyeColor arg2,
+            boolean arg3) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void sendSignChange(@NotNull Location arg0, @Nullable String[] arg1, @NotNull DyeColor arg2, boolean arg3)
+            throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setNoTickViewDistance(int i) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setResourcePack(@NotNull String arg0, @NotNull String arg1, boolean arg2) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setResourcePack(@NotNull String arg0, @NotNull String arg1, boolean arg2, @Nullable Component arg3) {
+        // TODO Auto-generated method stub
+        this.setResourcePack(arg0, arg1, arg2);
+    }
+
+    @Override
+    public void setSendViewDistance(int i) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void stopAllSounds() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

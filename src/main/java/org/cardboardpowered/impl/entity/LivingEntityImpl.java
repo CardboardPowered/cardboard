@@ -823,4 +823,33 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
         return nms.isClimbing();
     }
 
+    @Override
+    public @NotNull Set<Player> getTrackedPlayers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getBeeStingerCooldown() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getBeeStingersInBody() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setBeeStingerCooldown(int i) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setBeeStingersInBody(int i) {
+        // TODO Auto-generated method stub
+    }
+   
+
 }
