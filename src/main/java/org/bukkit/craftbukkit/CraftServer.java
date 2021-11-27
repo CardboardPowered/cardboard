@@ -768,15 +768,12 @@ public class CraftServer implements Server {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        MinecraftServer.convertLevel(worldSession); // Run conversion now
 
         boolean hardcore = creator.hardcore();
 
-        System.out.println("Bukkit#createWorld 1");
         RegistryOps<NbtElement> registryreadops = RegistryOps.of((DynamicOps<NbtElement>) NbtOps.INSTANCE, server.serverResourceManager.getResourceManager(), DynamicRegistryManager.create());
         LevelProperties worlddata = (LevelProperties) worldSession.readLevelProperties((DynamicOps<NbtElement>) registryreadops, method_29735(server.dataPackManager));
 
-        System.out.println("Bukkit#createWorld 2");
         LevelInfo worldSettings;
         // See MinecraftServer.a(String, String, long, WorldType, JsonElement)
         if (worlddata == null) {
@@ -803,7 +800,10 @@ public class CraftServer implements Server {
         if (worlddimension == null) {
             dimensionmanager = //(DimensionType) server.getRegistryManager().getDimensionTypes().getOrThrow(DimensionType.OVERWORLD_REGISTRY_KEY);
             server.getOverworld().getDimension();
-            chunkgenerator = GeneratorOptions.createOverworldGenerator(server.getRegistryManager().get(Registry.BIOME_KEY), server.getRegistryManager().get(Registry.CHUNK_GENERATOR_SETTINGS_KEY), (new Random()).nextLong());
+            GeneratorOptions.createOverworldGenerator(null, 0);
+            
+            me.isaiah.common.cmixin.IMixinMinecraftServer ic = (me.isaiah.common.cmixin.IMixinMinecraftServer) server;
+            chunkgenerator = ic.I_createOverworldGenerator();
         } else {
             dimensionmanager = worlddimension.getDimensionType();
             chunkgenerator = worlddimension.getChunkGenerator();

@@ -149,8 +149,6 @@ accessible	field	net/minecraft/entity/player/PlayerInventory	combinedInventory	L
 mutable	field	net/minecraft/entity/player/PlayerInventory	combinedInventory	Ljava/util/List;
 accessible	method	net/minecraft/entity/player/PlayerInventory	canStackAddMore	(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
 extendable	class	net/minecraft/entity/player/PlayerEntity$SleepFailureReason
-accessible	field	net/minecraft/entity/player/PlayerEntity$SleepFailureReason	text	Lnet/minecraft/text/Text;
-mutable	field	net/minecraft/entity/player/PlayerEntity$SleepFailureReason	text	Lnet/minecraft/text/Text;
 accessible	field	net/minecraft/entity/player/PlayerEntity	PLAYER_MODEL_PARTS	Lnet/minecraft/entity/data/TrackedData;
 mutable	field	net/minecraft/entity/player/PlayerEntity	PLAYER_MODEL_PARTS	Lnet/minecraft/entity/data/TrackedData;
 accessible	field	net/minecraft/entity/player/PlayerEntity	enderChestInventory	Lnet/minecraft/inventory/EnderChestInventory;
@@ -336,11 +334,8 @@ accessible	field	net/minecraft/world/level/LevelInfo	hardcore	Z
 mutable	field	net/minecraft/world/level/LevelInfo	hardcore	Z
 extendable	class	net/minecraft/world/LightType
 extendable	class	net/minecraft/world/SpawnHelper
-accessible	method	net/minecraft/world/SpawnHelper	getSpawnPos	(Lnet/minecraft/world/World;Lnet/minecraft/world/chunk/WorldChunk;)Lnet/minecraft/util/math/BlockPos;
 accessible	field	net/minecraft/world/PortalForcer	world	Lnet/minecraft/server/world/ServerWorld;
 mutable	field	net/minecraft/world/PortalForcer	world	Lnet/minecraft/server/world/ServerWorld;
-accessible	field	net/minecraft/server/world/ServerTickScheduler	world	Lnet/minecraft/server/world/ServerWorld;
-mutable	field	net/minecraft/server/world/ServerTickScheduler	world	Lnet/minecraft/server/world/ServerWorld;
 accessible	field	net/minecraft/block/AbstractBannerBlock	color	Lnet/minecraft/util/DyeColor;
 mutable	field	net/minecraft/block/AbstractBannerBlock	color	Lnet/minecraft/util/DyeColor;
 accessible	field	net/minecraft/block/AbstractSkullBlock	type	Lnet/minecraft/block/SkullBlock$SkullType;
@@ -437,8 +432,6 @@ accessible	field	net/minecraft/block/piston/PistonHandler	pistonDirection	Lnet/m
 mutable	field	net/minecraft/block/piston/PistonHandler	pistonDirection	Lnet/minecraft/util/math/Direction;
 accessible	field	net/minecraft/util/SignType	name	Ljava/lang/String;
 mutable	field	net/minecraft/util/SignType	name	Ljava/lang/String;
-accessible	field	net/minecraft/world/biome/source/BiomeArray	data	[Lnet/minecraft/world/biome/Biome;
-mutable	field	net/minecraft/world/biome/source/BiomeArray	data	[Lnet/minecraft/world/biome/Biome;
 extendable	class	net/minecraft/world/chunk/ChunkStatus$ChunkType
 accessible	field	net/minecraft/world/chunk/ChunkStatus	id	Ljava/lang/String;
 mutable	field	net/minecraft/world/chunk/ChunkStatus	id	Ljava/lang/String;
@@ -449,18 +442,7 @@ mutable	field	net/minecraft/world/chunk/ChunkStatus	previous	Lnet/minecraft/worl
 extendable	class	net/minecraft/world/chunk/WorldChunk$CreationType
 accessible	field	net/minecraft/world/chunk/WorldChunk	world	Lnet/minecraft/world/World;
 mutable	field	net/minecraft/world/chunk/WorldChunk	world	Lnet/minecraft/world/World;
-accessible	field	net/minecraft/world/chunk/WorldChunk	heightmaps	Ljava/util/Map;
-mutable	field	net/minecraft/world/chunk/WorldChunk	heightmaps	Ljava/util/Map;
-accessible	field	net/minecraft/world/chunk/WorldChunk	blockEntities	Ljava/util/Map;
-accessible	field	net/minecraft/world/chunk/WorldChunk	pos	Lnet/minecraft/util/math/ChunkPos;
-mutable	field	net/minecraft/world/chunk/WorldChunk	pos	Lnet/minecraft/util/math/ChunkPos;
-accessible	field	net/minecraft/world/chunk/ChunkSection	PALETTE	Lnet/minecraft/world/chunk/Palette;
-mutable	field	net/minecraft/world/chunk/ChunkSection	PALETTE	Lnet/minecraft/world/chunk/Palette;
-accessible	field	net/minecraft/world/chunk/ChunkSection	container	Lnet/minecraft/world/chunk/PalettedContainer;
-mutable	field	net/minecraft/world/chunk/ChunkSection	container	Lnet/minecraft/world/chunk/PalettedContainer;
 accessible	class	net/minecraft/world/chunk/PaletteResizeListener
-extendable	method	net/minecraft/world/gen/ChunkRandom	next	(I)I
-accessible	method	net/minecraft/world/gen/ChunkRandom	next	(I)I
 accessible	field	net/minecraft/world/ChunkUpdateState	all	Lit/unimi/dsi/fastutil/longs/LongSet;
 mutable	field	net/minecraft/world/ChunkUpdateState	all	Lit/unimi/dsi/fastutil/longs/LongSet;
 extendable	class	net/minecraft/block/piston/PistonBehavior
@@ -547,7 +529,6 @@ accessible	field	net/minecraft/text/Style	obfuscated	Ljava/lang/Boolean;
 mutable	field	net/minecraft/text/Style	obfuscated	Ljava/lang/Boolean;
 extendable	class	net/minecraft/network/NetworkSide
 accessible	class	net/minecraft/server/MinecraftServer$1
-extendable	class	net/minecraft/server/MinecraftServer$2
 accessible	field	net/minecraft/server/MinecraftServer	worldGenerationProgressListenerFactory	Lnet/minecraft/server/WorldGenerationProgressListenerFactory;
 mutable	field	net/minecraft/server/MinecraftServer	worldGenerationProgressListenerFactory	Lnet/minecraft/server/WorldGenerationProgressListenerFactory;
 accessible	field	net/minecraft/server/MinecraftServer	metadata	Lnet/minecraft/server/ServerMetadata;
@@ -667,3 +648,4 @@ accessible field net/minecraft/entity/player/PlayerEntity inventory Lnet/minecra
 accessible field net/minecraft/entity/Entity yaw F
 accessible field net/minecraft/entity/Entity pitch F
 accessible field net/minecraft/entity/player/PlayerEntity abilities Lnet/minecraft/entity/player/PlayerAbilities;
+accessible field net/minecraft/world/ChunkSerializer CODEC Lcom/mojang/serialization/Codec;

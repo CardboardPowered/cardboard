@@ -30,10 +30,10 @@ public class CardboardChunkSnapshot implements ChunkSnapshot {
     private final boolean[] empty;
     private final Heightmap hmap;
     private final long captureFulltime;
-    private final BiomeAccess.Storage biome;
+    private final PalettedContainer<net.minecraft.world.biome.Biome>[] biome;
 
     public CardboardChunkSnapshot(int x, int z, String wname, long wtime, PalettedContainer<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights,
-            byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeAccess.Storage biome) {
+            byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, PalettedContainer<net.minecraft.world.biome.Biome>[] biome2) {
         this.x = x;
         this.z = z;
         this.worldname = wname;
@@ -43,7 +43,7 @@ public class CardboardChunkSnapshot implements ChunkSnapshot {
         this.emitlight = sectionEmitLights;
         this.empty = sectionEmpty;
         this.hmap = hmap;
-        this.biome = biome;
+        this.biome = biome2;
     }
 
     @Override
@@ -125,7 +125,8 @@ public class CardboardChunkSnapshot implements ChunkSnapshot {
             reg = (Registry<net.minecraft.world.biome.Biome>) f.get(biome);
         } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {e.printStackTrace();}
 
-        return CraftBlock.biomeBaseToBiome(reg, biome.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2));
+        PalettedContainer<net.minecraft.world.biome.Biome> biome = this.biome[getSectionIndex(y)];
+        return CraftBlock.biomeBaseToBiome(reg, biome.get(x >> 2, y >> 2, z >> 2));
     }
 
 
@@ -133,12 +134,17 @@ public class CardboardChunkSnapshot implements ChunkSnapshot {
     public final double getRawBiomeTemperature(int x, int z) {
         return getRawBiomeTemperature(x, 0, z);
     }
+    
+    private int getSectionIndex(int y) {
+        return (y - 0) >> 4;
+    }
 
     @Override
     public final double getRawBiomeTemperature(int x, int y, int z) {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         CardboardChunk.validateChunkCoordinates(x, y, z);
-        return biome.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).getTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
+        PalettedContainer<net.minecraft.world.biome.Biome> biome = this.biome[getSectionIndex(y)];
+        return biome.get(x >> 2, y >> 2, z >> 2).getTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
     }
 
     @Override

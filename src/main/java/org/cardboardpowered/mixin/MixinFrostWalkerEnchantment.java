@@ -43,6 +43,8 @@ import net.minecraft.world.World;
  */
 @Mixin(value = FrostWalkerEnchantment.class, priority = 999)
 public class MixinFrostWalkerEnchantment {
+    
+    // TODO 1.18!!!
 
     /**
      * @reason BlockFormEvent - Add call to {@link BukkitEventFactory#handleBlockFormEvent}
@@ -66,12 +68,12 @@ public class MixinFrostWalkerEnchantment {
                     mutablePos.set(blockpos1.getX(), blockpos1.getY() + 1, blockpos1.getZ());
                     BlockState state1 = world.getBlockState(mutablePos);
 
-                    if (state1.isAir()) {
+                    /*if (state1.isAir()) {
                         BlockState state2 = world.getBlockState(blockpos1);
                         if (state2.getMaterial() == Material.WATER && (Integer) state2.get(FluidBlock.LEVEL) == 0 && state.canPlaceAt(world, blockpos1) && world.canPlace(state, blockpos1, ShapeContext.absent()))
                             if (BukkitEventFactory.handleBlockFormEvent(world, blockpos1, state, entity))
                                 world.getBlockTickScheduler().schedule(blockpos1, Blocks.FROSTED_ICE, MathHelper.nextInt(entity.getRandom(), 60, 120));
-                    }
+                    }*/
                 }
             }
         }

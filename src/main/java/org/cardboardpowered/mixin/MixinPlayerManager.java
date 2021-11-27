@@ -102,7 +102,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         boolean flag2 = false;
         BlockPos blockposition = player.getSpawnPointPosition();
         float f = player.getSpawnAngle();
-        boolean flag1 = player.isSpawnPointSet();
+        boolean flag1 = player.isSpawnForced();
         if (location == null) {
             boolean isBedSpawn = false;
             ServerWorld worldserver1 = CraftServer.server.getWorld(player.getSpawnPointDimension());
@@ -149,7 +149,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
             location = respawnEvent.getRespawnLocation();
         } else location.setWorld(((IMixinWorld)worldserver).getWorldImpl());
         ServerWorld worldserver1 = ((WorldImpl) location.getWorld()).getHandle();
-        ServerWorld fromWorld = player.getServerWorld();
+        ServerWorld fromWorld = player.getWorld();
         player.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
 
         if (fromWorld != location.getWorld()) {

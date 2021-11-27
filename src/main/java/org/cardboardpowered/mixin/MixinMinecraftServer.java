@@ -349,7 +349,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         worldborder.load(worldProperties.getWorldBorder());
         if (!worldProperties.isInitialized()) {
             try {
-                setupSpawn(worldserver, worldProperties, generatorsettings.hasBonusChest(), flag, true);
+                setupSpawn(worldserver, worldProperties, generatorsettings.hasBonusChest(), flag);
                 worldProperties.setInitialized(true);
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.create(throwable, "Exception initializing level");
@@ -360,7 +360,17 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         }
     }
 
-    private static void setupSpawn(ServerWorld worldserver, ServerWorldProperties worldProperties, boolean flag, boolean flag1, boolean flag2) {
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerChunkManager;getChunkGenerator()Lnet/minecraft/world/gen/chunk/ChunkGenerator;"), method = "setupSpawn")
+    private static void setupSpawn_BukkitGenerators(ServerWorld world, ServerWorldProperties swp, boolean bonusChest, boolean debugWorld, CallbackInfo ci) {
+        // TODO Bukkit Generators
+    }
+
+    @Shadow
+    private static void setupSpawn(ServerWorld world, ServerWorldProperties swp, boolean bonusChest, boolean debugWorld) {
+    }
+
+    // OLD
+    /*private static void setupSpawn(ServerWorld worldserver, ServerWorldProperties worldProperties, boolean flag, boolean flag1, boolean flag2) {
         ChunkGenerator chunkgenerator = worldserver.getChunkManager().getChunkGenerator();
 
         if (!flag2) {
@@ -415,6 +425,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
                 j += l;
             }
         }
-    }
+    }*/
 
 }

@@ -449,7 +449,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public float getFlySpeed() {
-        return nms.flyingSpeed;
+        return nms.airStrafingSpeed;
     }
 
     @Override
@@ -905,7 +905,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void setFlySpeed(float arg0) throws IllegalArgumentException {
-        nms.flyingSpeed = arg0;
+        nms.airStrafingSpeed = arg0;
     }
 
     @Override
@@ -1343,7 +1343,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         BlockPos bed = getHandle().getSpawnPointPosition();
 
         if (world != null && bed != null) {
-            Optional<Vec3d> spawnLoc = PlayerEntity.findRespawnPosition((ServerWorld) ((WorldImpl) world).getHandle(), bed, getHandle().getSpawnAngle(), getHandle().isSpawnPointSet(), true);
+            Optional<Vec3d> spawnLoc = PlayerEntity.findRespawnPosition((ServerWorld) ((WorldImpl) world).getHandle(), bed, getHandle().getSpawnAngle(), getHandle().isSpawnForced(), true);
             if (spawnLoc.isPresent()) {
                 Vec3d vec = spawnLoc.get();
                 return new Location(world, vec.x, vec.y, vec.z);

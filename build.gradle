@@ -32,13 +32,12 @@ configurations {
 }
 
 
-minecraft {
-    accessWidener = file("src/main/resources/bukkitfabric.accesswidener")
+loom {
+    accessWidenerPath = file("src/main/resources/bukkitfabric.accesswidener")
 }
 
 repositories {
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://repo.codemc.io/repository/maven-releases/' }
     mavenCentral()
@@ -50,9 +49,11 @@ configurations.all {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    minecraft("com.mojang:minecraft:${project.minecraft_version}") {
+    	exclude module: 'commons-logging'
+    }
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
     // modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
     
     // Make a collection of all api modules we wish to use
@@ -62,22 +63,17 @@ dependencies {
     	"fabric-screen-handler-api-v1"
     ]
 
-    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.17", "1.17", null)
+    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.18", "1.18", null)
     ic.setChanging(true) // Make sure we get the latest version of iCommon
 
-    include(modImplementation(ic))
-    //include( project(":cardboard-block-impl") )
-    //modImplementation(project(":cardboard-block-impl"))
-    //metest project(":cardboard-block-impl")
 
-    // Add each module as a dependency
-    apiModules.forEach {
-    	//include(modImplementation(fabricApi.module(it, "${project.fabric_version}")))
-    	modImplementation(fabricApi.module(it, "${project.fabric_version}"))
-    }
+    include(modImplementation(ic))
+
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
 
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
-    extraLibs group: "org.jetbrains", name: "annotations", version: "20.1.0"
+    //extraLibs group: "org.jetbrains", name: "annotations", version: "20.1.0"
     extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
 
     extraLibs("org.yaml:snakeyaml:1.27")
@@ -85,13 +81,13 @@ dependencies {
     // 
     compileOnly fileTree(dir: 'libs', include: "${project.paper_jar}")
     compileOnly fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
-    compileOnly fileTree(dir: 'libs', include: 'slf4j.jar')
+    //compileOnly fileTree(dir: 'libs', include: 'slf4j.jar')
     compileOnly group: "org.jetbrains", name: "annotations", version: "18.0.0"
     compileOnly group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
 
-    compileOnly 'net.fabricmc:tiny-mappings-parser:0.2.2.14'
-	compileOnly 'net.fabricmc:tiny-remapper:0.4.2'
-	compileOnly 'net.fabricmc:access-widener:1.0.0'
+    //compileOnly 'net.fabricmc:tiny-mappings-parser:0.2.2.14'
+	//compileOnly 'net.fabricmc:tiny-remapper:0.4.2'
+	//compileOnly 'net.fabricmc:access-widener:1.0.0'
 
     // NMS Remapping
     // srglib-0.1.2.jar
@@ -109,11 +105,26 @@ dependencies {
     removeLibs group: 'org.apache.commons', name: 'commons-collections4', version: '4.2'
     removeLibs group: 'commons-collections', name: 'commons-collections', version: '3.2.2'
     removeLibs group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    removeLibs group: 'commons-logging', name: 'commons-logging', version: '1.2'
     removeLibs group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
     removeLibs group: 'junit', name: 'junit', version: '4.10'
 
-    configurations.api.extendsFrom(configurations.extraLibs)
-    //project.compileJava.dependsOn(configurations.metest)
+    configurations.api.extendsFrom( (configurations.extraLibs) )
+
+    annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:0.4.1'
+}
+
+configurations.implementation {
+    exclude group: 'commons-logging', module: 'commons-logging'
+}
+
+configure([tasks.compileJava]) {
+    sourceCompatibility = 16 // for the IDE support
+    options.release = 16
+
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 processResources {
@@ -135,7 +146,7 @@ processResources {
 tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 
 jar {
-	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	duplicatesStrategy = DuplicatesStrategy.WARN
     from "LICENSE"
     from {
         (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }

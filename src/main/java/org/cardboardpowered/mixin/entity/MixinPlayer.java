@@ -138,10 +138,8 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(at = @At("HEAD"), method = "setClientSettings")
     public void setClientSettings(ClientSettingsC2SPacket packet, CallbackInfo ci) {
-        if (((ServerPlayerEntity) (Object) this).getMainArm() != packet.getMainArm()) {
-            PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent((Player) getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
-            CraftServer.INSTANCE.getPluginManager().callEvent(event);
-        }
+        PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent((Player) getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
+        CraftServer.INSTANCE.getPluginManager().callEvent(event);
     }
 
     @Shadow

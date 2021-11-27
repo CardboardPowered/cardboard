@@ -185,19 +185,11 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
         }
     }
 
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;filterText(Ljava/lang/String;Ljava/util/function/Consumer;)V"), method = "onGameMessage")
+    // 1.17 - onGameMessage, 1.18 - onChatMessage
+    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;filterText(Ljava/lang/String;Ljava/util/function/Consumer;)V"), method = "onChatMessage")
     public void onGameMessage_patch(ServerPlayNetworkHandler a, String s, Consumer con) {
         handleMessage(TextStream.Message.permitted(s));
     }
-
-    /**
-     * @reason Fixes AsyncChatEvent
-     * @author Bukkit4Fabric
-     */
-   // @Overwrite
-   // public void filterText(String text, Consumer<TextStream.Message> consumer) {
-   //     consumer.accept(text); // Skip filtering so we can stay off the primary server thread.
-   // }
 
 
 }

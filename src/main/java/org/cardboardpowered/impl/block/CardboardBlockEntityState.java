@@ -1,8 +1,10 @@
 package org.cardboardpowered.impl.block;
 
 import org.cardboardpowered.impl.world.WorldImpl;
-import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
+
 import com.google.common.base.Preconditions;
+
+import me.isaiah.common.cmixin.IMixinBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
@@ -42,14 +44,16 @@ public class CardboardBlockEntityState<T extends BlockEntity> extends CraftBlock
     private T createSnapshot(T tileEntity) {
         if (tileEntity == null) return null;
 
-        NbtCompound nbtTagCompound = tileEntity.writeNbt(new NbtCompound());
+        IMixinBlockEntity ic = (IMixinBlockEntity)tileEntity;
+        NbtCompound nbtTagCompound = ic.I_createNbtWithIdentifyingData();
         T snapshot = (T) BlockEntity.createFromNbt(getPosition(), data, nbtTagCompound);
         return snapshot;
     }
 
     private void copyData(T from, T to) {
         BlockPos pos = to.getPos();
-        NbtCompound nbtTagCompound = from.writeNbt(new NbtCompound());
+        IMixinBlockEntity ic = (IMixinBlockEntity)tileEntity;
+        NbtCompound nbtTagCompound = ic.I_createNbtWithIdentifyingData();
         to.setCachedState(data);
         to.readNbt(nbtTagCompound);
         to.pos = (pos);
@@ -70,7 +74,8 @@ public class CardboardBlockEntityState<T extends BlockEntity> extends CraftBlock
 
     public NbtCompound getSnapshotNBT() {
         applyTo(snapshot);
-        return snapshot.writeNbt(new NbtCompound());
+        IMixinBlockEntity ic = (IMixinBlockEntity)snapshot;
+        return ic.I_createNbtWithIdentifyingData();
     }
 
     public void load(T blockEntity) {
@@ -100,7 +105,7 @@ public class CardboardBlockEntityState<T extends BlockEntity> extends CraftBlock
 
     @Override
     public PersistentDataContainer getPersistentDataContainer() {
-        return ((IMixinBlockEntity)(Object)getSnapshot()).getPersistentDataContainer();
+        return ((com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity)(Object)getSnapshot()).getPersistentDataContainer();
     }
 
 }

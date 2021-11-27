@@ -311,7 +311,7 @@ public class WorldImpl implements World {
     public boolean generateTree(Location loc, TreeType type) {
         BlockPos pos = new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
-        ConfiguredFeature gen;
+        /*ConfiguredFeature gen;
         switch (type) {
             case BIG_TREE:
                 gen = ConfiguredFeatures.FANCY_OAK;
@@ -371,7 +371,8 @@ public class WorldImpl implements World {
             default:
                 gen = ConfiguredFeatures.OAK;
                 break;
-        }
+        }*/
+        // TODO 1.18
 
         return false; // TODO 1.17ify: return gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
     }
@@ -381,7 +382,7 @@ public class WorldImpl implements World {
     public boolean generateTree(Location loc, TreeType arg1, BlockChangeDelegate arg2) {
         BlockPos pos = new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         ConfiguredFeature gen = null;
-        switch (arg1) {
+        /*switch (arg1) {
             case ACACIA:
                 gen = ConfiguredFeatures.ACACIA;
                 break;
@@ -438,7 +439,8 @@ public class WorldImpl implements World {
                 gen = ConfiguredFeatures.OAK;
                 break;
             
-        }
+        }*/
+        // TODO 1.18
         // TODO 1.17ify gen.feature.generate(nms, nms.getChunkManager().getChunkGenerator(), rand, pos, gen.config);
         return false;
     }
@@ -1270,7 +1272,7 @@ public class WorldImpl implements World {
             PlayerImpl cp = (PlayerImpl) p;
             if (cp.getHandle().networkHandler == null) continue;
 
-            cp.getHandle().networkHandler.sendPacket(new WorldTimeUpdateS2CPacket(cp.getHandle().world.getTime(), cp.getHandle().getServerWorld().getTime(), cp.getHandle().world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));
+            cp.getHandle().networkHandler.sendPacket(new WorldTimeUpdateS2CPacket(cp.getHandle().world.getTime(), cp.getHandle().getWorld().getTime(), cp.getHandle().world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));
         }
     }
 

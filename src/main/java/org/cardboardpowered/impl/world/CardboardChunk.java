@@ -42,6 +42,7 @@ import org.bukkit.plugin.Plugin;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.mojang.serialization.Codec;
 
 import me.isaiah.common.GameVersion;
 import me.isaiah.common.cmixin.IMixinHeightmap;
@@ -49,6 +50,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -56,13 +58,15 @@ import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeAccess.Storage;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.PalettedContainer;
 import net.minecraft.world.chunk.light.LightingProvider;
-import net.minecraft.world.gen.ChunkRandom;
+// TODO 1.18: import net.minecraft.world.gen.ChunkRandom;
 
 public class CardboardChunk implements Chunk {
 
@@ -70,8 +74,15 @@ public class CardboardChunk implements Chunk {
     private final ServerWorld worldServer;
     private final int x;
     private final int z;
-    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getContainer(); // TODO 1.18: ChunkSection contructor changed
+    private static PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs;// = new ChunkSection(0).getContainer(); // TODO 1.18: ChunkSection contructor changed
     private static final byte[] emptyLight = new byte[2048];
+    
+    public static void setEmptyBlockIds(net.minecraft.world.World world) {
+        if (null == emptyBlockIDs) {
+            me.isaiah.common.cmixin.IMixinWorld ic = (me.isaiah.common.cmixin.IMixinWorld) world;
+            emptyBlockIDs = ic.I_emptyBlockIDs();
+        }
+    }
 
     public CardboardChunk(net.minecraft.world.chunk.WorldChunk chunk) {
         this.weakChunk = new WeakReference<>(chunk);
@@ -132,22 +143,6 @@ public class CardboardChunk implements Chunk {
             }
         }
         return list.toArray(new Entity[list.size()]);
-
-        /*
-        net.minecraft.world.chunk.WorldChunk chunk = getHandle();
-
-        for (int i = 0; i < 16; i++)
-            count += ((IMixinWorldChunk)(Object)chunk).getEntitySections()[i].size();
-
-        Entity[] entities = new Entity[count];
-
-        for (int i = 0; i < 16; i++) {
-            for (Object obj : ((IMixinWorldChunk)(Object)chunk).getEntitySections()[i].toArray()) {
-                if (!(obj instanceof net.minecraft.entity.Entity)) continue;
-                entities[index++] = ((IMixinEntity)(Object)((net.minecraft.entity.Entity) obj)).getBukkitEntity();
-            }
-        }
-        return entities;*/
     }
 
     @Override
@@ -191,7 +186,7 @@ public class CardboardChunk implements Chunk {
 
     @Override
     public boolean isSlimeChunk() {
-        return ChunkRandom.getSlimeRandom(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
+        return false; // TODO 1.18 ChunkRandom.getSlimeRandom(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
     }
 
     @Override
@@ -240,7 +235,7 @@ public class CardboardChunk implements Chunk {
 
         Predicate<net.minecraft.block.BlockState> nms = Predicates.equalTo(((CraftBlockData) block).getState());
         for (ChunkSection section : getHandle().getSectionArray())
-            if (section != null && section.getContainer().hasAny(nms)) return true;
+            if (section != null && section.getBlockStateContainer().hasAny(nms)) return true;
         return false;
     }
 
@@ -249,7 +244,7 @@ public class CardboardChunk implements Chunk {
         return getChunkSnapshot(true, false, false);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    /*@SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public ChunkSnapshot getChunkSnapshot(boolean includeMaxBlockY, boolean includeBiome, boolean includeBiomeTempRain) {
         net.minecraft.world.chunk.WorldChunk chunk = getHandle();
@@ -262,6 +257,7 @@ public class CardboardChunk implements Chunk {
 
         for (int i = 0; i < cs.length; i++) {
             if (cs[i] == null) { // Section empty?
+                setEmptyBlockIds(chunk.world);
                 sectionBlockIDs[i] = emptyBlockIDs;
                 sectionSkyLights[i] = emptyLight;
                 sectionEmitLights[i] = emptyLight;
@@ -314,16 +310,70 @@ public class CardboardChunk implements Chunk {
 
         World world = getWorld();
         return new CardboardChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
+    }*/
+    
+    @Override
+    public ChunkSnapshot getChunkSnapshot(boolean includeMaxBlockY, boolean includeBiome, boolean includeBiomeTempRain) {
+        net.minecraft.world.chunk.WorldChunk chunk = getHandle();
+
+        ChunkSection[] cs = chunk.getSectionArray();
+        PalettedContainer[] sectionBlockIDs = new PalettedContainer[cs.length];
+        byte[][] sectionSkyLights = new byte[cs.length][];
+        byte[][] sectionEmitLights = new byte[cs.length][];
+        boolean[] sectionEmpty = new boolean[cs.length];
+        PalettedContainer<Biome>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[cs.length] : null;
+
+        Registry<Biome> iregistry = worldServer.getRegistryManager().get(Registry.BIOME_KEY);
+        Codec<PalettedContainer<Biome>> biomeCodec = PalettedContainer.createCodec(iregistry, iregistry.method_39673(), PalettedContainer.PaletteProvider.BLOCK_STATE, iregistry.getOrThrow(BiomeKeys.PLAINS));
+
+        for (int i = 0; i < cs.length; i++) {
+            NbtCompound data = new NbtCompound();
+
+            data.put("block_states", net.minecraft.world.ChunkSerializer.CODEC.encodeStart(NbtOps.INSTANCE, cs[i].getBlockStateContainer()).get().left().get());
+            sectionBlockIDs[i] = net.minecraft.world.ChunkSerializer.CODEC.parse(NbtOps.INSTANCE, data.getCompound("block_states")).get().left().get();
+
+            LightingProvider lightengine = chunk.getWorld().getLightingProvider();
+            ChunkNibbleArray skyLightArray = lightengine.get(LightType.SKY).getLightSection(ChunkSectionPos.from(x, i, z));
+            if (skyLightArray == null) {
+                sectionSkyLights[i] = emptyLight;
+            } else {
+                sectionSkyLights[i] = new byte[2048];
+                System.arraycopy(skyLightArray.asByteArray(), 0, sectionSkyLights[i], 0, 2048);
+            }
+            ChunkNibbleArray emitLightArray = lightengine.get(LightType.BLOCK).getLightSection(ChunkSectionPos.from(x, i, z));
+            if (emitLightArray == null) {
+                sectionEmitLights[i] = emptyLight;
+            } else {
+                sectionEmitLights[i] = new byte[2048];
+                System.arraycopy(emitLightArray.asByteArray(), 0, sectionEmitLights[i], 0, 2048);
+            }
+
+            if (biome != null) {
+                data.put("biomes", biomeCodec.encodeStart(NbtOps.INSTANCE, cs[i].getBiomeContainer()).get().left().get());
+                biome[i] = biomeCodec.parse(NbtOps.INSTANCE, data.getCompound("biomes")).get().left().get();
+            }
+        }
+
+        Heightmap hmap = null;
+
+        if (includeMaxBlockY) {
+            hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
+            IMixinHeightmap map = (IMixinHeightmap) hmap;
+            //map.I_setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
+        }
+
+        World world = getWorld();
+        return new CardboardChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, WorldImpl world, boolean includeBiome, boolean includeBiomeTempRain) {
-        BiomeAccess.Storage biome = null;
+        /*BiomeAccess.Storage biome = null;
 
         if (includeBiome || includeBiomeTempRain) {
             biome = (Storage) ((me.isaiah.common.cmixin.IMixinWorld)world.getHandle()).I_newBiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY),
                     world.getHandle(), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
-        }
+        }*/
 
         // Fill with empty data
         int hSection = world.getMaxHeight() >> 4;
@@ -331,12 +381,19 @@ public class CardboardChunk implements Chunk {
         byte[][] skyLight = new byte[hSection][];
         byte[][] emitLight = new byte[hSection][];
         boolean[] empty = new boolean[hSection];
+        PalettedContainer<Biome>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[hSection] : null;
 
+        setEmptyBlockIds(world.getHandle());
         for (int i = 0; i < hSection; i++) {
             blockIDs[i] = emptyBlockIDs;
             skyLight[i] = emptyLight;
             emitLight[i] = emptyLight;
             empty[i] = true;
+
+            if (biome != null) {
+                Registry<Biome> iregistry = world.getHandle().getRegistryManager().get(Registry.BIOME_KEY);
+                biome[i] = new PalettedContainer<>(iregistry, iregistry.getOrThrow(net.minecraft.world.biome.BiomeKeys.PLAINS), PalettedContainer.PaletteProvider.BLOCK_STATE);
+            }
         }
 
         return new CardboardChunkSnapshot(x, z, world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(null, Heightmap.Type.MOTION_BLOCKING), biome);

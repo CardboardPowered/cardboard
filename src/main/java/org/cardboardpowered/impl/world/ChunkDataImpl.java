@@ -32,6 +32,9 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.material.MaterialData;
 
+import me.isaiah.common.ICommonMod;
+import me.isaiah.common.cmixin.IMixinMinecraftServer;
+
 @SuppressWarnings("deprecation")
 public final class ChunkDataImpl implements ChunkGenerator.ChunkData {
 
@@ -144,7 +147,9 @@ public final class ChunkDataImpl implements ChunkGenerator.ChunkData {
 
     private ChunkSection getChunkSection(int y, boolean create) {
         ChunkSection section = sections[y >> 4];
-        if (create && section == null) sections[y >> 4] = section = new ChunkSection(y >> 4 << 4);
+        IMixinMinecraftServer mc = (IMixinMinecraftServer) ICommonMod.getIServer().getMinecraft();
+        if (create && section == null) sections[y >> 4] = section = mc.newChunkSection(y >> 4 << 4);
+        //if (create && section == null) sections[y >> 4] = section = new ChunkSection(y >> 4 << 4);
         return section;
     }
 

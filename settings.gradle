@@ -8,5 +8,3 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
-include 'cardboard-block-impl'

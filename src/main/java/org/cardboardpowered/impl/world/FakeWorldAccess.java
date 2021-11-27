@@ -27,7 +27,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.world.DummyClientTickScheduler;
+import net.minecraft.client.world.BiomeColorCache;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -43,7 +43,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.TickScheduler;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldProperties;
 import net.minecraft.world.biome.Biome;
@@ -55,6 +54,7 @@ import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.tick.QueryableTickScheduler;
 
 public class FakeWorldAccess implements WorldAccess {
 
@@ -64,13 +64,13 @@ public class FakeWorldAccess implements WorldAccess {
     }
 
     @Override
-    public TickScheduler<Block> getBlockTickScheduler() {
-        return DummyClientTickScheduler.get();
+    public QueryableTickScheduler<Block> getBlockTickScheduler() {
+        return null;//TODO
     }
 
     @Override
-    public TickScheduler<Fluid> getFluidTickScheduler() {
-        return DummyClientTickScheduler.get();
+    public QueryableTickScheduler<Fluid> getFluidTickScheduler() {
+        return null;//TODO
     }
 
     @Override
@@ -241,6 +241,12 @@ public class FakeWorldAccess implements WorldAccess {
     public MinecraftServer getServer() {
         // TODO Auto-generated method stub
         return CraftServer.server;
+    }
+
+    // TODO
+    public long getTickOrder() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }
