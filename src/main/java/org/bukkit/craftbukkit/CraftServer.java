@@ -1337,7 +1337,7 @@ public class CraftServer implements Server {
 
     @Override
     public File getWorldContainer() {
-        return ((IMixinMinecraftServer)this.getServer()).getSessionBF().getWorldDirectory(net.minecraft.world.World.OVERWORLD).getParentFile();
+        return ((IMixinMinecraftServer)this.getServer()).getSessionBF().getWorldDirectory(net.minecraft.world.World.OVERWORLD).getParent().toFile();
     }
 
     @Override

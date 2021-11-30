@@ -54,7 +54,7 @@ public class SpigotConfig {
         config.options().copyDefaults( true );
 
         commands = new HashMap<String, Command>();
-        commands.put("spigot", new SpigotCommand("spigot"));
+        //commands.put("spigot", new SpigotCommand("spigot"));
         
         PaperMetrics.startMetrics_Cardboard();
 

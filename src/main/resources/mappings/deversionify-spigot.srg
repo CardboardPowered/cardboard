@@ -25,6 +25,14 @@ org/bukkit/craftbukkit/entity/CraftPlayer org/cardboardpowered/impl/entity/Playe
 org/bukkit/craftbukkit/CraftChunk org/cardboardpowered/impl/world/CardboardChunk
 org/bukkit/craftbukkit/CraftChunkSnapshot org/cardboardpowered/impl/world/CardboardChunkSnapshot
 
+#
+# Spigot remapped libraries
+# Example: org/bukkit/craftbukkit/libs/ -> /
+#
+org/bukkit/craftbukkit/libs/org/apache/ org/apache
+org/bukkit/craftbukkit/libs/org/ org
+org/bukkit/craftbukkit/libs/com/ com
+
 
 #
 # Spigot2Intermediary Mappings auto-generated using "Mapp".

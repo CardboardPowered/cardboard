@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -79,11 +80,23 @@ public final class LibraryManager {
         if (!directory.isDirectory() && !directory.mkdirs())
             logger.error("Could not create libraries directory: " + directory);
 
-        for (Library library : libraries) downloaderService.execute(new LibraryDownloader(library));
+        for (Library lib : libraries) {
+            String fn = lib.libraryKey.artifactId + "-" + lib.version + ".jar";
+            File f = new File(directory, fn);
+            if (f.isFile() && !(fn.contains("intermediary-adapter")) ) {
+                try {
+                    KnotHelper.propose(f);
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                downloaderService.execute(new LibraryDownloader(lib));
+           }
+        }
 
         downloaderService.shutdown();
         try {
-            if (!downloaderService.awaitTermination(1, TimeUnit.MINUTES)) downloaderService.shutdownNow();
+            if (!downloaderService.awaitTermination(10, TimeUnit.SECONDS)) downloaderService.shutdownNow();
         } catch (InterruptedException e) {
             logger.error("Library Manager thread interrupted: ", e);
         }

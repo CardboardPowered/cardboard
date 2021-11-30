@@ -20,7 +20,6 @@ import net.minecraft.text.Text;
 public class MixinGameMessageS2CPacket implements IMixinGameMessagePacket {
 
     @Shadow private Text message;
-    @Shadow private MessageType location;
     @Shadow private UUID sender;
 
     public net.md_5.bungee.api.chat.BaseComponent[] bungeeComponents;
@@ -34,7 +33,7 @@ public class MixinGameMessageS2CPacket implements IMixinGameMessagePacket {
     public void writePacket(PacketByteBuf buf, CallbackInfo ci) {
         if (bungeeComponents != null) {
             buf.writeString(net.md_5.bungee.chat.ComponentSerializer.toString(bungeeComponents));
-            buf.writeByte(this.location.getId());
+            buf.writeByte(MessageType.CHAT.getId());
             buf.writeUuid(this.sender);
             ci.cancel();
         }

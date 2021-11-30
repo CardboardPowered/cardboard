@@ -149,17 +149,17 @@ public class ReflectionMethodVisitor extends MethodVisitor {
 
                 if (!own.contains("net.minecraft.server.v1_1") && !name2.equals(name)) {
                     fixed++;
-                    if (fixed > lastF) System.out.println(fixed);
+                   // if (fixed > lastF) System.out.println(fixed);
                     //System.out.println(cl + "/=/" + name + d + " /=/ " + name2);
                 } else if (!own.contains("net.minecraft.server.v1_1") && !name.contains("<init>")) {
                     String key = cl.substring(cl.lastIndexOf('.')+1) + "#" + name + d2;
                     name2 = cbm.getOrDefault(key, name2);
                     if (!cbm.containsKey(key) && name.length() < 3) {
-                        System.out.println(cl.substring(cl.lastIndexOf('.')+1) + "#" + name + d2 + " |  " + name2);
+                        //System.out.println(cl.substring(cl.lastIndexOf('.')+1) + "#" + name + d2 + " |  " + name2);
                        
-                        System.out.println(own + " / " + mr.unmapClassName("official", own.replace('/','.')) + " / " + mr.unmapClassName("official", own.replace('/','.')));
-                        System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, desc));
-                        System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, d2));
+                        //System.out.println(own + " / " + mr.unmapClassName("official", own.replace('/','.')) + " / " + mr.unmapClassName("official", own.replace('/','.')));
+                        //System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, desc));
+                        //System.out.println(mr.mapMethodName("official", own.replace('/', '.'), name2, d2));
 
                         try {
                             Class<?> cz = Class.forName(cl);
@@ -173,10 +173,10 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                                     tt = tt.replace("int;","I");
                                     tt = "(" + tt + ")" + fixName(m.getReturnType().getName() + ";");
                                     if (tt.equalsIgnoreCase(d2)) {
-                                        System.out.println( "\tPossible Match?: " + m.getName() + tt + "");
+                                        //System.out.println( "\tPossible Match?: " + m.getName() + tt + "");
                                         
                                         String obfn = mr2.mapMethodName("named", mr2.mapClassName("named", cz.getName()), m.getName(), tt);
-                                        System.out.println("OBFN: " + obfn);
+                                        //System.out.println("OBFN: " + obfn);
                                     }
                                     
                                 //}

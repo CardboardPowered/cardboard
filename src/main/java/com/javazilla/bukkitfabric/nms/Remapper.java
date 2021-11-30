@@ -1,13 +1,10 @@
 package com.javazilla.bukkitfabric.nms;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,21 +12,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-
-import org.bukkit.craftbukkit.CraftServer;
-
 import com.javazilla.bukkitfabric.BukkitLogger;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.md_5.specialsource.SpecialSource;
-import net.minecraft.network.listener.PacketListener;
 
 /**
  * @deprecated To be replaced with our Ingot remapping tool
@@ -42,7 +31,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 100;
+    public static int MAPPINGS_VERSION = 102;
 
     public static BukkitLogger LOGGER = new BukkitLogger("Cardboard", null);
 
@@ -115,7 +104,8 @@ public class Remapper {
         }
         String md5 = null;
         try (InputStream is = Files.newInputStream(jarFile.toPath())) {
-            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
+            //md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
+            md5 = org.cardboardpowered.util.DigestUtil.md5Hex(is);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -162,7 +152,7 @@ public class Remapper {
         }
 
         try (InputStream is = Files.newInputStream(jarFile.toPath())) {
-            md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(is);
+            md5 = org.cardboardpowered.util.DigestUtil.md5Hex(is);
         } catch (IOException e1) {
             md5 = null;
             e1.printStackTrace();

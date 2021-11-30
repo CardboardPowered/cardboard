@@ -301,7 +301,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
             container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
         } else {
             // 1.17+
-            ((ServerPlayerEntity)getHandle()).onSpawn(container);
+            ((ServerPlayerEntity)getHandle()).onScreenHandlerOpened(container);
         }
     }
 
@@ -334,7 +334,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
             container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
         } else {
             // 1.17+
-            ((ServerPlayerEntity)getHandle()).onSpawn(container);
+            ((ServerPlayerEntity)getHandle()).onScreenHandlerOpened(container);
         }
     }
 

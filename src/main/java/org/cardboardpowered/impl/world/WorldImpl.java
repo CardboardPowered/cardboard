@@ -2370,7 +2370,6 @@ public class WorldImpl implements World {
     @Override
     public void sendGameEvent(@Nullable Entity arg0, @NotNull GameEvent arg1, @NotNull Vector arg2) {
         // TODO Auto-generated method stub
-        
     }
 
     @Override

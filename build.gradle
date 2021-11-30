@@ -66,11 +66,10 @@ dependencies {
     DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.18", "1.18", null)
     ic.setChanging(true) // Make sure we get the latest version of iCommon
 
-
-    include(modImplementation(ic))
+    //include(modImplementation(ic))
+    modImplementation(ic)
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
 
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     //extraLibs group: "org.jetbrains", name: "annotations", version: "20.1.0"
@@ -80,6 +79,7 @@ dependencies {
 
     // 
     compileOnly fileTree(dir: 'libs', include: "${project.paper_jar}")
+    //extraLibs fileTree(dir: 'libs', include: "${project.paper_jar}")
     compileOnly fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     //compileOnly fileTree(dir: 'libs', include: 'slf4j.jar')
     compileOnly group: "org.jetbrains", name: "annotations", version: "18.0.0"

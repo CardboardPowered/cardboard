@@ -226,7 +226,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                     container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
                 } else {
                     // 1.17
-                    ((ServerPlayerEntity)(Object)this).onSpawn(container);
+                    ((ServerPlayerEntity)(Object)this).onScreenHandlerOpened(container);
                 }
 
                 fabric_openedScreenHandler.remove();

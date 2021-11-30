@@ -10,13 +10,12 @@ import java.nio.file.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
-
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 
 public class KnotHelper {
-    
+
+    public static boolean PAPER_API_LOADED = false;
     private static final Logger logger = LogManager.getLogger("KnotHelper");
 
     public static void propose(File file) throws MalformedURLException {
@@ -58,11 +57,15 @@ public class KnotHelper {
                 String[] args = {"org.bukkit"};
                 if (!FabricLoader.getInstance().isDevelopmentEnvironment())
                     m.invoke(lb, file.toPath(), getPackages());
-                BukkitFabricMod.LOGGER.info("Debug: Loading library " + file.getName());
+                logger.info("Debug: Loading library " + file.getName());
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.info("ERROR: Got " + e.getClass().getSimpleName() + " while accessing Fabric Loader.");
             }
+        }
+
+        if (file.getName().contains("paper")) {
+            PAPER_API_LOADED = true;
         }
     }
 
