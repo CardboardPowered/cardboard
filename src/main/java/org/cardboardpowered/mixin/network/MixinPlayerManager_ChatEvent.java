@@ -35,7 +35,7 @@ import net.minecraft.text.Text;
 public class MixinPlayerManager_ChatEvent {
 
     @SuppressWarnings("deprecation")
-    @Inject(at = @At("HEAD"), method = "broadcast", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Ljava/util/function/Function;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V", cancellable = true)
     public void cardboard_doChatEvent_PLRMGR(Text tmessage, Function<ServerPlayerEntity, Text> playerMessageFactory, MessageType type, UUID sender, CallbackInfo ci) {
         try {
             Player player = Bukkit.getPlayer(sender);
