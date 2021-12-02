@@ -10,7 +10,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinHandshakeC2SPacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 
-import net.minecraft.SharedConstants;
+import me.isaiah.common.GameVersion;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
@@ -28,8 +28,10 @@ public class MixinServerHandshakeNetworkHandler {
     @Inject(at = @At("TAIL"), method = "onHandshake")
     public void onHandshake_Bungee(HandshakeC2SPacket packethandshakinginsetprotocol, CallbackInfo ci) {
         if (packethandshakinginsetprotocol.getIntendedState() == NetworkState.LOGIN) {
-            if (packethandshakinginsetprotocol.getProtocolVersion() > SharedConstants.getGameVersion().getProtocolVersion()) {
-            } else if (packethandshakinginsetprotocol.getProtocolVersion() < SharedConstants.getGameVersion().getProtocolVersion()) {
+            GameVersion ver = GameVersion.INSTANCE;
+
+            if (packethandshakinginsetprotocol.getProtocolVersion() > ver.getProtocolVersion()) {
+            } else if (packethandshakinginsetprotocol.getProtocolVersion() < ver.getProtocolVersion()) {
             } else {
                 if (org.spigotmc.SpigotConfig.bungee) {
                     String[] split = packethandshakinginsetprotocol.address.split("\00");
