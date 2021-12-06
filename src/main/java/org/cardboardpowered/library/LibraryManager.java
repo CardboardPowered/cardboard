@@ -10,10 +10,6 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.logging.log4j.LogManager;
@@ -52,7 +48,7 @@ public final class LibraryManager {
 
     private final Collection<Library> libraries;
 
-    private final ExecutorService downloaderService = Executors.newCachedThreadPool();
+    //private final ExecutorService downloaderService = Executors.newCachedThreadPool();
 
     /**
      * Creates the instance.
@@ -90,141 +86,95 @@ public final class LibraryManager {
                     e.printStackTrace();
                 }
             } else {
-                downloaderService.execute(new LibraryDownloader(lib));
+                download(lib);
            }
         }
+    }
+    
+    public void download(Library library) {
+        String repository = library.repository;
+        if (repository == null) repository = defaultRepository;
+        if (!repository.endsWith("/")) repository += "/";
 
-        downloaderService.shutdown();
+        String fileName = library.libraryKey.artifactId + '-' + library.version + ".jar";
+
+        File file = new File(directory, fileName);
+        if (!file.exists()) {
+            int attempts = 0;
+            while (attempts < maxDownloadAttempts) {
+                attempts++;
+                // download it
+                logger.info("Downloading " + library.toString() + "...");
+                try {
+                    URL downloadUrl;
+                    if (library.libraryKey.artifactId.contains("adapter")) {
+                        downloadUrl = new URL("https://github.com/CardboardPowered/worldedit-adapters/releases/download/1.17.1/we-adapter-for-cardboard.jar");
+                    } else if (null == library.libraryKey.spigotJarVersion) {
+                        downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
+                                + '/' + library.libraryKey.artifactId + '-' + library.version + ".jar");
+                    } else {
+                        downloadUrl = new URL("https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar");
+                    }
+                    HttpsURLConnection connection = (HttpsURLConnection) downloadUrl.openConnection();
+                    connection.setRequestProperty("User-Agent", "Mozilla/5.0 Chrome/90.0.4430.212");
+
+                    try (ReadableByteChannel input = Channels.newChannel(connection.getInputStream()); FileOutputStream output = new FileOutputStream(file)) {
+                        output.getChannel().transferFrom(input, 0, Long.MAX_VALUE);
+                        logger.info("Downloaded " + library.toString() + '.');
+                    }
+
+                    if (validateChecksum && library.checksumType != null && library.checksumValue != null && !checksum(file, library)) {
+                        logger.error("The checksum for the library '" + fileName + "' does not match. " + (attempts == maxDownloadAttempts ?
+                                "Restart the server to attempt downloading it again." : "Attempting download again ("+ (attempts+1) +"/"+ maxDownloadAttempts +")"));
+                        file.delete();
+                        if (attempts == maxDownloadAttempts) return;
+                        continue;
+                    }
+                    // everything's fine
+                    break;
+                } catch (IOException e) {
+                    logger.warn( "Failed to download: " + library.toString(), e);
+                    file.delete();
+                    if (attempts == maxDownloadAttempts) {
+                        logger.warn("Restart the server to attempt downloading '" + fileName + "' again.");
+                        return;
+                    }
+                    logger.warn("Attempting download of '" + fileName + "' again (" + (attempts + 1) + "/" + maxDownloadAttempts + ")");
+                }
+            }
+        } else if (validateChecksum && library.checksumType != null && library.checksumValue != null && !checksum(file, library)) {
+            // The file is already downloaded, but validate the checksum as a warning only
+            logger.warn("The checksum for the library '" + fileName + "' does not match. Remove the library and restart the server to download it again.");
+        }
+
+        // Add to KnotClassLoader
         try {
-            if (!downloaderService.awaitTermination(10, TimeUnit.SECONDS)) downloaderService.shutdownNow();
-        } catch (InterruptedException e) {
-            logger.error("Library Manager thread interrupted: ", e);
+            if (!library.libraryKey.artifactId.contains("adapter")) {
+                KnotHelper.propose(file);
+            }
+        } catch (Exception e) {
+            logger.warn( "Failed to add to classpath: " + library.toString(), e);
         }
     }
 
-    private class LibraryDownloader implements Runnable {
-        private final Library library;
-        private final String repository;
+    boolean checksum(File file, Library library) {
+        checkNotNull(file);
+        if (!file.exists()) return false;
 
-        /**
-         * Creates an instance of the downloader for a library.
-         * @param library a {@link Library} instance representing a library
-         */
-        LibraryDownloader(Library library) {
-            this.library = library;
+        HashAlgorithm algorithm = library.checksumType;
+        String checksum = library.checksumValue;
+        if (algorithm == null || checksum == null || checksum.isEmpty()) return true; // assume everything is OK if no reference checksum is provided
 
-            String repository = library.repository;
-            if (repository == null) repository = defaultRepository;
-            if (!repository.endsWith("/")) repository += "/";
-
-            this.repository = repository;
+        // get the file digest
+        String digest;
+        try {
+            digest = Files.hash(file, algorithm.function).toString();
+        } catch (IOException ex) {
+            logger.error("Failed to compute digest for '" + file.getName() + "'", ex);
+            return false;
         }
-
-        @Override
-        public void run() {
-            // check if we already have it
-            File file = new File(directory, getLibrary());
-            if (!file.exists()) {
-                int attempts = 0;
-                while (attempts < maxDownloadAttempts) {
-                    attempts++;
-                    // download it
-                    logger.info("Downloading " + library.toString() + "...");
-                    try {
-                        URL downloadUrl;
-                        if (library.libraryKey.artifactId.contains("adapter")) {
-                            downloadUrl = new URL("https://github.com/CardboardPowered/worldedit-adapters/releases/download/1.17.1/we-adapter-for-cardboard.jar");
-                        }
-                        else
-                        if (null == library.libraryKey.spigotJarVersion) {
-                            downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
-                                    + '/' + library.libraryKey.artifactId + '-' + library.version + ".jar");
-                        } else {
-                            downloadUrl = new URL("https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar");
-                            //downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
-                            //        + '/' + library.libraryKey.spigotJarVersion + ".jar");
-                        }
-                        HttpsURLConnection connection = (HttpsURLConnection) downloadUrl.openConnection();
-                        connection.setRequestProperty("User-Agent", "Mozilla/5.0 Chrome/90.0.4430.212");
-
-                        try (ReadableByteChannel input = Channels.newChannel(connection.getInputStream()); FileOutputStream output = new FileOutputStream(file)) {
-                            output.getChannel().transferFrom(input, 0, Long.MAX_VALUE);
-                            logger.info("Downloaded " + library.toString() + '.');
-                        }
-
-                        if (validateChecksum && library.checksumType != null && library.checksumValue != null && !checksum(file, library)) {
-                            logger.error("The checksum for the library '" + getLibrary() + "' does not match. " + (attempts == maxDownloadAttempts ?
-                                    "Restart the server to attempt downloading it again." : "Attempting download again ("+ (attempts+1) +"/"+ maxDownloadAttempts +")"));
-                            file.delete();
-                            if (attempts == maxDownloadAttempts) return;
-                            continue;
-                        }
-                        // everything's fine
-                        break;
-                    } catch (IOException e) {
-                        logger.warn( "Failed to download: " + library.toString(), e);
-                        file.delete();
-                        if (attempts == maxDownloadAttempts) {
-                            logger.warn("Restart the server to attempt downloading '" + getLibrary() + "' again.");
-                            return;
-                        }
-                        logger.warn("Attempting download of '" + getLibrary() + "' again (" + (attempts + 1) + "/" + maxDownloadAttempts + ")");
-                    }
-                }
-            } else if (validateChecksum && library.checksumType != null && library.checksumValue != null && !checksum(file, library)) {
-                // The file is already downloaded, but validate the checksum as a warning only
-                logger.warn("The checksum for the library '" + getLibrary() + "' does not match. Remove the library and restart the server to download it again.");
-            }
-
-            // Add to KnotClassLoader
-            try {
-                if (!library.libraryKey.artifactId.contains("adapter")) {
-                    KnotHelper.propose(file);
-                    //Knot.getLauncher().propose(file.toURI().toURL());
-                }
-            } catch (Exception e) {
-                logger.warn( "Failed to add to classpath: " + library.toString(), e);
-            }
-        }
-
-        /**
-         * Gets the name of the file the library will be saved to.
-         *
-         * @return the name of the file the library will be saved to
-         */
-        String getLibrary() {
-            return library.libraryKey.artifactId + '-' + library.version + ".jar";
-        }
-
-        /**
-         * Computes and validates the checksum of a file.
-         *
-         * <p>If the file does not exist, the checksum will be automatically invalidated.
-         * <p>If the reference checksum or the algorithm are empty or null, the checksum will be automatically validated.
-         *
-         * @param file the file.
-         * @param library the {@link Library} instance containing the algorithm and the checksum.
-         * @return true if the checksum was validated, false otherwise.
-         */
-        boolean checksum(File file, Library library) {
-            checkNotNull(file);
-            if (!file.exists()) return false;
-
-            HashAlgorithm algorithm = library.checksumType;
-            String checksum = library.checksumValue;
-            if (algorithm == null || checksum == null || checksum.isEmpty()) return true; // assume everything is OK if no reference checksum is provided
-
-            // get the file digest
-            String digest;
-            try {
-                digest = Files.hash(file, algorithm.function).toString();
-            } catch (IOException ex) {
-                logger.error("Failed to compute digest for '" + file.getName() + "'", ex);
-                return false;
-            }
-            //System.out.println(file.getName() + ": " + digest);
-            return digest.equals(checksum);
-        }
+        //System.out.println(file.getName() + ": " + digest);
+        return digest.equals(checksum);
     }
 
     /**
