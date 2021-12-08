@@ -691,7 +691,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
     @Override
     public void setSaturation(float arg0) {
-        // TODO Auto-generated method stub
+        this.getHandle().getHungerManager().setSaturationLevel(arg0);
     }
 
     @Override

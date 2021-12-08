@@ -111,6 +111,7 @@ import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.MessageType;
+import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
@@ -1678,8 +1679,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public int getPing() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.getHandle().pingMilliseconds;
     }
 
     @Override
@@ -1703,7 +1703,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     @Override
     public @NotNull Locale locale() {
         // TODO Auto-generated method stub
-        return null;
+        return Locale.ENGLISH;
     }
 
     @Override
@@ -1730,8 +1730,15 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void sendBlockDamage(@NotNull Location arg0, float arg1) {
-        // TODO Auto-generated method stub
+    public void sendBlockDamage(@NotNull Location loc, float progress) {
+        Preconditions.checkArgument(loc != null, "loc must not be null");
+        Preconditions.checkArgument((double)progress >= 0.0 && (double)progress <= 1.0, "progress must be between 0.0 and 1.0 (inclusive)");
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        int stage = (int)(9.0f * progress);
+        BlockBreakingProgressS2CPacket packet = new BlockBreakingProgressS2CPacket(this.getHandle().getId(), new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), stage);
+        this.getHandle().networkHandler.sendPacket(packet);
     }
 
     @Override
