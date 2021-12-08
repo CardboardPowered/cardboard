@@ -173,9 +173,10 @@ task publishModrinth (type: TaskModrinthUpload){ // Make sure it runs after buil
     projectId = 'MLYQ9VGP'
     versionType = VersionType.BETA
     versionNumber = '1.17-' + System.env.BUILD_NUMBER // Will fail if Modrinth has this version already
-    versionName = '1.17-#' + System.env.BUILD_NUMBER + ' (MC: 1.17.1)'
+    versionName = '#' + System.env.BUILD_NUMBER + ' (1.17.1 & 1.18)'
     // On fabric, use 'remapJar' instead of 'jar'
     uploadFile = remapJar // This is the java jar task. If it can't find the jar, try 'jar.outputs.getFiles().asPath' in place of 'jar' 
     addGameVersion('1.17.1') // Call this multiple times to add multiple game versions. There are tools that can help you generate the list of versions
+    addGameVersion('1.18')
     addLoader('fabric')
 }
