@@ -150,6 +150,7 @@ import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.entity.vehicle.SpawnerMinecartEntity;
 import net.minecraft.entity.vehicle.TntMinecartEntity;
 import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
+import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkHolder;
@@ -726,9 +727,10 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public int getHighestBlockYAt(int arg0, int arg1, HeightMap arg2) {
+    public int getHighestBlockYAt(int x, int z, HeightMap heightMap) {
         // TODO Auto-generated method stub
         System.out.println("GET HIGH Y!");
+       // return getHandle().getChunk(x >> 4, z >> 4).sampleHeightmap(CardboardHeightMap.toNMS(heightMap), x, z);
         return 0;
     }
 
@@ -1057,26 +1059,47 @@ public class WorldImpl implements World {
         return (nearest == null) ? null : new Location(this, nearest.getX(), nearest.getY(), nearest.getZ());
     }
 
-    @Override
-    public void playEffect(Location arg0, Effect arg1, int arg2) {
-        // TODO Auto-generated method stub
+    public void playEffect(Player player, Effect effect, int data) {
+        this.playEffect(player.getLocation(), effect, data, 0);
     }
 
     @Override
-    public <T> void playEffect(Location arg0, Effect arg1, T arg2) {
-        // TODO Auto-generated method stub
+    public void playEffect(Location location, Effect effect, int data) {
+        this.playEffect(location, effect, data, 64);
     }
 
     @Override
-    public void playEffect(Location arg0, Effect arg1, int arg2, int arg3) {
-        // TODO Auto-generated method stub
+    public <T> void playEffect(Location loc, Effect effect, T data) {
+        this.playEffect(loc, effect, data, 64);
     }
 
     @Override
-    public <T> void playEffect(Location arg0, Effect arg1, T arg2, int arg3) {
-        // TODO Auto-generated method stub
+    public <T> void playEffect(Location loc, Effect effect, T data, int radius) {
+        if (data != null) {
+            Validate.isTrue(effect.getData() != null && effect.getData().isAssignableFrom(data.getClass()), "Wrong kind of data for this effect!");
+        } else {
+            Validate.isTrue(effect.getData() == null || effect == Effect.ELECTRIC_SPARK, "Wrong kind of data for this effect!");
+        } 
+        int datavalue = 0;//CraftEffect.getDataValue(effect, data);
+        this.playEffect(loc, effect, datavalue, radius);
     }
 
+    @Override
+    public void playEffect(Location location, Effect effect, int data, int radius) {
+        Validate.notNull(location, "Location cannot be null");
+        Validate.notNull((Object)effect, "Effect cannot be null");
+        Validate.notNull(location.getWorld(), "World cannot be null");
+        int packetData = effect.getId();
+        WorldEventS2CPacket packet = new WorldEventS2CPacket(packetData, new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), data, false);
+        radius *= radius;
+        for (Player player : this.getPlayers()) {
+            int distance;
+            if (((PlayerImpl)player).getHandle().networkHandler == null || !location.getWorld().equals(player.getWorld()) || (distance = (int)player.getLocation().distanceSquared(location)) > radius) continue;
+            ((PlayerImpl)player).getHandle().networkHandler.sendPacket(packet);
+        }
+    }
+
+    
     @Override
     public void playSound(Location loc, Sound sound, float volume, float pitch) {
         playSound(loc, sound, org.bukkit.SoundCategory.MASTER, volume, pitch);
@@ -1163,27 +1186,48 @@ public class WorldImpl implements World {
     }
 
     @Override
-    public RayTraceResult rayTraceEntities(Location arg0, Vector arg1, double arg2) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance) {
+        return this.rayTraceEntities(start, direction, maxDistance, null);
     }
 
     @Override
-    public RayTraceResult rayTraceEntities(Location arg0, Vector arg1, double arg2, double arg3) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, double raySize) {
+        return this.rayTraceEntities(start, direction, maxDistance, raySize, null);
     }
 
     @Override
-    public RayTraceResult rayTraceEntities(Location arg0, Vector arg1, double arg2, Predicate<Entity> arg3) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, Predicate<Entity> filter) {
+        return this.rayTraceEntities(start, direction, maxDistance, 0.0, filter);
     }
 
     @Override
-    public RayTraceResult rayTraceEntities(Location arg0, Vector arg1, double arg2, double arg3, Predicate<Entity> arg4) {
-        // TODO Auto-generated method stub
-        return null;
+    public RayTraceResult rayTraceEntities(Location start, Vector direction, double maxDistance, double raySize, Predicate<Entity> filter) {
+        Validate.notNull(start, "Start location is null!");
+        Validate.isTrue(this.equals(start.getWorld()), "Start location is from different world!");
+        start.checkFinite();
+        Validate.notNull(direction, "Direction is null!");
+        direction.checkFinite();
+        Validate.isTrue(direction.lengthSquared() > 0.0, "Direction's magnitude is 0!");
+        if (maxDistance < 0.0) {
+            return null;
+        }
+        Vector startPos = start.toVector();
+        Vector dir = direction.clone().normalize().multiply(maxDistance);
+        BoundingBox aabb = BoundingBox.of(startPos, startPos).expandDirectional(dir).expand(raySize);
+        Collection<Entity> entities = this.getNearbyEntities(aabb, filter);
+        Entity nearestHitEntity = null;
+        RayTraceResult nearestHitResult = null;
+        double nearestDistanceSq = Double.MAX_VALUE;
+        for (Entity entity : entities) {
+            double distanceSq;
+            BoundingBox boundingBox = entity.getBoundingBox().expand(raySize);
+            RayTraceResult hitResult = boundingBox.rayTrace(startPos, direction, maxDistance);
+            if (hitResult == null || !((distanceSq = startPos.distanceSquared(hitResult.getHitPosition())) < nearestDistanceSq)) continue;
+            nearestHitEntity = entity;
+            nearestHitResult = hitResult;
+            nearestDistanceSq = distanceSq;
+        }
+        return nearestHitEntity == null ? null : new RayTraceResult(nearestHitResult.getHitPosition(), nearestHitEntity, nearestHitResult.getHitBlockFace());
     }
 
     @Override
