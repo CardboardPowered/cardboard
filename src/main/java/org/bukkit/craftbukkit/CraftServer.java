@@ -107,6 +107,7 @@ import org.bukkit.inventory.ComplexRecipe;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
@@ -212,15 +213,20 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.boss.CommandBossBar;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.resource.DataPackSettings;
 import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -1902,9 +1908,36 @@ public class CraftServer implements Server {
     }
 
     @Override
-    public @Nullable Recipe getCraftingRecipe(@NotNull ItemStack[] arg0, @NotNull World arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    public @Nullable Recipe getCraftingRecipe(ItemStack[] craftingMatrix, World world) {
+        ScreenHandler container = new ScreenHandler(null, -1){
+
+            //@Override
+            public InventoryView getBukkitView() {
+                return null;
+            }
+
+            @Override
+            public boolean canUse(PlayerEntity player) {
+                return false;
+            }
+        };
+        CraftingInventory inventoryCrafting = new CraftingInventory(container, 3, 3);
+        Optional<CraftingRecipe> opt = this.getNMSRecipe(craftingMatrix, inventoryCrafting, (WorldImpl)world);
+        if (opt.isEmpty()) { return null; }
+        
+        return ((IMixinRecipe)opt.get()).toBukkitRecipe();
+    }
+
+    private Optional<CraftingRecipe> getNMSRecipe(ItemStack[] craftingMatrix, CraftingInventory inventoryCrafting, WorldImpl world) {
+        Preconditions.checkArgument(craftingMatrix != null, "craftingMatrix must not be null");
+        Preconditions.checkArgument(craftingMatrix.length == 9, "craftingMatrix must be an array of length 9");
+        Preconditions.checkArgument(world != null, "world must not be null");
+        int i = 0;
+        while (i < craftingMatrix.length) {
+            inventoryCrafting.setStack(i, CraftItemStack.asNMSCopy(craftingMatrix[i]));
+            ++i;
+        }
+        return this.getServer().getRecipeManager().getFirstMatch(RecipeType.CRAFTING, inventoryCrafting, world.getHandle());
     }
 
     @Override

@@ -105,6 +105,7 @@ import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
+import me.isaiah.common.GameVersion;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancement.PlayerAdvancementTracker;
@@ -1136,7 +1137,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void updateInventory() {
-       // TODO 1.17ify nms.onHandlerRegistered(nms.currentScreenHandler, nms.currentScreenHandler.getStacks());
+        this.getHandle().currentScreenHandler.syncState();
     }
 
     @SuppressWarnings("deprecation")
@@ -1545,7 +1546,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     @Override
     public int getProtocolVersion() {
         // TODO Auto-generated method stub
-        return 0;
+        return GameVersion.INSTANCE.getProtocolVersion();
     }
 
     @Override
@@ -1575,7 +1576,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     @Override
     public String getClientBrandName() {
         // TODO Auto-generated method stub
-        return null;
+        return "Vanilla";
     }
 
     @Override
