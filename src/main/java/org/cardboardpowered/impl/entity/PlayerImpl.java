@@ -121,6 +121,9 @@ import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
+import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
+import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
+import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.WhitelistEntry;
@@ -861,18 +864,18 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void sendTitle(String arg0, String arg1, int arg2, int arg3, int arg4) {
-        // TODO 1.17ify
-        /*
-        TitleS2CPacket times = new TitleS2CPacket(arg2, arg3, arg4);
-        nms.networkHandler.sendPacket(times);
-
-        if (arg0 != null)
-            nms.networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, CraftChatMessage.fromStringOrNull(arg0)));
-
-        if (arg1 != null)
-            nms.networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.SUBTITLE, CraftChatMessage.fromStringOrNull(arg1)));
-    */}
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        TitleFadeS2CPacket times = new TitleFadeS2CPacket(fadeIn, stay, fadeOut);
+        this.getHandle().networkHandler.sendPacket(times);
+        if (title != null) {
+            TitleS2CPacket packetTitle = new TitleS2CPacket(CraftChatMessage.fromStringOrNull(title));
+            this.getHandle().networkHandler.sendPacket(packetTitle);
+        }
+        if (subtitle != null) {
+            SubtitleS2CPacket packetSubtitle = new SubtitleS2CPacket(CraftChatMessage.fromStringOrNull(subtitle));
+            this.getHandle().networkHandler.sendPacket(packetSubtitle);
+        }
+    }
 
     @Override
     public void setAllowFlight(boolean arg0) {
