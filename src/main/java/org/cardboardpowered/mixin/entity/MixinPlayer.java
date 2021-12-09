@@ -59,9 +59,12 @@ import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.MessageType;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
+import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerListener;
@@ -69,9 +72,15 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Arm;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -267,30 +276,32 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         if (((ServerPlayerEntity)(Object)this).currentScreenHandler != ((ServerPlayerEntity)(Object)this).playerScreenHandler) this.closeHandledScreen();
 
         String deathMessage = event.getDeathMessage();
+        ServerPlayerEntity plr = ((ServerPlayerEntity)(Object)this);
 
-        if (deathMessage != null && deathMessage.length() > 0 && flag) { // TODO: allow plugins to override?
-            Text ichatbasecomponent = deathMessage.equals(deathmessage) ? ((ServerPlayerEntity)(Object)this).getDamageTracker().getDeathMessage() : CraftChatMessage.fromStringOrNull(deathMessage);
-         // TODO 1.17ify  ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket((Packet<?>) (new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatbasecomponent)), (future) -> {
-        /*        if (!future.isSuccess()) {
+        if ((deathMessage = event.getDeathMessage()) != null && deathMessage.length() > 0 && flag) {
+            Text ichatbasecomponent = deathMessage.equals(deathmessage) ? plr.getDamageTracker().getDeathMessage() : CraftChatMessage.fromStringOrNull(deathMessage);
+            plr.networkHandler.sendPacket(new DeathMessageS2CPacket(plr.getDamageTracker(), ichatbasecomponent), future -> {
+                if (!future.isSuccess()) {
+                    boolean flag1 = true;
                     String s = ichatbasecomponent.asTruncatedString(256);
-                    TranslatableText chatmessage = new TranslatableText("death.attack.message_too_long", new Object[]{(new LiteralText(s)).formatted(Formatting.GOLD)});
-                    MutableText ichatmutablecomponent = (new TranslatableText("death.attack.even_more_magic", new Object[]{((ServerPlayerEntity)(Object)this).getDisplayName()})).styled((chatmodifier) -> {
-                        return chatmodifier.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, chatmessage));
-                    });
-                 // TODO 1.17ify ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED, ichatmutablecomponent));
+                    TranslatableText chatmessage = new TranslatableText("death.attack.message_too_long", new LiteralText(s).formatted(Formatting.YELLOW));
+                    MutableText ichatmutablecomponent = new TranslatableText("death.attack.even_more_magic", plr.getDisplayName()).styled(chatmodifier -> chatmodifier.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, chatmessage)));
+                    plr.networkHandler.sendPacket(new DeathMessageS2CPacket(plr.getDamageTracker(), ichatmutablecomponent));
                 }
-
             });
-            AbstractTeam scoreboardteambase = ((ServerPlayerEntity)(Object)this).getScoreboardTeam();
-
+            AbstractTeam scoreboardteambase = plr.getScoreboardTeam();
             if (scoreboardteambase != null && scoreboardteambase.getDeathMessageVisibilityRule() != AbstractTeam.VisibilityRule.ALWAYS) {
                 if (scoreboardteambase.getDeathMessageVisibilityRule() == AbstractTeam.VisibilityRule.HIDE_FOR_OTHER_TEAMS) {
-                    CraftServer.server.getPlayerManager().sendToTeam((PlayerEntity)(Object) this, ichatbasecomponent);
-                } else if (scoreboardteambase.getDeathMessageVisibilityRule() == AbstractTeam.VisibilityRule.HIDE_FOR_OWN_TEAM)
-                    CraftServer.server.getPlayerManager().sendToOtherTeams(((ServerPlayerEntity)(Object)this), ichatbasecomponent);
-            } else CraftServer.server.getPlayerManager().broadcastChatMessage(ichatbasecomponent, MessageType.SYSTEM, Util.NIL_UUID);
-        */}// TODO 1.17ify  else ((ServerPlayerEntity)(Object)this).networkHandler.sendPacket(new CombatEventS2CPacket(((ServerPlayerEntity)(Object)this).getDamageTracker(), CombatEventS2CPacket.Type.ENTITY_DIED));
-
+                    plr.server.getPlayerManager().sendToTeam(plr, ichatbasecomponent);
+                } else if (scoreboardteambase.getDeathMessageVisibilityRule() == AbstractTeam.VisibilityRule.HIDE_FOR_OWN_TEAM) {
+                    plr.server.getPlayerManager().sendToOtherTeams(plr, ichatbasecomponent);
+                }
+            } else {
+                plr.server.getPlayerManager().broadcast(ichatbasecomponent, MessageType.SYSTEM, Util.NIL_UUID);
+            }
+        } else {
+            plr.networkHandler.sendPacket(new DeathMessageS2CPacket(plr.getDamageTracker(), LiteralText.EMPTY));
+        }
         ((ServerPlayerEntity)(Object)this).dropShoulderEntities();
         if (this.world.getGameRules().getBoolean(GameRules.FORGIVE_DEAD_PLAYERS)) this.forgiveMobAnger();
 

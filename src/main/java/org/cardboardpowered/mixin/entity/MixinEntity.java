@@ -277,6 +277,9 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
 
     @Override
     public CraftEntity getBukkitEntity() {
+        if (null == bukkit) {
+            this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
+        }
         return bukkit;
     }
 

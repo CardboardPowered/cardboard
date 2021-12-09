@@ -53,6 +53,7 @@
 
     "entity.MixinEntity",
     "entity.MixinPlayer",
+    "entity.MixinPlayerEntity",
     "entity.MixinItemEntity",
     "entity.MixinProjectileEntity",
     "entity.MixinArrowEntity",
