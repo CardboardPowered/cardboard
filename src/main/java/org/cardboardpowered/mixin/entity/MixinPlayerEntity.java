@@ -40,7 +40,6 @@ public class MixinPlayerEntity {
         Item drop = (Item) ((IMixinEntity)cardboard_stored_entity).getBukkitEntity();
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
         Bukkit.getServer().getPluginManager().callEvent(event);
-        event.setCancelled(true);
 
         if (event.isCancelled()) {
             ItemStack cur = player.getInventory().getItemInHand();
