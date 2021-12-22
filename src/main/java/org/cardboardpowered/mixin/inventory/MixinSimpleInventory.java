@@ -23,6 +23,13 @@ public class MixinSimpleInventory implements IMixinInventory {
 
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     public int maxStack_BF = MAX_STACK;
+    
+    public InventoryHolder bukkitOwner;
+    
+    @Override
+    public void cardboard$setOwner(InventoryHolder owner) {
+        this.bukkitOwner = owner;
+    }
 
     @Override
     public List<ItemStack> getContents() {
@@ -47,7 +54,13 @@ public class MixinSimpleInventory implements IMixinInventory {
     @Override
     public InventoryHolder getOwner() {
         // TODO Auto-generated method stub
-        return (transaction.size() >= 1) ? transaction.get(0) : null;
+        
+        InventoryHolder hold = (transaction.size() >= 1) ? transaction.get(0) : null;
+        if (null == hold) {
+            System.out.println("NULL HOLD!");
+            return this.bukkitOwner;
+        }
+        return hold;
     }
 
     @Override

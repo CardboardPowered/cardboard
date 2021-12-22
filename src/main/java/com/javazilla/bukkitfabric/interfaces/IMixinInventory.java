@@ -20,6 +20,7 @@ package com.javazilla.bukkitfabric.interfaces;
 
 
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.inventory.InventoryHolder;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
@@ -51,5 +52,9 @@ public interface IMixinInventory {
     int MAX_STACK = 64;
 
     int getMaxStackSize();
+
+    default void cardboard$setOwner(InventoryHolder owner) {
+        // TODO
+    }
 
 }

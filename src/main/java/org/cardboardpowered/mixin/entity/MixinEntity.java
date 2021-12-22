@@ -109,6 +109,8 @@ import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.DolphinEntity;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.passive.GolemEntity;
+import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
 import net.minecraft.entity.passive.OcelotEntity;
@@ -326,17 +328,17 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                         else if (entity instanceof CatEntity) { return new CardboardCat(server, (CatEntity) entity); }
                         else if (entity instanceof ParrotEntity) { return new ParrotImpl(server, (ParrotEntity) entity); }
                     }
-                    /*else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
+                    //else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
                     else if (entity instanceof HorseBaseEntity) {
-                        if (entity instanceof AbstractDonkeyEntity){
+                        /*if (entity instanceof AbstractDonkeyEntity){
                             if (entity instanceof DonkeyEntity) { return new CraftDonkey(server, (DonkeyEntity) entity); }
                             else if (entity instanceof MuleEntity) { return new CraftMule(server, (MuleEntity) entity); }
                             else if (entity instanceof TraderLlamaEntity) { return new CraftTraderLlama(server, (TraderLlamaEntity) entity); }
                             else if (entity instanceof LlamaEntity) { return new CraftLlama(server, (LlamaEntity) entity); }
-                        } else if (entity instanceof HorseEntity) { return new CraftHorse(server, (HorseEntity) entity); }
-                        else if (entity instanceof SkeletonHorseEntity) { return new CraftSkeletonHorse(server, (SkeletonHorseEntity) entity); }
-                        else if (entity instanceof ZombieHorseEntity) { return new CraftZombieHorse(server, (ZombieHorseEntity) entity); }
-                    }*/
+                        } else*/ if (entity instanceof HorseEntity) { return new CardboardHorse(server, (HorseEntity) entity); }
+                        //else if (entity instanceof SkeletonHorseEntity) { return new CraftSkeletonHorse(server, (SkeletonHorseEntity) entity); }
+                        //else if (entity instanceof ZombieHorseEntity) { return new CraftZombieHorse(server, (ZombieHorseEntity) entity); }
+                    }
                     //else if (entity instanceof RabbitEntity) { return new CraftRabbit(server, (RabbitEntity) entity); }
                     else if (entity instanceof PolarBearEntity) { return new PolarBearImpl(server, (PolarBearEntity) entity); }
                     else if (entity instanceof TurtleEntity) { return new TurtleImpl(server, (TurtleEntity) entity); }
