@@ -10,7 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import me.isaiah.config.FileConfiguration;
 
 public class CardboardConfig {
-    
+
     private static String DEFAULT = 
             "# This is the configuration file for Cardboard\n\n" +
             "# Invoke ChatEvent from PlayerManager instead of NetworkHandler\n" +

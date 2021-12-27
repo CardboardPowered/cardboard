@@ -4,8 +4,7 @@ import net.minecraft.entity.mob.SlimeEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Slime;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinSlimeEntity;
+import org.cardboardpowered.interfaces.ISlimeEntity;
 
 public class SlimeImpl extends MobImpl implements Slime {
 
@@ -20,7 +19,7 @@ public class SlimeImpl extends MobImpl implements Slime {
 
     @Override
     public void setSize(int size) {
-        ((IMixinSlimeEntity)getHandle()).setSizeBF(size, true);
+        ((ISlimeEntity)getHandle()).setSizeBF(size, true);
     }
 
     @Override

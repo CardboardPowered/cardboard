@@ -4,25 +4,17 @@ import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.cardboardpowered.CardboardConfig;
 import org.cardboardpowered.library.Library;
-import org.cardboardpowered.library.LibraryKey;
 import org.cardboardpowered.library.LibraryManager;
 import org.cardboardpowered.util.GameVersion;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-import com.google.common.collect.ImmutableMap;
-
-import me.isaiah.common.ICommonMod;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class CardboardMixinPlugin implements IMixinConfigPlugin {
@@ -82,12 +74,12 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         }
 
         if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent") && 
-                FabricLoader.getInstance().getModContainer("architectury").isPresent()) {
+                should_force_alternate_chat()) {
             logger.info("Architectury Mod detected! Disabling async chat from NetworkHandler.");
             return false;
         }
         if (mixin.equals("network.MixinPlayerManager_ChatEvent")) {
-            if (FabricLoader.getInstance().getModContainer("architectury").isPresent()) {
+            if (should_force_alternate_chat()) {
                 logger.info("Architectury Mod detected! Using alternative async chat from PlayerManager");
                 return true;
             } else return false;
@@ -98,6 +90,20 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             if (mixin.equals("network.MixinPlayerManager_ChatEvent")) return true;
         }
         return true;
+    }
+
+    /**
+     * Check for mods that overwrite onGameMessage for chat event.
+     */
+    public boolean should_force_alternate_chat() {
+        FabricLoader loader = FabricLoader.getInstance();
+        String[] bad_mods = {"architectury", "dynmap"};
+
+        for (String s : bad_mods) {
+            if (loader.getModContainer(s).isPresent())
+                return true;
+        }
+        return false;
     }
 
     @Override

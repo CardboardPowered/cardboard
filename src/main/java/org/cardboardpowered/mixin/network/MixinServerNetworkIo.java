@@ -10,13 +10,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinNetworkIo;
+import org.cardboardpowered.interfaces.INetworkIo;
 
 import io.netty.channel.ChannelFuture;
 import net.minecraft.server.ServerNetworkIo;
 
 @Mixin(ServerNetworkIo.class)
-public class MixinServerNetworkIo implements IMixinNetworkIo {
+public class MixinServerNetworkIo implements INetworkIo {
 
     @Shadow
     @Final

@@ -14,14 +14,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinSlimeEntity;
+import org.cardboardpowered.interfaces.ISlimeEntity;
+
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.world.World;
 
 @Mixin(SlimeEntity.class)
-public class MixinSlimeEntity extends MixinEntity implements IMixinSlimeEntity {
+public class MixinSlimeEntity extends MixinEntity implements ISlimeEntity {
 
     @Shadow public int getSize() {return 0;}
     @Shadow public void setSize(int i, boolean flag) {}
