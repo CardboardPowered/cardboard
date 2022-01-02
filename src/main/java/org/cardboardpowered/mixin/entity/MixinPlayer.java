@@ -381,8 +381,8 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         } catch (Throwable throwable) {}
     }
 
-    @Overwrite
-    public void copyFrom(ServerPlayerEntity entityplayer, boolean flag) {
+    //@Overwrite
+    public void copyFrom_unused(ServerPlayerEntity entityplayer, boolean flag) {
         if (flag) {
             ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
             ((ServerPlayerEntity)(Object)this).setHealth(entityplayer.getHealth());

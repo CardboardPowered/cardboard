@@ -57,7 +57,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
 
         new LibraryManager(repository, "lib", true, 2, libraries).run();
 
-        System.setProperty("worldedit.bukkit.adapter", "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard");
+        //System.setProperty("worldedit.bukkit.adapter", "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard");
     }
 
     @Override
