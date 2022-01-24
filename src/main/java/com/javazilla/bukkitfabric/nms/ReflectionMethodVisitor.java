@@ -46,6 +46,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         SKIP.add("vault");
         SKIP.add("worldguard");
         //SKIP.add("essentials");
+        SKIP.add("worldedit");
     }
     private String pln;
     private MappingResolver mr;

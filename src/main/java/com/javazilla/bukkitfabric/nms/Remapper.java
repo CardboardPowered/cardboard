@@ -31,7 +31,7 @@ public class Remapper {
         providers.add(provider);
     }
 
-    public static int MAPPINGS_VERSION = 102;
+    public static int MAPPINGS_VERSION = 105;
 
     public static BukkitLogger LOGGER = new BukkitLogger("Cardboard", null);
 
@@ -69,14 +69,14 @@ public class Remapper {
         if (jarFile.getName().contains("worldedit") && FabricLoader.getInstance().isDevelopmentEnvironment()) {
            // return;
         }
-        if (jarFile.getName().contains("worldedit")) {
+        /*if (jarFile.getName().contains("worldedit")) {
             try {
                 wea(jarFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return;
-        }
+        }*/
 
         if (versionFix == null) {
             if (md5info.exists()) {

@@ -60,6 +60,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.StructureType;
+import org.bukkit.Tag;
 import org.bukkit.UnsafeValues;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.World;
@@ -157,6 +158,7 @@ import org.cardboardpowered.impl.inventory.recipe.RecipeIterator;
 import org.cardboardpowered.impl.inventory.InventoryCreator;
 import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.tag.BlockTagImpl;
+import org.cardboardpowered.impl.tag.EntityTagImpl;
 import org.cardboardpowered.impl.tag.ItemTagImpl;
 import org.cardboardpowered.impl.tag.Tags;
 import org.cardboardpowered.impl.util.CommandPermissions;
@@ -212,6 +214,7 @@ import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.CommandBossBar;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
@@ -236,6 +239,10 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.PendingServerCommand;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.tag.BlockTags;
+import net.minecraft.tag.EntityTypeTags;
+import net.minecraft.tag.FluidTags;
+import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryOps;
@@ -266,7 +273,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.17.1-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.18.1-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -1070,12 +1077,11 @@ public class CraftServer implements Server {
     public OfflinePlayer getOfflinePlayer(String name) {
         OfflinePlayer result = getPlayerExact(name);
         if (result == null) {
-            Optional<GameProfile> profile = server.getUserCache().findByName(name);
-            // TODO Add Profile API to iCommon
-            if (profile.isPresent()) {
-                // Make an OfflinePlayer using an offline mode UUID since the name has no profile
-                result = getOfflinePlayer(new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name));
-            } else result = getOfflinePlayer(profile.get());// Use the GameProfile even when we get a UUID so we ensure we still have a name
+            GameProfile profile = null;
+            if (this.getOnlineMode() || SpigotConfig.bungee) {
+                profile = server.getUserCache().findByName(name).orElse(null);
+            }
+            result = profile == null ? this.getOfflinePlayer(new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8)), name)) : this.getOfflinePlayer(profile);
         } else offlinePlayers.remove(result.getUniqueId());
 
         return result;
@@ -1229,8 +1235,9 @@ public class CraftServer implements Server {
     @SuppressWarnings("unchecked")
     public <T extends Keyed> org.bukkit.Tag<T> getTag(String registry, NamespacedKey tag, Class<T> clazz) {
         Identifier key = CraftNamespacedKey.toMinecraft(tag);
+        
 
-        switch (registry) {
+        /*switch (registry) {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
                 return (org.bukkit.Tag<T>) new BlockTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY), key);
@@ -1242,13 +1249,33 @@ public class CraftServer implements Server {
                 return (org.bukkit.Tag<T>) new Tags.FluidTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.FLUID_KEY), key);
             default:
                 throw new IllegalArgumentException();
+        }*/
+        switch (registry) {
+        case "blocks": {
+            Preconditions.checkArgument(clazz == Material.class, "Block namespace must have material type");
+            return (Tag<T>) new BlockTagImpl(BlockTags.getTagGroup(), key);
         }
+        case "items": {
+            Preconditions.checkArgument(clazz == Material.class, "Item namespace must have material type");
+            return (org.bukkit.Tag<T>) new ItemTagImpl(ItemTags.getTagGroup(), key);
+        }
+        case "fluids": {
+            //Preconditions.checkArgument(clazz == Fluid.class, "Fluid namespace must have fluid type");
+            return (org.bukkit.Tag<T>) new Tags.FluidTagImpl(FluidTags.getTagGroup(), key);
+        }
+        case "entity_types": {
+            Preconditions.checkArgument(clazz == org.bukkit.entity.EntityType.class, "Entity type namespace must have entity type");
+            return (org.bukkit.Tag<T>) new EntityTagImpl(EntityTypeTags.getTagGroup(), key);
+        }
+        default:
+            throw new IllegalArgumentException();
+    }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Keyed> Iterable<org.bukkit.Tag<T>> getTags(String registry, Class<T> clazz) {
-        switch (registry) {
+        /*switch (registry) {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
                 TagGroup<Block> blockTags = server.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
@@ -1265,7 +1292,30 @@ public class CraftServer implements Server {
                 return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new Tags.FluidTagImpl(fluidTags, key)).collect(ImmutableList.toImmutableList());
             default:
                 throw new IllegalArgumentException();
+        }*/
+        switch (registry) {
+            case "blocks": {
+                Preconditions.checkArgument(clazz == Material.class, "Block namespace must have material type");
+                TagGroup<Block> blockTags = BlockTags.getTagGroup();
+                return blockTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new BlockTagImpl(blockTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+            }
+            case "items": {
+                Preconditions.checkArgument(clazz == Material.class, "Item namespace must have material type");
+                TagGroup<Item> itemTags = ItemTags.getTagGroup();
+                return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new ItemTagImpl(itemTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+            }
+            case "fluids": {
+                Preconditions.checkArgument(clazz == Material.class, "Fluid namespace must have fluid type");
+                TagGroup<net.minecraft.fluid.Fluid> fluidTags = FluidTags.getTagGroup();
+                return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new Tags.FluidTagImpl(fluidTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+            }
+            case "entity_types": {
+                Preconditions.checkArgument(clazz == org.bukkit.entity.EntityType.class, "Entity type namespace must have entity type");
+                TagGroup<EntityType<?>> entityTags = EntityTypeTags.getTagGroup();
+                return entityTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new EntityTagImpl(entityTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+            }
         }
+        throw new IllegalArgumentException();
     }
 
     @Override
@@ -1297,7 +1347,7 @@ public class CraftServer implements Server {
     public String getVersion() {
     	// Some plugins like WorldEdit use PaperLib.getMinecraftVersion() for version checks
         // Update: WorldEdit now has a preview 1.17 build
-        return serverVersion + " (MC: 1.17.1)";
+        return getShortVersion(); //serverVersion + " (MC: 1.17.1)";
     }
 
     public String getShortVersion() {

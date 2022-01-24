@@ -26,7 +26,7 @@ public abstract class TagImpl<N, B extends Keyed> implements Tag<B> {
     }
 
     public net.minecraft.tag.Tag<N> getHandle() {
-        return (handle == null) ? handle = registry.getTag(tag) : handle;
+        return (handle == null) ? (handle = registry.getTagOrEmpty(tag)) : handle;
     }
 
     @Override

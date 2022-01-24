@@ -371,7 +371,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 
     @Deprecated
     public String getMappingsVersion() {
-        return "MinecraftMapping-spigot2intermediary.srg";
+        return "20b026e774dbf715e40a0b2afe114792";
     }
 
     @Override
@@ -405,7 +405,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         return false;
     }
 
-    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17");
+    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18");
 
     @Override
     public void checkSupported(PluginDescriptionFile pdf) throws InvalidPluginException {
@@ -442,7 +442,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 
     // Paper start
     public boolean isSupportedApiVersion(String apiVersion) {
-        return apiVersion != null && SUPPORTED_API.contains(apiVersion);
+        return true;//apiVersion != null && SUPPORTED_API.contains(apiVersion);
     }
     // Paper end
 

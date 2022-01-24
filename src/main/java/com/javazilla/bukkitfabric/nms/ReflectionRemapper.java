@@ -42,7 +42,7 @@ import net.minecraft.server.ServerNetworkIo;
  */
 public class ReflectionRemapper {
 
-    private static final String NMS_VERSION = "v1_17_R1";
+    private static final String NMS_VERSION = "v1_18_R1";
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {
@@ -64,9 +64,9 @@ public class ReflectionRemapper {
         if (className.startsWith("net.minecraft.server.CraftServer."))
             return MappingsReader.getIntermedClass(className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server."));
 
-        if (className.startsWith("com.sk89q.worldedit.bukkit.adapter.impl.Spigot")) {
+        /*if (className.startsWith("com.sk89q.worldedit.bukkit.adapter.impl.Spigot")) {
             return "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard";
-        }
+        }*/
 
         return className;
     }
@@ -138,10 +138,14 @@ public class ReflectionRemapper {
                         a.setAccessible(true);
                         return a;
                     }
-                    if (whyIsAsmBroken.getName().equals("protocolsupport.zplatform.impl.spigot.injector.network.SpigotNettyInjector") && f.contains("f")) {
+                    if (null != whyIsAsmBroken && whyIsAsmBroken.getName().equals("protocolsupport.zplatform.impl.spigot.injector.network.SpigotNettyInjector") && f.contains("f")) {
                         Field a = ServerNetworkIo.class.getDeclaredField("channels");
                         a.setAccessible(true);
                         return a;
+                    }
+                    if (null == whyIsAsmBroken) {
+                        System.out.println("CALLING: " + calling.getName() + ", F: " + f);
+                        return null;
                     }
                     Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField(whyIsAsmBroken.getName(), f));
                     a.setAccessible(true);

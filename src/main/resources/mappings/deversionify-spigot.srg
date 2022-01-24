@@ -1,7 +1,5 @@
-#
-# Copyright 2020 Cardboard. All Rights Reserved.
-# Licensed under the General Public Licence.
-#
+net/minecraft/server/v1_18_R1/ net/minecraft/server
+org/bukkit/craftbukkit/v1_18_R1/ org/bukkit/craftbukkit
 
 org/bukkit/craftbukkit/CraftWorld org/cardboardpowered/impl/world/WorldImpl
 org/bukkit/craftbukkit/CraftWorldBorder org/cardboardpowered/impl/world/WorldBorderImpl
@@ -33,21 +31,6 @@ org/bukkit/craftbukkit/libs/org/apache/ org/apache
 org/bukkit/craftbukkit/libs/org/ org
 org/bukkit/craftbukkit/libs/com/ com
 
-
-#
-# Spigot2Intermediary Mappings auto-generated using "Mapp".
-#
-# "Mapp" Mappings Generator
-# Copyright 2021 by Isaiah. All Rights Reserved.
-# 
-# PRE-RELEASE SOFTWARE. USE AT YOUR OWN RISK.
-# 
-# Inputs:
-#    - Yarn 1.17.1
-#    - Spigot 1.17.1 CL
-#    - Spigot 1.17.1 MEMBERS
-#
-
 # TODO: Does NMS use versioned prefixes with the new 1.17 mappings?
-net/minecraft/server/v1_17_R1/ net/minecraft/server
-org/bukkit/craftbukkit/v1_17_R1/ org/bukkit/craftbukkit
+# net/minecraft/server/v1_17_R1/ net/minecraft/server
+# org/bukkit/craftbukkit/v1_17_R1/ org/bukkit/craftbukkit

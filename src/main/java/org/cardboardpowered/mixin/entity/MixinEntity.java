@@ -45,11 +45,8 @@ import org.cardboardpowered.impl.entity.*;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
-
 import me.isaiah.common.entity.IRemoveReason;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.FallingBlockEntity;
@@ -100,6 +97,7 @@ import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.mob.ZombifiedPiglinEntity;
 import net.minecraft.entity.passive.MerchantEntity;
+import net.minecraft.entity.passive.AbstractDonkeyEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.CatEntity;
@@ -107,12 +105,15 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.CodEntity;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.DolphinEntity;
+import net.minecraft.entity.passive.DonkeyEntity;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.passive.GolemEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.entity.passive.LlamaEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
+import net.minecraft.entity.passive.MuleEntity;
 import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.passive.ParrotEntity;
@@ -122,6 +123,7 @@ import net.minecraft.entity.passive.SalmonEntity;
 import net.minecraft.entity.passive.SnowGolemEntity;
 import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.passive.TraderLlamaEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.VillagerEntity;
@@ -150,11 +152,9 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 @Mixin(Entity.class)
 public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
@@ -189,7 +189,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public World world;
 
     public MixinEntity() {
-        this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);//new CraftEntity2((Entity) (Object) this);
+        this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
     }
 
     public void sendSystemMessage(Text message) {
@@ -218,34 +218,12 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public void setValid(boolean b) {
         this.valid = b;
     }
-    
-    // TODO
-    //private boolean justPortal;
-    //private int portalAge = -1;
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
     public void setBukkit(CallbackInfo callbackInfo) {
         if (null == bukkit) {
             this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
-        //    this.justPortal = false;
         }
-        /*if (this.justPortal) {
-            int age = ((Entity)(Object)this).age;
-            if (portalAge == -1) portalAge = age;
-            if ( (age - portalAge) <= 20) {
-                Entity e = (Entity)(Object)this;
-                Vec3d vec = c_portalTarget.position;
-
-                Chunk c = world.getChunk(new BlockPos(vec.x, vec.y, vec.z));
-                if (!c.isOutOfHeightLimit((int)vec.y)) {
-                    e.teleport(vec.x, vec.y + 1, vec.z);
-                    e.refreshPosition();
-                }  
-            } else {
-                this.justPortal = false;
-                this.portalAge = -1;
-            }
-        }*/
     }
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;")
@@ -330,12 +308,12 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                     }
                     //else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
                     else if (entity instanceof HorseBaseEntity) {
-                        /*if (entity instanceof AbstractDonkeyEntity){
-                            if (entity instanceof DonkeyEntity) { return new CraftDonkey(server, (DonkeyEntity) entity); }
-                            else if (entity instanceof MuleEntity) { return new CraftMule(server, (MuleEntity) entity); }
-                            else if (entity instanceof TraderLlamaEntity) { return new CraftTraderLlama(server, (TraderLlamaEntity) entity); }
-                            else if (entity instanceof LlamaEntity) { return new CraftLlama(server, (LlamaEntity) entity); }
-                        } else*/ if (entity instanceof HorseEntity) { return new CardboardHorse(server, (HorseEntity) entity); }
+                        if (entity instanceof AbstractDonkeyEntity){
+                            if (entity instanceof DonkeyEntity) { return new CardboardDonkey(server, (DonkeyEntity) entity); }
+                            else if (entity instanceof MuleEntity) { return new CardboardMule(server, (MuleEntity) entity); }
+                            //else if (entity instanceof TraderLlamaEntity) { return new CardboardTraderLlama(server, (TraderLlamaEntity) entity); }
+                            else if (entity instanceof LlamaEntity) { return new CardboardLlama(server, (LlamaEntity) entity); }
+                        } else if (entity instanceof HorseEntity) { return new CardboardHorse(server, (HorseEntity) entity); }
                         //else if (entity instanceof SkeletonHorseEntity) { return new CraftSkeletonHorse(server, (SkeletonHorseEntity) entity); }
                         //else if (entity instanceof ZombieHorseEntity) { return new CraftZombieHorse(server, (ZombieHorseEntity) entity); }
                     }

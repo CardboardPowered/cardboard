@@ -113,11 +113,11 @@ public class Commodore {
         boolean skip = false;
         for (Provider p : Remapper.providers) {
             if (p.shouldReplaceASM()) {
-                cr.accept(p.getClassVisitor(Opcodes.ASM8, cw), 0);
+                cr.accept(p.getClassVisitor(Opcodes.ASM9, cw), 0);
                 skip = true;
             }
         }
-        if (!skip) cr.accept(new ClassVisitor(Opcodes.ASM8, node) {
+        if (!skip) cr.accept(new ClassVisitor(Opcodes.ASM9, node) {
             // Paper start - Rewrite plugins
             @Override
             public FieldVisitor visitField(int access, String name, String desc, String signature, Object value){
