@@ -7,11 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Llama;
-import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.LlamaInventory;
-import org.cardboardpowered.impl.inventory.CardboardInventoryAbstractHorse;
-import org.cardboardpowered.interfaces.IHorseBaseEntity;
-import org.jetbrains.annotations.NotNull;
 
 public class CardboardLlama extends CardboardChestedHorse implements Llama {
 

@@ -2,6 +2,7 @@ package org.cardboardpowered.mixin;
 
 import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import org.cardboardpowered.CardboardConfig;
 import org.cardboardpowered.library.Library;
 import org.cardboardpowered.library.LibraryManager;
 import org.cardboardpowered.util.GameVersion;
+import org.cardboardpowered.util.JarReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -22,6 +24,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
     private static final String MIXIN_PACKAGE_ROOT = "org.cardboardpowered.mixin.";
     private final Logger logger = LogManager.getLogger("Cardboard");
     public static boolean libload = true;
+    private static boolean read_plugins = false;
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -30,6 +33,18 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        File pl = new File("plugins");
+        if (pl.exists()) {
+            try {
+                JarReader.read_plugins(pl);
+                read_plugins = true;
+            } catch (Exception e) {
+                read_plugins = false;
+                e.printStackTrace();
+            }
+        }
+
         logger.info("Loading Libraries...");
         loadLibs();
     }
@@ -65,6 +80,13 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         return null;
     }
 
+    public static boolean is_event_found(String event) {
+        if (!read_plugins) {
+            return true;
+        }
+        return JarReader.found.contains(event);
+    }
+
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         String mixin = mixinClassName.substring(MIXIN_PACKAGE_ROOT.length());
@@ -89,7 +111,34 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent")) return false;
             if (mixin.equals("network.MixinPlayerManager_ChatEvent")) return true;
         }
+
+
+        if (not_has_event(mixin, "LeashKnotEntity", "PlayerLeashEntityEvent") && not_has_event(mixin, "LeashKnotEntity", "PlayerUnleashEntityEvent")) return false;
+        if (not_has_event(mixin, "GoToWorkTask", "VillagerCareerChangeEvent")) return false;
+        if (not_has_event(mixin, "LoseJobOnSiteLossTask", "VillagerCareerChangeEvent")) return false;
+        if (not_has_event(mixin, "PiglinBrain", "EntityPickupItemEvent")) return false;
+        if (not_has_event(mixin, "DyeItem", "SheepDyeWoolEvent")) return false;
+        if (not_has_event(mixin, "FrostWalkerEnchantment", "BlockFormEvent")) return false;
+        if (not_has_event(mixin, "ExperienceOrbEntity", "PlayerItemMendEvent") || not_has_event(mixin, "ExperienceOrbEntity", "PlayerExpChangeEvent")) return false;
+        if (not_has_event(mixin, "Explosion", "EntityExplodeEvent") || not_has_event(mixin, "Explosion", "BlockExplodeEvent")) return false;
+        if (not_has_event(mixin, "LeavesBlock", "LeavesDecayEvent")) return false;
+        if (not_has_event(mixin, "PlayerAdvancementTracker", "PlayerAdvancementDoneEvent")) return false;
+
         return true;
+    }
+
+    public boolean not_has_event(String mix, String mixin, String event) {
+        if (mix.contains(mixin)) {
+            boolean dev = FabricLoader.getInstance().isDevelopmentEnvironment();
+            if (is_event_found(event)) {
+                if (dev) {logger.info("DEBUG: Status of " + mixin + ": true. (" + event + ")");}
+                return false;
+            } else {
+                if (dev) {logger.info("DEBUG: Status of " + mixin + ": false. (" + event + ")");}
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

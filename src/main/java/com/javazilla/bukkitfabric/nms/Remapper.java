@@ -94,9 +94,9 @@ public class Remapper {
             versionFix = new File(configDir, "deversionify-spigot.srg");
             spigot2inter = new File(configDir, "spigot2intermediary.csrg");
             
-            if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-                spigot2inter = new File(configDir, "devmappings.csrg");
-            }
+            //if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            //    spigot2inter = new File(configDir, "devmappings.csrg");
+            //}
 
             // Export Mappings to File
             exportResource("deversionify-spigot.srg", configDir);

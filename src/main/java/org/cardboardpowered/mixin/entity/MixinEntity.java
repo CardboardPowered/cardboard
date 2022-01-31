@@ -117,6 +117,7 @@ import net.minecraft.entity.passive.MuleEntity;
 import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.passive.PandaEntity;
 import net.minecraft.entity.passive.ParrotEntity;
+import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.entity.passive.PolarBearEntity;
 import net.minecraft.entity.passive.PufferfishEntity;
 import net.minecraft.entity.passive.SalmonEntity;
@@ -300,7 +301,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                         if (entity instanceof MooshroomEntity) { return new MushroomImpl(server, (MooshroomEntity) entity); }
                         else { return new CowImpl(server, (CowEntity) entity); }
                     }
-                    //else if (entity instanceof PigEntity) { return new CraftPig(server, (PigEntity) entity); }
+                    else if (entity instanceof PigEntity) { return new CardboardPig(server, (PigEntity) entity); }
                     else if (entity instanceof TameableEntity) {
                         if (entity instanceof WolfEntity) { return new WolfImpl(server, (WolfEntity) entity); }
                         else if (entity instanceof CatEntity) { return new CardboardCat(server, (CatEntity) entity); }

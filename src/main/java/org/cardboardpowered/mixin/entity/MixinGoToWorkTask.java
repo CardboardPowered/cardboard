@@ -30,7 +30,7 @@ public class MixinGoToWorkTask {
         GlobalPos globalpos = (GlobalPos) entityvillager.getBrain().getOptionalMemory(MemoryModuleType.POTENTIAL_JOB_SITE).get();
 
         entityvillager.getBrain().forget(MemoryModuleType.POTENTIAL_JOB_SITE);
-        entityvillager.getBrain().remember(MemoryModuleType.JOB_SITE, globalpos); // CraftBukkit - decompile error
+        entityvillager.getBrain().remember(MemoryModuleType.JOB_SITE, globalpos);
         worldserver.sendEntityStatus(entityvillager, (byte) 14);
         if (entityvillager.getVillagerData().getProfession() == VillagerProfession.NONE) {
             MinecraftServer minecraftserver = worldserver.getServer();
