@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
 import org.bukkit.craftbukkit.CraftServer;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,6 +16,7 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.LegacyQueryHandler;
 import net.minecraft.server.MinecraftServer;
 
+@MixinInfo(events = {"ServerListPingEvent"})
 @Mixin(value = LegacyQueryHandler.class, priority = 999)
 public class MixinLegacyQueryHandler {
 

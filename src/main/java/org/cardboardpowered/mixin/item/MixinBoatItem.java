@@ -1,5 +1,6 @@
 package org.cardboardpowered.mixin.item;
 
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,6 +22,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"PlayerInteractEvent"})
 @Mixin(BoatItem.class)
 public class MixinBoatItem extends Item {
 

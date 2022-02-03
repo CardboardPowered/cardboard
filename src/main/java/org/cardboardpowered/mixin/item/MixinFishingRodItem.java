@@ -2,6 +2,7 @@ package org.cardboardpowered.mixin.item;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,6 +20,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"PlayerFishEvent"})
 @Mixin(FishingRodItem.class)
 public class MixinFishingRodItem {
 

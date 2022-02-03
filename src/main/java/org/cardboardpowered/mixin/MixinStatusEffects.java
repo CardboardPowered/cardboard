@@ -12,9 +12,9 @@ import net.minecraft.util.registry.Registry;
 public class MixinStatusEffects {
 
     static {
-        for (Object effect : Registry.STATUS_EFFECT) {
-            org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
-        }
+        //for (Object effect : Registry.STATUS_EFFECT) {
+       //     org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
+       // }
     }
 
 }

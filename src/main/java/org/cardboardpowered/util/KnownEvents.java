@@ -3,6 +3,7 @@ package org.cardboardpowered.util;
 public class KnownEvents {
 
     public static String[] EVENTS = {
+            "ThrownEggHatchEvent", // from Paper
             "BlockBreakEvent",
             "BlockBurnEvent",
             "BlockCanBuildEvent",

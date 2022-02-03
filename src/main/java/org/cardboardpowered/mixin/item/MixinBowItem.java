@@ -1,6 +1,7 @@
 package org.cardboardpowered.mixin.item;
 
 import org.bukkit.entity.Player;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"EntityShootBowEvent"})
 @Mixin(BowItem.class)
 public class MixinBowItem {
 

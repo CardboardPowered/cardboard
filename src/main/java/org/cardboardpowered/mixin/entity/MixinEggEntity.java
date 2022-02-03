@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
@@ -24,9 +25,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"ThrownEggHatchEvent", "PlayerEggThrowEvent"})
 @Mixin(value = EggEntity.class, priority = 999)
 public abstract class MixinEggEntity {
-    
+
     private final Random random = new Random();
 
     @Inject(at = @At(shift = Shift.AFTER, value = "HEAD"), method = "onCollision", cancellable = true)

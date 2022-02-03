@@ -2,6 +2,7 @@ package org.cardboardpowered.mixin.item;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.server.MapInitializeEvent;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
@@ -12,6 +13,7 @@ import net.minecraft.item.map.MapState;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"MapInitializeEvent"})
 @Mixin(FilledMapItem.class)
 public class MixinFilledMapItem {
 

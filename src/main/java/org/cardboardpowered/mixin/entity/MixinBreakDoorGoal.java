@@ -4,6 +4,7 @@
  */
 package org.cardboardpowered.mixin.entity;
 
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,6 +18,7 @@ import net.minecraft.entity.ai.goal.DoorInteractGoal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.BlockPos;
 
+@MixinInfo(events = {"EntityBreakDoorEvent"})
 @Mixin(BreakDoorGoal.class)
 public class MixinBreakDoorGoal extends DoorInteractGoal {
 

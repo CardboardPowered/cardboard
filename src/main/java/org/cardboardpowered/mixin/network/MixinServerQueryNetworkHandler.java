@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.cardboardpowered.impl.CardboardServerListPingEvent;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,6 +23,7 @@ import net.minecraft.server.network.ServerQueryNetworkHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
+@MixinInfo(events = {"ServerListPingEvent"})
 @Mixin(ServerQueryNetworkHandler.class)
 public class MixinServerQueryNetworkHandler {
 

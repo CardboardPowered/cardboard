@@ -1,6 +1,7 @@
 package org.cardboardpowered.mixin.entity;
 
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.util.MixinInfo;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,6 +15,7 @@ import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.ForgetAttackTargetTask;
 import net.minecraft.entity.mob.MobEntity;
 
+@MixinInfo(events = {"EntityTargetEvent", "EntityTargetLivingEntityEvent"})
 @Mixin(ForgetAttackTargetTask.class)
 public class MixinForgetAttackTargetTask<E extends MobEntity> {
 

@@ -2,6 +2,7 @@ package org.cardboardpowered.mixin.block;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"EntityPortalEnterEvent"})
 @Mixin(NetherPortalBlock.class)
 public class MixinNetherPortalBlock {
 

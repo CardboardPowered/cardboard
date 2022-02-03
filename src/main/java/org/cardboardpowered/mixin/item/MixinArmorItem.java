@@ -5,6 +5,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.cardboardpowered.impl.block.DispenserBlockHelper;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.util.MixinInfo;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.block.BlockDispenseArmorEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"BlockDispenseArmorEvent"})
 @Mixin(value = ArmorItem.class, priority = 900)
 public class MixinArmorItem {
 

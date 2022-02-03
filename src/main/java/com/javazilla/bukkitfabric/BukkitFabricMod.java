@@ -35,6 +35,7 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.cardboardpowered.impl.CardboardPotionEffectType;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
@@ -51,12 +52,14 @@ import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
 import me.isaiah.common.event.entity.player.ServerPlayerInitEvent;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 @SuppressWarnings("deprecation")
@@ -85,6 +88,10 @@ public class BukkitFabricMod implements ModInitializer {
         }
         LOGGER.info("Cardboard mod Loaded.");
         new File("plugins").mkdirs();
+        
+        for (Object effect : Registry.STATUS_EFFECT) {
+            org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
+        }
     }
 
     @EventHandler

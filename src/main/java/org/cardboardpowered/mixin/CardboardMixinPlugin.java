@@ -3,7 +3,9 @@ package org.cardboardpowered.mixin;
 import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +15,8 @@ import org.cardboardpowered.library.Library;
 import org.cardboardpowered.library.LibraryManager;
 import org.cardboardpowered.util.GameVersion;
 import org.cardboardpowered.util.JarReader;
+import org.cardboardpowered.util.MixinInfo;
+import org.cardboardpowered.util.TestCl;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -86,6 +90,8 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         }
         return JarReader.found.contains(event);
     }
+    
+    private static final TestCl dummy = new TestCl();
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
@@ -113,6 +119,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         }
 
 
+        // Disable mixin if event is not found in plugins.
         if (not_has_event(mixin, "LeashKnotEntity", "PlayerLeashEntityEvent") && not_has_event(mixin, "LeashKnotEntity", "PlayerUnleashEntityEvent")) return false;
         if (not_has_event(mixin, "GoToWorkTask", "VillagerCareerChangeEvent")) return false;
         if (not_has_event(mixin, "LoseJobOnSiteLossTask", "VillagerCareerChangeEvent")) return false;
@@ -120,10 +127,39 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         if (not_has_event(mixin, "DyeItem", "SheepDyeWoolEvent")) return false;
         if (not_has_event(mixin, "FrostWalkerEnchantment", "BlockFormEvent")) return false;
         if (not_has_event(mixin, "ExperienceOrbEntity", "PlayerItemMendEvent") || not_has_event(mixin, "ExperienceOrbEntity", "PlayerExpChangeEvent")) return false;
-        if (not_has_event(mixin, "Explosion", "EntityExplodeEvent") || not_has_event(mixin, "Explosion", "BlockExplodeEvent")) return false;
+        if (not_has_event(mixin, "Explosion", "EntityExplodeEvent") && not_has_event(mixin, "Explosion", "BlockExplodeEvent")) return false;
         if (not_has_event(mixin, "LeavesBlock", "LeavesDecayEvent")) return false;
         if (not_has_event(mixin, "PlayerAdvancementTracker", "PlayerAdvancementDoneEvent")) return false;
 
+        if (mixinClassName.contains("network")) return true;
+        
+        try {
+            Class<?> c = Class.forName(mixinClassName, true, new TestCl());
+
+            for (Annotation a : c.getAnnotations()) {
+                String e = a.toString().split("events=")[1].substring(1);
+                e = e.substring(0, e.lastIndexOf("}")).replace("\"", "");
+                String[] events = e.split(", ");
+                if (events.length > 0) {
+                    if (events[0].length() < 4) {
+                        return true; // No events
+                    }
+                    
+                    boolean disable = true;
+                    for (String ev : events) {
+                        if (!not_has_event(mixin, mixin, ev))
+                            disable = false;
+                    }
+                    if (disable)
+                        return false;
+                }
+            }
+        
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         return true;
     }
 

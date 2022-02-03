@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.cardboardpowered.impl.entity.VillagerImpl;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
@@ -18,6 +19,7 @@ import net.minecraft.village.VillagerProfession;
 
 import net.minecraft.util.registry.Registry;
 
+@MixinInfo(events = {"VillagerCareerChangeEvent"})
 @Mixin(value = GoToWorkTask.class, priority = 999)
 public class MixinGoToWorkTask {
 

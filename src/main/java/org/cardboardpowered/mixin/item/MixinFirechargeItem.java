@@ -1,5 +1,6 @@
 package org.cardboardpowered.mixin.item;
 
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,6 +16,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+@MixinInfo(events = {"BlockIgniteEvent"})
 @Mixin(FireChargeItem.class)
 public class MixinFirechargeItem {
 

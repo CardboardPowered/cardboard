@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.world.LootGenerateEvent;
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -17,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 
+@MixinInfo(events = {"LootGenerateEvent"})
 @Mixin(LootTable.class)
 public class MixinLootTable {
 

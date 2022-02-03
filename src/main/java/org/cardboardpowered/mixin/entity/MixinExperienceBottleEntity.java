@@ -1,5 +1,6 @@
 package org.cardboardpowered.mixin.entity;
 
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,6 +15,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
+@MixinInfo(events = {"ExpBottleEvent"})
 @Mixin(ExperienceBottleEntity.class)
 public class MixinExperienceBottleEntity extends MixinProjectileEntity {
 

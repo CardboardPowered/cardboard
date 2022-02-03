@@ -24,12 +24,14 @@ import org.spongepowered.asm.mixin.Overwrite;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import org.cardboardpowered.impl.entity.VillagerImpl;
+import org.cardboardpowered.util.MixinInfo;
 
 import net.minecraft.entity.ai.brain.task.LoseJobOnSiteLossTask;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.village.VillagerProfession;
 
+@MixinInfo(events = {"VillagerCareerChangeEvent"})
 @Mixin(value = LoseJobOnSiteLossTask.class, priority = 900)
 public class MixinLoseJobOnSiteLossTask {
 

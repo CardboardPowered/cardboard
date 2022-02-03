@@ -3,6 +3,7 @@ package org.cardboardpowered.mixin.entity;
 import java.util.Iterator;
 import java.util.List;
 
+import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
@@ -18,6 +19,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 
+@MixinInfo(events = {"PlayerLeashEntityEvent", "PlayerUnleashEntityEvent"})
 @Mixin(value = LeashKnotEntity.class, priority = 900)
 public class MixinLeashKnotEntity {
 
