@@ -7,12 +7,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
+import org.cardboardpowered.interfaces.IWorldChunk;
 
 import net.minecraft.world.chunk.WorldChunk;
 
 @Mixin(WorldChunk.class)
-public class MixinWorldChunk implements IMixinWorldChunk {
+public class MixinWorldChunk implements IWorldChunk {
 
     private Chunk bukkit;
 

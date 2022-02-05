@@ -111,6 +111,8 @@
     "network.MixinPacketByteBuf",
     "network.MixinResourcePackStatusC2SPacket",
     "network.MixinPlayerManager_ChatEvent",
+    "network.handler.MixinSPNH_SignUpdateEvent",
+    "network.handler.MixinSPNH_InventoryClickEvent",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",

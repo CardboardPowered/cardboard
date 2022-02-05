@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.javazilla.bukkitfabric.interfaces;
+package org.cardboardpowered.interfaces;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 
-public interface IMixinGameMessagePacket {
+public interface IGameMessagePacket {
 
     BaseComponent[] getBungeeComponents();
 

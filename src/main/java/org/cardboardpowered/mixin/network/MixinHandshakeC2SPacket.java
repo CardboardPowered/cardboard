@@ -3,13 +3,13 @@ package org.cardboardpowered.mixin.network;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinHandshakeC2SPacket;
+import org.cardboardpowered.interfaces.IHandshakeC2SPacket;
 
 import net.minecraft.network.NetworkState;
 import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
 
 @Mixin(HandshakeC2SPacket.class)
-public class MixinHandshakeC2SPacket implements IMixinHandshakeC2SPacket {
+public class MixinHandshakeC2SPacket implements IHandshakeC2SPacket {
 
     @Shadow public int protocolVersion;
     @Shadow public String address;

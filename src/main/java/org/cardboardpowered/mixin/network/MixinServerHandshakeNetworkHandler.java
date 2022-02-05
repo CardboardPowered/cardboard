@@ -1,5 +1,6 @@
 package org.cardboardpowered.mixin.network;
 
+import org.cardboardpowered.interfaces.IHandshakeC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -7,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
-import com.javazilla.bukkitfabric.interfaces.IMixinHandshakeC2SPacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 
 import me.isaiah.common.GameVersion;
@@ -44,7 +44,7 @@ public class MixinServerHandshakeNetworkHandler {
                     }
                     if ( split.length == 4 ) ((IMixinClientConnection)connection).setSpoofedProfile(gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class));
                 }
-                ((IMixinServerLoginNetworkHandler)((ServerLoginNetworkHandler) this.connection.getPacketListener())).setHostname(packethandshakinginsetprotocol.address + ":" + ((IMixinHandshakeC2SPacket)packethandshakinginsetprotocol).getPortBF()); // Bukkit - set hostname
+                ((IMixinServerLoginNetworkHandler)((ServerLoginNetworkHandler) this.connection.getPacketListener())).setHostname(packethandshakinginsetprotocol.address + ":" + ((IHandshakeC2SPacket)packethandshakinginsetprotocol).getPortBF()); // Bukkit - set hostname
             }
         }
     }

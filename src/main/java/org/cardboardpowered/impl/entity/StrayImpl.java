@@ -13,7 +13,7 @@ public class StrayImpl extends SkeletonImpl implements Stray {
 
     @Override
     public String toString() {
-        return "StrayImpl";
+        return "Stray";
     }
 
     @Override

@@ -22,7 +22,7 @@ public abstract class MixinYamlConfiguration extends FileConfiguration {
 
     public void cardboard_setMaxAliasesForCollections(int max) {
         try {
-            loaderOptions.setMaxAliasesForCollections(Integer.MAX_VALUE); // SPIGOT-5881: Not ideal, but was default pre SnakeYAML 1.26
+            loaderOptions.setMaxAliasesForCollections(Integer.MAX_VALUE); // SPIGOT-5881
         } catch (NoSuchMethodError | SecurityException e) {
             // A mod did not include YAML properly.
         }
@@ -30,7 +30,7 @@ public abstract class MixinYamlConfiguration extends FileConfiguration {
 
     /**
      * @author Cardboard
-     * @reason Some mods come bundled with YAML. Unfortunately due to know
+     * @reason Some mods come bundled with YAML. Unfortunately due to how
      *  class loading works for mods with Fabric we need to make sure we
      *  stay compatible with SnakeYAML pre-1.26
      */
@@ -40,7 +40,7 @@ public abstract class MixinYamlConfiguration extends FileConfiguration {
 
         Map<?, ?> input;
         try {
-            cardboard_setMaxAliasesForCollections(Integer.MAX_VALUE); // SPIGOT-5881: Not ideal, but was default pre SnakeYAML 1.26
+            cardboard_setMaxAliasesForCollections(Integer.MAX_VALUE); // SPIGOT-5881
             input = (Map<?, ?>) yaml.load(contents);
         } catch (YAMLException | ClassCastException e) {
             throw new InvalidConfigurationException();

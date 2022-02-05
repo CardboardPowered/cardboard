@@ -4,8 +4,10 @@ import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +17,6 @@ import org.cardboardpowered.library.Library;
 import org.cardboardpowered.library.LibraryManager;
 import org.cardboardpowered.util.GameVersion;
 import org.cardboardpowered.util.JarReader;
-import org.cardboardpowered.util.MixinInfo;
 import org.cardboardpowered.util.TestCl;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -131,10 +132,17 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         if (not_has_event(mixin, "LeavesBlock", "LeavesDecayEvent")) return false;
         if (not_has_event(mixin, "PlayerAdvancementTracker", "PlayerAdvancementDoneEvent")) return false;
 
-        if (mixinClassName.contains("network")) return true;
+        if (mixinClassName.contains("ServerPlayNetworkHandler")) return true;
         
         try {
-            Class<?> c = Class.forName(mixinClassName, true, new TestCl());
+            URL[] jar = {
+                    FabricLoader.getInstance().getModContainer("cardboard").get().getRootPath().toUri().toURL(),
+                    FabricLoader.getInstance().getModContainer("minecraft").get().getRootPath().toUri().toURL(),
+                    FabricLoader.getInstance().getModContainer("fabricloader").get().getRootPath().toUri().toURL(),
+                    new File(new File("lib"), "paper-api-1.17-dev.jar").toURI().toURL()
+            };
+
+            Class<?> c = Class.forName(mixinClassName, false, new URLClassLoader(jar));
 
             for (Annotation a : c.getAnnotations()) {
                 String e = a.toString().split("events=")[1].substring(1);
@@ -155,11 +163,10 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                 }
             }
         
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.info(e.getMessage());
         }
-        
+
         return true;
     }
 

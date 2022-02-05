@@ -113,7 +113,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinChunkHolder;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinThreadedAnvilChunkStorage;
-import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
+import org.cardboardpowered.interfaces.IWorldChunk;
 
 import io.papermc.paper.world.MoonPhase;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
@@ -505,7 +505,7 @@ public class WorldImpl implements World {
 
     @Override
     public Chunk getChunkAt(int x, int z) {
-        return ((IMixinWorldChunk)nms.getChunkManager().getWorldChunk(x, z, true)).getBukkitChunk();
+        return ((IWorldChunk)nms.getChunkManager().getWorldChunk(x, z, true)).getBukkitChunk();
     }
 
     @Override
@@ -775,7 +775,7 @@ public class WorldImpl implements World {
     }
 
     private static Chunk getBukkitChunkForChunk(WorldChunk mc) {
-        return ((IMixinWorldChunk)mc).getBukkitChunk();
+        return ((IWorldChunk)mc).getBukkitChunk();
     }
 
     @Override

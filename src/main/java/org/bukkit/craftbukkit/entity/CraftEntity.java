@@ -44,7 +44,7 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.interfaces.IMixinWorldChunk;
+import org.cardboardpowered.interfaces.IWorldChunk;
 import com.mojang.brigadier.LiteralMessage;
 
 import me.isaiah.common.entity.IRemoveReason;
@@ -645,7 +645,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Chunk getChunk() {
-        IMixinWorldChunk wc = (IMixinWorldChunk) nms.getEntityWorld().getWorldChunk(nms.getBlockPos());
+        IWorldChunk wc = (IWorldChunk) nms.getEntityWorld().getWorldChunk(nms.getBlockPos());
         return wc.getBukkitChunk();
     }
 

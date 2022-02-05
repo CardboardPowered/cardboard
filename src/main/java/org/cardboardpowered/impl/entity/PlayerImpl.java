@@ -91,11 +91,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.cardboardpowered.interfaces.IGameMessagePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinGameMessagePacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
@@ -1315,7 +1315,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
            if (null == getHandle().networkHandler) return;
 
             GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.SYSTEM, nms.getUuid());
-            ((IMixinGameMessagePacket)packet).setBungeeComponents(components);
+            ((IGameMessagePacket)packet).setBungeeComponents(components);
             getHandle().networkHandler.sendPacket(packet);
         }
 
@@ -1332,7 +1332,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
             if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR)
                 components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
 
-            ((IMixinGameMessagePacket)packet).setBungeeComponents(components);
+            ((IGameMessagePacket)packet).setBungeeComponents(components);
             getHandle().networkHandler.sendPacket(packet);
         }
     };
