@@ -133,7 +133,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         if (not_has_event(mixin, "PlayerAdvancementTracker", "PlayerAdvancementDoneEvent")) return false;
 
         if (mixinClassName.contains("ServerPlayNetworkHandler")) return true;
-        
+
         try {
             URL[] jar = {
                     FabricLoader.getInstance().getModContainer("cardboard").get().getRootPath().toUri().toURL(),

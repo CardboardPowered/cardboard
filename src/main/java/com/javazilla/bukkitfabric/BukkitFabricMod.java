@@ -90,7 +90,11 @@ public class BukkitFabricMod implements ModInitializer {
         new File("plugins").mkdirs();
         
         for (Object effect : Registry.STATUS_EFFECT) {
-            org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
+            try {
+                org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // ignore
+            }
         }
     }
 

@@ -353,7 +353,7 @@ public class CardboardChunk implements Chunk {
                 biome[i] = biomeCodec.parse(NbtOps.INSTANCE, data.getCompound("biomes")).get().left().get();
             }
         }
-
+ 
         Heightmap hmap = null;
 
         if (includeMaxBlockY) {

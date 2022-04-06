@@ -53,7 +53,7 @@ public abstract class MixinDedicatedServer extends MixinMCServer implements IDed
     @Final
     private List<PendingServerCommand> commandQueue;
 
-    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
+    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z") 
     private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
         CraftServer.server = (MinecraftDedicatedServer) (Object) this;
     }
@@ -67,7 +67,9 @@ public abstract class MixinDedicatedServer extends MixinMCServer implements IDed
         CraftMagicNumbers.test();
         CraftMagicNumbers.setupUnknownModdedMaterials();
 
-        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager((MinecraftDedicatedServer) (Object) this, registryManager, saveHandler));
+        MinecraftDedicatedServer thiss = (MinecraftDedicatedServer) (Object) this;
+        
+        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager(thiss, thiss.getRegistryManager(), saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
         org.spigotmc.SpigotConfig.init(new File("spigot.yml"));
 

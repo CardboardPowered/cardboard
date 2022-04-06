@@ -59,13 +59,14 @@ public class MixinBoatDispenserBehavior {
         BlockPos blockposition = isourceblock.getPos().offset(enumdirection);
         double d3;
 
-        if (worldserver.getFluidState(blockposition).isIn((Tag<Fluid>) FluidTags.WATER)) {
+        // FIXME: 1.18.2
+        //if (worldserver.getFluidState(blockposition).isIn((Tag<Fluid>) FluidTags.WATER)) {
             d3 = 1.0D;
-        } else {
-            if (!worldserver.getBlockState(blockposition).isAir() || !worldserver.getFluidState(blockposition.down()).isIn((Tag<Fluid>) FluidTags.WATER))
-                return this.itemDispenser.dispense(isourceblock, itemstack);
-            d3 = 0.0D;
-        }
+        //} else {
+        //    if (!worldserver.getBlockState(blockposition).isAir() || !worldserver.getFluidState(blockposition.down()).isIn((Tag<Fluid>) FluidTags.WATER))
+        //        return this.itemDispenser.dispense(isourceblock, itemstack);
+        //    d3 = 0.0D;
+       // }
 
         ItemStack itemstack1 = itemstack.split(1);
         org.bukkit.block.Block block = ((IMixinWorld)worldserver).getWorldImpl().getBlockAt(isourceblock.getPos().getX(), isourceblock.getPos().getY(), isourceblock.getPos().getZ());

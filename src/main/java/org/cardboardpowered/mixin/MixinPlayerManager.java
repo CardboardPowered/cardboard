@@ -118,7 +118,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
                     boolean flag3 = iblockdata.isOf(Blocks.RESPAWN_ANCHOR);
                     Vec3d vec3d = (Vec3d) optional.get();
                     float f1;
-                    if (!iblockdata.isIn((Tag<Block>) BlockTags.BEDS) && !flag3) {
+                    if (!iblockdata.isIn(BlockTags.BEDS) && !flag3) {
                         f1 = f;
                     } else {
                         Vec3d vec3d1 = Vec3d.ofBottomCenter((Vec3i) blockposition).subtract(vec3d).normalize();

@@ -48,7 +48,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import me.isaiah.common.cmixin.IMixinPersistentStateManager;
 import net.minecraft.command.DataCommandStorage;
-import net.minecraft.resource.ServerResourceManager;
+import net.minecraft.server.DataPackContents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -83,14 +83,14 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         super(string);
     }
 
-    @Shadow @Final public DynamicRegistryManager.Impl registryManager;
+   // @Shadow @Final public DynamicRegistryManager.Impl registryManager;
     @Shadow @Final public WorldSaveHandler saveHandler;
     @Shadow @Final private static Logger LOGGER;
     //@Shadow @Final public Executor workerExecutor;
    // @Shadow @Final public WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
 
     @Shadow public Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
-    @Shadow public ServerResourceManager serverResourceManager;
+    @Shadow public DataPackContents resourceManagerHolder; // 1.18.1: serverResourceManager
     @Shadow public LevelStorage.Session session;
     @Shadow private long timeReference;
     @Shadow public DataCommandStorage dataCommandStorage;
@@ -145,7 +145,10 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
     @Override
     public CommandManager setCommandManager(CommandManager commandManager) {
-        return (this.serverResourceManager.commandManager = commandManager);
+        
+        // MinecraftServer mc = (MinecraftServer)(Object)this;
+        
+        return (this.resourceManagerHolder.commandManager = commandManager);
     }
 
     public MinecraftServer getServer() {

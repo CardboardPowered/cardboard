@@ -86,7 +86,9 @@ public class MixinItemStack {
         PlayerEntity playerEntity = context.getPlayer();
         BlockPos blockPos = context.getBlockPos();
         CachedBlockPosition cachedBlockPosition = new CachedBlockPosition(context.getWorld(), blockPos, false);
-        if (playerEntity != null && !playerEntity.abilities.allowModifyWorld && !((ItemStack)(Object)this).canPlaceOn(context.getWorld().getTagManager(), cachedBlockPosition)) {
+        if (playerEntity != null && !playerEntity.abilities.allowModifyWorld
+                // FIXME: 1.18.2: Adventure mode place test.
+                /*&& !((ItemStack)(Object)this).canPlaceOn(context.getWorld().getTagManager(), cachedBlockPosition)*/) {
             return ActionResult.PASS;
         }
         ((IMixinWorld)context.getWorld()).setCaptureBlockStates_BF(true);

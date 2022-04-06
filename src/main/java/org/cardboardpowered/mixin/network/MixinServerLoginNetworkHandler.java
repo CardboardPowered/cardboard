@@ -154,7 +154,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                 return server.shouldPreventProxyConnections() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress) socketaddress).getAddress() : null;
             }
         };
-        thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
+        // TODO: thread.setUncaughtExceptionHandler(new UncaughtExceptionLogger(LogManager.getLogger("BukkitServerLoginManager")));
         thread.start();
     }
 

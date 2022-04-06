@@ -549,12 +549,12 @@ accessible	field	net/minecraft/server/MinecraftServer	timeReference	J
 mutable	field	net/minecraft/server/MinecraftServer	timeReference	J
 accessible	field	net/minecraft/server/MinecraftServer	dataPackManager	Lnet/minecraft/resource/ResourcePackManager;
 mutable	field	net/minecraft/server/MinecraftServer	dataPackManager	Lnet/minecraft/resource/ResourcePackManager;
-accessible	field	net/minecraft/resource/ServerResourceManager	commandManager	Lnet/minecraft/server/command/CommandManager;
-mutable	field	net/minecraft/resource/ServerResourceManager	commandManager	Lnet/minecraft/server/command/CommandManager;
+accessible	field	net/minecraft/server/DataPackContents	commandManager	Lnet/minecraft/server/command/CommandManager;
+mutable	field	net/minecraft/server/DataPackContents	commandManager	Lnet/minecraft/server/command/CommandManager;
 accessible	field	net/minecraft/server/MinecraftServer	tickTime	F
 accessible	field	net/minecraft/server/MinecraftServer	workerExecutor	Ljava/util/concurrent/Executor;
 accessible	field	net/minecraft/server/MinecraftServer	serverId	Ljava/lang/String;
-accessible	field	net/minecraft/server/MinecraftServer	serverResourceManager	Lnet/minecraft/resource/ServerResourceManager;
+accessible	field	net/minecraft/server/MinecraftServer	resourceManagerHolder	Lnet/minecraft/server/DataPackContents;
 accessible	method	net/minecraft/server/MinecraftServer	shutdown	()V
 accessible	method	net/minecraft/server/MinecraftServer	tick	(Ljava/util/function/BooleanSupplier;)V
 accessible	method	net/minecraft/server/MinecraftServer	isMonsterSpawningEnabled	()Z

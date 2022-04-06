@@ -711,7 +711,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public boolean isFrozen() {
-        return nms.isFreezing();
+        return nms.isFrozen();
     }
 
     @Override

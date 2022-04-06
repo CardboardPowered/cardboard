@@ -45,7 +45,7 @@ public class MixinTraderInventory implements IMixinInventory {
     @Override
     public void onClose(CraftHumanEntity who) {
         transaction.remove(who);
-        merchant.setCurrentCustomer((PlayerEntity) null);
+        merchant.setCustomer((PlayerEntity) null);
     }
 
     @Override

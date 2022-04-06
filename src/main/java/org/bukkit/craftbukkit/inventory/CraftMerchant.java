@@ -66,7 +66,7 @@ public class CraftMerchant implements org.bukkit.inventory.Merchant {
 
     @Override
     public HumanEntity getTrader() {
-        PlayerEntity eh = merchant.getCurrentCustomer();
+        PlayerEntity eh = merchant.getCustomer();
         return eh == null ? null : (Player)((IMixinServerEntityPlayer)eh).getBukkitEntity();
     }
 

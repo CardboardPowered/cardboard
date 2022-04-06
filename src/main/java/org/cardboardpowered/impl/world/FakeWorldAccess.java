@@ -41,6 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.WorldAccess;
@@ -149,7 +150,9 @@ public class FakeWorldAccess implements WorldAccess {
     }
 
     @Override
-    public Biome getGeneratorStoredBiome(int i, int i1, int i2) {
+    // 1.18.1: Biome
+    // 1.18.2: RegistryEntry<Biome> 
+    public RegistryEntry<Biome> getGeneratorStoredBiome(int i, int i1, int i2) {
         throw new UnsupportedOperationException("Not supported");
     }
 

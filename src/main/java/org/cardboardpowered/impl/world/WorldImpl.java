@@ -117,6 +117,8 @@ import org.cardboardpowered.interfaces.IWorldChunk;
 
 import io.papermc.paper.world.MoonPhase;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import me.isaiah.common.cmixin.IMixinWorld;
+import net.fabricmc.fabric.mixin.structure.StructureFeatureAccessor;
 import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChorusFlowerBlock;
@@ -480,7 +482,12 @@ public class WorldImpl implements World {
 
     @Override
     public Biome getBiome(int arg0, int arg1, int arg2) {
-        return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(Registry.BIOME_KEY), nms.getBiomeForNoiseGen(arg0 >> 2, arg1 >> 2, arg2 >> 2));
+        try {
+            return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(Registry.BIOME_KEY), nms.getBiomeForNoiseGen(arg0 >> 2, arg1 >> 2, arg2 >> 2).value());
+        } catch (Exception e) {
+            return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(Registry.BIOME_KEY),
+                    (net.minecraft.world.biome.Biome) (Object) nms.getBiomeForNoiseGen(arg0 >> 2, arg1 >> 2, arg2 >> 2));
+        }
     }
 
     @Override
@@ -741,7 +748,12 @@ public class WorldImpl implements World {
 
     @Override
     public double getHumidity(int x, int y, int z) {
-        return nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).getDownfall();
+        try {
+            return nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).value().getDownfall();
+        } catch (Exception e) {
+            // 1.18.1
+            return ((net.minecraft.world.biome.Biome) (Object) nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2) ).getDownfall();
+        }
     }
 
     @Override
@@ -888,7 +900,8 @@ public class WorldImpl implements World {
     @Override
     public double getTemperature(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        return nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).getTemperature(pos);
+        IMixinWorld icommon = (IMixinWorld) nms;
+        return icommon.I_get_biome_for_noise_gen(x >> 2, y >> 2, z >> 2).getTemperature(pos);
     }
 
     @Override
@@ -1055,8 +1068,10 @@ public class WorldImpl implements World {
     @Override
     public Location locateNearestStructure(Location origin, StructureType structureType, int radius, boolean findUnexplored) {
         BlockPos originPos = new BlockPos(origin.getX(), origin.getY(), origin.getZ());
-        BlockPos nearest = this.getHandle().getChunkManager().getChunkGenerator().locateStructure(this.getHandle(), StructureFeature.STRUCTURES.get(structureType.getName()), originPos, radius, findUnexplored);
-        return (nearest == null) ? null : new Location(this, nearest.getX(), nearest.getY(), nearest.getZ());
+        // FIXME: 1.18.2
+        return null;
+        // BlockPos nearest = this.getHandle().getChunkManager().getChunkGenerator().locateStructure(this.getHandle(), StructureFeature..STRUCTURES.get(structureType.getName()), originPos, radius, findUnexplored);
+        //return (nearest == null) ? null : new Location(this, nearest.getX(), nearest.getY(), nearest.getZ());
     }
 
     public void playEffect(Player player, Effect effect, int data) {
@@ -1468,7 +1483,8 @@ public class WorldImpl implements World {
             entity = new BoatEntity(nms, x, y, z);
             entity.refreshPositionAndAngles(x, y, z, yaw, pitch);
         } else if (FallingBlock.class.isAssignableFrom(clazz)) {
-            entity = new FallingBlockEntity(nms, x, y, z, nms.getBlockState(new BlockPos(x, y, z)));
+            // TODO 1.18.2
+            // entity = new FallingBlockEntity(nms, x, y, z, nms.getBlockState(new BlockPos(x, y, z)));
         } else if (Projectile.class.isAssignableFrom(clazz)) {
             if (Snowball.class.isAssignableFrom(clazz)) {
                 entity = new SnowballEntity(nms, x, y, z);

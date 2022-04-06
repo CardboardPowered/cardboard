@@ -11,7 +11,7 @@ import net.minecraft.world.WorldSaveHandler;
 @Mixin(value=MinecraftServer.class)
 public class MixinMCServer {
 
-    @Shadow @Final public DynamicRegistryManager.Impl registryManager;
+    // TODO: 1.18.2 @Shadow @Final public DynamicRegistryManager.Impl registryManager;
     @Shadow @Final public WorldSaveHandler saveHandler;
 
 }

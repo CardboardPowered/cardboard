@@ -244,6 +244,7 @@ import net.minecraft.tag.EntityTypeTags;
 import net.minecraft.tag.FluidTags;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.TagGroup;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.math.BlockPos;

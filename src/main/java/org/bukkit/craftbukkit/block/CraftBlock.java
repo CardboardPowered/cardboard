@@ -451,7 +451,9 @@ public class CraftBlock implements Block {
 
     @Override
     public double getTemperature() {
-        return world.getBiome(position).getTemperature(position);
+        return 0;
+        // TODO: 1.18.2
+        //return world.getBiome(position).getTemperature(position);
     }
 
     @Override
