@@ -7,9 +7,11 @@ Cardboard is an implementation of the popular Bukkit/Spigot/Paper Modding API fo
 
 | Supported? | Minecraft       | Download      | Build Status |
 |-----------------|---------------------------|---------------|----------------------|
-| &#x2705; | Fabric 1.17.1 | [Download for 1.17.x](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download#1.17) |
-| &#x2705; | Fabric 1.16.4-1.16.5 | [Download for 1.16.x](https://cardboardpowered.org/download#1.16) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
-| &#x274C; | &#8804; 1.16.3 | |            | |
+| &#x274C; | Fabric 1.18.2 | Work-in-Progress |  |
+| &#x2705; | Fabric 1.18.1 | [Download for 1.18.1](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
+| &#x2705; | Fabric 1.17.1 | [Download for 1.17.1](https://cardboardpowered.org/download) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
+| &#x274C; | 1.16.4 / 1.16.5 | [Download for 1.16.5](https://cardboardpowered.org/download#1.16) |            | |
+| &#x274C; | 1.16.3 | |  |
 
 ## License
 We inherit the license from Paper. See [Paper's License](https://github.com/PaperMC/Paper/blob/master/LICENSE.md) for full details.
@@ -29,7 +31,6 @@ Progress can be determined by the completeness of the to-do lists on the two pin
 * [Glowstone](https://glowstone.net) for the library loader.
 * [md_5's SpecialSource](https://github.com/md-5/SpecialSource), [SrgLib by Techcable & Orion](https://github.com/OrionMinecraft/SrgLib), [MinecraftMapping by Phase](https://github.com/phase/MinecraftMapping/)
 * Contributors to Cardboard
-* And the patreons who help support this project.
 
 # Apex Hosting 
 This project is partnered with ApexHosting! Join our test server, `cardboardmod.apexmc.co:25666`, or get a Minecraft server by clicking on the banner below:
