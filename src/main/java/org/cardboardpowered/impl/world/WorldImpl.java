@@ -1843,7 +1843,8 @@ public class WorldImpl implements World {
         Validate.notNull(location, "Location cannot be null");
         Validate.notNull(data, "Material cannot be null");
 
-        FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), ((CraftBlockData) data).getState());
+        //FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), ((CraftBlockData) data).getState());
+        FallingBlockEntity entity = FallingBlockEntity.spawnFromBlock(nms, new BlockPos(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState());
         entity.timeFalling = 1;
 
         nms.addEntity(entity/*, SpawnReason.CUSTOM*/);
@@ -1856,7 +1857,9 @@ public class WorldImpl implements World {
         Validate.notNull(material, "Material cannot be null");
         Validate.isTrue(material.isBlock(), "Material must be a block");
 
-        FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), CraftMagicNumbers.getBlock(material).getDefaultState());
+        // TODO 1.18.1 / 1.18.2
+        FallingBlockEntity entity = FallingBlockEntity.spawnFromBlock(nms, new BlockPos(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).getDefaultState());
+        //FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), CraftMagicNumbers.getBlock(material).getDefaultState());
         entity.timeFalling = 1;
 
         nms.addEntity(entity/*, SpawnReason.CUSTOM*/);

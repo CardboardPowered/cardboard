@@ -11,11 +11,19 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 
 import net.minecraft.fluid.Fluid;
-import net.minecraft.tag.TagGroup;
+import net.minecraft.tag.TagKey;
+// 1.18.1: import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntryList;
+
+
+import net.minecraft.util.registry.RegistryKey;
 
 public abstract class TagImpl<N, B extends Keyed> implements Tag<B> {
 
+    /*
+    Old 1.18.1:
     private final TagGroup<N> registry;
     private final Identifier tag;
     private net.minecraft.tag.Tag<N> handle;
@@ -32,27 +40,26 @@ public abstract class TagImpl<N, B extends Keyed> implements Tag<B> {
     @Override
     public NamespacedKey getKey() {
         return CraftNamespacedKey.fromMinecraft(tag);
+    }*/
+    
+    protected final Registry<N> registry;
+    protected final TagKey<N> tag;
+    private RegistryEntryList.Named<N> handle;
+
+    public TagImpl(Registry<N> registry, TagKey<N> tag) {
+        this.registry = registry;
+        this.tag = tag;
+        this.handle = registry.getEntryList(this.tag).orElseThrow();
     }
 
-    /**
-     * Tag for Fluids
-     */
-    public class FluidTagImpl extends TagImpl<Fluid, org.bukkit.Fluid> {
-
-        public FluidTagImpl(TagGroup<Fluid> registry, Identifier tag) {
-            super(registry, tag);
-        }
-
-        @Override
-        public boolean isTagged(org.bukkit.Fluid fluid) {
-            return getHandle().contains(CraftMagicNumbers.getFluid(fluid));
-        }
-
-        @Override
-        public Set<org.bukkit.Fluid> getValues() {
-            return Collections.unmodifiableSet(getHandle().values().stream().map(CraftMagicNumbers::getFluid).collect(Collectors.toSet()));
-        }
-
+    protected RegistryEntryList.Named<N> getHandle() {
+        return this.handle;
     }
+
+    public NamespacedKey getKey() {
+        return CraftNamespacedKey.fromMinecraft(this.tag.id());
+    }
+
+
 
 }

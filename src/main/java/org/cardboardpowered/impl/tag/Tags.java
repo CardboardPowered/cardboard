@@ -7,12 +7,11 @@ import java.util.stream.Collectors;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 
 import net.minecraft.fluid.Fluid;
-import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 
 public class Tags {
 
-    public static class FluidTagImpl extends TagImpl<Fluid, org.bukkit.Fluid> {
+    /*public static class FluidTagImpl extends TagImpl<Fluid, org.bukkit.Fluid> {
 
         public FluidTagImpl(TagGroup<Fluid> registry, Identifier tag) {
             super(registry, tag);
@@ -28,6 +27,6 @@ public class Tags {
             return Collections.unmodifiableSet(getHandle().values().stream().map(CraftMagicNumbers::getFluid).collect(Collectors.toSet()));
         }
 
-    }
+    }*/
 
 }

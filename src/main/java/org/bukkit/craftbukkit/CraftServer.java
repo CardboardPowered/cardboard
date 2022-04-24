@@ -159,7 +159,9 @@ import org.cardboardpowered.impl.inventory.InventoryCreator;
 import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.tag.BlockTagImpl;
 import org.cardboardpowered.impl.tag.EntityTagImpl;
+import org.cardboardpowered.impl.tag.FluidTagImpl;
 import org.cardboardpowered.impl.tag.ItemTagImpl;
+import org.cardboardpowered.impl.tag.TagImpl;
 import org.cardboardpowered.impl.tag.Tags;
 import org.cardboardpowered.impl.util.CommandPermissions;
 import org.cardboardpowered.impl.util.IconCacheImpl;
@@ -243,14 +245,16 @@ import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.EntityTypeTags;
 import net.minecraft.tag.FluidTags;
 import net.minecraft.tag.ItemTags;
-import net.minecraft.tag.TagGroup;
+//import net.minecraft.tag.TagGroup;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.village.ZombieSiegeManager;
@@ -261,11 +265,11 @@ import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.CatSpawner;
+//import net.minecraft.world.gen.CatSpawner;
 import net.minecraft.world.gen.GeneratorOptions;
-import net.minecraft.world.gen.PhantomSpawner;
-import net.minecraft.world.gen.PillagerSpawner;
-import net.minecraft.world.gen.Spawner;
+//import net.minecraft.world.gen.PhantomSpawner;
+//import net.minecraft.world.gen.PillagerSpawner;
+//import net.minecraft.world.gen.Spawner;
 import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.storage.LevelStorage;
@@ -274,7 +278,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.18.1-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.18.2-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -748,7 +752,7 @@ public class CraftServer implements Server {
     @Override
     public World createWorld(WorldCreator creator) {
         System.out.println("Bukkit#createWorld 0");
-        String name = creator.name();
+        /*String name = creator.name();
         ChunkGenerator generator = creator.generator();
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
@@ -779,7 +783,7 @@ public class CraftServer implements Server {
 
         LevelStorage.Session worldSession;
         try {
-            worldSession = LevelStorage.create(getWorldContainer().toPath()).createSession(name);//.c(name, actualDimension);
+            worldSession = LevelStorage.create(getWorldContainer().toPath()).createSession(name);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -827,7 +831,7 @@ public class CraftServer implements Server {
         RegistryKey<net.minecraft.world.World> worldKey = RegistryKey.of(Registry.WORLD_KEY, new Identifier(name.toLowerCase(java.util.Locale.ENGLISH)));
 
         ServerWorld internal = (ServerWorld) new ServerWorld(server, server.workerExecutor, worldSession, worlddata, worldKey, dimensionmanager, getServer().worldGenerationProgressListenerFactory.create(11),
-                chunkgenerator, worlddata.getGeneratorOptions().isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true/*, creator.environment(), generator*/);
+                chunkgenerator, worlddata.getGeneratorOptions().isDebugWorld(), j, creator.environment() == Environment.NORMAL ? list : ImmutableList.of(), true);
 
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH))))
             return null;
@@ -842,7 +846,8 @@ public class CraftServer implements Server {
         ((IMixinMinecraftServer)getServer()).loadSpawn(internal.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, internal);
 
         pluginManager.callEvent(new WorldLoadEvent(((IMixinWorld)internal).getWorldImpl()));
-        return ((IMixinWorld)internal).getWorldImpl();
+        return ((IMixinWorld)internal).getWorldImpl();*/
+        return null;
     }
 
     public static DataPackSettings method_29735(ResourcePackManager resourcePackManager) {
@@ -1233,24 +1238,11 @@ public class CraftServer implements Server {
         return getServer().getSpawnProtectionRadius();
     }
 
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
     public <T extends Keyed> org.bukkit.Tag<T> getTag(String registry, NamespacedKey tag, Class<T> clazz) {
         Identifier key = CraftNamespacedKey.toMinecraft(tag);
         
 
-        /*switch (registry) {
-            case org.bukkit.Tag.REGISTRY_BLOCKS:
-                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-                return (org.bukkit.Tag<T>) new BlockTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY), key);
-            case org.bukkit.Tag.REGISTRY_ITEMS:
-                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
-                return (org.bukkit.Tag<T>) new ItemTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY), key);
-            case org.bukkit.Tag.REGISTRY_FLUIDS:
-                Preconditions.checkArgument(clazz == org.bukkit.Fluid.class, "Fluid namespace must have fluid type");
-                return (org.bukkit.Tag<T>) new Tags.FluidTagImpl(server.getTagManager().getOrCreateTagGroup(Registry.FLUID_KEY), key);
-            default:
-                throw new IllegalArgumentException();
-        }*/
         switch (registry) {
         case "blocks": {
             Preconditions.checkArgument(clazz == Material.class, "Block namespace must have material type");
@@ -1271,50 +1263,77 @@ public class CraftServer implements Server {
         default:
             throw new IllegalArgumentException();
     }
-    }
+    }*/
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T extends Keyed> Iterable<org.bukkit.Tag<T>> getTags(String registry, Class<T> clazz) {
-        /*switch (registry) {
-            case org.bukkit.Tag.REGISTRY_BLOCKS:
-                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
-                TagGroup<Block> blockTags = server.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
-                return blockTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new BlockTagImpl(blockTags, key)).collect(ImmutableList.toImmutableList());
-            case org.bukkit.Tag.REGISTRY_ITEMS:
-                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
-
-                TagGroup<Item> itemTags = server.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY);
-                return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new ItemTagImpl(itemTags, key)).collect(ImmutableList.toImmutableList());
-            case org.bukkit.Tag.REGISTRY_FLUIDS:
-                Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Fluid namespace must have fluid type");
-
-                TagGroup<Fluid> fluidTags = server.getTagManager().getOrCreateTagGroup(Registry.FLUID_KEY);
-                return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new Tags.FluidTagImpl(fluidTags, key)).collect(ImmutableList.toImmutableList());
-            default:
-                throw new IllegalArgumentException();
-        }*/
+    public <T extends Keyed> Tag<T> getTag(String registry, NamespacedKey tag, Class<T> clazz) {
+        Identifier key = CraftNamespacedKey.toMinecraft(tag);
         switch (registry) {
             case "blocks": {
-                Preconditions.checkArgument(clazz == Material.class, "Block namespace must have material type");
-                TagGroup<Block> blockTags = BlockTags.getTagGroup();
-                return blockTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new BlockTagImpl(blockTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+              //  Preconditions.checkArgument((clazz == Material.class ? 1 : 0) != 0, (Object)"Block namespace must have material type");
+                TagKey<Block> blockTagKey = TagKey.of(Registry.BLOCK_KEY, key);
+                if (!Registry.BLOCK.containsTag(blockTagKey)) break;
+                return (Tag<T>) new BlockTagImpl((Registry<Block>)Registry.BLOCK, blockTagKey);
             }
             case "items": {
-                Preconditions.checkArgument(clazz == Material.class, "Item namespace must have material type");
-                TagGroup<Item> itemTags = ItemTags.getTagGroup();
-                return itemTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new ItemTagImpl(itemTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+               // Preconditions.checkArgument((clazz == Material.class ? 1 : 0) != 0, (Object)"Item namespace must have material type");
+                TagKey<Item> itemTagKey = TagKey.of(Registry.ITEM_KEY, key);
+                if (!Registry.ITEM.containsTag(itemTagKey)) break;
+                return (Tag<T>) new ItemTagImpl((Registry<Item>)Registry.ITEM, itemTagKey);
             }
             case "fluids": {
-                Preconditions.checkArgument(clazz == Material.class, "Fluid namespace must have fluid type");
-                TagGroup<net.minecraft.fluid.Fluid> fluidTags = FluidTags.getTagGroup();
-                return fluidTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new Tags.FluidTagImpl(fluidTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+              //  Preconditions.checkArgument((clazz == Fluid.class ? 1 : 0) != 0, (Object)"Fluid namespace must have fluid type");
+                TagKey<Fluid> fluidTagKey = TagKey.of(Registry.FLUID_KEY, key);
+                if (!Registry.FLUID.containsTag(fluidTagKey)) break;
+                return (Tag<T>) new FluidTagImpl((Registry<Fluid>)Registry.FLUID, fluidTagKey);
             }
             case "entity_types": {
-                Preconditions.checkArgument(clazz == org.bukkit.entity.EntityType.class, "Entity type namespace must have entity type");
-                TagGroup<EntityType<?>> entityTags = EntityTypeTags.getTagGroup();
-                return entityTags.getTags().keySet().stream().map(key -> (org.bukkit.Tag<T>) new EntityTagImpl(entityTags, (Identifier)key)).collect(ImmutableList.toImmutableList());
+               // Preconditions.checkArgument((clazz == EntityType.class ? 1 : 0) != 0, (Object)"Entity type namespace must have entity type");
+                TagKey<EntityType<?>> entityTagKey = TagKey.of(Registry.ENTITY_TYPE_KEY, key);
+                if (!Registry.ENTITY_TYPE.containsTag(entityTagKey)) break;
+                return (Tag<T>) new EntityTagImpl((Registry<EntityType<?>>)Registry.ENTITY_TYPE, entityTagKey);
             }
+            /*case "game_events": {
+                Preconditions.checkArgument((clazz == GameEvent.class ? 1 : 0) != 0, (Object)"Game Event namespace must have GameEvent type");
+                TagKey<GameEvent> gameEventTagKey = TagKey.of(Registry.GAME_EVENT_KEY, key);
+                if (!Registry.GAME_EVENT.containsTag(gameEventTagKey)) break;
+                return new CraftGameEventTag((Registry<GameEvent>)Registry.GAME_EVENT, gameEventTagKey);
+            }*/
+            default: {
+                throw new IllegalArgumentException();
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Keyed> Iterable<Tag<T>> getTags(String registry, Class<T> clazz) {
+        switch (registry) {
+            case "blocks": {
+              //  Preconditions.checkArgument((clazz == Material.class ? 1 : 0) != 0, (Object)"Block namespace must have material type");
+                DefaultedRegistry<Block> blockTags = Registry.BLOCK;
+                
+                return (Iterable)(blockTags).streamTagsAndEntries().map(pair -> new BlockTagImpl((Registry<Block>)blockTags, (TagKey)pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
+            case "items": {
+              //  Preconditions.checkArgument((clazz == Material.class ? 1 : 0) != 0, (Object)"Item namespace must have material type");
+                DefaultedRegistry<Item> itemTags = Registry.ITEM;
+                return (Iterable)(itemTags).streamTagsAndEntries().map(pair -> new ItemTagImpl((Registry<Item>)itemTags, (TagKey)pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
+            case "fluids": {
+              //  Preconditions.checkArgument((clazz == Material.class ? 1 : 0) != 0, (Object)"Fluid namespace must have fluid type");
+                DefaultedRegistry<Fluid> fluidTags = Registry.FLUID;
+                return (Iterable)(fluidTags).streamTagsAndEntries().map(pair -> new FluidTagImpl((Registry<Fluid>)fluidTags, (TagKey)pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
+            case "entity_types": {
+              //  Preconditions.checkArgument((clazz == EntityType.class ? 1 : 0) != 0, (Object)"Entity type namespace must have entity type");
+                DefaultedRegistry<EntityType<?>> entityTags = Registry.ENTITY_TYPE;
+                return (Iterable)(entityTags).streamTagsAndEntries().map(pair -> new EntityTagImpl((Registry<EntityType<?>>)entityTags, (TagKey)pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
+            /*case "game_events": {
+                Preconditions.checkArgument((clazz == GameEvent.class ? 1 : 0) != 0);
+                DefaultedRegistry<GameEvent> gameEvents = Registry.GAME_EVENT;
+                return (Iterable)((Registry)gameEvents).streamTagsAndEntries().map(pair -> new CraftGameEventTag((Registry<GameEvent>)gameEvents, (TagKey)pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }*/
         }
         throw new IllegalArgumentException();
     }
