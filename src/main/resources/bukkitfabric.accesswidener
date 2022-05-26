@@ -219,8 +219,6 @@ mutable	field	net/minecraft/recipe/SpecialCraftingRecipe	id	Lnet/minecraft/util/
 accessible	class	net/minecraft/recipe/Ingredient$StackEntry
 accessible	method	net/minecraft/recipe/Ingredient$StackEntry <init> (Lnet/minecraft/item/ItemStack;)V
 accessible	class	net/minecraft/recipe/Ingredient$TagEntry
-accessible	field	net/minecraft/recipe/Ingredient$TagEntry	tag	Lnet/minecraft/tag/Tag;
-mutable	field	net/minecraft/recipe/Ingredient$TagEntry	tag	Lnet/minecraft/tag/Tag;
 accessible	class	net/minecraft/recipe/Ingredient$Entry
 extendable	class	net/minecraft/recipe/Ingredient
 accessible	field	net/minecraft/recipe/Ingredient	entries	[Lnet/minecraft/recipe/Ingredient$Entry;
@@ -501,10 +499,6 @@ accessible	field	net/minecraft/util/math/Vec3i	y	I
 mutable	field	net/minecraft/util/math/Vec3i	y	I
 accessible	field	net/minecraft/util/math/Vec3i	z	I
 mutable	field	net/minecraft/util/math/Vec3i	z	I
-accessible	method	net/minecraft/data/server/RecipesProvider	generate	(Ljava/util/function/Consumer;)V
-accessible	class	net/minecraft/data/server/recipe/ComplexRecipeJsonFactory$1
-accessible	field	net/minecraft/data/server/recipe/ComplexRecipeJsonFactory	serializer	Lnet/minecraft/recipe/SpecialRecipeSerializer;
-mutable	field	net/minecraft/data/server/recipe/ComplexRecipeJsonFactory	serializer	Lnet/minecraft/recipe/SpecialRecipeSerializer;
 accessible	field	net/minecraft/data/dev/NbtProvider	root	Lnet/minecraft/data/DataGenerator;
 mutable	field	net/minecraft/data/dev/NbtProvider	root	Lnet/minecraft/data/DataGenerator;
 accessible	method	net/minecraft/data/dev/NbtProvider	getLocation	(Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/lang/String;
@@ -554,7 +548,6 @@ mutable	field	net/minecraft/server/DataPackContents	commandManager	Lnet/minecraf
 accessible	field	net/minecraft/server/MinecraftServer	tickTime	F
 accessible	field	net/minecraft/server/MinecraftServer	workerExecutor	Ljava/util/concurrent/Executor;
 accessible	field	net/minecraft/server/MinecraftServer	serverId	Ljava/lang/String;
-accessible	field	net/minecraft/server/MinecraftServer	resourceManagerHolder	Lnet/minecraft/server/DataPackContents;
 accessible	method	net/minecraft/server/MinecraftServer	shutdown	()V
 accessible	method	net/minecraft/server/MinecraftServer	tick	(Ljava/util/function/BooleanSupplier;)V
 accessible	method	net/minecraft/server/MinecraftServer	isMonsterSpawningEnabled	()Z
@@ -650,3 +643,5 @@ accessible field net/minecraft/entity/Entity pitch F
 accessible field net/minecraft/entity/player/PlayerEntity abilities Lnet/minecraft/entity/player/PlayerAbilities;
 accessible field net/minecraft/world/ChunkSerializer CODEC Lcom/mojang/serialization/Codec;
 accessible method net/minecraft/world/biome/Biome getTemperature (Lnet/minecraft/util/math/BlockPos;)F
+accessible field net/minecraft/server/MinecraftServer resourceManagerHolder Lnet/minecraft/server/MinecraftServer$ResourceManagerHolder;
+accessible class net/minecraft/server/MinecraftServer$ResourceManagerHolder

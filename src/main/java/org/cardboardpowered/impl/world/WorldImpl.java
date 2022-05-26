@@ -118,7 +118,7 @@ import org.cardboardpowered.interfaces.IWorldChunk;
 import io.papermc.paper.world.MoonPhase;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import me.isaiah.common.cmixin.IMixinWorld;
-import net.fabricmc.fabric.mixin.structure.StructureFeatureAccessor;
+// import net.fabricmc.fabric.mixin.structure.StructureFeatureAccessor;
 import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChorusFlowerBlock;

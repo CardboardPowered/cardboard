@@ -35,4 +35,6 @@ public interface IMixinWorld {
 
     void setCaptureBlockStates_BF(boolean b);
 
+    void set_bukkit_world(WorldImpl world);
+
 }

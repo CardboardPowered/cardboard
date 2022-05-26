@@ -13,14 +13,16 @@ import net.minecraft.nbt.NbtList;
 @Mixin(BannerBlockEntity.class)
 public class MixinBannerBlockEntity {
 
-    @Shadow
-    public NbtList patternListTag;
+    // TODO: 1.18.2
+    
+    //@Shadow
+    //public NbtList patternListTag;
 
     @Inject(at = @At("TAIL"), method = "readNbt")
     public void bukkit_readNbt(NbtCompound nbttagcompound, CallbackInfo ci) {
         // Bukkit - TitleEntityBanner.patch
-        while (this.patternListTag.size() > 20)
-            this.patternListTag.remove(20);
+        //while (this.patternListTag.size() > 20)
+        //    this.patternListTag.remove(20);
     }
 
 }

@@ -37,10 +37,12 @@ import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.cardboardpowered.impl.CardboardPotionEffectType;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.world.WorldImpl;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import me.isaiah.common.event.EventHandler;
@@ -50,6 +52,8 @@ import me.isaiah.common.event.entity.BlockEntityLoadEvent;
 import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
 import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
 import me.isaiah.common.event.entity.player.ServerPlayerInitEvent;
+import me.isaiah.common.event.server.ServerWorldInitEvent;
+import me.isaiah.common.fabric.FabricWorld;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffect;
@@ -61,6 +65,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import net.minecraft.world.level.ServerWorldProperties;
 
 @SuppressWarnings("deprecation")
 public class BukkitFabricMod implements ModInitializer {
@@ -96,6 +101,83 @@ public class BukkitFabricMod implements ModInitializer {
                 // ignore
             }
         }
+    }
+
+    @EventHandler
+    public void on_world_init__(ServerWorldInitEvent ev) {
+        System.out.println("on_world_init");
+
+        FabricWorld fw = (FabricWorld) ev.getWorld();
+
+        if (!(fw.mc instanceof ServerWorld)) {
+            System.out.println("CLIENT WORLD!");
+            return;
+        }
+
+        ServerWorld nms = ((ServerWorld) fw.mc);
+        String name = ((ServerWorldProperties) nms.getLevelProperties()).getLevelName();
+
+        File fi = new File(name + "_the_end");
+        File van = new File(new File(name), "DIM1");
+
+        if (fi.exists()) {
+            File dim = new File(fi, "DIM1");
+            if (dim.exists()) {
+                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + name + "_the_end !");
+                BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
+                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
+                if (dim.renameTo(van)) {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
+                } else {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
+                    BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
+                }
+                fi.delete();
+            }
+        }
+        
+        File fi2 = new File(name + "_nether");
+        File van2 = new File(new File(name), "DIM-1");
+
+        if (fi2.exists()) {
+            File dim = new File(fi2, "DIM-1");
+            if (dim.exists()) {
+                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + fi2.getName() + " !");
+                BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
+                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
+                if (dim.renameTo(van2)) {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
+                } else {
+                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
+                    BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
+                }
+                fi.delete();
+            }
+        }
+
+        if (CraftServer.INSTANCE.worlds.containsKey(name)) {
+            if (nms.getRegistryKey() == World.NETHER) {
+                name = name + "_nether";
+                fi2.mkdirs(); // Keep empty directory to fool plugins, ex. Multiverse.
+            }
+            if (nms.getRegistryKey() == World.END) {
+                name = name + "_the_end";
+                fi.mkdirs();
+            }
+
+            if (CraftServer.INSTANCE.worlds.containsKey(name)) {
+                // Fabric-mod added world
+                name = nms.getRegistryKey().getValue().toUnderscoreSeparatedString();
+                new File(name).mkdirs();
+            }
+            
+
+            ((IMixinWorld)nms).set_bukkit_world( new WorldImpl(name, nms) );
+            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldInitEvent(((IMixinWorld)nms).getWorldImpl()));
+        } else {
+            ((IMixinWorld)nms).set_bukkit_world( new WorldImpl(name, nms) );
+        }
+        ((CraftServer)Bukkit.getServer()).addWorldToMap( ((IMixinWorld)nms).getWorldImpl() );
     }
 
     @EventHandler

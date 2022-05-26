@@ -85,12 +85,12 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
    // @Shadow @Final public DynamicRegistryManager.Impl registryManager;
     @Shadow @Final public WorldSaveHandler saveHandler;
-    @Shadow @Final private static Logger LOGGER;
+    // @Shadow @Final private static Logger LOGGER;
     //@Shadow @Final public Executor workerExecutor;
    // @Shadow @Final public WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
 
     @Shadow public Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
-    @Shadow public DataPackContents resourceManagerHolder; // 1.18.1: serverResourceManager
+    @Shadow public MinecraftServer.ResourceManagerHolder resourceManagerHolder; // 1.18.1: serverResourceManager
     @Shadow public LevelStorage.Session session;
     @Shadow private long timeReference;
     @Shadow public DataCommandStorage dataCommandStorage;
@@ -145,10 +145,10 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
     @Override
     public CommandManager setCommandManager(CommandManager commandManager) {
+
+        // TODO: 1.18.2
         
-        // MinecraftServer mc = (MinecraftServer)(Object)this;
-        
-        return (this.resourceManagerHolder.commandManager = commandManager);
+        return (this.resourceManagerHolder.dataPackContents().commandManager = commandManager);
     }
 
     public MinecraftServer getServer() {
@@ -244,7 +244,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     public void loadSpawn(WorldGenerationProgressListener worldloadlistener, ServerWorld worldserver) {
         this.forceTicks = true;
 
-        LOGGER.info("Preparing start region for world " + worldserver.getRegistryKey().getValue());
+        BukkitFabricMod.LOGGER.info("Preparing start region for world " + worldserver.getRegistryKey().getValue());
         BlockPos blockposition = worldserver.getSpawnPos();
 
         worldloadlistener.start(new ChunkPos(blockposition));

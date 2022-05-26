@@ -49,7 +49,7 @@ import net.minecraft.world.World;
 public class MixinBlockItem {
 
     @Shadow public BlockState getPlacementState(ItemPlacementContext blockactioncontext) {return null;}
-    @Shadow public BlockState placeFromTag(BlockPos blockposition, World world, ItemStack itemstack, BlockState iblockdata) {return null;}
+    // @Shadow public BlockState placeFromTag(BlockPos blockposition, World world, ItemStack itemstack, BlockState iblockdata) {return null;}
     @Shadow public ItemPlacementContext getPlacementContext(ItemPlacementContext blockactioncontext) {return null;}
     @Shadow public boolean place(ItemPlacementContext blockactioncontext, BlockState iblockdata) {return false;}
     @Shadow public boolean postPlacement(BlockPos blockposition, World world, PlayerEntity entityhuman, ItemStack itemstack, BlockState iblockdata) {return false;}

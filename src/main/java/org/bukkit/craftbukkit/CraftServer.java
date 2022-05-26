@@ -752,7 +752,7 @@ public class CraftServer implements Server {
     @Override
     public World createWorld(WorldCreator creator) {
         System.out.println("Bukkit#createWorld 0");
-        /*String name = creator.name();
+        String name = creator.name();
         ChunkGenerator generator = creator.generator();
         File folder = new File(getWorldContainer(), name);
         World world = getWorld(name);
@@ -760,7 +760,7 @@ public class CraftServer implements Server {
         if (world != null)
             return world;
 
-        if ((folder.exists()) && (!folder.isDirectory()))
+        /*if ((folder.exists()) && (!folder.isDirectory()))
             throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
 
         if (generator == null)
