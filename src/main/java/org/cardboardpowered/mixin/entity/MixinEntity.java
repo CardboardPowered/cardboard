@@ -183,8 +183,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         this.forceDrops = forceDrops;
     }
 
-    @Shadow
-    public Random random;
+    // @Shadow
+    //public Random random;
 
     @Shadow
     public World world;

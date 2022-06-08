@@ -19,7 +19,6 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 
@@ -84,7 +83,7 @@ public abstract class MixinScreenHandler implements IMixinScreenHandler {
     @Override
     public final Text getTitle() {
         if (null == this.title_cb)
-            this.title_cb = new LiteralText(" nul ");
+            this.title_cb = Text.of(" nul ");
         return this.title_cb;
     }
 

@@ -99,6 +99,7 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
         return;
     }
 
+    // TODO: Testing
     @Shadow
     public int getXpToDrop(PlayerEntity entityhuman) {
         return 0;

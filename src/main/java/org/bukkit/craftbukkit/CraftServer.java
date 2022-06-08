@@ -1239,7 +1239,7 @@ public class CraftServer implements Server {
     }
 
     /*@SuppressWarnings("unchecked")
-    public <T extends Keyed> org.bukkit.Tag<T> getTag(String registry, NamespacedKey tag, Class<T> clazz) {
+    public <T extends Keyed> org.bukkit.Tag<T> getTag_(String registry, NamespacedKey tag, Class<T> clazz) {
         Identifier key = CraftNamespacedKey.toMinecraft(tag);
         
 
@@ -1989,6 +1989,11 @@ public class CraftServer implements Server {
             @Override
             public boolean canUse(PlayerEntity player) {
                 return false;
+            }
+
+            public net.minecraft.item.ItemStack transferSlot(PlayerEntity player, int index) {
+                // TODO Auto-generated method stub
+                return null;
             }
         };
         CraftingInventory inventoryCrafting = new CraftingInventory(container, 3, 3);

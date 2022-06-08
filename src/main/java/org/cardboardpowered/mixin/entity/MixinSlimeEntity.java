@@ -35,10 +35,12 @@ public class MixinSlimeEntity extends MixinEntity implements ISlimeEntity {
     private boolean cancelRemove_B;
     private List<net.minecraft.entity.LivingEntity> slimes_B = new ArrayList<>();
 
+    private final Random randoms = new Random();
+
     @Redirect(at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"), method = "remove")
     public int doBukkitEvent_SlimeSplitEvent(Random r, int a) {
         slimes_B.clear();
-        int k = 2 + this.random.nextInt(3);
+        int k = 2 + this.randoms.nextInt(3);
 
         SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), k);
         Bukkit.getPluginManager().callEvent(event);

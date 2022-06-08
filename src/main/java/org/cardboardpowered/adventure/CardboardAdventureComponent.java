@@ -11,6 +11,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+// import net.minecraft.text.TextContent;
 
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -81,5 +82,13 @@ public final class CardboardAdventureComponent implements Text {
     public OrderedText asOrderedText() {
         return this.deepConverted().asOrderedText();
     }
+
+    /**
+     * Minecraft 1.19
+     */
+    //public TextContent getContent() {
+    //    // TODO Auto-generated method stub
+    //    return null;
+    //}
 
 }

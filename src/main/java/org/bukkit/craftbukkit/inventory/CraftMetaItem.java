@@ -85,7 +85,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -1198,7 +1197,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (!(object instanceof String)) {
                 if (object != null)
                     throw new IllegalArgumentException(addFrom + " cannot contain non-string " + object.getClass().getName());
-                addTo.add(new LiteralText(""));
+                addTo.add(Text.of(""));
             } else {
                 String page = object.toString();
                 if (page.length() > maxItemLength) page = page.substring(0, maxItemLength);

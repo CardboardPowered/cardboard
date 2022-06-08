@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.ClickEvent.Action;
-import net.minecraft.text.LiteralText;
+// import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
@@ -93,7 +93,7 @@ public final class CraftChatMessage {
         private static final Style RESET = Style.EMPTY;
 
         private final List<Text> list = new ArrayList<Text>();
-        private Text currentChatComponent = new LiteralText("");
+        private Text currentChatComponent = Text.of("");
         private Style modifier = Style.EMPTY;
         private final Text[] output;
         private int currentIndex;
@@ -175,10 +175,10 @@ public final class CraftChatMessage {
         }
 
         private void appendNewComponent(int index) {
-            Text addition = new LiteralText(message.substring(currentIndex, index)).setStyle(modifier);
+            Text addition = Text.of(message.substring(currentIndex, index)).setStyle(modifier);
             currentIndex = index;
             if (currentChatComponent == null) {
-                currentChatComponent = new LiteralText("");
+                currentChatComponent = Text.of("");
                 list.add(currentChatComponent);
             }
             currentChatComponent.getSiblings().add(addition);
@@ -190,11 +190,11 @@ public final class CraftChatMessage {
     }
 
     public static Text wrapOrNull(String message) {
-        return (message == null || message.isEmpty()) ? null : new LiteralText(message);
+        return (message == null || message.isEmpty()) ? null : Text.of(message);
     }
 
     public static Text wrapOrEmpty(String message) {
-        return (message == null) ? new LiteralText("") : new LiteralText(message);
+        return (message == null) ? Text.of("") : Text.of(message);
     }
 
     public static Text fromStringOrNull(String message) {

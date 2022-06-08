@@ -54,7 +54,7 @@ import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -104,7 +104,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public void sendMessage(String message) {
-        nms.sendSystemMessage(new LiteralText(message), UUID.randomUUID());
+        nms.sendSystemMessage(Text.of(message), UUID.randomUUID());
     }
 
     @Override

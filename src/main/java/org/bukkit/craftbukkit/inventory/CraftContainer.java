@@ -28,7 +28,6 @@ import net.minecraft.screen.SmithingScreenHandler;
 import net.minecraft.screen.SmokerScreenHandler;
 import net.minecraft.screen.StonecutterScreenHandler;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import org.cardboardpowered.impl.entity.PlayerImpl;
@@ -97,7 +96,7 @@ public class CraftContainer extends ScreenHandler {
             this.slots.clear();
             if (typeChanged) setupSlots(top, bottom, player.getHandle());
             int size = getSize();
-            player.getHandle().networkHandler.sendPacket(new OpenScreenS2CPacket(this.syncId, type, new LiteralText(cachedTitle)));
+            player.getHandle().networkHandler.sendPacket(new OpenScreenS2CPacket(this.syncId, type, Text.of(cachedTitle)));
             player.updateInventory();
         }
         return true;
