@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.ClickEvent.Action;
+import net.minecraft.text.LiteralText;
 // import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.text.Style;
@@ -175,7 +176,7 @@ public final class CraftChatMessage {
         }
 
         private void appendNewComponent(int index) {
-            Text addition = Text.of(message.substring(currentIndex, index)).setStyle(modifier);
+            Text addition = new LiteralText(message.substring(currentIndex, index)).setStyle(modifier);
             currentIndex = index;
             if (currentChatComponent == null) {
                 currentChatComponent = Text.of("");
