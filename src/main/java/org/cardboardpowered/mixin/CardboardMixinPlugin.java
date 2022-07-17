@@ -102,6 +102,14 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             return false;
         }
 
+        if (mixin.equals("item.MixinChorusFruitItem")) {
+            FabricLoader loader = FabricLoader.getInstance();
+            boolean create_mod = loader.isModLoaded("porting_lib");
+            if (create_mod) {
+                return false;
+            }
+        }
+
         if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent") && 
                 should_force_alternate_chat()) {
             logger.info("Architectury Mod detected! Disabling async chat from NetworkHandler.");
