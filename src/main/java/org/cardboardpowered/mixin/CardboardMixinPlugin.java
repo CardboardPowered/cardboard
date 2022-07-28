@@ -4,7 +4,6 @@ import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;

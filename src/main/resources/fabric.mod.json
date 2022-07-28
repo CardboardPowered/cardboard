@@ -3,7 +3,7 @@
   "id": "cardboard",
   "version": "${version}",
 
-  "name": "CardboardMod",
+  "name": "Cardboard",
   "description": "An implementation of the popular Spigot/Paper API for Fabric",
   "authors": [
     "Isaiah"

@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.function.BooleanSupplier;
 
-import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
@@ -196,6 +195,9 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         ((MinecraftServer)(Object)this).setDifficulty(((DedicatedServer)(Object)this).getProperties().difficulty, true);
     }
 
+    /**
+     * WorldEdit does not like hybrid servers.
+     */
     private void fixBukkitWorldEdit() {
         try {
             if (!Bukkit.getPluginManager().isPluginEnabled("WorldEdit"))
