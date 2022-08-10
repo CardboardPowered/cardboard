@@ -48,7 +48,8 @@ public final class LibraryManager {
 
     private final Collection<Library> libraries;
 
-    private static final String PAPER_URL = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar\"";
+    // URL to download Paper API
+    private static final String PAPER_URL = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar";
 
     /**
      * Creates the instance.
