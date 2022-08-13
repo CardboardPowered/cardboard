@@ -48,16 +48,11 @@ public final class LibraryManager {
 
     private final Collection<Library> libraries;
 
-    //private final ExecutorService downloaderService = Executors.newCachedThreadPool();
+    // URL to download Paper API
+    private static final String PAPER_URL = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar";
 
     /**
      * Creates the instance.
-     *
-     * @param defaultRepository the repository to download the libraries from
-     * @param directoryName the name of the directory to download the libraries to
-     * @param validateChecksum whether or not checksum validation is enabled
-     * @param maxDownloadAttempts the maximum number of attempts to download a library
-     * @param libraries the libraries to download
      */
     public LibraryManager(String defaultRepository, String directoryName, boolean validateChecksum, int maxDownloadAttempts, Collection<Library> libraries) {
         checkNotNull(defaultRepository);
@@ -113,7 +108,7 @@ public final class LibraryManager {
                         downloadUrl = new URL(repository + library.libraryKey.groupId.replace('.', '/') + '/' + library.libraryKey.artifactId + '/' + library.version
                                 + '/' + library.libraryKey.artifactId + '-' + library.version + ".jar");
                     } else {
-                        downloadUrl = new URL("https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar");
+                        downloadUrl = new URL(PAPER_URL);
                     }
                     HttpsURLConnection connection = (HttpsURLConnection) downloadUrl.openConnection();
                     connection.setRequestProperty("User-Agent", "Mozilla/5.0 Chrome/90.0.4430.212");

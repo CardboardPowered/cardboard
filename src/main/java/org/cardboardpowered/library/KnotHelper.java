@@ -17,6 +17,53 @@ public class KnotHelper {
 
     public static boolean PAPER_API_LOADED = false;
     private static final Logger logger = LogManager.getLogger("KnotHelper");
+    
+    
+    public static void outdated_fabric_warning(double ver) {
+    	logger.error("======== ERROR: FABRIC OUTDATED ========");
+        logger.error("| Your version of Fabric is outdated!!");
+        logger.error("| You version is: " + ver);
+        logger.error("| Lowest Required: 0.12 or higher");
+        logger.error("| Update at: https://fabricmc.dev/use/");
+        logger.error("=======================================");
+    }
+
+    /**
+     * Add to class path in Fabric 0.11
+     */
+    public static void fabric_0_11_load(File file) {
+    	try {
+            Class<?> l = Class.forName("net.fabricmc.loader.launch.knot.Knot");
+            Method m = l.getMethod("getLauncher");
+            Object lb = m.invoke(null, null);
+            Method m2 = lb.getClass().getMethod("propose", URL.class);
+            m2.invoke(lb, file.toURI().toURL());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("ERROR: Got " + e.getClass().getSimpleName() + " while accessing Fabric Loader.");
+        }
+    }
+    
+    /**
+     * Add to class path in Fabric 0.12 or higher
+     */
+    public static void fabric_modern_load(File file) {
+        try {
+            Class<?> l = Class.forName("net.fabricmc.loader.impl.launch.FabricLauncherBase");
+            Field instance = l.getDeclaredField("launcher");
+            instance.setAccessible(true);
+            Object lb = instance.get(null);
+            Class<?> lbc = lb.getClass();
+            Method m = lbc.getMethod("addToClassPath", Path.class, String[].class);
+
+            if (!FabricLoader.getInstance().isDevelopmentEnvironment())
+                m.invoke(lb, file.toPath(), getPackages());
+            logger.info("Debug: Loading library " + file.getName());
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("ERROR: Got " + e.getClass().getSimpleName() + " while accessing Fabric Loader.");
+        }
+    }
 
     public static void propose(File file) throws MalformedURLException {
         Version loaderVersion = FabricLoader.getInstance().getModContainer("fabricloader").get().getMetadata().getVersion();
@@ -24,53 +71,31 @@ public class KnotHelper {
         verString = verString.substring(0, verString.lastIndexOf('.'));
         double ver = Double.valueOf( verString );
 
-        if (ver < 0.11) {
-            logger.error("======== ERROR: FABRIC OUTDATED ========");
-            logger.error("Your version of Fabric is outdated. At least 0.11 is required.");
-            logger.error("Update at: https://fabricmc.net/use/");
-            logger.error("=======================================");
-            return;
-        }
-        
-        if (ver < 0.12) {
-            try {
-                Class<?> l = Class.forName("net.fabricmc.loader.launch.knot.Knot");
-                Method m = l.getMethod("getLauncher");
-                Object lb = m.invoke(null, null);
-                Method m2 = lb.getClass().getMethod("propose", URL.class);
-                m2.invoke(lb, file.toURI().toURL());
-            } catch (Exception e) {
-                e.printStackTrace();
-                logger.info("ERROR: Got " + e.getClass().getSimpleName() + " while accessing Fabric Loader.");
-            }
-        }
-
-        if (ver >= 0.12) {
-            // Internals of Fabric changed during 0.12
-            try {
-                Class<?> l = Class.forName("net.fabricmc.loader.impl.launch.FabricLauncherBase");
-                Field instance = l.getDeclaredField("launcher");
-                instance.setAccessible(true);
-                Object lb = instance.get(null);
-                Class<?> lbc = lb.getClass();
-                Method m = lbc.getMethod("addToClassPath", Path.class, String[].class);
-                String[] args = {"org.bukkit"};
-                if (!FabricLoader.getInstance().isDevelopmentEnvironment())
-                    m.invoke(lb, file.toPath(), getPackages());
-                logger.info("Debug: Loading library " + file.getName());
-            } catch (Exception e) {
-                e.printStackTrace();
-                logger.info("ERROR: Got " + e.getClass().getSimpleName() + " while accessing Fabric Loader.");
-            }
-        }
+        propose_file(file, ver);
 
         if (file.getName().contains("paper")) {
             PAPER_API_LOADED = true;
         }
     }
+    
+    public static void propose_file(File file, double ver) {
+    	 if (ver < 0.11) {
+         	outdated_fabric_warning(ver);
+             return;
+         }
+
+         if (ver < 0.12) {
+         	fabric_0_11_load(file);
+         }
+
+         if (ver >= 0.12) {
+         	fabric_modern_load(file);
+         }
+    }
 
     /**
      * Allowed packages.
+     * Prevents loading class errors.
      */
     private static String[] getPackages() {
         String[] args = 
@@ -173,7 +198,17 @@ public class KnotHelper {
             "org.bukkit.util.permissions",
             "org.spigotmc",
             "org.spigotmc.event.entity",
-            "org.spigotmc.event.player"};
+            "org.spigotmc.event.player",
+            "net.md_5",
+            "net.kyori",
+            "org.bukkit",
+            "me.isaiah",
+            "org.cardboardpowered",
+            "com.",
+            "net.",
+            "org.",
+            "me."
+        };
         return args;
     }
 
