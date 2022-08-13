@@ -73,7 +73,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
      * @reason .
      * @author .
      */
-    @Overwrite
+    /*@Overwrite
     public void onContentChanged(Inventory iinventory) {
         if (iinventory == this.inventory) {
             ItemStack itemstack = iinventory.getStack(0);
@@ -159,7 +159,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
             }
         }
 
-    }
+    }*/
 
     /**
      * @reason .

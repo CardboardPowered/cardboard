@@ -29,12 +29,12 @@ public class CardboardStructureBlock extends CardboardBlockEntityState<Structure
 
     @Override
     public String getStructureName() {
-        return getSnapshot().getStructureName();
+        return getSnapshot().getTemplateName();
     }
 
     @Override
     public void setStructureName(String name) {
-        getSnapshot().setStructureName(name);
+        getSnapshot().setTemplateName(name);
     }
 
     @Override

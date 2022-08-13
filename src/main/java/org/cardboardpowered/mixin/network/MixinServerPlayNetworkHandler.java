@@ -142,14 +142,14 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void disconnect(Text reason) {
         String leaveMessage = Formatting.YELLOW + this.player.getEntityName() + " left the game.";
 
-        PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), reason.asString(), leaveMessage);
+        PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), reason.getString(), leaveMessage);
 
         if (CraftServer.INSTANCE.getServer().isRunning())
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) return;
 
-        reason = new LiteralText(event.getReason());
+        reason = Text.of(event.getReason());
         final Text reason_final = reason;
 
         get().connection.send(new DisconnectS2CPacket(reason), (future) -> get().connection.disconnect(reason_final));
@@ -238,7 +238,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
                     for (ServerPlayerEntity recipient : server.getPlayerManager().players)
                         for (Text txt : CraftChatMessage.fromString(s))
-                            recipient.sendMessage(txt, MessageType.CHAT, player.getUniqueId());
+                            recipient.sendMessage(txt, false);
                 } else for (Player recipient : event.getRecipients())
                     recipient.sendMessage(s);
             }
@@ -656,7 +656,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             this.player.updateLastActionTime();
         } else {
             System.out.println(this.player.getName().getString() + " tried to set an invalid carried item");
-            this.disconnect(new LiteralText("Invalid hotbar selection (Hacking?)")); // CraftBukkit
+            this.disconnect(Text.of("Invalid hotbar selection (Hacking?)")); // CraftBukkit
         }
     }
 

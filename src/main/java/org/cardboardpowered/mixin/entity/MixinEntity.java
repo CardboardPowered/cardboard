@@ -108,7 +108,7 @@ import net.minecraft.entity.passive.DolphinEntity;
 import net.minecraft.entity.passive.DonkeyEntity;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.passive.GolemEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.LlamaEntity;
@@ -308,7 +308,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                         else if (entity instanceof ParrotEntity) { return new ParrotImpl(server, (ParrotEntity) entity); }
                     }
                     //else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
-                    else if (entity instanceof HorseBaseEntity) {
+                    else if (entity instanceof AbstractHorseEntity) {
                         if (entity instanceof AbstractDonkeyEntity){
                             if (entity instanceof DonkeyEntity) { return new CardboardDonkey(server, (DonkeyEntity) entity); }
                             else if (entity instanceof MuleEntity) { return new CardboardMule(server, (MuleEntity) entity); }

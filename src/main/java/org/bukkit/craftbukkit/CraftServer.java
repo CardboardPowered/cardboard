@@ -1701,13 +1701,19 @@ public class CraftServer implements Server {
 
     // Because PlayerManager is broken
     public List<String> getOperatorList() throws IOException {
-        File f = new File(MinecraftServer.USER_CACHE_FILE.getParentFile(), "ops.json");
+        File f = new File("ops.json");
+        
+        List<String> toreturn = new ArrayList<>();
+        
+        if (!f.exists()) {
+        	return toreturn;
+        }
+
         List<String> content = null;
         try {
             content = Files.readAllLines(f.toPath());
         } catch (IOException e) {throw e;}
 
-        List<String> toreturn = new ArrayList<>();
         for (String s : content) {
             s = s.trim();
             if (s.startsWith("\"uuid\":")) {

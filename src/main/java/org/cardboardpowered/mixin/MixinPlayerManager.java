@@ -67,8 +67,10 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -186,7 +188,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Override
     public ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler nethand, GameProfile profile, String hostname) {
-        TranslatableText chatmessage;
+    	TranslatableTextContent chatmessage;
 
         // Moved from processLogin
         UUID uuid = PlayerEntity.getUuidFromProfile(profile);
@@ -205,7 +207,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         while (iterator.hasNext()) {
             entityplayer = (ServerPlayerEntity) iterator.next();
             savePlayerData(entityplayer); // Force the player's inventory to be saved
-            entityplayer.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.duplicate_login", new Object[0]));
+            entityplayer.networkHandler.disconnect(Text.of("multiplayer.disconnect.duplicate_login"));
         }
 
         SocketAddress address = nethand.connection.getAddress();
@@ -217,19 +219,19 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) address).getAddress(), ((java.net.InetSocketAddress) nethand.connection.channel.remoteAddress()).getAddress());
 
         if (((PlayerManager)(Object)this).getUserBanList().contains(profile) /*&& !((PlayerManager)(Object)this).getUserBanList().get(gameprofile).isInvalid()*/) {
-            chatmessage = new TranslatableText("multiplayer.disconnect.banned.reason", new Object[]{"TODO REASON!"});
-            chatmessage.append(new TranslatableText("multiplayer.disconnect.banned.expiration", new Object[] {"TODO EXPIRE!"}));
+            chatmessage = new TranslatableTextContent("multiplayer.disconnect.banned.reason", new Object[]{"TODO REASON!"});
+            //chatmessage.append(new TranslatableTextContent("multiplayer.disconnect.banned.expiration", new Object[] {"TODO EXPIRE!"}));
 
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
         } else if (!((PlayerManager)(Object)this).isWhitelisted(profile)) {
-            chatmessage = new TranslatableText("multiplayer.disconnect.not_whitelisted");
+            chatmessage = new TranslatableTextContent("multiplayer.disconnect.not_whitelisted");
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "Server whitelisted!");
         } else if (((PlayerManager)(Object)this).getIpBanList().isBanned(address) /*&& !((PlayerManager)(Object)this).getIpBanList().get(socketaddress).isInvalid()*/) {
             BannedIpEntry ipbanentry = ((PlayerManager)(Object)this).getIpBanList().get(address);
 
-            chatmessage = new TranslatableText("multiplayer.disconnect.banned_ip.reason", new Object[]{ipbanentry.getReason()});
-            if (ipbanentry.getExpiryDate() != null)
-                chatmessage.append(new TranslatableText("multiplayer.disconnect.banned_ip.expiration", new Object[]{ipbanentry.getExpiryDate()}));
+            chatmessage = new TranslatableTextContent("multiplayer.disconnect.banned_ip.reason", new Object[]{ipbanentry.getReason()});
+            //if (ipbanentry.getExpiryDate() != null)
+            //    chatmessage.append(new TranslatableTextContent("multiplayer.disconnect.banned_ip.expiration", new Object[]{ipbanentry.getExpiryDate()}));
 
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
         } else {
@@ -239,7 +241,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         BukkitEventFactory.callEvent(event);
         if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-            nethand.disconnect(new LiteralText(event.getKickMessage()));
+            nethand.disconnect(Text.of(event.getKickMessage()));
             return null;
         }
         return entity;

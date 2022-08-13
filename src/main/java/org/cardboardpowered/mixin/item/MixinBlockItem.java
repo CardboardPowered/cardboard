@@ -38,7 +38,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.LilyPadItem;
+import net.minecraft.item.PlaceableOnWaterItem ;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
@@ -66,7 +66,7 @@ public class MixinBlockItem {
             method = "place", cancellable = true)
     public void bukkitWaterlilyPlacementFix(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> ci) {
         bukkit_state = null;
-        if (((BlockItem)(Object)this) instanceof LilyPadItem)
+        if (((BlockItem)(Object)this) instanceof PlaceableOnWaterItem )
             bukkit_state = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(context.getWorld(), context.getBlockPos());
     }
 

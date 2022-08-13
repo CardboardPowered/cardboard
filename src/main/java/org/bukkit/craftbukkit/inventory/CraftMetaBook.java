@@ -428,7 +428,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 throw new IllegalArgumentException("Invalid page number " + page + "/" + pages.size());
 
             BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
-            CraftMetaBook.this.pages.set(page - 1, Text.Serializer.fromJson(ComponentSerializer.toString(newText)).asString());
+            CraftMetaBook.this.pages.set(page - 1, Text.Serializer.fromJson(ComponentSerializer.toString(newText)).getString());
         }
 
         @Override
@@ -446,7 +446,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 if (page == null)
                     page = new BaseComponent[0];
 
-                CraftMetaBook.this.pages.add(Text.Serializer.fromJson(ComponentSerializer.toString(page)).asString());
+                CraftMetaBook.this.pages.add(Text.Serializer.fromJson(ComponentSerializer.toString(page)).getString());
             }
         }
 

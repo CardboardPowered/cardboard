@@ -32,7 +32,7 @@ public class CardboardCat extends TameableAnimalImpl implements Cat {
 
     @Override
     public Type getCatType() {
-        return Type.values()[getHandle().getCatType()];
+        return Type.ALL_BLACK;// TODO: 1.19: Type.values()[getHandle().getCatType()];
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CardboardCat extends TameableAnimalImpl implements Cat {
             type = Type.ALL_BLACK;
         }
 
-        getHandle().setCatType(type.ordinal());
+       // getHandle().setCatType(type.ordinal());
     }
 
     @SuppressWarnings("deprecation")

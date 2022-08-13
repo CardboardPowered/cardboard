@@ -47,6 +47,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import org.cardboardpowered.interfaces.IWorldChunk;
 import com.mojang.brigadier.LiteralMessage;
 
+import me.isaiah.common.entity.IEntity;
 import me.isaiah.common.entity.IRemoveReason;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -104,7 +105,9 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public void sendMessage(String message) {
-        nms.sendSystemMessage(Text.of(message), UUID.randomUUID());
+    	
+    	me.isaiah.common.cmixin.IMixinEntity e = (me.isaiah.common.cmixin.IMixinEntity) nms;
+    	e.IsendText(Text.of(message), UUID.randomUUID());
     }
 
     @Override
@@ -180,7 +183,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public String getCustomName() {
-        return nms.getCustomName().asString();
+        return nms.getCustomName().getString();
     }
 
     @Override

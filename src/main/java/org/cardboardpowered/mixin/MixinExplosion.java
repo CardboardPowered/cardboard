@@ -104,7 +104,7 @@ public class MixinExplosion {
      * @reason Explosion Events
      */
     //@Overwrite
-    @Inject(at = @At("HEAD"), method = "affectWorld", cancellable = true)
+   /* @Inject(at = @At("HEAD"), method = "affectWorld", cancellable = true)
     public void affectWorld_cardboard(boolean flag, CallbackInfo ci) {
         if (this.world.isClient)
             this.world.playSound(this.x, this.y, this.z, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2F) * 0.7F, false);
@@ -176,7 +176,7 @@ public class MixinExplosion {
 
                     this.world.getProfiler().push("explosion_blocks");
                     if (block.shouldDropItemsOnExplosion((Explosion)(Object)this) && this.world instanceof ServerWorld) {
-                        BlockEntity tileentity = true/*block.hasBlockEntity()*/ ? this.world.getBlockEntity(blockposition) : null;
+                        BlockEntity tileentity = true/*block.hasBlockEntity()*/ /*? this.world.getBlockEntity(blockposition) : null;
                         LootContext.Builder loottableinfo_builder = (new LootContext.Builder((ServerWorld) this.world)).random(this.world.random).parameter(LootContextParameters.ORIGIN, Vec3d.ofCenter((Vec3i) blockposition)).parameter(LootContextParameters.TOOL, ItemStack.EMPTY).optionalParameter(LootContextParameters.BLOCK_ENTITY, tileentity).optionalParameter(LootContextParameters.THIS_ENTITY, this.entity);
 
                         if (this.destructionType ==Explosion.DestructionType.DESTROY || yield < 1.0F)
@@ -210,15 +210,15 @@ public class MixinExplosion {
         }
         ci.cancel();
         return;
-    }
+    }*/
 
     /**
      * @author BukkitFabric
      * @reason Explosion Events
      */
-    @SuppressWarnings("unused")
-    @Inject(at = @At("HEAD"), method = "collectBlocksAndDamageEntities", cancellable = true)
-    public void collectBlocksAndDamageEntities_cardboard(CallbackInfo ci) {
+   // @SuppressWarnings("unused")
+   // @Inject(at = @At("HEAD"), method = "collectBlocksAndDamageEntities", cancellable = true)
+    /*public void collectBlocksAndDamageEntities_cardboard(CallbackInfo ci) {
         if (this.power < 0.1F) {
             ci.cancel();
             return;
@@ -291,7 +291,7 @@ public class MixinExplosion {
                         BukkitEventFactory.entityDamage = entity;
                         boolean wasDamaged = entity.damage(this.getDamageSource(), (float) ((int) ((d13 * d13 + d13) / 2.0D * 7.0D * (double) f2 + 1.0D)));
                         BukkitEventFactory.entityDamage = null;
-                        if (!wasDamaged && !(entity instanceof TntEntity || entity instanceof FallingBlockEntity) /*&& !entity.forceExplosionKnockback*/)
+                        if (!wasDamaged && !(entity instanceof TntEntity || entity instanceof FallingBlockEntity))
                             continue;
                         double d14 = d13;
 
@@ -312,6 +312,6 @@ public class MixinExplosion {
 
         ci.cancel();
         return;
-    }
+    }*/
 
 }

@@ -55,9 +55,7 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerLoginNetworkHandler.State;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.logging.UncaughtExceptionLogger;
 import  net.minecraft.server.network.ServerLoginNetworkHandler.State;
 
@@ -104,7 +102,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             SecretKey secretKey = packet.decryptSecretKey(privateKey);
             Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, secretKey);
             Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, secretKey);
-            String string = new BigInteger(NetworkEncryptionUtils.generateServerId("", this.server.getKeyPair().getPublic(), secretKey)).toString(16);
+            String string = new BigInteger(NetworkEncryptionUtils.computeServerId("", this.server.getKeyPair().getPublic(), secretKey)).toString(16);
             id = string;
             this.state = State.AUTHENTICATING;
             this.connection.setupEncryption(cipher, cipher2);
@@ -130,7 +128,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                         profile = toOfflineProfile(gameprofile);
                         state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
                     } else {
-                        disconnect(new TranslatableText("multiplayer.disconnect.unverified_username"));
+                        disconnect("multiplayer.disconnect.unverified_username");
                         LOGGER_BF.error("Username '{}' tried to join with an invalid session", gameprofile.getName());
                     }
                 } catch (AuthenticationUnavailableException authenticationunavailableexception) {
@@ -139,7 +137,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                         profile = toOfflineProfile(gameprofile);
                         state = ServerLoginNetworkHandler.State.READY_TO_ACCEPT;
                     } else {
-                        disconnect(new TranslatableText("multiplayer.disconnect.authservers_down"));
+                        disconnect("multiplayer.disconnect.authservers_down");
                         LOGGER_BF.error("Couldn't verify username because servers are unavailable");
                     }
                 } catch (Exception exception) {
@@ -200,10 +198,10 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     public void disconnect(String s) {
         try {
-            Text ichatbasecomponent = new LiteralText(s);
+            Text text = Text.of(s);
             LOGGER_BF.info("Disconnecting BUKKITFABRIC_TODO: " + s);
-            this.connection.send(new LoginDisconnectS2CPacket(ichatbasecomponent));
-            this.connection.disconnect(ichatbasecomponent);
+            this.connection.send(new LoginDisconnectS2CPacket(text));
+            this.connection.disconnect(text);
         } catch (Exception exception) {
             LOGGER_BF.error("Error whilst disconnecting player", exception);
         }

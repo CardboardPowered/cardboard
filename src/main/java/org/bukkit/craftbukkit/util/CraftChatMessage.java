@@ -176,7 +176,7 @@ public final class CraftChatMessage {
         }
 
         private void appendNewComponent(int index) {
-            Text addition = new LiteralText(message.substring(currentIndex, index)).setStyle(modifier);
+            Text addition = Text.literal(message.substring(currentIndex, index)).setStyle(modifier);
             currentIndex = index;
             if (currentChatComponent == null) {
                 currentChatComponent = Text.of("");

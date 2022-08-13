@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.HorseScreenHandler;
@@ -26,7 +26,7 @@ public class MixinHorseScreenHandler extends MixinScreenHandler {
     private PlayerInventory playerInv;
 
     @Inject(method = "<init>*", at = @At("TAIL"))
-    public void setPlayerInv(int i, PlayerInventory playerinventory, Inventory iinventory, final HorseBaseEntity entityhorseabstract, CallbackInfo ci) {
+    public void setPlayerInv(int i, PlayerInventory playerinventory, Inventory iinventory, final AbstractHorseEntity  entityhorseabstract, CallbackInfo ci) {
         this.playerInv = playerinventory;
     }
 

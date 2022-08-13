@@ -22,7 +22,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.StructureFeature;
+// import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.util.hit.HitResult;
 
 @Mixin(EnderEyeItem.class)
