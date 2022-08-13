@@ -20,7 +20,7 @@ SrgLib is also licensed under MIT.
 ## NMS Support
 We do support using Spigot's ``net.minecraft.server`` classes. 
 Classes and Fields will automatically remap to their intermediary counterparts *(Including Reflection!)*
-However, the current system is far from perfect and is currently [being rewritten](https://github.com/cardboardpowered/ingot/)
+However, the current system is far from perfect and is currently being rewritten.
 
 # Progress
 There is a progress indicator in the Discord. Although, if you're not in the Discord:
