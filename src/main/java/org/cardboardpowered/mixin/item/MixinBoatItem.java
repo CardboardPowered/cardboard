@@ -4,13 +4,11 @@ import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.BoatItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,7 +29,7 @@ public class MixinBoatItem extends Item {
     }
 
     @SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
-    @Inject(method = "use", at = @At(value = "NEW", target = "(Lnet/minecraft/world/World;DDD)Lnet/minecraft/entity/vehicle/BoatEntity;"), cancellable = true)
+    @Inject(method = "use", at = @At(value = "NEW", target = "Lnet/minecraft/entity/vehicle/BoatEntity;<init>(Lnet/minecraft/world/World;DDD)V"), cancellable = true)
     public void bukkitize(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult> ci) {
         ItemStack itemstack = player.getStackInHand(hand);
         BlockHitResult movingobjectpositionblock = raycast(world, player, RaycastContext.FluidHandling.ANY);
