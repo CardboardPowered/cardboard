@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.cardboardpowered.impl.CardboardAttributable;
@@ -35,6 +36,7 @@ import net.minecraft.world.World;
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity {
 
+    private transient EntityPotionEffectEvent.Cause bukkitCause;
     private LivingEntity get() {
         return (LivingEntity)(Object)this;
     }
@@ -111,6 +113,11 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
             int i = getXpToDrop(get().attackingPlayer);
             return i;
         } else return 0;
+    }
+
+    @Override
+    public void pushEffectCause(EntityPotionEffectEvent.Cause cause) {
+        bukkitCause = cause;
     }
 
     @Shadow

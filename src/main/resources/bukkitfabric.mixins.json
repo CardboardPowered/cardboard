@@ -161,6 +161,7 @@
     "item.MixinDyeItem",
     "item.MixinEndCrystalItem",
     "item.MixinLeadItem",
+    "item.MixinMilkBucketItem",
     "item.MixinSkullItem",
     "item.MixinFilledMapItem",
     "item.MixinChorusFruitItem",
@@ -179,6 +180,9 @@
     "item.MixinFlintAndSteelItem",
     "item.MixinTridentItem",
     "item.MixinBlockItem",
+    "item.MixinMinecraftItem",
+    "item.MixinPotionItem",
+    "item.MixinSnowballItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",
