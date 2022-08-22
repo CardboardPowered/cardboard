@@ -29,7 +29,7 @@ public class MixinFireworkRocketEntity extends MixinEntity{
     }
 
     @Inject(method = "explode", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"))
-    private void arclight$damageSourceReset(CallbackInfo ci) {
+    private void bukkitDamageSourceReset(CallbackInfo ci) {
         BukkitEventFactory.entityDamage = null;
     }
 }

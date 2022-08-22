@@ -191,6 +191,8 @@
     "block.MixinPistonBlock",
     "block.MixinShearsDispenserBehavior",
     "block.MixinLeavesBlock",
+    "block.MixinChestBlockv2",
+    "block.MixinBambooBlock",
 
     "MixinFrostWalkerEnchantment"
   ],

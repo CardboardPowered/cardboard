@@ -47,15 +47,8 @@ import org.bukkit.entity.*;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -682,4 +675,22 @@ public class BukkitEventFactory {
         return event;
     }
 
+    public static boolean handleBlockSpreadEvent(World world, BlockPos source, BlockPos target, net.minecraft.block.BlockState block, int flag) {
+        // Suppress during worldgen
+        if (!(world instanceof World)) {
+            world.setBlockState(target, block, flag);
+            return true;
+        }
+
+        CraftBlockState state = CraftBlockState.getBlockState(world, target, flag);
+        state.setData(block);
+
+        BlockSpreadEvent event = new BlockSpreadEvent(((IMixinWorld) world).getWorldImpl().getBlockAt(target.getX(), target.getY(), target.getZ()), ((IMixinWorld) world).getWorldImpl().getBlockAt(source.getX(), source.getY(), source.getZ()), state);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            state.update(true);
+        }
+        return !event.isCancelled();
+    }
 }
