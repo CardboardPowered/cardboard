@@ -57,8 +57,6 @@ public class MixinBambooBlock extends Block {
                 if (blockState.isOf(Blocks.BAMBOO) && blockState.get(LEAVES) != BambooLeaves.NONE) {
                     bambooLeaves = BambooLeaves.LARGE;
                     if (blockState2.isOf(Blocks.BAMBOO)) {
-                        // world.setBlockState(pos.down(), (BlockState)blockState.with(LEAVES, BambooLeaves.SMALL), 3);
-                        // world.setBlockState(blockPos, (BlockState)blockState2.with(LEAVES, BambooLeaves.NONE), 3);
                         shouldUpdateOthers = true;
                     }
                 }

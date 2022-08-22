@@ -193,6 +193,7 @@
     "block.MixinLeavesBlock",
     "block.MixinChestBlockv2",
     "block.MixinBambooBlock",
+    "block.MixinBambooSaplingBlock",
 
     "MixinFrostWalkerEnchantment"
   ],
