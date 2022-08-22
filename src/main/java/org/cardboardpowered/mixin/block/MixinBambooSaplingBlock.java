@@ -1,4 +1,4 @@
-package org.cardboardpowered.mixin.entity.block;
+package org.cardboardpowered.mixin.block;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import net.minecraft.block.BambooSaplingBlock;
