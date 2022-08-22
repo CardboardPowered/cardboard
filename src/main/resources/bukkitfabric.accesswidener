@@ -644,4 +644,7 @@ accessible field net/minecraft/entity/player/PlayerEntity abilities Lnet/minecra
 accessible field net/minecraft/world/ChunkSerializer CODEC Lcom/mojang/serialization/Codec;
 accessible method net/minecraft/world/biome/Biome getTemperature (Lnet/minecraft/util/math/BlockPos;)F
 accessible field net/minecraft/server/MinecraftServer resourceManagerHolder Lnet/minecraft/server/MinecraftServer$ResourceManagerHolder;
+accessible field net/minecraft/entity/projectile/FireworkRocketEntity ITEM Lnet/minecraft/entity/data/TrackedData;
+accessible field net/minecraft/entity/projectile/FireworkRocketEntity SHOT_AT_ANGLE Lnet/minecraft/entity/data/TrackedData;
+accessible field net/minecraft/entity/projectile/FireworkRocketEntity lifeTime I
 accessible class net/minecraft/server/MinecraftServer$ResourceManagerHolder

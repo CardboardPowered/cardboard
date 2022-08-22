@@ -35,6 +35,7 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.cardboardpowered.api.event.CardboardEventManager;
 import org.cardboardpowered.impl.CardboardPotionEffectType;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
@@ -93,7 +94,8 @@ public class BukkitFabricMod implements ModInitializer {
         }
         LOGGER.info("Cardboard mod Loaded.");
         new File("plugins").mkdirs();
-        
+
+        CardboardEventManager.INSTANCE.callCardboardEvents();
         for (Object effect : Registry.STATUS_EFFECT) {
             try {
                 org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));

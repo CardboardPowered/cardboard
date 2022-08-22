@@ -97,6 +97,7 @@
     "entity.block.MixinShulkerBoxBlockEntity",
     "entity.block.MixinEndGatewayBlockEntity",
     "entity.block.MixinBeehiveBlockEntity",
+    "entity.MixinFireworkRocketEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
@@ -113,6 +114,7 @@
     "network.MixinPlayerManager_ChatEvent",
     "network.handler.MixinSPNH_SignUpdateEvent",
     "network.handler.MixinSPNH_InventoryClickEvent",
+    "network.MixinDataTracker",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",
@@ -160,13 +162,17 @@
 
     "item.MixinDyeItem",
     "item.MixinEndCrystalItem",
+    "item.MixinLeadItem",
     "item.MixinSkullItem",
     "item.MixinFilledMapItem",
     "item.MixinChorusFruitItem",
+    "item.MixinCrossbowItem",
+    "item.MixinDecorationItem",
     "item.MixinItemStack",
     "item.MixinArmorItem",
     "item.MixinArmorStandItem",
     "item.MixinEnderEyeItem",
+    "item.MixinEnderPearlItem",
     "item.MixinFishingRodItem",
     "item.MixinBowItem",
     "item.MixinBoatItem",
@@ -175,6 +181,9 @@
     "item.MixinFlintAndSteelItem",
     "item.MixinTridentItem",
     "item.MixinBlockItem",
+    "item.MixinMinecraftItem",
+    "item.MixinPotionItem",
+    "item.MixinSnowballItem",
 
     "block.MixinDispenserBlock",
     "block.MixinNetherPortalBlock",
@@ -182,6 +191,9 @@
     "block.MixinPistonBlock",
     "block.MixinShearsDispenserBehavior",
     "block.MixinLeavesBlock",
+    "block.MixinChestBlockv2",
+    "block.MixinBambooBlock",
+    "block.MixinBambooSaplingBlock",
 
     "MixinFrostWalkerEnchantment"
   ],
