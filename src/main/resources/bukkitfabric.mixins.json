@@ -97,6 +97,7 @@
     "entity.block.MixinShulkerBoxBlockEntity",
     "entity.block.MixinEndGatewayBlockEntity",
     "entity.block.MixinBeehiveBlockEntity",
+    "entity.MixinFireworkRocketEntity",
 
     "network.MixinGameMessageS2CPacket",
     "network.MixinHandshakeC2SPacket",
@@ -113,6 +114,7 @@
     "network.MixinPlayerManager_ChatEvent",
     "network.handler.MixinSPNH_SignUpdateEvent",
     "network.handler.MixinSPNH_InventoryClickEvent",
+    "network.MixinDataTracker",
 
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",

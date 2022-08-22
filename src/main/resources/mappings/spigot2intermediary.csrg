@@ -15,10 +15,12 @@ org/bukkit/craftbukkit/entity/CraftVillager org/cardboardpowered/impl/entity/Vil
 org/bukkit/craftbukkit/scheduler/CraftScheduler com/javazilla/bukkitfabric/impl/BukkitSchedulerImpl
 org/bukkit/craftbukkit/entity/CraftVillager org/cardboardpowered/impl/entity/VillagerImpl
 org/bukkit/craftbukkit/entity/CraftArmorStand org/cardboardpowered/impl/entity/ArmorStandImpl
+org/bukkit/craftbukkit/entity/CraftFirework org/cardboardpowered/impl/entity/CardboardFirework
 org/cardboardpowered/impl/entity/HumanEntityImpl org/bukkit/craftbukkit/entity/CraftHumanEntity
 org/bukkit/craftbukkit/entity/CraftPlayer org/cardboardpowered/impl/entity/PlayerImpl
 org/bukkit/craftbukkit/CraftChunk org/cardboardpowered/impl/world/CardboardChunk
 org/bukkit/craftbukkit/CraftChunkSnapshot org/cardboardpowered/impl/world/CardboardChunkSnapshot
+
 
 # (c) 2021 Cardboard
 # Classes
