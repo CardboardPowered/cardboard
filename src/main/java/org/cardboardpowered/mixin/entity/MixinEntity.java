@@ -18,10 +18,10 @@
 package org.cardboardpowered.mixin.entity;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 
 import net.minecraft.entity.projectile.*;
+import net.minecraft.util.ActionResult;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -35,6 +35,7 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDropItemEvent;
 import org.bukkit.event.entity.EntityPoseChangeEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import org.cardboardpowered.api.event.CardboardEntityMountEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -125,7 +126,6 @@ import net.minecraft.entity.passive.SalmonEntity;
 import net.minecraft.entity.passive.SnowGolemEntity;
 import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.passive.TraderLlamaEntity;
 import net.minecraft.entity.passive.TropicalFishEntity;
 import net.minecraft.entity.passive.TurtleEntity;
 import net.minecraft.entity.passive.VillagerEntity;
@@ -178,9 +178,6 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public void cardboard_setForceDrops(boolean forceDrops) {
         this.forceDrops = forceDrops;
     }
-
-    // @Shadow
-    //public Random random;
 
     @Shadow
     public World world;
@@ -599,5 +596,12 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         }
     }
 
+    @Inject(method = "addPassenger", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableList;isEmpty()Z"))
+    private void fireCardboardEntityMountEvent(Entity passenger, CallbackInfo ci) {
+        ActionResult result = CardboardEntityMountEvent.EVENT.invoker().interact(((Entity) (Object) this), passenger);
 
+        if (result == ActionResult.FAIL) {
+            ci.cancel();
+        }
+    }
 }
