@@ -31,7 +31,7 @@ public class MixinPistonBlock {
     
     private PistonHandler cardboard_ph;
 
-    @Redirect(at = @At(value = "NEW", target = "Lnet/minecraft/block/piston/PistonHandler;<init>(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Z)V"), method = "move")
+    @Redirect(at = @At(value = "NEW", target = "Lnet/minecraft/block/piston/PistonHandler;"), method = "move")
     public PistonHandler cardboard_storePH(World world, BlockPos pos, Direction dir, boolean retract) {
         return (cardboard_ph = new PistonHandler(world,pos,dir,retract));
     }
