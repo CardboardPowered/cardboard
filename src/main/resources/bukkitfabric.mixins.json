@@ -194,6 +194,8 @@
     "block.MixinChestBlockv2",
     "block.MixinBambooBlock",
     "block.MixinBambooSaplingBlock",
+    "block.MixinBedBlock",
+    "block.MixinSaplingBlock",
 
     "MixinFrostWalkerEnchantment"
   ],
