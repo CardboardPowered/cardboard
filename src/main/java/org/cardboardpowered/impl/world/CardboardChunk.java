@@ -326,7 +326,7 @@ public class CardboardChunk implements Chunk {
         PalettedContainer<Biome>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[cs.length] : null;
 
         Registry<Biome> iregistry = worldServer.getRegistryManager().get(Registry.BIOME_KEY);
-        Codec<PalettedContainer<Biome>> biomeCodec = PalettedContainer.createCodec(iregistry, iregistry.getCodec(), PalettedContainer.PaletteProvider.BLOCK_STATE, iregistry.getOrThrow(BiomeKeys.PLAINS));
+        //Codec<PalettedContainer<Biome>> biomeCodec = PalettedContainer.createCodec(iregistry, iregistry.getCodec(), PalettedContainer.PaletteProvider.BLOCK_STATE, iregistry.getOrThrow(BiomeKeys.PLAINS));
 
         for (int i = 0; i < cs.length; i++) {
             NbtCompound data = new NbtCompound();
@@ -353,7 +353,7 @@ public class CardboardChunk implements Chunk {
             if (biome != null) {
                 // TODO: 1.18.2
                 // data.put("biomes", biomeCodec.encodeStart(NbtOps.INSTANCE, cs[i].getBiomeContainer()).get().left().get());
-                biome[i] = biomeCodec.parse(NbtOps.INSTANCE, data.getCompound("biomes")).get().left().get();
+                //biome[i] = biomeCodec.parse(NbtOps.INSTANCE, data.getCompound("biomes")).get().left().get();
             }
         }
  
