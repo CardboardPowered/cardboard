@@ -194,7 +194,10 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     public void sendSystemMessage(Text message) {
-        ((Entity) (Object) this).sendSystemMessage(message, UUID.randomUUID());
+        // TODO: 1.19
+    	
+    	((Entity) (Object) this).sendMessage(message);
+    	//((Entity) (Object) this).sendSystemMessage(message, UUID.randomUUID());
     }
 
     public boolean valid = false;

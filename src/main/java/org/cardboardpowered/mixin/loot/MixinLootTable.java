@@ -22,7 +22,9 @@ import net.minecraft.loot.context.LootContext;
 @Mixin(LootTable.class)
 public class MixinLootTable {
 
-    public void supplyInventory(Inventory iinventory, LootContext loottableinfo) {
+	// TODO: 1.19
+	
+    /*public void supplyInventory(Inventory iinventory, LootContext loottableinfo) {
         // CraftBukkit start
         this.fillInventory(iinventory, loottableinfo, false);
     }
@@ -61,6 +63,6 @@ public class MixinLootTable {
     @Shadow
     public List<ItemStack> generateLoot(LootContext loottableinfo) {
         return null;
-    }
+    }*/
 
 }

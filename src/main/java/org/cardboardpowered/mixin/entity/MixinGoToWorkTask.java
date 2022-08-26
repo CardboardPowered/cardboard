@@ -23,11 +23,13 @@ import net.minecraft.util.registry.Registry;
 @Mixin(value = GoToWorkTask.class, priority = 999)
 public class MixinGoToWorkTask {
 
+	// TODO: 1.19
+
     /**
      * @reason VillagerCareerChangeEvent
      * @author
      */
-    @Overwrite
+    /*@Overwrite
     public void run(ServerWorld worldserver, VillagerEntity entityvillager, long i) {
         GlobalPos globalpos = (GlobalPos) entityvillager.getBrain().getOptionalMemory(MemoryModuleType.POTENTIAL_JOB_SITE).get();
 
@@ -52,6 +54,6 @@ public class MixinGoToWorkTask {
                 entityvillager.reinitializeBrain(worldserver);
             });
         }
-    }
+    }*/
 
 }

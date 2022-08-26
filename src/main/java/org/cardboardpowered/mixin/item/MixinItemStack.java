@@ -1,6 +1,6 @@
 package org.cardboardpowered.mixin.item;
 
-import java.util.Random;
+// import java.util.Random;
 import java.util.function.Consumer;
 
 import org.bukkit.craftbukkit.block.CraftBlockState;
@@ -39,6 +39,7 @@ import java.util.List;
 
 import org.bukkit.block.BlockState;
 import org.bukkit.event.block.BlockPlaceEvent;
+import net.minecraft.util.math.random.Random;
 
 @Mixin(value = ItemStack.class, priority = 999)
 public class MixinItemStack {

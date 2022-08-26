@@ -175,7 +175,7 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
-import net.minecraft.world.gen.feature.StructureFeature;
+// import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.level.ServerWorldProperties;
 
 @SuppressWarnings("deprecation")
@@ -999,7 +999,7 @@ public class WorldImpl implements World {
     public boolean isChunkGenerated(int x, int z) {
         try {
             return isChunkLoaded(x, z) || nms.getChunkManager().threadedAnvilChunkStorage.getNbt(new ChunkPos(x, z)) != null;
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -1138,7 +1138,9 @@ public class WorldImpl implements World {
 
     @Override
     public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
-        if (loc == null || sound == null || category == null) return;
+        // TODO: 1.19
+    	
+    	/*if (loc == null || sound == null || category == null) return;
 
         double x = loc.getX();
         double y = loc.getY();
@@ -1146,7 +1148,7 @@ public class WorldImpl implements World {
 
         PlaySoundIdS2CPacket packet = new PlaySoundIdS2CPacket(new Identifier(sound), net.minecraft.sound.SoundCategory.valueOf(category.name()), new Vec3d(x, y, z), volume, pitch);
         nms.getServer().getPlayerManager().sendToAround(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, nms.getRegistryKey(), packet);
-    }
+    */}
 
     @Override
     public RayTraceResult rayTrace(Location start, Vector direction, double maxDistance, FluidCollisionMode mode, boolean ignorePassableBlocks, double raySize, Predicate<Entity> filter) {
@@ -1757,7 +1759,8 @@ public class WorldImpl implements World {
 
                 Direction dir = CraftBlock.blockFaceToNotch(face).getOpposite();
                 if (Painting.class.isAssignableFrom(clazz)) {
-                    entity = new PaintingEntity(nms, new BlockPos(x, y, z), dir);
+                    // TODO: 1.19
+                	// entity = new PaintingEntity(nms, new BlockPos(x, y, z), dir);
                 } else if (ItemFrame.class.isAssignableFrom(clazz)) {
                     entity = new ItemFrameEntity(nms, new BlockPos(x, y, z), dir);
                 }

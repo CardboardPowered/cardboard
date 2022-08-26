@@ -40,6 +40,7 @@ import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.Heightmap;
@@ -55,6 +56,7 @@ import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.event.GameEvent;
+import net.minecraft.world.event.GameEvent.Emitter;
 import net.minecraft.world.tick.QueryableTickScheduler;
 
 public class FakeWorldAccess implements WorldAccess {
@@ -89,10 +91,10 @@ public class FakeWorldAccess implements WorldAccess {
         throw new UnsupportedOperationException("Not supported");
     }
 
-    @Override
+    /*@Override
     public Random getRandom() {
         throw new UnsupportedOperationException("Not supported");
-    }
+    }*/
 
     @Override
     public void playSound(PlayerEntity entityhuman, BlockPos blockposition, SoundEvent soundeffect, SoundCategory soundcategory, float f, float f1) {
@@ -251,5 +253,17 @@ public class FakeWorldAccess implements WorldAccess {
         // TODO Auto-generated method stub
         return 0;
     }
+
+	@Override
+	public void emitGameEvent(GameEvent event, Vec3d emitterPos, Emitter emitter) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public net.minecraft.util.math.random.Random getRandom() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

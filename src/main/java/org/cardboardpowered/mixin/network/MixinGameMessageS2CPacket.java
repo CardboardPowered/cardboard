@@ -28,14 +28,15 @@ public class MixinGameMessageS2CPacket implements IGameMessagePacket {
         return bungeeComponents;
     }
 
+    // TODO: 1.19.2
     @Inject(at = @At("HEAD"), method = "write", cancellable = true)
     public void writePacket(PacketByteBuf buf, CallbackInfo ci) {
-        if (bungeeComponents != null) {
+        /*if (bungeeComponents != null) {
             buf.writeString(net.md_5.bungee.chat.ComponentSerializer.toString(bungeeComponents));
             buf.writeByte(MessageType.CHAT.getId());
             buf.writeUuid(this.sender);
             ci.cancel();
-        }
+        }*/
     }
 
     @Override

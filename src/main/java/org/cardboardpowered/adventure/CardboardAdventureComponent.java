@@ -1,40 +1,45 @@
 package org.cardboardpowered.adventure;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import java.lang.reflect.Type;
-import java.util.List;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-// import net.minecraft.text.TextContent;
-
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import net.minecraft.text.TextContent;
 
 public final class CardboardAdventureComponent implements Text {
-    final Component wrapped;
-    private @MonotonicNonNull Text converted;
 
-    public CardboardAdventureComponent(final Component wrapped) {
-        this.wrapped = wrapped;
+    final Component adventure;
+    private @MonotonicNonNull Text vanilla;
+
+    public CardboardAdventureComponent(Component adventure) {
+        this.adventure = adventure;
     }
 
     public Text deepConverted() {
-        Text converted = this.converted;
-        if (converted == null) {
-            converted = CardboardAdventure.WRAPPER_AWARE_SERIALIZER.serialize(this.wrapped);
-            this.converted = converted;
+        Text vanilla = this.vanilla;
+        if (vanilla == null) {
+            this.vanilla = vanilla = CardboardAdventure.WRAPPER_AWARE_SERIALIZER.serialize(this.adventure);
         }
-        return converted;
+        return vanilla;
     }
 
     public @Nullable Text deepConvertedIfPresent() {
-        return this.converted;
+        return this.vanilla;
     }
 
     @Override
@@ -43,17 +48,16 @@ public final class CardboardAdventureComponent implements Text {
     }
 
     @Override
-    public String asString() {
-        if (this.wrapped instanceof TextComponent) {
-            return ((TextComponent) this.wrapped).content();
-        } else {
-            return this.deepConverted().asString();
+    public TextContent getContent() {
+        if (this.adventure instanceof TextComponent) {
+            return new LiteralTextContent(((TextComponent)this.adventure).content());
         }
+        return this.deepConverted().getContent();
     }
 
     @Override
     public String getString() {
-        return CardboardAdventure.PLAIN.serialize(this.wrapped);
+        return PlainTextComponentSerializer.plainText().serialize(this.adventure);
     }
 
     @Override
@@ -62,20 +66,13 @@ public final class CardboardAdventureComponent implements Text {
     }
 
     @Override
-    public MutableText copy() {
-        return this.deepConverted().copy();
+    public MutableText copyContentOnly() {
+        return this.deepConverted().copyContentOnly();
     }
 
     @Override
-    public MutableText shallowCopy() {
-        return this.deepConverted().shallowCopy();
-    }
-
-    public static class Serializer implements JsonSerializer<CardboardAdventureComponent> {
-        @Override
-        public JsonElement serialize(final CardboardAdventureComponent src, final Type type, final JsonSerializationContext context) {
-            return CardboardAdventure.GSON.serializer().toJsonTree(src.wrapped, Component.class);
-        }
+    public MutableText copy() {
+        return this.deepConverted().copy();
     }
 
     @Override
@@ -83,12 +80,11 @@ public final class CardboardAdventureComponent implements Text {
         return this.deepConverted().asOrderedText();
     }
 
-    /**
-     * Minecraft 1.19
-     */
-    //public TextContent getContent() {
-    //    // TODO Auto-generated method stub
-    //    return null;
-    //}
-
+    public static class Serializer
+    implements JsonSerializer<CardboardAdventureComponent> {
+        public JsonElement serialize(CardboardAdventureComponent src, Type type, JsonSerializationContext context) {
+            return GsonComponentSerializer.gson().serializer().toJsonTree((Object)src.adventure, Component.class);
+        }
+    }
 }
+

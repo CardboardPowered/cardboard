@@ -7,7 +7,6 @@ import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 public class CardboardChestBlockDoubleInventory implements NamedScreenHandlerFactory {
 
@@ -32,7 +31,7 @@ public class CardboardChestBlockDoubleInventory implements NamedScreenHandlerFac
 
     @Override
     public Text getDisplayName() {
-        return (Text) (tileentitychest.hasCustomName() ? tileentitychest.getDisplayName() : (tileentitychest1.hasCustomName() ? tileentitychest1.getDisplayName() : new TranslatableText("container.chestDouble")));
+        return (Text) (tileentitychest.hasCustomName() ? tileentitychest.getDisplayName() : (tileentitychest1.hasCustomName() ? tileentitychest1.getDisplayName() : Text.translatable("container.chestDouble")));
     }
 
 }

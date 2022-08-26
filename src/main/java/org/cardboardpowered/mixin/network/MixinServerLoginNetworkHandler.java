@@ -56,6 +56,7 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerLoginNetworkHandler.State;
 import net.minecraft.text.Text;
+import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.logging.UncaughtExceptionLogger;
 import  net.minecraft.server.network.ServerLoginNetworkHandler.State;
 
@@ -96,9 +97,10 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         PrivateKey privateKey = this.server.getKeyPair().getPrivate();
         String id = "";
         try {
-            if (!Arrays.equals(this.nonce, packet.decryptNonce(privateKey))) {
-                throw new IllegalStateException("Protocol error");
-            }
+            // TODO 1.19
+        	//if (!Arrays.equals(this.nonce, packet.decryptNonce(privateKey))) {
+            //    throw new IllegalStateException("Protocol error");
+            //}
             SecretKey secretKey = packet.decryptSecretKey(privateKey);
             Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, secretKey);
             Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, secretKey);
@@ -259,7 +261,10 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         UUID uuid;
         if ( ((IMixinClientConnection)connection).getSpoofedUUID() != null )
             uuid = ((IMixinClientConnection)connection).getSpoofedUUID();
-        else uuid = PlayerEntity.getOfflinePlayerUuid( this.profile.getName() );
+        else {
+        	// Note: PlayerEntity (1.18) -> DynamicSerializableUuid (1.19)
+        	uuid = DynamicSerializableUuid.getOfflinePlayerUuid( this.profile.getName() );
+        }
 
         this.profile = new GameProfile( uuid, this.profile.getName() );
 

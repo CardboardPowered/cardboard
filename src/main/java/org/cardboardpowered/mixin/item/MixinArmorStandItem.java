@@ -35,11 +35,13 @@ import net.minecraft.world.World;
 @Mixin(value = ArmorStandItem.class, priority = 900)
 public class MixinArmorStandItem {
 
+	// TODO: 1.19
+
     /**
      * @reason .
      * @author .
      */
-    @Overwrite
+    /*@Overwrite
     public ActionResult useOnBlock(ItemUsageContext itemactioncontext) {
         Direction enumdirection = itemactioncontext.getSide();
 
@@ -78,6 +80,6 @@ public class MixinArmorStandItem {
 
     @Shadow
     public void setRotations(ArmorStandEntity entityarmorstand, Random random) {
-    }
+    }*/
 
 }

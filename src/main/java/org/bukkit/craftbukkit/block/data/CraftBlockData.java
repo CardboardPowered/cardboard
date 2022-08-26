@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.block.data;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.cardboardpowered.BlockImplUtil;
@@ -11,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -20,6 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.AbstractBlock.AbstractBlockState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -29,6 +32,7 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Property;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
@@ -37,6 +41,7 @@ public class CraftBlockData implements BlockData {
 
     private BlockState state;
     private Map<Property<?>, Comparable<?>> parsedStates;
+    private static Map<String, CraftBlockData> stringDataCache;
 
     protected CraftBlockData() {
         throw new AssertionError("Template Constructor");
@@ -482,13 +487,59 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.WitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkull::new);
         register(net.minecraft.block.WallWitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkullWall::new);
         register(net.minecraft.block.WoodenButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftWoodButton::new);
+        
+        stringDataCache = new ConcurrentHashMap<String, CraftBlockData>();
+        CraftBlockData.reloadCache();
+        // TOODO 1.19: net.minecraft.block.Block.STATE_IDS.iterator().forEachRemaining(AbstractBlock.AbstractBlockState::createCraftBlockData);
+    }
+    
+    public static void reloadCache() {
+        stringDataCache.clear();
+        // TODO: 1.19 net.minecraft.block.Block.STATE_IDS.forEach(blockData -> stringDataCache.put(blockData.toString(), blockData.createCraftBlockData()));
     }
 
     private static void register(Class<? extends Block> nms, Function<BlockState, CraftBlockData> bukkit) {
         Preconditions.checkState(MAP.put(nms, bukkit) == null, "Duplicate mapping %s->%s", nms, bukkit);
     }
-
+    
     public static CraftBlockData newData(Material material, String data) {
+        net.minecraft.block.Block block;
+        Preconditions.checkArgument((material == null || material.isBlock() ? 1 : 0) != 0, (String)"Cannot get data for not block %s", (Object)material);
+        if (material != null && (block = CraftMagicNumbers.getBlock(material)) != null) {
+            Identifier key = Registry.BLOCK.getId(block);
+            data = data == null ? key.toString() : key + (String)data;
+        }
+        CraftBlockData cached = stringDataCache.computeIfAbsent((String)data, s2 -> CraftBlockData.createNewData(null, s2));
+        return (CraftBlockData)cached.clone();
+    }
+    
+    private static CraftBlockData createNewData(Material material, String data) {
+        BlockState blockData;
+        net.minecraft.block.Block block = CraftMagicNumbers.getBlock(material);
+        Map<Property<?>, Comparable<?>> parsed = null;
+        if (data != null) {
+            try {
+                if (block != null) {
+                    data = Registry.BLOCK.getId(block) + (String)data;
+                }
+                StringReader reader = new StringReader((String)data);
+                BlockArgumentParser.BlockResult arg = BlockArgumentParser.block(Registry.BLOCK, reader, false);
+                Preconditions.checkArgument((!reader.canRead() ? 1 : 0) != 0, (Object)("Spurious trailing data: " + (String)data));
+                blockData = arg.blockState();
+                parsed = arg.properties();
+            }
+            catch (CommandSyntaxException ex) {
+                throw new IllegalArgumentException("Could not parse data: " + (String)data, ex);
+            }
+        } else {
+            blockData = block.getDefaultState();
+        }
+        CraftBlockData craft = CraftBlockData.fromData(blockData);
+        craft.parsedStates = parsed;
+        return craft;
+    }
+
+    /*public static CraftBlockData newData_old(Material material, String data) {
         //Preconditions.checkArgument(material == null || material.isBlock(), "Cannot get data for not block %s", material);
 
         BlockState blockData;
@@ -516,7 +567,7 @@ public class CraftBlockData implements BlockData {
         CraftBlockData craft = fromData(blockData);
         craft.parsedStates = parsed;
         return craft;
-    }
+    }*/
 
     public static CraftBlockData fromData(BlockState data) {
         return MAP.getOrDefault(data.getBlock().getClass(), CraftBlockData::new).apply(data);
