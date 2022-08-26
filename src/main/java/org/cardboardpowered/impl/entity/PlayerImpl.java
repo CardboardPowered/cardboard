@@ -91,7 +91,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import org.cardboardpowered.impl.world.WorldImpl;
-import org.cardboardpowered.interfaces.IGameMessagePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
@@ -111,16 +110,12 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.MessageType;
 import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
@@ -131,10 +126,8 @@ import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.network.PacketByteBuf;
@@ -292,7 +285,8 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void sendMessage(String message) {
-        nms.sendSystemMessage(new LiteralText(message), UUID.randomUUID());
+        // nms.sendSystemMessage(new LiteralText(message), UUID.randomUUID());
+    	nms.sendMessage(Text.literal(message));
     }
 
     @Override
@@ -441,7 +435,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     public String getDisplayName() {
     	
     	
-        return (null == nms.getCustomName()) ? this.getName() : nms.getCustomName()..asString();
+        return (null == nms.getCustomName()) ? this.getName() : nms.getCustomName().getString();
     }
 
     @Override
@@ -839,8 +833,12 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     public void sendRawMessage(String arg0) {
         if (getHandle().networkHandler == null) return;
 
-        for (Text component : CraftChatMessage.fromString(arg0))
-            getHandle().networkHandler.sendPacket(new GameMessageS2CPacket(component, MessageType.CHAT, Util.NIL_UUID));
+        //for (Text component : CraftChatMessage.fromString(arg0))
+        //    getHandle().networkHandler.sendPacket(new GameMessageS2CPacket(component, MessageType.CHAT, Util.NIL_UUID));
+        
+        for (Text component : CraftChatMessage.fromString(arg0)) {
+            this.getHandle().sendMessage(component);
+        }
     }
 
     @Override
@@ -900,7 +898,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     @Override
     public void setDisplayName(String arg0) {
         nms.setCustomNameVisible(true);
-        nms.setCustomName(new LiteralText(arg0));
+        nms.setCustomName(Text.literal(arg0));
     }
 
     @Override
@@ -1319,9 +1317,12 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         public void sendMessage(BaseComponent... components) {
            if (null == getHandle().networkHandler) return;
 
-            GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.SYSTEM, nms.getUuid());
-            ((IGameMessagePacket)packet).setBungeeComponents(components);
-            getHandle().networkHandler.sendPacket(packet);
+           	// TODO: 1.19
+            //GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.SYSTEM, nms.getUuid());
+            //((IGameMessagePacket)packet).setBungeeComponents(components);
+            //getHandle().networkHandler.sendPacket(packet);
+            
+            getHandle().sendMessage( Text.literal( BaseComponent.toLegacyText(components) ) );
         }
 
         @Override
@@ -1333,12 +1334,18 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent... components) {
             if (null == getHandle().networkHandler) return;
 
-            GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.byId((byte) position.ordinal()), nms.getUuid());
+            // TODO: 1.19
+            
+           /* GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.byId((byte) position.ordinal()), nms.getUuid());
             if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR)
                 components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
             
             ((IGameMessagePacket)packet).setBungeeComponents(components);
-            getHandle().networkHandler.sendPacket(packet);
+            getHandle().networkHandler.sendPacket(packet);*/
+            
+            getHandle().sendMessage( Text.literal( BaseComponent.toLegacyText(components) ) );
+
+            //getHandle().networkHandler.sendPacket(new GameMessageS2CPacket(components, position == ChatMessageType.ACTION_BAR));
         }
     };
 
