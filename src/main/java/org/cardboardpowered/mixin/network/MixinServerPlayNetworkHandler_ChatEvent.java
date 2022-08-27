@@ -27,16 +27,13 @@ import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.client.option.ChatVisibility;
-import net.minecraft.network.MessageType;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.server.filter.TextStream;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 
@@ -82,10 +79,13 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
         return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
     }
 
+    
+    // TODO: 1.19
     /**
      * @reason Bukkit AsyncChat
      * @author Bukkit4Fabric
      */
+    /*
     @Overwrite
     public void handleMessage(TextStream.Message messag) {
         if (this.player.isRemoved() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN) {
@@ -183,13 +183,13 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
                     recipient.sendMessage(s);
             }
         }
-    }
+    }*/
 
     // 1.17 - onGameMessage, 1.18 - onChatMessage
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;filterText(Ljava/lang/String;Ljava/util/function/Consumer;)V"), method = "onChatMessage")
+    /*@Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;filterText(Ljava/lang/String;Ljava/util/function/Consumer;)V"), method = "onChatMessage")
     public void onGameMessage_patch(ServerPlayNetworkHandler a, String s, Consumer con) {
         handleMessage(TextStream.Message.permitted(s));
-    }
+    }*/
 
 
 }

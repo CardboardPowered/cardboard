@@ -72,7 +72,7 @@ public class MixinEndGatewayBlockEntity extends EndPortalBlockEntity {
                 return;
             }
 
-            entity1.resetNetherPortalCooldown();
+            entity1.resetPortalCooldown();
             ((IMixinPlayNetworkHandler) ((ServerPlayerEntity) entity1).networkHandler).teleport(teleEvent.getTo());
             startTeleportCooldown(world, blockposition, state, be);
             ci.cancel();

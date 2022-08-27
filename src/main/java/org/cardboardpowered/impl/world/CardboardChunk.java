@@ -313,7 +313,7 @@ public class CardboardChunk implements Chunk {
     }*/
     
     
-    
+    // TODO: 1.19
     @Override
     public ChunkSnapshot getChunkSnapshot(boolean includeMaxBlockY, boolean includeBiome, boolean includeBiomeTempRain) {
         net.minecraft.world.chunk.WorldChunk chunk = getHandle();

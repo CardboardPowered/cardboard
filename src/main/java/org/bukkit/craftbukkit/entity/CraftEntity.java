@@ -306,7 +306,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public int getPortalCooldown() {
-        return nms.getDefaultNetherPortalCooldown();
+        return nms.getDefaultPortalCooldown();
     }
 
     @Override

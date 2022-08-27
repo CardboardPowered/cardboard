@@ -75,13 +75,14 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
     @Shadow private int failedStartMiningTime;
     @Shadow private int blockBreakingProgress;
 
+    // TODO: 1.19
     /**
      * @author BukkitFabric
      * @reason Interaction Events
      */
     @SuppressWarnings("deprecation")
     //@Overwrite
-    @Inject(at = @At("HEAD"), method = "processBlockBreakingAction", cancellable = true)
+    /*@Inject(at = @At("HEAD"), method = "processBlockBreakingAction", cancellable = true)
     public void processBlockBreakingActionBF(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, Direction enumdirection, int i, CallbackInfo ci) {
         double d0 = this.player.getX() - ((double) blockposition.getX() + 0.5D);
         double d1 = this.player.getY() - ((double) blockposition.getY() + 0.5D) + 1.5D;
@@ -221,9 +222,9 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
             }
 
         }
-    }
+    }*/
 
-    @Shadow public void finishMining(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, String s) {}
+    // @Shadow public void finishMining(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, String s) {}
 
     @Inject(at = @At("HEAD"), method = "tryBreakBlock", cancellable = true)
     public void blockBreak(BlockPos blockposition, CallbackInfoReturnable<Boolean> ci) {

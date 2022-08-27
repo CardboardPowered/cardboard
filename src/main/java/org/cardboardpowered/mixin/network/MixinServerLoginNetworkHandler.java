@@ -44,6 +44,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.encryption.NetworkEncryptionException;
 import net.minecraft.network.encryption.NetworkEncryptionUtils;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
@@ -215,16 +216,19 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             target = "Lnet/minecraft/server/PlayerManager;checkCanJoin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/text/Text;"),
             method = "acceptPlayer")
     public Text acceptPlayer_checkCanJoin(PlayerManager man, SocketAddress a, GameProfile b) {
-        ServerPlayerEntity s = ((IMixinPlayerManager)this.server.getPlayerManager()).attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, hostname);
+    	
+    	IMixinPlayerManager pm = ((IMixinPlayerManager)this.server.getPlayerManager());
+        ServerPlayerEntity s = pm.attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, null, hostname);
+        
         cardboard_player = s;
 
         return null;
     }
 
     @Redirect(at = @At(value = "INVOKE", 
-            target = "Lnet/minecraft/server/PlayerManager;createPlayer(Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/server/network/ServerPlayerEntity;"),
+            target = "Lnet/minecraft/server/PlayerManager;createPlayer(Lcom/mojang/authlib/GameProfile;Lnet/minecraft/network/encryption/PlayerPublicKey;)Lnet/minecraft/server/network/ServerPlayerEntity;"),
             method = "acceptPlayer")
-    public ServerPlayerEntity acceptPlayer_createPlayer(PlayerManager man, GameProfile a) {
+    public ServerPlayerEntity acceptPlayer_createPlayer(PlayerManager man, GameProfile a, PlayerPublicKey key) {
         return cardboard_player;
     }
 

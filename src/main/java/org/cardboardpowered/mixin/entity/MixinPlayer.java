@@ -60,7 +60,6 @@ import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.MessageType;
 import net.minecraft.network.Packet;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
@@ -74,10 +73,8 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -246,7 +243,8 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         ci.cancel();
     }
 
-    @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
+    // TODO: 1.19
+    /*@Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
     public void bukkitizeDeath(DamageSource damagesource, CallbackInfo ci) {
         boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
         if (((ServerPlayerEntity)(Object)this).isRemoved()) {
@@ -330,7 +328,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         ((ServerPlayerEntity)(Object)this).getDamageTracker().update();
         ci.cancel();
         return;
-    }
+    }*/
 
     @Shadow
     public void forgiveMobAnger() {}

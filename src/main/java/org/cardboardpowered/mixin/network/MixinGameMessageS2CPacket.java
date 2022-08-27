@@ -18,8 +18,8 @@ import net.minecraft.text.Text;
 @Mixin(GameMessageS2CPacket.class)
 public class MixinGameMessageS2CPacket implements IGameMessagePacket {
 
-    @Shadow private Text message;
-    @Shadow private UUID sender;
+    //@Shadow private Text message;
+    //@Shadow private UUID sender;
 
     public net.md_5.bungee.api.chat.BaseComponent[] bungeeComponents;
 

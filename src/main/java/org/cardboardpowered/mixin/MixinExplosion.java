@@ -84,14 +84,14 @@ public class MixinExplosion {
     @Shadow @Final private double x;
     @Shadow @Final private double y;
     @Shadow @Final private double z;
-    @Shadow @Final private List<BlockPos> affectedBlocks;
+    //@Shadow @Final private List<BlockPos> affectedBlocks;
     @Shadow @Final public Entity entity;
     @Shadow @Final private float power;
     @Shadow @Final private DamageSource damageSource;
     @Shadow @Final private ExplosionBehavior behavior;
     @Shadow @Final private Explosion.DestructionType destructionType;
     @Shadow @Final private boolean createFire;
-    @Shadow @Final private Random random;
+    //@Shadow @Final private Random random;
     @Shadow @Final private Map<PlayerEntity, Vec3d> affectedPlayers = Maps.newHashMap();
 
     @Shadow private static void tryMergeStack(ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist, ItemStack itemstack, BlockPos blockposition) {}

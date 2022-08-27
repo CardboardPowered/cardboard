@@ -1,6 +1,6 @@
 /**
- * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Cardboard
+ * Copyright (C) 2020-2023
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ import org.bukkit.Location;
 
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -31,7 +32,7 @@ public interface IMixinPlayerManager {
 
     ServerPlayerEntity moveToWorld(ServerPlayerEntity player, ServerWorld world, boolean flag, Location location, boolean avoidSuffocation);
 
-    ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler loginlistener, GameProfile gameprofile, String hostname);
+    ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler loginlistener, GameProfile gameprofile, PlayerPublicKey profilepublickey, String hostname);
 
     void sendScoreboardBF(ServerScoreboard newboard, ServerPlayerEntity handle);
 

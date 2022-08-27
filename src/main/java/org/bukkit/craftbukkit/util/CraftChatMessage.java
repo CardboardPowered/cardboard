@@ -12,13 +12,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.ClickEvent.Action;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.MutableText;
 // import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextColor;
+import net.minecraft.text.TranslatableTextContent;
 
 import org.bukkit.ChatColor;
 
@@ -247,7 +248,7 @@ public final class CraftChatMessage {
             if (modi.isStrikethrough()) out.append(Formatting.STRIKETHROUGH);
             if (modi.isObfuscated()) out.append(Formatting.OBFUSCATED);
 
-            c.visitSelf((x) -> {
+            c.visit((x) -> {
                 out.append(x);
                 return Optional.empty();
             });
@@ -256,62 +257,61 @@ public final class CraftChatMessage {
         return out.toString();//.replaceFirst("^(" + defaultColor + ")*", "");
     }
 
-    public static Text fixComponent(Text component) {
+    public static Text fixComponent(MutableText component) {
         Matcher matcher = LINK_PATTERN.matcher("");
         return fixComponent(component, matcher);
     }
 
-    private static Text fixComponent(Text component, Matcher matcher) {
-        if (component instanceof LiteralText) {
-            LiteralText text = ((LiteralText) component);
-            String msg = text.asString();
-            if (matcher.reset(msg).find()) {
-                matcher.reset();
-
-                Style modifier = text.getStyle() != null ? text.getStyle() : Style.EMPTY;
-                List<Text> extras = new ArrayList<Text>();
-                List<Text> extrasOld = new ArrayList<Text>(text.getSiblings());
-                component = text = new LiteralText("");
-
-                int pos = 0;
-                while (matcher.find()) {
-                    String match = matcher.group();
-                    if (!(match.startsWith("http://") || match.startsWith("https://"))) match = "http://" + match;
-
-                    LiteralText prev = new LiteralText(msg.substring(pos, matcher.start()));
-                    prev.setStyle(modifier);
-                    extras.add(prev);
-                    LiteralText link = new LiteralText(matcher.group());
-                    Style linkModi = modifier.withClickEvent(new ClickEvent(Action.OPEN_URL, match));
-                    link.setStyle(linkModi);
-                    extras.add(link);
-
-                    pos = matcher.end();
+    private static Text fixComponent(MutableText component, Matcher matcher) {
+        LiteralTextContent text;
+        String msg;
+        if (component.getContent() instanceof LiteralTextContent && matcher.reset(msg = (text = (LiteralTextContent)component.getContent()).string()).find()) {
+            matcher.reset();
+            Style modifier = component.getStyle();
+            ArrayList<Text> extras = new ArrayList<Text>();
+            ArrayList<Text> extrasOld = new ArrayList<Text>(component.getSiblings());
+            component = Text.empty();
+            int pos = 0;
+            while (matcher.find()) {
+                Object match = matcher.group();
+                if (!((String)match).startsWith("http://") && !((String)match).startsWith("https://")) {
+                    match = "http://" + (String)match;
                 }
-
-                LiteralText prev = new LiteralText(msg.substring(pos));
+                MutableText prev = Text.literal(msg.substring(pos, matcher.start()));
                 prev.setStyle(modifier);
                 extras.add(prev);
-                extras.addAll(extrasOld);
-
-                for (Text c : extras) text.append(c);
+                MutableText link = Text.literal(matcher.group());
+                Style linkModi = modifier.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, (String)match));
+                link.setStyle(linkModi);
+                extras.add(link);
+                pos = matcher.end();
+            }
+            MutableText prev = Text.literal(msg.substring(pos));
+            prev.setStyle(modifier);
+            extras.add(prev);
+            extras.addAll(extrasOld);
+            for (Text c2 : extras) {
+                component.append(c2);
             }
         }
-
         List<Text> extras = component.getSiblings();
-        for (int i = 0; i < extras.size(); i++) {
-            Text comp = extras.get(i);
-            if (comp.getStyle() != null && comp.getStyle().getClickEvent() == null) extras.set(i, fixComponent(comp, matcher));
+        for (int i2 = 0; i2 < extras.size(); ++i2) {
+            Text comp = extras.get(i2);
+            if (comp.getStyle() == null || comp.getStyle().getClickEvent() != null) continue;
+            extras.set(i2, CraftChatMessage.fixComponent(comp.copy(), matcher));
         }
-
-        if (component instanceof TranslatableText) {
-            Object[] subs = ((TranslatableText) component).getArgs();
-            for (int i = 0; i < subs.length; i++) {
-                Object comp = subs[i];
+        if (component.getContent() instanceof TranslatableTextContent) {
+            Object[] subs = ((TranslatableTextContent)component.getContent()).getArgs();
+            for (int i3 = 0; i3 < subs.length; ++i3) {
+                Object comp = subs[i3];
                 if (comp instanceof Text) {
-                    Text c = (Text) comp;
-                    if (c.getStyle() != null && c.getStyle().getClickEvent() == null) subs[i] = fixComponent(c, matcher);
-                } else if (comp instanceof String && matcher.reset((String) comp).find()) subs[i] = fixComponent(new LiteralText((String) comp), matcher);
+                    Text c3 = (Text)comp;
+                    if (c3.getStyle() == null || c3.getStyle().getClickEvent() != null) continue;
+                    subs[i3] = CraftChatMessage.fixComponent(c3.copy(), matcher);
+                    continue;
+                }
+                if (!(comp instanceof String) || !matcher.reset((String)comp).find()) continue;
+                subs[i3] = CraftChatMessage.fixComponent(Text.literal((String)comp), matcher);
             }
         }
         return component;

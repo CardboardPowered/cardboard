@@ -99,17 +99,17 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
         return;
     }
 
-    // TODO: Testing
-    @Shadow
+    /*@Shadow
     public int getXpToDrop(PlayerEntity entityhuman) {
         return 0;
-    }
+    }*/
 
     @Override
     public int getExpReward() {
         if ((get().shouldAlwaysDropXp() || get().lastDamageTime > 0 && get().shouldAlwaysDropXp() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))) {
-            int i = getXpToDrop(get().attackingPlayer);
-            return i;
+            //int i = getXpToDrop(get().attackingPlayer);
+            int i = get().getXpToDrop();
+        	return i;
         } else return 0;
     }
 

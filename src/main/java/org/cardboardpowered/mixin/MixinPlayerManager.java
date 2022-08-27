@@ -55,7 +55,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.MessageType;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.scoreboard.ServerScoreboard;
@@ -65,13 +65,12 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.LiteralTextContent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Util;
+import net.minecraft.util.dynamic.DynamicSerializableUuid;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -163,7 +162,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
     public void firePlayerJoinEvent(ClientConnection con, ServerPlayerEntity player, CallbackInfo ci) {
-        String joinMessage = new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}).getString();
+        String joinMessage = Text.translatable("multiplayer.player.joined", new Object[]{player.getDisplayName()}).getString();
 
         PlayerImpl plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(plr, joinMessage);
@@ -172,9 +171,14 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         joinMessage = playerJoinEvent.getJoinMessage();
 
-        if (joinMessage != null && joinMessage.length() > 0)
-            for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))
-                CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
+        if (joinMessage != null && joinMessage.length() > 0) {
+            for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage)) {
+                // 1.18: CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
+                // TODO: 1.19
+            	CraftServer.server.getPlayerManager().broadcast(line, entityplayer -> line, false);
+            }
+        }
+
     }
 
     @Inject(at = @At("HEAD"), method = "remove")
@@ -187,12 +191,13 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     }
 
     @Override
-    public ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler nethand, GameProfile profile, String hostname) {
-    	TranslatableTextContent chatmessage;
+    public ServerPlayerEntity attemptLogin(ServerLoginNetworkHandler nethand, GameProfile profile, PlayerPublicKey profilepublickey, String hostname) {
+    	MutableText chatmessage;
 
         // Moved from processLogin
-        UUID uuid = PlayerEntity.getUuidFromProfile(profile);
-        List<ServerPlayerEntity> list = Lists.newArrayList();
+        // 1.18: UUID uuid = PlayerEntity.getUuidFromProfile(profile);
+    	UUID uuid = DynamicSerializableUuid.getUuidFromProfile(profile);
+    	List<ServerPlayerEntity> list = Lists.newArrayList();
 
         ServerPlayerEntity entityplayer;
 
@@ -219,17 +224,17 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) address).getAddress(), ((java.net.InetSocketAddress) nethand.connection.channel.remoteAddress()).getAddress());
 
         if (((PlayerManager)(Object)this).getUserBanList().contains(profile) /*&& !((PlayerManager)(Object)this).getUserBanList().get(gameprofile).isInvalid()*/) {
-            chatmessage = new TranslatableTextContent("multiplayer.disconnect.banned.reason", new Object[]{"TODO REASON!"});
+            chatmessage = Text.translatable("multiplayer.disconnect.banned.reason", new Object[]{"TODO REASON!"});
             //chatmessage.append(new TranslatableTextContent("multiplayer.disconnect.banned.expiration", new Object[] {"TODO EXPIRE!"}));
 
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, CraftChatMessage.fromComponent(chatmessage));
         } else if (!((PlayerManager)(Object)this).isWhitelisted(profile)) {
-            chatmessage = new TranslatableTextContent("multiplayer.disconnect.not_whitelisted");
+            chatmessage = Text.translatable("multiplayer.disconnect.not_whitelisted");
             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, "Server whitelisted!");
         } else if (((PlayerManager)(Object)this).getIpBanList().isBanned(address) /*&& !((PlayerManager)(Object)this).getIpBanList().get(socketaddress).isInvalid()*/) {
             BannedIpEntry ipbanentry = ((PlayerManager)(Object)this).getIpBanList().get(address);
 
-            chatmessage = new TranslatableTextContent("multiplayer.disconnect.banned_ip.reason", new Object[]{ipbanentry.getReason()});
+            chatmessage = Text.translatable("multiplayer.disconnect.banned_ip.reason", new Object[]{ipbanentry.getReason()});
             //if (ipbanentry.getExpiryDate() != null)
             //    chatmessage.append(new TranslatableTextContent("multiplayer.disconnect.banned_ip.expiration", new Object[]{ipbanentry.getExpiryDate()}));
 

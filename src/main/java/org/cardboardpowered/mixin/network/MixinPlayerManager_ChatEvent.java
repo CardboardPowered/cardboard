@@ -28,13 +28,14 @@ import net.minecraft.network.message.MessageType;
 import net.minecraft.network.Packet;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager_ChatEvent {
+	
+	// TODO: 1.19
 
-    @SuppressWarnings("deprecation")
+    /*@SuppressWarnings("deprecation")
     @Inject(at = @At("HEAD"), method = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Ljava/util/function/Function;Lnet/minecraft/network/MessageType;Ljava/util/UUID;)V", cancellable = true)
     public void cardboard_doChatEvent_PLRMGR(Text tmessage, Function<ServerPlayerEntity, Text> playerMessageFactory, MessageType type, UUID sender, CallbackInfo ci) {
         try {
@@ -102,6 +103,6 @@ public class MixinPlayerManager_ChatEvent {
 
     @Shadow
     public void sendToAll(Packet<?> packet) {
-    }
+    }*/
 
 }

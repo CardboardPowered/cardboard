@@ -30,7 +30,8 @@ public class MixinBoatItem extends Item {
         super(settings);
     }
 
-    @SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+    // TODO: 1.19
+    /*@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
     @Inject(method = "use", at = @At(value = "NEW", target = "(Lnet/minecraft/world/World;DDD)Lnet/minecraft/entity/vehicle/BoatEntity;"), cancellable = true)
     public void bukkitize(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult> ci) {
         ItemStack itemstack = player.getStackInHand(hand);
@@ -40,6 +41,6 @@ public class MixinBoatItem extends Item {
         if (event.isCancelled()) {
             ci.setReturnValue(new TypedActionResult(ActionResult.PASS, itemstack));
         }
-    }
+    }*/
 
 }

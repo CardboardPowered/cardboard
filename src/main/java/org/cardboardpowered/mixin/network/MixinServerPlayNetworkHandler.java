@@ -54,9 +54,9 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
@@ -70,7 +70,6 @@ import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -152,17 +151,18 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         reason = Text.of(event.getReason());
         final Text reason_final = reason;
 
-        get().connection.send(new DisconnectS2CPacket(reason), (future) -> get().connection.disconnect(reason_final));
+        get().connection.send(new DisconnectS2CPacket(reason), PacketCallbacks.always(() -> get().connection.disconnect(reason_final)));
         get().onDisconnected(reason);
         get().connection.disableAutoRead();
         CraftServer.server.submitAndJoin(get().connection::handleDisconnection);
     }
 
     /**
-     * @reason Bukkit
-     * @author Bukkit4Fabric
+     * @reason command
+     * @author Cardboard
      */
-    @Inject(at = @At("HEAD"), method = "executeCommand", cancellable = true)
+    // TODO: 1.19
+    // @Inject(at = @At("HEAD"), method = "executeCommand", cancellable = true)
     public void executeCommand(String string, CallbackInfo ci) {
         BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), string, new LazyPlayerSet(CraftServer.server));
@@ -185,7 +185,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
     }
 
-    @Override
+    // TODO: 1.19
+    /*@Override
     public void chat(String s, boolean async) {
         if (s.isEmpty() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN)
             return;
@@ -243,7 +244,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                     recipient.sendMessage(s);
             }
         }
-    }
+    }*/
 
     @Override
     public void teleport(Location dest) {

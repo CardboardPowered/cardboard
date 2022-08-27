@@ -21,6 +21,7 @@ import com.mojang.authlib.ProfileLookupCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.UserCache;
 import net.minecraft.util.UserCache.Entry;
+import net.minecraft.util.dynamic.DynamicSerializableUuid;
 
 @Mixin(UserCache.class)
 public class MixinUserCache implements IUserCache {
@@ -80,7 +81,12 @@ public class MixinUserCache implements IUserCache {
         repository.findProfilesByNames(new String[]{name}, Agent.MINECRAFT, profileLookupCallback);
         GameProfile gameProfile = (GameProfile)atomicReference.get();
         if (!shouldUseRemote() && gameProfile == null) {
-            UUID uUID = PlayerEntity.getUuidFromProfile((GameProfile)new GameProfile(null, name));
+            
+        	
+        	// TODO: 1.19
+        	UUID uUID = DynamicSerializableUuid.getUuidFromProfile(new GameProfile((UUID)null, name));
+        	
+        	// 1.18: UUID uUID = PlayerEntity.getUuidFromProfile((GameProfile)new GameProfile(null, name));
             return Optional.of(new GameProfile(uUID, name));
         }
         return Optional.ofNullable(gameProfile);

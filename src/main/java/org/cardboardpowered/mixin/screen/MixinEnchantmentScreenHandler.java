@@ -52,7 +52,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
 
     @Shadow public Inventory inventory;
     @Shadow public ScreenHandlerContext context;
-    @Shadow public Random random;
+    //@Shadow public Random random;
     @Shadow public Property seed;
 
     @Shadow public int[] enchantmentPower;

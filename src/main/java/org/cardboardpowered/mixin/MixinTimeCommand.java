@@ -33,7 +33,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.command.TimeCommand;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 @Mixin(TimeCommand.class)
 public class MixinTimeCommand {
@@ -48,7 +48,7 @@ public class MixinTimeCommand {
             Bukkit.getPluginManager().callEvent(event);
             if (!event.isCancelled()) world.setTimeOfDay((long) world.getTimeOfDay() + event.getSkipAmount());
         }
-        source.sendFeedback(new TranslatableText("commands.time.set", new Object[]{i}), true);
+        source.sendFeedback(Text.translatable("commands.time.set", new Object[]{i}), true);
         ci.setReturnValue(getDayTime(source.getWorld()));
         return;
     }
@@ -64,7 +64,7 @@ public class MixinTimeCommand {
             if (!event.isCancelled()) world.setTimeOfDay(world.getTimeOfDay() + event.getSkipAmount());
         }
         int j = getDayTime(source.getWorld());
-        source.sendFeedback(new TranslatableText("commands.time.set", new Object[]{j}), true);
+        source.sendFeedback(Text.translatable("commands.time.set", new Object[]{j}), true);
         ci.setReturnValue(j);
         return;
     }
