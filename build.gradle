@@ -63,7 +63,7 @@ dependencies {
     	"fabric-screen-handler-api-v1"
     ]
 
-    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.18.2", "1.18.2", null)
+    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.19", "1.19.2", null)
     ic.setChanging(true) // Make sure we get the latest version of iCommon
 
     //include(modImplementation(ic))
