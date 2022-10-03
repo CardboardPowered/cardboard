@@ -33,7 +33,7 @@ public class MixinDecorationItem {
 
     @Inject(method = "useOnBlock", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/decoration/AbstractDecorationEntity;onPlace()V"))
-    private void bukkitUseOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, BlockPos blockPos, Direction direction, BlockPos blockPos2, PlayerEntity playerEntity, ItemStack itemStack, World world, AbstractDecorationEntity abstractDecorationEntity, NbtCompound nbtCompound) {
+    private void bukkitUseOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir, BlockPos blockPos, Direction direction, BlockPos blockPos2, PlayerEntity playerEntity, ItemStack itemStack, World world, AbstractDecorationEntity abstractDecorationEntity) {
         Player who = (context.getPlayer() == null) ? null : (Player) ((IMixinServerEntityPlayer) context.getPlayer()).getBukkit();
         org.bukkit.block.Block blockClicked = CraftBlock.at((ServerWorld) world, blockPos);
         org.bukkit.block.BlockFace blockFace = CraftBlock.notchToBlockFace(direction);

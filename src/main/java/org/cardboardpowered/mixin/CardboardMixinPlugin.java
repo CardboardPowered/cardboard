@@ -158,8 +158,8 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                         if (!not_has_event(mixin, mixin, ev))
                             disable = false;
                     }
-                    if (disable)
-                        return false;
+                    //if (disable)
+                    //    return false;
                 }
             }
         
