@@ -25,7 +25,7 @@ public class MixinCoralWallFanBlock {
             target = "Lnet/minecraft/server/world/ServerWorld;setBlockState" +
                     "(Lnet/minecraft/util/math/BlockPos;" +
                     "Lnet/minecraft/block/BlockState;I)Z"))
-    private void fukkit_fadeEvent(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
+    private void bukkit_fadeEvent(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
         if (BukkitEventFactory.callBlockFadeEvent(world, pos, this.deadCoralBlock.getDefaultState()
                         .with(CoralWallFanBlock.WATERLOGGED, false)
                         .with(CoralWallFanBlock.FACING, state
