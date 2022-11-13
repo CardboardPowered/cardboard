@@ -194,6 +194,11 @@
     "block.MixinChestBlockv2",
     "block.MixinBambooBlock",
     "block.MixinBambooSaplingBlock",
+    "block.MixinTntBlock",
+    "block.MixinCocoaBlock",
+    "block.MixinCoralFanBlock",
+    "block.MixinCoralWallFanBlock",
+    "block.MixinCropBlock",
 
     "MixinFrostWalkerEnchantment"
   ],

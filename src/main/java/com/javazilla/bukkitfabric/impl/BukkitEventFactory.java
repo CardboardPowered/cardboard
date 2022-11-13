@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.WorldAccess;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -38,6 +39,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -692,5 +694,49 @@ public class BukkitEventFactory {
             state.update(true);
         }
         return !event.isCancelled();
+    }
+
+    public static EntityChangeBlockEvent callEntityChangeBlockEvent(Entity entity, BlockPos position, net.minecraft.block.BlockState newBlock) {
+        return callEntityChangeBlockEvent(entity, position, newBlock, false);
+    }
+
+    public static EntityChangeBlockEvent callEntityChangeBlockEvent(Entity entity, BlockPos position, net.minecraft.block.BlockState newBlock, boolean cancelled) {
+        Block block = ((IMixinWorld) entity).getWorldImpl().getBlockAt(position.getX(), position.getY(), position.getZ());
+
+        EntityChangeBlockEvent event = new EntityChangeBlockEvent(((IMixinEntity) entity).getBukkitEntity(), block, CraftBlockData.fromData(newBlock));
+        event.setCancelled(cancelled);
+        event.getEntity().getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static boolean handleBlockGrowEvent(World world, BlockPos pos, net.minecraft.block.BlockState block) {
+        return handleBlockGrowEvent(world, pos, block, 3);
+    }
+
+    public static boolean handleBlockGrowEvent(World world, BlockPos pos, net.minecraft.block.BlockState newData, int flag) {
+        Block block = ((IMixinWorld) world).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+        CraftBlockState state = (CraftBlockState) block.getState();
+        state.setData(newData);
+
+        BlockGrowEvent event = new BlockGrowEvent(block, state);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            state.update(true);
+        }
+
+        return !event.isCancelled();
+    }
+
+    /**
+     * BlockFadeEvent
+     */
+    public static BlockFadeEvent callBlockFadeEvent(WorldAccess world, BlockPos pos, net.minecraft.block.BlockState newBlock) {
+        CraftBlockState state = CraftBlockState.getBlockState(world, pos);
+        state.setData(newBlock);
+
+        BlockFadeEvent event = new BlockFadeEvent(state.getBlock(), state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 }
