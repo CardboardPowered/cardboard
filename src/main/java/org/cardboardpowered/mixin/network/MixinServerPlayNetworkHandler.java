@@ -1,24 +1,16 @@
 package org.cardboardpowered.mixin.network;
 
-import static org.bukkit.craftbukkit.CraftServer.server;
-
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -29,8 +21,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
-import org.cardboardpowered.impl.util.LazyPlayerSet;
-import org.cardboardpowered.impl.util.WaitableImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,16 +29,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinResourcePackStatusC2SPacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
 import me.isaiah.common.cmixin.IMixinEntity;
-import net.minecraft.client.option.ChatVisibility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.effect.StatusEffects;
@@ -155,30 +142,6 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         get().onDisconnected(reason);
         get().connection.disableAutoRead();
         CraftServer.server.submitAndJoin(get().connection::handleDisconnection);
-    }
-
-    /**
-     * @reason command
-     * @author Cardboard
-     */
-    // TODO: 1.19
-    // @Inject(at = @At("HEAD"), method = "executeCommand", cancellable = true)
-    public void executeCommand(String string, CallbackInfo ci) {
-        BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
-        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), string, new LazyPlayerSet(CraftServer.server));
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
-
-        try {
-            boolean b = Bukkit.getServer().dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
-            if (b) {
-                ci.cancel();
-                return;
-            }
-        } catch (org.bukkit.command.CommandException ex) {
-            getPlayer().sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
-            java.util.logging.Logger.getLogger(ServerPlayNetworkHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
     }
 
     public PlayerImpl getPlayer() {

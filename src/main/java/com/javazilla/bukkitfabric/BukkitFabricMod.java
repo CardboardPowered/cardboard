@@ -48,13 +48,17 @@ import com.javazilla.bukkitfabric.nms.MappingsReader;
 import me.isaiah.common.event.EventHandler;
 import me.isaiah.common.event.EventRegistery;
 import me.isaiah.common.event.block.BlockEntityWriteNbtEvent;
+import me.isaiah.common.event.block.LeavesDecayEvent;
 import me.isaiah.common.event.entity.BlockEntityLoadEvent;
 import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
 import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
 import me.isaiah.common.event.entity.player.ServerPlayerInitEvent;
 import me.isaiah.common.event.server.ServerWorldInitEvent;
+import me.isaiah.common.events.LeavesDecayCallback;
 import me.isaiah.common.fabric.FabricWorld;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.ItemStack;
@@ -62,6 +66,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
@@ -86,6 +91,10 @@ public class BukkitFabricMod implements ModInitializer {
         int r = EventRegistery.registerAll(this);
         LOGGER.info("Registered '" + r + "' iCommon events.");
 
+        ServerMessageEvents.CHAT_MESSAGE.register((message, source, params) -> {
+        	LOGGER.info("DEBUG: " + message.toString());
+        });
+        
         try {
             MappingsReader.main(null);
         } catch (IOException e) {
@@ -102,6 +111,33 @@ public class BukkitFabricMod implements ModInitializer {
             }
         }
     }
+    
+    @EventHandler
+    public void on_leaves_decay(LeavesDecayEvent ev) {
+    	WorldImpl w = ((IMixinWorld)ev.world).getWorldImpl();
+    	org.bukkit.event.block.LeavesDecayEvent event = 
+				new org.bukkit.event.block.LeavesDecayEvent(w.getBlockAt(ev.pos.getX(), ev.pos.getY(), ev.pos.getZ()));
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled() || ev.world.getBlockState(ev.pos).getBlock() != (LeavesBlock)(Object)this) {
+            ev.setCanceled(true);
+        }
+    }
+    
+    /*public void register_leaves_decay_callback() {
+    	LeavesDecayCallback.EVENT.register((state, world, pos) -> {
+    		
+    		org.bukkit.event.block.LeavesDecayEvent event = 
+    				new org.bukkit.event.block.LeavesDecayEvent(((IMixinWorld)world).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled() || world.getBlockState(pos).getBlock() != (LeavesBlock)(Object)this) {
+                return ActionResult.FAIL;
+            }
+    		
+    		return ActionResult.PASS;
+    	});
+    }*/
 
     @EventHandler
     public void on_world_init__(ServerWorldInitEvent ev) {

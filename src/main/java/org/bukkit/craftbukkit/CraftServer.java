@@ -450,8 +450,6 @@ public class CraftServer implements Server {
     private void syncCommands() {
         // Clear existing commands
     	
-    	
-    	
         CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(RegistrationEnvironment.ALL, new CommandRegistryAccess(server.getRegistryManager())));
 
         // Register all commands, vanilla ones will be using the old dispatcher references

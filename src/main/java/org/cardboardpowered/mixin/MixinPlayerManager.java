@@ -50,6 +50,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
+import me.isaiah.common.ICommonMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -196,7 +197,8 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         // Moved from processLogin
         // 1.18: UUID uuid = PlayerEntity.getUuidFromProfile(profile);
-    	UUID uuid = DynamicSerializableUuid.getUuidFromProfile(profile);
+    	UUID uuid = ICommonMod.getIServer().get_uuid_from_profile(profile);
+    	// UUID uuid = DynamicSerializableUuid.getUuidFromProfile(profile);
     	List<ServerPlayerEntity> list = Lists.newArrayList();
 
         ServerPlayerEntity entityplayer;

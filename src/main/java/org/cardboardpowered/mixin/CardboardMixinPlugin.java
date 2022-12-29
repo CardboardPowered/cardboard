@@ -125,10 +125,18 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent")) return false;
             if (mixin.equals("network.MixinPlayerManager_ChatEvent")) return true;
         }
+        
+        String mcver = GameVersion.create().getReleaseTarget();
+        if (mcver.contains("1.18") && mixin.endsWith("_1_19")) {
+        	return false;
+        }
+        if (mcver.contains("1.19") && mixin.endsWith("_1_18")) {
+        	return false;
+        }
 
 
         // Disable mixin if event is not found in plugins.
-        if (not_has_event(mixin, "LeashKnotEntity", "PlayerLeashEntityEvent") && not_has_event(mixin, "LeashKnotEntity", "PlayerUnleashEntityEvent")) return false;
+        /*if (not_has_event(mixin, "LeashKnotEntity", "PlayerLeashEntityEvent") && not_has_event(mixin, "LeashKnotEntity", "PlayerUnleashEntityEvent")) return false;
         if (not_has_event(mixin, "GoToWorkTask", "VillagerCareerChangeEvent")) return false;
         if (not_has_event(mixin, "LoseJobOnSiteLossTask", "VillagerCareerChangeEvent")) return false;
         if (not_has_event(mixin, "PiglinBrain", "EntityPickupItemEvent")) return false;
@@ -138,7 +146,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         if (not_has_event(mixin, "Explosion", "EntityExplodeEvent") && not_has_event(mixin, "Explosion", "BlockExplodeEvent")) return false;
         if (not_has_event(mixin, "LeavesBlock", "LeavesDecayEvent")) return false;
         if (not_has_event(mixin, "PlayerAdvancementTracker", "PlayerAdvancementDoneEvent")) return false;
-
+*/
         if (mixinClassName.contains("ServerPlayNetworkHandler")) return true;
 
         try {
@@ -165,8 +173,8 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
                         if (!not_has_event(mixin, mixin, ev))
                             disable = false;
                     }
-                    if (disable)
-                        return false;
+                    //if (disable)
+                    //    return false;
                 }
             }
         
