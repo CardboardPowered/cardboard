@@ -23,8 +23,10 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
 
 import com.google.common.io.ByteStreams;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.impl.launch.knot.Knot;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
@@ -49,7 +51,7 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
-        super(new URL[] {file.toURI().toURL()}, parent);
+        super(new URL[] {file.toURI().toURL()}, parent);;
         Validate.notNull(loader, "Loader cannot be null");
 
         this.loader = loader;

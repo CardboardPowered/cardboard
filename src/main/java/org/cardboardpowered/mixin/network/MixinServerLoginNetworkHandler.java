@@ -5,7 +5,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.security.PrivateKey;
-import java.util.Arrays;
+import java.time.Duration;
 import java.util.UUID;
 
 import javax.crypto.Cipher;
@@ -36,21 +36,15 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.local.LocalAddress;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.encryption.NetworkEncryptionException;
 import net.minecraft.network.encryption.NetworkEncryptionUtils;
 import net.minecraft.network.encryption.PlayerPublicKey;
+import net.minecraft.network.encryption.SignatureVerifier;
 import net.minecraft.network.packet.c2s.login.LoginHelloC2SPacket;
 import net.minecraft.network.packet.c2s.login.LoginKeyC2SPacket;
-import net.minecraft.network.packet.s2c.login.LoginCompressionS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginDisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
@@ -58,8 +52,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerLoginNetworkHandler.State;
 import net.minecraft.text.Text;
 import net.minecraft.util.dynamic.DynamicSerializableUuid;
-import net.minecraft.util.logging.UncaughtExceptionLogger;
-import  net.minecraft.server.network.ServerLoginNetworkHandler.State;
 
 @SuppressWarnings("deprecation")
 @Mixin(value = ServerLoginNetworkHandler.class, priority = 999)
@@ -76,6 +68,9 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
     public String hostname = ""; // Bukkit - add field
     private long theid = 0;
+    
+    @Shadow
+    private PlayerPublicKey.PublicKeyData publicKeyData;
 
     @Inject(at = @At("TAIL"), method = "<init>*")
     public void setBF(MinecraftServer minecraftserver, ClientConnection networkmanager, CallbackInfo ci) {
@@ -98,6 +93,13 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         PrivateKey privateKey = this.server.getKeyPair().getPrivate();
         String id = "";
         try {
+        	
+        	
+        	 PlayerPublicKey playerPublicKey;
+             if (this.publicKeyData != null ? !packet.verifySignedNonce(this.nonce, playerPublicKey = new PlayerPublicKey(this.publicKeyData)) : !packet.verifyEncryptedNonce(this.nonce, privateKey)) {
+                 throw new IllegalStateException("Protocol error");
+             }
+        	
             // TODO 1.19
         	//if (!Arrays.equals(this.nonce, packet.decryptNonce(privateKey))) {
             //    throw new IllegalStateException("Protocol error");
@@ -211,14 +213,40 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
     }
 
     private ServerPlayerEntity cardboard_player;
-
+    
+    @Overwrite
+    private static PlayerPublicKey getVerifiedPublicKey(@Nullable PlayerPublicKey.PublicKeyData publicKeyData, UUID playerUuid, SignatureVerifier servicesSignatureVerifier, boolean shouldThrowOnMissingKey) throws PlayerPublicKey.PublicKeyException {
+        if (publicKeyData == null) {
+        	BukkitFabricMod.LOGGER.info("PUBLIC KEY DATA IS NULL!!");
+            if (shouldThrowOnMissingKey) {
+                throw new PlayerPublicKey.PublicKeyException(PlayerPublicKey.MISSING_PUBLIC_KEY_TEXT);
+            }
+            return null;
+        }
+        return PlayerPublicKey.verifyAndDecode(servicesSignatureVerifier, playerUuid, publicKeyData, Duration.ZERO);
+    }
+    
     @Redirect(at = @At(value = "INVOKE", 
             target = "Lnet/minecraft/server/PlayerManager;checkCanJoin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/text/Text;"),
             method = "acceptPlayer")
     public Text acceptPlayer_checkCanJoin(PlayerManager man, SocketAddress a, GameProfile b) {
     	
+    	
+    	
     	IMixinPlayerManager pm = ((IMixinPlayerManager)this.server.getPlayerManager());
-        ServerPlayerEntity s = pm.attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, null, hostname);
+        
+    	PlayerPublicKey playerPublicKey;
+    	try {
+            SignatureVerifier signatureVerifier = this.server.getServicesSignatureVerifier();
+            playerPublicKey = getVerifiedPublicKey(this.publicKeyData, this.profile.getId(), signatureVerifier, this.server.shouldEnforceSecureProfile());
+        }
+        catch (PlayerPublicKey.PublicKeyException publicKeyException) {
+            // LOGGER.error("Failed to validate profile key: {}", (Object)publicKeyException.getMessage());
+            this.disconnect(publicKeyException.getMessageText());
+            return null;
+        }
+    	
+    	ServerPlayerEntity s = pm.attemptLogin((ServerLoginNetworkHandler)(Object)this, this.profile, playerPublicKey, hostname);
         
         cardboard_player = s;
 
@@ -234,7 +262,11 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
 
     @Inject(at = @At("HEAD"), method="onHello", cancellable = true)
     public void spigotHello1(LoginHelloC2SPacket p, CallbackInfo ci) {
+    	if (null == this.publicKeyData) {
+    		this.publicKeyData = p.publicKey().orElse(null);
+    	}
         if (state != State.HELLO) {
+        	LOGGER_BF.info("Cancel onHello because state is " + state);
             ((ServerLoginNetworkHandler)(Object)this).acceptPlayer();
             ci.cancel();
         }

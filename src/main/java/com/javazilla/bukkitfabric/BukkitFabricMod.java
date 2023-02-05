@@ -24,6 +24,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -32,15 +34,20 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.cardboardpowered.impl.CardboardPotionEffectType;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.util.LazyPlayerSet;
 import org.cardboardpowered.impl.world.WorldImpl;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
@@ -57,6 +64,7 @@ import me.isaiah.common.event.server.ServerWorldInitEvent;
 import me.isaiah.common.events.LeavesDecayCallback;
 import me.isaiah.common.fabric.FabricWorld;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.message.v1.ServerMessageDecoratorEvent;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.entity.BlockEntity;
@@ -66,6 +74,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -95,6 +104,8 @@ public class BukkitFabricMod implements ModInitializer {
         	LOGGER.info("DEBUG: " + message.toString());
         });
         
+       // test();
+        
         try {
             MappingsReader.main(null);
         } catch (IOException e) {
@@ -111,6 +122,76 @@ public class BukkitFabricMod implements ModInitializer {
             }
         }
     }
+    
+    public PlayerImpl getPlayer_0(ServerPlayerEntity e) {
+        return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)e).getBukkitEntity();
+    }
+    
+  /*  public void test() {
+    	ServerMessageDecoratorEvent.EVENT.register(ServerMessageDecoratorEvent.CONTENT_PHASE, (sender, message) -> {
+    		LOGGER.info("debug content phase: " + message.toString() + ", " + message.getString());
+
+    		String s = message.getString();
+    		boolean async = true;
+    		
+    		Player player = getPlayer_0(sender);
+            AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(CraftServer.server));
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                // Evil plugins still listening to deprecated event
+                final PlayerChatEvent queueEvent = new PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
+                queueEvent.setCancelled(event.isCancelled());
+                
+                queueEvent.getRecipients();
+                
+                Waitable<?> waitable = new WaitableImpl(()-> {
+                    Bukkit.getPluginManager().callEvent(queueEvent);
+
+                    if (queueEvent.isCancelled())
+                        return;
+
+                    String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
+                    for (Text txt : CraftChatMessage.fromString(message))
+                        CraftServer.server.sendSystemMessage(txt, queueEvent.getPlayer().getUniqueId());
+                    if (((LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
+                        for (ServerPlayerEntity plr : CraftServer.server.getPlayerManager().getPlayerList())
+                            for (Text txt : CraftChatMessage.fromString(message))
+                                plr.sendMessage(txt, false);
+                    } else for (Player plr : queueEvent.getRecipients())
+                        plr.sendMessage(message);
+                });
+
+                if (async)
+                    ((IMixinMinecraftServer)CraftServer.server).getProcessQueue().add(waitable);
+                else waitable.run();
+                try {
+                    waitable.get();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // This is proper habit for java. If we aren't handling it, pass it on!
+                } catch (ExecutionException e) {
+                    throw new RuntimeException("Exception processing chat event", e.getCause());
+                }
+            } else {
+                if (event.isCancelled()) return;
+
+                s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
+                server.sendSystemMessage(new LiteralText(s), player.getUniqueId());
+                if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
+                    for (ServerPlayerEntity recipient : server.getPlayerManager().players)
+                        for (Text txt : CraftChatMessage.fromString(s))
+                            recipient.sendMessage(txt, MessageType.CHAT, player.getUniqueId());
+                } else for (Player recipient : event.getRecipients())
+                    recipient.sendMessage(s);
+            }
+    		
+    		
+    		return CompletableFuture.completedFuture(message);
+    		
+    	});
+    	
+    }*/
+    
     
     @EventHandler
     public void on_leaves_decay(LeavesDecayEvent ev) {
@@ -161,11 +242,9 @@ public class BukkitFabricMod implements ModInitializer {
             if (dim.exists()) {
                 BukkitFabricMod.LOGGER.info("------ Migration of world file: " + name + "_the_end !");
                 BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
-                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
                 if (dim.renameTo(van)) {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
                 } else {
-                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
                     BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
                 }
                 fi.delete();
@@ -180,11 +259,9 @@ public class BukkitFabricMod implements ModInitializer {
             if (dim.exists()) {
                 BukkitFabricMod.LOGGER.info("------ Migration of world file: " + fi2.getName() + " !");
                 BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
-                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
                 if (dim.renameTo(van2)) {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
                 } else {
-                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
                     BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
                 }
                 fi.delete();

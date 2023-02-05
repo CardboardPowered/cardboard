@@ -147,6 +147,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     public static void test() {
         // TODO: This needs to be kept updated when Spigot updates
         // It is the value of Material.values().length
+    	BukkitFabricMod.LOGGER.info("DEB: " + Material.values().length);
         int MATERIAL_LENGTH = 1525;
         int i = MATERIAL_LENGTH - 1;
 
@@ -157,7 +158,21 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         for (Block block : Registry.BLOCK) {
             Identifier id = Registry.BLOCK.getId(block);
             String name = standardize(id);
-            if (id.getNamespace().startsWith("minecraft")) continue;
+            String nam = id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT);
+            if (id.getNamespace().startsWith("minecraft")) {
+            	boolean has = false;
+            	try {
+            		Material.valueOf(id.getPath().toUpperCase());
+            		has = true;
+            	} catch (IllegalArgumentException e) {
+            		// Snapshot or API not updated.
+            		has = false;
+            		nam = id.getPath().toUpperCase(Locale.ROOT);
+            	}
+            	if (has) {
+            		continue;
+            	}
+            }
 
             Material material = BY_NAME.get(name);
             if (null == material && !names.contains(name)) {
@@ -176,7 +191,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
                 if (!(lastMod.equalsIgnoreCase(id.namespace)))
                     BukkitFabricMod.LOGGER.info("Registering modded blocks from mod '" + (lastMod = id.namespace) + "'..");
             }
-            Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
+            Material m = Material.getMaterial(nam);
             BLOCK_MATERIAL.put(block, m);
             MATERIAL_BLOCK.put(m, block);
         }
@@ -184,7 +199,21 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         for (Item item : Registry.ITEM) {
             Identifier id = Registry.ITEM.getId(item);
             String name = standardize(id);
-            if (id.getNamespace().startsWith("minecraft")) continue;
+            String nam = id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT);
+            if (id.getNamespace().startsWith("minecraft")) {
+            	boolean has = false;
+            	try {
+            		Material.valueOf(id.getPath().toUpperCase());
+            		has = true;
+            	} catch (IllegalArgumentException e) {
+            		// Snapshot or API not updated.
+            		nam = id.getPath().toUpperCase(Locale.ROOT);
+            		has = false;
+            	}
+            	if (has) {
+            		continue;
+            	}
+            }
 
             Material material = BY_NAME.get(name);
             if (null == material && !names.contains(name)) {
@@ -203,7 +232,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
                 if (!(lastMod.equalsIgnoreCase(id.namespace)))
                     BukkitFabricMod.LOGGER.info("Registering modded items from mod '" + (lastMod = id.namespace) + "'..");
             }
-            Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
+            Material m = Material.getMaterial(nam);
             ITEM_MATERIAL.put(item, m);
             MATERIAL_ITEM.put(m, item);
         }
@@ -405,7 +434,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         return false;
     }
 
-    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18");
+    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18", "1.19");
 
     @Override
     public void checkSupported(PluginDescriptionFile pdf) throws InvalidPluginException {

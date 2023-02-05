@@ -19,6 +19,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.nms.Provider;
 import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
 import com.javazilla.bukkitfabric.nms.Remapper;
@@ -66,7 +67,7 @@ public class Commodore {
         if ( true )
         {
             // unversion incoming calls for pre-relocate debug work
-            final String NMS_REVISION_PACKAGE = "v1_17_R1/";
+            final String NMS_REVISION_PACKAGE = "v1_19_R1/";
 
        //     getAndRemove.put( "net/minecraft/", NMS_REVISION_PACKAGE );
             getAndRemove.put( "org/bukkit/".concat( "craftbukkit/"), NMS_REVISION_PACKAGE );
@@ -84,14 +85,18 @@ public class Commodore {
         }
     }
 
-    public static String getOriginalOrRewrite(String original)
-    {
+    public static String getOriginalOrRewrite(String original) {
         String rewrite = null;
-        for ( Map.Entry<String, String> entry : SEARCH_AND_REMOVE.entrySet() )
-        {
-            if ( original.contains( entry.getKey() ) )
-            {
-                System.out.println("DEBUG: " + original);
+        
+        if (original.contains("WOOL_CARPETS")) {
+        	System.out.println("Commodore: " + original);
+        }
+        
+        for ( Map.Entry<String, String> entry : SEARCH_AND_REMOVE.entrySet() ) {
+            if ( original.contains( entry.getKey() ) ) {
+            	if (original.contains("1_19") || original.contains("1_18")) {
+            		// System.out.println("Commodore: DEBUG: " + original);
+            	}
                 //rewrite = original.replace( entry.getValue(), "" );
             }
         }
@@ -188,6 +193,38 @@ public class Commodore {
                         if ( desc != null ) {
                             desc = getOriginalOrRewrite( desc );
                         }
+                        
+                        if (owner.contains("org/bukkit/Tag")) {
+                        	// Extra Tags
+                        	switch (name) {
+                        		case "WOOL_CARPETS":
+                        		case "COAL_ORES":
+                        		case "IRON_ORES":
+                        		case "DIAMOND_ORES":
+                        		case "REDSTONE_ORES":
+                        		case "EMERALD_ORES":
+                        		case "COPPER_ORES":
+                        		case "LAPIS_ORES":
+                        		case "CANDLES":
+                        		case "CANDLE_CAKES":
+                        		case "CAULDRONS":
+                        		case "ITEMS_CHEST_BOATS":
+                        			owner = "org/cardboardpowered/TagExtra";
+                        			break;
+                        		default:
+                        			break;
+                        	}
+                        }
+                        if (owner.contains("org/bukkit/potion/PotionEffectType")) {
+                        	switch (name) {
+                        		case "DARKNESS":
+                        			owner = "org/cardboardpowered/TagExtra";
+                        			break;
+                        		default:
+                        			break;
+                        	}
+                        }
+                        
                         // Paper end
 
                         if (modern) {

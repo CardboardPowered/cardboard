@@ -1,37 +1,63 @@
 package org.cardboardpowered.mixin.network;
 
-import static org.bukkit.craftbukkit.CraftServer.server;
+import java.util.List;
+import java.util.function.Predicate;
 
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.craftbukkit.util.Waitable;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.cardboardpowered.impl.util.LazyPlayerSet;
-import org.cardboardpowered.impl.util.WaitableImpl;
-import org.minecarts.api.util.Multithreading;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 
+import net.minecraft.network.message.MessageSourceProfile;
 import net.minecraft.network.message.MessageType;
-import net.minecraft.network.Packet;
+import net.minecraft.network.message.SentMessage;
+import net.minecraft.network.message.SignedMessage;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager_ChatEvent {
+	
+	// 1.19.2:
+	
+    @Shadow
+    public List<ServerPlayerEntity> players;
+	
+    @Shadow
+    @Final
+    private MinecraftServer server;
+    
+    @Overwrite
+    private void broadcast(SignedMessage message, Predicate<ServerPlayerEntity> shouldSendFiltered, ServerPlayerEntity sender, MessageSourceProfile sourceProfile, MessageType.Parameters params) {
+        BukkitFabricMod.LOGGER.info("BROADCAST DEBUG: " + message.getContent().getString());
+    	
+    	boolean bl = this.verify(message, sourceProfile);
+        this.server.logChatMessage(message.getContent(), params, bl ? null : "Not Secure");
+        SentMessage sentMessage = SentMessage.of(message);
+        boolean bl2 = message.isFullyFiltered();
+        boolean bl3 = false;
+        for (ServerPlayerEntity serverPlayerEntity : this.players) {
+            boolean bl4 = shouldSendFiltered.test(serverPlayerEntity);
+            serverPlayerEntity.sendChatMessage(sentMessage, bl4, params);
+            if (sender == serverPlayerEntity) continue;
+            bl3 |= bl2 && bl4;
+        }
+        if (bl3 && sender != null) {
+            sender.sendMessage(PlayerManager.FILTERED_FULL_TEXT);
+        }
+        sentMessage.afterPacketsSent((PlayerManager)(Object)this);
+    }
+
+    @Shadow
+    private boolean verify(SignedMessage message, MessageSourceProfile profile) {
+        return true;
+    }
+    
+	
+	
 	
 	// TODO: 1.19
 

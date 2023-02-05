@@ -42,6 +42,8 @@ import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.yaml.snakeyaml.error.YAMLException;
 
+import net.fabricmc.loader.impl.launch.knot.Knot;
+
 /**
  * Represents a Java plugin loader, allowing plugins in the form of .jar
  */
@@ -114,6 +116,7 @@ public final class JavaPluginLoader implements PluginLoader {
 
         final PluginClassLoader loader;
         try {
+        	
             loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file);
         } catch (InvalidPluginException ex) {
             throw ex;
