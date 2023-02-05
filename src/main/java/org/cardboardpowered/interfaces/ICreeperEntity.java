@@ -1,6 +1,6 @@
-package com.javazilla.bukkitfabric.interfaces;
+package org.cardboardpowered.interfaces;
 
-public interface IMixinCreeperEntity {
+public interface ICreeperEntity {
 
     void explodeBF();
 

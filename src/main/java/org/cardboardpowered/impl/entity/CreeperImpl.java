@@ -1,7 +1,7 @@
 package org.cardboardpowered.impl.entity;
 
 import com.google.common.base.Preconditions;
-import com.javazilla.bukkitfabric.interfaces.IMixinCreeperEntity;
+import org.cardboardpowered.interfaces.ICreeperEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 
 import net.minecraft.entity.mob.CreeperEntity;
@@ -22,7 +22,7 @@ public class CreeperImpl extends MonsterImpl implements Creeper {
 
     @Override
     public boolean isPowered() {
-        return ((IMixinCreeperEntity)getHandle()).isPoweredBF();
+        return ((ICreeperEntity)getHandle()).isPoweredBF();
     }
 
     @Override
@@ -35,13 +35,13 @@ public class CreeperImpl extends MonsterImpl implements Creeper {
             server.getPluginManager().callEvent(event);
 
             if (!event.isCancelled())
-                ((IMixinCreeperEntity)getHandle()).setPowered(true);
+                ((ICreeperEntity)getHandle()).setPowered(true);
         } else {
             CreeperPowerEvent event = new CreeperPowerEvent(entity, CreeperPowerEvent.PowerCause.SET_OFF);
             server.getPluginManager().callEvent(event);
 
             if (!event.isCancelled())
-                ((IMixinCreeperEntity)getHandle()).setPowered(false);
+                ((ICreeperEntity)getHandle()).setPowered(false);
         }
     }
 
@@ -49,29 +49,29 @@ public class CreeperImpl extends MonsterImpl implements Creeper {
     public void setMaxFuseTicks(int ticks) {
         Preconditions.checkArgument(ticks >= 0, "ticks < 0");
 
-        ((IMixinCreeperEntity)getHandle()).setFuseTimeBF(ticks);
+        ((ICreeperEntity)getHandle()).setFuseTimeBF(ticks);
     }
 
     @Override
     public int getMaxFuseTicks() {
-        return ((IMixinCreeperEntity)getHandle()).getFuseTimeBF();
+        return ((ICreeperEntity)getHandle()).getFuseTimeBF();
     }
 
     @Override
     public void setExplosionRadius(int radius) {
         Preconditions.checkArgument(radius >= 0, "radius < 0");
 
-        ((IMixinCreeperEntity)getHandle()).setExplosionRadiusBF(radius);
+        ((ICreeperEntity)getHandle()).setExplosionRadiusBF(radius);
     }
 
     @Override
     public int getExplosionRadius() {
-        return ((IMixinCreeperEntity)getHandle()).getExplosionRadiusBF();
+        return ((ICreeperEntity)getHandle()).getExplosionRadiusBF();
     }
 
     @Override
     public void explode() {
-        ((IMixinCreeperEntity)getHandle()).explodeBF();
+        ((ICreeperEntity)getHandle()).explodeBF();
     }
 
     @Override
