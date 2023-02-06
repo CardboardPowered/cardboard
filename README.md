@@ -1,7 +1,7 @@
 
 <img align="right" alt="logo" width="130" src="https://cardboardpowered.org/assets/cardboard-box.png">
 
-# Cardboard [![Join Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&style=flat-square)](https://discord.gg/Qp4a2Nj) <img alt="Discord" src="https://img.shields.io/badge/Fabric%20-0.11.2%2B-%23dacfa4">
+# Cardboard [![Join Discord](https://img.shields.io/badge/Discord-Join-7289DA?logo=discord&style=flat-square)](https://discord.gg/tddTWXZtaP) <img alt="Discord" src="https://img.shields.io/badge/Fabric%20-0.11.2%2B-%23dacfa4">
 
 Cardboard is an implementation of the popular Bukkit/Spigot/Paper Modding API for FabricMC. This mod lets you use plugins that are made for Bukkit and it's derivatives (Spigot & Paper) on a Fabric modded server.
 
