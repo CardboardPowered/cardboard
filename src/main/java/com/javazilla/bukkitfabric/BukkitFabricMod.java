@@ -24,8 +24,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -34,20 +32,15 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
-import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.cardboardpowered.impl.CardboardPotionEffectType;
 import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.cardboardpowered.impl.util.LazyPlayerSet;
 import org.cardboardpowered.impl.world.WorldImpl;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.javazilla.bukkitfabric.nms.MappingsReader;
@@ -61,10 +54,8 @@ import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
 import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
 import me.isaiah.common.event.entity.player.ServerPlayerInitEvent;
 import me.isaiah.common.event.server.ServerWorldInitEvent;
-import me.isaiah.common.events.LeavesDecayCallback;
 import me.isaiah.common.fabric.FabricWorld;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.message.v1.ServerMessageDecoratorEvent;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.entity.BlockEntity;
@@ -74,8 +65,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
@@ -200,7 +189,7 @@ public class BukkitFabricMod implements ModInitializer {
 				new org.bukkit.event.block.LeavesDecayEvent(w.getBlockAt(ev.pos.getX(), ev.pos.getY(), ev.pos.getZ()));
         Bukkit.getPluginManager().callEvent(event);
 
-        if (event.isCancelled() || ev.world.getBlockState(ev.pos).getBlock() != (LeavesBlock)(Object)this) {
+        if (event.isCancelled() || !(ev.world.getBlockState(ev.pos).getBlock() instanceof LeavesBlock)) {
             ev.setCanceled(true);
         }
     }
@@ -240,7 +229,7 @@ public class BukkitFabricMod implements ModInitializer {
         if (fi.exists()) {
             File dim = new File(fi, "DIM1");
             if (dim.exists()) {
-                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + name + "_the_end !");
+                BukkitFabricMod.LOGGER.info("---- Migration of world file: " + name + "_the_end !");
                 BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
                 if (dim.renameTo(van)) {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
@@ -257,7 +246,7 @@ public class BukkitFabricMod implements ModInitializer {
         if (fi2.exists()) {
             File dim = new File(fi2, "DIM-1");
             if (dim.exists()) {
-                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + fi2.getName() + " !");
+                BukkitFabricMod.LOGGER.info("---- Migration of world file: " + fi2.getName() + " !");
                 BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
                 if (dim.renameTo(van2)) {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");

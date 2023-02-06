@@ -230,17 +230,13 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
             target = "Lnet/minecraft/server/PlayerManager;checkCanJoin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/text/Text;"),
             method = "acceptPlayer")
     public Text acceptPlayer_checkCanJoin(PlayerManager man, SocketAddress a, GameProfile b) {
-    	
-    	
-    	
     	IMixinPlayerManager pm = ((IMixinPlayerManager)this.server.getPlayerManager());
         
     	PlayerPublicKey playerPublicKey;
     	try {
             SignatureVerifier signatureVerifier = this.server.getServicesSignatureVerifier();
             playerPublicKey = getVerifiedPublicKey(this.publicKeyData, this.profile.getId(), signatureVerifier, this.server.shouldEnforceSecureProfile());
-        }
-        catch (PlayerPublicKey.PublicKeyException publicKeyException) {
+        } catch (PlayerPublicKey.PublicKeyException publicKeyException) {
             // LOGGER.error("Failed to validate profile key: {}", (Object)publicKeyException.getMessage());
             this.disconnect(publicKeyException.getMessageText());
             return null;
