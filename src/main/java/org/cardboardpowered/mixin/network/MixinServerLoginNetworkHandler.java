@@ -62,7 +62,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
     @Shadow public ClientConnection connection;
     @Shadow private ServerLoginNetworkHandler.State state;
     @Shadow private GameProfile profile;
-    // TODO 1.17ify: @Shadow private SecretKey secretKey;
     @Shadow public ServerPlayerEntity delayedPlayer;
 
     private Logger LOGGER_BF = LogManager.getLogger("Bukkit|ServerLoginNetworkHandler");
@@ -93,8 +92,7 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         PrivateKey privateKey = this.server.getKeyPair().getPrivate();
         String id = "";
         try {
-        	
-        	
+
         	 PlayerPublicKey playerPublicKey;
              if (this.publicKeyData != null ? !packet.verifySignedNonce(this.nonce, playerPublicKey = new PlayerPublicKey(this.publicKeyData)) : !packet.verifyEncryptedNonce(this.nonce, privateKey)) {
                  throw new IllegalStateException("Protocol error");
@@ -104,6 +102,8 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
         	//if (!Arrays.equals(this.nonce, packet.decryptNonce(privateKey))) {
             //    throw new IllegalStateException("Protocol error");
             //}
+             
+             
             SecretKey secretKey = packet.decryptSecretKey(privateKey);
             Cipher cipher = NetworkEncryptionUtils.cipherFromKey(2, secretKey);
             Cipher cipher2 = NetworkEncryptionUtils.cipherFromKey(1, secretKey);
@@ -122,7 +122,6 @@ public class MixinServerLoginNetworkHandler implements IMixinServerLoginNetworkH
                 GameProfile gameprofile = profile;
 
                 try {
-                    //String s = server.serverId;// TODO Check 1.17ify (new BigInteger(NetworkEncryptionUtils.generateServerId("", server.getKeyPair().getPublic(), secretKey))).toString(16);
                     profile = server.getSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.a());
                     if (profile != null) {
                         // Fire PlayerPreLoginEvent
