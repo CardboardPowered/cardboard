@@ -27,9 +27,9 @@ public class MapRendererImpl extends MapRenderer {
             for (int y = 0; y < 128; ++y) canvas.setPixel(x, y, worldMap.colors[y * 128 + x]);
 
         // Cursors
-        MapCursorCollection cursors = canvas.getCursors();
-        while (cursors.size() > 0)
-            cursors.removeCursor(cursors.getCursor(0));
+        //MapCursorCollection cursors = canvas.getCursors();
+        //while (cursors.size() > 0)
+        //    cursors.removeCursor(cursors.getCursor(0));
      // TODO: 1.17ify
        /* for (Object key : worldMap.icons.keySet()) {
             // If this cursor is for a player check visibility with vanish system
@@ -39,6 +39,7 @@ public class MapRendererImpl extends MapRenderer {
             MapIcon decoration = worldMap.icons.get(key);
             cursors.addCursor(decoration.getX(), decoration.getZ(), (byte) (decoration.getRotation() & 15), decoration.getType().getId(), true, CraftChatMessage.fromComponent(decoration.getText()));
         }*/
+
     }
 
 }

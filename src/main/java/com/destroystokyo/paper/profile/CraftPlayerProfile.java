@@ -1,6 +1,7 @@
 package com.destroystokyo.paper.profile;
 
-import com.destroystokyo.paper.PaperConfig;
+// import com.destroystokyo.paper.PaperConfig;
+
 import com.google.common.base.Charsets;
 import com.javazilla.bukkitfabric.interfaces.IUserCache;
 import com.mojang.authlib.GameProfile;
@@ -8,25 +9,34 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.UserCache;
+import net.minecraft.util.Util;
 
 import org.apache.commons.lang3.Validate;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.profile.PlayerTextures;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spigotmc.SpigotConfig;
 
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class CraftPlayerProfile implements PlayerProfile {
 
     private GameProfile profile;
     private final PropertySet properties = new PropertySet();
-
+ 
     public CraftPlayerProfile(PlayerImpl player) {
         this.profile = player.getHandle().getGameProfile();
     }
@@ -136,7 +146,7 @@ public class CraftPlayerProfile implements PlayerProfile {
     @Override
     public boolean completeFromCache() {
         MinecraftServer server = CraftServer.INSTANCE.getServer();
-        return completeFromCache(false, server.isOnlineMode() || (SpigotConfig.bungee && PaperConfig.bungeeOnlineMode));
+        return completeFromCache(false, server.isOnlineMode() || (SpigotConfig.bungee /*&& PaperConfig.bungeeOnlineMode*/));
     }
 
     public boolean completeFromCache(boolean onlineMode) {
@@ -178,7 +188,7 @@ public class CraftPlayerProfile implements PlayerProfile {
 
     public boolean complete(boolean textures) {
         MinecraftServer server = CraftServer.INSTANCE.getServer();
-        return complete(textures, server.isOnlineMode() || (SpigotConfig.bungee && PaperConfig.bungeeOnlineMode));
+        return complete(textures, server.isOnlineMode() || (SpigotConfig.bungee /*&& PaperConfig.bungeeOnlineMode*/));
     }
     public boolean complete(boolean textures, boolean onlineMode) {
         MinecraftServer server = CraftServer.INSTANCE.getServer();
@@ -293,5 +303,51 @@ public class CraftPlayerProfile implements PlayerProfile {
             }
         }
     }
+
+	@Override
+	public @Nullable UUID getUniqueId() {
+		// TODO Auto-generated method stub
+		return getId();
+	}
+
+	@Override
+    public @NotNull CompletableFuture<org.bukkit.profile.PlayerProfile> update() {
+        return CompletableFuture.supplyAsync(() -> {
+            final CraftPlayerProfile clone = clone();
+            clone.complete(true);
+            return clone;
+        }, Util.getMainWorkerExecutor());
+    }
+
+
+	@Override
+    public @NotNull Map<String, Object> serialize() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        if (this.getId() != null) {
+            map.put("uniqueId", this.getId().toString());
+        }
+        if (this.getName() != null) {
+            map.put("name", getName());
+        }
+        if (!this.properties.isEmpty()) {
+            List<Object> propertiesData = new ArrayList<>();
+            for (ProfileProperty property : properties) {
+                // propertiesData.add(CraftProfileProperty.serialize(new Property(property.getName(), property.getValue(), property.getSignature())));
+            }
+            map.put("properties", propertiesData);
+        }
+        return map;
+    }
+	@Override
+	public @NotNull PlayerTextures getTextures() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTextures(@Nullable PlayerTextures arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

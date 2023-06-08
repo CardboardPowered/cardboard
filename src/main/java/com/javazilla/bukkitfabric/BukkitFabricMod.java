@@ -28,12 +28,15 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.cardboardpowered.impl.CardboardPotionEffectType;
 import org.cardboardpowered.impl.entity.PlayerImpl;
@@ -80,6 +83,26 @@ public class BukkitFabricMod implements ModInitializer {
     public static List<ServerLoginNetworkHandler> NETWORK_CACHE = new ArrayList<>();
     public static Method GET_SERVER;
 
+    /*public void updateNeighbors(int recursionLimit) {
+    	BlockPos pos;
+       // WorldServer world = this.getWorld();
+    	ServerWorld world = null;
+       // oldState.b((GeneratorAccess)world, pos, 2, recursionLimit);
+        //if (this.sideEffectSet.shouldApply(SideEffect.EVENTS)) {
+            WorldImpl craftWorld = null;//world.getWorld();
+            
+            
+            
+            BlockPhysicsEvent event = new BlockPhysicsEvent(craftWorld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), (BlockData)CraftBlockData.fromData(null));
+            world.getCraftServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+        //}
+        //newState.a((GeneratorAccess)world, pos, 2, recursionLimit);
+        //newState.b((GeneratorAccess)world, pos, 2, recursionLimit);
+    }*/
+    
     @Override
     public void onInitialize() {
         LOGGER.info("");
@@ -89,9 +112,12 @@ public class BukkitFabricMod implements ModInitializer {
         int r = EventRegistery.registerAll(this);
         LOGGER.info("Registered '" + r + "' iCommon events.");
 
-        ServerMessageEvents.CHAT_MESSAGE.register((message, source, params) -> {
-        	LOGGER.info("DEBUG: " + message.toString());
-        });
+        
+        
+        
+        //ServerMessageEvents.CHAT_MESSAGE.register((message, source, params) -> {
+        //	LOGGER.info("DEBUG: " + message.toString());
+        //});
         
        // test();
         
@@ -211,7 +237,7 @@ public class BukkitFabricMod implements ModInitializer {
 
     @EventHandler
     public void on_world_init__(ServerWorldInitEvent ev) {
-        System.out.println("on_world_init");
+        // System.out.println("on_world_init");
 
         FabricWorld fw = (FabricWorld) ev.getWorld();
 

@@ -60,4 +60,28 @@ public class EndermanImpl extends MonsterImpl implements Enderman {
         // TODO Auto-generated method stub
         return false;
     }
+
+	@Override
+	public boolean hasBeenStaredAt() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isScreaming() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setHasBeenStaredAt(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setScreaming(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

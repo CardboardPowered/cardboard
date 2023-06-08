@@ -6,7 +6,6 @@ import org.cardboardpowered.impl.CardboardPotionEffectType;
 
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.util.registry.Registry;
 
 @Mixin(StatusEffects.class)
 public class MixinStatusEffects {

@@ -28,8 +28,8 @@ public class MixinItemEntity extends MixinEntity {
     @Shadow
     public int pickupDelay;
 
-    @Shadow
-    public UUID owner;
+    // @Shadow
+    // public UUID owner;
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
     public void setBukkit(CallbackInfo callbackInfo) {

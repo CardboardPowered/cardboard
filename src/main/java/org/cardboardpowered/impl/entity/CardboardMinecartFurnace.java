@@ -32,4 +32,28 @@ public class CardboardMinecartFurnace extends CardboardMinecart implements Power
         // TODO Auto-generated method stub
     }
 
+	@Override
+	public double getPushX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getPushZ() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setPushX(double arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPushZ(double arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

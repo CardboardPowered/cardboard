@@ -129,4 +129,28 @@ public class ItemEntityImpl extends CraftEntity implements Item {
         
     }
 
+	@Override
+	public int getHealth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isUnlimitedLifetime() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setHealth(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUnlimitedLifetime(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

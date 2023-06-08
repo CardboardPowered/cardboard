@@ -1,6 +1,6 @@
 /**
  * Cardboard - Bukkit/Spigot/Paper API for Fabric
- * Copyright (C) 2020, CardboardPowered.org
+ * Copyright (C) 2023, CardboardPowered.org
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     static {
         SKIP.add("vault");
         SKIP.add("worldguard");
-        //SKIP.add("essentials");
+        // SKIP.add("essentials");
         SKIP.add("worldedit");
     }
     private String pln;
@@ -120,19 +120,39 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (name.equals("getCraftServer")) {
-            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", name, desc, false );
-            return;
+        	System.out.println(owner + " " + name + " " + desc);
+            // super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", name, desc, false );
+            // return;
         }
         
         if (owner.startsWith("net/minecraft") && name.equals("getMinecraftServer")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getNmsServer", desc, false );
+            System.out.println(owner + " " + name + " " + desc);
             return;
         }
         
-        if (name.equals("getWorld") && desc.contains("org/bukkit/craftbukkit")) {
+        if (name.contains("getWorld")) {
+        	//System.out.println(owner + " " + name + " " + desc);
+        }
+
+        
+        //  net/minecraft/class_3218 getWorld ()Lorg/cardboardpowered/impl/world/WorldImpl;
+        
+        /*if (owner.contains("class_3218") && name.equals("getWorld") && desc.contains("WorldImpl")) {
+        	System.out.println("Casting ServerWorld to IServerWorld.");
+        	String iw = "org/cardboardpowered/interfaces/IServerWorld";
+        	
+        	super.visitVarInsn(Opcodes.ILOAD, 1); // Load the 'level' parameter
+            super.visitTypeInsn(Opcodes.CHECKCAST, iw); // Cast the 'level' parameter to 'ILevel'
+            super.visitMethodInsn(opcode, iw, "getWorld", desc, itf);
+            return;
+        }
+        
+        
+        if (name.equals("getWorld") && (desc.contains("org/bukkit/craftbukkit") || desc.contains("WorldImpl"))) {
             name = "getWorldImpl";
             desc = desc.replace("/v1_17_R1", "");
-        }
+        }*/
 
         if (owner.startsWith("net/minecraft") && spigot2obf.size() > 1) {
             String own = spigot2obf.getOrDefault(owner, owner);
@@ -252,15 +272,15 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         //if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;"))
         //    super.visitMethodInsn(Opcodes.INVOKESTATIC, "com/comphenix/protocol/reflect/FuzzyReflection", "getMethod", "(Ljava/lang/String;)Ljava/lang/String;", false);
 
-
+        
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("forName") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/Class;"))
             super.visitMethodInsn(Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "mapClassName", "(Ljava/lang/String;)Ljava/lang/String;", false);
-
+        
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getMethods")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getMethods", "(Ljava/lang/Class;)[Ljava/lang/reflect/Method;", false );
             return;
         }
-
+        /*
         if (owner.equalsIgnoreCase("java/lang/Class") && name.equalsIgnoreCase("getField") && desc.equalsIgnoreCase("(Ljava/lang/String;)Ljava/lang/reflect/Field;")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getFieldByName", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/reflect/Field;", false );
             return;

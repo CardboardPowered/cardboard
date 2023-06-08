@@ -46,4 +46,16 @@ public class WolfImpl extends TameableAnimalImpl implements Wolf {
         getHandle().setCollarColor(net.minecraft.util.DyeColor.byId(color.getWoolData()));
     }
 
+	@Override
+	public boolean isInterested() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setInterested(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

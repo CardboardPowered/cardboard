@@ -1,6 +1,6 @@
 /**
  * The Bukkit for Fabric Project
- * Copyright (C) 2020 Javazilla Software and contributors
+ * Copyright (C) 2020-2023
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ import net.techcable.srglib.format.MappingsFormat;
 import net.techcable.srglib.mappings.Mappings;
 
 /**
- * @deprecated To be replaced with our Ingot remapping tool
+ * @deprecated Replaced
  */
 @Deprecated
 public class MappingsReader {
@@ -92,21 +92,25 @@ public class MappingsReader {
         });
     }
 
+    @Deprecated
     public static String getIntermedClass(String spigot) {
         return dev(MAPPINGS.getNewClass(spigot).getName());
     }
 
+    @Deprecated
     public static String getIntermedField(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
         JavaType type = JavaType.fromName(getIntermedClass(c));
         if (c.contains("class_")) type = MAPPINGS.inverted().getNewClass(c);
         return obf(MAPPINGS.getNewField(FieldData.create(type, spigot)).getName());
     }
 
+    @Deprecated
     public static String getIntermedField2(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
         JavaType type = JavaType.fromName(getIntermedClass(c));
         return obf(MAPPINGS.getNewField(FieldData.create(type, spigot)).getName());
     }
 
+    @Deprecated
     public static File exportResource(String res, File folder) {
         try (InputStream stream = MappingsReader.class.getClassLoader().getResourceAsStream("mappings/" + res)) {
             if (stream == null) throw new IOException("Null " + res);
@@ -117,6 +121,7 @@ public class MappingsReader {
         } catch (IOException e) { e.printStackTrace(); return null;}
     }
 
+    @Deprecated
     public static String getIntermedMethod(String name, String spigot, Class<?>[] parms) {
         String sig = "(";
         for (Class<?> clazz : parms)
@@ -138,6 +143,7 @@ public class MappingsReader {
         } catch (Exception e) { return getIntermedMethod(name, spigot); }
     }
 
+    @Deprecated
     public static String getIntermedMethod(String name, String spigot) {
         // TODO This very bad. It doesn't use the method descriptor.
         // TODO There are 44 spigot-named methods that will have duplicates.

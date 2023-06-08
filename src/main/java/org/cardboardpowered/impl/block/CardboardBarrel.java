@@ -57,4 +57,10 @@ public class CardboardBarrel extends CardboardLootableBlock<BarrelBlockEntity> i
         return false;
     }
 
+	@Override
+	public boolean isSnapshot() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

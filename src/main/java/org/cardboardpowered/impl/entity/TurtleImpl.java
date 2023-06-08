@@ -64,4 +64,10 @@ public class TurtleImpl extends AnimalsImpl implements Turtle {
         
     }
 
+	@Override
+	public boolean isLayingEgg() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

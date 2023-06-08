@@ -51,4 +51,16 @@ public class CardboardAnvilInventory extends CraftResultInventory implements Anv
         ((IMixinAnvilScreenHandler)container).setMaxRepairCost_BF(levels);
     }
 
+	@Override
+	public int getRepairCostAmount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setRepairCostAmount(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

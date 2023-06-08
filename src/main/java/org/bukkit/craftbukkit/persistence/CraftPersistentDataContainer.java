@@ -14,6 +14,7 @@ import org.bukkit.craftbukkit.util.CraftNBTTagConfigSerializer;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 public final class CraftPersistentDataContainer implements PersistentDataContainer {
 
@@ -126,5 +127,13 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         });
         return keys;
     }
+
+    // 1.18.2 api:
+    
+	@Override
+	public boolean has(@NotNull NamespacedKey arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

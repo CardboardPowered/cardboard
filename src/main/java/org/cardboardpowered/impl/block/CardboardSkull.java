@@ -14,7 +14,9 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.CraftServer;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.jetbrains.annotations.Nullable;
 
+import com.destroystokyo.paper.profile.CraftPlayerProfile;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
@@ -158,6 +160,25 @@ public class CardboardSkull extends CardboardBlockEntityState<SkullBlockEntity> 
     @Override
     public void setPlayerProfile(PlayerProfile arg0) {
         this.profile = new GameProfile(arg0.getId(), arg0.getName());
+    }
+
+    @Override
+    public PlayerProfile getOwnerProfile() {
+        if (!hasOwner()) {
+            return null;
+        }
+
+        return new CraftPlayerProfile(profile);
+    }
+
+	
+	@Override
+    public void setOwnerProfile(org.bukkit.profile.@Nullable PlayerProfile profile) {
+        if (profile == null) {
+            this.profile = null;
+        } else {
+           //  this.profile = CraftPlayerProfile.validateSkullProfile(((CraftPlayerProfile) profile).getGameProfile());
+        }
     }
 
 }

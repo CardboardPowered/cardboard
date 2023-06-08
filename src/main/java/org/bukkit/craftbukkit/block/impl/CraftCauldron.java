@@ -31,4 +31,10 @@ public final class CraftCauldron extends org.bukkit.craftbukkit.block.data.Craft
     public int getMaximumLevel() {
         return getMax(LEVEL);
     }
+
+	@Override
+	public int getMinimumLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

@@ -1,5 +1,6 @@
 package org.cardboardpowered.impl.map;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.util.Arrays;
 import java.util.Objects;
@@ -36,13 +37,18 @@ public class MapCanvasImpl implements MapCanvas {
     public void setCursors(MapCursorCollection cursors) {
         this.cursors = cursors;
     }
+    
+    public void setPixelColor(int x, int y, Color color) {
+        setPixel(x, y, (color == null) ? -1 : MapPalette.matchColor(color));
+    }
 
     @Override
     public void setPixel(int x, int y, byte color) {
-        if (x < 0 || y < 0 || x >= 128 || y >= 128) return;
+        if (x < 0 || y < 0 || x >= 128 || y >= 128)
+            return;
         if (buffer[y * 128 + x] != color) {
             buffer[y * 128 + x] = color;
-         // TODO: 1.17ify mapView.worldMap.markDirty(x, y);
+            mapView.worldMap.markDirty();// TODO .markDirty(x, y);
         }
     }
 

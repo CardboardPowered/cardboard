@@ -1,12 +1,9 @@
 package org.cardboardpowered.impl.tag;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.entity.EntityType;
 import net.minecraft.tag.TagKey;
-//import net.minecraft.tag.TagGroup;
-import net.minecraft.util.Identifier;
 //import org.bukkit.Registry;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import net.minecraft.util.registry.Registry;

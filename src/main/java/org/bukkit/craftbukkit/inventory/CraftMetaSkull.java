@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.jetbrains.annotations.Nullable;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -217,5 +218,19 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         // TODO Auto-generated method stub
         
     }
+    
+    // 1.18.2 api:
+
+	@Override
+	public org.bukkit.profile.@Nullable PlayerProfile getOwnerProfile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setOwnerProfile(org.bukkit.profile.@Nullable PlayerProfile arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -25,6 +25,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.profile.PlayerProfile;
+import org.jetbrains.annotations.NotNull;
 
 @SerializableAs("Player")
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
@@ -414,5 +416,11 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     public long getLastSeen() {
         return 0;
     }
+
+	// @Override
+	public @NotNull PlayerProfile getPlayerProfile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

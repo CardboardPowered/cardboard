@@ -1,15 +1,24 @@
 package org.cardboardpowered.impl;
 
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.util.registry.Registry;
+
+import java.util.Map;
+
 import org.bukkit.Color;
+import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 public class CardboardPotionEffectType extends PotionEffectType {
 
     private final StatusEffect handle;
 
     public CardboardPotionEffectType(StatusEffect handle) {
-        super(StatusEffect.getRawId(handle));
+        super(StatusEffect.getRawId(handle), CraftNamespacedKey.fromMinecraft(Registry.STATUS_EFFECT.getId(handle)));
         this.handle = handle;
     }
 
@@ -104,5 +113,29 @@ public class CardboardPotionEffectType extends PotionEffectType {
     public Color getColor() {
         return Color.fromRGB(handle.getColor());
     }
+
+	@Override
+	public @NotNull String translationKey() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double getAttributeModifierAmount(@NotNull Attribute arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public @NotNull Map<Attribute, AttributeModifier> getEffectAttributes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Category getEffectCategory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.scoreboard;
 
 import com.google.common.collect.ImmutableSet;
+
+import java.util.Collection;
 import java.util.Set;
 
 import net.kyori.adventure.text.Component;
@@ -13,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.entity.Entity;
 import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
@@ -355,5 +358,57 @@ public class CardboardTeam extends CardboardScoreboardComponent implements Team 
         // TODO Auto-generated method stub
         
     }
+    
+    // 1.18.2 api:
+
+	@Override
+	public void addEntities(@NotNull Collection<Entity> arg0) throws IllegalStateException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addEntity(@NotNull Entity arg0) throws IllegalStateException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addEntries(@NotNull Collection<String> arg0) throws IllegalStateException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean hasColor() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasEntity(@NotNull Entity arg0) throws IllegalStateException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeEntities(@NotNull Collection<Entity> arg0)
+			throws IllegalStateException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeEntity(@NotNull Entity arg0) throws IllegalStateException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean removeEntries(@NotNull Collection<String> arg0)
+			throws IllegalStateException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

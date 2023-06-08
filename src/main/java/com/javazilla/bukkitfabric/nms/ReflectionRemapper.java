@@ -1,6 +1,6 @@
 /**
  * Cardboard - Bukkit/Spigot/Paper API for Fabric
- * Copyright (C) 2020, CardboardPowered.org
+ * Copyright (C) 2023, CardboardPowered.org
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ import net.minecraft.server.ServerNetworkIo;
  */
 public class ReflectionRemapper {
 
-    private static final String NMS_VERSION = "v1_18_R1";
+    private static final String NMS_VERSION = "v1_19_R1";
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {
@@ -63,10 +63,6 @@ public class ReflectionRemapper {
 
         if (className.startsWith("net.minecraft.server.CraftServer."))
             return MappingsReader.getIntermedClass(className.replace("net.minecraft.server.CraftServer.", "net.minecraft.server."));
-
-        /*if (className.startsWith("com.sk89q.worldedit.bukkit.adapter.impl.Spigot")) {
-            return "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard";
-        }*/
 
         return className;
     }
@@ -190,6 +186,7 @@ public class ReflectionRemapper {
         return r;
     }
 
+    @Deprecated
     public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchMethodException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
             return BukkitFabricMod.GET_SERVER;
@@ -217,6 +214,7 @@ public class ReflectionRemapper {
         }
     }
 
+    @Deprecated
     public static Method getDeclaredMethodByName(Class<?> calling, String f, Class<?>[] parms) throws ClassNotFoundException, NoSuchMethodException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
             return BukkitFabricMod.GET_SERVER;

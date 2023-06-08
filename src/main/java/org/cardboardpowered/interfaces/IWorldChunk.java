@@ -6,6 +6,9 @@ package org.cardboardpowered.interfaces;
 
 import org.bukkit.Chunk;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
+
 public interface IWorldChunk {
 
     //Map<Heightmap.Type, Heightmap> getHeightMaps();
@@ -13,5 +16,9 @@ public interface IWorldChunk {
     //TypeFilterableList<Entity>[] getEntitySections();
 
     Chunk getBukkitChunk();
+
+	public default BlockState setBlockState(BlockPos blockposition, BlockState iblockdata, boolean moved, boolean doPlace) {
+		return null;
+	}
 
 }

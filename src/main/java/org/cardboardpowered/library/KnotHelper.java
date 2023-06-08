@@ -12,13 +12,13 @@ import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 
 public class KnotHelper {
 
     public static boolean PAPER_API_LOADED = false;
     private static final Logger logger = LogManager.getLogger("KnotHelper");
-    
-    
+
     public static void outdated_fabric_warning(double ver) {
     	logger.error("======== ERROR: FABRIC OUTDATED ========");
         logger.error("| Your version of Fabric is outdated!!");
@@ -48,6 +48,7 @@ public class KnotHelper {
      * Add to class path in Fabric 0.12 or higher
      */
     public static void fabric_modern_load(File file) {
+    	
         try {
             Class<?> l = Class.forName("net.fabricmc.loader.impl.launch.FabricLauncherBase");
             Field instance = l.getDeclaredField("launcher");
@@ -140,6 +141,8 @@ public class KnotHelper {
             "io.papermc.paper.util",
             "io.papermc.paper.world",
             "io.papermc.paper.world.generation",
+            "io.papermc.paper.entity",
+            "io.papermc.paper",
             "org.bukkit",
             "org.bukkit.advancement",
             "org.bukkit.attribute",

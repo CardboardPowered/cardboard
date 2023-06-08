@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 
 import net.minecraft.entity.passive.CatEntity;
+
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Cat;

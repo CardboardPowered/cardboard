@@ -38,4 +38,40 @@ public class TridentImpl extends ArrowImpl implements Trident {
         // TODO Auto-generated method stub
     }
 
+	@Override
+	public boolean hasNoPhysics() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setNoPhysics(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getLoyaltyLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean hasGlint() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setGlint(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLoyaltyLevel(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableList;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.server.world.ServerWorld;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,6 +48,17 @@ public class ModsCommand extends Command {
         } else {
             sender.sendMessage("No Permission for command!");
         }
+        
+        Method[] mm = ServerWorld.class.getMethods();
+        for (Method m : mm) {
+        	 sender.sendMessage("M: " + m.getName());
+        }
+        
+        Method[] mm1 = ServerWorld.class.getDeclaredMethods();
+        for (Method m : mm1) {
+        	 sender.sendMessage("DM: " + m.getName());
+        }
+        
         return true;
     }
 

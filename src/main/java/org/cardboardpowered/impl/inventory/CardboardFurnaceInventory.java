@@ -5,6 +5,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
@@ -48,5 +49,17 @@ public class CardboardFurnaceInventory extends CraftInventory implements Furnace
     public Furnace getHolder() {
         return (Furnace) ((IMixinInventory)(Object)inventory).getOwner();
     }
+
+	@Override
+	public boolean canSmelt(@Nullable ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isFuel(@Nullable ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

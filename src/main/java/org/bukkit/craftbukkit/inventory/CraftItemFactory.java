@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.hover.content.Content;
 
 import java.util.Collection;
+import java.util.Random;
 import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang.Validate;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 public final class CraftItemFactory implements ItemFactory {
 
@@ -389,5 +391,20 @@ public final class CraftItemFactory implements ItemFactory {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    // 1.18.2 api:
+
+	@Override
+	public @NotNull ItemStack createItemStack(@NotNull String arg0) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull ItemStack enchantWithLevels(@NotNull ItemStack arg0, @Range(from = 1, to = 30) int arg1,
+			boolean arg2, @NotNull Random arg3) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

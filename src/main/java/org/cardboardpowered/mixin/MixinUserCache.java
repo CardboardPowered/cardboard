@@ -22,7 +22,6 @@ import me.isaiah.common.ICommonMod;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.UserCache;
 import net.minecraft.util.UserCache.Entry;
-import net.minecraft.util.dynamic.DynamicSerializableUuid;
 
 @Mixin(UserCache.class)
 public class MixinUserCache implements IUserCache {

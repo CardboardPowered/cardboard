@@ -40,6 +40,8 @@ repositories {
 
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://repo.codemc.io/repository/maven-releases/' }
+	maven { url = 'https://repo.spongepowered.org/maven' }
+	maven { url = 'https://maven.izzel.io/releases' }
     mavenCentral()
 }
 
@@ -71,12 +73,18 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+    modImplementation fileTree(dir: 'libs', include: 'MohistRemapper-0.3.jar')
+    extraLibs fileTree(dir: 'libs', include: 'MohistRemapper-0.3.jar')
+	
+	modImplementation "io.izzel:tools:1.3.0"
+    extraLibs "io.izzel:tools:1.3.0"
+
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     extraLibs fileTree(dir: 'libs', include: 'adventure.jar')
     //extraLibs group: "org.jetbrains", name: "annotations", version: "20.1.0"
     extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
 
-    extraLibs("org.yaml:snakeyaml:1.27")
+    extraLibs("org.yaml:snakeyaml:1.33")
 
     // 
     compileOnly fileTree(dir: 'libs', include: "${project.paper_jar}")
@@ -153,7 +161,7 @@ jar {
         (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
     }
     exclude("**/mojang-translations/")
-	exclude("*.jar") // WHY GRADLE, WHY?
+	// exclude("*.jar") // WHY GRADLE, WHY?
 }
 
 shadowJar {

@@ -53,4 +53,34 @@ public class CardboardCampfire extends CardboardBlockEntityState<CampfireBlockEn
         getSnapshot().cookingTotalTimes[index] = cookTimeTotal;
     }
 
+	@Override
+	public boolean isCookingDisabled(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void startCooking() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean startCooking(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void stopCooking() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean stopCooking(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

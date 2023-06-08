@@ -202,4 +202,16 @@ public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
         
     }
 
+	@Override
+	public boolean hasNoPhysics() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setNoPhysics(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

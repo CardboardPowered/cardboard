@@ -108,4 +108,10 @@ public class CardboardBlockEntityState<T extends BlockEntity> extends CraftBlock
         return ((com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity)(Object)getSnapshot()).getPersistentDataContainer();
     }
 
+	@Override
+	public boolean isSnapshot() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

@@ -31,4 +31,10 @@ public final class CraftComposter extends org.bukkit.craftbukkit.block.data.Craf
     public int getMaximumLevel() {
         return getMax(LEVEL);
     }
+
+	@Override
+	public int getMinimumLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

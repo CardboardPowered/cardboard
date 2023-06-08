@@ -45,9 +45,11 @@ import org.bukkit.Note;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.Statistic;
 import org.bukkit.WeatherType;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
@@ -67,6 +69,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.event.player.PlayerKickEvent.Cause;
@@ -74,6 +77,7 @@ import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
@@ -131,6 +135,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket;
+
+import org.bukkit.map.MapCursor;
+import org.bukkit.map.MapView;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class PlayerImpl extends CraftHumanEntity implements Player {
@@ -795,7 +803,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         getHandle().networkHandler.sendPacket(packet);
     }
 
-    @Override
+    // @Override
     public boolean sendChunkChange(Location arg0, int arg1, int arg2, int arg3, byte[] arg4) {
         throw new NotImplementedException("Also not in Spigot");
     }
@@ -815,6 +823,19 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void sendMap(MapView map) {
+		if (getHandle().networkHandler == null) return;
+
+        /* 1.19: RenderData data = ((CraftMapView) map).render(this);
+        Collection<MapIcon> icons = new ArrayList<MapIcon>();
+        for (MapCursor cursor : data.cursors) {
+            if (cursor.isVisible()) {
+                icons.add(new MapIcon(MapIcon.Type.byId(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), CraftChatMessage.fromStringOrNull(cursor.getCaption())));
+            }
+        }
+
+        MapUpdateS2CPacket packet = new MapUpdateS2CPacket(map.getId(), map.getScale().getValue(), map.isLocked(), icons, new MapState.UpdateData(0, 0, 128, 128, data.buffer));
+        getHandle().networkHandler.sendPacket(packet);
+		*/
       // TODO 1.17ify
         /*if (getHandle().networkHandler == null) return;
 
@@ -1846,5 +1867,134 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         // TODO Auto-generated method stub
         
     }
+
+    // 1.18.2 api:
+    
+	@Override
+	public boolean canSee(@NotNull Entity arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public @Nullable GameMode getPreviousGameMode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getSimulationDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public @Nullable WorldBorder getWorldBorder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void hideEntity(@NotNull Plugin arg0, @NotNull Entity arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isAllowingServerListings() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void kick() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull Sound arg1, float arg2, float arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull Sound arg1, @NotNull SoundCategory arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendEquipmentChange(@NotNull LivingEntity arg0, @NotNull EquipmentSlot arg1, @NotNull ItemStack arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendHealthUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendHealthUpdate(double arg0, int arg1, float arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendMultiBlockChange(@NotNull Map<Location, BlockData> arg0, boolean arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setResourcePack(@NotNull String arg0, @Nullable byte[] arg1, @Nullable String arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setResourcePack(@NotNull String arg0, @Nullable byte[] arg1, boolean arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setResourcePack(@NotNull String arg0, @Nullable byte[] arg1, @Nullable String arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setResourcePack(@NotNull String arg0, byte @Nullable [] arg1, @Nullable Component arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSimulationDistance(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWorldBorder(@Nullable WorldBorder arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showDemoScreen() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showEntity(@NotNull Plugin arg0, @NotNull Entity arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

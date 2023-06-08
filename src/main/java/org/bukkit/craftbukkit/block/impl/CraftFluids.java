@@ -31,4 +31,10 @@ public final class CraftFluids extends org.bukkit.craftbukkit.block.data.CraftBl
     public int getMaximumLevel() {
         return getMax(LEVEL);
     }
+
+	@Override
+	public int getMinimumLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

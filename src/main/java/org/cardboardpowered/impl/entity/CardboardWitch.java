@@ -70,4 +70,16 @@ public class CardboardWitch extends CardboardRaider implements Witch {
         
     }
 
+	@Override
+	public boolean isCelebrating() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setCelebrating(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

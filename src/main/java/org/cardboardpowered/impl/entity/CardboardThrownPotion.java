@@ -14,8 +14,10 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.cardboardpowered.impl.CardboardPotionUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CardboardThrownPotion extends ProjectileImpl implements ThrownPotion {
@@ -66,5 +68,17 @@ public class CardboardThrownPotion extends ProjectileImpl implements ThrownPotio
         // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public @NotNull PotionMeta getPotionMeta() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPotionMeta(@NotNull PotionMeta arg0) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }

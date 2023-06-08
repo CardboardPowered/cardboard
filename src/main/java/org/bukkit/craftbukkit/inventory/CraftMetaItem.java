@@ -55,6 +55,7 @@ import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.cardboardpowered.impl.CardboardAttributable;
 import org.cardboardpowered.impl.CardboardAttributeInstance;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.destroystokyo.paper.Namespaced;
@@ -1377,5 +1378,13 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         // TODO Auto-generated method stub
         
     }
+    
+    // 1.18.2 api:
+
+	@Override
+	public @NotNull String getAsString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
