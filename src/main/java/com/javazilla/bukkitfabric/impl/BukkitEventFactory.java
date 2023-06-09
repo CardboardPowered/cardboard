@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.WorldAccess;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -37,52 +39,19 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LightningStrike;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.CreeperPowerEvent;
-import org.bukkit.event.entity.EntityBreakDoorEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityEnterLoveModeEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.EntityPlaceEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.EntityTransformEvent;
-import org.bukkit.event.entity.ExpBottleEvent;
-import org.bukkit.event.entity.HorseJumpEvent;
-import org.bukkit.event.entity.ItemMergeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.PlayerLeashEntityEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.VillagerCareerChangeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.VillagerCareerChangeEvent.ChangeReason;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
@@ -106,7 +75,6 @@ import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.entity.UnknownEntity;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
-import org.cardboardpowered.impl.inventory.CustomInventoryView;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.jetbrains.annotations.Nullable;
 
@@ -354,6 +322,12 @@ public class BukkitEventFactory {
         }
 
         return container;
+    }
+
+    public static FireworkExplodeEvent callFireworkExplodeEvent(FireworkRocketEntity firework) {
+        FireworkExplodeEvent event = new FireworkExplodeEvent((Firework) ((IMixinEntity) firework).getBukkitEntity());
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
     public static VillagerCareerChangeEvent callVillagerCareerChangeEvent(VillagerEntity vilager, Profession future, ChangeReason reason) {
@@ -703,4 +677,66 @@ public class BukkitEventFactory {
         return event;
     }
 
+    public static boolean handleBlockSpreadEvent(World world, BlockPos source, BlockPos target, net.minecraft.block.BlockState block, int flag) {
+        // Suppress during worldgen
+        if (!(world instanceof World)) {
+            world.setBlockState(target, block, flag);
+            return true;
+        }
+
+        CraftBlockState state = CraftBlockState.getBlockState(world, target, flag);
+        state.setData(block);
+
+        BlockSpreadEvent event = new BlockSpreadEvent(((IMixinWorld) world).getWorldImpl().getBlockAt(target.getX(), target.getY(), target.getZ()), ((IMixinWorld) world).getWorldImpl().getBlockAt(source.getX(), source.getY(), source.getZ()), state);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            state.update(true);
+        }
+        return !event.isCancelled();
+    }
+
+    public static EntityChangeBlockEvent callEntityChangeBlockEvent(Entity entity, BlockPos position, net.minecraft.block.BlockState newBlock) {
+        return callEntityChangeBlockEvent(entity, position, newBlock, false);
+    }
+
+    public static EntityChangeBlockEvent callEntityChangeBlockEvent(Entity entity, BlockPos position, net.minecraft.block.BlockState newBlock, boolean cancelled) {
+        Block block = ((IMixinWorld) entity).getWorldImpl().getBlockAt(position.getX(), position.getY(), position.getZ());
+
+        EntityChangeBlockEvent event = new EntityChangeBlockEvent(((IMixinEntity) entity).getBukkitEntity(), block, CraftBlockData.fromData(newBlock));
+        event.setCancelled(cancelled);
+        event.getEntity().getServer().getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static boolean handleBlockGrowEvent(World world, BlockPos pos, net.minecraft.block.BlockState block) {
+        return handleBlockGrowEvent(world, pos, block, 3);
+    }
+
+    public static boolean handleBlockGrowEvent(World world, BlockPos pos, net.minecraft.block.BlockState newData, int flag) {
+        Block block = ((IMixinWorld) world).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+        CraftBlockState state = (CraftBlockState) block.getState();
+        state.setData(newData);
+
+        BlockGrowEvent event = new BlockGrowEvent(block, state);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (!event.isCancelled()) {
+            state.update(true);
+        }
+
+        return !event.isCancelled();
+    }
+
+    /**
+     * BlockFadeEvent
+     */
+    public static BlockFadeEvent callBlockFadeEvent(WorldAccess world, BlockPos pos, net.minecraft.block.BlockState newBlock) {
+        CraftBlockState state = CraftBlockState.getBlockState(world, pos);
+        state.setData(newBlock);
+
+        BlockFadeEvent event = new BlockFadeEvent(state.getBlock(), state);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
 }

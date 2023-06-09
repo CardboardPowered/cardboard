@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.cardboardpowered.extras.DualBlockList;
 import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,7 +47,7 @@ public class MixinPistonBlock {
 
         Direction enumdirection1 = retract ? cardboard_ph.pistonDirection : cardboard_ph.pistonDirection ;
 
-        List<org.bukkit.block.Block> blocks = new AbstractList<org.bukkit.block.Block>() {
+        List<org.bukkit.block.Block> blocks = new DualBlockList(moved, broken, bblock.getWorld()) {
 
             @Override
             public int size() {

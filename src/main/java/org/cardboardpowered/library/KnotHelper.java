@@ -23,7 +23,7 @@ public class KnotHelper {
     	logger.error("======== ERROR: FABRIC OUTDATED ========");
         logger.error("| Your version of Fabric is outdated!!");
         logger.error("| You version is: " + ver);
-        logger.error("| Lowest Required: 0.12 or higher");
+        logger.error("| Lowest Required: 0.13 or higher");
         logger.error("| Update at: https://fabricmc.dev/use/");
         logger.error("=======================================");
     }
@@ -81,12 +81,14 @@ public class KnotHelper {
     
     public static void propose_file(File file, double ver) {
     	 if (ver < 0.11) {
-         	outdated_fabric_warning(ver);
+         	 outdated_fabric_warning(ver);
              return;
          }
 
          if (ver < 0.12) {
-         	fabric_0_11_load(file);
+        	 outdated_fabric_warning(ver);
+        	 fabric_0_11_load(file);
+        	 return;
          }
 
          if (ver >= 0.12) {
