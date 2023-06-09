@@ -37,8 +37,9 @@ public class ModsCommand extends Command {
 
                 if (name.startsWith("Fabric") && name.endsWith(")")) continue; // Don't list all modules of FAPI
                 if (name.startsWith("Fabric API Base")) name = "Fabric API";
-                if (name.startsWith("OpenJDK")) name = name.replace(" 64-Bit Server VM",""); // Shorten
-                if (name.startsWith("Minecraft")) continue;
+                if (name.startsWith("OpenJDK")) continue;
+                if (name.startsWith("Fabric Convention Tags")) continue;
+                if (name.startsWith("SpecialSource")) continue;
 
                 if (!mods.contains(name)) {
                 	mods += ", " + ChatColor.GREEN + name + ChatColor.WHITE;
@@ -48,17 +49,6 @@ public class ModsCommand extends Command {
         } else {
             sender.sendMessage("No Permission for command!");
         }
-        
-        Method[] mm = ServerWorld.class.getMethods();
-        for (Method m : mm) {
-        	 sender.sendMessage("M: " + m.getName());
-        }
-        
-        Method[] mm1 = ServerWorld.class.getDeclaredMethods();
-        for (Method m : mm1) {
-        	 sender.sendMessage("DM: " + m.getName());
-        }
-        
         return true;
     }
 
