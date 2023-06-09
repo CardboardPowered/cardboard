@@ -1,4 +1,4 @@
-package org.cardboardpowered.mixin.entity;
+package org.cardboardpowered.mixin.entity.ai;
 
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -15,10 +15,10 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 @Mixin(UpdateAttackTargetTask.class)
-public class MixinUpdateAttackTargetTask<E extends MobEntity> {
+public class MixinUpdateAttackTargetTask {
 
     @Inject(at = @At("HEAD"), method = "updateAttackTarget", cancellable = true)
-    public void callTargetEvent(E e0, LivingEntity entityliving, CallbackInfo ci) {
+    private static <E extends MobEntity> void callTargetEvent(E e0, LivingEntity entityliving, CallbackInfo ci) {
         EntityTargetEvent event = BukkitEventFactory.callEntityTargetLivingEvent(e0, entityliving, (entityliving instanceof ServerPlayerEntity) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.CLOSEST_ENTITY);
         if (event.isCancelled()) {
             ci.cancel();

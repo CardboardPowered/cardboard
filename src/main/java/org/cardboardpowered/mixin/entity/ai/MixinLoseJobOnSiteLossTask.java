@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.cardboardpowered.mixin.entity;
+package org.cardboardpowered.mixin.entity.ai;
 
 import org.bukkit.event.entity.VillagerCareerChangeEvent;
 import org.spongepowered.asm.mixin.Mixin;
