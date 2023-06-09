@@ -747,4 +747,13 @@ public class BukkitEventFactory {
         Bukkit.getPluginManager().callEvent(event);
         return !event.isCancelled();
     }
+
+    public static EntityBreedEvent callEntityBreedEvent(LivingEntity child, LivingEntity mother, LivingEntity father, LivingEntity breeder, ItemStack bredWith, int experience) {
+        org.bukkit.entity.LivingEntity breederEntity = (org.bukkit.entity.LivingEntity) (breeder == null ? null : ((IMixinEntity)breeder).getBukkitEntity());
+        CraftItemStack bredWithStack = bredWith == null ? null : CraftItemStack.asCraftMirror(bredWith).clone();
+
+        EntityBreedEvent event = new EntityBreedEvent((org.bukkit.entity.LivingEntity) ((IMixinEntity)child).getBukkitEntity(), (org.bukkit.entity.LivingEntity) ((IMixinEntity) mother).getBukkitEntity(), (org.bukkit.entity.LivingEntity) ((IMixinEntity) father).getBukkitEntity(), breederEntity, bredWithStack, experience);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
 }
