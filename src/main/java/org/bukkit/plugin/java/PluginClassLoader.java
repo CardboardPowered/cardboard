@@ -22,7 +22,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 
-// import com.mohistmc.banner.bukkit.BukkitExtraConstants;
 import com.mohistmc.banner.bukkit.nms.ClassLoaderContext;
 import com.mohistmc.banner.bukkit.nms.model.ClassMapping;
 import com.mohistmc.banner.bukkit.nms.utils.RemapUtils;
@@ -189,8 +188,7 @@ public class PluginClassLoader extends URLClassLoader {
 
                     if (result == null) {
                         try {
-                            result = CraftServer.INSTANCE.getClass().getClassLoader().loadClass(name);
-                        	// result = BukkitExtraConstants.getServer().getClass().getClassLoader().loadClass(name);
+                            result = CraftServer.server.getClass().getClassLoader().loadClass(name);
                         } catch (Throwable throwable) {
                             throw new ClassNotFoundException(name, throwable);
                         }
