@@ -1,4 +1,4 @@
-package org.cardboardpowered.mixin;
+package org.cardboardpowered.mixin.bukkit;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

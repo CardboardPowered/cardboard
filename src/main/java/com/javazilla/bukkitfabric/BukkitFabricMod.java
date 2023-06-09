@@ -131,13 +131,17 @@ public class BukkitFabricMod implements ModInitializer {
         new File("plugins").mkdirs();
 
         CardboardEventManager.INSTANCE.callCardboardEvents();
+        // Cardboard start - TODO fix, waiting for better handle to inject Fabric modded Potion types to Bukkit
+        /*
         for (Object effect : Registry.STATUS_EFFECT) {
             try {
                 org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
             } catch (ArrayIndexOutOfBoundsException e) {
                 // ignore
             }
-        }
+        }*/
+        // Cardboard end
+
     }
     
     public PlayerImpl getPlayer_0(ServerPlayerEntity e) {

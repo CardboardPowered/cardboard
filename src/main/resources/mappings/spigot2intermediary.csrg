@@ -20,6 +20,7 @@ org/cardboardpowered/impl/entity/HumanEntityImpl org/bukkit/craftbukkit/entity/C
 org/bukkit/craftbukkit/entity/CraftPlayer org/cardboardpowered/impl/entity/PlayerImpl
 org/bukkit/craftbukkit/CraftChunk org/cardboardpowered/impl/world/CardboardChunk
 org/bukkit/craftbukkit/CraftChunkSnapshot org/cardboardpowered/impl/world/CardboardChunkSnapshot
+com/mohistmc/banner/fabric/FabricHookBukkitEvent org/cardboardpowered/fabric/FabricHookBukkitEvent
 
 
 # (c) 2021 Cardboard

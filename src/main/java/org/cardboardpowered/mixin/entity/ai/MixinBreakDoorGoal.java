@@ -2,7 +2,7 @@
  * This file belongs to Cardboard.
  * Copyright (c) 2021 Cardboard Contributors
  */
-package org.cardboardpowered.mixin.entity;
+package org.cardboardpowered.mixin.entity.ai;
 
 import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;

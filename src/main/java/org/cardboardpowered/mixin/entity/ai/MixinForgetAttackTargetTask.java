@@ -1,4 +1,4 @@
-package org.cardboardpowered.mixin.entity;
+package org.cardboardpowered.mixin.entity.ai;
 
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.cardboardpowered.util.MixinInfo;
