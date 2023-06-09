@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CardboardFirework extends ProjectileImpl implements Firework {
@@ -93,4 +94,37 @@ public class CardboardFirework extends ProjectileImpl implements Firework {
     public @Nullable LivingEntity getBoostedEntity() {
         return null;//TODO
     }
+
+	@Override
+	public org.bukkit.inventory.@NotNull ItemStack getItem() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getTicksFlown() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTicksToDetonate() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setItem(org.bukkit.inventory.@Nullable ItemStack arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setTicksFlown(int arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setTicksToDetonate(int arg0) {
+		// TODO Auto-generated method stub
+	}
 }

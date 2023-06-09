@@ -7,7 +7,6 @@ import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 public class BukkitChestDoubleInventory implements NamedScreenHandlerFactory {
     public final net.minecraft.inventory.DoubleInventory inventory;
@@ -25,7 +24,7 @@ public class BukkitChestDoubleInventory implements NamedScreenHandlerFactory {
     public Text getDisplayName() {
         return this.leftChest.hasCustomName() ? this.leftChest.getDisplayName() :
                 (this.rightChest.hasCustomName() ? this.rightChest.getDisplayName() :
-                        new TranslatableText("container.chestDouble"));
+                        Text.translatable("container.chestDouble"));
     }
 
     @Override

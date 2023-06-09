@@ -10,6 +10,7 @@ import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +19,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.util.Random;
+// import java.util.Random;
 
 @Mixin(BambooBlock.class)
 public class MixinBambooBlock extends Block {
@@ -46,7 +47,7 @@ public class MixinBambooBlock extends Block {
      * @reason
      */
     @Overwrite
-    protected void updateLeaves(BlockState state, World world, BlockPos pos, Random random, int height) {
+    public void updateLeaves(BlockState state, World world, BlockPos pos, Random random, int height) {
         BlockState blockState = world.getBlockState(pos.down());
         BlockPos blockPos = pos.down(2);
         BlockState blockState2 = world.getBlockState(blockPos);
