@@ -9,11 +9,13 @@ Cardboard is an implementation of the popular Bukkit/Spigot/Paper Modding API fo
 |-----------------|---------------------------|---------------|----------------------|
 | &#x274C; | Fabric 1.20 | Work-in-Progress |  |
 | &#x274C; | Fabric 1.19.4 | Work-in-Progress |  |
-| &#x2705; | Fabric 1.19.2 | [Download for 1.18.2](https://cardboardpowered.org/download/)  |  |
+| &#x2705; | Fabric 1.19.2 | [Download for 1.19.2](https://cardboardpowered.org/download/)  |  |
 | &#x2705; | Fabric 1.18.2 | [Download for 1.18.2](https://cardboardpowered.org/download/)  |  |
-| &#x2705; | Fabric 1.18.1 | [Download for 1.18.1](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
-| &#x2705; | Fabric 1.17.1 | [Download for 1.17.1](https://cardboardpowered.org/download) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
+| &#x26A0;* | Fabric 1.18.1 | [Download for 1.18.1](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
+| &#x26A0;* | Fabric 1.17.1 | [Download for 1.17.1](https://cardboardpowered.org/download) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
 | &#x274C; | <= 1.16.5 | [Download for 1.16.5](https://cardboardpowered.org/download#1.16) |            | |
+
+&#x26A0;* *= Limited support*
 
 ## License
 We inherit the license from Paper. See [Paper's License](https://github.com/PaperMC/Paper/blob/master/LICENSE.md) for full details.
