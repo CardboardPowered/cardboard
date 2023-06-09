@@ -1,15 +1,14 @@
 package org.cardboardpowered.mixin.recipe;
 
+import org.cardboardpowered.interfaces.IIngredient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinIngredient;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 
 @Mixin(Ingredient.class)
-public class MixinIngredient implements IMixinIngredient {
+public class MixinIngredient implements IIngredient {
 
     @Shadow public ItemStack[] matchingStacks;
     @Shadow public void cacheMatchingStacks() {}

@@ -197,7 +197,6 @@ import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinLevelProperties;
 import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;

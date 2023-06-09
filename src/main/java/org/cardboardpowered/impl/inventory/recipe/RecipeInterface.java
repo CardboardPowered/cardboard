@@ -9,10 +9,8 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
+import org.cardboardpowered.interfaces.IIngredient;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinIngredient;
-
-@SuppressWarnings("deprecation")
 public interface RecipeInterface extends Recipe {
 
     void addToCraftingManager();
@@ -26,7 +24,7 @@ public interface RecipeInterface extends Recipe {
             stack = new Ingredient(((RecipeChoice.MaterialChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.recipe.Ingredient.StackEntry(CraftItemStack.asNMSCopy(new ItemStack(mat)))));
         } else if (bukkit instanceof RecipeChoice.ExactChoice) {
             stack = new Ingredient(((RecipeChoice.ExactChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.recipe.Ingredient.StackEntry(CraftItemStack.asNMSCopy(mat))));
-            ((IMixinIngredient)stack).setExact_BF(true);
+            ((IIngredient)stack).setExact_BF(true);
         } else throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
 
         stack.cacheMatchingStacks();
@@ -37,7 +35,7 @@ public interface RecipeInterface extends Recipe {
     public static RecipeChoice toBukkit(Ingredient list) {
         list.cacheMatchingStacks();
         if (list.matchingStacks.length == 0) return null;
-        if (((IMixinIngredient)list).getExact_BF()) {
+        if (((IIngredient)list).getExact_BF()) {
             List<org.bukkit.inventory.ItemStack> choices = new ArrayList<>(list.matchingStacks.length);
             for (net.minecraft.item.ItemStack i : list.matchingStacks) choices.add(CraftItemStack.asBukkitCopy(i));
             return new RecipeChoice.ExactChoice(choices);
