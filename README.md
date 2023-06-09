@@ -7,7 +7,9 @@ Cardboard is an implementation of the popular Bukkit/Spigot/Paper Modding API fo
 
 | Supported? | Minecraft       | Download      | Build Status |
 |-----------------|---------------------------|---------------|----------------------|
-| &#x274C; | Fabric 1.19.2 | Work-in-Progress |  |
+| &#x274C; | Fabric 1.20 | Work-in-Progress |  |
+| &#x274C; | Fabric 1.19.4 | Work-in-Progress |  |
+| &#x2705; | Fabric 1.19.2 | [Download for 1.18.2](https://cardboardpowered.org/download/)  |  |
 | &#x2705; | Fabric 1.18.2 | [Download for 1.18.2](https://cardboardpowered.org/download/)  |  |
 | &#x2705; | Fabric 1.18.1 | [Download for 1.18.1](https://cardboardpowered.org/download/) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
 | &#x2705; | Fabric 1.17.1 | [Download for 1.17.1](https://cardboardpowered.org/download) | [![Build Status](https://img.shields.io/jenkins/build?jobUrl=https://ci.codemc.io/job/IsaiahPatton/job/Cardboard/&style=flat-square)](https://cardboardpowered.org/download) |
