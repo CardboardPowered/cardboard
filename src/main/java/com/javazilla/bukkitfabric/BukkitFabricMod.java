@@ -84,26 +84,6 @@ public class BukkitFabricMod implements ModInitializer {
     public static List<ServerLoginNetworkHandler> NETWORK_CACHE = new ArrayList<>();
     public static Method GET_SERVER;
 
-    /*public void updateNeighbors(int recursionLimit) {
-    	BlockPos pos;
-       // WorldServer world = this.getWorld();
-    	ServerWorld world = null;
-       // oldState.b((GeneratorAccess)world, pos, 2, recursionLimit);
-        //if (this.sideEffectSet.shouldApply(SideEffect.EVENTS)) {
-            WorldImpl craftWorld = null;//world.getWorld();
-            
-            
-            
-            BlockPhysicsEvent event = new BlockPhysicsEvent(craftWorld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), (BlockData)CraftBlockData.fromData(null));
-            world.getCraftServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return;
-            }
-        //}
-        //newState.a((GeneratorAccess)world, pos, 2, recursionLimit);
-        //newState.b((GeneratorAccess)world, pos, 2, recursionLimit);
-    }*/
-    
     @Override
     public void onInitialize() {
         LOGGER.info("");
@@ -131,17 +111,14 @@ public class BukkitFabricMod implements ModInitializer {
         new File("plugins").mkdirs();
 
         CardboardEventManager.INSTANCE.callCardboardEvents();
-        // Cardboard start - TODO fix, waiting for better handle to inject Fabric modded Potion types to Bukkit
-        /*
+
         for (Object effect : Registry.STATUS_EFFECT) {
             try {
                 org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
             } catch (ArrayIndexOutOfBoundsException e) {
                 // ignore
             }
-        }*/
-        // Cardboard end
-
+        }
     }
     
     public PlayerImpl getPlayer_0(ServerPlayerEntity e) {
