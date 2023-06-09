@@ -209,6 +209,7 @@ public class Commodore {
                         		case "CANDLE_CAKES":
                         		case "CAULDRONS":
                         		case "ITEMS_CHEST_BOATS":
+                        		case "CARPETS":
                         			owner = "org/cardboardpowered/TagExtra";
                         			break;
                         		default:
