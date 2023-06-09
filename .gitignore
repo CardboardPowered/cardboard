@@ -29,7 +29,3 @@ build/
 /bin/
 .classpath
 .project
-
-# fabric
-run/
-mappings/
