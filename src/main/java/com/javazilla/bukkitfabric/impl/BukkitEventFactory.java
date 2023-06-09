@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.papermc.paper.event.block.BellRingEvent;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.WorldAccess;
 import org.bukkit.Bukkit;
@@ -738,5 +739,12 @@ public class BukkitEventFactory {
         BlockFadeEvent event = new BlockFadeEvent(state.getBlock(), state);
         Bukkit.getPluginManager().callEvent(event);
         return event;
+    }
+
+    public static boolean handleBellRingEvent(ServerWorld world, BlockPos pos, Entity entity) {
+        Block block = CraftBlock.at(world, pos);
+        BellRingEvent event = new BellRingEvent(block, (entity != null) ? ((IMixinEntity) entity).getBukkitEntity() : null);
+        Bukkit.getPluginManager().callEvent(event);
+        return !event.isCancelled();
     }
 }
