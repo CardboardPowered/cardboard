@@ -114,8 +114,9 @@
     "network.MixinPlayerManager_ChatEvent",
     "network.handler.MixinSPNH_SignUpdateEvent",
     "network.handler.MixinSPNH_InventoryClickEvent",
+    "network.handler.MixinSPNH_PlayerCommandPreprocessEvent_1_19",
+    "network.handler.MixinSPNH_PlayerCommandPreprocessEvent_1_18",
     "network.MixinDataTracker",
-
     "recipe.MixinRecipeManager",
     "recipe.MixinIngredient",
     "recipe.MixinShapedRecipe",

@@ -34,7 +34,11 @@ public final class MinecraftCommandWrapper extends BukkitCommand {
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!testPermission(sender)) return true;
 
-        dispatcher.execute(getCommandSource(sender), toDispatcher(args, commandLabel));
+       // dispatcher.execute(getCommandSource(sender), toDispatcher(args, commandLabel));
+        
+        ServerCommandSource icommandlistener = MinecraftCommandWrapper.getCommandSource(sender);
+        this.dispatcher.executeWithPrefix(icommandlistener, this.toDispatcher(args, this.getName()));
+        
         return true;
     }
 

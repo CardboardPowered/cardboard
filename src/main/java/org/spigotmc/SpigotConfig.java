@@ -181,6 +181,7 @@ public class SpigotConfig {
         restartOnCrash = getBoolean( "settings.restart-on-crash", restartOnCrash );
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
+        WatchdogThread.doStart( timeoutTime, restartOnCrash );
     }
 
     public static boolean bungee;
@@ -300,6 +301,20 @@ public class SpigotConfig {
     public static boolean logVillagerDeaths;
     private static void logVillagerDeaths() {
         logVillagerDeaths = getBoolean("settings.log-villager-deaths", true);
+    }
+    
+    public static boolean logNamedDeaths;
+    private static void logDeaths() {
+        logVillagerDeaths = getBoolean("settings.log-villager-deaths", false);
+        logNamedDeaths = getBoolean("settings.log-named-deaths", false);
+    }
+    public static boolean disablePlayerDataSaving;
+    private static void disablePlayerDataSaving() {
+        disablePlayerDataSaving = getBoolean("players.disable-saving", false);
+    }
+    public static boolean belowZeroGenerationInExistingChunks;
+    private static void belowZeroGenerationInExistingChunks() {
+        belowZeroGenerationInExistingChunks = getBoolean("world-settings.default.below-zero-generation-in-existing-chunks", true);
     }
 
 }

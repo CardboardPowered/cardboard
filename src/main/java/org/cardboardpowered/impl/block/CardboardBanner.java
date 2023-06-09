@@ -18,6 +18,7 @@ import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.util.registry.RegistryEntry;
 
 @SuppressWarnings("deprecation")
 public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity> implements Banner {
@@ -41,9 +42,10 @@ public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity
         patterns = new ArrayList<Pattern>();
 
         for (int i = 0; i < banner.getPatterns().size(); i++) {
-        	Pair<BannerPattern, net.minecraft.util.DyeColor> pair = banner.getPatterns().get(i);
-            patterns.add(new Pattern(DyeColor.getByWoolData((byte) pair.getSecond().getId()), PatternType.getByIdentifier(pair.getFirst().getId())));
+        	Pair<RegistryEntry<BannerPattern>, net.minecraft.util.DyeColor> pair = banner.getPatterns().get(i);
+            patterns.add(new Pattern(DyeColor.getByWoolData((byte) pair.getSecond().getId()), PatternType.getByIdentifier(pair.getFirst().value().getId())));
         }
+
     }
 
     @Override

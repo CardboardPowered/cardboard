@@ -37,4 +37,16 @@ public final class CraftLeaves extends org.bukkit.craftbukkit.block.data.CraftBl
     public void setDistance(int distance) {
         set(DISTANCE, distance);
     }
+
+	@Override
+	public int getMaximumDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMinimumDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

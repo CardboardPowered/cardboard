@@ -37,7 +37,8 @@ public class MixinSlimeEntity extends MixinEntity implements ISlimeEntity {
 
     private final Random randoms = new Random();
 
-    @Redirect(at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"), method = "remove")
+    // TODO: 1.19
+    /*@Redirect(at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"), method = "remove")
     public int doBukkitEvent_SlimeSplitEvent(Random r, int a) {
         slimes_B.clear();
         int k = 2 + this.randoms.nextInt(3);
@@ -58,7 +59,7 @@ public class MixinSlimeEntity extends MixinEntity implements ISlimeEntity {
             ci.cancel();
             return;
         }
-    }
+    }*/
 
     @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), method = "remove")
     public boolean doBukkitEvent_RedirectSpawnEntity(World w, Entity e) {

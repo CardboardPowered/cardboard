@@ -21,6 +21,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -47,6 +48,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import org.cardboardpowered.interfaces.IWorldChunk;
 import com.mojang.brigadier.LiteralMessage;
 
+import me.isaiah.common.entity.IEntity;
 import me.isaiah.common.entity.IRemoveReason;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -104,7 +106,9 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public void sendMessage(String message) {
-        nms.sendSystemMessage(Text.of(message), UUID.randomUUID());
+    	
+    	me.isaiah.common.cmixin.IMixinEntity e = (me.isaiah.common.cmixin.IMixinEntity) nms;
+    	e.IsendText(Text.of(message), UUID.randomUUID());
     }
 
     @Override
@@ -180,7 +184,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public String getCustomName() {
-        return nms.getCustomName().asString();
+        return nms.getCustomName().getString();
     }
 
     @Override
@@ -200,6 +204,8 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public boolean addScoreboardTag(String arg0) {
+    	// 1.19.2: addScoreboardTag
+    	// 1.19.4: addCommandTag
         return nms.addScoreboardTag(arg0);
     }
 
@@ -303,7 +309,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public int getPortalCooldown() {
-        return nms.getDefaultNetherPortalCooldown();
+        return nms.getDefaultPortalCooldown();
     }
 
     @Override
@@ -749,5 +755,29 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     public @NotNull Set<Player> getTrackedPlayers() {
         return null;
     }
+
+	@Override
+	public @NotNull SpawnCategory getSpawnCategory() {
+		// TODO Auto-generated method stub
+		return SpawnCategory.MISC;
+	}
+
+	@Override
+	public boolean isFreezeTickingLocked() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isInPowderedSnow() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void lockFreezeTicks(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

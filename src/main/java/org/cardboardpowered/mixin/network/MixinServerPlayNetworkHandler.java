@@ -1,24 +1,16 @@
 package org.cardboardpowered.mixin.network;
 
-import static org.bukkit.craftbukkit.CraftServer.server;
-
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.craftbukkit.util.Waitable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -29,8 +21,6 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
-import org.cardboardpowered.impl.util.LazyPlayerSet;
-import org.cardboardpowered.impl.util.WaitableImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,24 +29,21 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinResourcePackStatusC2SPacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
 import me.isaiah.common.cmixin.IMixinEntity;
-import net.minecraft.client.option.ChatVisibility;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MovementType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.MessageType;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
@@ -70,7 +57,6 @@ import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -142,50 +128,28 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     public void disconnect(Text reason) {
         String leaveMessage = Formatting.YELLOW + this.player.getEntityName() + " left the game.";
 
-        PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), reason.asString(), leaveMessage);
+        PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), reason.getString(), leaveMessage);
 
         if (CraftServer.INSTANCE.getServer().isRunning())
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) return;
 
-        reason = new LiteralText(event.getReason());
+        reason = Text.of(event.getReason());
         final Text reason_final = reason;
 
-        get().connection.send(new DisconnectS2CPacket(reason), (future) -> get().connection.disconnect(reason_final));
+        get().connection.send(new DisconnectS2CPacket(reason), PacketCallbacks.always(() -> get().connection.disconnect(reason_final)));
         get().onDisconnected(reason);
         get().connection.disableAutoRead();
         CraftServer.server.submitAndJoin(get().connection::handleDisconnection);
-    }
-
-    /**
-     * @reason Bukkit
-     * @author Bukkit4Fabric
-     */
-    @Inject(at = @At("HEAD"), method = "executeCommand", cancellable = true)
-    public void executeCommand(String string, CallbackInfo ci) {
-        BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
-        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), string, new LazyPlayerSet(CraftServer.server));
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
-
-        try {
-            boolean b = Bukkit.getServer().dispatchCommand(event.getPlayer(), event.getMessage().substring(1));
-            if (b) {
-                ci.cancel();
-                return;
-            }
-        } catch (org.bukkit.command.CommandException ex) {
-            getPlayer().sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
-            java.util.logging.Logger.getLogger(ServerPlayNetworkHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
     }
 
     public PlayerImpl getPlayer() {
         return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)this.player).getBukkitEntity();
     }
 
-    @Override
+    // TODO: 1.19
+    /*@Override
     public void chat(String s, boolean async) {
         if (s.isEmpty() || this.player.getClientChatVisibility() == ChatVisibility.HIDDEN)
             return;
@@ -238,12 +202,12 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                 if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
                     for (ServerPlayerEntity recipient : server.getPlayerManager().players)
                         for (Text txt : CraftChatMessage.fromString(s))
-                            recipient.sendMessage(txt, MessageType.CHAT, player.getUniqueId());
+                            recipient.sendMessage(txt, false);
                 } else for (Player recipient : event.getRecipients())
                     recipient.sendMessage(s);
             }
         }
-    }
+    }*/
 
     @Override
     public void teleport(Location dest) {
@@ -656,7 +620,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             this.player.updateLastActionTime();
         } else {
             System.out.println(this.player.getName().getString() + " tried to set an invalid carried item");
-            this.disconnect(new LiteralText("Invalid hotbar selection (Hacking?)")); // CraftBukkit
+            this.disconnect(Text.of("Invalid hotbar selection (Hacking?)")); // CraftBukkit
         }
     }
 

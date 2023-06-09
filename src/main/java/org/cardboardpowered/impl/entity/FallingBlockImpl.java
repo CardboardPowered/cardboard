@@ -82,4 +82,16 @@ public class FallingBlockImpl extends CraftEntity implements FallingBlock {
         
     }
 
+	@Override
+	public boolean doesAutoExpire() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void shouldAutoExpire(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

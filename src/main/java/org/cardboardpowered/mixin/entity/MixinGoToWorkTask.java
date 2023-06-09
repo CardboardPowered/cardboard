@@ -14,7 +14,7 @@ import net.minecraft.entity.ai.brain.task.GoToWorkTask;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.village.VillagerProfession;
 
 import net.minecraft.util.registry.Registry;
@@ -23,11 +23,13 @@ import net.minecraft.util.registry.Registry;
 @Mixin(value = GoToWorkTask.class, priority = 999)
 public class MixinGoToWorkTask {
 
+	// TODO: 1.19
+
     /**
      * @reason VillagerCareerChangeEvent
      * @author
      */
-    @Overwrite
+    /*@Overwrite
     public void run(ServerWorld worldserver, VillagerEntity entityvillager, long i) {
         GlobalPos globalpos = (GlobalPos) entityvillager.getBrain().getOptionalMemory(MemoryModuleType.POTENTIAL_JOB_SITE).get();
 
@@ -52,6 +54,6 @@ public class MixinGoToWorkTask {
                 entityvillager.reinitializeBrain(worldserver);
             });
         }
-    }
+    }*/
 
 }

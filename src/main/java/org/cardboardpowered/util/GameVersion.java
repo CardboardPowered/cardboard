@@ -32,7 +32,14 @@ public class GameVersion {
 
     public GameVersion(JsonObject jsonObject) {
         INSTANCE = this;
-        this.releaseTarget = JsonHelper.getString(jsonObject, "release_target");
+        String relTarget = "";
+        try {
+			relTarget = JsonHelper.getString(jsonObject, "release_target");
+		} catch (Exception e) {
+			// Why would mojang decide to break gameversion again?
+			relTarget = JsonHelper.getString(jsonObject, "id");
+		}
+		this.releaseTarget = relTarget;
         this.protocolVersion = JsonHelper.getInt(jsonObject, "protocol_version");
         this.world_version = JsonHelper.getInt(jsonObject, "world_version");
     }

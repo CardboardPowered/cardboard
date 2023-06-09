@@ -57,4 +57,88 @@ public class CardboardPanda extends AnimalsImpl implements Panda {
         return PandaEntity.Gene.values()[gene.ordinal()];
     }
 
+	@Override
+	public int getEatingTicks() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getSneezeTicks() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getUnhappyTicks() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isOnBack() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isRolling() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isSitting() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isSneezing() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setEatingTicks(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setIsOnBack(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRolling(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSitting(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSneezeTicks(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSneezing(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUnhappyTicks(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

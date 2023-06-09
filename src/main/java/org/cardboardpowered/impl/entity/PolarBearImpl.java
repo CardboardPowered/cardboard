@@ -26,4 +26,16 @@ public class PolarBearImpl extends AnimalsImpl implements PolarBear {
         return EntityType.POLAR_BEAR;
     }
 
+	@Override
+	public boolean isStanding() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setStanding(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

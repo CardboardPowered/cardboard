@@ -65,6 +65,7 @@ import org.bukkit.UnsafeValues;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldBorder;
 import org.bukkit.WorldCreator;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
@@ -91,6 +92,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SpawnCategory;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
@@ -131,8 +133,11 @@ import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.SimpleServicesManager;
 import org.bukkit.plugin.UnknownDependencyException;
+import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
+import org.bukkit.potion.PotionBrewer;
+import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
@@ -158,6 +163,7 @@ import org.cardboardpowered.impl.inventory.recipe.RecipeIterator;
 import org.cardboardpowered.impl.inventory.InventoryCreator;
 import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.tag.BlockTagImpl;
+import org.cardboardpowered.impl.tag.CraftGameEventTag;
 import org.cardboardpowered.impl.tag.EntityTagImpl;
 import org.cardboardpowered.impl.tag.FluidTagImpl;
 import org.cardboardpowered.impl.tag.ItemTagImpl;
@@ -199,6 +205,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.javazilla.bukkitfabric.interfaces.IUserCache;
+import com.mohistmc.banner.bukkit.nms.utils.RemapUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -215,6 +222,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.block.Block;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.CommandBossBar;
@@ -265,6 +273,7 @@ import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.event.GameEvent;
 //import net.minecraft.world.gen.CatSpawner;
 import net.minecraft.world.gen.GeneratorOptions;
 //import net.minecraft.world.gen.PhantomSpawner;
@@ -278,7 +287,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.18.2-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.19.2-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -388,9 +397,13 @@ public class CraftServer implements Server {
     }
 
     public void loadPlugins() {
+    	
+        RemapUtils.init();
+        pluginManager.registerInterface(JavaPluginLoader.class);
+    	
         File pluginFolder = new File("plugins");
         if (pluginFolder.exists()) {
-            for (File f : pluginFolder.listFiles()) {
+            /*for (File f : pluginFolder.listFiles()) {
                 if (f.getName().endsWith(".jar")) {
                     try {
                         com.javazilla.bukkitfabric.nms.Remapper.remap(f); // Cardboard: Remap Jar file
@@ -398,7 +411,7 @@ public class CraftServer implements Server {
                         e.printStackTrace();
                     }
                 }
-            }
+            }*/
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
 
             for (Plugin plugin : plugins) {
@@ -448,7 +461,8 @@ public class CraftServer implements Server {
     @SuppressWarnings("unchecked")
     private void syncCommands() {
         // Clear existing commands
-        CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(RegistrationEnvironment.ALL));
+    	
+        CommandManager dispatcher = ((IMixinMinecraftServer) server).setCommandManager(new CommandManager(RegistrationEnvironment.ALL, new CommandRegistryAccess(server.getRegistryManager())));
 
         // Register all commands, vanilla ones will be using the old dispatcher references
         for (Map.Entry<String, Command> entry : commandMap.getKnownCommands().entrySet()) {
@@ -692,6 +706,9 @@ public class CraftServer implements Server {
         FilledMapItem.fillExplorationMap(worldServer, stack);
         // "+" map ID taken from EntityVillager
 
+        // method_8001
+        // 1.19.2: getOrCreateMapState
+        // 1.19.4: getMapState
         FilledMapItem.getOrCreateMapState(stack, worldServer).addDecorationsNbt(stack, structurePosition, "+", net.minecraft.item.map.MapIcon.Type.byId(structureType.getMapIcon().getValue()));
 
         return CraftItemStack.asBukkitCopy(stack);
@@ -1292,14 +1309,14 @@ public class CraftServer implements Server {
                 if (!Registry.ENTITY_TYPE.containsTag(entityTagKey)) break;
                 return (Tag<T>) new EntityTagImpl((Registry<EntityType<?>>)Registry.ENTITY_TYPE, entityTagKey);
             }
-            /*case "game_events": {
-                Preconditions.checkArgument((clazz == GameEvent.class ? 1 : 0) != 0, (Object)"Game Event namespace must have GameEvent type");
+            case "game_events": {
+                //Preconditions.checkArgument((clazz == GameEvent.class ? 1 : 0) != 0, (Object)"Game Event namespace must have GameEvent type");
                 TagKey<GameEvent> gameEventTagKey = TagKey.of(Registry.GAME_EVENT_KEY, key);
                 if (!Registry.GAME_EVENT.containsTag(gameEventTagKey)) break;
-                return new CraftGameEventTag((Registry<GameEvent>)Registry.GAME_EVENT, gameEventTagKey);
-            }*/
+                return (Tag<T>) new CraftGameEventTag((Registry<GameEvent>)Registry.GAME_EVENT, gameEventTagKey);
+            }
             default: {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(registry);
             }
         }
         return null;
@@ -1329,11 +1346,11 @@ public class CraftServer implements Server {
                 DefaultedRegistry<EntityType<?>> entityTags = Registry.ENTITY_TYPE;
                 return (Iterable)(entityTags).streamTagsAndEntries().map(pair -> new EntityTagImpl((Registry<EntityType<?>>)entityTags, (TagKey)pair.getFirst())).collect(ImmutableList.toImmutableList());
             }
-            /*case "game_events": {
-                Preconditions.checkArgument((clazz == GameEvent.class ? 1 : 0) != 0);
+            case "game_events": {
+                // Preconditions.checkArgument((clazz == GameEvent.class ? 1 : 0) != 0);
                 DefaultedRegistry<GameEvent> gameEvents = Registry.GAME_EVENT;
-                return (Iterable)((Registry)gameEvents).streamTagsAndEntries().map(pair -> new CraftGameEventTag((Registry<GameEvent>)gameEvents, (TagKey)pair.getFirst())).collect(ImmutableList.toImmutableList());
-            }*/
+                return (Iterable)(gameEvents).streamTagsAndEntries().map(pair -> new CraftGameEventTag((Registry<GameEvent>)gameEvents, pair.getFirst())).collect(ImmutableList.toImmutableList());
+            }
         }
         throw new IllegalArgumentException();
     }
@@ -1701,13 +1718,19 @@ public class CraftServer implements Server {
 
     // Because PlayerManager is broken
     public List<String> getOperatorList() throws IOException {
-        File f = new File(MinecraftServer.USER_CACHE_FILE.getParentFile(), "ops.json");
+        File f = new File("ops.json");
+        
+        List<String> toreturn = new ArrayList<>();
+        
+        if (!f.exists()) {
+        	return toreturn;
+        }
+
         List<String> content = null;
         try {
             content = Files.readAllLines(f.toPath());
         } catch (IOException e) {throw e;}
 
-        List<String> toreturn = new ArrayList<>();
         for (String s : content) {
             s = s.trim();
             if (s.startsWith("\"uuid\":")) {
@@ -1995,6 +2018,12 @@ public class CraftServer implements Server {
                 // TODO Auto-generated method stub
                 return null;
             }
+
+			// 1.19.4 @Override
+			public net.minecraft.item.ItemStack quickMove(PlayerEntity player, int slot) {
+				// TODO Auto-generated method stub
+				return null;
+			}
         };
         CraftingInventory inventoryCrafting = new CraftingInventory(container, 3, 3);
         Optional<CraftingRecipe> opt = this.getNMSRecipe(craftingMatrix, inventoryCrafting, (WorldImpl)world);
@@ -2047,5 +2076,96 @@ public class CraftServer implements Server {
     public void setWhitelistEnforced(boolean bl) {
         server.setEnforceWhitelist(bl);
     }
+
+	@Override
+	public @NotNull CommandSender createCommandSender(@NotNull Consumer<? super Component> arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull PlayerProfile createPlayerProfile(@NotNull UUID arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull PlayerProfile createPlayerProfile(@NotNull String arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull PlayerProfile createPlayerProfile(@Nullable UUID arg0, @Nullable String arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public com.destroystokyo.paper.profile.@NotNull PlayerProfile createProfileExact(@Nullable UUID arg0,
+			@Nullable String arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull WorldBorder createWorldBorder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean getHideOnlinePlayers() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public @NotNull PotionBrewer getPotionBrewer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull String getResourcePack() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull String getResourcePackHash() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull String getResourcePackPrompt() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getSimulationDistance() {
+		// TODO Auto-generated method stub
+		return 8;
+	}
+
+	@Override
+	public int getSpawnLimit(@NotNull SpawnCategory arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getTicksPerSpawns(@NotNull SpawnCategory arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isResourcePackRequired() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

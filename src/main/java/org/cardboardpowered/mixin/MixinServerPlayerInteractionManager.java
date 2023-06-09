@@ -22,14 +22,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -47,7 +50,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerActionResponseS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
@@ -57,6 +59,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
 
@@ -75,155 +78,91 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
     @Shadow private int failedStartMiningTime;
     @Shadow private int blockBreakingProgress;
 
-    /**
-     * @author BukkitFabric
-     * @reason Interaction Events
-     */
-    @SuppressWarnings("deprecation")
-    //@Overwrite
-    @Inject(at = @At("HEAD"), method = "processBlockBreakingAction", cancellable = true)
-    public void processBlockBreakingActionBF(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, Direction enumdirection, int i, CallbackInfo ci) {
-        double d0 = this.player.getX() - ((double) blockposition.getX() + 0.5D);
-        double d1 = this.player.getY() - ((double) blockposition.getY() + 0.5D) + 1.5D;
-        double d2 = this.player.getZ() - ((double) blockposition.getZ() + 0.5D);
-        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
-
-        if (d3 > 36.0D) {
-            this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "too far"));
-        } else if (blockposition.getY() >= i) {
-            this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "too high"));
-        } else {
-            BlockState iblockdata;
-
-            if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.START_DESTROY_BLOCK) {
-                if (!this.world.canPlayerModifyAt((PlayerEntity) this.player, blockposition)) {
-                    // CraftBukkit start - fire PlayerInteractEvent
-                    BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
-                    this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "may not interact"));
-                    // Update any tile entity data for this block
-                    BlockEntity tileentity = world.getBlockEntity(blockposition);
-                    if (tileentity != null)
-                        this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
-                    ci.cancel();
-                    return;
-                }
-
-                PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, blockposition, enumdirection, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
-                if (event.isCancelled()) {
-                    // Let the client know the block still exists
-                    this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
-                    // Update any tile entity data for this block
-                    BlockEntity tileentity = this.world.getBlockEntity(blockposition);
-                    if (tileentity != null)
-                        this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
-                    ci.cancel();
-                    return;
-                }
-
-                if (this.gameMode.isCreative()) {
-                    this.finishMining(blockposition, packetplayinblockdig_enumplayerdigtype, "creative destroy");
-                    return;
-                }
-
-                if (this.player.isBlockBreakingRestricted((World) this.world, blockposition, this.gameMode)) {
-                    this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, false, "block action restricted"));
-                    ci.cancel();
-                    return;
-                }
-
-                this.startMiningTime = this.tickCounter;
-                float f = 1.0F;
-
-                iblockdata = this.world.getBlockState(blockposition);
-                // CraftBukkit start - Swings at air do *NOT* exist.
-                if (event.useInteractedBlock() == Event.Result.DENY) {
-                    // If we denied a door from opening, we need to send a correcting update to the client, as it already opened the door.
-                    BlockState data = this.world.getBlockState(blockposition);
-                    if (data.getBlock() instanceof DoorBlock) {
-                        // For some reason *BOTH* the bottom/top part have to be marked updated.
-                        boolean bottom = data.get(DoorBlock.HALF) == DoubleBlockHalf.LOWER;
-                        this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
-                        this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, bottom ? blockposition.up() : blockposition.down()));
-                    } else if (data.getBlock() instanceof TrapdoorBlock) {
-                        this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
-                    }
-                } else if (!iblockdata.isAir()) {
-                    iblockdata.onBlockBreakStart(this.world, blockposition, this.player);
-                    f = iblockdata.calcBlockBreakingDelta(this.player, this.player.world, blockposition);
-                }
-
-                if (event.useItemInHand() == Event.Result.DENY) {
-                    // If we 'insta destroyed' then the client needs to be informed.
-                    if (f > 1.0f)
-                        this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
-                    return;
-                }
-                org.bukkit.event.block.BlockDamageEvent blockEvent = BukkitEventFactory.callBlockDamageEvent(this.player, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.player.inventory.getMainHandStack(), f >= 1.0f);
-
-                if (blockEvent.isCancelled()) {
-                    // Let the client know the block still exists
-                    this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, blockposition));
-                    ci.cancel();
-                    return;
-                }
-
-                if (blockEvent.getInstaBreak())
-                    f = 2.0f;
-
-                if (!iblockdata.isAir() && f >= 1.0F) {
-                    this.finishMining(blockposition, packetplayinblockdig_enumplayerdigtype, "insta mine");
-                } else {
-                    if (this.mining)
-                        this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(this.miningPos, this.world.getBlockState(this.miningPos), PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, false, "abort destroying since another started (client insta mine, server disagreed)"));
-
-                    this.mining = true;
-                    this.miningPos = blockposition.toImmutable();
-                    int j = (int) (f * 10.0F);
-
-                    this.world.setBlockBreakingInfo(this.player.getId(), blockposition, j);
-                    this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, true, "actual start of destroying"));
-                    this.blockBreakingProgress = j;
-                }
-            } else if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK) {
-                if (blockposition.equals(this.miningPos)) {
-                    int k = this.tickCounter - this.startMiningTime;
-
-                    iblockdata = this.world.getBlockState(blockposition);
-                    if (!iblockdata.isAir()) {
-                        float f1 = iblockdata.calcBlockBreakingDelta(this.player, this.player.world, blockposition) * (float) (k + 1);
-
-                        if (f1 >= 0.7F) {
-                            this.mining = false;
-                            this.world.setBlockBreakingInfo(this.player.getId(), blockposition, -1);
-                            this.finishMining(blockposition, packetplayinblockdig_enumplayerdigtype, "destroyed");
-                            return;
-                        }
-
-                        if (!this.failedToMine) {
-                            this.mining = false;
-                            this.failedToMine = true;
-                            this.failedMiningPos = blockposition;
-                            this.failedStartMiningTime = this.startMiningTime;
-                        }
-                    }
-                }
-
-                this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, true, "stopped destroying"));
-            } else if (packetplayinblockdig_enumplayerdigtype == PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK) {
-                this.mining = false;
-                if (!Objects.equals(this.miningPos, blockposition)) {
-                    this.world.setBlockBreakingInfo(this.player.getId(), this.miningPos, -1);
-                    this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(this.miningPos, this.world.getBlockState(this.miningPos), packetplayinblockdig_enumplayerdigtype, true, "aborted mismatched destroying"));
-                }
-
-                this.world.setBlockBreakingInfo(this.player.getId(), blockposition, -1);
-                this.player.networkHandler.sendPacket(new PlayerActionResponseS2CPacket(blockposition, this.world.getBlockState(blockposition), packetplayinblockdig_enumplayerdigtype, true, "aborted destroying"));
+    private int cb_stat = 0;
+    private PlayerInteractEvent cb_ev;
+    private float cb_f2 = 0;
+    private BlockPos cb_pos;
+    
+    @Inject(
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerInteractionManager;isCreative()Z"),
+            method = "processBlockBreakingAction", cancellable = true)
+    public void processBlockBreakkingAction_cb1(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int sequence, CallbackInfo ci) {
+    	cb_stat = 0;
+    	PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_BLOCK, pos, direction, this.player.getInventory().getMainHandStack(), Hand.MAIN_HAND);
+        this.cb_ev = event;
+    	// System.out.println("PlayerInteractEvent! " + pos.toString());
+        if (event.isCancelled()) {
+            for (Direction dir : Direction.values()) {
+                this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, pos.offset(dir)));
             }
-
+            this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, pos));
+            BlockEntity tileentity = this.world.getBlockEntity(pos);
+            if (tileentity != null) {
+                this.player.networkHandler.sendPacket(tileentity.toUpdatePacket());
+            }
+            ci.cancel();
+            return;
         }
     }
-
-    @Shadow public void finishMining(BlockPos blockposition, PlayerActionC2SPacket.Action packetplayinblockdig_enumplayerdigtype, String s) {}
+    
+    @Redirect(method = "processBlockBreakingAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;calcBlockBreakingDelta(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;)F"))
+    public float cb_2(BlockState instance, PlayerEntity playerEntity, BlockView blockView, BlockPos blockPos) {
+    	this.cb_pos = blockPos;
+    	float f2 = instance.calcBlockBreakingDelta(playerEntity, blockView, blockPos);
+    	this.cb_f2 = f2;
+        return f2;
+    }
+    
+    @Inject(method = "processBlockBreakingAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isAir()Z"), locals = LocalCapture.CAPTURE_FAILSOFT)
+    private void cb_3(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int sequence, CallbackInfo ci, float i) {
+        // System.out.println("A = " + i);
+    
+    	if (cb_stat == 1) {
+            if (cb_ev.useItemInHand() == Event.Result.DENY) {
+                if (cb_f2 > 1.0f) {
+                    this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, cb_pos));
+                }
+                return;
+            }
+            BlockDamageEvent blockEvent = BukkitEventFactory.callBlockDamageEvent(this.player, cb_pos.getX(), cb_pos.getY(), cb_pos.getZ(), this.player.getInventory().getMainHandStack(), cb_f2 >= 1.0f);
+            if (blockEvent.isCancelled()) {
+                this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(this.world, cb_pos));
+                ci.cancel();
+                return;
+            }
+            // System.out.println("INSTA CHECK");
+            if (blockEvent.getInstaBreak()) {
+                cb_f2 = 2.0f;
+                i = cb_f2;
+            }	
+    	}
+    }
+    
+    @Redirect(method = "processBlockBreakingAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isAir()Z"))
+    public boolean cb_4(BlockState instance) {
+    	// CraftBukkit: - Swings at air do *NOT* exist.
+    	if (cb_stat == 0 && cb_ev.useInteractedBlock() == Event.Result.DENY) {
+    		return true;
+    	}
+    	
+    	cb_stat += 1;
+    	
+		return instance.isAir();
+    }
+    
+    /*@Redirect(
+            method = "processBlockBreakingAction",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/network/ServerPlayerInteractionManager;method_41250(Lnet/minecraft/util/math/BlockPos;ZILjava/lang/String;)V"
+            )
+    )*/
+    @SuppressWarnings("unused")
+	private void block_damage_abort_event(ServerPlayerInteractionManager instance, BlockPos pos, boolean success, int sequence, String reason) {
+    	// TODO: Update our Paper-API
+    	// BukkitEventFactory.callBlockDamageAbortEvent(this.player, pos, this.player.getInventory().getMainHandStack());
+    	// instance.method_41250(pos, success, sequence, reason);
+    }
 
     @Inject(at = @At("HEAD"), method = "tryBreakBlock", cancellable = true)
     public void blockBreak(BlockPos blockposition, CallbackInfoReturnable<Boolean> ci) {

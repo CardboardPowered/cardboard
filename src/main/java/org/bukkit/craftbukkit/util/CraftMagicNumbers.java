@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Fluid;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.UnsafeValues;
@@ -23,6 +24,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.CreativeCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -46,6 +48,7 @@ import com.mojang.serialization.Dynamic;
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
 import io.papermc.paper.inventory.ItemRarity;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -113,9 +116,18 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         for (Item item : Registry.ITEM)
             ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getId(item).getPath().toUpperCase(Locale.ROOT)));
 
-        for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
-            FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
+        //for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
+        //    FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
 
+        for (net.minecraft.fluid.Fluid fluidType : Registry.FLUID) {
+            if (Registry.FLUID.getId(fluidType).getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                //Fluid fluid = org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluidType)));
+               // if (fluid != null) {
+               // 	FLUID_MATERIAL.put(fluidType, fluid);
+               // }
+            }
+        }
+        
         for (Material material : Material.values()) {
             if (material.isLegacy()) continue;
 
@@ -147,6 +159,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     public static void test() {
         // TODO: This needs to be kept updated when Spigot updates
         // It is the value of Material.values().length
+    	BukkitFabricMod.LOGGER.info("DEB: " + Material.values().length);
         int MATERIAL_LENGTH = 1525;
         int i = MATERIAL_LENGTH - 1;
 
@@ -157,7 +170,21 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         for (Block block : Registry.BLOCK) {
             Identifier id = Registry.BLOCK.getId(block);
             String name = standardize(id);
-            if (id.getNamespace().startsWith("minecraft")) continue;
+            String nam = id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT);
+            if (id.getNamespace().startsWith("minecraft")) {
+            	boolean has = false;
+            	try {
+            		Material.valueOf(id.getPath().toUpperCase());
+            		has = true;
+            	} catch (IllegalArgumentException e) {
+            		// Snapshot or API not updated.
+            		has = false;
+            		nam = id.getPath().toUpperCase(Locale.ROOT);
+            	}
+            	if (has) {
+            		continue;
+            	}
+            }
 
             Material material = BY_NAME.get(name);
             if (null == material && !names.contains(name)) {
@@ -176,7 +203,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
                 if (!(lastMod.equalsIgnoreCase(id.namespace)))
                     BukkitFabricMod.LOGGER.info("Registering modded blocks from mod '" + (lastMod = id.namespace) + "'..");
             }
-            Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
+            Material m = Material.getMaterial(nam);
             BLOCK_MATERIAL.put(block, m);
             MATERIAL_BLOCK.put(m, block);
         }
@@ -184,7 +211,21 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         for (Item item : Registry.ITEM) {
             Identifier id = Registry.ITEM.getId(item);
             String name = standardize(id);
-            if (id.getNamespace().startsWith("minecraft")) continue;
+            String nam = id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT);
+            if (id.getNamespace().startsWith("minecraft")) {
+            	boolean has = false;
+            	try {
+            		Material.valueOf(id.getPath().toUpperCase());
+            		has = true;
+            	} catch (IllegalArgumentException e) {
+            		// Snapshot or API not updated.
+            		nam = id.getPath().toUpperCase(Locale.ROOT);
+            		has = false;
+            	}
+            	if (has) {
+            		continue;
+            	}
+            }
 
             Material material = BY_NAME.get(name);
             if (null == material && !names.contains(name)) {
@@ -203,13 +244,13 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
                 if (!(lastMod.equalsIgnoreCase(id.namespace)))
                     BukkitFabricMod.LOGGER.info("Registering modded items from mod '" + (lastMod = id.namespace) + "'..");
             }
-            Material m = Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT));
+            Material m = Material.getMaterial(nam);
             ITEM_MATERIAL.put(item, m);
             MATERIAL_ITEM.put(m, item);
         }
 
-        for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
-            FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
+        //for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
+        //    FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
 
         EnumHelper.addEnums(Material.class, list);
 
@@ -405,7 +446,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         return false;
     }
 
-    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18");
+    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18", "1.19");
 
     @Override
     public void checkSupported(PluginDescriptionFile pdf) throws InvalidPluginException {
@@ -608,5 +649,33 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    
+    // 1.18.2 api:
+    
+	@Override
+	public CreativeCategory getCreativeCategory(Material arg0) {
+		return CreativeCategory.BUILDING_BLOCKS;
+	}
+	@Override
+	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(Material arg0, EquipmentSlot arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public @NotNull String getMainLevelName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public PlainTextComponentSerializer plainTextSerializer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public <T extends Keyed> org.bukkit.@NotNull Registry<T> registryFor(Class<T> arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -12,19 +12,19 @@ import org.cardboardpowered.impl.inventory.CardboardInventoryAbstractHorse;
 import org.cardboardpowered.interfaces.IHorseBaseEntity;
 
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 
 public abstract class CardboardAbstractHorse
 extends AnimalsImpl
 implements AbstractHorse {
 
-    public CardboardAbstractHorse(CraftServer server, HorseBaseEntity entity) {
+    public CardboardAbstractHorse(CraftServer server, AbstractHorseEntity  entity) {
         super(server, entity);
     }
 
     @Override
-    public HorseBaseEntity getHandle() {
-        return (HorseBaseEntity)this.nms;
+    public AbstractHorseEntity getHandle() {
+        return (AbstractHorseEntity)this.nms;
     }
 
     @Override

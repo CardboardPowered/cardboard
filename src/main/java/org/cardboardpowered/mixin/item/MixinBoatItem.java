@@ -35,6 +35,19 @@ import java.util.function.Predicate;
 @Mixin(BoatItem.class)
 public class MixinBoatItem extends Item {
 
+    // TODO: 1.19
+    /*@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
+    @Inject(method = "use", at = @At(value = "NEW", target = "(Lnet/minecraft/world/World;DDD)Lnet/minecraft/entity/vehicle/BoatEntity;"), cancellable = true)
+    public void bukkitize(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult> ci) {
+        ItemStack itemstack = player.getStackInHand(hand);
+        BlockHitResult movingobjectpositionblock = raycast(world, player, RaycastContext.FluidHandling.ANY);
+        org.bukkit.event.player.PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent((ServerPlayerEntity) player, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getSide(), itemstack, hand);
+
+        if (event.isCancelled()) {
+            ci.setReturnValue(new TypedActionResult(ActionResult.PASS, itemstack));
+        }
+    }*/
+
     // @formatter:off
     @Shadow @Final private BoatEntity.Type type;
     @Shadow @Final private static Predicate<Entity> RIDERS;

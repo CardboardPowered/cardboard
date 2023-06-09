@@ -20,7 +20,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerMetadata;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerQueryNetworkHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 @MixinInfo(events = {"ServerListPingEvent"})
@@ -38,7 +37,8 @@ public class MixinServerQueryNetworkHandler {
     @Overwrite
     public void onRequest(QueryRequestC2SPacket packetstatusinstart) {
         if (this.responseSent) {
-            this.connection.disconnect(new LiteralText("BF: Response sent!"));
+            // this.connection.disconnect(new LiteralText("BF: Response sent!"));
+        	this.connection.disconnect(Text.of("BF: Response sent!"));
         } else {
             this.responseSent = true;
             MinecraftServer server = CraftServer.server;

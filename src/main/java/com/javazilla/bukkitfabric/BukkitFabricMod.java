@@ -28,12 +28,15 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockCookEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.cardboardpowered.api.event.CardboardEventManager;
 import org.cardboardpowered.impl.CardboardPotionEffectType;
@@ -49,6 +52,7 @@ import com.javazilla.bukkitfabric.nms.MappingsReader;
 import me.isaiah.common.event.EventHandler;
 import me.isaiah.common.event.EventRegistery;
 import me.isaiah.common.event.block.BlockEntityWriteNbtEvent;
+import me.isaiah.common.event.block.LeavesDecayEvent;
 import me.isaiah.common.event.entity.BlockEntityLoadEvent;
 import me.isaiah.common.event.entity.CampfireBlockEntityCookEvent;
 import me.isaiah.common.event.entity.player.PlayerGamemodeChangeEvent;
@@ -56,6 +60,8 @@ import me.isaiah.common.event.entity.player.ServerPlayerInitEvent;
 import me.isaiah.common.event.server.ServerWorldInitEvent;
 import me.isaiah.common.fabric.FabricWorld;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.ItemStack;
@@ -78,6 +84,26 @@ public class BukkitFabricMod implements ModInitializer {
     public static List<ServerLoginNetworkHandler> NETWORK_CACHE = new ArrayList<>();
     public static Method GET_SERVER;
 
+    /*public void updateNeighbors(int recursionLimit) {
+    	BlockPos pos;
+       // WorldServer world = this.getWorld();
+    	ServerWorld world = null;
+       // oldState.b((GeneratorAccess)world, pos, 2, recursionLimit);
+        //if (this.sideEffectSet.shouldApply(SideEffect.EVENTS)) {
+            WorldImpl craftWorld = null;//world.getWorld();
+            
+            
+            
+            BlockPhysicsEvent event = new BlockPhysicsEvent(craftWorld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), (BlockData)CraftBlockData.fromData(null));
+            world.getCraftServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+        //}
+        //newState.a((GeneratorAccess)world, pos, 2, recursionLimit);
+        //newState.b((GeneratorAccess)world, pos, 2, recursionLimit);
+    }*/
+    
     @Override
     public void onInitialize() {
         LOGGER.info("");
@@ -87,6 +113,15 @@ public class BukkitFabricMod implements ModInitializer {
         int r = EventRegistery.registerAll(this);
         LOGGER.info("Registered '" + r + "' iCommon events.");
 
+        
+        
+        
+        //ServerMessageEvents.CHAT_MESSAGE.register((message, source, params) -> {
+        //	LOGGER.info("DEBUG: " + message.toString());
+        //});
+        
+       // test();
+        
         try {
             MappingsReader.main(null);
         } catch (IOException e) {
@@ -104,10 +139,107 @@ public class BukkitFabricMod implements ModInitializer {
             }
         }
     }
+    
+    public PlayerImpl getPlayer_0(ServerPlayerEntity e) {
+        return (PlayerImpl) ((IMixinServerEntityPlayer)(Object)e).getBukkitEntity();
+    }
+    
+  /*  public void test() {
+    	ServerMessageDecoratorEvent.EVENT.register(ServerMessageDecoratorEvent.CONTENT_PHASE, (sender, message) -> {
+    		LOGGER.info("debug content phase: " + message.toString() + ", " + message.getString());
+
+    		String s = message.getString();
+    		boolean async = true;
+    		
+    		Player player = getPlayer_0(sender);
+            AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(CraftServer.server));
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0) {
+                // Evil plugins still listening to deprecated event
+                final PlayerChatEvent queueEvent = new PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
+                queueEvent.setCancelled(event.isCancelled());
+                
+                queueEvent.getRecipients();
+                
+                Waitable<?> waitable = new WaitableImpl(()-> {
+                    Bukkit.getPluginManager().callEvent(queueEvent);
+
+                    if (queueEvent.isCancelled())
+                        return;
+
+                    String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
+                    for (Text txt : CraftChatMessage.fromString(message))
+                        CraftServer.server.sendSystemMessage(txt, queueEvent.getPlayer().getUniqueId());
+                    if (((LazyPlayerSet) queueEvent.getRecipients()).isLazy()) {
+                        for (ServerPlayerEntity plr : CraftServer.server.getPlayerManager().getPlayerList())
+                            for (Text txt : CraftChatMessage.fromString(message))
+                                plr.sendMessage(txt, false);
+                    } else for (Player plr : queueEvent.getRecipients())
+                        plr.sendMessage(message);
+                });
+
+                if (async)
+                    ((IMixinMinecraftServer)CraftServer.server).getProcessQueue().add(waitable);
+                else waitable.run();
+                try {
+                    waitable.get();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // This is proper habit for java. If we aren't handling it, pass it on!
+                } catch (ExecutionException e) {
+                    throw new RuntimeException("Exception processing chat event", e.getCause());
+                }
+            } else {
+                if (event.isCancelled()) return;
+
+                s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
+                server.sendSystemMessage(new LiteralText(s), player.getUniqueId());
+                if (((LazyPlayerSet) event.getRecipients()).isLazy()) {
+                    for (ServerPlayerEntity recipient : server.getPlayerManager().players)
+                        for (Text txt : CraftChatMessage.fromString(s))
+                            recipient.sendMessage(txt, MessageType.CHAT, player.getUniqueId());
+                } else for (Player recipient : event.getRecipients())
+                    recipient.sendMessage(s);
+            }
+    		
+    		
+    		return CompletableFuture.completedFuture(message);
+    		
+    	});
+    	
+    }*/
+    
+    
+    @EventHandler
+    public void on_leaves_decay(LeavesDecayEvent ev) {
+    	WorldImpl w = ((IMixinWorld)ev.world).getWorldImpl();
+    	org.bukkit.event.block.LeavesDecayEvent event = 
+				new org.bukkit.event.block.LeavesDecayEvent(w.getBlockAt(ev.pos.getX(), ev.pos.getY(), ev.pos.getZ()));
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled() || !(ev.world.getBlockState(ev.pos).getBlock() instanceof LeavesBlock)) {
+            ev.setCanceled(true);
+        }
+    }
+    
+    /*public void register_leaves_decay_callback() {
+    	LeavesDecayCallback.EVENT.register((state, world, pos) -> {
+    		
+    		org.bukkit.event.block.LeavesDecayEvent event = 
+    				new org.bukkit.event.block.LeavesDecayEvent(((IMixinWorld)world).getWorldImpl().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
+            Bukkit.getPluginManager().callEvent(event);
+
+            if (event.isCancelled() || world.getBlockState(pos).getBlock() != (LeavesBlock)(Object)this) {
+                return ActionResult.FAIL;
+            }
+    		
+    		return ActionResult.PASS;
+    	});
+    }*/
 
     @EventHandler
     public void on_world_init__(ServerWorldInitEvent ev) {
-        System.out.println("on_world_init");
+        // System.out.println("on_world_init");
 
         FabricWorld fw = (FabricWorld) ev.getWorld();
 
@@ -125,13 +257,11 @@ public class BukkitFabricMod implements ModInitializer {
         if (fi.exists()) {
             File dim = new File(fi, "DIM1");
             if (dim.exists()) {
-                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + name + "_the_end !");
+                BukkitFabricMod.LOGGER.info("---- Migration of world file: " + name + "_the_end !");
                 BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
-                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
                 if (dim.renameTo(van)) {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
                 } else {
-                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
                     BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
                 }
                 fi.delete();
@@ -144,13 +274,11 @@ public class BukkitFabricMod implements ModInitializer {
         if (fi2.exists()) {
             File dim = new File(fi2, "DIM-1");
             if (dim.exists()) {
-                BukkitFabricMod.LOGGER.info("------ Migration of world file: " + fi2.getName() + " !");
+                BukkitFabricMod.LOGGER.info("---- Migration of world file: " + fi2.getName() + " !");
                 BukkitFabricMod.LOGGER.info("Cardboard is currently migrating the world back to the vanilla format!");
-                BukkitFabricMod.LOGGER.info("Do to the differences between Spigot & Fabric world folders, we require migration.");
                 if (dim.renameTo(van2)) {
                     BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder complete ----");
                 } else {
-                    BukkitFabricMod.LOGGER.info("---- Migration of old bukkit format folder FAILED! ----");
                     BukkitFabricMod.LOGGER.info("Please follow these instructions: https://s.cardboardpowered.org/world-migration-info");
                 }
                 fi.delete();

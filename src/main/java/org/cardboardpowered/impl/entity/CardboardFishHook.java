@@ -130,4 +130,16 @@ public class CardboardFishHook extends ProjectileImpl implements FishHook {
         
     }
 
+	@Override
+	public int getWaitTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setWaitTime(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -10,6 +10,8 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.ZombieVillager;
+import org.jetbrains.annotations.Nullable;
 
 import com.destroystokyo.paper.entity.villager.Reputation;
 import com.google.common.base.Preconditions;
@@ -156,5 +158,11 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
     public void shakeHead() {
         // TODO Auto-generated method stub
     }
+
+	@Override
+	public @Nullable ZombieVillager zombify() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

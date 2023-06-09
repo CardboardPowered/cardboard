@@ -19,7 +19,7 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+// import net.minecraft.text.TranslatableText;
 
 @Mixin(PlayerScreenHandler.class)
 public class MixinPlayerScreenHandler extends MixinScreenHandler implements NamedScreenHandlerFactory {
@@ -34,7 +34,9 @@ public class MixinPlayerScreenHandler extends MixinScreenHandler implements Name
        // this.craftingResult = new CraftingResultInventory();
        // this.craftingInput = new CraftingInventory((PlayerScreenHandler)(Object)this, 2, 2);
         this.player = playerinventory;
-        setTitle(new TranslatableText("container.crafting"));
+        
+        // TODO: 1.19:
+        // setTitle(new TranslatableText("container.crafting"));
     }
 
     @Override

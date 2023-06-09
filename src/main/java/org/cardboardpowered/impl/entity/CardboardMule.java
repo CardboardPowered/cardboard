@@ -30,4 +30,16 @@ public class CardboardMule extends CardboardChestedHorse implements Mule {
         return Horse.Variant.MULE;
     }
 
+	@Override
+	public boolean isEatingHaystack() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setEatingHaystack(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -37,7 +37,7 @@ import org.cardboardpowered.impl.world.WorldImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 

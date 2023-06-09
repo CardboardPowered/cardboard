@@ -20,7 +20,7 @@ import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.LiteralTextContent;
 import net.minecraft.util.Formatting;
 
 @MixinInfo(events = {"SignChangeEvent"})
@@ -43,7 +43,7 @@ public class MixinSPNH_SignUpdateEvent {
             String[] lines = new String[4];
     
             for (int i = 0; i < astring.length; ++i)
-                lines[i] = Formatting.strip(new LiteralText(Formatting.strip(astring[i])).getString());
+                lines[i] = Formatting.strip(new LiteralTextContent (Formatting.strip(astring[i])).toString());
     
             ((IMixinMinecraftServer)CraftServer.server).cardboard_runOnMainThread(() -> {
                 try {

@@ -110,7 +110,7 @@ import net.minecraft.entity.passive.DolphinEntity;
 import net.minecraft.entity.passive.DonkeyEntity;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.passive.GolemEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.LlamaEntity;
@@ -187,7 +187,10 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     public void sendSystemMessage(Text message) {
-        ((Entity) (Object) this).sendSystemMessage(message, UUID.randomUUID());
+        // TODO: 1.19
+    	
+    	((Entity) (Object) this).sendMessage(message);
+    	//((Entity) (Object) this).sendSystemMessage(message, UUID.randomUUID());
     }
 
     public boolean valid = false;
@@ -301,7 +304,7 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
                         else if (entity instanceof ParrotEntity) { return new ParrotImpl(server, (ParrotEntity) entity); }
                     }
                     //else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
-                    else if (entity instanceof HorseBaseEntity) {
+                    else if (entity instanceof AbstractHorseEntity) {
                         if (entity instanceof AbstractDonkeyEntity){
                             if (entity instanceof DonkeyEntity) { return new CardboardDonkey(server, (DonkeyEntity) entity); }
                             else if (entity instanceof MuleEntity) { return new CardboardMule(server, (MuleEntity) entity); }
@@ -530,9 +533,6 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         i = event.getAmount();
     }
 
-   // @Shadow
-   // public void remove(RemovalReason r) {}
-    //public void removeBF() {remove(RemovalReason.DISCARDED);} // Helper
     public void removeBF() {
         ((me.isaiah.common.cmixin.IMixinEntity)this).Iremove(IRemoveReason.DISCARDED);
     }
@@ -544,34 +544,6 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     @Shadow
     private TeleportTarget getTeleportTarget(ServerWorld w) {
         return null;
-    }
-
-    private TeleportTarget c_portalTarget;
-    /**
-     * Correct position on portal teleport.
-     */
-    @Redirect(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;moveToWorld(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/entity/Entity;"), method = { "tickNetherPortal" })
-    public Entity tickNetherPortal_cardboard_moveToWorld(Entity entity, ServerWorld world) {
-        Entity e = entity;
-        //if (entity instanceof PlayerEntity) {
-            /*TeleportTarget tar = getTeleportTarget(world);
-            Vec3d vec = tar.position;
-            c_portalTarget = tar;
-
-            Chunk c = world.getChunk(new BlockPos(vec.x, vec.y, vec.z));
-            boolean high = c.isOutOfHeightLimit((int)vec.y);
-
-            if (!high) {
-                e = entity.moveToWorld(world);
-                e.teleport(vec.x, vec.y + 1, vec.z);
-                e.refreshPosition();
-            }
-            this.justPortal = true;*/
-        //} else {
-        BukkitFabricMod.LOGGER.info("Tick portal move to world debug");
-            e = entity.moveToWorld(world);
-        //}
-        return e;
     }
 
     /**

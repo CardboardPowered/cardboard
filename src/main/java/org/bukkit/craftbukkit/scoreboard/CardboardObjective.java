@@ -6,6 +6,7 @@ import net.minecraft.scoreboard.ScoreboardObjective;
 import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.entity.Entity;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -140,6 +141,8 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
         return !(this.objective != other.objective && (this.objective == null || !this.objective.equals(other.objective)));
     }
 
+    // 1.18.2 api:
+    
     @Override
     public @NotNull Component displayName() throws IllegalStateException {
         // TODO Auto-generated method stub
@@ -151,5 +154,11 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
         // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public @NotNull Score getScoreFor(@NotNull Entity arg0) throws IllegalArgumentException, IllegalStateException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

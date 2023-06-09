@@ -22,6 +22,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.loot.LootTable;
 import org.cardboardpowered.impl.CardboardDragonBattle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardEnderdragon extends CardboardComplexEntity implements EnderDragon {
 
@@ -204,4 +205,16 @@ public class CardboardEnderdragon extends CardboardComplexEntity implements Ende
         // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public @NotNull Location getPodium() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPodium(@Nullable Location arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

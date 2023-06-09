@@ -181,7 +181,7 @@ public class CardboardAdventure {
 
     public static String asJsonString(final Text component, final Locale locale) {
         if ((Object)component instanceof CardboardAdventureComponent) {
-            return asJsonString(((CardboardAdventureComponent)(Object) component).wrapped, locale);
+            return asJsonString(((CardboardAdventureComponent)(Object) component).adventure, locale);
         }
         return Text.Serializer.toJson(component);
     }

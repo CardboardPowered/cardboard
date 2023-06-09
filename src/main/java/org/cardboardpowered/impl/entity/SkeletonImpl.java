@@ -80,4 +80,10 @@ public class SkeletonImpl extends MonsterImpl implements Skeleton {
         
     }
 
+	@Override
+	public int inPowderedSnowTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

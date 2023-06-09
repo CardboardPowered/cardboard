@@ -13,7 +13,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 
 import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 @SuppressWarnings("deprecation")
@@ -85,7 +84,7 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
     public static Text[] sanitizeLines(String[] lines) {
         Text[] components = new Text[4];
         for (int i = 0; i < 4; i++)
-            components[i] = (i < lines.length && lines[i] != null) ? CraftChatMessage.fromString(lines[i])[0] : new LiteralText("");
+            components[i] = (i < lines.length && lines[i] != null) ? CraftChatMessage.fromString(lines[i])[0] : Text.of("");
         return components;
     }
 

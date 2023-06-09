@@ -3,11 +3,11 @@ import com.modrinth.minotaur.TaskModrinthUpload
 import com.modrinth.minotaur.request.VersionType
 
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.1-SNAPSHOT'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'java-library'
-    id "com.peterabeles.gversion" version "1.8.3"
+    id "com.peterabeles.gversion" version "1.10.2"
     id "com.modrinth.minotaur" version "1.2.1"
 }
 
@@ -40,6 +40,8 @@ repositories {
 
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://repo.codemc.io/repository/maven-releases/' }
+	maven { url = 'https://repo.spongepowered.org/maven' }
+	maven { url = 'https://maven.izzel.io/releases' }
     mavenCentral()
 }
 
@@ -63,7 +65,7 @@ dependencies {
     	"fabric-screen-handler-api-v1"
     ]
 
-    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.18.2", "1.18.2", null)
+    DefaultExternalModuleDependency ic = new DefaultExternalModuleDependency("com.javazilla.mods", "icommon-fabric-1.19", "1.19.2", null)
     ic.setChanging(true) // Make sure we get the latest version of iCommon
 
     //include(modImplementation(ic))
@@ -71,12 +73,18 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+    modImplementation fileTree(dir: 'libs', include: 'MohistRemapper-0.3.jar')
+    extraLibs fileTree(dir: 'libs', include: 'MohistRemapper-0.3.jar')
+	
+	modImplementation "io.izzel:tools:1.3.0"
+    extraLibs "io.izzel:tools:1.3.0"
+
     extraLibs fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     extraLibs fileTree(dir: 'libs', include: 'adventure.jar')
     //extraLibs group: "org.jetbrains", name: "annotations", version: "20.1.0"
     extraLibs group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
 
-    extraLibs("org.yaml:snakeyaml:1.27")
+    extraLibs("org.yaml:snakeyaml:1.33")
 
     // 
     compileOnly fileTree(dir: 'libs', include: "${project.paper_jar}")
@@ -153,7 +161,7 @@ jar {
         (configurations.extraLibs - configurations.removeLibs).filter{ it.exists() }.collect { it.isDirectory() ? it : zipTree(it) }
     }
     exclude("**/mojang-translations/")
-	exclude("*.jar") // WHY GRADLE, WHY?
+	// exclude("*.jar") // WHY GRADLE, WHY?
 }
 
 shadowJar {
@@ -174,10 +182,10 @@ task publishModrinth (type: TaskModrinthUpload){ // Make sure it runs after buil
     projectId = 'MLYQ9VGP'
     versionType = VersionType.BETA
     versionNumber = '1.17-' + System.env.BUILD_NUMBER // Will fail if Modrinth has this version already
-    versionName = '#' + System.env.BUILD_NUMBER + ' (1.17.1 & 1.18)'
+    versionName = '#' + System.env.BUILD_NUMBER + ' (1.19.2)'
     // On fabric, use 'remapJar' instead of 'jar'
     uploadFile = remapJar // This is the java jar task. If it can't find the jar, try 'jar.outputs.getFiles().asPath' in place of 'jar' 
-    addGameVersion('1.17.1') // Call this multiple times to add multiple game versions. There are tools that can help you generate the list of versions
-    addGameVersion('1.18')
+    addGameVersion('1.19.2') // Call this multiple times to add multiple game versions. There are tools that can help you generate the list of versions
+    // addGameVersion('1.18')
     addLoader('fabric')
 }

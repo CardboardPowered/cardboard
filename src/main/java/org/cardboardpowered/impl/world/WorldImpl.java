@@ -51,6 +51,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Raid;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.StructureType;
 import org.bukkit.TreeType;
 import org.bukkit.World;
@@ -88,6 +89,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
@@ -175,7 +177,7 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.ConfiguredFeatures;
-import net.minecraft.world.gen.feature.StructureFeature;
+// import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.level.ServerWorldProperties;
 
 @SuppressWarnings("deprecation")
@@ -999,7 +1001,7 @@ public class WorldImpl implements World {
     public boolean isChunkGenerated(int x, int z) {
         try {
             return isChunkLoaded(x, z) || nms.getChunkManager().threadedAnvilChunkStorage.getNbt(new ChunkPos(x, z)) != null;
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -1138,7 +1140,9 @@ public class WorldImpl implements World {
 
     @Override
     public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
-        if (loc == null || sound == null || category == null) return;
+        // TODO: 1.19
+    	
+    	/*if (loc == null || sound == null || category == null) return;
 
         double x = loc.getX();
         double y = loc.getY();
@@ -1146,7 +1150,7 @@ public class WorldImpl implements World {
 
         PlaySoundIdS2CPacket packet = new PlaySoundIdS2CPacket(new Identifier(sound), net.minecraft.sound.SoundCategory.valueOf(category.name()), new Vec3d(x, y, z), volume, pitch);
         nms.getServer().getPlayerManager().sendToAround(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, nms.getRegistryKey(), packet);
-    }
+    */}
 
     @Override
     public RayTraceResult rayTrace(Location start, Vector direction, double maxDistance, FluidCollisionMode mode, boolean ignorePassableBlocks, double raySize, Predicate<Entity> filter) {
@@ -1757,7 +1761,8 @@ public class WorldImpl implements World {
 
                 Direction dir = CraftBlock.blockFaceToNotch(face).getOpposite();
                 if (Painting.class.isAssignableFrom(clazz)) {
-                    entity = new PaintingEntity(nms, new BlockPos(x, y, z), dir);
+                    // TODO: 1.19
+                	// entity = new PaintingEntity(nms, new BlockPos(x, y, z), dir);
                 } else if (ItemFrame.class.isAssignableFrom(clazz)) {
                     entity = new ItemFrameEntity(nms, new BlockPos(x, y, z), dir);
                 }
@@ -2452,5 +2457,81 @@ public class WorldImpl implements World {
         // TODO Auto-generated method stub
         
     }
+    
+    // 1.18.2 API:
+
+	@Override
+	public boolean generateTree(@NotNull Location arg0, @NotNull Random arg1, @NotNull TreeType arg2,
+			@Nullable Predicate<BlockState> arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public @NotNull Biome getComputedBiome(int arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull BiomeProvider vanillaBiomeProvider() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull PersistentDataContainer getPersistentDataContainer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getSimulationDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getSpawnLimit(@NotNull SpawnCategory arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long getTicksPerSpawns(@NotNull SpawnCategory arg0) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull Sound arg1, float arg2, float arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull Sound arg1, @NotNull SoundCategory arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSimulationDistance(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSpawnLimit(@NotNull SpawnCategory arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setTicksPerSpawns(@NotNull SpawnCategory arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

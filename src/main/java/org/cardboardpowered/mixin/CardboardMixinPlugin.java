@@ -1,10 +1,10 @@
 package org.cardboardpowered.mixin;
 
 import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.SHA1;
+import static org.cardboardpowered.library.LibraryManager.HashAlgorithm.MD5;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -64,9 +64,11 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         libraries.add( new Library("io.papermc", "paper-api", "1.17-dev", SHA1, "1011c06b51835ac752e2f0b2a22d9188c566c169", "paper") );
 
         // Paper API Libraries
-        libraries.add( new Library("org.xerial", "sqlite-jdbc", "3.21.0.1", SHA1, "81a0bcda2f100dc91dc402554f60ed2f696cded5", null) );
-        libraries.add( new Library("mysql", "mysql-connector-java", "5.1.46", SHA1, "9a3e63b387e376364211e96827bc27db8d7a92e9", null) );
-        libraries.add( new Library("commons-lang", "commons-lang", "2.6", SHA1, "0ce1edb914c94ebc388f086c6827e8bdeec71ac2", null) );
+        libraries.add( new Library("org.xerial", "sqlite-jdbc", "3.41.0.0", MD5, "0d63ee5b583e9a75ea1717ffce63fed8", null));
+		//libraries.add( new Library("org.xerial", "sqlite-jdbc", "3.21.0.1", SHA1, "81a0bcda2f100dc91dc402554f60ed2f696cded5", null) );
+        //libraries.add( new Library("mysql", "mysql-connector-java", "5.1.46", SHA1, "9a3e63b387e376364211e96827bc27db8d7a92e9", null) );
+        libraries.add( new Library("com.mysql", "mysql-connector-j", "8.0.32", MD5, "25bf3b3cd262065283962078dc82e99c", null));
+		libraries.add( new Library("commons-lang", "commons-lang", "2.6", SHA1, "0ce1edb914c94ebc388f086c6827e8bdeec71ac2", null) );
         libraries.add( new Library("org.apache.commons", "commons-collections4", "4.4", SHA1, "62ebe7544cb7164d87e0637a2a6a2bdc981395e8", null) );
         libraries.add( new Library("commons-collections", "commons-collections", "3.2.1", SHA1, "761ea405b9b37ced573d2df0d1e3a4e0f9edc668", null) );
         libraries.add( new Library("org.cardboardpowered", "intermediary-adapter", "7.3", SHA1, "", null) );
@@ -76,8 +78,6 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         }
 
         new LibraryManager(repository, "lib", true, 2, libraries).run();
-
-        //System.setProperty("worldedit.bukkit.adapter", "com.sk89q.worldedit.bukkit.adapter.impl.Spigot_Cardboard");
     }
 
     @Override
@@ -102,12 +102,21 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             return false;
         }
 
+        if (mixin.equals("item.MixinChorusFruitItem")) {
+            FabricLoader loader = FabricLoader.getInstance();
+            boolean create_mod = loader.isModLoaded("porting_lib");
+            if (create_mod) {
+                return false;
+            }
+        }
+
         if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent") && 
                 should_force_alternate_chat()) {
             logger.info("Architectury Mod detected! Disabling async chat from NetworkHandler.");
             return false;
         }
-        if (mixin.equals("network.MixinPlayerManager_ChatEvent")) {
+
+        /*if (mixin.equals("network.MixinPlayerManager_ChatEvent")) {
             if (should_force_alternate_chat()) {
                 logger.info("Architectury Mod detected! Using alternative async chat from PlayerManager");
                 return true;
@@ -117,11 +126,19 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             logger.info("Alternative ChatEvent Mixin enabled in config. Changing status on: " + mixin);
             if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent")) return false;
             if (mixin.equals("network.MixinPlayerManager_ChatEvent")) return true;
+        }*/
+        
+        String mcver = GameVersion.create().getReleaseTarget();
+        if (mcver.contains("1.18") && mixin.endsWith("_1_19")) {
+        	return false;
+        }
+        if (mcver.contains("1.19") && mixin.endsWith("_1_18")) {
+        	return false;
         }
 
 
         // Disable mixin if event is not found in plugins.
-        if (not_has_event(mixin, "LeashKnotEntity", "PlayerLeashEntityEvent") && not_has_event(mixin, "LeashKnotEntity", "PlayerUnleashEntityEvent")) return false;
+        /*if (not_has_event(mixin, "LeashKnotEntity", "PlayerLeashEntityEvent") && not_has_event(mixin, "LeashKnotEntity", "PlayerUnleashEntityEvent")) return false;
         if (not_has_event(mixin, "GoToWorkTask", "VillagerCareerChangeEvent")) return false;
         if (not_has_event(mixin, "LoseJobOnSiteLossTask", "VillagerCareerChangeEvent")) return false;
         if (not_has_event(mixin, "PiglinBrain", "EntityPickupItemEvent")) return false;
@@ -131,7 +148,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         if (not_has_event(mixin, "Explosion", "EntityExplodeEvent") && not_has_event(mixin, "Explosion", "BlockExplodeEvent")) return false;
         if (not_has_event(mixin, "LeavesBlock", "LeavesDecayEvent")) return false;
         if (not_has_event(mixin, "PlayerAdvancementTracker", "PlayerAdvancementDoneEvent")) return false;
-
+*/
         if (mixinClassName.contains("ServerPlayNetworkHandler")) return true;
 
         try {

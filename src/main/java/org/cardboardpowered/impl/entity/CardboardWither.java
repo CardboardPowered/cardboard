@@ -5,6 +5,8 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Wither;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.boss.WitherEntity;
 
@@ -78,5 +80,17 @@ public class CardboardWither extends MonsterImpl implements Wither {
         // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public @Nullable LivingEntity getTarget(@NotNull Head arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setTarget(@NotNull Head arg0, @Nullable LivingEntity arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

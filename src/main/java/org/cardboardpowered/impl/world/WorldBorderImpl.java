@@ -23,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.jetbrains.annotations.Nullable;
 
 public class WorldBorderImpl implements WorldBorder {
 
@@ -124,5 +125,11 @@ public class WorldBorderImpl implements WorldBorder {
         Preconditions.checkArgument(location != null, "Null Location");
         return location.getWorld().equals(this.world) && this.handle.contains(new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
+
+	@Override
+	public @Nullable World getWorld() {
+		// TODO Auto-generated method stub
+		return world;
+	}
 
 }

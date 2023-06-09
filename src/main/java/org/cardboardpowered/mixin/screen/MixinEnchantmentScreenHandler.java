@@ -52,7 +52,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
 
     @Shadow public Inventory inventory;
     @Shadow public ScreenHandlerContext context;
-    @Shadow public Random random;
+    //@Shadow public Random random;
     @Shadow public Property seed;
 
     @Shadow public int[] enchantmentPower;
@@ -73,7 +73,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
      * @reason .
      * @author .
      */
-    @Overwrite
+    /*@Overwrite
     public void onContentChanged(Inventory iinventory) {
         if (iinventory == this.inventory) {
             ItemStack itemstack = iinventory.getStack(0);
@@ -159,7 +159,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
             }
         }
 
-    }
+    }*/
 
     /**
      * @reason .

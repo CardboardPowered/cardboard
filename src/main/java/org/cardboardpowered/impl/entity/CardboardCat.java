@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 
 import net.minecraft.entity.passive.CatEntity;
+
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Cat;
@@ -32,7 +33,7 @@ public class CardboardCat extends TameableAnimalImpl implements Cat {
 
     @Override
     public Type getCatType() {
-        return Type.values()[getHandle().getCatType()];
+        return Type.ALL_BLACK;// TODO: 1.19: Type.values()[getHandle().getCatType()];
     }
 
     @Override
@@ -42,7 +43,7 @@ public class CardboardCat extends TameableAnimalImpl implements Cat {
             type = Type.ALL_BLACK;
         }
 
-        getHandle().setCatType(type.ordinal());
+       // getHandle().setCatType(type.ordinal());
     }
 
     @SuppressWarnings("deprecation")

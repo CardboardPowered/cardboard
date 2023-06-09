@@ -127,7 +127,6 @@ accessible	field	net/minecraft/entity/mob/MobEntity	lootTable	Lnet/minecraft/uti
 mutable	field	net/minecraft/entity/mob/MobEntity	lootTable	Lnet/minecraft/util/Identifier;
 accessible	field	net/minecraft/entity/mob/MobEntity	lootTableSeed	J
 mutable	field	net/minecraft/entity/mob/MobEntity	lootTableSeed	J
-accessible	method	net/minecraft/entity/mob/MobEntity	dropLoot	(Lnet/minecraft/entity/damage/DamageSource;Z)V
 accessible	method	net/minecraft/entity/mob/MobEntity	loot	(Lnet/minecraft/entity/ItemEntity;)V
 extendable	class	net/minecraft/entity/EntityPose
 extendable	class	net/minecraft/entity/EntityInteraction$1
@@ -168,10 +167,6 @@ mutable	field	net/minecraft/inventory/CraftingInventory	width	I
 accessible	field	net/minecraft/inventory/CraftingInventory	height	I
 mutable	field	net/minecraft/inventory/CraftingInventory	height	I
 accessible	field	net/minecraft/item/AirBlockItem	block	Lnet/minecraft/block/Block;
-accessible	method	net/minecraft/item/ArmorStandItem	setRotations	(Lnet/minecraft/entity/decoration/ArmorStandEntity;Ljava/util/Random;)V
-accessible	field	net/minecraft/item/BannerPatternItem	pattern	Lnet/minecraft/block/entity/BannerPattern;
-mutable	field	net/minecraft/item/BannerPatternItem	pattern	Lnet/minecraft/block/entity/BannerPattern;
-accessible	method	net/minecraft/item/BedItem	place	(Lnet/minecraft/item/ItemPlacementContext;Lnet/minecraft/block/BlockState;)Z
 accessible	field	net/minecraft/item/BlockItem	block	Lnet/minecraft/block/Block;
 mutable	field	net/minecraft/item/BlockItem	block	Lnet/minecraft/block/Block;
 accessible	method	net/minecraft/item/BlockItem	with	(Lnet/minecraft/block/BlockState;Lnet/minecraft/state/property/Property;Ljava/lang/String;)Lnet/minecraft/block/BlockState;
@@ -312,8 +307,6 @@ accessible	field	net/minecraft/world/explosion/Explosion	entity	Lnet/minecraft/e
 mutable	field	net/minecraft/world/explosion/Explosion	entity	Lnet/minecraft/entity/Entity;
 accessible	field	net/minecraft/world/explosion/Explosion	power	F
 mutable	field	net/minecraft/world/explosion/Explosion	power	F
-accessible	field	net/minecraft/world/explosion/Explosion	affectedBlocks	Ljava/util/List;
-mutable	field	net/minecraft/world/explosion/Explosion	affectedBlocks	Ljava/util/List;
 accessible	field	net/minecraft/world/explosion/Explosion	affectedPlayers	Ljava/util/Map;
 mutable	field	net/minecraft/world/explosion/Explosion	affectedPlayers	Ljava/util/Map;
 extendable	class	net/minecraft/world/GameMode
@@ -344,7 +337,6 @@ accessible	method	net/minecraft/block/ComparatorBlock	update	(Lnet/minecraft/wor
 accessible	method	net/minecraft/block/AbstractRedstoneGateBlock	hasPower	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Z
 extendable	class	net/minecraft/block/DoubleBlockProperties$Type
 extendable	class	net/minecraft/block/DoubleBlockProperties$PropertySource$Pair
-accessible	method	net/minecraft/block/DropperBlock	dispense	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V
 accessible	method	net/minecraft/block/WallMountedBlock	getDirection	(Lnet/minecraft/block/BlockState;)Lnet/minecraft/util/math/Direction;
 accessible	method	net/minecraft/block/LadderBlock	canPlaceOn	(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;)Z
 accessible	method	net/minecraft/block/LecternBlock	setPowered	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Z)V
@@ -502,18 +494,9 @@ mutable	field	net/minecraft/util/math/Vec3i	z	I
 accessible	field	net/minecraft/data/dev/NbtProvider	root	Lnet/minecraft/data/DataGenerator;
 mutable	field	net/minecraft/data/dev/NbtProvider	root	Lnet/minecraft/data/DataGenerator;
 accessible	method	net/minecraft/data/dev/NbtProvider	getLocation	(Ljava/nio/file/Path;Ljava/nio/file/Path;)Ljava/lang/String;
-accessible	field	net/minecraft/data/server/AbstractTagProvider	root	Lnet/minecraft/data/DataGenerator;
-mutable	field	net/minecraft/data/server/AbstractTagProvider	root	Lnet/minecraft/data/DataGenerator;
 accessible	field	net/minecraft/data/server/AbstractTagProvider	registry	Lnet/minecraft/util/registry/Registry;
 mutable	field	net/minecraft/data/server/AbstractTagProvider	registry	Lnet/minecraft/util/registry/Registry;
 accessible	method	net/minecraft/nbt/StringNbtReader	readString	()Ljava/lang/String;
-accessible	field	net/minecraft/text/BaseText	style	Lnet/minecraft/text/Style;
-mutable	field	net/minecraft/text/BaseText	style	Lnet/minecraft/text/Style;
-extendable	class	net/minecraft/network/MessageType
-accessible	field	net/minecraft/network/MessageType	id	B
-mutable	field	net/minecraft/network/MessageType	id	B
-accessible	field	net/minecraft/text/SelectorText	pattern	Ljava/lang/String;
-mutable	field	net/minecraft/text/SelectorText	pattern	Ljava/lang/String;
 extendable	class	net/minecraft/text/Style$1
 accessible	field	net/minecraft/text/Style	bold	Ljava/lang/Boolean;
 mutable	field	net/minecraft/text/Style	bold	Ljava/lang/Boolean;
@@ -599,8 +582,6 @@ accessible	field	net/minecraft/server/network/ServerPlayNetworkHandler	teleportR
 accessible	field	net/minecraft/server/network/ServerPlayNetworkHandler	floating	Z
 accessible	field	net/minecraft/server/network/ServerPlayNetworkHandler	movePacketsCount	I
 accessible	field	net/minecraft/server/network/ServerPlayNetworkHandler	lastTickMovePacketsCount	I
-extendable	method	net/minecraft/server/network/ServerPlayNetworkHandler	executeCommand	(Ljava/lang/String;)V
-accessible	method	net/minecraft/server/network/ServerPlayNetworkHandler	executeCommand	(Ljava/lang/String;)V
 accessible	field	net/minecraft/server/network/ServerHandshakeNetworkHandler	connection	Lnet/minecraft/network/ClientConnection;
 extendable	class	net/minecraft/server/network/ServerLoginNetworkHandler$State
 accessible	field	net/minecraft/server/network/ServerLoginNetworkHandler	server	Lnet/minecraft/server/MinecraftServer;
@@ -615,6 +596,7 @@ accessible	field	net/minecraft/block/entity/StructureBlockBlockEntity	integrity	
 accessible	field	net/minecraft/inventory/ContainerLock	key	Ljava/lang/String;
 accessible	method	net/minecraft/block/JukeboxBlock	removeRecord	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V
 accessible	field	net/minecraft/village/TradeOffer	secondBuyItem	Lnet/minecraft/item/ItemStack;
+accessible	method	net/minecraft/block/DropperBlock	dispense	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V
 mutable	field	net/minecraft/village/TradeOffer	secondBuyItem	Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/village/TradeOffer	sellItem	Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/village/TradeOffer	merchantExperience	I

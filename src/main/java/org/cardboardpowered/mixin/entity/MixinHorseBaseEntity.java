@@ -13,10 +13,10 @@ import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.inventory.SimpleInventory;
 
-@Mixin(HorseBaseEntity.class)
+@Mixin(AbstractHorseEntity .class)
 public class MixinHorseBaseEntity implements IHorseBaseEntity {
     
     @Shadow
@@ -26,7 +26,7 @@ public class MixinHorseBaseEntity implements IHorseBaseEntity {
     public void callJumpEvent(int i, CallbackInfo ci) {
         float power = (i >= 90) ? 1.0F : (0.4F + 0.4F * (float) i / 90.0F);
 
-        HorseJumpEvent event = BukkitEventFactory.callHorseJumpEvent((HorseBaseEntity)(Object)this, power);
+        HorseJumpEvent event = BukkitEventFactory.callHorseJumpEvent((AbstractHorseEntity )(Object)this, power);
         if (event.isCancelled()) {
             ci.cancel();
             return;

@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
+import java.util.Set;
 
 import net.kyori.adventure.text.Component;
 import net.minecraft.scoreboard.Scoreboard;
@@ -12,6 +13,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.entity.Entity;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -195,5 +197,25 @@ public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboa
         // TODO Auto-generated method stub
         return null;
     }
+    
+    // 1.18.2 api:
+
+	@Override
+	public @Nullable Team getEntityTeam(@NotNull Entity arg0) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Set<Score> getScoresFor(@NotNull Entity arg0) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetScoresFor(@NotNull Entity arg0) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

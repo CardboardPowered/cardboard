@@ -9,6 +9,7 @@ import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SoundGroup;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -740,5 +741,27 @@ public class CraftBlock implements Block {
         // TODO Auto-generated method stub
         return false;
     }
+    
+    // 1.18 api:
+
+	@Override
+	public boolean canPlace(@NotNull BlockData arg0) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public @NotNull SoundGroup getBlockSoundGroup() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Biome getComputedBiome() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    //
 
 }

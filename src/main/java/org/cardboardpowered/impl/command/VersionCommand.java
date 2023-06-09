@@ -31,7 +31,7 @@ import org.bukkit.util.StringUtil;
 
 public class VersionCommand extends Command {
 
-    public static String BRANCH = "1.17-dev";
+    public static String BRANCH = "dev";
 
     public VersionCommand(String name) {
         super(name);
@@ -50,7 +50,8 @@ public class VersionCommand extends Command {
             String ver = FabricLoader.getInstance().getModContainer("cardboard").get().getMetadata().getVersion().getFriendlyString();
             if (ver.contains("version")) ver = CraftServer.INSTANCE.getShortVersion(); // Dev ENV
 
-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + ver + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
+            String message = "This server is running " + ChatColor.GOLD + Bukkit.getName() + ChatColor.RESET + " version " + ver + ChatColor.ITALIC + " (Implementing API version " + Bukkit.getBukkitVersion() + ")";
+            sender.sendMessage(message);
             sendVersion(sender);
         } else {
             StringBuilder name = new StringBuilder();
@@ -166,7 +167,7 @@ public class VersionCommand extends Command {
         String version = Bukkit.getVersion();
         if (version == null) version = "Custom";
 
-        if (version.startsWith("git-Bukkit4Fabric-")) {
+        if (version.startsWith("git-Cardboard-")) {
             int cbVersions = check();
             setVersionMessage(cbVersions == 0 ? "You are running the latest version" : "You are " + cbVersions + " version(s) behind");
         } else setVersionMessage("Unknown version, custom build?");
