@@ -67,7 +67,7 @@ public class TntImpl extends CraftEntity implements TNTPrimed {
 
     @Override
     public Entity getSource() {
-        LivingEntity source = getHandle().getCausingEntity();
+        LivingEntity source = getHandle().getOwner(); //.getCausingEntity();
         return (source != null) ? ((IMixinEntity)source).getBukkitEntity() : null;
     }
 

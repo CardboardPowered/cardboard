@@ -20,7 +20,7 @@ import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import net.minecraft.village.VillagerProfession;
 
 public class VillagerImpl extends AbstractVillagerImpl implements Villager {
@@ -57,13 +57,13 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
 
     @Override
     public Type getVillagerType() {
-        return Type.valueOf(Registry.VILLAGER_TYPE.getId(getHandle().getVillagerData().getType()).getPath().toUpperCase(Locale.ROOT));
+        return Type.valueOf(Registries.VILLAGER_TYPE.getId(getHandle().getVillagerData().getType()).getPath().toUpperCase(Locale.ROOT));
     }
 
     @Override
     public void setVillagerType(Type type) {
         Validate.notNull(type);
-        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
+        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
     @Override
@@ -109,11 +109,11 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Profession.valueOf(Registry.VILLAGER_PROFESSION.getId(nms).getPath().toUpperCase(Locale.ROOT));
+        return Profession.valueOf(Registries.VILLAGER_PROFESSION.getId(nms).getPath().toUpperCase(Locale.ROOT));
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
-        return Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
+        return Registries.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
     }
 
     // Paper start

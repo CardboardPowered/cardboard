@@ -26,7 +26,7 @@ public class MixinBeaconScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/inventory/Inventory;Lnet/minecraft/screen/PropertyDelegate;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, Inventory inventory, PropertyDelegate icontainerproperties, ScreenHandlerContext containeraccess, CallbackInfo ci) {
         this.player = (PlayerInventory) inventory;
     }

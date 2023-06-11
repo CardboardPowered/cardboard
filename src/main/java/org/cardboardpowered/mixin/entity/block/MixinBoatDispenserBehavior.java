@@ -31,7 +31,6 @@ import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.FluidTags;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -93,7 +92,7 @@ public class MixinBoatDispenserBehavior {
 
         BoatEntity entityboat = new BoatEntity(worldserver, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 
-        entityboat.setBoatType(this.boatType);
+        entityboat.setVariant(this.boatType);
         entityboat.setYaw(enumdirection.asRotation());
         if (!worldserver.spawnEntity(entityboat)) itemstack.increment(1); // CraftBukkit
         return itemstack;

@@ -3,7 +3,7 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Switch, org.bukkit.block.data.Directional, org.bukkit.block.data.FaceAttachable, org.bukkit.block.data.Powerable {
+/*public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Switch, org.bukkit.block.data.Directional, org.bukkit.block.data.FaceAttachable, org.bukkit.block.data.Powerable {
 
     public CraftWoodButton() {
         super();
@@ -15,21 +15,21 @@ public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.type.CraftSwitch
 
-    private static final net.minecraft.state.property.EnumProperty<?> FACE = getEnum(net.minecraft.block.WoodenButtonBlock.class, "face");
+    // private static final net.minecraft.state.property.EnumProperty<?> FACE = getEnum(net.minecraft.block.WoodenButtonBlock.class, "face");
 
     @Override
     public Face getFace() {
-        return get(FACE, Face.class);
+        return null;//get(FACE, Face.class);
     }
 
     @Override
     public void setFace(Face face) {
-        set(FACE, face);
+        //set(FACE, face);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.property.EnumProperty<?> FACING = getEnum(net.minecraft.block.WoodenButtonBlock.class, "facing");
+    // private static final net.minecraft.state.property.EnumProperty<?> FACING = getEnum(net.minecraft.block.WoodenButtonBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -73,4 +73,4 @@ public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.Cra
     public void setPowered(boolean powered) {
         set(POWERED, powered);
     }
-}
+}*/

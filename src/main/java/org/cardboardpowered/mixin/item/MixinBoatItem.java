@@ -15,9 +15,14 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.event.GameEvent;
+
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,20 +54,93 @@ public class MixinBoatItem extends Item {
     }*/
 
     // @formatter:off
-    @Shadow @Final private BoatEntity.Type type;
+    //@Shadow @Final private BoatEntity.Type type;
     @Shadow @Final private static Predicate<Entity> RIDERS;
+    // @formatter:on
+    
+    // @formatter:off
+    @Shadow @Final private BoatEntity.Type type;
+    @Shadow public BoatEntity createEntity(World world, HitResult hitResult) {return null;}
     // @formatter:on
 
     public MixinBoatItem(Settings settings) {
         super(settings);
     }
+    
+    private static boolean isValid(WorldAccess level) {
+        return level != null
+                && !level.isClient();
+    }
 
+    private static boolean isValid(BlockView getter) {
+        return getter instanceof WorldAccess level && isValid(level);
+    }
+
+    @Overwrite
+    public TypedActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+        ItemStack itemstack = playerIn.getStackInHand(handIn);
+        BlockHitResult result = raycast(worldIn, playerIn, RaycastContext.FluidHandling.ANY);
+        if (result.getType() == HitResult.Type.MISS) {
+            return new TypedActionResult<>(ActionResult.PASS, itemstack);
+        } else {
+            Vec3d vec3d = playerIn.getRotationVec(1.0F);
+            double d0 = 5.0D;
+            List<Entity> list = worldIn.getOtherEntities(playerIn, playerIn.getBoundingBox().stretch(vec3d.multiply(5.0D)).expand(1.0D), RIDERS);
+            if (!list.isEmpty()) {
+                Vec3d vec3d1 = playerIn.getCameraPosVec(1.0F);
+
+                for (Entity entity : list) {
+                    Box axisalignedbb = entity.getBoundingBox().expand(entity.getTargetingMargin());
+                    if (axisalignedbb.contains(vec3d1)) {
+                        return new TypedActionResult<>(ActionResult.PASS, itemstack);
+                    }
+                }
+            }
+
+            if (result.getType() == HitResult.Type.BLOCK) {
+                if (isValid(worldIn)) {
+                    PlayerInteractEvent event = BukkitEventFactory.callPlayerInteractEvent((ServerPlayerEntity)playerIn, Action.RIGHT_CLICK_BLOCK, result.getBlockPos(), result.getSide(), itemstack, handIn);
+
+                    if (event.isCancelled()) {
+                        return new TypedActionResult<>(ActionResult.PASS, itemstack);
+                    }
+                }
+
+                BoatEntity boatentity = this.createEntity(worldIn, result);
+                boatentity.setVariant(this.type);
+                boatentity.setYaw(playerIn.getYaw());
+                if (!worldIn.isSpaceEmpty(boatentity, boatentity.getBoundingBox().expand(-0.1D))) {
+                    return new TypedActionResult<>(ActionResult.FAIL, itemstack);
+                } else {
+                    if (!worldIn.isClient) {
+                        if (isValid(worldIn) && BukkitEventFactory.callEntityPlaceEvent(worldIn, result.getBlockPos(), result.getSide(), playerIn, boatentity, handIn).isCancelled()) {
+                            return new TypedActionResult<>(ActionResult.FAIL, itemstack);
+                        }
+                        if (!worldIn.spawnEntity(boatentity)) {
+                            return new TypedActionResult<>(ActionResult.PASS, itemstack);
+                        }
+
+                        if (!playerIn.getAbilities().creativeMode) {
+                            itemstack.decrement(1);
+                        }
+                    }
+
+                    playerIn.incrementStat(Stats.USED.getOrCreateStat(this));
+                    return TypedActionResult.success(itemstack, worldIn.isClient());
+                }
+            } else {
+                return new TypedActionResult<>(ActionResult.PASS, itemstack);
+            }
+        }
+    }
+    
+    
     /**
      * @author
      * @reason
      */
-    @Overwrite
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    /*@Overwrite
+    public TypedActionResult<ItemStack> use_1(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         HitResult hitResult = raycast(world, user, RaycastContext.FluidHandling.ANY);
         if (hitResult.getType() == HitResult.Type.MISS) {
@@ -119,5 +197,5 @@ public class MixinBoatItem extends Item {
                 return TypedActionResult.pass(itemStack);
             }
         }
-    }
+    }*/
 }

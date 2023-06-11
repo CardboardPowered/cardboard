@@ -25,7 +25,7 @@ public class MixinGrindstoneScreenHandler extends MixinScreenHandler {
     @Shadow private Inventory result;
     @Shadow private Inventory input;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, PlayerInventory playerinventory, final ScreenHandlerContext containeraccess, CallbackInfo ci) {
         this.player = (Player)((IMixinServerEntityPlayer)playerinventory.player).getBukkitEntity();
     }

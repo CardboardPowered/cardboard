@@ -10,7 +10,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 @MixinInfo(events = {"MapInitializeEvent"})

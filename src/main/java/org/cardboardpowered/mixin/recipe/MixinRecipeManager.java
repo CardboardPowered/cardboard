@@ -33,7 +33,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import net.minecraft.world.World;
 
 @Mixin(RecipeManager.class)
@@ -55,7 +55,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
     public void apply(Map<Identifier, JsonElement> map, ResourceManager iresourcemanager, Profiler gameprofilerfiller, CallbackInfo ci) {
         this.errored = false;
         Map<RecipeType<?>, Map<Identifier, Recipe<?>>> map1 = Maps.newHashMap();
-        for (RecipeType<?> recipeType : Registry.RECIPE_TYPE)
+        for (RecipeType<?> recipeType : Registries.RECIPE_TYPE)
             map1.put(recipeType, new HashMap<>());
         Iterator<Entry<Identifier, JsonElement>> iterator = map.entrySet().iterator();
 
@@ -98,7 +98,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
     @Override
     public void clearRecipes() {
         this.recipes = Maps.newHashMap();
-        for (RecipeType<?> recipeType : Registry.RECIPE_TYPE)
+        for (RecipeType<?> recipeType : Registries.RECIPE_TYPE)
             this.recipes.put(recipeType, new Object2ObjectLinkedOpenHashMap<>());
     }
 

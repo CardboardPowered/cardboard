@@ -49,14 +49,14 @@ public class CardboardJukebox extends CardboardBlockEntityState<JukeboxBlockEnti
 
     @Override
     public org.bukkit.inventory.ItemStack getRecord() {
-        ItemStack record = this.getSnapshot().getRecord();
+        ItemStack record = this.getSnapshot().getStack();
         return CraftItemStack.asBukkitCopy(record);
     }
 
     @Override
     public void setRecord(org.bukkit.inventory.ItemStack record) {
         ItemStack nms = CraftItemStack.asNMSCopy(record);
-        this.getSnapshot().setRecord(nms);
+        this.getSnapshot().setStack(nms);
         this.data = this.data.with(JukeboxBlock.HAS_RECORD, !nms.isEmpty());
     }
 
@@ -72,9 +72,9 @@ public class CardboardJukebox extends CardboardBlockEntityState<JukeboxBlockEnti
         if (!(tileEntity instanceof JukeboxBlockEntity)) return false;
 
         JukeboxBlockEntity jukebox = (JukeboxBlockEntity) tileEntity;
-        boolean result = !jukebox.getRecord().isEmpty();
-        WorldImpl world = (WorldImpl) this.getWorld();
-        ((JukeboxBlock) Blocks.JUKEBOX).removeRecord(world.getHandle(), getPosition());
+        boolean result = !jukebox.getStack().isEmpty();
+        jukebox.dropRecord();
+        
         return result;
     }
 

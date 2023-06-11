@@ -20,6 +20,8 @@ package com.javazilla.bukkitfabric.interfaces;
 
 import org.bukkit.Location;
 
+import net.minecraft.network.ClientConnection;
+
 public interface IMixinPlayNetworkHandler {
 
     void chat(String message, boolean notDeprecated);
@@ -27,5 +29,7 @@ public interface IMixinPlayNetworkHandler {
     void teleport(Location location);
 
     boolean isDisconnected();
+
+	ClientConnection cb_get_connection();
 
 }

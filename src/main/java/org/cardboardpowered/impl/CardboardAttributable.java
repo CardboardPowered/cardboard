@@ -26,7 +26,7 @@ public class CardboardAttributable implements Attributable {
     }
 
     public static EntityAttribute toMinecraft(Attribute attribute) {
-        return net.minecraft.util.registry.Registry.ATTRIBUTE.get(CraftNamespacedKey.toMinecraft(attribute.getKey()));
+        return net.minecraft.registry.Registries.ATTRIBUTE.get(CraftNamespacedKey.toMinecraft(attribute.getKey()));
     }
 
     public static Attribute fromMinecraft(String nms) {

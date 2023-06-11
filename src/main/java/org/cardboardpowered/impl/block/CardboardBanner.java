@@ -18,7 +18,7 @@ import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntry;
 
 @SuppressWarnings("deprecation")
 public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity> implements Banner {

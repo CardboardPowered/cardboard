@@ -25,7 +25,7 @@ public class MixinLoomScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, PlayerInventory playerinventory, ScreenHandlerContext containeraccesss, CallbackInfo ci) {
         this.player = (Player)((IMixinEntity)playerinventory.player).getBukkitEntity();
     }

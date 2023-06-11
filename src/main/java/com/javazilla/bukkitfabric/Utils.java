@@ -39,7 +39,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 public class Utils {
 
@@ -77,12 +77,12 @@ public class Utils {
 
     @SuppressWarnings("unchecked")
     public static <T, U> MemoryModuleType<U> fromMemoryKey(MemoryKey<T> memoryKey) {
-        return (MemoryModuleType<U>) Registry.MEMORY_MODULE_TYPE.get(CraftNamespacedKey.toMinecraft(memoryKey.getKey()));
+        return (MemoryModuleType<U>) Registries.MEMORY_MODULE_TYPE.get(CraftNamespacedKey.toMinecraft(memoryKey.getKey()));
     }
 
     @SuppressWarnings("unchecked")
     public static <T, U> MemoryKey<U> toMemoryKey(MemoryModuleType<T> memoryModuleType) {
-        return MemoryKey.getByKey(CraftNamespacedKey.fromMinecraft(Registry.MEMORY_MODULE_TYPE.getId(memoryModuleType)));
+        return MemoryKey.getByKey(CraftNamespacedKey.fromMinecraft(Registries.MEMORY_MODULE_TYPE.getId(memoryModuleType)));
     }
 
     public static Object fromNmsGlobalPos(Object object) {
@@ -107,7 +107,7 @@ public class Utils {
     }
 
     public static GlobalPos toNmsGlobalPos(Location location) {
-        return GlobalPos.create(((WorldImpl) Objects.requireNonNull(location.getWorld())).getHandle().getRegistryKey(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        return GlobalPos.create(((WorldImpl) Objects.requireNonNull(location.getWorld())).getHandle().getRegistryKey(), BlockPos.ofFloored(location.getX(), location.getY(), location.getZ()));
     }
 
     private static final net.minecraft.entity.EquipmentSlot[] slots = new net.minecraft.entity.EquipmentSlot[EquipmentSlot.values().length];

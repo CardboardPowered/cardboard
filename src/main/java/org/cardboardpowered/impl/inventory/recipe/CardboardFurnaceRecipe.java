@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.recipe.CookingBookCategory;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
@@ -27,7 +28,12 @@ public class CardboardFurnaceRecipe extends FurnaceRecipe implements RecipeInter
     @Override
     public void addToCraftingManager() {
         ItemStack result = this.getResult();
-        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.SmeltingRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), toNMS(this.getInputChoice(), true), CraftItemStack.asNMSCopy(result), getExperience(), getCookingTime()));
+        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.SmeltingRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), RecipeInterface.getCategory(this.getCategory()), toNMS(this.getInputChoice(), true), CraftItemStack.asNMSCopy(result), getExperience(), getCookingTime()));
     }
 
+    // TODO: Update API to 1.19.4
+    public CookingBookCategory getCategory() {
+        return CookingBookCategory.MISC;
+    }
+    
 }

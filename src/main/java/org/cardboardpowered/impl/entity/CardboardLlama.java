@@ -22,13 +22,13 @@ public class CardboardLlama extends CardboardChestedHorse implements Llama {
 
     @Override
     public Llama.Color getColor() {
-        return Llama.Color.values()[this.getHandle().getVariant()];
+        return Llama.Color.values()[this.getHandle().getVariant().getIndex()];
     }
 
     @Override
     public void setColor(Llama.Color color) {
         Preconditions.checkArgument(color != null, "color");
-        this.getHandle().setVariant(color.ordinal());
+        this.getHandle().setVariant(LlamaEntity.Variant.byId(color.ordinal()));
     }
 
     @Override

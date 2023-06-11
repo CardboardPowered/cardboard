@@ -123,7 +123,7 @@ public class WorldBorderImpl implements WorldBorder {
     @Override
     public boolean isInside(Location location) {
         Preconditions.checkArgument(location != null, "Null Location");
-        return location.getWorld().equals(this.world) && this.handle.contains(new BlockPos(location.getX(), location.getY(), location.getZ()));
+        return location.getWorld().equals(this.world) && this.handle.contains(BlockPos.ofFloored(location.getX(), location.getY(), location.getZ()));
     }
 
 	@Override

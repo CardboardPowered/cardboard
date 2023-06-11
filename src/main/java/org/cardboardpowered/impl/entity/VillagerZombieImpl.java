@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import java.util.Locale;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
@@ -36,24 +36,24 @@ public class VillagerZombieImpl extends ZombieImpl implements ZombieVillager {
 
     @Override
     public Villager.Profession getVillagerProfession() {
-        return Villager.Profession.valueOf(Registry.VILLAGER_PROFESSION.getId(getHandle().getVillagerData().getProfession()).getPath().toUpperCase(Locale.ROOT));
+        return Villager.Profession.valueOf(Registries.VILLAGER_PROFESSION.getId(getHandle().getVillagerData().getProfession()).getPath().toUpperCase(Locale.ROOT));
     }
 
     @Override
     public void setVillagerProfession(Villager.Profession profession) {
         Validate.notNull(profession);
-        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(Registry.VILLAGER_PROFESSION.get(new Identifier(profession.name().toLowerCase(Locale.ROOT)))));
+        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(Registries.VILLAGER_PROFESSION.get(new Identifier(profession.name().toLowerCase(Locale.ROOT)))));
     }
 
     @Override
     public Villager.Type getVillagerType() {
-        return Villager.Type.valueOf(Registry.VILLAGER_TYPE.getId(getHandle().getVillagerData().getType()).getPath().toUpperCase(Locale.ROOT));
+        return Villager.Type.valueOf(Registries.VILLAGER_TYPE.getId(getHandle().getVillagerData().getType()).getPath().toUpperCase(Locale.ROOT));
     }
 
     @Override
     public void setVillagerType(Villager.Type type) {
         Validate.notNull(type);
-        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
+        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registries.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
     @Override

@@ -41,8 +41,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.WorldAccess;
@@ -262,6 +263,12 @@ public class FakeWorldAccess implements WorldAccess {
 
 	@Override
 	public net.minecraft.util.math.random.Random getRandom() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FeatureSet getEnabledFeatures() {
 		// TODO Auto-generated method stub
 		return null;
 	}

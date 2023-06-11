@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import io.papermc.paper.event.block.BellRingEvent;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.world.WorldAccess;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -458,6 +459,19 @@ public class BukkitEventFactory {
 
         return event;
     }
+    
+    public static EntityPlaceEvent callEntityPlaceEvent(World world, BlockPos clickPosition, Direction clickedFace, PlayerEntity  human, Entity entity, Hand enumhand) {
+        Player who = (human == null) ? null : (Player) ((IMixinEntity)human).getBukkitEntity();
+        org.bukkit.block.Block blockClicked = CraftBlock.at((ServerWorld) world, clickPosition);
+        org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(clickedFace);
+
+        //EntityPlaceEvent event = new EntityPlaceEvent(((IMixinEntity)entity).getBukkitEntity(), who, blockClicked, blockFace, EquipmentSlotImpl.getHand(enumhand));
+        EntityPlaceEvent event = new EntityPlaceEvent(((IMixinEntity)entity).getBukkitEntity(), who, blockClicked, blockFace/*, Hand.MAIN_HAND*/);
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        return event;
+    }
 
     public static CreeperPowerEvent callCreeperPowerEvent(Entity creeper, Entity lightning, CreeperPowerEvent.PowerCause cause) {
         CreeperPowerEvent event = new CreeperPowerEvent((Creeper) ((IMixinEntity)creeper).getBukkitEntity(), (LightningStrike) ((IMixinEntity)lightning).getBukkitEntity(), cause);
@@ -756,4 +770,5 @@ public class BukkitEventFactory {
         Bukkit.getPluginManager().callEvent(event);
         return event;
     }
+
 }

@@ -11,7 +11,7 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.particle.ItemStackParticleEffect;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.block.data.BlockData;
@@ -136,7 +136,7 @@ public enum CraftParticle {
         if (aliases.containsKey(particle))
             canonical = aliases.get(particle);
 
-        net.minecraft.particle.ParticleType nms = Registry.PARTICLE_TYPE.get(particles.get(canonical));
+        net.minecraft.particle.ParticleType nms = Registries.PARTICLE_TYPE.get(particles.get(canonical));
         Preconditions.checkArgument(nms != null, "No NMS particle %s", particle);
 
         if (particle.getDataType().equals(Void.class))
@@ -170,7 +170,7 @@ public enum CraftParticle {
 
     @SuppressWarnings("rawtypes")
     public static Particle toBukkit(net.minecraft.particle.ParticleType nms) {
-        return particles.inverse().get(Registry.PARTICLE_TYPE.getId(nms));
+        return particles.inverse().get(Registries.PARTICLE_TYPE.getId(nms));
     }
 
 }

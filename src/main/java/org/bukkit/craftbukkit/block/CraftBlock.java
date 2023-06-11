@@ -50,7 +50,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.LightType;
 
@@ -440,13 +442,17 @@ public class CraftBlock implements Block {
         getWorld().setBiome(getX(), getY(), getZ(), bio);
     }
 
+    public static Biome biomeBaseToBiome(net.minecraft.registry.Registry<net.minecraft.world.biome.Biome> registry, RegistryEntry<net.minecraft.world.biome.Biome> base) {
+        return biomeBaseToBiome(registry, base.value());
+    }
+
     public static Biome biomeBaseToBiome(Registry<net.minecraft.world.biome.Biome> registry, net.minecraft.world.biome.Biome biome) {
         if (biome == null)
             return null;
         return org.bukkit.Registry.BIOME.get(CraftNamespacedKey.fromMinecraft(registry.getKey(biome).get().getValue()));
     }
 
-    public static net.minecraft.world.biome.Biome biomeToBiomeBase(net.minecraft.util.registry.Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {
+    public static net.minecraft.world.biome.Biome biomeToBiomeBase(net.minecraft.registry.Registry<net.minecraft.world.biome.Biome> registry, Biome bio) {
         return (null == bio) ? null : registry.get(CraftNamespacedKey.toMinecraft(bio.getKey()));
     }
 

@@ -3,7 +3,7 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftStoneButton extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Switch, org.bukkit.block.data.Directional, org.bukkit.block.data.FaceAttachable, org.bukkit.block.data.Powerable {
+/*public final class CraftStoneButton extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Switch, org.bukkit.block.data.Directional, org.bukkit.block.data.FaceAttachable, org.bukkit.block.data.Powerable {
 
     public CraftStoneButton() {
         super();
@@ -73,4 +73,4 @@ public final class CraftStoneButton extends org.bukkit.craftbukkit.block.data.Cr
     public void setPowered(boolean powered) {
         set(POWERED, powered);
     }
-}
+}*/

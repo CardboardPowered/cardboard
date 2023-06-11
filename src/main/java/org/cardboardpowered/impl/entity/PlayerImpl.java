@@ -408,7 +408,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     public InetSocketAddress getAddress() {
         if (nms.networkHandler == null) return null;
 
-        SocketAddress addr = getHandle().networkHandler.connection.getAddress();
+        SocketAddress addr = getHandle().networkHandler.getConnectionAddress(); //.connection.getAddress();
         return addr instanceof InetSocketAddress ? (InetSocketAddress) addr : null;
     }
 
@@ -458,7 +458,8 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public float getFlySpeed() {
-        return nms.airStrafingSpeed;
+        // return nms.airStrafingSpeed;
+        return (float) getHandle().getAbilities().getFlySpeed() * 2f;
     }
 
     @Override
@@ -934,7 +935,10 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public void setFlySpeed(float arg0) throws IllegalArgumentException {
-        nms.airStrafingSpeed = arg0;
+        // nms.airStrafingSpeed = arg0;
+        ServerPlayerEntity player = getHandle();
+        player.getAbilities().setFlySpeed(arg0 / 2f);
+        player.sendAbilitiesUpdate();
     }
 
     @Override
@@ -1285,7 +1289,8 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
                 e.printStackTrace();
             }
         }
-        return (InetSocketAddress) ((IMixinClientConnection) (nms.networkHandler.connection)).getRawAddress();
+        IMixinPlayNetworkHandler im = (IMixinPlayNetworkHandler) nms.networkHandler;
+        return (InetSocketAddress) ((IMixinClientConnection) (im.cb_get_connection())).getRawAddress();
     }
 
     private final Player.Spigot spigot = new Player.Spigot() {

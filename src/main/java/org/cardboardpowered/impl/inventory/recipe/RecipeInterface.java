@@ -9,6 +9,8 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.recipe.CookingBookCategory;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.cardboardpowered.interfaces.IIngredient;
 
 public interface RecipeInterface extends Recipe {
@@ -27,13 +29,13 @@ public interface RecipeInterface extends Recipe {
             ((IIngredient)stack).setExact_BF(true);
         } else throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
 
-        stack.cacheMatchingStacks();
+        stack.getMatchingStacks();
         if (requireNotEmpty && stack.matchingStacks.length == 0) throw new IllegalArgumentException("Recipe requires at least one non-air choice!");
         return stack;
     }
 
     public static RecipeChoice toBukkit(Ingredient list) {
-        list.cacheMatchingStacks();
+        list.getMatchingStacks();
         if (list.matchingStacks.length == 0) return null;
         if (((IIngredient)list).getExact_BF()) {
             List<org.bukkit.inventory.ItemStack> choices = new ArrayList<>(list.matchingStacks.length);
@@ -44,6 +46,23 @@ public interface RecipeInterface extends Recipe {
             for (net.minecraft.item.ItemStack i : list.matchingStacks) choices.add(CraftMagicNumbers.getMaterial(i.getItem()));
             return new RecipeChoice.MaterialChoice(choices);
         }
+    }
+    
+    
+    public static net.minecraft.recipe.book.CraftingRecipeCategory getCategory(CraftingBookCategory bukkit) {
+        return net.minecraft.recipe.book.CraftingRecipeCategory.valueOf(bukkit.name());
+    }
+
+    public static CraftingBookCategory getCategory(net.minecraft.recipe.book.CraftingRecipeCategory nms) {
+        return CraftingBookCategory.valueOf(nms.name());
+    }
+
+    public static net.minecraft.recipe.book.CookingRecipeCategory getCategory(CookingBookCategory bukkit) {
+        return net.minecraft.recipe.book.CookingRecipeCategory.valueOf(bukkit.name());
+    }
+
+    public static CookingBookCategory getCategory(net.minecraft.recipe.book.CookingRecipeCategory nms) {
+        return CookingBookCategory.valueOf(nms.name());
     }
 
 }

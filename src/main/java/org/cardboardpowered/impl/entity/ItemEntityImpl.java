@@ -70,7 +70,7 @@ public class ItemEntityImpl extends CraftEntity implements Item {
 
     // Spigot #758
     public UUID getOwner() {
-        return item.getOwner();
+        return item.getOwner().getUuid();
     }
 
     // Spigot #758
@@ -80,7 +80,9 @@ public class ItemEntityImpl extends CraftEntity implements Item {
 
     // Spigot #758
     public UUID getThrower() {
-        return item.getThrower();
+        // TODO: 1.19.4 need AW here
+    	// return item.thrower;
+    	return null;
     }
 
     @Override

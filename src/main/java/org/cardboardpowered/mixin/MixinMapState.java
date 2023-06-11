@@ -27,7 +27,7 @@ import org.cardboardpowered.impl.map.MapViewImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
 
 import net.minecraft.item.map.MapState;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 
 @Mixin(MapState.class)
 public class MixinMapState implements IMixinMapState {

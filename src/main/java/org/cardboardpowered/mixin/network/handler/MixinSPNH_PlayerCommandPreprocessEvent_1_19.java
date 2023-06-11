@@ -1,5 +1,6 @@
 package org.cardboardpowered.mixin.network.handler;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,10 @@ import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.mojang.brigadier.ParseResults;
 
-import net.minecraft.command.argument.DecoratableArgumentList;
+import net.minecraft.command.argument.SignedArgumentList;
+import net.minecraft.network.message.LastSeenMessageList;
+import net.minecraft.network.message.MessageChain;
+import net.minecraft.network.message.MessageChain.MessageChainException;
 import net.minecraft.network.message.SignedCommandArguments;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
@@ -34,46 +38,44 @@ public abstract class MixinSPNH_PlayerCommandPreprocessEvent_1_19 implements IMi
 
     /**
      * @reason PlayerCommandPreprocessEvent
-     * @author Cardboard 1.19.2+
+     * @author Cardboard 1.19.4
      */
     @SuppressWarnings("unused")
 	@Overwrite
-    private void handleCommandExecution(CommandExecutionC2SPacket packet) {
+    private void handleCommandExecution(CommandExecutionC2SPacket packet, LastSeenMessageList lastseenmessages) {
         SignedMessage playerchatmessage;
-        Object command = "/" + packet.command();
-        BukkitFabricMod.LOGGER.info(this.player.getEntityName() + " issued server command: " + (String)command);
-        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(this.getPlayer(), (String)command, new LazyPlayerSet(CraftServer.server));
+        String command = "/" + packet.command();
+        BukkitFabricMod.LOGGER.info(this.player.getEntityName() + " issued server command: " + command);
+        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(this.getPlayer(), command, new LazyPlayerSet(CraftServer.server));
         CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        
+        if (event.isCancelled()) {
+            return;
+        }
+        
         command = event.getMessage().substring(1);
         ParseResults<ServerCommandSource> parseresults = this.parse(packet.command());
-        Map<String, SignedMessage> map = this.collectArgumentMessages(packet, DecoratableArgumentList.of(parseresults));
-        if (event.isCancelled() || !packet.command().equals(command)) {
-            for (SignedMessage message : map.values()) {
-                this.player.server.getPlayerManager().sendMessageHeader(message, Set.of());
-            }
-            if (event.isCancelled()) {
-                return;
-            }
-            map.clear();
-            parseresults = this.parse((String)command);
-        }
-        Iterator<SignedMessage> iterator = map.values().iterator();
-        do {
-            if (iterator.hasNext()) continue;
-            SignedCommandArguments.Impl commandsigningcontext_a = new SignedCommandArguments.Impl(map);
-            parseresults = CommandManager.withCommandSource(parseresults, commandlistenerwrapper -> commandlistenerwrapper.withSignedArguments(commandsigningcontext_a));
-            CraftServer.server.getCommandManager().execute(parseresults, (String)command);
+        Map<String, SignedMessage> map;
+        try {
+            map = (packet.command().equals(command)) ? this.collectArgumentMessages(packet, SignedArgumentList.of(parseresults), lastseenmessages) : Collections.emptyMap(); // CraftBukkit
+        } catch (MessageChain.MessageChainException e) {
+            this.handleMessageChainException(e);
             return;
-        } while (this.canAcceptMessage(playerchatmessage = iterator.next()));
+        }
+        
+        SignedCommandArguments.Impl arguments = new SignedCommandArguments.Impl(map);
+
+        parseresults = CommandManager.withCommandSource(parseresults, (stack) -> stack.withSignedArguments(arguments));
+        CraftServer.server.getCommandManager().execute(parseresults, command);
+    }
+
+    @Shadow
+    public void handleMessageChainException(MessageChain.MessageChainException e) {
     }
     
+    //  private Map<String, SignedMessage> collectArgumentMessages(CommandExecutionC2SPacket packet, DecoratableArgumentList<?> arguments) {
     @Shadow
-    private boolean canAcceptMessage(SignedMessage message) {
-    	return true;
-    }
-    
-    @Shadow
-    private Map<String, SignedMessage> collectArgumentMessages(CommandExecutionC2SPacket packet, DecoratableArgumentList<?> arguments) {
+    private Map<String, SignedMessage> collectArgumentMessages(CommandExecutionC2SPacket packet, SignedArgumentList<?> a, LastSeenMessageList b) throws MessageChainException {
     	return null; // Shadow method
     }
     

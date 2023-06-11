@@ -19,13 +19,13 @@ public class MushroomImpl extends CowImpl implements MushroomCow {
 
     @Override
     public Variant getVariant() {
-        return Variant.values()[getHandle().getMooshroomType().ordinal()];
+        return Variant.values()[getHandle().getVariant().ordinal()];
     }
 
     @Override
     public void setVariant(Variant variant) {
         Preconditions.checkArgument(variant != null, "variant");
-        getHandle().setType(MooshroomEntity.Type.values()[variant.ordinal()]);
+        getHandle().setVariant(MooshroomEntity.Type.values()[variant.ordinal()]);
     }
 
     @Override

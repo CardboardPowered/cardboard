@@ -41,8 +41,9 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkThreadUtils;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.PacketCallbacks;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
@@ -53,6 +54,7 @@ import net.minecraft.network.packet.c2s.play.UpdatePlayerAbilitiesC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -74,6 +76,14 @@ import net.minecraft.world.WorldView;
 @SuppressWarnings("deprecation")
 @Mixin(value = ServerPlayNetworkHandler.class, priority = 800)
 public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetworkHandler {
+
+	@Shadow
+	private ClientConnection connection;
+	
+	@Override
+	public ClientConnection cb_get_connection() {
+		return connection;
+	}
 
     @Shadow 
     public ServerPlayerEntity player;
@@ -138,10 +148,11 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         reason = Text.of(event.getReason());
         final Text reason_final = reason;
 
-        get().connection.send(new DisconnectS2CPacket(reason), PacketCallbacks.always(() -> get().connection.disconnect(reason_final)));
+        IMixinPlayNetworkHandler im = (IMixinPlayNetworkHandler) get();
+        im.cb_get_connection().send(new DisconnectS2CPacket(reason), PacketCallbacks.always(() -> im.cb_get_connection().disconnect(reason_final)));
         get().onDisconnected(reason);
-        get().connection.disableAutoRead();
-        CraftServer.server.submitAndJoin(get().connection::handleDisconnection);
+        im.cb_get_connection().disableAutoRead();
+        CraftServer.server.submitAndJoin(im.cb_get_connection()::handleDisconnection);
     }
 
     public PlayerImpl getPlayer() {
@@ -211,12 +222,13 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Override
     public void teleport(Location dest) {
-        requestTeleport(dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch(), Collections.emptySet(), true);
+        requestTeleport(dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch(), Collections.emptySet());
     }
 
     @Overwrite
-    public void requestTeleport(double d0, double d1, double d2, float f, float f1, Set<PlayerPositionLookS2CPacket.Flag> set, boolean flag) { // CraftBukkit - Return event status
-        Player player = this.getPlayer();
+    public void requestTeleport(double d0, double d1, double d2, float f, float f1, Set<PositionFlag> set) {
+
+    	Player player = this.getPlayer();
         Location from = player.getLocation();
 
         double x = d0;
@@ -228,7 +240,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         Location to = new Location(this.getPlayer().getWorld(), x, y, z, yaw, pitch);
         // SPIGOT-5171: Triggered on join
         if (from.equals(to)) {
-            this.internalTeleport(d0, d1, d2, f, f1, set, flag);
+            this.internalTeleport(d0, d1, d2, f, f1, set, false);
             return;
         }
 
@@ -245,26 +257,25 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             f1 = to.getPitch();
         }
 
-        this.internalTeleport(d0, d1, d2, f, f1, set, flag);
+        this.internalTeleport(d0, d1, d2, f, f1, set, false);
         return;
     }
 
-
-    public void internalTeleport(double d0, double d1, double d2, float f, float f1, Set<PlayerPositionLookS2CPacket.Flag> set, boolean shouldDismount) {
-        if (Float.isNaN(f)) f = 0;
-        if (Float.isNaN(f1)) f1 = 0;
+    public void internalTeleport(double d0, double d1, double d2, float f, float f1, Set<PositionFlag> set, boolean shouldDismount_unused) {
+        if (Float.isNaN(f)) f = 0.0f;
+        if (Float.isNaN(f1)) f1 = 0.0f;
         
-        BlockPos pos = new BlockPos(d0, d1, d2);
+        /*BlockPos pos = BlockPos.ofFloored(d0, d1, d2);
         if (!player.getWorld().getBlockState(pos).isAir()) {
             BukkitFabricMod.LOGGER.info("Safe Teleport stopped teleport.");
-        }
+        }*/
 
         this.justTeleported = true;
-        double d3 = set.contains(PlayerPositionLookS2CPacket.Flag.X) ? this.player.getX() : 0.0D;
-        double d4 = set.contains(PlayerPositionLookS2CPacket.Flag.Y) ? this.player.getY() : 0.0D;
-        double d5 = set.contains(PlayerPositionLookS2CPacket.Flag.Z) ? this.player.getZ() : 0.0D;
-        float f2 = set.contains(PlayerPositionLookS2CPacket.Flag.Y_ROT) ? this.player.getYaw() : 0.0F;
-        float f3 = set.contains(PlayerPositionLookS2CPacket.Flag.X_ROT) ? this.player.getPitch() : 0.0F;
+        double d3 = set.contains(PositionFlag.X) ? this.player.getX() : 0.0;
+        double d4 = set.contains(PositionFlag.Y) ? this.player.getY() : 0.0;
+        double d5 = set.contains(PositionFlag.Z) ? this.player.getZ() : 0.0;
+        float f2 = set.contains(PositionFlag.Y_ROT) ? this.player.getYaw() : 0.0f;
+        float f3 = set.contains(PositionFlag.X_ROT) ? this.player.getPitch() : 0.0f;
 
         this.requestedTeleportPos = new Vec3d(d0, d1, d2);
         if (++this.requestedTeleportId == Integer.MAX_VALUE)
@@ -272,7 +283,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
         this.teleportRequestTick = this.ticks;
         this.player.updatePositionAndAngles(d0, d1, d2, f, f1);
-        this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(d0 - d3, d1 - d4, d2 - d5, f - f2, f1 - f3, set, this.requestedTeleportId, shouldDismount));
+
+        this.player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(d0 - d3, d1 - d4, d2 - d5, f - f2, f1 - f3, set, this.requestedTeleportId));
     }
 
     @Inject(at = @At("HEAD"), method = "onClientCommand", cancellable = true)
@@ -642,7 +654,9 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         Bukkit.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal()]));
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;closeScreenHandler()V", shift = At.Shift.BEFORE), method = "onCloseHandledScreen")
+    // 1.19.2 = closeScreenHandler
+    // 1.19.4 = onHandledScreenClosed
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;onHandledScreenClosed()V", shift = At.Shift.BEFORE), method = "onCloseHandledScreen")
     public void doBukkit_InventoryCloseEvent(CallbackInfo ci) {
         IMixinScreenHandler handler = (IMixinScreenHandler) player.currentScreenHandler;
         CardboardInventoryView view = handler.getBukkitView();

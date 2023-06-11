@@ -29,7 +29,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
@@ -70,7 +70,7 @@ public final class CraftItemStack extends ItemStack {
         // TODO 1.17ify
         Material mat = CraftMagicNumbers.getMaterial(original.getItem());
         if (null == mat) {
-            System.out.println("Unknown Bukkit Material (possible 1.17 material?): " + Registry.ITEM.getId(original.getItem()).getPath().toUpperCase());
+            System.out.println("Unknown Bukkit Material (possible 1.17 material?): " + Registries.ITEM.getId(original.getItem()).getPath().toUpperCase());
         }
 
         ItemStack stack = new ItemStack(mat);
@@ -510,7 +510,7 @@ public final class CraftItemStack extends ItemStack {
         if (null != item) {
             boolean isModded = (null == CraftMagicNumbers.getMaterial(item.getItem()));
             if (isModded) {
-                Identifier id = Registry.ITEM.getId(item.item);
+                Identifier id = Registries.ITEM.getId(item.item);
                 String name = CraftMagicNumbers.standardize(id);
                 Material material = Material.getMaterial(name);                    
                 return material;

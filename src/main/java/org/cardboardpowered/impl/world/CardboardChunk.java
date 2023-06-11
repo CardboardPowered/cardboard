@@ -55,7 +55,11 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.world.ChunkSerializer;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
@@ -64,7 +68,10 @@ import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeAccess.Storage;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.PalettedContainer;
+import net.minecraft.world.chunk.ReadOnlyChunk;
+import net.minecraft.world.chunk.ReadableContainer;
 import net.minecraft.world.chunk.light.LightingProvider;
 // TODO 1.18: import net.minecraft.world.gen.ChunkRandom;
 
@@ -97,6 +104,7 @@ public class CardboardChunk implements Chunk {
         return ((IMixinWorld)worldServer.toServerWorld()).getWorldImpl();
     }
 
+    @Deprecated
     public net.minecraft.world.chunk.WorldChunk getHandle() {
         net.minecraft.world.chunk.WorldChunk c = weakChunk.get();
 
@@ -105,6 +113,17 @@ public class CardboardChunk implements Chunk {
             weakChunk = new WeakReference<>(c);
         }
         return c;
+    }
+    
+    public net.minecraft.world.chunk.Chunk getHandle(ChunkStatus chunkStatus) {
+        net.minecraft.world.chunk.Chunk chunkAccess = worldServer.getChunk(x, z, chunkStatus);
+
+        // SPIGOT-7332: Get unwrapped extension
+        if (chunkAccess instanceof ReadOnlyChunk extension) {
+            return extension.getWrappedChunk();
+        }
+
+        return chunkAccess;
     }
 
     void breakLink() {
@@ -313,28 +332,27 @@ public class CardboardChunk implements Chunk {
     }*/
     
     
-    // TODO: 1.19
     @Override
     public ChunkSnapshot getChunkSnapshot(boolean includeMaxBlockY, boolean includeBiome, boolean includeBiomeTempRain) {
-        net.minecraft.world.chunk.WorldChunk chunk = getHandle();
+        net.minecraft.world.chunk.Chunk chunk = getHandle(ChunkStatus.FULL);
 
         ChunkSection[] cs = chunk.getSectionArray();
         PalettedContainer[] sectionBlockIDs = new PalettedContainer[cs.length];
         byte[][] sectionSkyLights = new byte[cs.length][];
         byte[][] sectionEmitLights = new byte[cs.length][];
         boolean[] sectionEmpty = new boolean[cs.length];
-        PalettedContainer<Biome>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[cs.length] : null;
+        ReadableContainer<RegistryEntry<Biome>>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[cs.length] : null;
 
-        Registry<Biome> iregistry = worldServer.getRegistryManager().get(Registry.BIOME_KEY);
-        //Codec<PalettedContainer<Biome>> biomeCodec = PalettedContainer.createCodec(iregistry, iregistry.getCodec(), PalettedContainer.PaletteProvider.BLOCK_STATE, iregistry.getOrThrow(BiomeKeys.PLAINS));
+        net.minecraft.registry.Registry<Biome> iregistry = worldServer.getRegistryManager().get(RegistryKeys.BIOME);
+        Codec<ReadableContainer<RegistryEntry<Biome>>> biomeCodec = PalettedContainer.createReadableContainerCodec(iregistry.getIndexedEntries(), iregistry.createEntryCodec(), PalettedContainer.PaletteProvider.BIOME, iregistry.entryOf(BiomeKeys.PLAINS));
 
         for (int i = 0; i < cs.length; i++) {
             NbtCompound data = new NbtCompound();
 
-            data.put("block_states", net.minecraft.world.ChunkSerializer.CODEC.encodeStart(NbtOps.INSTANCE, cs[i].getBlockStateContainer()).get().left().get());
-            sectionBlockIDs[i] = net.minecraft.world.ChunkSerializer.CODEC.parse(NbtOps.INSTANCE, data.getCompound("block_states")).get().left().get();
+            data.put("block_states", ChunkSerializer.CODEC.encodeStart(NbtOps.INSTANCE, cs[i].getBlockStateContainer()).get().left().get());
+            sectionBlockIDs[i] = ChunkSerializer.CODEC.parse(NbtOps.INSTANCE, data.getCompound("block_states")).get().left().get();
 
-            LightingProvider lightengine = chunk.getWorld().getLightingProvider();
+            LightingProvider lightengine = worldServer.getLightingProvider();
             ChunkNibbleArray skyLightArray = lightengine.get(LightType.SKY).getLightSection(ChunkSectionPos.from(x, i, z));
             if (skyLightArray == null) {
                 sectionSkyLights[i] = emptyLight;
@@ -351,42 +369,36 @@ public class CardboardChunk implements Chunk {
             }
 
             if (biome != null) {
-                // TODO: 1.18.2
-                // data.put("biomes", biomeCodec.encodeStart(NbtOps.INSTANCE, cs[i].getBiomeContainer()).get().left().get());
-                //biome[i] = biomeCodec.parse(NbtOps.INSTANCE, data.getCompound("biomes")).get().left().get();
+                data.put("biomes", biomeCodec.encodeStart(NbtOps.INSTANCE, cs[i].getBiomeContainer()).get().left().get());
+                biome[i] = biomeCodec.parse(NbtOps.INSTANCE, data.getCompound("biomes")).get().left().get();
             }
         }
- 
+
         Heightmap hmap = null;
 
         if (includeMaxBlockY) {
-            hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
-            IMixinHeightmap map = (IMixinHeightmap) hmap;
-            //map.I_setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
+            hmap = new Heightmap(chunk, Heightmap.Type.MOTION_BLOCKING);
+            // TODO: 1.19.4 chunk.heightmaps needs AW
+            // hmap.setTo(chunk, Heightmap.Type.MOTION_BLOCKING, chunk.heightmaps.get(Heightmap.Type.MOTION_BLOCKING).asLongArray());
         }
 
         World world = getWorld();
-        return new CardboardChunkSnapshot(getX(), getZ(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, biome);
+        return new CardboardChunkSnapshot(getX(), getZ(), chunk.getBottomY(), chunk.getTopY(), world.getName(), world.getFullTime(), sectionBlockIDs, sectionSkyLights, sectionEmitLights, sectionEmpty, hmap, iregistry, biome);
     }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, WorldImpl world, boolean includeBiome, boolean includeBiomeTempRain) {
-        /*BiomeAccess.Storage biome = null;
+        net.minecraft.world.chunk.Chunk actual = world.getHandle().getChunk(x, z, (includeBiome || includeBiomeTempRain) ? ChunkStatus.BIOMES : ChunkStatus.EMPTY);
 
-        if (includeBiome || includeBiomeTempRain) {
-            biome = (Storage) ((me.isaiah.common.cmixin.IMixinWorld)world.getHandle()).I_newBiomeArray(((ServerWorld)world.getHandle()).getRegistryManager().get(Registry.BIOME_KEY),
-                    world.getHandle(), new ChunkPos(x, z), ((ServerWorld)world.getHandle()).getChunkManager().getChunkGenerator().getBiomeSource());
-        }*/
-
-        // Fill with empty data
-        int hSection = world.getMaxHeight() >> 4;
+        /* Fill with empty data */
+        int hSection = actual.countVerticalSections();
         PalettedContainer[] blockIDs = new PalettedContainer[hSection];
         byte[][] skyLight = new byte[hSection][];
         byte[][] emitLight = new byte[hSection][];
         boolean[] empty = new boolean[hSection];
-        PalettedContainer<Biome>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[hSection] : null;
+        net.minecraft.registry.Registry<Biome> iregistry = world.getHandle().getRegistryManager().get(RegistryKeys.BIOME);
+        PalettedContainer<RegistryEntry<Biome>>[] biome = (includeBiome || includeBiomeTempRain) ? new PalettedContainer[hSection] : null;
+        Codec<ReadableContainer<RegistryEntry<Biome>>> biomeCodec = PalettedContainer.createReadableContainerCodec(iregistry.getIndexedEntries(), iregistry.createEntryCodec(), PalettedContainer.PaletteProvider.BIOME, iregistry.entryOf(BiomeKeys.PLAINS));
 
-        setEmptyBlockIds(world.getHandle());
         for (int i = 0; i < hSection; i++) {
             blockIDs[i] = emptyBlockIDs;
             skyLight[i] = emptyLight;
@@ -394,17 +406,22 @@ public class CardboardChunk implements Chunk {
             empty[i] = true;
 
             if (biome != null) {
-                Registry<Biome> iregistry = world.getHandle().getRegistryManager().get(Registry.BIOME_KEY);
-                biome[i] = new PalettedContainer<>(iregistry, iregistry.getOrThrow(net.minecraft.world.biome.BiomeKeys.PLAINS), PalettedContainer.PaletteProvider.BLOCK_STATE);
+                biome[i] = (PalettedContainer<RegistryEntry<Biome>>) biomeCodec.parse(NbtOps.INSTANCE, biomeCodec.encodeStart(NbtOps.INSTANCE, actual.getSection(i).getBiomeContainer()).get().left().get()).get().left().get();
             }
         }
 
-        return new CardboardChunkSnapshot(x, z, world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(null, Heightmap.Type.MOTION_BLOCKING), biome);
+        return new CardboardChunkSnapshot(x, z, world.getMinHeight(), world.getMaxHeight(), world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(actual, Heightmap.Type.MOTION_BLOCKING), iregistry, biome);
     }
 
     static void validateChunkCoordinates(int x, int y, int z) {
         Preconditions.checkArgument(0 <= x && x <= 15, "x out of range (expected 0-15, got %s)", x);
         Preconditions.checkArgument(0 <= y && y <= 255, "y out of range (expected 0-255, got %s)", y);
+        Preconditions.checkArgument(0 <= z && z <= 15, "z out of range (expected 0-15, got %s)", z);
+    }
+
+    static void validateChunkCoordinates(int minY, int maxY, int x, int y, int z) {
+        Preconditions.checkArgument(0 <= x && x <= 15, "x out of range (expected 0-15, got %s)", x);
+        Preconditions.checkArgument(minY <= y && y <= maxY, "y out of range (expected %s-%s, got %s)", minY, maxY, y);
         Preconditions.checkArgument(0 <= z && z <= 15, "z out of range (expected 0-15, got %s)", z);
     }
 

@@ -24,7 +24,7 @@ import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.WorldGenerationProgressListenerFactory;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.gen.GeneratorOptions;

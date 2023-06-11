@@ -9,7 +9,7 @@ public class CardboardModdedItem implements CardboardModdedMaterial {
 
     public CardboardModdedItem(String id) {
         this.id = id;
-        this.item = net.minecraft.util.registry.Registry.ITEM.get(new net.minecraft.util.Identifier(id));
+        this.item = net.minecraft.registry.Registries.ITEM.get(new net.minecraft.util.Identifier(id));
     }
 
     public CardboardModdedItem(Item item) {

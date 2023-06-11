@@ -26,7 +26,6 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
-import net.minecraft.network.message.MessageSourceProfile;
 import net.minecraft.network.message.MessageType;
 import net.minecraft.network.message.SentMessage;
 import net.minecraft.network.message.SignedMessage;
@@ -59,11 +58,14 @@ public class MixinPlayerManager_ChatEvent {
 		 BukkitFabricMod.LOGGER.info("onSendChatMessage: " + message.getContent().getString());
 	}
     
+    //     private void broadcast(SignedMessage message, Predicate<ServerPlayerEntity> shouldSendFiltered, @Nullable ServerPlayerEntity sender, MessageType.Parameters params) {
+
+    
     @Overwrite
-    public void broadcast(SignedMessage message, Predicate<ServerPlayerEntity> shouldSendFiltered, ServerPlayerEntity sender, MessageSourceProfile sourceProfile, MessageType.Parameters params) {
+    public void broadcast(SignedMessage message, Predicate<ServerPlayerEntity> shouldSendFiltered, ServerPlayerEntity sender/*, MessageSourceProfile sourceProfile*/, MessageType.Parameters params) {
         BukkitFabricMod.LOGGER.info("BROADCAST DEBUG: " + message.getContent().getString());
         
-    	boolean bl = this.verify(message, sourceProfile);
+    	boolean bl = this.verify(message);
         this.server.logChatMessage(message.getContent(), params, null);
         SentMessage sentMessage = SentMessage.of(message);
         boolean bl2 = message.isFullyFiltered();
@@ -133,11 +135,11 @@ public class MixinPlayerManager_ChatEvent {
             } else for (Player recipient : event.getRecipients())
                 recipient.sendMessage(s);
         }
-        sentMessage.afterPacketsSent((PlayerManager)(Object)this);
+        // sentMessage.afterPacketsSent((PlayerManager)(Object)this);
     }
 
     @Shadow
-    private boolean verify(SignedMessage message, MessageSourceProfile profile) {
+    private boolean verify(SignedMessage message/*, MessageSourceProfile profile*/) {
         return true;
     }
 

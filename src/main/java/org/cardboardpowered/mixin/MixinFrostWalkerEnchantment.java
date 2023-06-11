@@ -38,13 +38,9 @@ import net.minecraft.util.math.Position;
 import net.minecraft.world.World;
 
 /**
- * @implNote Mixin set to priority 999 to allow
- *          other mods to inject after us. 
  */
 @Mixin(value = FrostWalkerEnchantment.class, priority = 999)
 public class MixinFrostWalkerEnchantment {
-    
-    // TODO 1.18!!!
 
     /**
      * @reason BlockFormEvent - Add call to {@link BukkitEventFactory#handleBlockFormEvent}
@@ -55,25 +51,25 @@ public class MixinFrostWalkerEnchantment {
      * @param pos    - The current {@link BlockPos}
      */
     @Overwrite
-    public static void freezeWater(LivingEntity entity, World world, BlockPos pos, int i) {
-        if (entity.isOnGround()) {
-            BlockState state = Blocks.FROSTED_ICE.getDefaultState();
-            float f = (float) Math.min(16, 2 + i);
-            BlockPos.Mutable mutablePos = new BlockPos.Mutable();
-            Iterator<BlockPos> iterator = BlockPos.iterate(pos.add((double) (-f), -1.0D, (double) (-f)), pos.add((double) f, -1.0D, (double) f)).iterator();
+    public static void freezeWater(LivingEntity living, World worldIn, BlockPos pos, int level) {
+        if (living.isOnGround()) {
+            BlockState blockstate = Blocks.FROSTED_ICE.getDefaultState();
+            int f = Math.min(16, 2 + level);
+            BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
 
-            while (iterator.hasNext()) {
-                BlockPos blockpos1 = (BlockPos) iterator.next();
-                if (blockpos1.isWithinDistance((Position) entity.getPos(), (double) f)) {
-                    mutablePos.set(blockpos1.getX(), blockpos1.getY() + 1, blockpos1.getZ());
-                    BlockState state1 = world.getBlockState(mutablePos);
-
-                    /*if (state1.isAir()) {
-                        BlockState state2 = world.getBlockState(blockpos1);
-                        if (state2.getMaterial() == Material.WATER && (Integer) state2.get(FluidBlock.LEVEL) == 0 && state.canPlaceAt(world, blockpos1) && world.canPlace(state, blockpos1, ShapeContext.absent()))
-                            if (BukkitEventFactory.handleBlockFormEvent(world, blockpos1, state, entity))
-                                world.getBlockTickScheduler().schedule(blockpos1, Blocks.FROSTED_ICE, MathHelper.nextInt(entity.getRandom(), 60, 120));
-                    }*/
+            for (BlockPos blockpos : BlockPos.iterate(pos.add(-f, -1, -f), pos.add(f, -1, f))) {
+                if (blockpos.isWithinDistance(living.getPos(), f)) {
+                    blockpos$mutable.set(blockpos.getX(), blockpos.getY() + 1, blockpos.getZ());
+                    BlockState blockstate1 = worldIn.getBlockState(blockpos$mutable);
+                    if (blockstate1.isAir()) {
+                        BlockState blockstate2 = worldIn.getBlockState(blockpos);
+                        boolean isFull = blockstate2.getBlock() == Blocks.WATER && blockstate2.get(FluidBlock.LEVEL) == 0;
+                        if (blockstate2.getMaterial() == Material.WATER && isFull && blockstate.canPlaceAt(worldIn, blockpos) && worldIn.canPlace(blockstate, blockpos, ShapeContext.absent())) {
+                            if (BukkitEventFactory.handleBlockFormEvent(worldIn, blockpos, blockstate, living)) {
+                                worldIn.scheduleBlockTick(blockpos, Blocks.FROSTED_ICE, MathHelper.nextInt(living.getRandom(), 60, 120));
+                            }
+                        }
+                    }
                 }
             }
         }

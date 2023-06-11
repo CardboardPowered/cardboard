@@ -37,10 +37,42 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
 
     /**
      * @reason Spigot Offline UUID
-     * @author BukkitFabric
+     * @author Cardboard
      */
     @Overwrite
-    public NbtCompound loadPlayerData(PlayerEntity entityhuman) {
+    public NbtCompound loadPlayerData(PlayerEntity player) {
+        NbtCompound lv = null;
+        try {
+            File file = new File(this.playerDataDir, player.getUuidAsString() + ".dat");
+            if (file.exists() && file.isFile()) {
+                lv = NbtIo.readCompressed(file);
+            }
+        } catch (Exception exception) {
+        	BukkitFabricMod.LOGGER.warning("Failed to load player data for " + player.getName().getString());
+        }
+        if (lv != null) {
+        	// Cardboard Start
+        	if (player instanceof ServerPlayerEntity) {
+                PlayerImpl craftPlayer = (PlayerImpl) ((IMixinServerEntityPlayer)player).getBukkitEntity();
+                // Only update first played if it is older than the one we have
+                long modified = new File(this.playerDataDir, player.getUuid() + ".dat").lastModified();
+                if (modified < craftPlayer.getFirstPlayed()) {
+                    craftPlayer.setFirstPlayed(modified);
+                }
+            }
+        	// Cardboard End
+            int i = NbtHelper.getDataVersion(lv, -1);
+            player.readNbt(DataFixTypes.PLAYER.update(this.dataFixer, lv, i));
+        }
+        return lv;
+    }
+    
+    /**
+     * @reason Spigot Offline UUID
+     * @author BukkitFabric
+     *
+    // @Overwrite
+    public NbtCompound loadPlayerData_(PlayerEntity entityhuman) {
         NbtCompound nbttagcompound = null;
 
         try {
@@ -81,7 +113,7 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
         }
 
         return nbttagcompound;
-    }
+    }*/
 
     @SuppressWarnings("resource")
     @Override

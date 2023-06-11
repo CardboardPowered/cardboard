@@ -25,7 +25,7 @@ public class MixinHorseScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory playerInv;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/inventory/Inventory;Lnet/minecraft/entity/passive/AbstractHorseEntity;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, PlayerInventory playerinventory, Inventory iinventory, final AbstractHorseEntity  entityhorseabstract, CallbackInfo ci) {
         this.playerInv = playerinventory;
     }

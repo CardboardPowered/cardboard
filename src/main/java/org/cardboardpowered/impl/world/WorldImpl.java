@@ -153,9 +153,9 @@ import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.entity.vehicle.SpawnerMinecartEntity;
 import net.minecraft.entity.vehicle.TntMinecartEntity;
-import net.minecraft.network.packet.s2c.play.PlaySoundIdS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkHolder;
 import net.minecraft.server.world.ChunkTicketType;
@@ -168,7 +168,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -267,7 +266,7 @@ public class WorldImpl implements World {
 
     @Override
     public boolean createExplosion(double x, double y, double z, float power, boolean setFire, boolean breakBlocks, Entity source) {
-        nms.createExplosion(source == null ? null : ((CraftEntity) source).getHandle(), x, y, z, power, setFire, breakBlocks ? Explosion.DestructionType.BREAK : Explosion.DestructionType.NONE);
+        nms.createExplosion(source == null ? null : ((CraftEntity) source).getHandle(), x, y, z, power, setFire, breakBlocks ? net.minecraft.world.World.ExplosionSourceType.MOB : net.minecraft.world.World.ExplosionSourceType.NONE);
         return true; // TODO return wasCanceled
     }
 
@@ -485,9 +484,9 @@ public class WorldImpl implements World {
     @Override
     public Biome getBiome(int arg0, int arg1, int arg2) {
         try {
-            return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(Registry.BIOME_KEY), nms.getBiomeForNoiseGen(arg0 >> 2, arg1 >> 2, arg2 >> 2).value());
+            return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(RegistryKeys.BIOME), nms.getBiomeForNoiseGen(arg0 >> 2, arg1 >> 2, arg2 >> 2).value());
         } catch (Exception e) {
-            return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(Registry.BIOME_KEY),
+            return CraftBlock.biomeBaseToBiome(getHandle().getRegistryManager().get(RegistryKeys.BIOME),
                     (net.minecraft.world.biome.Biome) (Object) nms.getBiomeForNoiseGen(arg0 >> 2, arg1 >> 2, arg2 >> 2));
         }
     }
@@ -750,12 +749,17 @@ public class WorldImpl implements World {
 
     @Override
     public double getHumidity(int x, int y, int z) {
+    	
+    	// TODO 1.19.4 add AW for
+    	// return nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).value().weather.downfall(); 
+    	
         try {
-            return nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).value().getDownfall();
+            return 0; // nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2).value().getDownfall();
         } catch (Exception e) {
             // 1.18.1
-            return ((net.minecraft.world.biome.Biome) (Object) nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2) ).getDownfall();
+            // return ((net.minecraft.world.biome.Biome) (Object) nms.getBiomeForNoiseGen(x >> 2, y >> 2, z >> 2) ).getDownfall();
         }
+        return 0;
     }
 
     @Override
@@ -1069,7 +1073,7 @@ public class WorldImpl implements World {
 
     @Override
     public Location locateNearestStructure(Location origin, StructureType structureType, int radius, boolean findUnexplored) {
-        BlockPos originPos = new BlockPos(origin.getX(), origin.getY(), origin.getZ());
+        //BlockPos originPos = new BlockPos(origin.getX(), origin.getY(), origin.getZ());
         // FIXME: 1.18.2
         return null;
         // BlockPos nearest = this.getHandle().getChunkManager().getChunkGenerator().locateStructure(this.getHandle(), StructureFeature..STRUCTURES.get(structureType.getName()), originPos, radius, findUnexplored);
@@ -1744,7 +1748,7 @@ public class WorldImpl implements World {
             }
 
             BlockFace[] faces = new BlockFace[]{BlockFace.EAST, BlockFace.NORTH, BlockFace.WEST, BlockFace.SOUTH, BlockFace.UP, BlockFace.DOWN};
-            final BlockPos pos = new BlockPos(x, y, z);
+            final BlockPos pos = BlockPos.ofFloored(x, y, z);
             for (BlockFace dir : faces) {
                 net.minecraft.block.BlockState nmsBlock = nms.getBlockState(pos.offset(CraftBlock.blockFaceToNotch(dir)));
                 if (nmsBlock.getMaterial().isSolid() || AbstractRedstoneGateBlock.isRedstoneGate(nmsBlock)) {
@@ -1753,7 +1757,7 @@ public class WorldImpl implements World {
             }
 
             if (LeashHitch.class.isAssignableFrom(clazz)) {
-                entity = new LeashKnotEntity(nms, new BlockPos(x, y, z));
+                entity = new LeashKnotEntity(nms, BlockPos.ofFloored(x, y, z));
              // TODO 1.17ify entity.teleporting = true;
             } else {
                 // No valid face found
@@ -1764,7 +1768,7 @@ public class WorldImpl implements World {
                     // TODO: 1.19
                 	// entity = new PaintingEntity(nms, new BlockPos(x, y, z), dir);
                 } else if (ItemFrame.class.isAssignableFrom(clazz)) {
-                    entity = new ItemFrameEntity(nms, new BlockPos(x, y, z), dir);
+                    entity = new ItemFrameEntity(nms, BlockPos.ofFloored(x, y, z), dir);
                 }
             }
 
@@ -1849,7 +1853,7 @@ public class WorldImpl implements World {
         Validate.notNull(data, "Material cannot be null");
 
         //FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), ((CraftBlockData) data).getState());
-        FallingBlockEntity entity = FallingBlockEntity.spawnFromBlock(nms, new BlockPos(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState());
+        FallingBlockEntity entity = FallingBlockEntity.spawnFromBlock(nms, BlockPos.ofFloored(location.getX(), location.getY(), location.getZ()), ((CraftBlockData) data).getState());
         entity.timeFalling = 1;
 
         nms.addEntity(entity/*, SpawnReason.CUSTOM*/);
@@ -1863,7 +1867,7 @@ public class WorldImpl implements World {
         Validate.isTrue(material.isBlock(), "Material must be a block");
 
         // TODO 1.18.1 / 1.18.2
-        FallingBlockEntity entity = FallingBlockEntity.spawnFromBlock(nms, new BlockPos(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).getDefaultState());
+        FallingBlockEntity entity = FallingBlockEntity.spawnFromBlock(nms, BlockPos.ofFloored(location.getX(), location.getY(), location.getZ()), CraftMagicNumbers.getBlock(material).getDefaultState());
         //FallingBlockEntity entity = new FallingBlockEntity(nms, location.getX(), location.getY(), location.getZ(), CraftMagicNumbers.getBlock(material).getDefaultState());
         entity.timeFalling = 1;
 

@@ -8,7 +8,9 @@ import net.minecraft.item.Item;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -121,8 +123,8 @@ public enum CraftStatistic {
 
     public static org.bukkit.Statistic getBukkitStatistic(net.minecraft.stat.Stat<?> statistic) {
         Registry statRegistry = statistic.getType().getRegistry();
-        Identifier nmsKey = Registry.STAT_TYPE.getId(statistic.getType());
-        if (statRegistry == Registry.CUSTOM_STAT)
+        Identifier nmsKey = Registries.STAT_TYPE.getId(statistic.getType());
+        if (statRegistry == Registries.CUSTOM_STAT)
             nmsKey = (Identifier) statistic.getValue();
 
         return statistics.get(nmsKey);
@@ -158,7 +160,7 @@ public enum CraftStatistic {
 
     public static net.minecraft.stat.Stat getEntityStatistic(org.bukkit.Statistic stat, EntityType entity) {
         if (entity.getName() != null) {
-            net.minecraft.entity.EntityType<?> nmsEntity = Registry.ENTITY_TYPE.get(new Identifier(entity.getName()));
+            net.minecraft.entity.EntityType<?> nmsEntity = Registries.ENTITY_TYPE.get(new Identifier(entity.getName()));
             if (stat == org.bukkit.Statistic.KILL_ENTITY)
                 return net.minecraft.stat.Stats.KILLED.getOrCreateStat(nmsEntity);
             if (stat == org.bukkit.Statistic.ENTITY_KILLED_BY)

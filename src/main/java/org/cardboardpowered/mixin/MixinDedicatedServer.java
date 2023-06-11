@@ -44,7 +44,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.PendingServerCommand;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 @Mixin(MinecraftDedicatedServer.class)
 public abstract class MixinDedicatedServer extends MixinMCServer implements IDedicatedServer {
@@ -61,7 +61,7 @@ public abstract class MixinDedicatedServer extends MixinMCServer implements IDed
     @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
     private void init(CallbackInfoReturnable<Boolean> ci) {
         // Register Bukkit Enchantments
-        for (Enchantment enchantment : Registry.ENCHANTMENT)
+        for (Enchantment enchantment : Registries.ENCHANTMENT)
             org.bukkit.enchantments.Enchantment.registerEnchantment(new CardboardEnchantment(enchantment));
 
         CraftMagicNumbers.test();
@@ -69,7 +69,7 @@ public abstract class MixinDedicatedServer extends MixinMCServer implements IDed
 
         MinecraftDedicatedServer thiss = (MinecraftDedicatedServer) (Object) this;
         
-        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager(thiss, thiss.getRegistryManager(), saveHandler));
+        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager(thiss, thiss.getCombinedDynamicRegistries(), saveHandler));
         Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
         org.spigotmc.SpigotConfig.init(new File("spigot.yml"));
 

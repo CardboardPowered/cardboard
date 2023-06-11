@@ -10,9 +10,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.Registries;
 
 public class CraftGameEventTag extends TagImpl<net.minecraft.world.event.GameEvent, GameEvent> {
 	
@@ -25,13 +27,13 @@ public class CraftGameEventTag extends TagImpl<net.minecraft.world.event.GameEve
 	
 	@Override
 	public boolean isTagged(@NotNull GameEvent gameEvent) {
-	    return registry.entryOf(KEY_CACHE.computeIfAbsent(gameEvent, event -> RegistryKey.of(Registry.GAME_EVENT_KEY, CraftNamespacedKey.toMinecraft(event.getKey())))).isIn(tag);
+	    return registry.entryOf(KEY_CACHE.computeIfAbsent(gameEvent, event -> RegistryKey.of(RegistryKeys.GAME_EVENT, CraftNamespacedKey.toMinecraft(event.getKey())))).isIn(tag);
 	}
 
 	@Override
     public Set<GameEvent> getValues() {
         return getHandle().stream().map(nms -> {
-        	NamespacedKey key = CraftNamespacedKey.fromMinecraft(Registry.GAME_EVENT.getId(nms.value()));
+        	NamespacedKey key = CraftNamespacedKey.fromMinecraft(Registries.GAME_EVENT.getId(nms.value()));
         	return GameEvent.getByKey(key);
         }).collect(Collectors.toUnmodifiableSet());
 	}

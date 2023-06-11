@@ -130,6 +130,12 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             System.out.println(owner + " " + name + " " + desc);
             return;
         }
+
+        if (owner.startsWith("net/minecraft") && name.equals("getServer")) {
+            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getNmsServer", desc, false );
+            System.out.println(owner + " " + name + " " + desc);
+            return;
+        }
         
         if (name.contains("getWorld")) {
         	//System.out.println(owner + " " + name + " " + desc);

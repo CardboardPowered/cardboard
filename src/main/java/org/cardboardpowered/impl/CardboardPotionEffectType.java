@@ -1,7 +1,7 @@
 package org.cardboardpowered.impl;
 
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.Map;
 
@@ -18,7 +18,7 @@ public class CardboardPotionEffectType extends PotionEffectType {
     private final StatusEffect handle;
 
     public CardboardPotionEffectType(StatusEffect handle) {
-        super(StatusEffect.getRawId(handle), CraftNamespacedKey.fromMinecraft(Registry.STATUS_EFFECT.getId(handle)));
+        super(StatusEffect.getRawId(handle), CraftNamespacedKey.fromMinecraft(Registries.STATUS_EFFECT.getId(handle)));
         this.handle = handle;
     }
 

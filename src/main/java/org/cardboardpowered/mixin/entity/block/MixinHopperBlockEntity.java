@@ -26,6 +26,7 @@ import net.minecraft.block.entity.Hopper;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.inventory.DoubleInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
@@ -103,7 +104,7 @@ public class MixinHopperBlockEntity implements IMixinInventory {
         boolean error = false;
 
         try {
-            if (!itemstack.isEmpty() && canExtract(iinventory, itemstack, i, enumdirection)) {
+            if (!itemstack.isEmpty() && canExtract(ihopper, iinventory, itemstack, i, enumdirection)) {
                 ItemStack itemstack1 = itemstack.copy();
                 if (iinventory instanceof IMixinInventory && ihopper instanceof IMixinInventory) {
                     CraftItemStack oitemstack = CraftItemStack.asCraftMirror(iinventory.removeStack(i, 1));
@@ -155,8 +156,13 @@ public class MixinHopperBlockEntity implements IMixinInventory {
     }
 
     @Shadow
-    public static boolean canExtract(net.minecraft.inventory.Inventory iinventory, ItemStack itemstack, int i, Direction enumdirection) {
-        return false;
+    public static boolean canExtract(Inventory hopperInventory, Inventory fromInventory, ItemStack stack, int slot, Direction facing) {
+    	return false;
     }
+
+    //@Shadow
+    //public static boolean canExtract(net.minecraft.inventory.Inventory iinventory, ItemStack itemstack, int i, Direction enumdirection) {
+    //    return false;
+    //}
 
 }

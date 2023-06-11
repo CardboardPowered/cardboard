@@ -35,7 +35,7 @@ import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 public class CraftBlockData implements BlockData {
 
@@ -254,7 +254,7 @@ public class CraftBlockData implements BlockData {
 
     // Mimicked from BlockDataAbstract#toString()
     public String toString(Map<Property<?>, Comparable<?>> states) {
-        StringBuilder stateString = new StringBuilder(Registry.BLOCK.getId(state.getBlock()).toString());
+        StringBuilder stateString = new StringBuilder(Registries.BLOCK.getId(state.getBlock()).toString());
 
         if (!states.isEmpty()) {
             stateString.append('[');
@@ -332,7 +332,7 @@ public class CraftBlockData implements BlockData {
     private static Property<?> getState(Class<? extends Block> block, String name, boolean optional) {
         Property<?> state = null;
 
-        for (Block instance : Registry.BLOCK) {
+        for (Block instance : Registries.BLOCK) {
             if (instance.getClass() == block) {
                 if (state == null) {
                     state = instance.getStateManager().getProperty(name);
@@ -466,7 +466,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.StemBlock.class, org.bukkit.craftbukkit.block.impl.CraftStem::new);
         register(net.minecraft.block.AttachedStemBlock.class, org.bukkit.craftbukkit.block.impl.CraftStemAttached::new);
         register(net.minecraft.block.SlabBlock.class, org.bukkit.craftbukkit.block.impl.CraftStepAbstract::new);
-        register(net.minecraft.block.StoneButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftStoneButton::new);
+        // TODO: 1.19.4: register(net.minecraft.block.StoneButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftStoneButton::new);
         register(net.minecraft.block.StonecutterBlock.class, org.bukkit.craftbukkit.block.impl.CraftStonecutter::new);
         register(net.minecraft.block.StructureBlock.class, org.bukkit.craftbukkit.block.impl.CraftStructure::new);
         register(net.minecraft.block.SweetBerryBushBlock.class, org.bukkit.craftbukkit.block.impl.CraftSweetBerryBush::new);
@@ -486,7 +486,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.WeepingVinesBlock.class, org.bukkit.craftbukkit.block.impl.CraftWeepingVines::new);
         register(net.minecraft.block.WitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkull::new);
         register(net.minecraft.block.WallWitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkullWall::new);
-        register(net.minecraft.block.WoodenButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftWoodButton::new);
+        // TODO: 1.19.4: register(net.minecraft.block.WoodenButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftWoodButton::new);
         
         stringDataCache = new ConcurrentHashMap<String, CraftBlockData>();
         CraftBlockData.reloadCache();
@@ -506,7 +506,7 @@ public class CraftBlockData implements BlockData {
         net.minecraft.block.Block block;
         Preconditions.checkArgument((material == null || material.isBlock() ? 1 : 0) != 0, (String)"Cannot get data for not block %s", (Object)material);
         if (material != null && (block = CraftMagicNumbers.getBlock(material)) != null) {
-            Identifier key = Registry.BLOCK.getId(block);
+            Identifier key = Registries.BLOCK.getId(block);
             data = data == null ? key.toString() : key + (String)data;
         }
         CraftBlockData cached = stringDataCache.computeIfAbsent((String)data, s2 -> CraftBlockData.createNewData(null, s2));
@@ -520,10 +520,10 @@ public class CraftBlockData implements BlockData {
         if (data != null) {
             try {
                 if (block != null) {
-                    data = Registry.BLOCK.getId(block) + (String)data;
+                    data = Registries.BLOCK.getId(block) + (String)data;
                 }
                 StringReader reader = new StringReader((String)data);
-                BlockArgumentParser.BlockResult arg = BlockArgumentParser.block(Registry.BLOCK, reader, false);
+                BlockArgumentParser.BlockResult arg = BlockArgumentParser.block(Registries.BLOCK.getReadOnlyWrapper(), reader, false);
                 Preconditions.checkArgument((!reader.canRead() ? 1 : 0) != 0, (Object)("Spurious trailing data: " + (String)data));
                 blockData = arg.blockState();
                 parsed = arg.properties();

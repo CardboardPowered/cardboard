@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit;
 import com.google.common.base.Preconditions;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Sound;
 
@@ -1014,7 +1014,7 @@ public enum CraftSound {
     }
 
     public static SoundEvent getSoundEffect(String s) {
-        SoundEvent effect = Registry.SOUND_EVENT.get(new Identifier(s));
+        SoundEvent effect = Registries.SOUND_EVENT.get(new Identifier(s));
         Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
 
         return effect;

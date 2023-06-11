@@ -60,7 +60,7 @@ import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.Packet;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
 import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
@@ -81,7 +81,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
@@ -130,7 +130,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         CraftServer.INSTANCE.playerView.remove(this.bukkit);
     }
 
-    @Inject(at = @At("HEAD"), method = "teleport", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "Lnet/minecraft/server/network/ServerPlayerEntity;teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", cancellable = true)
     public void teleport1(ServerWorld worldserver, double x, double y, double z, float f, float f1, CallbackInfo ci) {
         PlayerTeleportEvent event = new PlayerTeleportEvent((Player) this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(((IMixinWorld)worldserver).getWorldImpl(), x,y,z,f,f1), PlayerTeleportEvent.TeleportCause.UNKNOWN);
         Bukkit.getPluginManager().callEvent(event);
@@ -170,7 +170,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             if (handler.getType() instanceof ExtendedScreenHandlerType<?>) {
                 Networking.sendOpenPacket((ServerPlayerEntity) (Object) this, (ExtendedScreenHandlerFactory) factory, handler, screenHandlerSyncId);
             } else {
-                Identifier id = Registry.SCREEN_HANDLER.getId(handler.getType());
+                Identifier id = Registries.SCREEN_HANDLER.getId(handler.getType());
                 throw new IllegalArgumentException("[Fabric] Non-extended screen handler " + id + " must not be opened with an ExtendedScreenHandlerFactory!");
             }
         } else {
@@ -219,7 +219,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                 if (factory instanceof ExtendedScreenHandlerFactory) {
                     fabric_openedScreenHandler.set(container);
                 } else if (container.getType() instanceof ExtendedScreenHandlerType<?>) {
-                    Identifier id = Registry.SCREEN_HANDLER.getId(container.getType());
+                    Identifier id = Registries.SCREEN_HANDLER.getId(container.getType());
                     throw new IllegalArgumentException("[Fabric] Extended screen handler " + id + " must be opened with an ExtendedScreenHandlerFactory!");
                 }
                 

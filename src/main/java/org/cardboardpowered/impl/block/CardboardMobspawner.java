@@ -10,6 +10,7 @@ import org.cardboardpowered.impl.world.WorldImpl;
 import net.minecraft.block.entity.MobSpawnerBlockEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 
 @SuppressWarnings("deprecation")
 public class CardboardMobspawner extends CardboardBlockEntityState<MobSpawnerBlockEntity> implements CreatureSpawner {
@@ -34,7 +35,10 @@ public class CardboardMobspawner extends CardboardBlockEntityState<MobSpawnerBlo
     public void setSpawnedType(EntityType entityType) {
         if (entityType == null || entityType.getName() == null)
             throw new IllegalArgumentException("Can't spawn EntityType " + entityType + " from mobspawners!");
-        this.getSnapshot().getLogic().setEntityId(net.minecraft.entity.EntityType.get(entityType.getName()).get());
+        // this.getSnapshot().getLogic().setEntityId(net.minecraft.entity.EntityType.get(entityType.getName()).get());
+        
+        Random rand = (this.isPlaced()) ? ((WorldImpl)this.getWorld()).getHandle().getRandom() : Random.create();
+        this.getSnapshot().setEntityType(net.minecraft.entity.EntityType.get(entityType.getName()).get(), rand);
     }
 
     @Override

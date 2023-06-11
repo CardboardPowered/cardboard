@@ -59,7 +59,8 @@ public class MixinPiglinBrain {
         } else if (isFood(itemstack) && !hasAteRecently(entitypiglin)) {
             setEatenRecently(entitypiglin);
         } else {
-            if (!entitypiglin.tryEquip(itemstack)) barterItem(entitypiglin, itemstack);
+            boolean flag = !entitypiglin.tryEquip(itemstack).equals(ItemStack.EMPTY);
+            if (!flag) barterItem(entitypiglin, itemstack);
         }
     }
 

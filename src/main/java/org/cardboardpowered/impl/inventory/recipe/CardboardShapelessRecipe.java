@@ -10,6 +10,7 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
@@ -42,7 +43,12 @@ public class CardboardShapelessRecipe extends ShapelessRecipe implements RecipeI
         DefaultedList<Ingredient> data = DefaultedList.ofSize(ingred.size(), Ingredient.EMPTY);
         for (int i = 0; i < ingred.size(); i++) data.set(i, toNMS(ingred.get(i), true));
 
-        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftItemStack.asNMSCopy(this.getResult()), data));
+        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), RecipeInterface.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data));
+    }
+    
+    // TODO: Update API to 1.19.4
+    public CraftingBookCategory getCategory() {
+        return CraftingBookCategory.MISC;
     }
 
 }

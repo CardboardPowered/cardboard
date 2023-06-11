@@ -32,32 +32,32 @@ public class CardboardFishTropical extends CardboardFish implements TropicalFish
 
     @Override
     public DyeColor getPatternColor() {
-        return getPatternColor(getHandle().getVariant());
+        return getPatternColor(getHandle().getVariant().getId());
     }
 
     @Override
     public void setPatternColor(DyeColor color) {
-        getHandle().setVariant(getData(color, getBodyColor(), getPattern()));
+        getHandle().setVariant(TropicalFishEntity.Variety.fromId(getData(color, getBodyColor(), getPattern())));
     }
 
     @Override
     public DyeColor getBodyColor() {
-        return getBodyColor(getHandle().getVariant());
+        return getBodyColor(getHandle().getVariant().getId());
     }
 
     @Override
     public void setBodyColor(DyeColor color) {
-        getHandle().setVariant(getData(getPatternColor(), color, getPattern()));
+        getHandle().setVariant(TropicalFishEntity.Variety.fromId(getData(getPatternColor(), color, getPattern())));
     }
 
     @Override
     public Pattern getPattern() {
-        return getPattern(getHandle().getVariant());
+        return getPattern(getHandle().getVariant().getId());
     }
 
     @Override
     public void setPattern(Pattern pattern) {
-        getHandle().setVariant(getData(getPatternColor(), getBodyColor(), pattern));
+        getHandle().setVariant(TropicalFishEntity.Variety.fromId(getData(getPatternColor(), getBodyColor(), pattern)));
     }
 
     public static enum CraftPattern {

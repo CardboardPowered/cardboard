@@ -89,7 +89,7 @@ public class MobImpl extends LivingEntityImpl implements Mob {
     public boolean isInDaylight() {
         if (getHandle().world.isDay()) {
             float f = getHandle().getBrightnessAtEyes();
-            BlockPos blockPos = getHandle().getVehicle() instanceof BoatEntity ? new BlockPos(getHandle().getX(), Math.round(getHandle().getY()), getHandle().getZ()).up() : new BlockPos(getHandle().getX(), Math.round(getHandle().getY()), getHandle().getZ());
+            BlockPos blockPos = getHandle().getVehicle() instanceof BoatEntity ? BlockPos.ofFloored(getHandle().getX(), Math.round(getHandle().getY()), getHandle().getZ()).up() : BlockPos.ofFloored(getHandle().getX(), Math.round(getHandle().getY()), getHandle().getZ());
             if (f > 0.5f && BukkitFabricMod.random.nextFloat() * 30.0f < (f - 0.4f) * 2.0f && getHandle().world.isSkyVisible(blockPos)) return true;
         }
         return false;

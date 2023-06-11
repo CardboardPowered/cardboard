@@ -61,7 +61,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import org.bukkit.craftbukkit.block.data.IMagicNumbers;
 import org.cardboardpowered.BlockImplUtil;
@@ -110,18 +110,18 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     static {
         BlockImplUtil.setMN((IMagicNumbers)INSTANCE);
         
-        for (Block block : Registry.BLOCK)
-            BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getId(block).getPath().toUpperCase(Locale.ROOT)));
+        for (Block block : Registries.BLOCK)
+            BLOCK_MATERIAL.put(block, Material.getMaterial(Registries.BLOCK.getId(block).getPath().toUpperCase(Locale.ROOT)));
 
-        for (Item item : Registry.ITEM)
-            ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getId(item).getPath().toUpperCase(Locale.ROOT)));
+        for (Item item : Registries.ITEM)
+            ITEM_MATERIAL.put(item, Material.getMaterial(Registries.ITEM.getId(item).getPath().toUpperCase(Locale.ROOT)));
 
-        //for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
-        //    FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
+        //for (net.minecraft.fluid.Fluid fluid : Registries.FLUID)
+        //    FLUID_MATERIAL.put(fluid, org.bukkit.Registries.FLUID.get(CraftNamespacedKey.fromMinecraft(Registries.FLUID.getId(fluid))));
 
-        for (net.minecraft.fluid.Fluid fluidType : Registry.FLUID) {
-            if (Registry.FLUID.getId(fluidType).getNamespace().equals(NamespacedKey.MINECRAFT)) {
-                //Fluid fluid = org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluidType)));
+        for (net.minecraft.fluid.Fluid fluidType : Registries.FLUID) {
+            if (Registries.FLUID.getId(fluidType).getNamespace().equals(NamespacedKey.MINECRAFT)) {
+                //Fluid fluid = org.bukkit.Registries.FLUID.get(CraftNamespacedKey.fromMinecraft(Registries.FLUID.getId(fluidType)));
                // if (fluid != null) {
                // 	FLUID_MATERIAL.put(fluidType, fluid);
                // }
@@ -132,9 +132,9 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
             if (material.isLegacy()) continue;
 
             Identifier key = key(material);
-            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
-            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
-            Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
+            Registries.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
+            Registries.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
+            Registries.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
         }
     }
 
@@ -150,9 +150,9 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         for (Material material : Material.values()) {
             if (material.isLegacy()) continue;
             Identifier key = key(material);
-            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
-            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
-            Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
+            Registries.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
+            Registries.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
+            Registries.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
         }
     }
 
@@ -167,8 +167,8 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         List<Material> list = new ArrayList<>();
 
         String lastMod = "";
-        for (Block block : Registry.BLOCK) {
-            Identifier id = Registry.BLOCK.getId(block);
+        for (Block block : Registries.BLOCK) {
+            Identifier id = Registries.BLOCK.getId(block);
             String name = standardize(id);
             String nam = id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT);
             if (id.getNamespace().startsWith("minecraft")) {
@@ -208,8 +208,8 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
             MATERIAL_BLOCK.put(m, block);
         }
 
-        for (Item item : Registry.ITEM) {
-            Identifier id = Registry.ITEM.getId(item);
+        for (Item item : Registries.ITEM) {
+            Identifier id = Registries.ITEM.getId(item);
             String name = standardize(id);
             String nam = id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT);
             if (id.getNamespace().startsWith("minecraft")) {
@@ -249,31 +249,31 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
             MATERIAL_ITEM.put(m, item);
         }
 
-        //for (net.minecraft.fluid.Fluid fluid : Registry.FLUID)
-        //    FLUID_MATERIAL.put(fluid, org.bukkit.Registry.FLUID.get(CraftNamespacedKey.fromMinecraft(Registry.FLUID.getId(fluid))));
+        //for (net.minecraft.fluid.Fluid fluid : Registries.FLUID)
+        //    FLUID_MATERIAL.put(fluid, org.bukkit.Registries.FLUID.get(CraftNamespacedKey.fromMinecraft(Registries.FLUID.getId(fluid))));
 
         EnumHelper.addEnums(Material.class, list);
 
         for (Material material : list) {
             Identifier key = key(material);
-            Registry.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
-            Registry.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
-            Registry.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
+            Registries.ITEM.getOrEmpty(key).ifPresent((item) -> MATERIAL_ITEM.put(material, item));
+            Registries.BLOCK.getOrEmpty(key).ifPresent((block) -> MATERIAL_BLOCK.put(material, block));
+            Registries.FLUID.getOrEmpty(key).ifPresent((fluid) -> MATERIAL_FLUID.put(material, fluid));
         }
     }
 
     public static HashMap<String, Material> getModdedMaterials() {
         HashMap<String, Material> map = new HashMap<>();
-        for (Block block : Registry.BLOCK) {
-            Identifier id = Registry.BLOCK.getId(block);
+        for (Block block : Registries.BLOCK) {
+            Identifier id = Registries.BLOCK.getId(block);
             String name = standardize(id);
             if (id.getNamespace().startsWith("minecraft")) continue;
 
             map.put(name, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
         }
 
-        for (Item item : Registry.ITEM) {
-            Identifier id = Registry.ITEM.getId(item);
+        for (Item item : Registries.ITEM) {
+            Identifier id = Registries.ITEM.getId(item);
             String name = standardize(id);
             if (id.getNamespace().startsWith("minecraft")) continue;
 
@@ -300,7 +300,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     }
 
     public static Material getMaterial(Block block) {
-        Identifier id = Registry.BLOCK.getId(block);
+        Identifier id = Registries.BLOCK.getId(block);
         Material m = BLOCK_MATERIAL.getOrDefault(block, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
         BLOCK_MATERIAL.put(block, m);
         MATERIAL_BLOCK.put(m, block);
@@ -308,13 +308,13 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     }
 
     public static Material getMaterial(Item item) {
-        for (Item item1 : Registry.ITEM) {
-            Identifier id = Registry.ITEM.getId(item1);
+        for (Item item1 : Registries.ITEM) {
+            Identifier id = Registries.ITEM.getId(item1);
             if (!id.getNamespace().toLowerCase().contains("minecraft"))
             ITEM_MATERIAL.put(item1, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
         }
 
-        Identifier id = Registry.ITEM.getId(item);
+        Identifier id = Registries.ITEM.getId(item);
         Material m = ITEM_MATERIAL.getOrDefault(item, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
         ITEM_MATERIAL.put(item, m);
         MATERIAL_ITEM.put(m,item);
@@ -340,7 +340,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         if (!mm.isModded()) return null;
 
         Identifier id = new Identifier(mm.getModdedData().getId());
-        Item item = Registry.ITEM.get(id);
+        Item item = Registries.ITEM.get(id);
         MATERIAL_ITEM.put(mat, item);
         return item;
     }
@@ -355,7 +355,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         if (!mm.isModded()) return null;
 
         Identifier id = new Identifier(mm.getModdedData().getId());
-        Block block = Registry.BLOCK.get(id);
+        Block block = Registries.BLOCK.get(id);
         MATERIAL_BLOCK.put(mat, block);
         return block;
     }

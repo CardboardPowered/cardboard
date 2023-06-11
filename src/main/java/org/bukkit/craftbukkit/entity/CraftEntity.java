@@ -206,7 +206,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     public boolean addScoreboardTag(String arg0) {
     	// 1.19.2: addScoreboardTag
     	// 1.19.4: addCommandTag
-        return nms.addScoreboardTag(arg0);
+        return nms.addCommandTag(arg0);
     }
 
     @Override
@@ -319,7 +319,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public Set<String> getScoreboardTags() {
-        return nms.scoreboardTags;
+        return nms.getCommandTags();
     }
 
     @Override

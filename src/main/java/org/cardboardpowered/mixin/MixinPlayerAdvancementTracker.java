@@ -49,14 +49,14 @@ public class MixinPlayerAdvancementTracker {
 
     @Shadow @Final private static Logger LOGGER;
 
-    @Redirect(method = "load", at = @At (value = "INVOKE",
+    /*@Redirect(method = "load", at = @At (value = "INVOKE",
             target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V",
             remap = false))
     public void ifModdedThing(Logger logger, String message, Object p0, Object p1) {
         if ("minecraft".equals(((Map.Entry<Identifier, ?>) p0).getKey().getNamespace())) {
             LOGGER.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", p0, p1);
         }
-    }
+    }*/
 
     @SuppressWarnings("rawtypes")
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/AdvancementRewards;apply(Lnet/minecraft/server/network/ServerPlayerEntity;)V"), method = "grantCriterion")

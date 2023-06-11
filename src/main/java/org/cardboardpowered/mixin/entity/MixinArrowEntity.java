@@ -15,7 +15,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 @Mixin(ArrowEntity.class)
 public class MixinArrowEntity implements IMixinArrowEntity {
@@ -31,7 +31,7 @@ public class MixinArrowEntity implements IMixinArrowEntity {
 
     @Override
     public void setType(String string) {
-        this.potion = Registry.POTION.get(new Identifier(string));
+        this.potion = Registries.POTION.get(new Identifier(string));
         (((Entity)(Object)this).getDataTracker()).set(COLOR, PotionUtil.getColor((Collection<StatusEffectInstance>) PotionUtil.getPotionEffects(this.potion, (Collection<StatusEffectInstance>) this.effects)));
     }
 

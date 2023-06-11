@@ -25,7 +25,7 @@ public class MixinBrewingStandScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/inventory/Inventory;Lnet/minecraft/screen/PropertyDelegate;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, PlayerInventory inventory, Inventory iinventory, PropertyDelegate icontainerproperties, CallbackInfo ci) {
         this.player = (PlayerInventory) inventory;
     }

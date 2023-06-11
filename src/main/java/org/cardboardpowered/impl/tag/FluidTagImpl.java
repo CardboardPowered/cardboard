@@ -8,9 +8,10 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 
 import net.minecraft.fluid.Fluid;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 
 public class FluidTagImpl extends TagImpl<Fluid, org.bukkit.Fluid> {
 
@@ -19,7 +20,7 @@ public class FluidTagImpl extends TagImpl<Fluid, org.bukkit.Fluid> {
     }
 
     public boolean isTagged(org.bukkit.Fluid fluid) {
-        return this.registry.entryOf(RegistryKey.of(Registry.FLUID_KEY, CraftNamespacedKey.toMinecraft(fluid.getKey()))).isIn(this.tag);
+        return this.registry.entryOf(RegistryKey.of(RegistryKeys.FLUID, CraftNamespacedKey.toMinecraft(fluid.getKey()))).isIn(this.tag);
     }
 
     public Set<org.bukkit.Fluid> getValues() {

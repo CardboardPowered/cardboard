@@ -28,7 +28,7 @@ public class MixinGenericContainerScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(Lnet/minecraft/screen/ScreenHandlerType;ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/inventory/Inventory;I)V", at = @At("TAIL"))
     public void setPlayerInv(ScreenHandlerType<?> containers, int i, PlayerInventory playerinventory, Inventory inventory, int j, CallbackInfo ci) {
         this.player = (PlayerInventory) playerinventory;
     }

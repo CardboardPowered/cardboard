@@ -29,7 +29,7 @@ public class MixinAbstractFurnaceScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory playerInv;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(Lnet/minecraft/screen/ScreenHandlerType;Lnet/minecraft/recipe/RecipeType;Lnet/minecraft/recipe/book/RecipeBookCategory;ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/inventory/Inventory;Lnet/minecraft/screen/PropertyDelegate;)V", at = @At("TAIL"))
     public void setPlayerInv(ScreenHandlerType<?> containers, RecipeType<? extends AbstractCookingRecipe> recipes, RecipeBookCategory recipebooktype, int i, PlayerInventory playerinventory, Inventory iinventory, PropertyDelegate icontainerproperties, CallbackInfo ci) {
         this.playerInv = playerinventory;
     }

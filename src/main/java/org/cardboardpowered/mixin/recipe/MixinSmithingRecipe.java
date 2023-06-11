@@ -12,10 +12,11 @@ import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.LegacySmithingRecipe;
 import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.util.Identifier;
 
-@Mixin(SmithingRecipe.class)
+@Mixin(LegacySmithingRecipe.class)
 public class MixinSmithingRecipe implements IMixinRecipe {
 
     @Shadow private Ingredient base;

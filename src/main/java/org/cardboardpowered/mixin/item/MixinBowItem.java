@@ -45,7 +45,7 @@ public class MixinBowItem {
             method = "onStoppedUsing")
     public PersistentProjectileEntity bukkitize(ArrowItem itemarrow, World world, ItemStack itemstack, LivingEntity entityliving) {
         PlayerEntity entityhuman = (PlayerEntity) entityliving;
-        ItemStack itemstack1 = entityhuman.getArrowType(itemstack);
+        ItemStack itemstack1 = entityhuman.getProjectileType(itemstack); //.getArrowType(itemstack);
 
         PersistentProjectileEntity entityarrow = itemarrow.createArrow(world, itemstack1, (LivingEntity) entityhuman);
         cancel_BF = false;

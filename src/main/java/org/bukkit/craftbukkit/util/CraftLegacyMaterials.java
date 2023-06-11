@@ -33,7 +33,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 /**
  * This class may seem unnecessarily slow and complicated/repetitive however it
@@ -305,7 +305,7 @@ public final class CraftLegacyMaterials {
                         continue;
 
                     String name = blockTag.get("Name").asString("");
-                    Block block = Registry.BLOCK.get(new Identifier(name));
+                    Block block = Registries.BLOCK.get(new Identifier(name));
                     if (block == null)
                         continue;
                     BlockState blockData = block.getDefaultState();
@@ -372,7 +372,7 @@ public final class CraftLegacyMaterials {
                 if (newId.equals("minecraft:spawn_egg"))
                     newId = "minecraft:pig_spawn_egg";
 
-                Item newMaterial = Registry.ITEM.get(new Identifier(newId));
+                Item newMaterial = Registries.ITEM.get(new Identifier(newId));
 
                 if (newMaterial == Items.AIR)
                     continue;

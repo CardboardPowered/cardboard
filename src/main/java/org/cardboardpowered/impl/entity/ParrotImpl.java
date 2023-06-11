@@ -19,14 +19,14 @@ public class ParrotImpl extends TameableAnimalImpl implements Parrot {
 
     @Override
     public Variant getVariant() {
-        return Variant.values()[getHandle().getVariant()];
+        return Variant.values()[getHandle().getVariant().ordinal()];
     }
 
     @Override
     public void setVariant(Variant variant) {
         Preconditions.checkArgument(variant != null, "variant");
 
-        getHandle().setVariant(variant.ordinal());
+        getHandle().setVariant(ParrotEntity.Variant.byIndex(variant.ordinal()));
     }
 
     @Override

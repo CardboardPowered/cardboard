@@ -3,7 +3,7 @@ package org.cardboardpowered.impl;
 import net.kyori.adventure.text.Component;
 import net.minecraft.enchantment.BindingCurseEnchantment;
 import net.minecraft.enchantment.VanishingCurseEnchantment;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 import java.util.Set;
 
@@ -24,7 +24,7 @@ public class CardboardEnchantment extends Enchantment {
     private final net.minecraft.enchantment.Enchantment target;
 
     public CardboardEnchantment(net.minecraft.enchantment.Enchantment target) {
-        super(CraftNamespacedKey.fromMinecraft(Registry.ENCHANTMENT.getId(target)));
+        super(CraftNamespacedKey.fromMinecraft(Registries.ENCHANTMENT.getId(target)));
         this.target = target;
     }
 
@@ -40,7 +40,7 @@ public class CardboardEnchantment extends Enchantment {
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        switch (target.type) {
+        switch (target.target) {
             case ARMOR:
                 return EnchantmentTarget.ARMOR;
             case ARMOR_FEET:
@@ -89,7 +89,7 @@ public class CardboardEnchantment extends Enchantment {
 
     @Override
     public String getName() {
-        switch (Registry.ENCHANTMENT.getRawId(target)) {
+        switch (Registries.ENCHANTMENT.getRawId(target)) {
             case 0:
                 return "PROTECTION_ENVIRONMENTAL";
             case 1:
@@ -165,7 +165,7 @@ public class CardboardEnchantment extends Enchantment {
             case 36:
                 return "VANISHING_CURSE";
             default:
-                return "UNKNOWN_ENCHANT_" + Registry.ENCHANTMENT.getId(target);
+                return "UNKNOWN_ENCHANT_" + Registries.ENCHANTMENT.getId(target);
         }
     }
 

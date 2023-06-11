@@ -43,8 +43,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.authlib.GameProfile;
 
@@ -61,7 +63,7 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -160,7 +162,9 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         PlayerImpl plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(plr, joinMessage);
         BukkitEventFactory.callEvent(playerJoinEvent);
-        if (!player.networkHandler.connection.isOpen()) return;
+        IMixinPlayNetworkHandler ims = (IMixinPlayNetworkHandler)player.networkHandler;
+
+        if (!ims.cb_get_connection().isOpen()) return;
 
         joinMessage = playerJoinEvent.getJoinMessage();
 
@@ -209,14 +213,15 @@ public class MixinPlayerManager implements IMixinPlayerManager {
             entityplayer.networkHandler.disconnect(Text.of("multiplayer.disconnect.duplicate_login"));
         }
 
-        SocketAddress address = nethand.connection.getAddress();
+        IMixinServerLoginNetworkHandler ims = (IMixinServerLoginNetworkHandler)nethand;
+        SocketAddress address = ims.cb_get_connection().getAddress();
 
         me.isaiah.common.cmixin.IMixinPlayerManager imixin = (me.isaiah.common.cmixin.IMixinPlayerManager) (Object)this;
        // ServerPlayerEntity entity = imixin.InewPlayer(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile);
-        ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile, key);
+        ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile);
         
         Player player = (Player) ((IMixinServerEntityPlayer)entity).getBukkitEntity();
-        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) address).getAddress(), ((java.net.InetSocketAddress) nethand.connection.channel.remoteAddress()).getAddress());
+        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) address).getAddress(), ((java.net.InetSocketAddress) ims.cb_get_connection().channel.remoteAddress()).getAddress());
 
         if (((PlayerManager)(Object)this).getUserBanList().contains(profile) /*&& !((PlayerManager)(Object)this).getUserBanList().get(gameprofile).isInvalid()*/) {
             chatmessage = Text.translatable("multiplayer.disconnect.banned.reason", new Object[]{"TODO REASON!"});

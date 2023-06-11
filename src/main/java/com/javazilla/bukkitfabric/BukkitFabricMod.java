@@ -70,7 +70,7 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 import net.minecraft.world.World;
 import net.minecraft.world.level.ServerWorldProperties;
 
@@ -112,7 +112,7 @@ public class BukkitFabricMod implements ModInitializer {
 
         CardboardEventManager.INSTANCE.callCardboardEvents();
 
-        for (Object effect : Registry.STATUS_EFFECT) {
+        for (Object effect : Registries.STATUS_EFFECT) {
             try {
                 org.bukkit.potion.PotionEffectType.registerPotionEffectType(new CardboardPotionEffectType((StatusEffect) effect));
             } catch (ArrayIndexOutOfBoundsException e) {

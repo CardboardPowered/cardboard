@@ -1,6 +1,9 @@
 package org.cardboardpowered.mixin.network;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.cardboardpowered.impl.CardboardServerListPingEvent;
@@ -26,7 +29,7 @@ import net.minecraft.text.Text;
 @Mixin(ServerQueryNetworkHandler.class)
 public class MixinServerQueryNetworkHandler {
 
-    @Shadow private static Text REQUEST_HANDLED;
+    // @Shadow private static Text REQUEST_HANDLED;
     @Shadow private ClientConnection connection;
     @Shadow private boolean responseSent;
 
@@ -52,22 +55,21 @@ public class MixinServerQueryNetworkHandler {
                     profiles.add(((ServerPlayerEntity) player).getGameProfile());
             }
 
-            ServerMetadata.Players samp = new ServerMetadata.Players(event.getMaxPlayers(), profiles.size());
-            samp.setSample(profiles.toArray(new GameProfile[profiles.size()]));
+            ServerMetadata.Players samp = new ServerMetadata.Players(event.getMaxPlayers(), profiles.size(), (server.hideOnlinePlayers()) ? Collections.emptyList() : profiles);
 
-            ServerMetadata ping = new ServerMetadata();
-            ping.setDescription(CraftChatMessage.fromString(event.getMotd(), true)[0]);
-
-            ping.setFavicon(event.icon.value);
-            ping.setPlayers(samp);
-            ping.setVersion(new ServerMetadata.Version("Cardboard " + server.getVersion(), SharedConstants.getGameVersion().getProtocolVersion()));
+            ServerMetadata ping = new ServerMetadata(
+                    CraftChatMessage.fromString(event.getMotd(), true)[0],
+                    Optional.of(samp),
+                    Optional.of(new ServerMetadata.Version(server.getServerModName() + " " + server.getVersion(), SharedConstants.getGameVersion().getProtocolVersion())),
+                    (event.icon.value != null) ? Optional.of(new ServerMetadata.Favicon(event.icon.value)) : Optional.empty(),
+                    server.shouldEnforceSecureProfile());
 
             this.connection.send(new QueryResponseS2CPacket(ping));
         }
     }
 
-    @Shadow public ClientConnection getConnection() {return null;}
-    @Shadow public void onDisconnected(Text reason) {}
-    @Shadow public void onPing(QueryPingC2SPacket packet) {}
+   // @Shadow public ClientConnection getConnection() {return null;}
+   // @Shadow public void onDisconnected(Text reason) {}
+  //  @Shadow public void onPing(QueryPingC2SPacket packet) {}
 
 }

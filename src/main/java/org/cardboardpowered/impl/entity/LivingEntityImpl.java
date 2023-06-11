@@ -18,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.DragonFireball;
@@ -29,6 +30,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.FishHook;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LingeringPotion;
 import org.bukkit.entity.LivingEntity;
@@ -125,12 +127,22 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public void damage(double arg0) {
-        nms.damage(DamageSource.MAGIC, (float)arg0);
+        // nms.damage(DamageSource.MAGIC, (float)arg0);
+    	damage(arg0, null);
     }
 
     @Override
-    public void damage(double arg0, Entity arg1) {
-        nms.damage(DamageSource.mob((net.minecraft.entity.LivingEntity) arg1), (float) arg0);
+    public void damage(double arg0, Entity source) {
+        // nms.damage(DamageSource.mob((net.minecraft.entity.LivingEntity) arg1), (float) arg0);
+    	DamageSource reason = getHandle().getDamageSources().generic();
+
+        if (source instanceof HumanEntity) {
+            reason = getHandle().getDamageSources().playerAttack(((CraftHumanEntity) source).getHandle());
+        } else if (source instanceof LivingEntity) {
+            reason = getHandle().getDamageSources().mobAttack(((LivingEntityImpl) source).getHandle());
+        }
+
+        nms.damage(reason, (float) arg0);
     }
 
     @Override

@@ -34,7 +34,7 @@ implements Horse {
 
     @Override
     public Horse.Color getColor() {
-        return Horse.Color.values()[this.getHandle().getColor().getIndex()];
+        return Horse.Color.values()[this.getHandle().getVariant().getId()];
     }
 
     @Override
@@ -45,7 +45,7 @@ implements Horse {
 
     @Override
     public Horse.Style getStyle() {
-        return Horse.Style.values()[this.getHandle().getMarking().getIndex()];
+        return Horse.Style.values()[this.getHandle().getMarking().getId()];
     }
 
     @Override

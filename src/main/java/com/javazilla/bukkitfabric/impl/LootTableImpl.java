@@ -96,7 +96,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
             if (context.getLootedEntity() != null) {
                 Entity nmsLootedEntity = ((CraftEntity) context.getLootedEntity()).getHandle();
                 builder.parameter(LootContextParameters.THIS_ENTITY, nmsLootedEntity);
-                builder.parameter(LootContextParameters.DAMAGE_SOURCE, DamageSource.GENERIC);
+                builder.parameter(LootContextParameters.DAMAGE_SOURCE, handle.getDamageSources().generic());
                 builder.parameter(LootContextParameters.ORIGIN, nmsLootedEntity.getPos());
             }
 
@@ -104,7 +104,7 @@ public class LootTableImpl implements org.bukkit.loot.LootTable {
                 PlayerEntity nmsKiller = ((CraftHumanEntity) context.getKiller()).getHandle();
                 builder.parameter(LootContextParameters.KILLER_ENTITY, nmsKiller);
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
-                builder.parameter(LootContextParameters.DAMAGE_SOURCE, DamageSource.player(nmsKiller));
+                builder.parameter(LootContextParameters.DAMAGE_SOURCE, handle.getDamageSources().playerAttack(nmsKiller));
                 builder.parameter(LootContextParameters.LAST_DAMAGE_PLAYER, nmsKiller); // SPIGOT-5603 - Set minecraft:killed_by_player
             }
 

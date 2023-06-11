@@ -25,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.screen.CraftingScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -42,9 +43,9 @@ public class MixinCraftingScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory playerInv;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, PlayerInventory playerinventory, ScreenHandlerContext containeraccess, CallbackInfo ci) {
-        this.playerInv = playerinventory;
+    	this.playerInv = playerinventory;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class MixinCraftingScreenHandler extends MixinScreenHandler {
             if (optional.isPresent()) {
                 CraftingRecipe recipecrafting = (CraftingRecipe) optional.get();
                 if (inventorycraftresult.shouldCraftRecipe(world, entityplayer, recipecrafting))
-                    itemstack = recipecrafting.craft(inventorycrafting);
+                    itemstack = recipecrafting.craft(inventorycrafting, DynamicRegistryManager.EMPTY);
             }
             itemstack = BukkitEventFactory.callPreCraftEvent(inventorycrafting, inventorycraftresult, itemstack, ((IMixinScreenHandler)container).getBukkitView(), false);
             inventorycraftresult.setStack(0, itemstack);

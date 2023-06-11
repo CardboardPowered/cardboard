@@ -3,11 +3,13 @@ package org.cardboardpowered.impl.tag;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.entity.EntityType;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.tag.TagKey;
 //import org.bukkit.Registry;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+
 import java.util.Objects;
 
 public class EntityTagImpl
@@ -31,7 +33,7 @@ extends TagImpl<EntityType<?>, org.bukkit.entity.EntityType> {
     }
 
     public boolean isTagged(org.bukkit.entity.EntityType entity) {
-        return this.registry.entryOf(RegistryKey.of(Registry.ENTITY_TYPE_KEY, CraftNamespacedKey.toMinecraft(entity.getKey()))).isIn(this.tag);
+        return this.registry.entryOf(RegistryKey.of(RegistryKeys.ENTITY_TYPE, CraftNamespacedKey.toMinecraft(entity.getKey()))).isIn(this.tag);
     }
 
     public Set<org.bukkit.entity.EntityType> getValues() {

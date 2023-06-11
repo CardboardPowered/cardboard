@@ -44,7 +44,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registries;
 
 // MixinInfo(events = {"PrepareItemEnchantEvent", "EnchantItemEvent"})
 @Mixin(EnchantmentScreenHandler.class)
@@ -62,7 +62,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/screen/ScreenHandlerContext;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, PlayerInventory playerinventory, ScreenHandlerContext containeraccesss, CallbackInfo ci) {
         this.player = (Player)((IMixinEntity)playerinventory.player).getBukkitEntity();
     }
@@ -182,7 +182,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
                 Map<org.bukkit.enchantments.Enchantment, Integer> enchants = new java.util.HashMap<org.bukkit.enchantments.Enchantment, Integer>();
                 for (Object obj : list) {
                     EnchantmentLevelEntry instance = (EnchantmentLevelEntry) obj;
-                    enchants.put(org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(Registry.ENCHANTMENT.getId(instance.enchantment))), instance.level);
+                    enchants.put(org.bukkit.enchantments.Enchantment.getByKey(CraftNamespacedKey.fromMinecraft(Registries.ENCHANTMENT.getId(instance.enchantment))), instance.level);
                 }
                 CraftItemStack item = CraftItemStack.asCraftMirror(itemstack2);
 
@@ -204,7 +204,7 @@ public class MixinEnchantmentScreenHandler extends MixinScreenHandler {
                     try {
                         if (flag) {
                             NamespacedKey enchantId = entry.getKey().getKey();
-                            Enchantment nms = Registry.ENCHANTMENT.get(CraftNamespacedKey.toMinecraft(enchantId));
+                            Enchantment nms = Registries.ENCHANTMENT.get(CraftNamespacedKey.toMinecraft(enchantId));
                             if (nms == null) continue;
 
                             EnchantmentLevelEntry weightedrandomenchant = new EnchantmentLevelEntry(nms, entry.getValue());

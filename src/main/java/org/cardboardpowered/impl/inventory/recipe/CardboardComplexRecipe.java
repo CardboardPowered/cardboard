@@ -10,6 +10,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 
 import net.minecraft.recipe.SpecialCraftingRecipe;
+import net.minecraft.registry.DynamicRegistryManager;
 
 public class CardboardComplexRecipe implements RecipeInterface, ComplexRecipe {
 
@@ -21,7 +22,7 @@ public class CardboardComplexRecipe implements RecipeInterface, ComplexRecipe {
 
     @Override
     public ItemStack getResult() {
-        return CraftItemStack.asCraftMirror(recipe.getOutput());
+        return CraftItemStack.asCraftMirror(recipe.getOutput(DynamicRegistryManager.EMPTY));
     }
 
     @Override

@@ -265,11 +265,11 @@ public class CraftContainer extends ScreenHandler {
     }
 
     @Override
-    public ItemStack transferSlot(PlayerEntity entityhuman, int i) {
+    public ItemStack quickMove(PlayerEntity entityhuman, int i) {
     	if (delegate == null) {
     		return null;
     	}
-        return delegate.transferSlot(entityhuman, i);
+        return delegate.quickMove(entityhuman, i);
     	//return (delegate != null) ? delegate.transferSlot(entityhuman, i) : super.transferSlot(entityhuman, i);
     }
 

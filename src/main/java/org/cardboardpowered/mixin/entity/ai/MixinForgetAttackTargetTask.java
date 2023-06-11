@@ -19,7 +19,9 @@ import net.minecraft.entity.mob.MobEntity;
 @Mixin(ForgetAttackTargetTask.class)
 public class MixinForgetAttackTargetTask<E extends MobEntity> {
 
-    @Inject(at = @At("HEAD"), method = "forgetAttackTarget", cancellable = true)
+    // TODO 1.19.4
+	
+	/*@Inject(at = @At("HEAD"), method = "forgetAttackTarget", cancellable = true)
     public void callTargetEvent(E e0, CallbackInfo ci) {
         LivingEntity old = e0.getBrain().getOptionalMemory(MemoryModuleType.ATTACK_TARGET).orElse(null);
         EntityTargetEvent event = BukkitEventFactory.callEntityTargetLivingEvent(e0, old, (old != null && !old.isAlive()) ? EntityTargetEvent.TargetReason.TARGET_DIED : EntityTargetEvent.TargetReason.FORGOT_TARGET);
@@ -31,6 +33,6 @@ public class MixinForgetAttackTargetTask<E extends MobEntity> {
             return;
         }
         e0.getBrain().forget(MemoryModuleType.ATTACK_TARGET);
-    }
+    }*/
 
 }

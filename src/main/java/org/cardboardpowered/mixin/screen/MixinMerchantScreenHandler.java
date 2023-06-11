@@ -25,7 +25,7 @@ public class MixinMerchantScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/village/Merchant;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, PlayerInventory playerinventory, Merchant imerchant, CallbackInfo ci) {
         this.player = playerinventory;
     }

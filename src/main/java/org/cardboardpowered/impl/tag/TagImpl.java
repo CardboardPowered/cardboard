@@ -11,14 +11,13 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 
 import net.minecraft.fluid.Fluid;
-import net.minecraft.tag.TagKey;
 // 1.18.1: import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntryList;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.registry.tag.TagKey;
 
-
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 
 public abstract class TagImpl<N, B extends Keyed> implements Tag<B> {
 
@@ -42,8 +41,9 @@ public abstract class TagImpl<N, B extends Keyed> implements Tag<B> {
         return CraftNamespacedKey.fromMinecraft(tag);
     }*/
     
-    protected final Registry<N> registry;
+    protected final net.minecraft.registry.Registry<N> registry;
     protected final TagKey<N> tag;
+    //
     private RegistryEntryList.Named<N> handle;
 
     public TagImpl(Registry<N> registry, TagKey<N> tag) {
@@ -53,11 +53,12 @@ public abstract class TagImpl<N, B extends Keyed> implements Tag<B> {
     }
 
     protected RegistryEntryList.Named<N> getHandle() {
-        return this.handle;
+        return handle;
     }
 
+    @Override
     public NamespacedKey getKey() {
-        return CraftNamespacedKey.fromMinecraft(this.tag.id());
+        return CraftNamespacedKey.fromMinecraft(tag.id());
     }
 
 

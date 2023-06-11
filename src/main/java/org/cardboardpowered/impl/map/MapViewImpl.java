@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.logging.Level;
 import net.minecraft.item.map.MapState;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;

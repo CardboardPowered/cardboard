@@ -8,6 +8,8 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.recipe.CookingBookCategory;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
@@ -58,7 +60,12 @@ public class CardboardShapedRecipe extends ShapedRecipe implements RecipeInterfa
                 data.set(i * width + j, toNMS(ingred.get(row.charAt(j)), false));
         }
 
-        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
+        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), RecipeInterface.getCategory(this.getCategory()), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
+    }
+    
+    // TODO: Update API to 1.19.4
+    public CraftingBookCategory getCategory() {
+        return CraftingBookCategory.MISC;
     }
 
 }

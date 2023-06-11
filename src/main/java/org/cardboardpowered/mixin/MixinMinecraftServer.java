@@ -63,8 +63,8 @@ import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.world.ForcedChunkState;
 import net.minecraft.world.PersistentStateManager;
@@ -340,7 +340,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     }
 
     public void initWorld(ServerWorld worldserver, ServerWorldProperties worldProperties, SaveProperties saveData, GeneratorOptions generatorsettings) {
-        boolean flag = generatorsettings.isDebugWorld();
+        boolean flag = false; // generatorsettings.isDebugWorld();
         // TODO Bukkit generators
         WorldBorder worldborder = worldserver.getWorldBorder();
 

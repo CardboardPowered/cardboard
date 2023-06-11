@@ -33,7 +33,7 @@ public class MixinLecternScreenHandler extends MixinScreenHandler {
     private CardboardInventoryView bukkitEntity = null;
     private Player player;
 
-    @Inject(method = "<init>*", at = @At("TAIL"))
+    @Inject(method = "<init>(ILnet/minecraft/inventory/Inventory;Lnet/minecraft/screen/PropertyDelegate;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, Inventory iinventory, PropertyDelegate icontainerproperties, CallbackInfo ci) {
         this.player = (Player)((IMixinEntity)((PlayerInventory)iinventory).player).getBukkitEntity();
     }
