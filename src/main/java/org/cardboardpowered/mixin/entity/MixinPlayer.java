@@ -246,6 +246,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         ci.cancel();
     }
 
+    /*
     @Inject(at = @At("HEAD"), method = "onDeath", cancellable = true)
     public void bukkitizeDeath(DamageSource damagesource, CallbackInfo ci) {
         boolean flag = this.world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES);
@@ -331,6 +332,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         ci.cancel();
         return;
     }
+    */
 
     @Shadow
     public void forgiveMobAnger() {}
