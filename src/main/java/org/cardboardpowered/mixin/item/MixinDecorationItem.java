@@ -37,13 +37,14 @@ public class MixinDecorationItem {
         Player who = (context.getPlayer() == null) ? null : (Player) ((IMixinServerEntityPlayer) context.getPlayer()).getBukkit();
         org.bukkit.block.Block blockClicked = CraftBlock.at((ServerWorld) world, blockPos);
         org.bukkit.block.BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
-
+/*
         HangingPlaceEvent event = new HangingPlaceEvent((Hanging) ((IMixinEntity) abstractDecorationEntity).getBukkitEntity(), who, blockClicked, blockFace, CraftItemStack.asBukkitCopy(itemStack));
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
             cir.setReturnValue(ActionResult.FAIL);
         }
+*/
     }
 
 }
