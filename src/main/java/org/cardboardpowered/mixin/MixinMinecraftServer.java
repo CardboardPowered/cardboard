@@ -22,21 +22,29 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.Executor;
 import java.util.function.BooleanSupplier;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.dimension.DimensionOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.scoreboard.CardboardScoreboardManager;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerLoadEvent;
+import org.bukkit.event.world.WorldInitEvent;
 import org.cardboardpowered.interfaces.INetworkIo;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -47,7 +55,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import me.isaiah.common.cmixin.IMixinPersistentStateManager;
 import net.minecraft.command.DataCommandStorage;
-import net.minecraft.server.DataPackContents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -63,7 +70,6 @@ import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.world.ForcedChunkState;
@@ -74,9 +80,17 @@ import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.level.storage.LevelStorage;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(value=MinecraftServer.class)
 public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<ServerTask> implements IMixinMinecraftServer {
+
+    @Shadow @Final protected SaveProperties saveProperties;
+    @Shadow public WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
+
+    @Shadow public abstract ServerWorld getOverworld();
+
+    @Shadow public abstract boolean save(boolean suppressLogs, boolean flush, boolean force);
 
     public MixinMinecraftServer(String string) {
         super(string);
@@ -178,8 +192,10 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Inject(at = @At("TAIL"), method = "loadWorld")
     public void afterWorldLoad(CallbackInfo ci) {
         for (ServerWorld worldserver : ((MinecraftServer)(Object)this).getWorlds()) {
-            this.loadSpawn(worldserver.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, worldserver);
-            CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getWorldImpl()));
+            if (worldserver != getOverworld()) {
+                this.loadSpawn(worldserver.getChunkManager().threadedAnvilChunkStorage.worldGenerationProgressListener, worldserver);
+                CraftServer.INSTANCE.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(((IMixinWorld)worldserver).getWorldImpl()));
+            }
         }
 
         CraftServer.INSTANCE.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD);
@@ -189,6 +205,55 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         CraftMagicNumbers.setupUnknownModdedMaterials();
         fixBukkitWorldEdit();
         BukkitFabricMod.isAfterWorldLoad = true;
+    }
+
+    @Redirect(method = "createWorlds", at = @At(value = "NEW", args = "class=net/minecraft/server/world/ServerWorld", ordinal = 1))
+    private ServerWorld cardboard$spiltListener(MinecraftServer server, Executor workerExecutor,
+                                                 LevelStorage.Session session, ServerWorldProperties properties,
+                                                 RegistryKey worldKey, DimensionOptions dimensionOptions,
+                                                 WorldGenerationProgressListener worldGenerationProgressListener,
+                                                 boolean debugWorld, long seed, List spawners, boolean shouldTickTime) {
+        WorldGenerationProgressListener listener = this.worldGenerationProgressListenerFactory.create(11);
+        return new ServerWorld(server, workerExecutor, session, properties, worldKey,
+                dimensionOptions, listener, debugWorld, seed, spawners, shouldTickTime);
+    }
+
+    @Inject(method = "createWorlds",
+            at = @At(value = "INVOKE",
+            remap = false,
+            target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+            ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void cardboard$initWorld(WorldGenerationProgressListener worldGenerationProgressListener,
+                                     CallbackInfo ci, ServerWorldProperties serverWorldProperties,
+                                     GeneratorOptions generatorOptions, boolean bl, long l, long m,
+                                     List list, Registry registry, DimensionOptions dimensionOptions,
+                                     ServerWorld serverWorld) {
+        cardboard$initLevel(serverWorld);
+    }
+
+    @Inject(method = "createWorlds",
+            at = @At(value = "INVOKE",
+                    remap = false,
+                    target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+                    ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void cardboard$initWorld0(WorldGenerationProgressListener worldGenerationProgressListener,
+                                     CallbackInfo ci, ServerWorldProperties serverWorldProperties,
+                                     GeneratorOptions generatorOptions, boolean bl, long l, long m,
+                                     List list, Registry registry, DimensionOptions dimensionOptions,
+                                     ServerWorld serverWorld) {
+        cardboard$initLevel(serverWorld);
+        cardboard$initializedLevel(serverWorld, serverWorldProperties, saveProperties, generatorOptions);
+    }
+
+    @Override
+    public void addLevel(ServerWorld level) {
+        this.worlds.put(level.getRegistryKey(), level);
+    }
+
+    @Override
+    public void removeLevel(ServerWorld level) {
+        ServerWorldEvents.UNLOAD.invoker().onWorldUnload(((MinecraftServer) (Object) this), level);
+        this.worlds.remove(level.getRegistryKey());
     }
 
     public void updateDifficulty() {
@@ -340,6 +405,18 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     }
 
     public void initWorld(ServerWorld worldserver, ServerWorldProperties worldProperties, SaveProperties saveData, GeneratorOptions generatorsettings) {
+        cardboard$initLevel(worldserver);
+        cardboard$initializedLevel(worldserver, worldProperties, saveData, generatorsettings);
+    }
+
+    private void cardboard$initLevel(ServerWorld serverWorld) {
+        if (((CraftServer) Bukkit.getServer()).scoreboardManager == null) {
+            ((CraftServer) Bukkit.getServer()).scoreboardManager = new CardboardScoreboardManager((MinecraftServer) (Object) this, serverWorld.getScoreboard());
+        }
+        Bukkit.getPluginManager().callEvent(new WorldInitEvent(((IMixinWorld) serverWorld).getWorldImpl()));
+    }
+
+    private void cardboard$initializedLevel(ServerWorld worldserver, ServerWorldProperties worldProperties, SaveProperties saveData, GeneratorOptions generatorsettings) {
         boolean flag = generatorsettings.isDebugWorld();
         // TODO Bukkit generators
         WorldBorder worldborder = worldserver.getWorldBorder();
