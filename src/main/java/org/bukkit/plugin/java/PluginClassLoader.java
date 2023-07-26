@@ -234,7 +234,7 @@ public class PluginClassLoader extends URLClassLoader {
                         // Resolve it - sets the class loader of the class
                         this.resolveClass(result);
                     }
-                    
+                    /*
                     File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
                     try {
                     	Files.createDirectories(out.toPath().getParent());
@@ -243,6 +243,7 @@ public class PluginClassLoader extends URLClassLoader {
     					// TODO Auto-generated catch block
     					e.printStackTrace();
     				}
+					*/
                 }
             }
         } catch (Exception t) {

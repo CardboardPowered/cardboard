@@ -33,6 +33,10 @@ import net.minecraft.world.level.storage.LevelStorage.Session;
 
 public interface IMixinMinecraftServer {
 
+    void removeLevel(ServerWorld level);
+
+    void addLevel(ServerWorld level);
+
     Queue<Runnable> getProcessQueue();
 
     Map<RegistryKey<net.minecraft.world.World>, ServerWorld> getWorldMap();
