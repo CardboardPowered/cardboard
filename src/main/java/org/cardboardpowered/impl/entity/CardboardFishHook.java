@@ -39,7 +39,7 @@ public class CardboardFishHook extends ProjectileImpl implements FishHook {
     public double getBiteChance() {
         FishingBobberEntity hook = getHandle();
         if (this.biteChance == -1) {
-            if (hook.world.hasRain(new BlockPos(MathHelper.floor(hook.getX()), MathHelper.floor(hook.getY()) + 1, MathHelper.floor(hook.getZ()))))
+            if (hook.getWorld().hasRain(new BlockPos(MathHelper.floor(hook.getX()), MathHelper.floor(hook.getY()) + 1, MathHelper.floor(hook.getZ()))))
                 return 1 / 300.0;
             return 1 / 500.0;
         }

@@ -34,7 +34,7 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
         super.load(sign);
         lines = new String[((IMixinSignBlockEntity)sign).getTextBF().length];
         System.arraycopy(revertComponents(((IMixinSignBlockEntity)sign).getTextBF()), 0, lines, 0, lines.length);
-        editable = sign.editable;
+       // editable = sign.editable;
     }
 
     @Override
@@ -64,12 +64,12 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
 
     @Override
     public DyeColor getColor() {
-        return DyeColor.getByWoolData((byte) getSnapshot().getTextColor().getId());
+        return DyeColor.getByWoolData((byte) getSnapshot().getFrontText().getColor().getId());
     }
 
     @Override
     public void setColor(DyeColor color) {
-        getSnapshot().setTextColor(net.minecraft.util.DyeColor.byId(color.getWoolData()));
+        getSnapshot().getFrontText().withColor(net.minecraft.util.DyeColor.byId(color.getWoolData()));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
 
         Text[] newLines = sanitizeLines(lines);
         System.arraycopy(newLines, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, 4);
-        sign.editable = true;
+      //  sign.editable = true;
     }
 
     public static Text[] sanitizeLines(String[] lines) {
@@ -117,12 +117,12 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
     
     @Override
     public boolean isGlowingText() {
-        return getSnapshot().isGlowingText();
+        return getSnapshot().getFrontText().isGlowing();
     }
 
     @Override
     public void setGlowingText(boolean arg0) {
-        getSnapshot().setGlowingText(arg0);
+        getSnapshot().getFrontText().withGlowing(arg0);
     }
 
 }

@@ -135,6 +135,9 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         if (mcver.contains("1.19") && mixin.endsWith("_1_18")) {
         	return false;
         }
+        if (mcver.contains("1.20") && mixin.endsWith("_1_18")) {
+        	return false;
+        }
 
 
         // Disable mixin if event is not found in plugins.

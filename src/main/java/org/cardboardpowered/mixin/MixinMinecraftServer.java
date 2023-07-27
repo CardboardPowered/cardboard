@@ -69,6 +69,7 @@ import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.random.RandomSequencesState;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -210,14 +211,15 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     }
 
     @Redirect(method = "createWorlds", at = @At(value = "NEW", args = "class=net/minecraft/server/world/ServerWorld", ordinal = 1))
-    private ServerWorld cardboard$spiltListener(MinecraftServer server, Executor workerExecutor,
-                                                 LevelStorage.Session session, ServerWorldProperties properties,
-                                                 RegistryKey worldKey, DimensionOptions dimensionOptions,
-                                                 WorldGenerationProgressListener worldGenerationProgressListener,
-                                                 boolean debugWorld, long seed, List spawners, boolean shouldTickTime) {
+    private ServerWorld cardboard$spiltListener(MinecraftServer server, Executor dispatcher,
+                                             LevelStorage.Session levelStorageAccess,
+                                             ServerWorldProperties serverLevelData, RegistryKey dimension,
+                                             DimensionOptions levelStem, WorldGenerationProgressListener progressListener,
+                                             boolean isDebug, long biomeZoomSeed, List customSpawners, boolean tickTime,
+                                             RandomSequencesState randomSequences) {
         WorldGenerationProgressListener listener = this.worldGenerationProgressListenerFactory.create(11);
-        return new ServerWorld(server, workerExecutor, session, properties, worldKey,
-                dimensionOptions, listener, debugWorld, seed, spawners, shouldTickTime);
+        return new ServerWorld(server, dispatcher, levelStorageAccess, serverLevelData,
+                dimension, levelStem, listener, isDebug, biomeZoomSeed, customSpawners, tickTime, randomSequences);
     }
     
     
@@ -323,7 +325,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         worldloadlistener.start(new ChunkPos(blockposition));
         ServerChunkManager chunkproviderserver = worldserver.getChunkManager();
 
-        chunkproviderserver.getLightingProvider().setTaskBatchSize(500);
+        //chunkproviderserver.getLightingProvider().setTaskBatchSize(500);
         this.timeReference = Util.getMeasuringTimeMs();
         chunkproviderserver.addTicket(ChunkTicketType.START, new ChunkPos(blockposition), 11, Unit.INSTANCE);
 
@@ -349,7 +351,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 
         this.executeModerately();
         worldloadlistener.stop();
-        chunkproviderserver.getLightingProvider().setTaskBatchSize(5);
+        //chunkproviderserver.getLightingProvider().setTaskBatchSize(5);
         this.updateMobSpawnOptions_1_15_2();
 
         this.forceTicks = false;

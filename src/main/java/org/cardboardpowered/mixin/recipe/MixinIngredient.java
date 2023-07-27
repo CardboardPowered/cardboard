@@ -3,6 +3,9 @@ package org.cardboardpowered.mixin.recipe;
 import org.cardboardpowered.interfaces.IIngredient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
@@ -14,7 +17,7 @@ public class MixinIngredient implements IIngredient {
 	@Shadow public Entry[] entries;
     @Shadow public ItemStack[] matchingStacks;
     // @Shadow public void cacheMatchingStacks() {}
-
+    
     public boolean exact_BF;
 
     @Override
@@ -31,7 +34,27 @@ public class MixinIngredient implements IIngredient {
     public ItemStack[] getMatchingStacks() {
     	return null;
     }
-
+    
+    @Inject(method = "test(Lnet/minecraft/item/ItemStack;)Z",
+            at = @At("HEAD"),
+            cancellable = true)
+    private void banner$test(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        for (ItemStack banner$stack : this.getMatchingStacks()) {
+            // CraftBukkit start
+            if (exact_BF) {
+                if (ItemStack.canCombine(banner$stack, stack)) {
+                    cir.setReturnValue(true);
+                }
+                continue;
+            }
+            if (banner$stack.isOf(stack.getItem())) {
+                cir.setReturnValue(true);
+            }
+            // CraftBukkit end
+        }
+    }
+    
+    /*
     public boolean test(ItemStack itemstack) {
         if (itemstack == null) {
             return false;
@@ -39,9 +62,7 @@ public class MixinIngredient implements IIngredient {
             if (this.entries.length == 0) {
             	return itemstack.isEmpty();
             }
-            /*if (this.matchingStacks.length == 0) {
-                return itemstack.isEmpty();
-            }*/
+
                 ItemStack[] aitemstack = getMatchingStacks();
                 int i = aitemstack.length;
 
@@ -62,6 +83,6 @@ public class MixinIngredient implements IIngredient {
                 return false;
             
         }
-    }
+    }*/
 
 }

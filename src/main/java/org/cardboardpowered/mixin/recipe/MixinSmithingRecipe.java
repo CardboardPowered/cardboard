@@ -12,14 +12,21 @@ import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.LegacySmithingRecipe;
+//import net.minecraft.recipe.LegacySmithingRecipe;
 import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.util.Identifier;
 
-@Mixin(LegacySmithingRecipe.class)
+//@Mixin(LegacySmithingRecipe.class)
+@Mixin(Ingredient.class)
 public class MixinSmithingRecipe implements IMixinRecipe {
 
-    @Shadow private Ingredient base;
+	@Override
+	public Recipe toBukkitRecipe() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    /*@Shadow private Ingredient base;
     @Shadow private Ingredient addition;
     @Shadow private ItemStack result;
     @Shadow public Identifier id;
@@ -30,6 +37,6 @@ public class MixinSmithingRecipe implements IMixinRecipe {
         CardboardSmithingRecipe recipe = new CardboardSmithingRecipe(CraftNamespacedKey.fromMinecraft(this.id), result, RecipeInterface.toBukkit(this.base), RecipeInterface.toBukkit(this.addition));
 
         return recipe;
-    }
+    }*/
 
 }

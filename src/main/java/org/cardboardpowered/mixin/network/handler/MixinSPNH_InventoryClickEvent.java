@@ -89,7 +89,7 @@ public class MixinSPNH_InventoryClickEvent {
                                 } else if(slot.canInsert(cursor)) {
                                 	// 1.19.2: isItemEqualIgnoreDamage
                                 	// 1.19.4: isItemEqual
-                                    if(clickedItem.isItemEqual(cursor) && ItemStack.areNbtEqual(clickedItem, cursor)) {
+                                    if(clickedItem.areItemsEqual(clickedItem, cursor) && ItemStack.areEqual(clickedItem, cursor)) { // Banner TODO
                                         int toPlace = packet.getButton() == 0 ? cursor.getCount() : 1;
                                         toPlace = Math.min(toPlace, clickedItem.getMaxCount() - clickedItem.getCount());
                                         toPlace = Math.min(toPlace, slot.inventory.getMaxCountPerStack() - clickedItem.getCount());
@@ -103,7 +103,7 @@ public class MixinSPNH_InventoryClickEvent {
                                             action = InventoryAction.PLACE_SOME;
                                     } else if(cursor.getCount() < slot.getMaxItemCount()) {
                                         action = InventoryAction.SWAP_WITH_CURSOR;
-                                    } else if(cursor.getItem() == clickedItem.getItem() && ItemStack.areNbtEqual(cursor ,clickedItem)) {
+                                    } else if(cursor.getItem() == clickedItem.getItem() && ItemStack.areEqual(cursor ,clickedItem)) {
                                         if(clickedItem.getCount() >= 0)
                                             if(clickedItem.getCount() + cursor.getCount() <= cursor.getMaxCount())
                                                 action = InventoryAction.PICKUP_ALL;

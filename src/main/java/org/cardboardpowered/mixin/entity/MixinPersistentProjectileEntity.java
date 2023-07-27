@@ -49,10 +49,10 @@ public abstract class MixinPersistentProjectileEntity implements IMixinPersisten
     @SuppressWarnings("deprecation")
     @Inject(at = @At("HEAD"), method = "onPlayerCollision", cancellable = true)
     public void doBukkitEvent_PlayerPickupArrowEvent(PlayerEntity entityhuman, CallbackInfo ci) {
-        if (!getBF().world.isClient && (this.inGround || getBF().isNoClip()) && getBF().shake <= 0) {
+        if (!getBF().getWorld().isClient && (this.inGround || getBF().isNoClip()) && getBF().shake <= 0) {
             ItemStack itemstack = this.asItemStack();
             if (this.pickupType == PickupPermission.ALLOWED && !itemstack.isEmpty()) {
-                ItemEntity item = new ItemEntity(getBF().world, getBF().getX(), getBF().getY(), getBF().getZ(), itemstack);
+                ItemEntity item = new ItemEntity(getBF().getWorld(), getBF().getX(), getBF().getY(), getBF().getZ(), itemstack);
                 PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((org.bukkit.entity.Player) ((IMixinEntity)entityhuman).getBukkitEntity(), new ItemEntityImpl(CraftServer.INSTANCE, getBF(), item), (org.bukkit.entity.AbstractArrow) ((IMixinEntity)this).getBukkitEntity());
                 Bukkit.getServer().getPluginManager().callEvent(event);
 

@@ -21,6 +21,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.CraftingResultInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.recipe.CraftingRecipe;
@@ -35,7 +36,9 @@ import net.minecraft.world.World;
 @Mixin(CraftingScreenHandler.class)
 public class MixinCraftingScreenHandler extends MixinScreenHandler {
 
-    @Shadow public CraftingInventory input;
+	// Lnet/minecraft/screen/CraftingScreenHandler;input:Lnet/minecraft/inventory/RecipeInputInventory;
+	
+    @Shadow public RecipeInputInventory input;
     @Shadow public CraftingResultInventory result;
     @Shadow public ScreenHandlerContext context;
     @Shadow public PlayerEntity player;
@@ -58,7 +61,7 @@ public class MixinCraftingScreenHandler extends MixinScreenHandler {
         return bukkitEntity;
     }
 
-    private static void aBF(int i, World world, PlayerEntity entityhuman, CraftingInventory inventorycrafting, CraftingResultInventory inventorycraftresult, ScreenHandler container) {
+    private static void aBF(int i, World world, PlayerEntity entityhuman, RecipeInputInventory inventorycrafting, CraftingResultInventory inventorycraftresult, ScreenHandler container) {
         if (!world.isClient) {
             ServerPlayerEntity entityplayer = (ServerPlayerEntity) entityhuman;
             ItemStack itemstack = ItemStack.EMPTY;

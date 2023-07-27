@@ -275,7 +275,7 @@ public class BukkitEventFactory {
         BlockFace hitFace = null;
         if (position.getType() == Type.BLOCK) {
             BlockHitResult positionBlock = (BlockHitResult) position;
-            hitBlock = CraftBlock.at((ServerWorld) entity.world, positionBlock.getBlockPos());
+            hitBlock = CraftBlock.at((ServerWorld) entity.getWorld(), positionBlock.getBlockPos());
             hitFace = CraftBlock.notchToBlockFace(positionBlock.getSide());
         }
 

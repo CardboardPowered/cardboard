@@ -391,7 +391,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
             ((ServerPlayerEntity)(Object)this).experienceProgress = entityplayer.experienceProgress;
             ((ServerPlayerEntity)(Object)this).setScore(entityplayer.getScore());
             ((ServerPlayerEntity)(Object)this).lastNetherPortalPosition = entityplayer.lastNetherPortalPosition;
-        } else if (((ServerPlayerEntity)(Object)this).world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || entityplayer.isSpectator()) {
+        } else if (((ServerPlayerEntity)(Object)this).getWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY) || entityplayer.isSpectator()) {
             ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
             ((ServerPlayerEntity)(Object)this).experienceLevel = entityplayer.experienceLevel;
             ((ServerPlayerEntity)(Object)this).totalExperience = entityplayer.totalExperience;

@@ -54,7 +54,7 @@ public class MixinSPNH_SignUpdateEvent {
                         BlockEntity tileentity = this.player.getWorld().getBlockEntity(packet.getPos());
                         SignBlockEntity tileentitysign = (SignBlockEntity) tileentity;
                         System.arraycopy(CardboardSign.sanitizeLines(event.getLines()), 0, ((IMixinSignBlockEntity)tileentitysign).getTextBF(), 0, 4);
-                        tileentitysign.editable = false;
+                        //tileentitysign.editable = false;
                      }
                 } catch (NullPointerException serverNoLikeSigns) {}
             });

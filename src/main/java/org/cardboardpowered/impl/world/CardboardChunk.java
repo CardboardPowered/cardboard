@@ -70,7 +70,7 @@ import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.PalettedContainer;
-import net.minecraft.world.chunk.ReadOnlyChunk;
+import net.minecraft.world.chunk.WrapperProtoChunk;
 import net.minecraft.world.chunk.ReadableContainer;
 import net.minecraft.world.chunk.light.LightingProvider;
 // TODO 1.18: import net.minecraft.world.gen.ChunkRandom;
@@ -119,7 +119,7 @@ public class CardboardChunk implements Chunk {
         net.minecraft.world.chunk.Chunk chunkAccess = worldServer.getChunk(x, z, chunkStatus);
 
         // SPIGOT-7332: Get unwrapped extension
-        if (chunkAccess instanceof ReadOnlyChunk extension) {
+        if (chunkAccess instanceof WrapperProtoChunk extension) {
             return extension.getWrappedChunk();
         }
 

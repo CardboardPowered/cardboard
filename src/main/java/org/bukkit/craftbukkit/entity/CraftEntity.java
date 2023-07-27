@@ -278,7 +278,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 
     @Override
     public List<org.bukkit.entity.Entity> getNearbyEntities(double x, double y, double z) {
-        List<net.minecraft.entity.Entity> notchEntityList = nms.world.getOtherEntities(nms, nms.getBoundingBox().expand(x, y, z), null);
+        List<net.minecraft.entity.Entity> notchEntityList = nms.getWorld().getOtherEntities(nms, nms.getBoundingBox().expand(x, y, z), null);
         List<org.bukkit.entity.Entity> bukkitEntityList = new java.util.ArrayList<org.bukkit.entity.Entity>(notchEntityList.size());
 
         for (net.minecraft.entity.Entity e : notchEntityList)
@@ -431,7 +431,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     @Override
     public void playEffect(EntityEffect type) {
         if (type.getApplicable().isInstance(this))
-            this.getHandle().world.sendEntityStatus(getHandle(), type.getData());
+            this.getHandle().getWorld().sendEntityStatus(getHandle(), type.getData());
     }
 
     @Override

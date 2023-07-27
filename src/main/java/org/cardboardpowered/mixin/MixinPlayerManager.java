@@ -145,7 +145,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
             location = respawnEvent.getRespawnLocation();
         } else location.setWorld(((IMixinWorld)worldserver).getWorldImpl());
         ServerWorld worldserver1 = ((WorldImpl) location.getWorld()).getHandle();
-        ServerWorld fromWorld = player.getWorld();
+        World fromWorld = player.getWorld();
         player.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
 
         if (fromWorld != location.getWorld()) {

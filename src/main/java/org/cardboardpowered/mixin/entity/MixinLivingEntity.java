@@ -70,8 +70,8 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
                 PICE_canceled = true;
                 return null;
             }
-            return (craftItem.equals(event.getItem())) ? get().activeItemStack.finishUsing(get().world, get()) : CraftItemStack.asNMSCopy(event.getItem()).finishUsing(get().world, get());
-        } else return get().activeItemStack.finishUsing(get().world, get());
+            return (craftItem.equals(event.getItem())) ? get().activeItemStack.finishUsing(get().getWorld(), get()) : CraftItemStack.asNMSCopy(event.getItem()).finishUsing(get().getWorld(), get());
+        } else return get().activeItemStack.finishUsing(get().getWorld(), get());
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setStackInHand(Lnet/minecraft/util/Hand;Lnet/minecraft/item/ItemStack;)V"),
@@ -89,7 +89,7 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
 
         boolean flag = get().playerHitTimer > 0;
         get().dropInventory();
-        if (!get().isBaby() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
+        if (!get().isBaby() && get().getWorld().getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
             this.dropLoot(damagesource, flag);
             this.dropEquipment(damagesource, ((entity instanceof PlayerEntity) ? EnchantmentHelper.getLooting((LivingEntity) entity) : 0), flag);
         }
@@ -108,7 +108,7 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
 
     @Override
     public int getExpReward() {
-        if ((get().shouldAlwaysDropXp() || get().lastDamageTime > 0 && get().shouldAlwaysDropXp() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT))) {
+        if ((get().shouldAlwaysDropXp() || get().lastDamageTime > 0 && get().shouldAlwaysDropXp() && this.mc_world().getGameRules().getBoolean(GameRules.DO_MOB_LOOT))) {
             //int i = getXpToDrop(get().attackingPlayer);
             int i = get().getXpToDrop();
         	return i;

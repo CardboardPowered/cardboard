@@ -38,7 +38,7 @@ import net.minecraft.text.Text;
 @Mixin(TimeCommand.class)
 public class MixinTimeCommand {
 
-    @Inject(at = @At("HEAD"), method = "executeSet", cancellable = true)
+    /*@Inject(at = @At("HEAD"), method = "executeSet", cancellable = true)
     private static void executeSet_Bukkit(ServerCommandSource source, int i, CallbackInfoReturnable<Integer> ci) {
         Iterator<ServerWorld> iterator = source.getServer().getWorlds().iterator();
 
@@ -72,6 +72,8 @@ public class MixinTimeCommand {
     @Shadow
     private static int getDayTime(ServerWorld world) {
         return (int) (world.getTimeOfDay() % 24000L);
-    }
+    }*/
+	
+	
 
 }

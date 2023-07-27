@@ -171,7 +171,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.ReadOnlyChunk;
+import net.minecraft.world.chunk.WrapperProtoChunk;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
@@ -789,7 +789,7 @@ public class WorldImpl implements World {
     @Override
     public Chunk[] getLoadedChunks() {
         Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = ((IMixinThreadedAnvilChunkStorage)(nms.getChunkManager().threadedAnvilChunkStorage)).getChunkHoldersBF();
-        return chunks.values().stream().map(IMixinChunkHolder::getFullChunk).filter(Objects::nonNull).map(WorldImpl::getBukkitChunkForChunk).toArray(Chunk[]::new);
+        return chunks.values().stream().map(IMixinChunkHolder::getFullChunkNow).filter(Objects::nonNull).map(WorldImpl::getBukkitChunkForChunk).toArray(Chunk[]::new);
     }
 
     private static Chunk getBukkitChunkForChunk(WorldChunk mc) {
@@ -1054,7 +1054,7 @@ public class WorldImpl implements World {
     public boolean loadChunk(int x, int z, boolean generate) {
         net.minecraft.world.chunk.Chunk chunk = nms.getChunkManager().getChunk(x, z, generate ? ChunkStatus.FULL : ChunkStatus.EMPTY, true);
 
-        if (chunk instanceof ReadOnlyChunk)
+        if (chunk instanceof WrapperProtoChunk)
             chunk = nms.getChunkManager().getChunk(x, z, ChunkStatus.FULL, true);
 
         if (chunk instanceof net.minecraft.world.chunk.WorldChunk) {
@@ -1342,7 +1342,7 @@ public class WorldImpl implements World {
             PlayerImpl cp = (PlayerImpl) p;
             if (cp.getHandle().networkHandler == null) continue;
 
-            cp.getHandle().networkHandler.sendPacket(new WorldTimeUpdateS2CPacket(cp.getHandle().world.getTime(), cp.getHandle().getWorld().getTime(), cp.getHandle().world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));
+            cp.getHandle().networkHandler.sendPacket(new WorldTimeUpdateS2CPacket(cp.getHandle().getWorld().getTime(), cp.getHandle().getWorld().getTime(), cp.getHandle().getWorld().getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));
         }
     }
 
@@ -1751,7 +1751,7 @@ public class WorldImpl implements World {
             final BlockPos pos = BlockPos.ofFloored(x, y, z);
             for (BlockFace dir : faces) {
                 net.minecraft.block.BlockState nmsBlock = nms.getBlockState(pos.offset(CraftBlock.blockFaceToNotch(dir)));
-                if (nmsBlock.getMaterial().isSolid() || AbstractRedstoneGateBlock.isRedstoneGate(nmsBlock)) {
+                if (nmsBlock.isSolid() || AbstractRedstoneGateBlock.isRedstoneGate(nmsBlock)) {
                     // TODO
                 }
             }

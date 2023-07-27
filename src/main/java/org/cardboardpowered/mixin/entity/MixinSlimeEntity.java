@@ -78,7 +78,7 @@ public class MixinSlimeEntity extends MixinEntity implements ISlimeEntity {
             return;
         }
         for (net.minecraft.entity.LivingEntity living : slimes_B)
-            this.world.spawnEntity(living); // TODO SpawnReason.SLIME_SPLIT
+            this.mc_world().spawnEntity(living); // TODO SpawnReason.SLIME_SPLIT
     }
 
 }

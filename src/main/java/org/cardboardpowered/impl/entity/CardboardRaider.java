@@ -27,7 +27,7 @@ public abstract class CardboardRaider extends MonsterImpl implements Raider {
 
     @Override
     public Block getPatrolTarget() {
-        return getHandle().getPatrolTarget() == null ? null : CraftBlock.at((ServerWorld) getHandle().world, getHandle().getPatrolTarget());
+        return getHandle().getPatrolTarget() == null ? null : CraftBlock.at((ServerWorld) getHandle().getWorld(), getHandle().getPatrolTarget());
     }
 
     @Override

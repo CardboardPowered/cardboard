@@ -29,10 +29,10 @@ public class MixinLeashKnotEntity {
 
     @Overwrite
     public ActionResult interact(PlayerEntity entityhuman, Hand enumhand) {
-        if (getBF().world.isClient) return ActionResult.SUCCESS;
+        if (getBF().getWorld().isClient) return ActionResult.SUCCESS;
 
         boolean flag = false;
-        List<MobEntity> list = getBF().world.getNonSpectatingEntities(MobEntity.class, new Box(getBF().getX() - 7.0D, getBF().getY() - 7.0D, getBF().getZ() - 7.0D, getBF().getX() + 7.0D, getBF().getY() + 7.0D, getBF().getZ() + 7.0D));
+        List<MobEntity> list = getBF().getWorld().getNonSpectatingEntities(MobEntity.class, new Box(getBF().getX() - 7.0D, getBF().getY() - 7.0D, getBF().getZ() - 7.0D, getBF().getX() + 7.0D, getBF().getY() + 7.0D, getBF().getZ() + 7.0D));
         Iterator<MobEntity> iterator = list.iterator();
         MobEntity entityinsentient;
         while (iterator.hasNext()) {

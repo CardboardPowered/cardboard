@@ -546,7 +546,7 @@ public class CraftBlock implements Block {
 
     @Override
     public boolean isLiquid() {
-        return getNMS().getMaterial().isLiquid();
+        return getNMS().isLiquid();//.getMaterial().isLiquid();
     }
 
     @SuppressWarnings("deprecation")

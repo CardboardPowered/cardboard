@@ -11,12 +11,15 @@ import net.minecraft.text.Text;
 @Mixin(SignBlockEntity.class)
 public class MixinSignBlockEntity implements IMixinSignBlockEntity {
 
-    @Shadow
-    public Text[] texts;
+   // @Shadow
+   // public Text[] texts;
 
     @Override
     public Text[] getTextBF() {
-        return texts;
+    	SignBlockEntity e = (SignBlockEntity)(Object)this;
+    	return e.getFrontText().getMessages(false);
+    	
+        //return texts;
     }
 
 }

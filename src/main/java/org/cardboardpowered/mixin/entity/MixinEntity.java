@@ -180,7 +180,12 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     @Shadow
-    public World world;
+    private World world;
+    
+    @Override
+    public World mc_world() {
+    	return world;
+    }
 
     public MixinEntity() {
         this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);

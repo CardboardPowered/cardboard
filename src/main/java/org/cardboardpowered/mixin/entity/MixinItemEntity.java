@@ -50,7 +50,7 @@ public class MixinItemEntity extends MixinEntity {
      */
     @Inject(at = @At("HEAD"), method = "onPlayerCollision", cancellable = true)
     public void fireEntityPickupItemEvent(PlayerEntity entityhuman, CallbackInfo ci) {
-        if (this.world.isClient) return;
+        if (this.mc_world().isClient) return;
         ItemStack itemstack = ((ItemEntity)(Object)this).getStack();
         int i = itemstack.getCount();
 

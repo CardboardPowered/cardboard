@@ -26,14 +26,14 @@ public class MixinExperienceBottleEntity extends MixinProjectileEntity {
             ((ExperienceBottleEntity)(Object)this).onEntityHit((EntityHitResult)movingobjectposition);
         } else if (type == HitResult.Type.BLOCK) this.onBlockHit((BlockHitResult)movingobjectposition);
 
-        int i = 3 + this.world.random.nextInt(5) + this.world.random.nextInt(5);
+        int i = 3 + this.mc_world().random.nextInt(5) + this.mc_world().random.nextInt(5);
         org.bukkit.event.entity.ExpBottleEvent event = BukkitEventFactory.callExpBottleEvent((ExperienceBottleEntity)(Object)this, i);
         i = event.getExperience();
 
         while (i > 0) {
             int j = ExperienceOrbEntity.roundToOrbSize(i);
             i -= j;
-            this.world.spawnEntity(new ExperienceOrbEntity(this.world, ((Entity)(Object)this).getX(), ((Entity)(Object)this).getY(), ((Entity)(Object)this).getZ(), j));
+            this.mc_world().spawnEntity(new ExperienceOrbEntity(this.mc_world(), ((Entity)(Object)this).getX(), ((Entity)(Object)this).getY(), ((Entity)(Object)this).getZ(), j));
         }
         this.removeBF();
         ci.cancel();

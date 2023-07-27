@@ -117,7 +117,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
     private Collection<Recipe<?>> bukkitKeysToMinecraftRecipes(Collection<NamespacedKey> recipeKeys) {
         Collection<Recipe<?>> recipes = new ArrayList<>();
-        RecipeManager manager = getHandle().world.getServer().getRecipeManager();
+        RecipeManager manager = getHandle().getWorld().getServer().getRecipeManager();
 
         for (NamespacedKey recipeKey : recipeKeys) {
             Optional<? extends Recipe<?>> recipe = manager.get(CraftNamespacedKey.toMinecraft(recipeKey));
@@ -191,7 +191,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public org.bukkit.entity.Entity getShoulderEntityLeft() {
         if (!getHandle().getShoulderEntityLeft().isEmpty()) {
-            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromNbt(getHandle().getShoulderEntityLeft(), getHandle().world);
+            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromNbt(getHandle().getShoulderEntityLeft(), getHandle().getWorld());
             return (!shoulder.isPresent()) ? null : ((IMixinEntity)shoulder.get()).getBukkitEntity();
         }
         return null;
@@ -200,7 +200,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public org.bukkit.entity.Entity getShoulderEntityRight() {
         if (!getHandle().getShoulderEntityRight().isEmpty()) {
-            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromNbt(getHandle().getShoulderEntityRight(), getHandle().world);
+            Optional<net.minecraft.entity.Entity> shoulder = net.minecraft.entity.EntityType.getEntityFromNbt(getHandle().getShoulderEntityRight(), getHandle().getWorld());
             return (!shoulder.isPresent()) ? null : ((IMixinEntity)shoulder.get()).getBukkitEntity();
         }
         return null;
@@ -238,7 +238,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
         // If there isn't an enchant table we can force create one, won't be very useful though.
         BlockPos pos = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        getHandle().openHandledScreen(((EnchantingTableBlock) Blocks.ENCHANTING_TABLE).createScreenHandlerFactory(null, getHandle().world, pos));
+        getHandle().openHandledScreen(((EnchantingTableBlock) Blocks.ENCHANTING_TABLE).createScreenHandlerFactory(null, getHandle().getWorld(), pos));
 
         if (force)
             ((IMixinScreenHandler)getHandle().currentScreenHandler).setCheckReachable(false);
@@ -266,7 +266,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
                 BlockEntity te = (BlockEntity) iinventory;
                 if (!te.hasWorld()) {
                    // te.setLocation(getHandle().world, getHandle().getBlockPos());
-                    te.setWorld(getHandle().world);
+                    te.setWorld(getHandle().getWorld());
                     te.pos = getHandle().getBlockPos();
                 }
             }
@@ -359,7 +359,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         }
         if (location == null)
             location = getLocation();
-        getHandle().openHandledScreen(((CraftingTableBlock) Blocks.CRAFTING_TABLE).createScreenHandlerFactory(null, getHandle().world, new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ())));
+        getHandle().openHandledScreen(((CraftingTableBlock) Blocks.CRAFTING_TABLE).createScreenHandlerFactory(null, getHandle().getWorld(), new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ())));
         if (force)
             ((IMixinScreenHandler)getHandle().currentScreenHandler).setCheckReachable(false);
         return ((IMixinScreenHandler)getHandle().currentScreenHandler).getBukkitView();
@@ -409,7 +409,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public boolean sleep(Location location, boolean force) {
         BlockPos blockposition = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        BlockState iblockdata = getHandle().world.getBlockState(blockposition);
+        BlockState iblockdata = getHandle().getWorld().getBlockState(blockposition);
         if (!(iblockdata.getBlock() instanceof BedBlock))
             return false;
 
@@ -418,7 +418,7 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
         // From BlockBed
         iblockdata = (BlockState) iblockdata.with(BedBlock.OCCUPIED, true);
-        getHandle().world.setBlockState(blockposition, iblockdata, 4);
+        getHandle().getWorld().setBlockState(blockposition, iblockdata, 4);
 
         return true;
     }

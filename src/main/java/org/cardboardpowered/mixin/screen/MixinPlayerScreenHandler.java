@@ -13,7 +13,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.inventory.CraftingResultInventory;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -24,12 +24,14 @@ import net.minecraft.text.Text;
 @Mixin(PlayerScreenHandler.class)
 public class MixinPlayerScreenHandler extends MixinScreenHandler implements NamedScreenHandlerFactory {
 
-    @Shadow private CraftingInventory craftingInput;
+	@Shadow public RecipeInputInventory craftingInput;
     @Shadow private CraftingResultInventory craftingResult;
     private CardboardInventoryView bukkitEntity = null;
     private PlayerInventory player;
 
     @Inject(method = "<init>", at = @At("TAIL"))
+    
+    
     public void setPlayerInv(PlayerInventory playerinventory, boolean flag, PlayerEntity entityhuman, CallbackInfo ci) {
        // this.craftingResult = new CraftingResultInventory();
        // this.craftingInput = new CraftingInventory((PlayerScreenHandler)(Object)this, 2, 2);

@@ -174,8 +174,6 @@ accessible	field	net/minecraft/item/ItemStack	count	I
 mutable	field	net/minecraft/item/ItemStack	count	I
 accessible	field	net/minecraft/item/ItemStack	item	Lnet/minecraft/item/Item;
 mutable	field	net/minecraft/item/ItemStack	item	Lnet/minecraft/item/Item;
-accessible	field	net/minecraft/item/ItemStack	empty	Z
-mutable	field	net/minecraft/item/ItemStack	empty	Z
 accessible	field	net/minecraft/item/SwordItem	attackDamage	F
 mutable	field	net/minecraft/item/SwordItem	attackDamage	F
 accessible	field	net/minecraft/item/ToolItem	material	Lnet/minecraft/item/ToolMaterial;
@@ -398,8 +396,6 @@ mutable	field	net/minecraft/block/entity/LootableContainerBlockEntity	lootTableI
 accessible	field	net/minecraft/block/entity/LootableContainerBlockEntity	lootTableSeed	J
 mutable	field	net/minecraft/block/entity/LootableContainerBlockEntity	lootTableSeed	J
 extendable	class	net/minecraft/block/entity/ShulkerBoxBlockEntity$AnimationStage
-accessible	field	net/minecraft/block/entity/SignBlockEntity	editable	Z
-mutable	field	net/minecraft/block/entity/SignBlockEntity	editable	Z
 accessible	method	net/minecraft/block/PistonBlock	move	(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Z)Z
 accessible	field	net/minecraft/block/entity/PistonBlockEntity	source	Z
 mutable	field	net/minecraft/block/entity/PistonBlockEntity	source	Z
@@ -408,8 +404,6 @@ mutable	field	net/minecraft/block/piston/PistonHandler	world	Lnet/minecraft/worl
 accessible	field	net/minecraft/block/piston/PistonHandler	pistonDirection	Lnet/minecraft/util/math/Direction;
 mutable	field	net/minecraft/block/piston/PistonHandler	pistonDirection	Lnet/minecraft/util/math/Direction;
 extendable	class	net/minecraft/world/chunk/ChunkStatus$ChunkType
-accessible	field	net/minecraft/world/chunk/ChunkStatus	id	Ljava/lang/String;
-mutable	field	net/minecraft/world/chunk/ChunkStatus	id	Ljava/lang/String;
 accessible	field	net/minecraft/world/chunk/ChunkStatus	index	I
 mutable	field	net/minecraft/world/chunk/ChunkStatus	index	I
 accessible	field	net/minecraft/world/chunk/ChunkStatus	previous	Lnet/minecraft/world/chunk/ChunkStatus;
@@ -588,8 +582,6 @@ accessible class net/minecraft/entity/mob/SpellcastingIllagerEntity$Spell
 accessible field net/minecraft/scoreboard/ScoreboardCriterion CRITERIA Ljava/util/Map;
 accessible field net/minecraft/screen/PlayerScreenHandler craftingResult Lnet/minecraft/inventory/CraftingResultInventory;
 mutable field net/minecraft/screen/PlayerScreenHandler craftingResult Lnet/minecraft/inventory/CraftingResultInventory;
-accessible field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/minecraft/inventory/CraftingInventory;
-mutable field net/minecraft/screen/PlayerScreenHandler craftingInput Lnet/minecraft/inventory/CraftingInventory;
 accessible class net/minecraft/server/world/ServerWorld$ServerEntityHandler
 accessible method net/minecraft/server/network/ServerPlayerEntity onScreenHandlerOpened (Lnet/minecraft/screen/ScreenHandler;)V
 accessible class net/minecraft/util/UserCache$Entry

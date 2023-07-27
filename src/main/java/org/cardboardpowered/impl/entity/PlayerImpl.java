@@ -878,7 +878,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         Text[] components = CardboardSign.sanitizeLines(lines);
         SignBlockEntity sign = new SignBlockEntity(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), null);
         //sign.setPos(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-        sign.setTextColor(net.minecraft.util.DyeColor.byId(dyeColor.getWoolData()));
+        sign.getFrontText().withColor(net.minecraft.util.DyeColor.byId(dyeColor.getWoolData()));
         System.arraycopy(components, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, ((IMixinSignBlockEntity)sign).getTextBF().length);
 
         getHandle().networkHandler.sendPacket(sign.toUpdatePacket());

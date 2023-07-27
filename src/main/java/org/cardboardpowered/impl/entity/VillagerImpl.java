@@ -95,7 +95,7 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
         Preconditions.checkArgument(location.getWorld().equals(getWorld()), "Cannot sleep across worlds");
 
         BlockPos position = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        BlockState iblockdata = getHandle().world.getBlockState(position);
+        BlockState iblockdata = getHandle().getWorld().getBlockState(position);
         if (!(iblockdata.getBlock() instanceof BedBlock)) return false;
 
         getHandle().sleep(position);

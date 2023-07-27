@@ -28,7 +28,7 @@ import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FluidBlock;
-import net.minecraft.block.Material;
+//import net.minecraft.block.Material;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.enchantment.FrostWalkerEnchantment;
 import net.minecraft.entity.LivingEntity;
@@ -64,7 +64,7 @@ public class MixinFrostWalkerEnchantment {
                     if (blockstate1.isAir()) {
                         BlockState blockstate2 = worldIn.getBlockState(blockpos);
                         boolean isFull = blockstate2.getBlock() == Blocks.WATER && blockstate2.get(FluidBlock.LEVEL) == 0;
-                        if (blockstate2.getMaterial() == Material.WATER && isFull && blockstate.canPlaceAt(worldIn, blockpos) && worldIn.canPlace(blockstate, blockpos, ShapeContext.absent())) {
+                        if (blockstate2.isLiquid() && isFull && blockstate.canPlaceAt(worldIn, blockpos) && worldIn.canPlace(blockstate, blockpos, ShapeContext.absent())) {
                             if (BukkitEventFactory.handleBlockFormEvent(worldIn, blockpos, blockstate, living)) {
                                 worldIn.scheduleBlockTick(blockpos, Blocks.FROSTED_ICE, MathHelper.nextInt(living.getRandom(), 60, 120));
                             }

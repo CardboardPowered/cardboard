@@ -289,7 +289,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Inject(at = @At("HEAD"), method = "onClientCommand", cancellable = true)
     public void onClientCommand(ClientCommandC2SPacket packetplayinentityaction, CallbackInfo ci) {
-        NetworkThreadUtils.forceMainThread(packetplayinentityaction, get(), this.player.getWorld());
+        NetworkThreadUtils.forceMainThread(packetplayinentityaction, get(), (ServerWorld) this.player.getWorld());
         
         IMixinEntity e = (IMixinEntity) this.player;
 
@@ -320,6 +320,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     private ServerPlayNetworkHandler get() {
         return (ServerPlayNetworkHandler) (Object) this;
     }
+    
+    
 
     /**
      * @author Cardboard
@@ -328,12 +330,12 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      */
     @Overwrite
     public void onPlayerMove(PlayerMoveC2SPacket packet) {
-        NetworkThreadUtils.forceMainThread(packet, (ServerPlayNetworkHandler)(Object)this, this.player.getWorld());
+        NetworkThreadUtils.forceMainThread(packet, (ServerPlayNetworkHandler)(Object)this, (ServerWorld)this.player.getWorld());
         boolean sfly = false;
         if (sfly/*validateVehicleMove(packet.a(0.0D), packet.isOnGround(0.0D), packet.c(0.0D), packet.a(0.0F), packet.isOnGround(0.0F))*/) {
             //this.disconnect(new ChatMessage("multiplayer.disconnect.invalid_player_movement"));
         } else {
-            ServerWorld worldserver = this.player.getWorld();
+            ServerWorld worldserver = (ServerWorld) this.player.getWorld();
 
             if (/*!this.player.wonGame &&*/ !this.player.isDead()) { // CraftBukkit
                 if (this.ticks == 0) ((ServerPlayNetworkHandler)(Object)this).syncWithPlayerPosition();
@@ -354,7 +356,8 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
                     if (this.player.hasVehicle()) {
                         this.player.updatePositionAndAngles(this.player.getX(), this.player.getY(), this.player.getZ(), f, f1);
-                        this.player.getWorld().getChunkManager().updatePosition(this.player);
+                        //this.player.getWorld().getChunkManager().updatePosition(this.player);
+                        worldserver.getChunkManager().updatePosition(this.player);
                         this.allowedPlayerTicks = 20; // Bukkit
                     } else {
                         double prevX = player.getX();
@@ -446,7 +449,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                             }
 
                             this.player.updatePositionAndAngles(d0, d1, d2, f, f1);
-                            if (!this.player.noClip && !this.player.isSleeping() && (flag1 && worldserver.isSpaceEmpty(this.player, axisalignedbb) || this.isPlayerNotCollidingWithBlocks(worldserver, axisalignedbb))) {
+                            if (!this.player.noClip && !this.player.isSleeping() && (flag1 && worldserver.isSpaceEmpty(this.player, axisalignedbb) || this.isPlayerNotCollidingWithBlocks(worldserver, axisalignedbb, d0, d1, d2))) {
                                 this.requestTeleport(d3, d4, d5, f, f1);
                             } else {
                                 this.player.updatePositionAndAngles(prevX, prevY, prevZ, prevYaw, prevPitch);
@@ -496,8 +499,13 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
                                 this.player.updatePositionAndAngles(d0, d1, d2, f, f1); // Copied from above
 
                                 this.floating = d12 >= -0.03125D && this.player.interactionManager.getGameMode() != GameMode.SPECTATOR && !CraftServer.server.isFlightEnabled() && !this.player.abilities.allowFlying && !this.player.hasStatusEffect(StatusEffects.LEVITATION) && !this.player.isFallFlying() && this.isEntityOnAir((Entity) this.player) && !this.player.isUsingRiptide();
-                                this.player.getWorld().getChunkManager().updatePosition(this.player);
-                                this.player.handleFall(this.player.getY() - d6, packet.isOnGround());
+                                //this.player.getWorld().getChunkManager().updatePosition(this.player);
+                                worldserver.getChunkManager().updatePosition(this.player);
+                                //this.player.handleFall(this.player.getY() - d6, packet.isOnGround());
+                                
+                                this.player.handleFall(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5, packet.isOnGround());
+
+                                
                                 if (flag) this.player.fallDistance = 0.0F;
 
                                 this.player.increaseTravelMotionStats(this.player.getX() - d3, this.player.getY() - d4, this.player.getZ() - d5);
@@ -513,7 +521,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     }
 
     @Shadow
-    private boolean isPlayerNotCollidingWithBlocks(WorldView world, Box box) {
+    private boolean isPlayerNotCollidingWithBlocks(WorldView world, Box box, double d0, double d1, double d2) {
         return false;
     }
 
@@ -524,13 +532,17 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
     @Shadow
     private boolean isEntityOnAir(Entity entity) {return false;}
 
+    public ServerWorld get_server_world() {
+    	return (ServerWorld) this.player.getServerWorld();
+    }
+    
     /**
      * @author Cardboard
      * @reason Events
      */
     @Inject(at = @At("HEAD"), method = "onHandSwing", cancellable = true)
     public void onHandSwingBF(HandSwingC2SPacket packet, CallbackInfo ci) {
-        NetworkThreadUtils.forceMainThread(packet, get(), this.player.getWorld());
+        NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
         this.player.updateLastActionTime();
         float f1 = this.player.pitch;
         float f2 = this.player.yaw;
@@ -547,7 +559,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         float f8 = f3 * f5;
         double d3 = player.interactionManager.getGameMode()== GameMode.CREATIVE ? 5.0D : 4.5D;
         Vec3d vec3d1 = vec3d.add((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-        HitResult movingobjectposition = ((ServerWorld)this.player.world).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
+        HitResult movingobjectposition = ((ServerWorld)this.player.getServerWorld()).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
 
         if (movingobjectposition == null || movingobjectposition.getType() != HitResult.Type.BLOCK)
             BukkitEventFactory.callPlayerInteractEvent(this.player, Action.LEFT_CLICK_AIR, this.player.inventory.getMainHandStack(), Hand.MAIN_HAND);
@@ -566,7 +578,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Inject(at = @At("HEAD"), method = "onPlayerInteractItem", cancellable = true)
     public void onPlayerInteractItemBF(PlayerInteractItemC2SPacket packetplayinblockplace, CallbackInfo ci) {
-        NetworkThreadUtils.forceMainThread(packetplayinblockplace, get(), this.player.getWorld());
+        NetworkThreadUtils.forceMainThread(packetplayinblockplace, get(), this.player.getServerWorld());
         Hand enumhand = packetplayinblockplace.getHand();
         ItemStack itemstack = this.player.getStackInHand(enumhand);
 
@@ -587,7 +599,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
             float f8 = f3 * f5;
             double d3 = player.interactionManager.getGameMode()== GameMode.CREATIVE ? 5.0D : 4.5D;
             Vec3d vec3d1 = vec3d.add((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
-            HitResult movingobjectposition = ((ServerWorld)this.player.world).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
+            HitResult movingobjectposition = ((ServerWorld)this.player.getServerWorld()).raycast(new RaycastContext(vec3d, vec3d1, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player));
 
             boolean cancelled;
             if (movingobjectposition == null || movingobjectposition.getType() != HitResult.Type.BLOCK) {
@@ -618,7 +630,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
      */
     @Overwrite
     public void onUpdateSelectedSlot(UpdateSelectedSlotC2SPacket packetplayinhelditemslot) {
-        NetworkThreadUtils.forceMainThread(packetplayinhelditemslot, get(), this.player.getWorld());
+        NetworkThreadUtils.forceMainThread(packetplayinhelditemslot, get(), this.player.getServerWorld());
         if (packetplayinhelditemslot.getSelectedSlot() >= 0 && packetplayinhelditemslot.getSelectedSlot() < PlayerInventory.getHotbarSize()) {
             PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.player.inventory.selectedSlot, packetplayinhelditemslot.getSelectedSlot());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
@@ -650,7 +662,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Inject(at = @At("HEAD"), method = "onResourcePackStatus")
     public void doBukkitEvent_PlayerResourcePackStatusEvent(ResourcePackStatusC2SPacket packet, CallbackInfo ci) {
-        NetworkThreadUtils.forceMainThread(packet, get(), this.player.getWorld());
+        NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
         Bukkit.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal()]));
     }
 
