@@ -27,6 +27,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.cardboardpowered.fabric.FabricInjectBukkit;
 import org.cardboardpowered.impl.CardboardEnchantment;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -67,6 +68,7 @@ public abstract class MixinDedicatedServer extends MixinMCServer implements IDed
         CraftMagicNumbers.test();
         CraftMagicNumbers.setupUnknownModdedMaterials();
 
+        FabricInjectBukkit.registerAll();
         MinecraftDedicatedServer thiss = (MinecraftDedicatedServer) (Object) this;
         
         ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager(thiss, thiss.getRegistryManager(), saveHandler));
