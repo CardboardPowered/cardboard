@@ -19,6 +19,7 @@
 package org.cardboardpowered.mixin.entity;
 
 import java.util.OptionalInt;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -161,7 +162,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     /**/
     @Unique
-    private final ThreadLocal<ScreenHandler> fabric_openedScreenHandler = new ThreadLocal<>();
+    private final AtomicReference<ScreenHandler> fabric_openedScreenHandler = new AtomicReference<>();
 
     private void fabric_replaceVanillaScreenPacket_include(ServerPlayNetworkHandler networkHandler, Packet<?> packet, NamedScreenHandlerFactory factory) {
         if (factory instanceof ExtendedScreenHandlerFactory) {
@@ -181,7 +182,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(method = "openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;", at = @At("RETURN"))
     private void fabric_clearStoredScreenHandler_include(NamedScreenHandlerFactory factory, CallbackInfoReturnable<OptionalInt> info) {
-        fabric_openedScreenHandler.remove();
+        fabric_openedScreenHandler.set(null);
     }
 
     /**
@@ -236,7 +237,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                     ((ServerPlayerEntity)(Object)this).onScreenHandlerOpened(container);
                 }
 
-                fabric_openedScreenHandler.remove();
+                fabric_openedScreenHandler.set(null);
                 ci.setReturnValue(OptionalInt.of(this.screenHandlerSyncId));
             }
         }
