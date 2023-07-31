@@ -121,6 +121,8 @@ dependencies {
     configurations.api.extendsFrom( (configurations.extraLibs) )
 
     annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:0.4.1'
+
+    implementation(include("org.apache.logging.log4j:log4j-iostreams:2.20.0"))// Include at now,waiting for download maven include it
 }
 
 configurations.implementation {

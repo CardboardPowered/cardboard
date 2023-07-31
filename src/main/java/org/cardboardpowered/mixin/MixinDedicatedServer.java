@@ -21,9 +21,12 @@ package org.cardboardpowered.mixin;
 import java.io.File;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.io.IoBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.util.ForwardLogHandler;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -88,6 +91,26 @@ public abstract class MixinDedicatedServer extends MixinMCServer implements IDed
         s.enablePlugins(PluginLoadOrder.STARTUP);
 
         Bukkit.getLogger().info("");
+    }
+
+    @Inject(method = "setupServer",
+            at = @At(value = "INVOKE",
+                    target = "Ljava/lang/Thread;setDaemon(Z)V",
+                    ordinal = 0,
+                    shift = At.Shift.BEFORE))
+    private void cardboard$addLog4j(CallbackInfoReturnable<Boolean> cir) {
+        // CraftBukkit start - TODO: handle command-line logging arguments
+        java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
+        global.setUseParentHandlers(false);
+        for (java.util.logging.Handler handler : global.getHandlers()) {
+            global.removeHandler(handler);
+        }
+        global.addHandler(new ForwardLogHandler());
+        final org.apache.logging.log4j.Logger logger = LogManager.getRootLogger();
+
+        System.setOut(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.INFO).buildPrintStream());
+        System.setErr(IoBuilder.forLogger(logger).setLevel(org.apache.logging.log4j.Level.WARN).buildPrintStream());
+        // CraftBukkit end
     }
 
     @Inject(at = @At("TAIL"), method = "exit")
