@@ -289,7 +289,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.19.4-R0.1-SNAPSHOT"; // "1.19.2-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.20.1-R0.1-SNAPSHOT"; // "1.19.4-R0.1-SNAPSHOT"; // "1.19.2-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 

@@ -10,6 +10,9 @@ import java.util.Map;
 
 import com.mohistmc.banner.bukkit.nms.model.ClassMapping;
 import com.mohistmc.banner.bukkit.nms.remappers.*;
+
+import net.md_5.specialsource.InheritanceMap;
+import net.md_5.specialsource.provider.JointProvider;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -32,22 +35,29 @@ public class RemapUtils {
     public static void init() {
     	System.out.println("REMAP UTIL DEBUG");
         jarMapping = new BannerJarMapping();
-        jarMapping.packages.put("org/bukkit/craftbukkit/v1_19_R3/", "org/bukkit/craftbukkit/");
+        // v1_20_R1
+        jarMapping.packages.put("org/bukkit/craftbukkit/v1_20_R1/", "org/bukkit/craftbukkit/");
+        //jarMapping.packages.put("org/bukkit/craftbukkit/v1_19_R3/", "org/bukkit/craftbukkit/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
-        jarMapping.setInheritanceMap(new BannerInheritanceMap());
-        jarMapping.setFallbackInheritanceProvider(new BannerInheritanceProvider());
+        // jarMapping.setInheritanceMap(new BannerInheritanceMap());
+        // jarMapping.setFallbackInheritanceProvider(new BannerInheritanceProvider());
 
         try {
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg - 1.19.4.srg"))),
+                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg-1.20.srg"))),
                     null,
                     null, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        JointProvider provider = new JointProvider();
+        provider.add(new BannerInheritanceProvider());
+        jarMapping.setInheritanceMap(new InheritanceMap());
+        jarMapping.setFallbackInheritanceProvider(provider);
         jarRemapper = new BannerJarRemapper(jarMapping);
         remappers.add(jarRemapper);
         remappers.add(new ReflectRemapper());
