@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.registry.Registries;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -88,16 +89,16 @@ public class CardboardPotionUtil {
     }
 
     public static StatusEffectInstance fromBukkit(PotionEffect effect) {
-        return new StatusEffectInstance(StatusEffect.byRawId(effect.getType().getId()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+        return new StatusEffectInstance(Registries.STATUS_EFFECT.get(effect.getType().getId()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
     }
 
     public static PotionEffect toBukkit(StatusEffectInstance effect) {
-        PotionEffectType type = PotionEffectType.getById(StatusEffect.getRawId(effect.getEffectType()));
+        PotionEffectType type = PotionEffectType.getById(Registries.STATUS_EFFECT.getRawId(effect.getEffectType()));
         return new PotionEffect(type, effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.shouldShowParticles());
     }
 
     public static boolean equals(StatusEffect mobEffect, PotionEffectType type) {
-        return PotionEffectType.getById(StatusEffect.getRawId(mobEffect)).equals(type);
+        return PotionEffectType.getById(Registries.STATUS_EFFECT.getRawId(mobEffect)).equals(type);
     }
 
 }

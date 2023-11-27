@@ -1,25 +1,25 @@
 package org.cardboardpowered.mixin.world;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.cardboardpowered.impl.block.CapturedBlockState;
-import org.cardboardpowered.impl.world.WorldImpl;
-
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-
 import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
+import org.cardboardpowered.impl.block.CapturedBlockState;
+import org.cardboardpowered.impl.world.WorldImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(World.class)
-public class MixinWorld implements IMixinWorld {
+public abstract class MixinWorld implements IMixinWorld {
 
+    @Shadow public WorldChunk getWorldChunk(BlockPos pos) {return null;}
     private WorldImpl bukkit;
 
     public boolean captureBlockStates = false;
@@ -56,14 +56,14 @@ public class MixinWorld implements IMixinWorld {
         this.bukkit = world;
     }
 
-    @Inject(at = @At("HEAD"), method = "setBlockState", cancellable = true)
-    public void setBlockState1(BlockPos blockposition, BlockState iblockdata, int i, CallbackInfoReturnable<Boolean> ci) {
+    @Inject(at = @At("HEAD"), method = "setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;II)Z")
+    public void setBlockState1(BlockPos pos, BlockState state, int flags, int maxUpdateDepth, CallbackInfoReturnable<Boolean> cir) {
         // TODO 1.17ify: if (!ServerWorld.isOutOfBuildLimitVertically(blockposition)) {
-            WorldChunk chunk = ((ServerWorld)(Object)this).getWorldChunk(blockposition);
+            WorldChunk chunk = getWorldChunk(pos);
             boolean captured = false;
-            if (this.captureBlockStates && !this.capturedBlockStates.containsKey(blockposition)) {
-                CapturedBlockState blockstate = CapturedBlockState.getBlockState((World)(Object)this, blockposition, i);
-                this.capturedBlockStates.put(blockposition.toImmutable(), blockstate);
+            if (this.captureBlockStates && !this.capturedBlockStates.containsKey(pos)) {
+                CapturedBlockState blockstate = CapturedBlockState.getBlockState((World)(Object)this, pos, flags);
+                this.capturedBlockStates.put(pos.toImmutable(), blockstate);
                 captured = true;
             }
         //}

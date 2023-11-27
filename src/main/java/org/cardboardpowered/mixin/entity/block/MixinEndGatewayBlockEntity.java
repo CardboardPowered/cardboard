@@ -1,83 +1,79 @@
 package org.cardboardpowered.mixin.entity.block;
 
-import org.bukkit.Bukkit;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.EndGatewayBlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
-import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.EndGatewayBlockEntity;
-import net.minecraft.block.entity.EndPortalBlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Entity.RemovalReason;
-import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(EndGatewayBlockEntity.class)
-public class MixinEndGatewayBlockEntity extends EndPortalBlockEntity {
+public class MixinEndGatewayBlockEntity {
 
-    public MixinEndGatewayBlockEntity(BlockPos pos, BlockState state) {
-        super(pos, state);
-    }
+	// I tried using LocalCapture but it kept making up
+	// that i was using ServerWorld which crashed the game
+	// So this messy solution will have to do
 
-    @Shadow public BlockPos exitPortalPos;
-    @Shadow public boolean exactTeleport;
+	@Shadow
+	private static void startTeleportCooldown(World world, BlockPos pos, BlockState state, EndGatewayBlockEntity be) {
+	}
 
-    @Shadow
-    private static BlockPos findBestPortalExitPos(World world, BlockPos pos) {
-        return null;
-    }
 
-    @Shadow
-    private static void startTeleportCooldown(World world, BlockPos pos, BlockState state, EndGatewayBlockEntity be) {
-    }
+	@Redirect(method = "tryTeleportingEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;resetPortalCooldown()V"))
+	private static void onResetPortalCooldown(Entity instance) {
+		// ignore, called somewhere else here
+	}
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;teleport(DDD)V"), method = "tryTeleportingEntity", cancellable = true)
-    private static void bukkitize(World world, BlockPos pos, BlockState state, Entity entity, EndGatewayBlockEntity be, CallbackInfo ci) {
-        BlockPos blockposition = be.exactTeleport ? be.exitPortalPos : findBestPortalExitPos(world, pos);
-        Entity entity1;
+	@Unique private static boolean wasCancelled;
 
-        if (entity instanceof EnderPearlEntity) {
-            Entity entity2 = ((EnderPearlEntity) entity).getOwner();
-            if (entity2 instanceof ServerPlayerEntity) Criteria.ENTER_BLOCK.trigger((ServerPlayerEntity) entity2, state);
+	@Redirect(method = "tryTeleportingEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/EndGatewayBlockEntity;startTeleportCooldown(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/EndGatewayBlockEntity;)V"))
+	private static void onStartTeleportCooldown(World world, BlockPos pos, BlockState state, EndGatewayBlockEntity blockEntity) {
+		if(wasCancelled) {
+			wasCancelled = false;
+		} else {
+			startTeleportCooldown(world, pos, state, blockEntity);
+		}
+	}
 
-            if (entity2 != null) {
-                entity1 = entity2;
-                entity.remove(RemovalReason.DISCARDED);
-            } else entity1 = entity;
-        } else entity1 = entity.getRootVehicle();
+	@Redirect(method = "tryTeleportingEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;teleport(DDD)V"))
+	private static void bukkitize(Entity target, double x, double y, double z) {
+		if(!(target instanceof ServerPlayerEntity player)) {
+			target.resetPortalCooldown();
+			target.teleport(x, y, z);
+			return;
+		}
 
-        if (entity1 instanceof ServerPlayerEntity) {
-            PlayerImpl player = (PlayerImpl) ((IMixinEntity)entity1).getBukkitEntity();
-            org.bukkit.Location location = new Location(((IMixinWorld)world).getWorldImpl(), (double) blockposition.getX() + 0.5D, (double) blockposition.getY() + 0.5D, (double) blockposition.getZ() + 0.5D);
-            location.setPitch(player.getLocation().getPitch());
-            location.setYaw(player.getLocation().getYaw());
+		Location loc = callEvent((IMixinWorld) player.getWorld(), (IMixinEntity) player, x, y, z);
 
-            PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.END_GATEWAY);
-            Bukkit.getPluginManager().callEvent(teleEvent);
-            if (teleEvent.isCancelled()) {
-                ci.cancel();
-                return;
-            }
+		if(loc == null) {
+			wasCancelled = true;
+			return;
+		}
 
-            entity1.resetPortalCooldown();
-            ((IMixinPlayNetworkHandler) ((ServerPlayerEntity) entity1).networkHandler).teleport(teleEvent.getTo());
-            startTeleportCooldown(world, blockposition, state, be);
-            ci.cancel();
-            return;
-        }
-    }
+		target.resetPortalCooldown();
+		((IMixinPlayNetworkHandler) player.networkHandler).teleport(loc);
+	}
+
+	@Unique
+	private static Location callEvent(IMixinWorld world, IMixinEntity teleported, double x, double y, double z) {
+		PlayerImpl player = (PlayerImpl) teleported.getBukkitEntity();
+		Location location = new Location(world.getWorldImpl(), x, y, z);
+		location.setPitch(player.getLocation().getPitch());
+		location.setYaw(player.getLocation().getYaw());
+
+		PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.END_GATEWAY);
+		return teleEvent.isCancelled() ? null : teleEvent.getTo();
+	}
 
 }

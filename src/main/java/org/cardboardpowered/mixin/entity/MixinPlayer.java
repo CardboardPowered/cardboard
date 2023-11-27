@@ -18,53 +18,21 @@
  */
 package org.cardboardpowered.mixin.entity;
 
-import java.util.OptionalInt;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.cardboardpowered.impl.inventory.CardboardInventoryView;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.util.CraftChatMessage;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerChangedMainHandEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.MainHand;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-//import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.impl.screenhandler.Networking;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
-import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
+import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.scoreboard.AbstractTeam;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerListener;
@@ -72,21 +40,35 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.registry.Registries;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerChangedMainHandEvent;
+import org.bukkit.event.player.PlayerLocaleChangeEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.MainHand;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.OptionalInt;
 
 @Mixin(value = ServerPlayerEntity.class, priority = 999)
-public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutput, IMixinServerEntityPlayer  {
+public abstract class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutput, IMixinServerEntityPlayer  {
 
     private PlayerImpl bukkit;
 
@@ -111,7 +93,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     }
 
     @Override
-    public CraftEntity getBukkitEntity() {
+    public PlayerImpl getBukkitEntity() {
         return bukkit;
     }
 
@@ -132,21 +114,27 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(at = @At("HEAD"), method = "Lnet/minecraft/server/network/ServerPlayerEntity;teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", cancellable = true)
     public void teleport1(ServerWorld worldserver, double x, double y, double z, float f, float f1, CallbackInfo ci) {
-        PlayerTeleportEvent event = new PlayerTeleportEvent((Player) this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(((IMixinWorld)worldserver).getWorldImpl(), x,y,z,f,f1), PlayerTeleportEvent.TeleportCause.UNKNOWN);
+        PlayerTeleportEvent event = new PlayerTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(((IMixinWorld)worldserver).getWorldImpl(), x,y,z,f,f1), PlayerTeleportEvent.TeleportCause.UNKNOWN);
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
             ci.cancel();
-            return;
         }
     }
 
     public String locale_BF = "en_us";
 
-    @Inject(at = @At("HEAD"), method = "setClientSettings")
-    public void setClientSettings(ClientSettingsC2SPacket packet, CallbackInfo ci) {
-        PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent((Player) getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
-        CraftServer.INSTANCE.getPluginManager().callEvent(event);
+    @Inject(at = @At("HEAD"), method = "setClientOptions")
+    public void onUpdateOptions(SyncedClientOptions options, CallbackInfo ci) {
+        if(getMainArm() != options.mainArm()) {
+            PlayerChangedMainHandEvent event = new PlayerChangedMainHandEvent(getBukkitEntity(), ((ServerPlayerEntity) (Object) this).getMainArm() == Arm.LEFT ? MainHand.LEFT : MainHand.RIGHT);
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        }
+
+        if(!this.language.equals(options.language())) {
+            PlayerLocaleChangeEvent event = new PlayerLocaleChangeEvent(getBukkitEntity(), options.language());
+            CraftServer.INSTANCE.getPluginManager().callEvent(event);
+        }
     }
 
     @Shadow
@@ -230,7 +218,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
                 if ( CraftServer.INSTANCE.getMinecraftVersion().contains("1.16") ) {
                     // 1.16.5
-                    container.addListener((ScreenHandlerListener) ((ServerPlayerEntity)(Object)this));
+                    container.addListener((ScreenHandlerListener) this);
                 } else {
                     // 1.17
                     ((ServerPlayerEntity)(Object)this).onScreenHandlerOpened(container);
@@ -333,6 +321,8 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     @Shadow
     public void forgiveMobAnger() {}
 
+    @Shadow public abstract OptionalInt openHandledScreen(@Nullable NamedScreenHandlerFactory factory);
+    @Shadow private String language;
     @Override
     public void setConnectionBF(ClientConnection connection) {
         this.connectionBF = connection;
@@ -374,7 +364,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         try {
             if (this.oldLevel == -1) this.oldLevel = ((ServerPlayerEntity)(Object)this).experienceLevel;
             if (this.oldLevel != ((ServerPlayerEntity)(Object)this).experienceLevel) {
-                BukkitEventFactory.callPlayerLevelChangeEvent((Player)getBukkitEntity(), this.oldLevel, ((ServerPlayerEntity)(Object)this).experienceLevel);
+                BukkitEventFactory.callPlayerLevelChangeEvent(getBukkitEntity(), this.oldLevel, ((ServerPlayerEntity)(Object)this).experienceLevel);
                 this.oldLevel = ((ServerPlayerEntity)(Object)this).experienceLevel;
             }
         } catch (Throwable throwable) {}
@@ -418,7 +408,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         view.setPlayerIfNotSet(getBukkit());
         InventoryCloseEvent event = new InventoryCloseEvent(view);
         Bukkit.getPluginManager().callEvent(event);
-        handler.transferTo(((ServerPlayerEntity)(Object)this).playerScreenHandler, (CraftHumanEntity) getBukkitEntity());
+        handler.transferTo(((ServerPlayerEntity)(Object)this).playerScreenHandler, getBukkitEntity());
     }
 
 }

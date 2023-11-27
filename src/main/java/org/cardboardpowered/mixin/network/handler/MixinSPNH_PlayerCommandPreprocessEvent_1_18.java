@@ -1,5 +1,12 @@
 package org.cardboardpowered.mixin.network.handler;
 
+import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import net.minecraft.network.message.LastSeenMessageList;
+import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -10,12 +17,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.javazilla.bukkitfabric.BukkitLogger;
-import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 @Mixin(value = ServerPlayNetworkHandler.class, priority = 800)
 public abstract class MixinSPNH_PlayerCommandPreprocessEvent_1_18 implements IMixinPlayNetworkHandler {
@@ -28,10 +29,11 @@ public abstract class MixinSPNH_PlayerCommandPreprocessEvent_1_18 implements IMi
      * @author Cardboard 1.18.2
      */
     // TODO: 1.19
-    @Inject(at = @At("HEAD"), method = "executeCommand", cancellable = true)
-    public void executeCommand_1_18_2(String string, CallbackInfo ci) {
-        BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + string);
-        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), string, new LazyPlayerSet(CraftServer.server));
+    @Inject(at = @At("HEAD"), method = "handleCommandExecution", cancellable = true)
+    public void executeCommand_1_18_2(CommandExecutionC2SPacket packet, LastSeenMessageList messages, CallbackInfo ci) {
+        String command = packet.command();
+        BukkitLogger.getLogger().info(this.player.getName().getString() + " issued server command: " + command);
+        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), command, new LazyPlayerSet(CraftServer.server));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 

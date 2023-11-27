@@ -1,43 +1,19 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.screen.ArrayPropertyDelegate;
-import net.minecraft.screen.BeaconScreenHandler;
-import net.minecraft.screen.BlastFurnaceScreenHandler;
-import net.minecraft.screen.BrewingStandScreenHandler;
-import net.minecraft.screen.CartographyTableScreenHandler;
-import net.minecraft.screen.CraftingScreenHandler;
-import net.minecraft.screen.EnchantmentScreenHandler;
-import net.minecraft.screen.FurnaceScreenHandler;
-import net.minecraft.screen.Generic3x3ContainerScreenHandler;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.GrindstoneScreenHandler;
-import net.minecraft.screen.HopperScreenHandler;
-import net.minecraft.screen.LecternScreenHandler;
-import net.minecraft.screen.LoomScreenHandler;
-import net.minecraft.screen.MerchantScreenHandler;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.ShulkerBoxScreenHandler;
-import net.minecraft.screen.SmithingScreenHandler;
-import net.minecraft.screen.SmokerScreenHandler;
-import net.minecraft.screen.StonecutterScreenHandler;
+import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
-
-import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
+import org.cardboardpowered.impl.entity.PlayerImpl;
 
 public class CraftContainer extends ScreenHandler {
 

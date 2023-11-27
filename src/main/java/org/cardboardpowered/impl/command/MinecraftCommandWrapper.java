@@ -3,13 +3,8 @@ package org.cardboardpowered.impl.command;
 import com.google.common.base.Joiner;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
-
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -17,6 +12,10 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public final class MinecraftCommandWrapper extends BukkitCommand {
 
@@ -34,8 +33,6 @@ public final class MinecraftCommandWrapper extends BukkitCommand {
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!testPermission(sender)) return true;
 
-       // dispatcher.execute(getCommandSource(sender), toDispatcher(args, commandLabel));
-        
         ServerCommandSource icommandlistener = MinecraftCommandWrapper.getCommandSource(sender);
         this.dispatcher.executeWithPrefix(icommandlistener, this.toDispatcher(args, this.getName()));
         

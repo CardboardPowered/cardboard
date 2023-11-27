@@ -1,21 +1,20 @@
 package org.cardboardpowered.mixin;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.bukkit.craftbukkit.CraftServer;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-
 import net.minecraft.network.packet.Packet;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.bukkit.craftbukkit.CraftServer;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 @Mixin(value = ServerScoreboard.class, priority = 900)
 public class MixinServerScoreboard extends Scoreboard {

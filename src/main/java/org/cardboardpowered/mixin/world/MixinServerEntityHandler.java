@@ -18,34 +18,32 @@
  */
 package org.cardboardpowered.mixin.world;
 
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.server.world.ServerWorld.ServerEntityHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
-import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
-import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.server.world.ServerWorld.ServerEntityHandler;
-
 @Mixin(ServerEntityHandler.class)
 public class MixinServerEntityHandler {
 
-    @Inject(at = @At("TAIL"), method = "stopTracking")
+    @Inject(at = @At("TAIL"), method = "stopTracking(Lnet/minecraft/entity/Entity;)V")
     public void unvalidateEntityBF(Entity entity, CallbackInfo ci) {
         IMixinEntity bf = (IMixinEntity) entity;
         bf.setValid(false);
         BukkitEventFactory.callEvent( new EntityRemoveFromWorldEvent(bf.getBukkitEntity()) );
     }
 
-    @Inject(at = @At("TAIL"), method = "startTracking")
+    @Inject(at = @At("TAIL"), method = "startTicking(Lnet/minecraft/entity/Entity;)V")
     public void validateEntityBF(Entity entity, CallbackInfo ci) {
         IMixinEntity bf = (IMixinEntity) entity;
         bf.setValid(true);
-        if (null == bf.getOriginBF() && null != bf.getBukkitEntity())
+        if (null == bf.getOriginBF() && bf.getBukkitEntity() != null)
             bf.setOriginBF(bf.getBukkitEntity().getLocation()); // Paper Entity Origin API
 
         BukkitEventFactory.callEvent( new EntityAddToWorldEvent(bf.getBukkitEntity()) );

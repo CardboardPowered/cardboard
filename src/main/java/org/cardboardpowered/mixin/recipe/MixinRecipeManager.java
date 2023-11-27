@@ -1,86 +1,83 @@
 package org.cardboardpowered.mixin.recipe;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.Util;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.registry.Registries;
-import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Mixin(RecipeManager.class)
 public class MixinRecipeManager implements IMixinRecipeManager {
 
+    @Invoker("deserialize")
+    protected static RecipeEntry<?> method_17720(Identifier minecraftkey, JsonObject jsonobject) {
+        return null;
+    }
+
     @Shadow public boolean errored;
-    @Shadow public static Recipe<?> deserialize(Identifier minecraftkey, JsonObject jsonobject) {return null;}
-    @Shadow public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes = ImmutableMap.of();
+    @Shadow public Map<RecipeType<?>, Map<Identifier, RecipeEntry<?>>> recipes = ImmutableMap.of();
     @Shadow public <C extends Inventory, T extends Recipe<C>> Map<Identifier, Recipe<C>> getAllOfType(RecipeType<T> recipes) {return null;}
 
-    private static final Logger LOGGER_BF = LogManager.getLogger("Bukkit|RecipeManager");
+    @Unique private static final Logger LOGGER_BF = LogManager.getLogger("Bukkit|RecipeManager");
 
     /**
      * @author BukkitFabric
      * @reason Properly fill recipe map
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Inject(at = @At("TAIL"), method = "apply")
+    @Inject(at = @At("TAIL"), method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V")
     public void apply(Map<Identifier, JsonElement> map, ResourceManager iresourcemanager, Profiler gameprofilerfiller, CallbackInfo ci) {
         this.errored = false;
-        Map<RecipeType<?>, Map<Identifier, Recipe<?>>> map1 = Maps.newHashMap();
+        Map<RecipeType<?>, Map<Identifier, RecipeEntry<?>>> map1 = Maps.newHashMap();
         for (RecipeType<?> recipeType : Registries.RECIPE_TYPE)
             map1.put(recipeType, new HashMap<>());
-        Iterator<Entry<Identifier, JsonElement>> iterator = map.entrySet().iterator();
 
-        while (iterator.hasNext()) {
-            Entry<Identifier, JsonElement> entry = (Entry) iterator.next();
-            Identifier minecraftkey = (Identifier) entry.getKey();
+	    for(Entry<Identifier, JsonElement> entry : map.entrySet()) {
+		    Identifier minecraftkey = entry.getKey();
 
-            try {
-                Recipe<?> irecipe = deserialize(minecraftkey, JsonHelper.asObject((JsonElement) entry.getValue(), "top element"));
-                (map1.computeIfAbsent(irecipe.getType(), (recipes) -> new Object2ObjectLinkedOpenHashMap<>())).put(minecraftkey, irecipe);
-            } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
-                LOGGER_BF.error("Parsing error loading recipe {}", minecraftkey, jsonparseexception);
-            }
-        }
+		    try {
+                RecipeEntry<?> irecipe = method_17720(minecraftkey, JsonHelper.asObject(entry.getValue(), "top element"));
+			    (map1.computeIfAbsent(irecipe.value().getType(), (recipes) -> new Object2ObjectLinkedOpenHashMap<>())).put(minecraftkey, irecipe);
+		    } catch(IllegalArgumentException | JsonParseException jsonparseexception) {
+			    LOGGER_BF.error("Parsing error loading recipe {}", minecraftkey, jsonparseexception);
+		    }
+	    }
 
-        this.recipes = (Map) map1.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, (entry1) -> entry1.getValue()));
+        this.recipes = map1.entrySet().stream().collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));
         LOGGER_BF.info("Loaded " + map1.size() + " recipes");
     }
 
     @Override
-    public void addRecipe(Recipe<?> irecipe) {
-        Map<Identifier, Recipe<?>> map = this.recipes.get(irecipe.getType());
-        if (map.containsKey(irecipe.getId()))
-            throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.getId());
-        else map.put(irecipe.getId(), irecipe);
+    public void addRecipe(RecipeEntry<?> entry) {
+        Map<Identifier, RecipeEntry<?>> map = this.recipes.get(entry.value().getType());
+        if (map.containsKey(entry.id()))
+            throw new IllegalStateException("Duplicate recipe ignored with ID " + entry.toString());
+        else
+            map.put(entry.id(), entry);
     }
 
     /**
@@ -103,7 +100,7 @@ public class MixinRecipeManager implements IMixinRecipeManager {
     }
 
     @Override
-    public Map<RecipeType<?>, Map<Identifier, Recipe<?>>> getRecipes() {
+    public Map<RecipeType<?>, Map<Identifier, RecipeEntry<?>>> getRecipes() {
         return recipes;
     }
 

@@ -1,33 +1,38 @@
 /**
  * CardboardPowered - Bukkit/Spigot for Fabric
  * Copyright (C) CardboardPowered.org and contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
- * License as published by the Free Software Foundation; either 
+ * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package org.cardboardpowered.mixin;
 
-import java.io.File;
-import java.util.List;
-
+import com.javazilla.bukkitfabric.BukkitLogger;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.registry.Registries;
+import net.minecraft.server.dedicated.DedicatedPlayerManager;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.dedicated.PendingServerCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.cardboardpowered.CardboardConfig;
 import org.cardboardpowered.impl.CardboardEnchantment;
+import org.cardboardpowered.interfaces.IDedicatedServer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -37,85 +42,84 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.javazilla.bukkitfabric.BukkitLogger;
-import org.cardboardpowered.interfaces.IDedicatedServer;
-
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.server.dedicated.DedicatedPlayerManager;
-import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.server.dedicated.PendingServerCommand;
-import net.minecraft.registry.Registries;
+import java.io.File;
+import java.util.List;
 
 @Mixin(MinecraftDedicatedServer.class)
 public abstract class MixinDedicatedServer extends MixinMCServer implements IDedicatedServer {
 
-    @Shadow
-    @Final
-    private List<PendingServerCommand> commandQueue;
+	@Shadow
+	@Final
+	private List<PendingServerCommand> commandQueue;
 
-    @Inject(at = @At(value = "HEAD"), method = "setupServer()Z") 
-    private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
-        CraftServer.server = (MinecraftDedicatedServer) (Object) this;
-    }
+	@Inject(at = @At(value = "HEAD"), method = "setupServer()Z")
+	private void initVar(CallbackInfoReturnable<Boolean> callbackInfo) {
+		CraftServer.server = (MinecraftDedicatedServer) (Object) this;
+	}
 
-    @Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
-    private void init(CallbackInfoReturnable<Boolean> ci) {
-        // Register Bukkit Enchantments
-        for (Enchantment enchantment : Registries.ENCHANTMENT)
-            org.bukkit.enchantments.Enchantment.registerEnchantment(new CardboardEnchantment(enchantment));
+	@Inject(at = @At(value = "JUMP", ordinal = 8), method = "setupServer()Z") // TODO keep ordinal updated
+	private void init(CallbackInfoReturnable<Boolean> ci) {
+		// Register Bukkit Enchantments
+		for(Enchantment enchantment : Registries.ENCHANTMENT)
+			org.bukkit.enchantments.Enchantment.registerEnchantment(new CardboardEnchantment(enchantment));
 
-        CraftMagicNumbers.test();
-        CraftMagicNumbers.setupUnknownModdedMaterials();
+		CraftMagicNumbers.test();
+		CraftMagicNumbers.setupUnknownModdedMaterials();
 
-        MinecraftDedicatedServer thiss = (MinecraftDedicatedServer) (Object) this;
-        
-        ((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager(thiss, thiss.getCombinedDynamicRegistries(), saveHandler));
-        Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
-        org.spigotmc.SpigotConfig.init(new File("spigot.yml"));
+		MinecraftDedicatedServer thiss = (MinecraftDedicatedServer) (Object) this;
 
-        Bukkit.getLogger().info("Loading Bukkit plugins...");
-        File pluginsDir = new File("plugins");
-        pluginsDir.mkdir();
+		((MinecraftDedicatedServer) (Object) this).setPlayerManager(new DedicatedPlayerManager(thiss, thiss.getCombinedDynamicRegistries(), saveHandler));
+		Bukkit.setServer(new CraftServer((MinecraftDedicatedServer) (Object) this));
+		org.spigotmc.SpigotConfig.init(new File("spigot.yml"));
 
-        Bukkit.getPluginManager().registerInterface(JavaPluginLoader.class);
+		Bukkit.getLogger().info("Loading Bukkit plugins...");
+		File pluginsDir = new File("plugins");
+		pluginsDir.mkdir();
 
-        CraftServer s = ((CraftServer)Bukkit.getServer());
-        if (CraftServer.server == null) CraftServer.server = (MinecraftDedicatedServer) (Object) this;
+		Bukkit.getPluginManager().registerInterface(JavaPluginLoader.class);
 
-        s.loadPlugins();
-        s.enablePlugins(PluginLoadOrder.STARTUP);
+		CraftServer s = ((CraftServer) Bukkit.getServer());
+		if(CraftServer.server == null) CraftServer.server = (MinecraftDedicatedServer) (Object) this;
 
-        Bukkit.getLogger().info("");
-    }
+		s.loadPlugins();
+		s.enablePlugins(PluginLoadOrder.STARTUP);
 
-    @Inject(at = @At("TAIL"), method = "exit")
-    public void killProcess(CallbackInfo ci) {
-        BukkitLogger.getLogger().info("Goodbye!");
-        Runtime.getRuntime().halt(0);
-    }
+		Bukkit.getLogger().info("");
+	}
 
-    /**
-     * @author BukkitFabric
-     * @reason ServerCommandEvent
-     */
-    @Overwrite
-    public void executeQueuedCommands() {
-        while (!this.commandQueue.isEmpty()) {
-            PendingServerCommand servercommand = (PendingServerCommand) this.commandQueue.remove(0);
+	@Inject(at = @At("TAIL"), method = "exit")
+	public void killProcess(CallbackInfo ci) {
+		BukkitLogger.getLogger().info("Goodbye!");
+		Runtime.getRuntime().halt(0);
+	}
 
-            ServerCommandEvent event = new ServerCommandEvent(CraftServer.INSTANCE.getConsoleSender(), servercommand.command);
-            CraftServer.INSTANCE.getPluginManager().callEvent(event);
-            if (event.isCancelled()) continue;
-            servercommand = new PendingServerCommand(event.getCommand(), servercommand.source);
+	/**
+	 * @author BukkitFabric
+	 * @reason ServerCommandEvent
+	 */
+	@Overwrite
+	public void executeQueuedCommands() {
+		while(!this.commandQueue.isEmpty()) {
+			PendingServerCommand servercommand = (PendingServerCommand) this.commandQueue.remove(0);
 
-            CraftServer.INSTANCE.dispatchServerCommand(CraftServer.INSTANCE.getConsoleSender(), servercommand);
-        }
+			ServerCommandEvent event = new ServerCommandEvent(CraftServer.INSTANCE.getConsoleSender(), servercommand.command);
+			CraftServer.INSTANCE.getPluginManager().callEvent(event);
+			if(event.isCancelled()) continue;
+			servercommand = new PendingServerCommand(event.getCommand(), servercommand.source);
 
-    }
+			CraftServer.INSTANCE.dispatchServerCommand(CraftServer.INSTANCE.getConsoleSender(), servercommand);
+		}
+	}
 
-    @Override
-    public boolean isDebugging() {
-        return false;
-    }
+	@Inject(method = "shouldEnforceSecureProfile", at = @At("HEAD"), cancellable = true)
+	public void dontEnforceWithFix(CallbackInfoReturnable<Boolean> cir) {
+		if(CardboardConfig.REGISTRY_COMMAND_FIX)
+			cir.setReturnValue(false);
+	}
+
+	@Override
+	public boolean isDebugging() {
+		return false;
+	}
 
 }

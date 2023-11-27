@@ -4,11 +4,8 @@ accessible	method	net/minecraft/recipe/Ingredient	<init>	(Ljava/util/stream/Stre
 accessible	field	net/minecraft/network/packet/c2s/handshake/HandshakeC2SPacket	address	Ljava/lang/String;
 accessible	method	net/minecraft/server/ServerConfigEntry	getKey	()Ljava/lang/Object;
 accessible	field	net/minecraft/entity/boss/BossBar	color	Lnet/minecraft/entity/boss/BossBar$Color;
-accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	cookTime	I
 accessible	method	net/minecraft/entity/decoration/AbstractDecorationEntity	setFacing	(Lnet/minecraft/util/math/Direction;)V
-accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	cookTimeTotal	I
 accessible	field	net/minecraft/block/entity/AbstractFurnaceBlockEntity	burnTime	I
-accessible	method	net/minecraft/block/DispenserBlock	dispense	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V
 accessible	field	net/minecraft/network/ClientConnection	address	Ljava/net/SocketAddress;
 accessible	field	net/minecraft/entity/boss/dragon/EnderDragonEntity	parts	[Lnet/minecraft/entity/boss/dragon/EnderDragonPart;
 accessible	field	net/minecraft/network/packet/s2c/play/PlayerSpawnPositionS2CPacket	pos	Lnet/minecraft/util/math/BlockPos;
@@ -183,20 +180,10 @@ mutable	field	net/minecraft/potion/Potion	effects	Lcom/google/common/collect/Imm
 accessible	method	net/minecraft/potion/Potions	register	(Ljava/lang/String;Lnet/minecraft/potion/Potion;)Lnet/minecraft/potion/Potion;
 accessible	field	net/minecraft/recipe/AbstractCookingRecipe	type	Lnet/minecraft/recipe/RecipeType;
 mutable	field	net/minecraft/recipe/AbstractCookingRecipe	type	Lnet/minecraft/recipe/RecipeType;
-accessible	field	net/minecraft/recipe/AbstractCookingRecipe	id	Lnet/minecraft/util/Identifier;
-mutable	field	net/minecraft/recipe/AbstractCookingRecipe	id	Lnet/minecraft/util/Identifier;
 accessible	field	net/minecraft/recipe/AbstractCookingRecipe	group	Ljava/lang/String;
 mutable	field	net/minecraft/recipe/AbstractCookingRecipe	group	Ljava/lang/String;
-accessible	field	net/minecraft/recipe/AbstractCookingRecipe	input	Lnet/minecraft/recipe/Ingredient;
-mutable	field	net/minecraft/recipe/AbstractCookingRecipe	input	Lnet/minecraft/recipe/Ingredient;
-accessible	field	net/minecraft/recipe/AbstractCookingRecipe	output	Lnet/minecraft/item/ItemStack;
-mutable	field	net/minecraft/recipe/AbstractCookingRecipe	output	Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/recipe/AbstractCookingRecipe	experience	F
 mutable	field	net/minecraft/recipe/AbstractCookingRecipe	experience	F
-accessible	field	net/minecraft/recipe/AbstractCookingRecipe	cookTime	I
-mutable	field	net/minecraft/recipe/AbstractCookingRecipe	cookTime	I
-accessible	field	net/minecraft/recipe/SpecialCraftingRecipe	id	Lnet/minecraft/util/Identifier;
-mutable	field	net/minecraft/recipe/SpecialCraftingRecipe	id	Lnet/minecraft/util/Identifier;
 accessible	class	net/minecraft/recipe/Ingredient$StackEntry
 accessible	method	net/minecraft/recipe/Ingredient$StackEntry <init> (Lnet/minecraft/item/ItemStack;)V
 accessible	class	net/minecraft/recipe/Ingredient$TagEntry
@@ -215,28 +202,11 @@ accessible	method	net/minecraft/recipe/RecipeManager	getAllOfType	(Lnet/minecraf
 extendable	class	net/minecraft/recipe/RecipeType$1
 accessible	field	net/minecraft/recipe/ShapedRecipe	width	I
 accessible	field	net/minecraft/recipe/ShapedRecipe	height	I
-accessible	field	net/minecraft/recipe/ShapedRecipe	output	Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/recipe/ShapedRecipe	id	Lnet/minecraft/util/Identifier;
 accessible	field	net/minecraft/recipe/ShapedRecipe	group	Ljava/lang/String;
-accessible	method	net/minecraft/recipe/ShapedRecipe	getPattern	(Lcom/google/gson/JsonArray;)[Ljava/lang/String;
-accessible	field	net/minecraft/recipe/ShapelessRecipe	id	Lnet/minecraft/util/Identifier;
-mutable	field	net/minecraft/recipe/ShapelessRecipe	id	Lnet/minecraft/util/Identifier;
 accessible	field	net/minecraft/recipe/ShapelessRecipe	group	Ljava/lang/String;
 mutable	field	net/minecraft/recipe/ShapelessRecipe	group	Ljava/lang/String;
-accessible	field	net/minecraft/recipe/ShapelessRecipe	output	Lnet/minecraft/item/ItemStack;
-mutable	field	net/minecraft/recipe/ShapelessRecipe	output	Lnet/minecraft/item/ItemStack;
 accessible	class	net/minecraft/recipe/CookingRecipeSerializer$RecipeFactory
-accessible	field	net/minecraft/recipe/CookingRecipeSerializer	cookingTime	I
-mutable	field	net/minecraft/recipe/CookingRecipeSerializer	cookingTime	I
 accessible	class	net/minecraft/recipe/CuttingRecipe$Serializer$RecipeFactory
-accessible	field	net/minecraft/recipe/CuttingRecipe	input	Lnet/minecraft/recipe/Ingredient;
-mutable	field	net/minecraft/recipe/CuttingRecipe	input	Lnet/minecraft/recipe/Ingredient;
-accessible	field	net/minecraft/recipe/CuttingRecipe	output	Lnet/minecraft/item/ItemStack;
-mutable	field	net/minecraft/recipe/CuttingRecipe	output	Lnet/minecraft/item/ItemStack;
-accessible	field	net/minecraft/recipe/CuttingRecipe	type	Lnet/minecraft/recipe/RecipeType;
-mutable	field	net/minecraft/recipe/CuttingRecipe	type	Lnet/minecraft/recipe/RecipeType;
-accessible	field	net/minecraft/recipe/CuttingRecipe	id	Lnet/minecraft/util/Identifier;
-mutable	field	net/minecraft/recipe/CuttingRecipe	id	Lnet/minecraft/util/Identifier;
 accessible	field	net/minecraft/recipe/CuttingRecipe	group	Ljava/lang/String;
 mutable	field	net/minecraft/recipe/CuttingRecipe	group	Ljava/lang/String;
 extendable	class	net/minecraft/enchantment/EnchantmentTarget$1
@@ -564,7 +534,6 @@ accessible	field	net/minecraft/block/entity/StructureBlockBlockEntity	mirror	Lne
 accessible	field	net/minecraft/block/entity/StructureBlockBlockEntity	integrity	F
 accessible	field	net/minecraft/inventory/ContainerLock	key	Ljava/lang/String;
 accessible	field	net/minecraft/village/TradeOffer	secondBuyItem	Lnet/minecraft/item/ItemStack;
-accessible	method	net/minecraft/block/DropperBlock	dispense	(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;)V
 mutable	field	net/minecraft/village/TradeOffer	secondBuyItem	Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/village/TradeOffer	sellItem	Lnet/minecraft/item/ItemStack;
 accessible	field	net/minecraft/village/TradeOffer	merchantExperience	I
@@ -596,3 +565,8 @@ accessible field net/minecraft/entity/projectile/FireworkRocketEntity ITEM Lnet/
 accessible field net/minecraft/entity/projectile/FireworkRocketEntity SHOT_AT_ANGLE Lnet/minecraft/entity/data/TrackedData;
 accessible field net/minecraft/entity/projectile/FireworkRocketEntity lifeTime I
 accessible class net/minecraft/server/MinecraftServer$ResourceManagerHolder
+accessible method net/minecraft/block/entity/SkullBlockEntity fetchProfileWithTextures (Lcom/mojang/authlib/GameProfile;)Ljava/util/concurrent/CompletableFuture;
+accessible method net/minecraft/block/DispenserBlock dispense (Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)V
+accessible method net/minecraft/block/DropperBlock dispense (Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)V
+accessible field net/minecraft/block/entity/AbstractFurnaceBlockEntity cookTime I
+accessible field net/minecraft/block/entity/AbstractFurnaceBlockEntity cookTimeTotal I
