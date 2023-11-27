@@ -116,7 +116,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
             return false;
         }
 
-        /*if (mixin.equals("network.MixinPlayerManager_ChatEvent")) {
+        if (mixin.equals("network.MixinPlayerManager_ChatEvent")) {
             if (should_force_alternate_chat()) {
                 logger.info("Architectury Mod detected! Using alternative async chat from PlayerManager");
                 return true;
@@ -125,8 +125,7 @@ public class CardboardMixinPlugin implements IMixinConfigPlugin {
         if (CardboardConfig.ALT_CHAT && (mixin.contains("_ChatEvent"))) {
             logger.info("Alternative ChatEvent Mixin enabled in config. Changing status on: " + mixin);
             if (mixin.equals("network.MixinServerPlayNetworkHandler_ChatEvent")) return false;
-            if (mixin.equals("network.MixinPlayerManager_ChatEvent")) return true;
-        }*/
+        }
         
         String mcver = GameVersion.create().getReleaseTarget();
         if (mcver.contains("1.18") && mixin.endsWith("_1_19")) {

@@ -18,12 +18,38 @@
  */
 package org.cardboardpowered.mixin;
 
-import java.net.SocketAddress;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import com.google.common.collect.Lists;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.mojang.authlib.GameProfile;
+import me.isaiah.common.ICommonMod;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.encryption.PlayerPublicKey;
+import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.scoreboard.ServerScoreboard;
+import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ConnectedClientData;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -41,36 +67,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.collect.Lists;
-import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
-import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
-import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.mojang.authlib.GameProfile;
-
-import me.isaiah.common.ICommonMod;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.encryption.PlayerPublicKey;
-import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
-import net.minecraft.scoreboard.ServerScoreboard;
-import net.minecraft.server.BannedIpEntry;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
+import java.net.SocketAddress;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager implements IMixinPlayerManager {
@@ -148,7 +150,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         World fromWorld = player.getWorld();
         player.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
 
-        if (fromWorld != location.getWorld()) {
+        if (fromWorld != ((WorldImpl) location.getWorld()).getHandle()) {
             PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) ((IMixinServerEntityPlayer)player).getBukkitEntity(), ((IMixinWorld)fromWorld).getWorldImpl());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
         }
@@ -156,8 +158,9 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     }
 
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
-    public void firePlayerJoinEvent(ClientConnection con, ServerPlayerEntity player, CallbackInfo ci) {
-        String joinMessage = Text.translatable("multiplayer.player.joined", new Object[]{player.getDisplayName()}).getString();
+    public void firePlayerJoinEvent(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
+        String joinMessage = Formatting.YELLOW +
+                Text.translatable("multiplayer.player.joined", player.getDisplayName()).getString();
 
         PlayerImpl plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(plr, joinMessage);
@@ -168,8 +171,8 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         joinMessage = playerJoinEvent.getJoinMessage();
 
-        if (joinMessage != null && joinMessage.length() > 0) {
-            for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage)) {
+        if (joinMessage != null && !joinMessage.isEmpty()) {
+            for (Text line : CraftChatMessage.fromString(joinMessage)) {
                 // 1.18: CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
                 // TODO: 1.19
             	CraftServer.server.getPlayerManager().broadcast(line, entityplayer -> line, false);
@@ -218,8 +221,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         me.isaiah.common.cmixin.IMixinPlayerManager imixin = (me.isaiah.common.cmixin.IMixinPlayerManager) (Object)this;
        // ServerPlayerEntity entity = imixin.InewPlayer(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile);
-        ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile);
-        
+        ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile, SyncedClientOptions.createDefault());
         Player player = (Player) ((IMixinServerEntityPlayer)entity).getBukkitEntity();
         PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) address).getAddress(), ((java.net.InetSocketAddress) ims.cb_get_connection().channel.remoteAddress()).getAddress());
 

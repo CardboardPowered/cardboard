@@ -1,6 +1,4 @@
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
-import com.modrinth.minotaur.TaskModrinthUpload
-import com.modrinth.minotaur.request.VersionType
 
 plugins {
     id 'fabric-loom' version '1.1-SNAPSHOT'
@@ -101,7 +99,7 @@ dependencies {
     // NMS Remapping
     // srglib-0.1.2.jar
     extraLibs fileTree(dir: 'libs', include: "srglib-0.1.2.jar")
-    include(modImplementation("com.github.IsaiahPatton:SpecialSource:master-SNAPSHOT"))
+    include(modImplementation("net.md-5:SpecialSource:1.11.2"))
 
     compileOnly fileTree(dir: 'libs', include: "srglib-0.1.2.jar")
 

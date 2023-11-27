@@ -1,25 +1,28 @@
 package com.mohistmc.banner.bukkit.nms.utils;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.invoke.MethodType;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.mohistmc.banner.bukkit.nms.model.ClassMapping;
-import com.mohistmc.banner.bukkit.nms.remappers.*;
-
+import com.mohistmc.banner.bukkit.nms.remappers.BannerInheritanceProvider;
+import com.mohistmc.banner.bukkit.nms.remappers.BannerJarMapping;
+import com.mohistmc.banner.bukkit.nms.remappers.BannerJarRemapper;
+import com.mohistmc.banner.bukkit.nms.remappers.BannerSuperClassRemapper;
+import com.mohistmc.banner.bukkit.nms.remappers.ClassRemapperSupplier;
+import com.mohistmc.banner.bukkit.nms.remappers.ReflectMethodRemapper;
+import com.mohistmc.banner.bukkit.nms.remappers.ReflectRemapper;
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.provider.JointProvider;
-import net.md_5.specialsource.transformer.MavenShade;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.invoke.MethodType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -36,7 +39,7 @@ public class RemapUtils {
     	System.out.println("REMAP UTIL DEBUG");
         jarMapping = new BannerJarMapping();
         // v1_20_R1
-        jarMapping.packages.put("org/bukkit/craftbukkit/v1_20_R1/", "org/bukkit/craftbukkit/");
+        jarMapping.packages.put("org/bukkit/craftbukkit/v1_20_R2/", "org/bukkit/craftbukkit/");
         //jarMapping.packages.put("org/bukkit/craftbukkit/v1_19_R3/", "org/bukkit/craftbukkit/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
@@ -47,7 +50,7 @@ public class RemapUtils {
 
         try {
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg-1.20.srg"))),
+                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg-1.20.2.srg"))),
                     null,
                     null, false);
         } catch (Exception e) {

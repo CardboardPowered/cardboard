@@ -1,22 +1,21 @@
 package org.cardboardpowered.impl.inventory.recipe;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.util.Identifier;
+import org.bukkit.inventory.Recipe;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.inventory.Recipe;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
-import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
-
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.util.Identifier;
-
 public class RecipeIterator implements Iterator<Recipe> {
 
-    private final Iterator<Entry<RecipeType<?>, Map<Identifier, net.minecraft.recipe.Recipe<?>>>> recipes;
-    private Iterator<net.minecraft.recipe.Recipe<?>> current;
+    private final Iterator<Entry<RecipeType<?>, Map<Identifier, RecipeEntry<?>>>> recipes;
+    private Iterator<RecipeEntry<?>> current;
 
     public RecipeIterator() {
         this.recipes = ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).getRecipes().entrySet().iterator();
@@ -30,7 +29,7 @@ public class RecipeIterator implements Iterator<Recipe> {
     @Override
     public Recipe next() {
         if (current == null || !current.hasNext()) current = recipes.next().getValue().values().iterator();
-        return ((IMixinRecipe)current.next()).toBukkitRecipe();
+        return ((IMixinRecipe)(Object) current.next()).toBukkitRecipe();
     }
 
     @Override

@@ -18,12 +18,10 @@
  */
 package com.javazilla.bukkitfabric.nms;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+import net.minecraft.SharedConstants;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerNetworkIo;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.PluginLoader;
@@ -31,18 +29,18 @@ import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
-
-import net.minecraft.SharedConstants;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerNetworkIo;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Very unsafe re-mapping of Reflection.
  */
 public class ReflectionRemapper {
 
-    private static final String NMS_VERSION = "v1_20_R1";// "v1_19_R3";
+    private static final String NMS_VERSION = "v1_20_R2";
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {

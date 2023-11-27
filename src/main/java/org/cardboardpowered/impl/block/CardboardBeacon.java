@@ -1,12 +1,9 @@
 package org.cardboardpowered.impl.block;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.BeaconBlockEntity;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.inventory.ContainerLock;
+import net.minecraft.registry.Registries;
 import org.bukkit.Material;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;
@@ -15,6 +12,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity> implements Beacon {
 
@@ -45,7 +45,7 @@ public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity
 
     @Override
     public void setPrimaryEffect(PotionEffectType effect) {
-        this.getSnapshot().primary = (effect != null) ? StatusEffect.byRawId(effect.getId()) : null;
+        this.getSnapshot().primary = (effect != null) ? Registries.STATUS_EFFECT.get(effect.getId()) : null;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CardboardBeacon extends CardboardBlockEntityState<BeaconBlockEntity
 
     @Override
     public void setSecondaryEffect(PotionEffectType effect) {
-        this.getSnapshot().secondary = (effect != null) ? StatusEffect.byRawId(effect.getId()) : null;
+        this.getSnapshot().secondary = (effect != null) ? Registries.STATUS_EFFECT.get(effect.getId()) : null;
     }
 
     @Override

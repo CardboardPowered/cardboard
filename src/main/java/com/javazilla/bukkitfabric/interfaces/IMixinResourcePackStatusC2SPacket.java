@@ -1,9 +1,9 @@
 package com.javazilla.bukkitfabric.interfaces;
 
-import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
+import net.minecraft.network.packet.c2s.common.ResourcePackStatusC2SPacket.Status;
 
 public interface IMixinResourcePackStatusC2SPacket {
 
-    public ResourcePackStatusC2SPacket.Status getStatus_Bukkit();
+    public Status getStatus_Bukkit();
 
 }

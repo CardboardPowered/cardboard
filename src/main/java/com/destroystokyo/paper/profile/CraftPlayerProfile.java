@@ -8,9 +8,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.UserCache;
 import net.minecraft.util.Util;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.profile.PlayerTextures;
@@ -140,7 +139,7 @@ public class CraftPlayerProfile implements PlayerProfile {
 
     @Override
     public boolean isComplete() {
-        return profile.isComplete();
+        return this.getUniqueId() != null && this.getName() != null && !getTextures().isEmpty();
     }
 
     @Override
@@ -174,7 +173,7 @@ public class CraftPlayerProfile implements PlayerProfile {
 
         if ((profile.getName() == null || !hasTextures()) && profile.getId() != null) {
             Optional<GameProfile> o = userCache.card_getByUuid(this.profile.getId());
-            if (!o.isEmpty()) {
+            if (o.isPresent()) {
                 GameProfile profile = o.get();
                 if (profile != null) {
                     // if old has it, assume its newer, so overwrite, else use cached if it was set and ours wasn't
@@ -183,7 +182,8 @@ public class CraftPlayerProfile implements PlayerProfile {
                 }
             }
         }
-        return this.profile.isComplete();
+
+        return isProfileComplete();
     }
 
     public boolean complete(boolean textures) {
@@ -195,15 +195,19 @@ public class CraftPlayerProfile implements PlayerProfile {
 
         boolean isCompleteFromCache = this.completeFromCache(true, onlineMode);
         if (onlineMode && (!isCompleteFromCache || textures && !hasTextures())) {
-            GameProfile result = server.getSessionService().fillProfileProperties(profile, true);
+            GameProfile result = null; // TODO
             if (result != null)
                 copyProfileProperties(result, this.profile, true);
-            if (this.profile.isComplete()) {
+            if (isProfileComplete()) {
                 CraftServer.server.getUserCache().add(this.profile);
                 CraftServer.server.getUserCache().save();
             }
         }
-        return profile.isComplete() && (!onlineMode || !textures || hasTextures());
+        return isProfileComplete() && (!onlineMode || !textures || hasTextures());
+    }
+
+    private boolean isProfileComplete() {
+        return profile.getId() != null && StringUtils.isNotBlank(profile.getName());
     }
 
     private static void copyProfileProperties(GameProfile source, GameProfile target) {
@@ -217,13 +221,13 @@ public class CraftPlayerProfile implements PlayerProfile {
         if (sourceProperties.isEmpty()) return;
 
         for (Property property : sourceProperties.values()) {
-            targetProperties.removeAll(property.getName());
-            targetProperties.put(property.getName(), property);
+            targetProperties.removeAll(property.name());
+            targetProperties.put(property.name(), property);
         }
     }
 
     private static ProfileProperty toBukkit(Property property) {
-        return new ProfileProperty(property.getName(), property.getValue(), property.getSignature());
+        return new ProfileProperty(property.name(), property.value(), property.signature());
     }
 
     public static PlayerProfile asBukkitCopy(GameProfile gameProfile) {

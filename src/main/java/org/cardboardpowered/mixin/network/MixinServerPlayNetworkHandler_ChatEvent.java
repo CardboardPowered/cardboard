@@ -1,24 +1,24 @@
 package org.cardboardpowered.mixin.network;
 
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ConnectedClientData;
+import net.minecraft.server.network.ServerCommonNetworkHandler;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 @Mixin(value = ServerPlayNetworkHandler.class, priority = 999)
-public abstract class MixinServerPlayNetworkHandler_ChatEvent {
+public abstract class MixinServerPlayNetworkHandler_ChatEvent extends ServerCommonNetworkHandler {
 
     @Shadow 
     public ServerPlayerEntity player;
-
-    @Shadow
-    public abstract void sendPacket(Packet<?> packet);
 
     private static final AtomicIntegerFieldUpdater<ServerPlayNetworkHandler> chatSpamField = AtomicIntegerFieldUpdater.newUpdater(ServerPlayNetworkHandler.class, "messageCooldownBukkit");
 
@@ -44,6 +44,10 @@ public abstract class MixinServerPlayNetworkHandler_ChatEvent {
     @Shadow private int movePacketsCount;
     @Shadow private int lastTickMovePacketsCount;
 
+    public MixinServerPlayNetworkHandler_ChatEvent(MinecraftServer server, ClientConnection connection, ConnectedClientData clientData) {
+        super(server, connection, clientData);
+        throw new AssertionError("i disagree");
+    }
 
     private ServerPlayNetworkHandler get() {
         return (ServerPlayNetworkHandler) (Object) this;

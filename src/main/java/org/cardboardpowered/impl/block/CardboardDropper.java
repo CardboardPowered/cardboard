@@ -1,7 +1,10 @@
 package org.cardboardpowered.impl.block;
 
-import java.util.UUID;
-
+import net.kyori.adventure.text.Component;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.DropperBlock;
+import net.minecraft.block.entity.DropperBlockEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;
@@ -10,11 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.jetbrains.annotations.Nullable;
 
-import net.kyori.adventure.text.Component;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DropperBlock;
-import net.minecraft.block.entity.DropperBlockEntity;
-import net.minecraft.server.world.ServerWorld;
+import java.util.UUID;
 
 public class CardboardDropper extends CardboardLootableBlock<DropperBlockEntity> implements Dropper {
 
@@ -43,7 +42,8 @@ public class CardboardDropper extends CardboardLootableBlock<DropperBlockEntity>
         if (block.getType() == Material.DROPPER) {
             WorldImpl world = (WorldImpl) this.getWorld();
             DropperBlock drop = (DropperBlock) Blocks.DROPPER;
-            drop.dispense((ServerWorld) world.getHandle(), this.getPosition());
+            BlockState state = world.getHandle().getBlockState(getPosition());
+            drop.dispense(world.getHandle(), state, this.getPosition());
         }
     }
 
