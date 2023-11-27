@@ -18,23 +18,23 @@
  */
 package org.cardboardpowered.mixin;
 
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
+import com.destroystokyo.paper.utils.PaperPluginLogger;
+import com.javazilla.bukkitfabric.BukkitLogger;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-import com.destroystokyo.paper.utils.PaperPluginLogger;
-import com.javazilla.bukkitfabric.BukkitLogger;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 @Mixin(value = PaperPluginLogger.class, remap = false)
 public class MixinPluginLogger {
 
     @Overwrite
+    @NotNull
     public static Logger getLogger(PluginDescriptionFile des) {
-        Logger logger = BukkitLogger.getPluginLogger(des.getName());
-        return logger;
+	    return BukkitLogger.getPluginLogger(des.getName());
     }
 
     public void log(LogRecord logRecord) {

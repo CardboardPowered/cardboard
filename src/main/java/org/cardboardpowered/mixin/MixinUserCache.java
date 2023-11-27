@@ -1,6 +1,14 @@
 package org.cardboardpowered.mixin;
 
-import static org.bukkit.craftbukkit.CraftServer.server;
+import com.javazilla.bukkitfabric.interfaces.IUserCache;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.GameProfileRepository;
+import com.mojang.authlib.ProfileLookupCallback;
+import me.isaiah.common.ICommonMod;
+import net.minecraft.util.UserCache;
+import net.minecraft.util.UserCache.Entry;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Date;
 import java.util.Locale;
@@ -9,19 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-
-import com.javazilla.bukkitfabric.interfaces.IUserCache;
-import com.mojang.authlib.Agent;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.GameProfileRepository;
-import com.mojang.authlib.ProfileLookupCallback;
-
-import me.isaiah.common.ICommonMod;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.UserCache;
-import net.minecraft.util.UserCache.Entry;
+import static org.bukkit.craftbukkit.CraftServer.server;
 
 @Mixin(UserCache.class)
 public class MixinUserCache implements IUserCache {
@@ -67,18 +63,17 @@ public class MixinUserCache implements IUserCache {
     }
  
     private static Optional<GameProfile> card_findProfileByName(GameProfileRepository repository, String name) {
-        final AtomicReference atomicReference = new AtomicReference();
+        final AtomicReference<GameProfile> atomicReference = new AtomicReference();
         ProfileLookupCallback profileLookupCallback = new ProfileLookupCallback(){
-
             public void onProfileLookupSucceeded(GameProfile profile) {
                 atomicReference.set(profile);
             }
-
-            public void onProfileLookupFailed(GameProfile profile, Exception exception) {
+            @Override
+            public void onProfileLookupFailed(String profileName, Exception exception) {
                 atomicReference.set(null);
             }
         };
-        repository.findProfilesByNames(new String[]{name}, Agent.MINECRAFT, profileLookupCallback);
+        repository.findProfilesByNames(new String[]{name}, profileLookupCallback);
         GameProfile gameProfile = (GameProfile)atomicReference.get();
         if (!shouldUseRemote() && gameProfile == null) {
             

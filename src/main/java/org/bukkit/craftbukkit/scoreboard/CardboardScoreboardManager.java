@@ -1,28 +1,27 @@
 package org.bukkit.craftbukkit.scoreboard;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import net.minecraft.network.packet.s2c.play.ScoreboardObjectiveUpdateS2CPacket;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardCriterion;
+import net.minecraft.scoreboard.ScoreboardDisplaySlot;
+import net.minecraft.scoreboard.ScoreboardObjective;
+import net.minecraft.scoreboard.ScoreboardPlayerScore;
+import net.minecraft.scoreboard.ServerScoreboard;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import org.apache.commons.lang.Validate;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.ScoreboardManager;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.util.WeakCollection;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
-import net.minecraft.network.packet.s2c.play.ScoreboardObjectiveUpdateS2CPacket;
-import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardCriterion;
-import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.scoreboard.ScoreboardPlayerScore;
-import net.minecraft.scoreboard.ServerScoreboard;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import org.apache.commons.lang.Validate;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.cardboardpowered.impl.util.WeakCollection;
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.ScoreboardManager;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 
 public final class CardboardScoreboardManager implements ScoreboardManager {
 
@@ -73,7 +72,7 @@ public final class CardboardScoreboardManager implements ScoreboardManager {
         // Old objective tracking
         HashSet<ScoreboardObjective> removed = new HashSet<ScoreboardObjective>();
         for (int i = 0; i < 3; ++i) {
-            ScoreboardObjective scoreboardobjective = oldboard.getObjectiveForSlot(i);
+            ScoreboardObjective scoreboardobjective = oldboard.getObjectiveForSlot(ScoreboardDisplaySlot.values()[i]);
             if (scoreboardobjective != null && !removed.contains(scoreboardobjective)) {
                 entityplayer.networkHandler.sendPacket(new ScoreboardObjectiveUpdateS2CPacket(scoreboardobjective, 1));
                 removed.add(scoreboardobjective);

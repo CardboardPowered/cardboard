@@ -18,17 +18,16 @@
  */
 package org.cardboardpowered.mixin;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
+import net.minecraft.advancement.AdvancementEntry;
 import org.cardboardpowered.impl.AdvancementImpl;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
-
-import net.minecraft.advancement.Advancement;
-
-@Mixin(Advancement.class)
-public class MixinAdvancement implements IMixinAdvancement {
-
-    public AdvancementImpl bukkit = new AdvancementImpl((Advancement)(Object)this);
+@Mixin(AdvancementEntry.class)
+public class MixinAdvancementEntry implements IMixinAdvancement {
+    @Unique
+    private final AdvancementImpl bukkit = new AdvancementImpl((AdvancementEntry)(Object)this);
 
     @Override
     public AdvancementImpl getBukkitAdvancement() {

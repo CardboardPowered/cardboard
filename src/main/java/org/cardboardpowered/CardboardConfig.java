@@ -1,21 +1,26 @@
 package org.cardboardpowered;
 
+import me.isaiah.config.FileConfiguration;
+import net.fabricmc.loader.api.FabricLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-import net.fabricmc.loader.api.FabricLoader;
-
-import me.isaiah.config.FileConfiguration;
-
 public class CardboardConfig {
 
-    private static String DEFAULT = 
+    private static final String DEFAULT =
             "# This is the configuration file for Cardboard\n\n" +
             "# Invoke ChatEvent from PlayerManager instead of NetworkHandler\n" +
             "# This can solve issues with other mods that overwrite the chat method,\n" +
             "use_alternative_chat_mixin: false\n" +
+            "\n"+
+            "# Registry Command Fix\n" +
+            "# Commands like \"/give\" or \"/setblock\" don't work when\n" +
+            "# executed by entities unless \"minecraft:\" prefix is specified.\n" +
+            "# Enabling will break chat signatures.\n" +
+            "registry-command-fix: true\n" +
             "\n"+
             "# Reflection Remapper Skip\n" +
             "# Our current Reflection remapper might cause issues with some plugins\n" +
@@ -27,8 +32,8 @@ public class CardboardConfig {
 
     public static ArrayList<String> disabledMixins = new ArrayList<>();
     public static boolean ALT_CHAT = false;
+	public static boolean REGISTRY_COMMAND_FIX = true;
 
-    @SuppressWarnings("unchecked")
     public static void setup() throws Exception {
         File fabDir = FabricLoader.getInstance().getConfigDir().toFile();
         File oldDir = new File(fabDir, "bukkit4fabric");
@@ -49,6 +54,7 @@ public class CardboardConfig {
 
         FileConfiguration config = new FileConfiguration(f);
         ALT_CHAT = config.getBoolean("use_alternative_chat_mixin");
+		REGISTRY_COMMAND_FIX = config.getBoolean("registry-command-fix");
 
         ArrayList<String> disables = (ArrayList<String>)config.getObject("mixin-force-disable");
         disabledMixins.addAll(disables);
@@ -77,10 +83,11 @@ public class CardboardConfig {
             }
         }
 
-        String con = "";
-        for (String line : Files.readAllLines(newConfig.toPath())){con += line + "\n";}
-        con = con.replace("use_alternative_chat_mixin: false", "use_alternative_chat_mixin: " + ALT_CHAT);
-        Files.write(newConfig.toPath(), con.getBytes());
+        StringBuilder con = new StringBuilder();
+        for (String line : Files.readAllLines(newConfig.toPath())){con.append(line).append("\n");}
+        con = new StringBuilder(con.toString()
+		        .replace("use_alternative_chat_mixin: false", "use_alternative_chat_mixin: " + ALT_CHAT));
+        Files.write(newConfig.toPath(), con.toString().getBytes());
         oldConfig.delete();
     }
 
