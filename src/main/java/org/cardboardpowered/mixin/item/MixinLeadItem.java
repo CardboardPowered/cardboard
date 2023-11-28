@@ -19,6 +19,7 @@ import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -55,7 +56,7 @@ public class MixinLeadItem extends Item {
                 if (leashKnotEntity == null) {
                     leashKnotEntity = LeashKnotEntity.getOrCreate(world, pos);
 
-                    HangingPlaceEvent event = new HangingPlaceEvent((Hanging) ((IMixinEntity) leashKnotEntity).getBukkitEntity(), player != null ? (Player) ((IMixinServerEntityPlayer) player).getBukkit() : null, CraftBlock.at((ServerWorld) world, pos), BlockFace.SELF);
+                    HangingPlaceEvent event = new HangingPlaceEvent((Hanging) ((IMixinEntity) leashKnotEntity).getBukkitEntity(), player != null ? (Player) ((IMixinServerEntityPlayer) player).getBukkit() : null, CraftBlock.at((ServerWorld) world, pos), BlockFace.SELF, EquipmentSlot.HAND);
                     Bukkit.getPluginManager().callEvent(event);
 
                     if (event.isCancelled()) {

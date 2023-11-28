@@ -1,6 +1,7 @@
 package org.cardboardpowered.impl.entity;
 
 import net.minecraft.entity.projectile.TridentEntity;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Trident;
@@ -57,10 +58,9 @@ public class TridentImpl extends ArrowImpl implements Trident {
 	}
 
 	@Override
-	public boolean hasGlint() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean hasGlint() {
+        return this.getHandle().isEnchanted();
+    }
 
 	@Override
 	public void setGlint(boolean arg0) {
@@ -70,6 +70,20 @@ public class TridentImpl extends ArrowImpl implements Trident {
 
 	@Override
 	public void setLoyaltyLevel(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	// 1.19.2:
+
+	@Override
+	public boolean hasDealtDamage() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setHasDealtDamage(boolean arg0) {
 		// TODO Auto-generated method stub
 		
 	}

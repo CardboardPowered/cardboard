@@ -36,4 +36,17 @@ public class EndermiteImpl extends MonsterImpl implements Endermite {
      // TODO 1.17ify  getHandle().setPlayerSpawned(playerSpawned);
     }
 
+	@Override
+	public int getLifetimeTicks() {
+		// TODO Auto-generated method stub
+		// return this.getHandle().lifeTime;
+		return 0;
+	}
+
+	@Override
+	public void setLifetimeTicks(int arg0) {
+		// TODO Auto-generated method stub
+		// this.getHandle().lifeTime = ticks;
+	}
+
 }

@@ -85,6 +85,7 @@ import org.bukkit.event.world.TimeSkipEvent;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.structure.Structure;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataStoreBase;
@@ -96,6 +97,7 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.StructureSearchResult;
 import org.bukkit.util.Vector;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.util.CardboardFluidRaytraceMode;
@@ -2532,6 +2534,28 @@ public class WorldImpl implements World {
 	public void setTicksPerSpawns(@NotNull SpawnCategory arg0, int arg1) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	// 1.19.2
+
+	@Override
+    public boolean hasCollisionsIn(@NotNull BoundingBox boundingBox) {
+        Box aabb = new Box(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        return !this.getHandle().isSpaceEmpty(aabb);
+    }
+
+	@Override
+	public @Nullable StructureSearchResult locateNearestStructure(@NotNull Location arg0,
+			org.bukkit.generator.structure.@NotNull StructureType arg1, int arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @Nullable StructureSearchResult locateNearestStructure(@NotNull Location arg0, @NotNull Structure arg1,
+			int arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

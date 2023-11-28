@@ -107,4 +107,16 @@ public class CardboardPhantom extends CardboardFlying implements Phantom {
         return false;
     }
 
+	@Override
+	public @NotNull Location getAnchorLocation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAnchorLocation(@NotNull Location arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -99,7 +99,7 @@ public final class CraftItemStack extends ItemStack {
         return new CraftItemStack(CraftMagicNumbers.getMaterial(item), amount, (short) 0, null);
     }
 
-    net.minecraft.item.ItemStack handle;
+    public net.minecraft.item.ItemStack handle;
 
     /**
      * Mirror

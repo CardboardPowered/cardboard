@@ -9,11 +9,13 @@ import org.bukkit.Chunk;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
@@ -779,5 +781,51 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// 1.19.2:
+
+	@Override
+    public boolean collidesAt(@NotNull Location location) {
+        Box aabb = ((IMixinEntity)this.getHandle()).cardboad_getBoundingBoxAt(location.getX(), location.getY(), location.getZ());
+        return !this.getHandle().getWorld().isSpaceEmpty(this.getHandle(), aabb);
+    }
+
+	@Override
+	public @NotNull Sound getSwimHighSpeedSplashSound() {
+		return Sound.ENTITY_GENERIC_SWIM; 
+	}
+
+	@Override
+	public @NotNull Sound getSwimSound() {
+		return Sound.ENTITY_GENERIC_SWIM; 
+	}
+
+	@Override
+	public Sound getSwimSplashSound() {
+        return Sound.ENTITY_GENERIC_SWIM; // //CraftSound.getBukkit(this.getHandle().sound);
+    }
+	
+	@Override
+	public @NotNull EntityType getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+    public boolean isUnderWater() {
+        return this.getHandle().isSubmergedInWater();
+    }
+
+	@Override
+	public boolean teleport(@NotNull Location arg0, @NotNull TeleportCause arg1, boolean arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		return this.teleport(arg0, arg1);
+	}
+
+	@Override
+    public boolean wouldCollideUsing(@NotNull BoundingBox boundingBox) {
+        Box aabb = new Box(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        return !this.getHandle().getWorld().isSpaceEmpty(this.getHandle(), aabb);
+    }
 
 }

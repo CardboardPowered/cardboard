@@ -39,4 +39,9 @@ public class ParrotImpl extends TameableAnimalImpl implements Parrot {
         return EntityType.PARROT;
     }
 
+	@Override
+	public boolean isDancing() {
+		return this.getHandle().isSongPlaying();
+	}
+
 }

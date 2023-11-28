@@ -87,6 +87,7 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.scoreboard.CardboardScoreboardManager;
+import org.bukkit.craftbukkit.scoreboard.CraftCriteria;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -139,6 +140,7 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.potion.PotionBrewer;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.scheduler.BukkitWorker;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.structure.StructureManager;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
@@ -315,6 +317,8 @@ public class CraftServer implements Server {
     private final MetadataStoreBase<Entity> entityMetadata = MetadataStoreImpl.newEntityMetadataStore();
     private final MetaDataStoreBase<OfflinePlayer> playerMetadata = MetadataStoreImpl.newPlayerMetadataStore();
     private final MetaDataStoreBase<World> worldMetadata = MetadataStoreImpl.newWorldMetadataStore();
+    
+    private final Map<Class<?>, org.bukkit.Registry<?>> registries = new HashMap<>();
 
     public CraftServer(MinecraftDedicatedServer nms) {
         INSTANCE = this;
@@ -2163,6 +2167,44 @@ public class CraftServer implements Server {
 
 	@Override
 	public boolean isResourcePackRequired() {
+		return this.getServer().requireResourcePack();
+	}
+
+	@Override
+	public int getMaxChainedNeighborUpdates() {
+		return this.getServer().getMaxChainedNeighborUpdates();
+	}
+
+	@Override
+	public <T extends Keyed> org.bukkit.@Nullable Registry<T> getRegistry(@NotNull Class<T> aClass) {
+		// TODO Auto-generated method stub
+        return (org.bukkit.Registry<T>) registries.computeIfAbsent(aClass, key -> CraftRegistry.createRegistry(aClass, console.getRegistryManager()));
+	}
+
+	@Override
+	public @NotNull Criteria getScoreboardCriteria(@NotNull String arg0) {
+		return CraftCriteria.getFromBukkit(arg0);
+	}
+
+	@Override
+	public boolean isEnforcingSecureProfiles() {
+        return this.getServer().shouldEnforceSecureProfile();
+	}
+
+	@Override
+	public boolean isTickingWorlds() {
+		// TODO Auto-generated method stub
+		return true; // todo: paper api
+	}
+
+	@Override
+	public @NotNull Component permissionMessage() {
+		// TODO Auto-generated method stub
+		return Component.text("todo: permissionMessage");
+	}
+
+	@Override
+	public boolean shouldSendChatPreviews() {
 		// TODO Auto-generated method stub
 		return false;
 	}

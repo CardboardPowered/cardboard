@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Sound;
+import org.jetbrains.annotations.NotNull;
 
 public enum CraftSound {
 
@@ -1018,5 +1019,9 @@ public enum CraftSound {
         Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
 
         return effect;
+    }
+
+    public static Sound getBukkit(SoundEvent soundEffect) {
+        return Sound.ENTITY_GENERIC_EXPLODE;
     }
 }

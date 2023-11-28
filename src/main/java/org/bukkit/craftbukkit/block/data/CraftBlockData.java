@@ -7,12 +7,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.cardboardpowered.BlockImplUtil;
-
+import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.NotNull;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockSupport;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -34,6 +40,7 @@ import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
@@ -577,5 +584,44 @@ public class CraftBlockData implements BlockData {
     public SoundGroup getSoundGroup() {
         return null;
     }
+
+	@Override
+	public boolean isFaceSturdy(@NotNull BlockFace arg0, @NotNull BlockSupport arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isPreferredTool(@NotNull ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isRandomlyTicked() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	  @Override
+	    public boolean isSupported(org.bukkit.block.Block block) {
+	        Preconditions.checkArgument(block != null, "block must not be null");
+
+	        CraftBlock craftBlock = (CraftBlock) block;
+	        return state.canPlaceAt(craftBlock.getCraftWorld().getHandle(), craftBlock.getPosition());
+	    }
+
+	    @Override
+	    public boolean isSupported(Location location) {
+	        Preconditions.checkArgument(location != null, "location must not be null");
+
+	        WorldImpl world = (WorldImpl) location.getWorld();
+	        Preconditions.checkArgument(world != null, "location must not have a null world");
+
+	        
+	        
+	        BlockPos position = CraftLocation.toBlockPosition(location);
+	        return state.canPlaceAt(world.getHandle(), position);
+	    }
 
 }

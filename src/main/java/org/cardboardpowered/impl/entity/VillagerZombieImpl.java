@@ -2,6 +2,8 @@ package org.cardboardpowered.impl.entity;
 
 import com.google.common.base.Preconditions;
 import java.util.Locale;
+
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -12,6 +14,7 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.ZombieVillager;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 
 public class VillagerZombieImpl extends ZombieImpl implements ZombieVillager {
 
@@ -70,11 +73,6 @@ public class VillagerZombieImpl extends ZombieImpl implements ZombieVillager {
     }
 
     @Override
-    public void setConversionTime(int time) {
-        // TODO
-    }
-
-    @Override
     public OfflinePlayer getConversionPlayer() {
         // TODO return (getHandle().converter == null) ? null : Bukkit.getOfflinePlayer(getHandle().converter);
         return null;
@@ -84,6 +82,22 @@ public class VillagerZombieImpl extends ZombieImpl implements ZombieVillager {
     public void setConversionPlayer(OfflinePlayer conversionPlayer) {
         if (!this.isConverting()) return;
         // TODO getHandle().converter = (conversionPlayer == null) ? null : conversionPlayer.getUniqueId();
+    }
+
+    @Override
+    public void setConversionTime(int time) {
+        this.setConversionTime(time, true);
+    }
+
+    public void setConversionTime(int time, boolean broadcastEntityEvent) {
+        if (time < 0) {
+           //  this.getHandle().conversionTimer = -1;
+            // this.getHandle().getDataTracker().set(ZombieVillagerEntity.CONVERTING, false);
+           //  this.getHandle().converter = null;
+           // this.getHandle().removeStatusEffect(StatusEffects.STRENGTH); // , EntityPotionEffectEvent.Cause.CONVERSION);
+        } else {
+            // this.getHandle().startConverting(null, time, broadcastEntityEvent);
+        }
     }
 
 }

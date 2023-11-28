@@ -12,6 +12,7 @@ import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
@@ -54,6 +55,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
@@ -73,6 +75,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.util.TriState;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -98,6 +101,7 @@ import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
+import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.util.Hand;
 
 @SuppressWarnings("deprecation")
@@ -758,8 +762,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean isHandRaised() {
-        // TODO Auto-generated method stub
-        return false;
+    	return this.getHandle().isUsingItem();
     }
 
     @Override
@@ -770,8 +773,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public void setArrowsStuck(int arg0) {
-        // TODO Auto-generated method stub
-        
+    	this.getHandle().setStuckArrowCount(arg0);
     }
 
     @Override
@@ -786,7 +788,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public void setShieldBlockingDelay(int arg0) {
-        // TODO Auto-generated method stub
+    	// this.getHandle().setShieldBlockingDelay(arg0);
     }
     // PaperAPI - end
 
@@ -850,6 +852,123 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
     public void setBeeStingersInBody(int i) {
         // TODO Auto-generated method stub
     }
+    
+    // 1.19.2
+
+	@Override
+	public <T extends Projectile> @NotNull T launchProjectile(@NotNull Class<? extends T> arg0, @Nullable Vector arg1,
+			@Nullable Consumer<T> arg2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull TriState getFrictionState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFrictionState(@NotNull TriState arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void broadcastSlotBreak(EquipmentSlot slot) {
+		this.getHandle().sendEquipmentBreakStatus( Utils.getNMS(slot));
+	}
+
+	public void broadcastSlotBreak(EquipmentSlot slot, Collection<Player> players) {
+		if (players.isEmpty()) {
+			return;
+		}
+		// EntityStatusS2CPacket packet = new EntityStatusS2CPacket(this.getHandle(), net.minecraft.entity.LivingEntity.getEquipmentBreakStatus( Utils.getNMS(slot)));
+		// players.forEach(player -> ((PlayerImpl)player).getHandle().networkHandler.sendPacket(packet));
+	}
+
+	@Override
+    public boolean canBreatheUnderwater() {
+        return this.getHandle().canBreatheInWater();
+    }
+
+	@Override
+    public ItemStack damageItemStack(ItemStack stack, int amount) {
+        net.minecraft.item.ItemStack nmsStack;
+        if (stack instanceof CraftItemStack) {
+            CraftItemStack craftItemStack = (CraftItemStack)stack;
+            if (craftItemStack.handle == null || craftItemStack.handle.isEmpty()) {
+                return stack;
+            }
+            nmsStack = craftItemStack.handle;
+        } else {
+            nmsStack = CraftItemStack.asNMSCopy(stack);
+            stack = CraftItemStack.asCraftMirror(nmsStack);
+        }
+        this.damageItemStack0(nmsStack, amount, null);
+        return stack;
+    }
+
+	@Override
+    public void damageItemStack(EquipmentSlot slot, int amount) {
+        net.minecraft.entity.EquipmentSlot nmsSlot = Utils.getNMS(slot);
+        this.damageItemStack0(this.getHandle().getEquippedStack(nmsSlot), amount, nmsSlot);
+    }
+	
+    private void damageItemStack0(net.minecraft.item.ItemStack nmsStack, int amount, net.minecraft.entity.EquipmentSlot slot) {
+        nmsStack.damage(amount, this.getHandle(), livingEntity -> {
+            if (slot != null) {
+                livingEntity.sendEquipmentBreakStatus(slot);
+            }
+        });
+    }
+
+	
+	@Override
+	public @Nullable Sound getDeathSound() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_DEATH;
+	}
+
+	@Override
+	public @NotNull Sound getDrinkingSound(@NotNull ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_DRINK;
+	}
+
+	@Override
+	public @NotNull Sound getEatingSound(@NotNull ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_EAT;
+	}
+
+	@Override
+	public @NotNull Sound getFallDamageSound(int arg0) {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_BIG_FALL;
+	}
+
+	@Override
+	public @NotNull Sound getFallDamageSoundBig() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_BIG_FALL;
+	}
+
+	@Override
+	public @NotNull Sound getFallDamageSoundSmall() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_SMALL_FALL;
+	}
+
+	@Override
+	public @Nullable Sound getHurtSound() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_HURT;
+	}
+
+	@Override
+	public void knockback(double arg0, double arg1, double arg2) {
+		 this.getHandle().takeKnockback(arg0, arg2, arg2);
+	}
    
 
 }

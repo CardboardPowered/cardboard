@@ -48,14 +48,22 @@ public class WolfImpl extends TameableAnimalImpl implements Wolf {
 
 	@Override
 	public boolean isInterested() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getHandle().isBegging();
 	}
 
 	@Override
 	public void setInterested(boolean arg0) {
-		// TODO Auto-generated method stub
-		
+		this.getHandle().setBegging(arg0);
+	}
+
+	@Override
+	public float getTailAngle() {
+		 return this.getHandle().getTailAngle();
+	}
+
+	@Override
+	public boolean isWet() {
+		 return this.getHandle().isFurWet();
 	}
 
 }

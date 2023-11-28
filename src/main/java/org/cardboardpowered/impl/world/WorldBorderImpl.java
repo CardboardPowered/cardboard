@@ -20,9 +20,13 @@ package org.cardboardpowered.impl.world;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WorldBorderImpl implements WorldBorder {
@@ -130,6 +134,26 @@ public class WorldBorderImpl implements WorldBorder {
 	public @Nullable World getWorld() {
 		// TODO Auto-generated method stub
 		return world;
+	}
+	
+	// 1.19.2
+
+	@Override
+	public double getMaxCenterCoordinate() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getMaxSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setSize(double arg0, @NotNull TimeUnit arg1, long arg2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

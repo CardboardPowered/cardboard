@@ -4,12 +4,16 @@ import com.google.common.base.Preconditions;
 import net.minecraft.entity.raid.RaiderEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.entity.Raider;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class CardboardRaider extends MonsterImpl implements Raider {
+public class CardboardRaider extends MonsterImpl implements Raider {
 
     public CardboardRaider(CraftServer server, RaiderEntity entity) {
         super(server, entity);
@@ -59,5 +63,21 @@ public abstract class CardboardRaider extends MonsterImpl implements Raider {
     public void setCanJoinRaid(boolean join) {
         getHandle().setAbleToJoinRaid(join);
     }
+
+	@Override
+	public @NotNull Sound getCelebrationSound() {
+        return CraftSound.getBukkit(this.getHandle().getCelebratingSound());
+
+	}
+
+	@Override
+	public boolean isCelebrating() {
+        return this.getHandle().isCelebrating();
+	}
+
+	@Override
+	public void setCelebrating(boolean arg0) {
+        this.getHandle().setCelebrating(arg0);
+	}
 
 }

@@ -16,11 +16,13 @@ import org.jetbrains.annotations.Nullable;
 import com.destroystokyo.paper.entity.villager.Reputation;
 import com.google.common.base.Preconditions;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
 
 public class VillagerImpl extends AbstractVillagerImpl implements Villager {
@@ -164,5 +166,30 @@ public class VillagerImpl extends AbstractVillagerImpl implements Villager {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	// 1.19.2:
+
+	@Override
+	public boolean addTrades(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+    public boolean increaseLevel(int amount) {
+        Preconditions.checkArgument((amount > 0 ? 1 : 0) != 0, (Object)"Level earned must be positive");
+        int supposedFinalLevel = this.getVillagerLevel() + amount;
+        Preconditions.checkArgument((1 <= supposedFinalLevel && supposedFinalLevel <= 5 ? 1 : 0) != 0, (Object)"Final level reached after the donation (%d) must be between [%d, %d]".formatted(supposedFinalLevel, 1, 5));
+        Int2ObjectMap<TradeOffers.Factory[]> trades = TradeOffers.PROFESSION_TO_LEVELED_TRADE.get(this.getHandle().getVillagerData().getProfession());
+        if (trades == null || trades.isEmpty()) {
+            this.getHandle().setVillagerData(this.getHandle().getVillagerData().withLevel(supposedFinalLevel));
+            return false;
+        }
+        while (amount > 0) {
+            // TODO this.getHandle().levelUp();
+            --amount;
+        }
+        return true;
+    }
 
 }

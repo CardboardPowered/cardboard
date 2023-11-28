@@ -49,4 +49,20 @@ public final class CraftLeaves extends org.bukkit.craftbukkit.block.data.CraftBl
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+
+    // org.bukkit.craftbukkit.block.data.CraftWaterlogged
+
+    private static final net.minecraft.state.property.BooleanProperty WATERLOGGED = getBoolean(net.minecraft.block.LeavesBlock.class, "waterlogged");
+
+    @Override
+    public boolean isWaterlogged() {
+        return get(WATERLOGGED);
+    }
+
+    @Override
+    public void setWaterlogged(boolean waterlogged) {
+        set(WATERLOGGED, waterlogged);
+    }
+	
 }

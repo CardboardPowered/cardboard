@@ -65,8 +65,7 @@ public class CardboardPanda extends AnimalsImpl implements Panda {
 
 	@Override
 	public int getSneezeTicks() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.getHandle().getSneezeProgress();
 	}
 
 	@Override
@@ -83,20 +82,17 @@ public class CardboardPanda extends AnimalsImpl implements Panda {
 
 	@Override
 	public boolean isRolling() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getHandle().isPlaying();
 	}
 
 	@Override
 	public boolean isSitting() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getHandle().isSitting();
 	}
 
 	@Override
 	public boolean isSneezing() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getHandle().isSneezing();
 	}
 
 	@Override
@@ -113,32 +109,49 @@ public class CardboardPanda extends AnimalsImpl implements Panda {
 
 	@Override
 	public void setRolling(boolean arg0) {
-		// TODO Auto-generated method stub
-		
+		this.getHandle().setPlaying(arg0);
 	}
 
 	@Override
 	public void setSitting(boolean arg0) {
-		// TODO Auto-generated method stub
-		
+		this.getHandle().setSitting(arg0);
 	}
 
 	@Override
 	public void setSneezeTicks(int arg0) {
-		// TODO Auto-generated method stub
-		
+		this.getHandle().setSneezeProgress(arg0);
 	}
 
 	@Override
 	public void setSneezing(boolean arg0) {
-		// TODO Auto-generated method stub
-		
+		this.getHandle().setSneezing(arg0);
 	}
 
 	@Override
 	public void setUnhappyTicks(int arg0) {
-		// TODO Auto-generated method stub
-		
+		this.getHandle().setAskForBambooTicks(arg0);
+	}
+	
+	// 1.19.2:
+
+	@Override
+	public boolean isEating() {
+		return this.getHandle().isEating();
+	}
+
+	@Override
+	public boolean isScared() {
+		return this.getHandle().isScaredByThunderstorm();
+	}
+
+	@Override
+	public void setEating(boolean arg0) {
+		this.getHandle().setEating(arg0);
+	}
+
+	@Override
+	public void setOnBack(boolean arg0) {
+		this.getHandle().setLyingOnBack(arg0);
 	}
 
 }

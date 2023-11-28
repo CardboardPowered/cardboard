@@ -9,6 +9,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Chunk;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -18,6 +19,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
@@ -187,6 +189,7 @@ public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
     @Override
     public ItemStack getItemStack() {
         // TODO Auto-generated method stub
+    	// return CraftItemStack.asCraftMirror(this.getHandle().asItemStack());
         return null;
     }
 
@@ -204,12 +207,34 @@ public class ArrowImpl extends AbstractProjectile implements AbstractArrow {
 
 	@Override
 	public boolean hasNoPhysics() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getHandle().isNoClip();
 	}
 
 	@Override
 	public void setNoPhysics(boolean arg0) {
+		this.getHandle().setNoClip(arg0);
+	}
+
+	@Override
+	public @NotNull Sound getHitSound() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_ARROW_SHOOT;
+	}
+
+	@Override
+	public int getLifetimeTicks() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setHitSound(@NotNull Sound arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLifetimeTicks(int arg0) {
 		// TODO Auto-generated method stub
 		
 	}
