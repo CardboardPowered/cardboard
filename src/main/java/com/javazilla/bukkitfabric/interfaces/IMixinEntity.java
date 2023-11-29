@@ -11,6 +11,8 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
+import net.minecraft.util.math.Box;
+
 public interface IMixinEntity {
 
     CraftEntity getBukkitEntity();
@@ -34,5 +36,7 @@ public interface IMixinEntity {
     boolean cardboard_getForceDrops();
 
     void cardboard_setForceDrops(boolean forceDrops);
+
+	Box cardboad_getBoundingBoxAt(double x2, double y2, double z2);
 
 }

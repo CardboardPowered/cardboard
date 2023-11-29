@@ -7,6 +7,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -152,13 +153,20 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
     @Override
     public void displayName(@Nullable Component arg0) throws IllegalStateException, IllegalArgumentException {
         // TODO Auto-generated method stub
-        
+        this.setDisplayName(arg0.toString());
     }
 
 	@Override
 	public @NotNull Score getScoreFor(@NotNull Entity arg0) throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
-		return null;
+		return new CardboardScore(this, arg0.getName());
+	}
+
+	@Override
+	public @NotNull Criteria getTrackedCriteria() throws IllegalStateException {
+		checkState();
+
+        return criteria;
 	}
 
 }

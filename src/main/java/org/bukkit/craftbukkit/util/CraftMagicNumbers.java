@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.bukkit.Fluid;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.RegionAccessor;
 import org.bukkit.UnsafeValues;
 import org.bukkit.World;
 import org.bukkit.advancement.Advancement;
@@ -20,6 +22,7 @@ import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
@@ -48,6 +51,7 @@ import com.mojang.serialization.Dynamic;
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
 import io.papermc.paper.inventory.ItemRarity;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
@@ -676,6 +680,25 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 	public <T extends Keyed> org.bukkit.@NotNull Registry<T> registryFor(Class<T> arg0) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	// 1.19.2
+	
+	@Override
+	public @NotNull NamespacedKey getBiomeKey(RegionAccessor arg0, int arg1, int arg2, int arg3) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Component resolveWithContext(Component arg0, CommandSender arg1, Entity arg2, boolean arg3)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void setBiomeKey(RegionAccessor arg0, int arg1, int arg2, int arg3, NamespacedKey arg4) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

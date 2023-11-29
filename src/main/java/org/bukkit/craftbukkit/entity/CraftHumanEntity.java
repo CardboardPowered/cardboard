@@ -15,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
@@ -30,8 +31,11 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -64,6 +68,7 @@ import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
@@ -709,6 +714,39 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
     @Override
     public @Nullable ItemStack getItemInUse() {
         return CraftItemStack.asBukkitCopy(nms.getActiveItem());
+    }
+
+	@Override
+    public Firework fireworkBoost(ItemStack fireworkItemStack) {
+        Preconditions.checkArgument((fireworkItemStack != null ? 1 : 0) != 0, (Object)"fireworkItemStack must not be null");
+        Preconditions.checkArgument((fireworkItemStack.getType() == Material.FIREWORK_ROCKET ? 1 : 0) != 0, (String)"fireworkItemStack must be of type %s", (Object)Material.FIREWORK_ROCKET);
+        FireworkRocketEntity fireworks = new FireworkRocketEntity(this.getHandle().getWorld(), CraftItemStack.asNMSCopy(fireworkItemStack), this.getHandle());
+        boolean success = this.getHandle().getWorld().spawnEntity(fireworks);
+        return success ? (Firework)(((IMixinEntity) fireworks).getBukkitEntity()) : null;
+    }
+
+	@Override
+    public FishHook getFishHook() {
+        if (this.getHandle().fishHook == null) {
+            return null;
+        }
+        return (FishHook)((IMixinEntity)this.getHandle().fishHook).getBukkitEntity();
+    }
+
+	@Override
+	public @Nullable Location getLastDeathLocation() {
+		// TODO Auto-generated method stub
+        return this.getHandle().getLastDeathPos().map(CraftMemoryMapper::fromNms).orElse(null);
+
+	}
+
+	@Override
+    public void setLastDeathLocation(Location location) {
+        if (location == null) {
+            this.getHandle().setLastDeathPos(Optional.empty());
+        } else {
+           //  this.getHandle().setLastDeathPos(Optional.of(CraftMemoryMapper.toNms(location)));
+        }
     }
 
 }

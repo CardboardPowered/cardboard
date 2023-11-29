@@ -80,5 +80,10 @@ public class CardboardThrownPotion extends ProjectileImpl implements ThrownPotio
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void splash() {
+		// this.getHandle().splash(null);
+	}
     
 }

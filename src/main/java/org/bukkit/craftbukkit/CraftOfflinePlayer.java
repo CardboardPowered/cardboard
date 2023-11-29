@@ -27,6 +27,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.profile.PlayerProfile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SerializableAs("Player")
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
@@ -419,6 +420,12 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
 	// @Override
 	public @NotNull PlayerProfile getPlayerProfile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @Nullable Location getLastDeathLocation() {
 		// TODO Auto-generated method stub
 		return null;
 	}

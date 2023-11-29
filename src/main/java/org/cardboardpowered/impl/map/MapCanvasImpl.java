@@ -10,6 +10,8 @@ import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapFont;
 import org.bukkit.map.MapFont.CharacterSprite;
 import org.bukkit.map.MapPalette;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MapCanvasImpl implements MapCanvas {
 
@@ -113,6 +115,20 @@ public class MapCanvasImpl implements MapCanvas {
             assert sprite != null;
             x += sprite.getWidth() + 1;
         }
+    }
+
+	@Override
+	public Color getBasePixelColor(int x2, int y2) {
+        return MapPalette.getColor((byte)this.getBasePixel(x2, y2));
+    }
+
+	@Override
+    public Color getPixelColor(int x2, int y2) {
+        byte pixel = this.getPixel(x2, y2);
+        if (pixel == -1) {
+            return null;
+        }
+        return MapPalette.getColor((byte)pixel);
     }
 
 }

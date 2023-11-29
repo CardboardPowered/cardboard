@@ -17,4 +17,14 @@ public class CardboardTntCart extends CardboardMinecart implements ExplosiveMine
         return EntityType.MINECART_TNT;
     }
 
+	@Override
+    public int getFuseTicks() {
+        return this.getHandle().getFireTicks();
+    }
+
+	@Override
+	public void setFuseTicks(int arg0) {
+        this.getHandle().fireTicks = arg0;
+	}
+
 }
