@@ -1,18 +1,13 @@
 package org.cardboardpowered.impl.command;
 
 import com.google.common.collect.ImmutableList;
-
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.server.world.ServerWorld;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 /**
  * Provides a /fabricmods command
@@ -25,7 +20,6 @@ public class ModsCommand extends Command {
         this.description = "Gets the version of this server including any plugins in use";
         this.usageMessage = "/fabricmods";
         this.setPermission("cardboard.command.mods");
-        this.setAliases(Arrays.asList("fabricmods"));
     }
 
     @Override

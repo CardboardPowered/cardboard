@@ -63,8 +63,10 @@ import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.net.SocketAddress;
@@ -73,9 +75,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 @Mixin(PlayerManager.class)
-public class MixinPlayerManager implements IMixinPlayerManager {
+public abstract class MixinPlayerManager implements IMixinPlayerManager {
 
     @Shadow
     public List<ServerPlayerEntity> players;
@@ -157,25 +160,43 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         return player;
     }
 
-    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
-    public void firePlayerJoinEvent(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
-        String joinMessage = Formatting.YELLOW +
-                Text.translatable("multiplayer.player.joined", player.getDisplayName()).getString();
+    @Unique private PlayerImpl plr;
 
-        PlayerImpl plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
+    @Inject(method = "onPlayerConnect", at = @At("HEAD"))
+    public void onConnect(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
+        this.plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
+    }
+
+    @Redirect(method = "onPlayerConnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"))
+    public void firePlayerJoinEvent(PlayerManager instance, Text message, boolean overlay) {
+        PlayerImpl plr;
+
+        if(this.plr == null) {
+            instance.broadcast(message, overlay);
+            return;
+        } else {
+            plr = this.plr;
+            this.plr = null;
+        }
+
+        String key = "multiplayer.player.joined";
+        Text name = plr.nms.getDisplayName();
+
+        String joinMessage = Formatting.YELLOW + Text.translatable(key, name).getString();
+
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(plr, joinMessage);
         BukkitEventFactory.callEvent(playerJoinEvent);
-        IMixinPlayNetworkHandler ims = (IMixinPlayNetworkHandler)player.networkHandler;
+        IMixinPlayNetworkHandler ims = (IMixinPlayNetworkHandler)plr.nms.networkHandler;
 
-        if (!ims.cb_get_connection().isOpen()) return;
+        if (!ims.cb_get_connection().isOpen()) {
+            return;
+        }
 
         joinMessage = playerJoinEvent.getJoinMessage();
 
         if (joinMessage != null && !joinMessage.isEmpty()) {
             for (Text line : CraftChatMessage.fromString(joinMessage)) {
-                // 1.18: CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
-                // TODO: 1.19
-            	CraftServer.server.getPlayerManager().broadcast(line, entityplayer -> line, false);
+                broadcast(line, entityplayer -> line, false);
             }
         }
 
@@ -258,6 +279,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     public void sendScoreboard(ServerScoreboard scoreboardserver, ServerPlayerEntity entityplayer) {
     }
 
+    @Shadow public abstract void broadcast(Text message, Function<ServerPlayerEntity, Text> playerMessageFactory, boolean overlay);
     @Override
     public void sendScoreboardBF(ServerScoreboard newboard, ServerPlayerEntity handle) {
         sendScoreboard(newboard, handle);

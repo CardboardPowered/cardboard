@@ -1,25 +1,45 @@
 package org.cardboardpowered.impl.command;
 
-import java.util.Map;
-
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public class CommandMapImpl extends SimpleCommandMap {
+	private static final Class<?> CARDBOARD_VERSION_COMMAND = VersionCommand.class;
 
-    public CommandMapImpl(Server server) {
-        super(server);
+	public CommandMapImpl(Server server) {
+		super(server);
+		registerCardboardCommands();
+	}
 
-        // Register our commands
-        for (String s : new String[] {"version", "ver", "about"})
-            register("bukkit", new VersionCommand(s));
-        for (String s : new String[] {"fabricmods"})
-            register("cardboard", new ModsCommand(s));
-    }
+	@Override
+	public boolean register(@NotNull String label, @NotNull String fallbackPrefix, @NotNull Command command) {
+		if(label.equals("version") && fallbackPrefix.equals("bukkit")
+				&& !CARDBOARD_VERSION_COMMAND.isInstance(command)) {
+			// Let Cardboard version command take priority
+			return false;
+		}
 
-    public Map<String, Command> getKnownCommands() {
-        return knownCommands;
-    }
+		return super.register(label, fallbackPrefix, command);
+	}
+
+	@Override
+	public synchronized void clearCommands() {
+		super.clearCommands();
+		registerCardboardCommands();
+	}
+
+	@Override
+	public Map<String, Command> getKnownCommands() {
+		return knownCommands;
+	}
+
+	private void registerCardboardCommands() {
+		register("bukkit", new VersionCommand("version"));
+		register("cardboard", new ModsCommand("fabricmods"));
+	}
 
 }

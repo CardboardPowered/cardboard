@@ -78,6 +78,7 @@ import net.minecraft.resource.DataPackSettings;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.BannedIpEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -86,6 +87,12 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.PendingServerCommand;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.ClickEvent.Action;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -836,24 +843,60 @@ public class CraftServer implements Server {
         return result;
     }
 
-    @Override
-    public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
-        if (commandLine.startsWith("minecraft:") && sender instanceof Entity) {
-            try {
-                int result = vanillaCommandManager.dispatcher.execute(commandLine.replace("minecraft:", ""), ((CraftEntity)sender).nms.getCommandSource());
-                return result != -1;
-            } catch (CommandSyntaxException e) {
-                e.printStackTrace();
-                throw new CommandException("Vanilla command syntax error: " + e.getMessage());
-            }
-        }
+	@Override
+	public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
+		if(sender instanceof Entity) {
+			ServerCommandSource source = ((CraftEntity) sender).nms.getCommandSource();
 
-        if (commandMap.dispatch(sender, commandLine))
-            return true;
+			try {
+				String theCommand;
 
-        sender.sendMessage("Unknown command. Type " + (sender instanceof Player ? "\"/help\" for help." : "\"help\" for help."));
-        return false;
-    }
+				if(commandLine.startsWith("minecraft:")) {
+					theCommand = commandLine.substring("minecraft:".length());
+				} else {
+					theCommand = commandLine;
+				}
+
+				int result = vanillaCommandManager.dispatcher.execute(theCommand, source);
+				return result != -1;
+			} catch(net.minecraft.command.CommandException var13) {
+				source.sendError(var13.getTextMessage());
+				return false;
+			} catch(CommandSyntaxException e) {
+				if(e.getType() != CommandSyntaxException
+						.BUILT_IN_EXCEPTIONS
+						.dispatcherUnknownCommand()) {
+					source.sendError(Texts.toText(e.getRawMessage()));
+					if (e.getInput() != null && e.getCursor() >= 0) {
+						int i = Math.min(e.getInput().length(), e.getCursor());
+						MutableText mutableText = Text.empty().formatted(Formatting.GRAY).styled((style) -> {
+							return style.withClickEvent(new ClickEvent(Action.SUGGEST_COMMAND, "/" + commandLine));
+						});
+						if (i > 10) {
+							mutableText.append(ScreenTexts.ELLIPSIS);
+						}
+
+						mutableText.append(e.getInput().substring(Math.max(0, i - 10), i));
+						if (i < e.getInput().length()) {
+							Text text = Text.literal(e.getInput().substring(i)).formatted(Formatting.RED, Formatting.UNDERLINE);
+							mutableText.append(text);
+						}
+
+						mutableText.append(Text.translatable("command.context.here").formatted(Formatting.RED, Formatting.ITALIC));
+						source.sendError(mutableText);
+					}
+
+					return false;
+				}
+			}
+		}
+
+		if(commandMap.dispatch(sender, commandLine))
+			return true;
+
+		sender.sendMessage("Unknown command. Type \"/help\" for help.");
+		return false;
+	}
 
     @Override
     public Advancement getAdvancement(NamespacedKey arg0) {
