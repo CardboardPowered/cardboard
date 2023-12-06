@@ -7,6 +7,8 @@ import java.util.List;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -69,6 +71,15 @@ public class CardboardAttributeInstance implements AttributeInstance {
 
     public static AttributeModifier convert(EntityAttributeModifier nms) {
         return new AttributeModifier(nms.getId(), nms.getName(), nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+    }
+
+	// @Override
+    public void addTransientModifier(AttributeModifier modifier) {
+        this.handle.addTemporaryModifier(convert(modifier));
+    }
+	
+    public static AttributeModifier convert(EntityAttributeModifier nms, EquipmentSlot slot) {
+        return new AttributeModifier(nms.getId(), nms.getName(), nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()], slot);
     }
 
 }

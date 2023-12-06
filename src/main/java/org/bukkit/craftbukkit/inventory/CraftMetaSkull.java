@@ -3,15 +3,19 @@ package org.bukkit.craftbukkit.inventory;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
+
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.cardboardpowered.impl.entity.PlayerImpl;
