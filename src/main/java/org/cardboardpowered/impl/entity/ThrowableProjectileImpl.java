@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinThrownItemEntity;
 
-public abstract class ThrowableProjectileImpl extends ProjectileImpl implements ThrowableProjectile {
+public class ThrowableProjectileImpl extends ProjectileImpl implements ThrowableProjectile {
 
     public ThrowableProjectileImpl(CraftServer server, ProjectileEntity entity) {
         super(server, entity);

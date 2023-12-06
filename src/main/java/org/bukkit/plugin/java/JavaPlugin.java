@@ -52,6 +52,12 @@ public abstract class JavaPlugin extends PluginBase {
 
         ((PluginClassLoader) classLoader).initialize(this);
     }
+    
+    @Override
+    public final io.papermc.paper.plugin.configuration.PluginMeta getPluginMeta() {
+    	// CARDBOARD: Just use description.
+    	return this.description;
+    }
 
     protected JavaPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
         final ClassLoader classLoader = this.getClass().getClassLoader();

@@ -500,9 +500,8 @@ public class CardboardChunk implements Chunk {
         return false;
     }
 
-	//@Override
-    /*public Chunk.LoadLevel getLoadLevel() {
-		
+	@Override
+    public Chunk.LoadLevel getLoadLevel() {
 		if (!this.worldServer.isChunkLoaded(this.getX(), this.getZ())) {
 			return Chunk.LoadLevel.UNLOADED;
 		}
@@ -512,7 +511,7 @@ public class CardboardChunk implements Chunk {
             return Chunk.LoadLevel.UNLOADED;
         }
         return Chunk.LoadLevel.values()[chunk.getLevelType().ordinal()];
-    }*/
+    }
 
 	// @Override
     public boolean isGenerated() {

@@ -235,4 +235,23 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
         return super.updateMaterial(material);
     }
 
+    @Override
+    public org.bukkit.entity.EntityType getCustomSpawnedType() {
+        return Optional.ofNullable(this.entityTag).map(tag -> tag.getString(CraftMetaSpawnEgg.ENTITY_ID.NBT)).flatMap(net.minecraft.entity.EntityType::get).map(CraftMagicNumbers::getEntityType).orElse(null);
+    }
+
+    @Override
+    public void setCustomSpawnedType(org.bukkit.entity.EntityType type) {
+        if (type == null) {
+            if (this.entityTag != null) {
+                this.entityTag.remove(CraftMetaSpawnEgg.ENTITY_ID.NBT);
+            }
+        } else {
+            if (this.entityTag == null) {
+                this.entityTag = new NbtCompound();
+            }
+            this.entityTag.putString(CraftMetaSpawnEgg.ENTITY_ID.NBT, type.key().toString());
+        }
+    }
+
 }

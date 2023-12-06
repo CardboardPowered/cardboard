@@ -141,5 +141,97 @@ public class CardboardFishHook extends ProjectileImpl implements FishHook {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// 1.19.4:
+
+	@Override
+	public float getMaxLureAngle() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxLureTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public float getMinLureAngle() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMinLureTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isRainInfluenced() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isSkyInfluenced() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setLureAngle(float arg0, float arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLureTime(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMaxLureAngle(float arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMaxLureTime(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMinLureAngle(float arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMinLureTime(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRainInfluenced(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSkyInfluenced(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWaitTime(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

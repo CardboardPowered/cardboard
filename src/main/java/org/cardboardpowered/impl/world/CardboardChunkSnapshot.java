@@ -187,4 +187,16 @@ public class CardboardChunkSnapshot implements ChunkSnapshot {
         CardboardChunk.validateChunkCoordinates(minHeight, maxHeight, x, y, z);
     }
 
+	@Override
+    public boolean contains(Biome biome) {
+        Preconditions.checkArgument((biome != null ? 1 : 0) != 0, (Object)"Biome cannot be null");
+        com.google.common.base.Predicate nms = Predicates.equalTo(CraftBlock.biomeToBiomeBase(this.biomeRegistry, biome));
+        for (ReadableContainer<RegistryEntry<net.minecraft.world.biome.Biome>> palette : this.biome) {
+            if (!palette.hasAny((Predicate<RegistryEntry<net.minecraft.world.biome.Biome>>)nms)) continue;
+            return true;
+        }
+        return false;
+    }
+
+
 }

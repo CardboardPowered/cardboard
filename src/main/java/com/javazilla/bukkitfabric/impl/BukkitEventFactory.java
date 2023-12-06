@@ -137,7 +137,7 @@ public class BukkitEventFactory {
     }
 
     public static ServerListPingEvent callServerListPingEvent(Server craftServer, InetAddress address, String motd, int numPlayers, int maxPlayers) {
-        ServerListPingEvent event = new ServerListPingEvent(address, motd, true, numPlayers, maxPlayers);
+    	ServerListPingEvent event =  new ServerListPingEvent("", address, motd, numPlayers, maxPlayers);
         craftServer.getPluginManager().callEvent(event);
         return event;
     }
@@ -755,10 +755,20 @@ public class BukkitEventFactory {
         return event;
     }
 
-    public static boolean handleBellRingEvent(ServerWorld world, BlockPos pos, Entity entity) {
-        Block block = CraftBlock.at(world, pos);
-        BellRingEvent event = new BellRingEvent(block, (entity != null) ? ((IMixinEntity) entity).getBukkitEntity() : null);
-        Bukkit.getPluginManager().callEvent(event);
+    @Deprecated
+    public static boolean handleBellRingEvent_(ServerWorld world, BlockPos pos, Entity entity) {
+        //Block block = CraftBlock.at(world, pos);
+        //BellRingEvent event = new BellRingEvent(block, (entity != null) ? ((IMixinEntity) entity).getBukkitEntity() : null);
+        //Bukkit.getPluginManager().callEvent(event);
+        //return !event.isCancelled();
+    	return false;
+    }
+    
+    public static boolean handleBellRingEvent(ServerWorld world, BlockPos position, Direction direction, net.minecraft.entity.Entity entity) {
+        CraftBlock block = CraftBlock.at(world, position);
+        BlockFace bukkitDirection = CraftBlock.notchToBlockFace(direction);
+        BellRingEvent event = new BellRingEvent((Block)block, bukkitDirection, (entity != null) ? ((IMixinEntity) entity).getBukkitEntity() : null);
+        Bukkit.getPluginManager().callEvent((Event)event);
         return !event.isCancelled();
     }
 

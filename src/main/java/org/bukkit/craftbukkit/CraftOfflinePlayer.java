@@ -419,7 +419,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
 	// @Override
-	public @NotNull PlayerProfile getPlayerProfile() {
+	public @NotNull com.destroystokyo.paper.profile.@NotNull PlayerProfile getPlayerProfile() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -6,6 +6,8 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.jetbrains.annotations.NotNull;
 
@@ -123,6 +125,22 @@ public class CardboardSign extends CardboardBlockEntityState<SignBlockEntity> im
     @Override
     public void setGlowingText(boolean arg0) {
         getSnapshot().setGlowingText(arg0);
+    }
+
+	@Override
+    public SignSide getSide(Side side) {
+        // Preconditions.checkArgument((side != null ? 1 : 0) != 0, (Object)"side == null");
+        switch (side) {
+            //case FRONT: {
+             //   return this.front;
+            //}
+            //case BACK: {
+           //     return this.back;
+           // }
+        }
+        // TODO!
+        return null;
+        //throw new IllegalArgumentException();
     }
 
 }

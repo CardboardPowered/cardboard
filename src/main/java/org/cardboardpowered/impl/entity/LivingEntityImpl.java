@@ -105,6 +105,10 @@ import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 
 @SuppressWarnings("deprecation")
 public class LivingEntityImpl extends CraftEntity implements LivingEntity {
@@ -750,8 +754,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public BlockFace getTargetBlockFace(int arg0, FluidMode arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    	return this.getTargetBlockFace(arg0, arg1.bukkit);
     }
 
     @Override
@@ -980,6 +983,45 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 	@Override
 	public void knockback(double arg0, double arg1, double arg2) {
 		 this.getHandle().takeKnockback(arg0, arg2, arg2);
+	}
+	
+	// 1.19.4:
+
+	@Override
+    public float getBodyYaw() {
+        return this.getHandle().getBodyYaw();
+    }
+
+	@Override
+    public BlockFace getTargetBlockFace(int maxDistance, FluidCollisionMode fluidMode) {
+        RayTraceResult result = this.rayTraceBlocks(maxDistance, fluidMode);
+        return result != null ? result.getHitBlockFace() : null;
+    }
+
+	@Override
+    public RayTraceResult rayTraceEntities(int maxDistance, boolean ignoreBlocks) {
+        EntityHitResult rayTrace = this.rayTraceEntity(maxDistance, ignoreBlocks);
+        return null;
+        //return rayTrace == null ? null : new RayTraceResult(CraftVector.toBukkit(rayTrace.getPos()), ((IMixinEntity)rayTrace.getEntity()).getBukkitEntity());
+    }
+	
+    public EntityHitResult rayTraceEntity(int maxDistance, boolean ignoreBlocks) {
+        return null;
+    }
+
+	@Override
+    public void setArrowsInBody(int count, boolean fireEvent) {
+        // Preconditions.checkArgument((count >= 0 ? 1 : 0) != 0, (Object)"New arrow amount must be >= 0");
+        if (!fireEvent) {
+            this.getHandle().getDataTracker().set(net.minecraft.entity.LivingEntity.STUCK_ARROW_COUNT, count);
+        } else {
+            this.getHandle().setStuckArrowCount(count);
+        }
+    }
+
+	@Override
+	public void setBodyYaw(float arg0) {
+        this.getHandle().setBodyYaw(arg0);
 	}
    
 

@@ -92,5 +92,22 @@ public class CardboardWither extends MonsterImpl implements Wither {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// 1.19.4:
+
+	@Override
+	public void enterInvulnerabilityPhase() {
+        this.getHandle().onSummoned();
+	}
+
+	@Override
+	public int getInvulnerabilityTicks() {
+        return this.getHandle().getInvulnerableTimer();
+	}
+
+	@Override
+	public void setInvulnerabilityTicks(int arg0) {
+        this.getHandle().setInvulTimer(arg0);
+	}
 
 }

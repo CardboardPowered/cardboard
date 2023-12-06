@@ -629,34 +629,39 @@ public class CraftBlockData implements BlockData {
 	        return state.canPlaceAt(world.getHandle(), position);
 	    }
 
-		// @Override
+		@Override
 		public int getLightEmission() {
 			return this.state.getLuminance();
 		}
 
-		// @Override
+		@Override
 	    public Material getPlacementMaterial() {
 	        return CraftMagicNumbers.getMaterial(this.state.getBlock().asItem());
 	    }
 
-		// @Override
+		@Override
 	    public boolean isOccluding() {
 	        return this.state.isOpaque();
 	    }
 
-		// @Override
+		@Override
 	    public void mirror(Mirror mirror) {
 	        this.state = this.state.mirror(BlockMirror.valueOf(mirror.name()));
 	    }
 
-		// @Override
+		@Override
 	    public boolean requiresCorrectToolForDrops() {
 	        return this.state.isToolRequired();
 	    }
 
-		// @Override
+		@Override
 	    public void rotate(StructureRotation rotation) {
 	        this.state = this.state.rotate(BlockRotation.valueOf(rotation.name()));
+	    }
+
+		@Override
+	    public PistonMoveReaction getPistonMoveReaction() {
+	        return PistonMoveReaction.getById((int)this.state.getPistonBehavior().ordinal());
 	    }
 
 }

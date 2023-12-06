@@ -53,6 +53,7 @@ import org.cardboardpowered.impl.world.WorldImpl;
 import org.cardboardpowered.interfaces.IWorldChunk;
 import com.mojang.brigadier.LiteralMessage;
 
+import io.papermc.paper.entity.TeleportFlag;
 import me.isaiah.common.entity.IEntity;
 import me.isaiah.common.entity.IRemoveReason;
 import net.kyori.adventure.text.Component;
@@ -66,7 +67,7 @@ import net.minecraft.text.Texts;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
-public abstract class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
+public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     protected static PermissibleBase perm;
     private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
@@ -844,7 +845,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
     }
 
 	// TODO 1.19.4
-	/*@Override
+	@Override
     public boolean teleport(Location location, TeleportCause cause, TeleportFlag ... flags) {
         Preconditions.checkArgument((location != null ? 1 : 0) != 0, (Object)"location cannot be null");
         location.checkFinite();
@@ -872,6 +873,17 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         this.nms.refreshPositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         this.nms.setHeadYaw(location.getYaw());
         return true;
-    }*/
+    }
+
+	@Override
+	public boolean isVisibleByDefault() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public void setVisibleByDefault(boolean arg0) {
+		// TODO Auto-generated method stub
+	}
 
 }
