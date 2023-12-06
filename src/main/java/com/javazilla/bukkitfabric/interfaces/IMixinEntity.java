@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
 import net.minecraft.world.World;
+import net.minecraft.util.math.Box;
 
 public interface IMixinEntity {
 
@@ -38,5 +39,7 @@ public interface IMixinEntity {
     void cardboard_setForceDrops(boolean forceDrops);
 
 	World mc_world();
+
+	Box cardboad_getBoundingBoxAt(double x2, double y2, double z2);
 
 }

@@ -62,7 +62,7 @@ public class ProtocolLibMapper {
      *   Retrieve the class object of a specific Minecraft class.
      */
     public static Class<?> getMinecraftClass(String className) {
-    	System.out.println("GET MINECRAFT CLASS!!!");
+    	// System.out.println("GET MINECRAFT CLASS!!!");
         try {
             if (className.equals("ServerConnection")) {
                 return Class.forName(ReflectionRemapper.mapClassName("net.minecraft.server.ServerNetworkIo"));
@@ -77,7 +77,7 @@ public class ProtocolLibMapper {
      * ProtocolLib Reflection
      */
     public static Class<?> getMinecraftClass(String className, String... aliases) {
-    	System.out.println("GET MINECRAFT CLASS!!!");
+    	// System.out.println("GET MINECRAFT CLASS!!!");
         try {
             // Try the main class first
             return getMinecraftClass(className);

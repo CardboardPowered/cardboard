@@ -9,16 +9,20 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.util.Pair;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerBlockEntity;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.text.Text;
 
 @SuppressWarnings("deprecation")
 public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity> implements Banner {
@@ -110,6 +114,24 @@ public class CardboardBanner extends CardboardBlockEntityState<BannerBlockEntity
         }
         bannerNbt.put("Patterns", newPatterns);
         banner.readNbt(bannerNbt);
+    }
+
+	
+    public Component customName() {
+       // return PaperAdventure.asAdventure(((BannerBlockEntity)this.getSnapshot()).getCustomName());
+    	return Component.text(((BannerBlockEntity)this.getSnapshot()).getCustomName().getString());
+    }
+
+    public void customName(Component customName) {
+        ((BannerBlockEntity)this.getSnapshot()).setCustomName(Text.of(customName.toString()));
+    }
+
+    public String getCustomName() {
+        return (String)LegacyComponentSerializer.legacySection().serializeOrNull(this.customName());
+    }
+
+    public void setCustomName(String name) {
+        this.customName(LegacyComponentSerializer.legacySection().deserializeOrNull(name));
     }
 
 }

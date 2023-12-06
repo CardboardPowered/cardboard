@@ -2,6 +2,8 @@ package org.cardboardpowered.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import net.kyori.adventure.text.Component;
 import net.minecraft.advancement.Advancement;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
@@ -56,5 +58,11 @@ public class AdvancementImpl implements org.bukkit.advancement.Advancement {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public @NotNull Component displayName() {
+		// TODO Auto-generated method stub
+		return Component.text("Hello world");
+	}
 
 }

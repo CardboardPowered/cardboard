@@ -1,6 +1,8 @@
 package org.cardboardpowered.impl.entity;
 
 import com.google.common.base.Preconditions;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+
 import net.minecraft.entity.passive.LlamaEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
@@ -8,6 +10,8 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Llama;
 import org.bukkit.inventory.LlamaInventory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CardboardLlama extends CardboardChestedHorse implements Llama {
 
@@ -80,14 +84,43 @@ public class CardboardLlama extends CardboardChestedHorse implements Llama {
 
 	@Override
 	public boolean isEatingHaystack() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.getHandle().isEatingGrass();
 	}
 
 	@Override
 	public void setEatingHaystack(boolean arg0) {
-		// TODO Auto-generated method stub
-		
+		this.getHandle().setEatingGrass(arg0);
+	}
+
+	@Override
+    public Llama getCaravanHead() {
+        return this.getHandle().getFollowing() == null ? null : (Llama)((IMixinEntity)this.getHandle().getFollowing()).getBukkitEntity();
+    }
+
+	@Override
+	public @Nullable Llama getCaravanTail() {
+		// return this.getHandle().follower == null ? null : (Llama)this.getHandle().follower.getBukkitEntity();
+		return null;
+	}
+
+	@Override
+	public boolean hasCaravanTail() {
+        return this.getHandle().hasFollower();
+	}
+
+	@Override
+	public boolean inCaravan() {
+        return this.getHandle().isFollowing();
+	}
+
+	@Override
+	public void joinCaravan(@NotNull Llama arg0) {
+		this.getHandle().follow(((CardboardLlama)arg0).getHandle());
+	}
+
+	@Override
+	public void leaveCaravan() {
+		this.getHandle().stopFollowing();
 	}
 
 }

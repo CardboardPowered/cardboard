@@ -768,6 +768,24 @@ public class CraftBlock implements Block {
 		return null;
 	}
 
+	// 1.19.2 api
+	
+	@Override
+	public void randomTick() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void tick() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public WorldImpl getCraftWorld() {
+		// TODO Auto-generated method stub
+		return this.getWorldImpl();
+	}
+
     //
 
 }

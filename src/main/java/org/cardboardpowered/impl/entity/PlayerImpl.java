@@ -22,6 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -51,6 +53,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -76,6 +79,7 @@ import org.bukkit.event.player.PlayerKickEvent.Cause;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
@@ -108,6 +112,8 @@ import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
+import io.papermc.paper.entity.LookAnchor;
+import io.papermc.paper.entity.RelativeTeleportFlag;
 import me.isaiah.common.GameVersion;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -116,6 +122,7 @@ import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.ChatSuggestionsS2CPacket;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
@@ -2000,6 +2007,103 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 	public void showEntity(@NotNull Plugin arg0, @NotNull Entity arg1) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	// 1.19.2
+
+	@Override
+	public void addAdditionalChatCompletions(@NotNull Collection<String> arg0) {
+		this.getHandle().networkHandler.sendPacket(new ChatSuggestionsS2CPacket(ChatSuggestionsS2CPacket.Action.ADD, new ArrayList<String>(arg0)));
+	}
+
+	@Override
+	public int getWardenTimeSinceLastWarning() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getWardenWarningCooldown() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getWardenWarningLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void increaseWardenWarningLevel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lookAt(@NotNull Entity arg0, @NotNull LookAnchor arg1, @NotNull LookAnchor arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lookAt(double arg0, double arg1, double arg2, @NotNull LookAnchor arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeAdditionalChatCompletions(@NotNull Collection<String> arg0) {
+        this.getHandle().networkHandler.sendPacket(new ChatSuggestionsS2CPacket(ChatSuggestionsS2CPacket.Action.REMOVE, new ArrayList<String>(arg0)));
+	}
+
+	@Override
+	public void sendBlockChanges(@NotNull Collection<BlockState> arg0, boolean arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendBlockDamage(@NotNull Location arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWardenTimeSinceLastWarning(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWardenWarningCooldown(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWardenWarningLevel(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showElderGuardian(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stopSound(@NotNull SoundCategory arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean teleport(@NotNull Location arg0, @NotNull TeleportCause arg1, boolean arg2, boolean arg3,
+			@NotNull RelativeTeleportFlag @NotNull... arg4) {
+		// TODO Auto-generated method stub
+		return this.teleport(arg0, arg1);
 	}
 
 }

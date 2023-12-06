@@ -9,8 +9,10 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.CraftServer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -159,6 +161,11 @@ public class MobImpl extends LivingEntityImpl implements Mob {
     public void setLeftHanded(boolean bl) {
         // TODO Auto-generated method stub
     }
+
+	@Override
+	public Sound getAmbientSound() {
+		return Sound.AMBIENT_CAVE;
+	}
 
 
 }

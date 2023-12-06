@@ -2,10 +2,15 @@ package org.bukkit.craftbukkit.scoreboard;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.RenderType;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.scoreboard.ScoreboardObjective;
 
-public class CardboardCriteria {
+public class CardboardCriteria implements Criteria {
 
     private static final Map<String, CardboardCriteria> DEFAULTS;
     private static final CardboardCriteria DUMMY;
@@ -48,6 +53,21 @@ public class CardboardCriteria {
     @Override
     public int hashCode() {
         return this.bukkitName.hashCode() ^ CardboardCriteria.class.hashCode();
+    }
+
+    @Override
+    public String getName() {
+        return bukkitName;
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return criteria.isReadOnly();
+    }
+
+    @Override
+    public RenderType getDefaultRenderType() {
+        return RenderType.values()[criteria.getDefaultRenderType().ordinal()];
     }
 
 }

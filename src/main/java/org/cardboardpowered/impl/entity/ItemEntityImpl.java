@@ -1,6 +1,7 @@
 package org.cardboardpowered.impl.entity;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.util.TriState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 
@@ -12,6 +13,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ItemEntityImpl extends CraftEntity implements Item {
@@ -151,6 +153,18 @@ public class ItemEntityImpl extends CraftEntity implements Item {
 
 	@Override
 	public void setUnlimitedLifetime(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public @NotNull TriState getFrictionState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFrictionState(@NotNull TriState arg0) {
 		// TODO Auto-generated method stub
 		
 	}

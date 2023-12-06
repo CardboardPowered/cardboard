@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Entity;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -216,6 +217,45 @@ public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboa
 	public void resetScoresFor(@NotNull Entity arg0) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		
+	}
+
+    @Override
+    public ImmutableSet<Objective> getObjectivesByCriteria(Criteria criteria) {
+        ImmutableSet.Builder<Objective> objectives = ImmutableSet.builder();
+        for (net.minecraft.scoreboard.ScoreboardObjective netObjective : board.getObjectives()) {
+            CardboardObjective objective = new CardboardObjective(this, netObjective);
+            if (objective.getTrackedCriteria().equals(criteria)) {
+                objectives.add(objective);
+            }
+        }
+
+        return objectives.build();
+    }
+    
+    @Override
+    public Objective registerNewObjective(String name, Criteria criteria, String displayName) {
+        return registerNewObjective(name, criteria, displayName, RenderType.INTEGER);
+    }
+
+	@Override
+	public @NotNull Objective registerNewObjective(@NotNull String arg0, @NotNull Criteria arg1,
+			@Nullable Component arg2) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Objective registerNewObjective(@NotNull String arg0, @NotNull Criteria arg1,
+			@Nullable Component arg2, @NotNull RenderType arg3) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Objective registerNewObjective(@NotNull String arg0, @NotNull Criteria arg1, @NotNull String arg2,
+			@NotNull RenderType arg3) throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
