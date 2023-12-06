@@ -43,6 +43,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.javazilla.bukkitfabric.interfaces.IMixinChunk;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.mojang.serialization.Codec;
+
 import io.papermc.paper.util.CoordinateUtils;
 import me.isaiah.common.cmixin.IMixinHeightmap;
 import net.minecraft.block.entity.BlockEntity;
@@ -59,6 +61,7 @@ import net.minecraft.world.ChunkSerializer;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -434,15 +437,15 @@ public class CardboardChunk implements Chunk {
         // Added in Bukkit 1.16.3 API (Spigot Pull #672)
         return null;
     }
-    
-    public net.minecraft.world.chunk.Chunk getHandle(ChunkStatus chunkStatus) {
+
+    /*public net.minecraft.world.chunk.Chunk getHandle(ChunkStatus chunkStatus) {
         net.minecraft.world.chunk.Chunk chunkAccess = this.worldServer.getChunk(this.x, this.z, chunkStatus);
         if (chunkAccess instanceof ReadOnlyChunk) {
         	ReadOnlyChunk extension = (ReadOnlyChunk)chunkAccess;
             return extension.getWrappedChunk();
         }
         return chunkAccess;
-    }
+    }*/
 
     static {
         Arrays.fill(emptyLight, (byte) 0xFF);
