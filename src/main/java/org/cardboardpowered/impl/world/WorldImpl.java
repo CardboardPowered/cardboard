@@ -2490,7 +2490,7 @@ public class WorldImpl implements World {
 	@Override
 	public int getSimulationDistance() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 8;
 	}
 
 	@Override
@@ -2556,6 +2556,29 @@ public class WorldImpl implements World {
 			int arg2, boolean arg3) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	// 1.19.4
+
+	// @Override
+    public org.bukkit.Chunk getChunkAt(int x2, int z2, boolean generate) {
+        if (generate) {
+            return this.getChunkAt(x2, z2);
+        }
+        return new CardboardChunk(this.getHandle(), x2, z2);
+    }
+
+	// @Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, float arg2, float arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// @Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, @NotNull SoundCategory arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

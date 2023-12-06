@@ -19,6 +19,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.jetbrains.annotations.NotNull;
 
 public class CardboardChunkSnapshot implements ChunkSnapshot {
 

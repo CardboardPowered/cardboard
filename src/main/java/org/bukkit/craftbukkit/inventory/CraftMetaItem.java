@@ -1378,6 +1378,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     @Override
+    // 1.19.4: public void lore(@Nullable List<? extends Component> arg0) {
     public void lore(@Nullable List<Component> arg0) {
         // TODO Auto-generated method stub
         

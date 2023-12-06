@@ -19,6 +19,7 @@ import org.bukkit.craftbukkit.CraftSound;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
+import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -47,6 +48,8 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+
+import org.cardboardpowered.impl.world.WorldImpl;
 import org.cardboardpowered.interfaces.IWorldChunk;
 import com.mojang.brigadier.LiteralMessage;
 
@@ -816,7 +819,7 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         return this.getHandle().isSubmergedInWater();
     }
 
-	@Override
+	// @Override
 	public boolean teleport(@NotNull Location arg0, @NotNull TeleportCause arg1, boolean arg2, boolean arg3) {
 		// TODO Auto-generated method stub
 		return this.teleport(arg0, arg1);
@@ -827,5 +830,48 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
         Box aabb = new Box(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
         return !this.getHandle().getWorld().isSpaceEmpty(this.getHandle(), aabb);
     }
+	
+	// 1.19.4:
+
+	// @Override
+    public boolean isSneaking() {
+        return this.getHandle().isSneaking();
+    }
+
+	// @Override
+    public void setSneaking(boolean sneak) {
+        this.getHandle().setSneaking(sneak);
+    }
+
+	// TODO 1.19.4
+	/*@Override
+    public boolean teleport(Location location, TeleportCause cause, TeleportFlag ... flags) {
+        Preconditions.checkArgument((location != null ? 1 : 0) != 0, (Object)"location cannot be null");
+        location.checkFinite();
+        Set<TeleportFlag> flagSet = Set.of(flags);
+        boolean dismount = !flagSet.contains(TeleportFlag.EntityState.RETAIN_VEHICLE);
+        boolean ignorePassengers = flagSet.contains(TeleportFlag.EntityState.RETAIN_PASSENGERS);
+        if (flagSet.contains(TeleportFlag.EntityState.RETAIN_PASSENGERS) && this.nms.hasPassengers() && location.getWorld() != this.getWorld()) {
+            return false;
+        }
+        if (!dismount && this.nms.hasVehicle() && location.getWorld() != this.getWorld()) {
+            return false;
+        }
+        if (!ignorePassengers && this.nms.hasPassengers() || this.nms.isRemoved()) {
+            return false;
+        }
+        if (dismount) {
+            this.nms.stopRiding();
+        }
+        if (location.getWorld() != null && !location.getWorld().equals(this.getWorld())) {
+            // Preconditions.checkState((!this.nms.generation ? 1 : 0) != 0, (Object)"Cannot teleport entity to an other world during world generation");
+            // TODO
+        	// this.nms.teleportTo(((WorldImpl)location.getWorld()).getHandle(), CraftLocation.toPosition(location));
+            return true;
+        }
+        this.nms.refreshPositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        this.nms.setHeadYaw(location.getYaw());
+        return true;
+    }*/
 
 }

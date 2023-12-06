@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,8 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.jetbrains.annotations.NotNull;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -65,9 +68,34 @@ public class CraftContainer extends ScreenHandler {
             @Override public HumanEntity getPlayer()        { return (HumanEntity)((IMixinEntity)player).getBukkitEntity(); }
             @Override public InventoryType getType()        { return inventory.getType(); }
 
-            @Override
+            private final String originalTitle;
+            private String title;
+            {
+                this.title = this.originalTitle = inventory instanceof CraftInventoryCustom ? ((CraftInventoryCustom.MinecraftInventory) ((CraftInventory) inventory).getInventory()).getTitle() : inventory.getType().getDefaultTitle();
+            }
+
+            public Component title() {
+                Component component = null;
+                if (inventory instanceof CraftInventoryCustom) {
+                    CraftInventoryCustom custom = (CraftInventoryCustom)inventory;
+                    // TODO component = custom.title();
+                } else {
+                    component = inventory.getType().defaultTitle();
+                }
+                return component;
+            }
+
             public String getTitle() {
-                return inventory instanceof CraftInventoryCustom ? ((CraftInventoryCustom.MinecraftInventory) ((CraftInventory) inventory).getInventory()).getTitle() : inventory.getType().getDefaultTitle();
+                return this.title;
+            }
+
+            public String getOriginalTitle() {
+                return this.originalTitle;
+            }
+
+            public void setTitle(String title) {
+                CardboardInventoryView.sendInventoryTitleChange(this, title);
+                this.title = title;
             }
         }, player, id);
     }

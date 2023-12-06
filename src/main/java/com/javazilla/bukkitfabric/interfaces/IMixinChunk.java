@@ -18,10 +18,26 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
+import java.util.Map;
+
 import org.bukkit.Chunk;
+
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
 
 public interface IMixinChunk {
 
     Chunk getBukkitChunk();
 
+    // Lnet/minecraft/world/chunk/Chunk;blockEntities:Ljava/util/Map;
+    //     public final Map<BlockPos, BlockEntity> blockEntities = Maps.newHashMap();
+
+    Map<BlockPos, BlockEntity> cardboard_getBlockEntities();
+
+    default Registry<Biome> bridge$biomeRegistry() {
+        return null;
+    }
+    
 }
