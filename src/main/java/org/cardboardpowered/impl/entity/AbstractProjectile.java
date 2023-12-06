@@ -1,12 +1,19 @@
 package org.cardboardpowered.impl.entity;
 
+import java.util.UUID;
+
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractProjectile extends CraftEntity implements Projectile {
+import net.minecraft.util.hit.EntityHitResult;
+
+public class AbstractProjectile extends CraftEntity implements Projectile {
 
     private boolean doesBounce;
 
@@ -57,6 +64,33 @@ public abstract class AbstractProjectile extends CraftEntity implements Projecti
 
 	@Override
 	public void setShooter(@Nullable ProjectileSource arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	// 1.19.4:
+
+	@Override
+	 public boolean canHitEntity(org.bukkit.entity.Entity entity) {
+        //return this.getHandle().canHit(((CraftEntity)entity).getHandle());
+		return this.getHandle().canHit();
+    }
+
+	@Override
+	public @Nullable UUID getOwnerUniqueId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void hitEntity(@NotNull Entity arg0) {
+		// TODO Auto-generated method stub
+        // this.getHandle().preOnHit(new EntityHitResult(((CraftEntity)entity).getHandle()));
+
+	}
+
+	@Override
+	public void hitEntity(@NotNull Entity arg0, @NotNull Vector arg1) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -87,6 +87,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.packs.CraftDataPackManager;
 import org.bukkit.craftbukkit.scoreboard.CardboardScoreboardManager;
 import org.bukkit.craftbukkit.scoreboard.CraftCriteria;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -125,6 +126,7 @@ import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataStoreBase;
+import org.bukkit.packs.DataPackManager;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.InvalidPluginException;
@@ -286,6 +288,7 @@ import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.LevelInfo;
 import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.storage.LevelStorage;
+//import io.papermc.paper.plugin.manager.PaperPluginManagerImpl;
 
 @SuppressWarnings("deprecation")
 public class CraftServer implements Server {
@@ -298,7 +301,11 @@ public class CraftServer implements Server {
     private final Logger logger = BukkitLogger.getLogger();
 
     private final CommandMapImpl commandMap;
+
     private final SimplePluginManager pluginManager;
+   // public final PaperPluginManagerImpl paperPluginManager;
+
+    
     private final CraftMagicNumbers unsafe = (CraftMagicNumbers) CraftMagicNumbers.INSTANCE;
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final BukkitSchedulerImpl scheduler = new BukkitSchedulerImpl();
@@ -323,6 +330,8 @@ public class CraftServer implements Server {
     
     private final Map<Class<?>, org.bukkit.Registry<?>> registries = new HashMap<>();
 
+    public CraftDataPackManager dataPackManager;
+    
     public CraftServer(MinecraftDedicatedServer nms) {
         INSTANCE = this;
         serverVersion = "git-Cardboard-" + Utils.getGitHash().substring(0,7); // use short hash
@@ -331,6 +340,8 @@ public class CraftServer implements Server {
         console = nms;
         commandMap = new CommandMapImpl(this);
         pluginManager = new SimplePluginManager(this, commandMap);
+        // paperPluginManager = new PaperPluginManagerImpl(this, commandMap, this.pluginManager);
+        
         scoreboardManager = new CardboardScoreboardManager(nms, server.getScoreboard());
 
         configuration = YamlConfiguration.loadConfiguration(new File("bukkit.yml"));
@@ -339,6 +350,9 @@ public class CraftServer implements Server {
         saveConfig();
 
         this.playerView = new ArrayList<>();
+        
+        this.dataPackManager = new CraftDataPackManager(this.getServer().getDataPackManager());
+
         loadIcon();
     }
  
@@ -2220,6 +2234,23 @@ public class CraftServer implements Server {
 	public boolean shouldSendChatPreviews() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public @NotNull DataPackManager getDataPackManager() {
+        return this.dataPackManager;
+	}
+
+	@Override
+	public @NotNull List<String> getInitialDisabledPacks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull List<String> getInitialEnabledPacks() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

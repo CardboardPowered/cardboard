@@ -42,5 +42,35 @@ public class CardboardGuardian extends MonsterImpl implements Guardian {
         // TODO Auto-generated method stub
         return false;
     }
+    
+    // 1.19.4:
+
+    @Override
+    public GuardianEntity getHandle() {
+        return (GuardianEntity)super.getHandle();
+    }
+    
+	@Override
+	public int getLaserDuration() {
+        return this.getHandle().getWarmupTime();
+	}
+
+	@Override
+	public int getLaserTicks() {
+        //GuardianEntity.FireBeamGoal goal = this.getHandle().guardianAttackGoal;
+        //return goal != null ? goal.beamTicks : -10;
+		return 0;
+	}
+
+	@Override
+	public boolean isMoving() {
+        return this.getHandle().areSpikesRetracted();
+	}
+
+	@Override
+	public void setLaserTicks(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

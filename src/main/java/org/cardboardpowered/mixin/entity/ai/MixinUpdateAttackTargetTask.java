@@ -25,7 +25,9 @@ import java.util.function.Predicate;
 @Mixin(UpdateAttackTargetTask.class)
 public class MixinUpdateAttackTargetTask {
     
-    @Inject(method = "method_47123", at = @At(value = "INVOKE",
+	// Lnet/minecraft/entity/ai/brain/task/UpdateAttackTargetTask;method_47123(Ljava/util/function/Predicate;Ljava/util/function/Function;Lnet/minecraft/entity/ai/brain/MemoryQueryResult;Lnet/minecraft/entity/ai/brain/MemoryQueryResult;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/entity/mob/MobEntity;J)Z
+	
+    /*@Inject(method = "method_47123", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/entity/ai/behavior/declarative/MemoryAccessor;set(Ljava/lang/Object;)V"),
             locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     private static <E extends MobEntity> void banner$targetEvent(Predicate<E> predicate, Function<E, Optional<? extends LivingEntity>> function,
@@ -43,6 +45,6 @@ public class MixinUpdateAttackTargetTask {
         }
         livingEntity = ((LivingEntityImpl) event.getTarget()).getHandle();
         // CraftBukkit end
-    }
+    }*/
 
 }

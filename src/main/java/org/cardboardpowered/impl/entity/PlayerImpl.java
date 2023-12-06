@@ -56,6 +56,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.sign.Side;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -75,6 +76,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
+import org.bukkit.event.player.PlayerExpCooldownChangeEvent;
 import org.bukkit.event.player.PlayerKickEvent.Cause;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
@@ -98,6 +100,8 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,9 +117,10 @@ import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
 import io.papermc.paper.entity.LookAnchor;
-import io.papermc.paper.entity.RelativeTeleportFlag;
+import io.papermc.paper.math.Position;
 import me.isaiah.common.GameVersion;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.util.TriState;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.entity.SignBlockEntity;
@@ -125,7 +130,9 @@ import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChatSuggestionsS2CPacket;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.play.DamageTiltS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
@@ -1796,12 +1803,12 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1) throws IllegalArgumentException {
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<? extends Component> arg1) throws IllegalArgumentException {
         // TODO Auto-generated method stub
     }
 
     @Override
-    public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1, @NotNull DyeColor arg2)
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<? extends Component> arg1, @NotNull DyeColor arg2)
             throws IllegalArgumentException {
         // TODO Auto-generated method stub
     }
@@ -1837,7 +1844,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1, @NotNull DyeColor arg2,
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<? extends Component> arg1, @NotNull DyeColor arg2,
             boolean arg3) throws IllegalArgumentException {
         // TODO Auto-generated method stub
         
@@ -1955,8 +1962,10 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 		
 	}
 
-	@Override
-	public void sendMultiBlockChange(@NotNull Map<Location, BlockData> arg0, boolean arg1) {
+	// @Override
+	// public void sendMultiBlockChange(@NotNull Map<Location, BlockData> arg0, boolean arg1) {
+	public void sendMultiBlockChange(@NotNull Map<? extends Position, BlockData> arg0, boolean arg1) {
+
 		// TODO Auto-generated method stub
 		
 	}
@@ -2098,12 +2107,120 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// 1.19.4:
 
 	@Override
+    public void addCustomChatCompletions(Collection<String> completions) {
+        this.sendCustomChatCompletionPacket(completions, ChatSuggestionsS2CPacket.Action.ADD);
+    }
+
+	@Override
+    public void removeCustomChatCompletions(Collection<String> completions) {
+        this.sendCustomChatCompletionPacket(completions, ChatSuggestionsS2CPacket.Action.REMOVE);
+    }
+
+	@Override
+    public void setCustomChatCompletions(Collection<String> completions) {
+        this.sendCustomChatCompletionPacket(completions, ChatSuggestionsS2CPacket.Action.SET);
+    }
+
+    private void sendCustomChatCompletionPacket(Collection<String> completions, ChatSuggestionsS2CPacket.Action action) {
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        ChatSuggestionsS2CPacket packet = new ChatSuggestionsS2CPacket(action, new ArrayList<String>(completions));
+        this.getHandle().networkHandler.sendPacket(packet);
+    }
+
+	@Override
+	public int getExpCooldown() {
+        return this.getHandle().experiencePickUpDelay;
+	}
+
+	@Override
+	public @NotNull TriState hasFlyingFallDamage() {
+		// TODO Auto-generated method stub
+		return TriState.NOT_SET;
+		//         return this.getHandle().flyingFallDamage;
+	}
+
+	@Override
+	public boolean hasSeenWinScreen() {
+        return this.getHandle().seenCredits;
+	}
+
+	@Override
+	public void openSign(@NotNull Sign arg0, @NotNull Side arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, float arg2, float arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, @NotNull SoundCategory arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendBlockDamage(@NotNull Location arg0, float arg1, @NotNull Entity arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendEquipmentChange(@NotNull LivingEntity arg0, @NotNull Map<EquipmentSlot, ItemStack> arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendHurtAnimation(float yaw) {
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        float actualYaw = yaw + 90.0f;
+        this.getHandle().networkHandler.sendPacket(new DamageTiltS2CPacket(this.getEntityId(), actualYaw));
+	}
+
+	@Override
+    public void setExpCooldown(int ticks) {
+        // TODO
+		// this.getHandle().experiencePickUpDelay = BukkitEventFactory.callPlayerXpCooldownEvent(this.getHandle(), ticks, PlayerExpCooldownChangeEvent.ChangeReason.PLUGIN).getNewCooldown();
+    }
+
+	@Override
+	public void setFlyingFallDamage(@NotNull TriState arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+    public void setHasSeenWinScreen(boolean hasSeenWinScreen) {
+        this.getHandle().seenCredits = hasSeenWinScreen;
+    }
+
+	@Override
+	public void showWinScreen() {
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        GameStateChangeS2CPacket packet = new GameStateChangeS2CPacket(GameStateChangeS2CPacket.GAME_WON, 1.0f);
+        this.getHandle().networkHandler.sendPacket(packet);
+	}
+
+	/*@Override
 	public boolean teleport(@NotNull Location arg0, @NotNull TeleportCause arg1, boolean arg2, boolean arg3,
 			@NotNull RelativeTeleportFlag @NotNull... arg4) {
 		// TODO Auto-generated method stub
 		return this.teleport(arg0, arg1);
-	}
+	}*/
 
 }

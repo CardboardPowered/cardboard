@@ -167,5 +167,10 @@ public class MobImpl extends LivingEntityImpl implements Mob {
 		return Sound.AMBIENT_CAVE;
 	}
 
+	@Override
+	public int getPossibleExperienceReward() {
+        return this.getHandle().getXpToDrop();
+	}
+
 
 }

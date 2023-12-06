@@ -41,10 +41,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
+import net.minecraft.block.AbstractFireBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.IceBlock;
 import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.block.TurtleEggBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -785,6 +788,47 @@ public class CraftBlock implements Block {
 		// TODO Auto-generated method stub
 		return this.getWorldImpl();
 	}
+
+	// @Override
+    public boolean breakNaturally(boolean triggerEffect, boolean dropExperience) {
+        return this.breakNaturally(null, triggerEffect, dropExperience);
+    }
+
+	 public boolean breakNaturally(ItemStack item, boolean triggerEffect, boolean dropExperience) {
+	        boolean destroyed;
+	        net.minecraft.block.BlockState iblockdata = this.getNMS();
+	        net.minecraft.block.Block block = iblockdata.getBlock();
+	        net.minecraft.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+	        boolean result = false;
+	        if (block != Blocks.AIR && (item == null || !iblockdata.isToolRequired() || nmsItem.isSuitableFor(iblockdata))) {
+	            net.minecraft.block.Block.dropStacks(iblockdata, this.world, this.position, this.world.getBlockEntity(this.position), null, nmsItem);
+	            if (triggerEffect) {
+	                if (iblockdata.getBlock() instanceof AbstractFireBlock) {
+	                    this.world.syncWorldEvent(1009, this.position, 0);
+	                } else {
+	                    this.world.syncWorldEvent(2001, this.position, net.minecraft.block.Block.getRawIdFromState(iblockdata));
+	                }
+	            }
+	            if (dropExperience) {
+	                // TODO
+	            	// block.dropExperience(this.world, this.position, block.getExpDrop(iblockdata, this.world, this.position, nmsItem, true));
+	            }
+	            result = true;
+	        }
+	        if (destroyed = this.world.removeBlock(this.position, false)) {
+	            block.onBroken(this.world, this.position, iblockdata);
+	        }
+	        if (result) {
+	            if (block instanceof IceBlock) {
+	                //IceBlock iceBlock = (IceBlock)block;
+	                //iceBlock.afterDestroy(this.world, this.position, nmsItem);
+	            } else if (block instanceof TurtleEggBlock) {
+	              //  TurtleEggBlock turtleEggBlock = (TurtleEggBlock)block;
+	                //turtleEggBlock.breakEgg(this.world, this.position, iblockdata);
+	            }
+	        }
+	        return destroyed && result;
+	    }
 
     //
 

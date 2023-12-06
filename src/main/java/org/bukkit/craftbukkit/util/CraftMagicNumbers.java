@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.FeatureFlag;
 import org.bukkit.Fluid;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -23,6 +24,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftFeatureFlag;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
@@ -38,6 +40,7 @@ import org.cardboardpowered.impl.CardboardModdedBlock;
 import org.cardboardpowered.impl.CardboardModdedItem;
 import org.cardboardpowered.util.GameVersion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -110,9 +113,17 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     private static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
     private static final Map<net.minecraft.fluid.Fluid, org.bukkit.Fluid> FLUID_MATERIAL = new HashMap<>();
     private static final Map<Material, net.minecraft.fluid.Fluid> MATERIAL_FLUID = new HashMap<>();
+    private static final Map<org.bukkit.entity.EntityType, net.minecraft.entity.EntityType<?>> ENTITY_TYPE_ENTITY_TYPES = new HashMap();
+    private static final Map<net.minecraft.entity.EntityType<?>, org.bukkit.entity.EntityType> ENTITY_TYPES_ENTITY_TYPE = new HashMap();
 
     static {
         BlockImplUtil.setMN((IMagicNumbers)INSTANCE);
+        
+        for (org.bukkit.entity.EntityType type : org.bukkit.entity.EntityType.values()) {
+            if (type == org.bukkit.entity.EntityType.UNKNOWN) continue;
+            ENTITY_TYPE_ENTITY_TYPES.put(type, Registries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey())));
+            ENTITY_TYPES_ENTITY_TYPE.put(Registries.ENTITY_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey())), type);
+        }
         
         for (Block block : Registries.BLOCK)
             BLOCK_MATERIAL.put(block, Material.getMaterial(Registries.BLOCK.getId(block).getPath().toUpperCase(Locale.ROOT)));
@@ -531,12 +542,12 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         return "Fabric";
     }
 
-    @Override
+    //@Override
     public String getTranslationKey(Material arg0) {
         return arg0.name();
     }
 
-    @Override
+    //@Override
     public String getTranslationKey(org.bukkit.block.Block arg0) {
         // TODO Auto-generated method stub
         return null;
@@ -676,7 +687,8 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
+
+	//@Override
 	public <T extends Keyed> org.bukkit.@NotNull Registry<T> registryFor(Class<T> arg0) {
 		// TODO Auto-generated method stub
 		return null;
@@ -700,5 +712,34 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// 1.19.4:
+
+	@Override
+    public String getBlockTranslationKey(Material material) {
+        Block block = CraftMagicNumbers.getBlock(material);
+        return block != null ? block.getTranslationKey() : null;
+    }
+
+	@Override
+	public @Nullable FeatureFlag getFeatureFlag(@NotNull NamespacedKey key) {
+        Preconditions.checkArgument((key != null ? 1 : 0) != 0, "key cannot be null");
+        return CraftFeatureFlag.getFromNMS(key);
+	}
+
+	@Override
+    public String getItemTranslationKey(Material material) {
+        Item item = CraftMagicNumbers.getItem(material);
+        return item != null ? item.getTranslationKey() : null;
+    }
+	
+    public static net.minecraft.entity.EntityType<?> getEntityTypes(org.bukkit.entity.EntityType type) {
+        return ENTITY_TYPE_ENTITY_TYPES.get(type);
+    }
+
+    public static org.bukkit.entity.EntityType getEntityType(net.minecraft.entity.EntityType<?> entityTypes) {
+        return ENTITY_TYPES_ENTITY_TYPE.get(entityTypes);
+    }
+
 
 }

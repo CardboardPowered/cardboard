@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.BlockChangeDelegate;
@@ -41,6 +42,7 @@ import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Difficulty;
 import org.bukkit.Effect;
+import org.bukkit.FeatureFlag;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameEvent;
 import org.bukkit.GameRule;
@@ -63,6 +65,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.DragonBattle;
+import org.bukkit.craftbukkit.CraftFeatureFlag;
 import org.bukkit.craftbukkit.CraftParticle;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftSound;
@@ -2494,7 +2497,7 @@ public class WorldImpl implements World {
 	@Override
 	public int getSimulationDistance() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 8;
 	}
 
 	@Override
@@ -2560,6 +2563,34 @@ public class WorldImpl implements World {
 			int arg2, boolean arg3) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	// 1.19.4
+
+	// @Override
+    public org.bukkit.Chunk getChunkAt(int x2, int z2, boolean generate) {
+        if (generate) {
+            return this.getChunkAt(x2, z2);
+        }
+        return new CardboardChunk(this.getHandle(), x2, z2);
+    }
+
+	// @Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, float arg2, float arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// @Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, @NotNull SoundCategory arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public @NotNull Set<FeatureFlag> getFeatureFlags() {
+        return CraftFeatureFlag.getFromNMS(this.getHandle().getEnabledFeatures()).stream().map(FeatureFlag.class::cast).collect(Collectors.toUnmodifiableSet());
 	}
 
 }

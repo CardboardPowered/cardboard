@@ -749,4 +749,14 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         }
     }
 
+	@Override
+	public int getEnchantmentSeed() {
+        return this.getHandle().getEnchantmentTableSeed();
+	}
+
+	@Override
+	public void setEnchantmentSeed(int i2) {
+        this.getHandle().enchantmentTableSeed = i2;
+	}
+
 }

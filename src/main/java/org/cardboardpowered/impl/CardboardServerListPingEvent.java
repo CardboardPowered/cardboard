@@ -24,7 +24,7 @@ public class CardboardServerListPingEvent extends ServerListPingEvent {
     //      public ServerListPingEvent(@NotNull InetAddress address, @NotNull String motd, boolean shouldSendChatPreviews, int numPlayers, int maxPlayers) {
 
     public CardboardServerListPingEvent(ClientConnection connection, MinecraftServer server) {
-        super(((InetSocketAddress) connection.getAddress()).getAddress(), server.getServerMotd(), false, server.getPlayerManager().getCurrentPlayerCount(), server.getPlayerManager().getMaxPlayerCount());
+        super("", ((InetSocketAddress) connection.getAddress()).getAddress(), server.getServerMotd(), server.getPlayerManager().getCurrentPlayerCount(), server.getPlayerManager().getMaxPlayerCount());
         this.players = server.getPlayerManager().players.toArray();
         this.icon = CraftServer.INSTANCE.getServerIcon();
     }

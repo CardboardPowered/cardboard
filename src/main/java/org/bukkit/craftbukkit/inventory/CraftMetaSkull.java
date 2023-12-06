@@ -3,21 +3,28 @@ package org.bukkit.craftbukkit.inventory;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
+
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.util.Identifier;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.jetbrains.annotations.Nullable;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.meta.SkullMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
@@ -32,13 +39,16 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     private GameProfile profile;
     private NbtCompound serializedProfile;
 
+    private Identifier noteBlockSound;
+
     CraftMetaSkull(CraftMetaItem meta) {
         super(meta);
-        if (!(meta instanceof CraftMetaSkull))
+        if (!(meta instanceof CraftMetaSkull)) {
             return;
-
-        CraftMetaSkull skullMeta = (CraftMetaSkull) meta;
+        }
+        CraftMetaSkull skullMeta = (CraftMetaSkull)meta;
         this.setProfile(skullMeta.profile);
+        this.noteBlockSound = skullMeta.noteBlockSound;
     }
 
     CraftMetaSkull(NbtCompound tag) {
@@ -232,5 +242,17 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 		// TODO Auto-generated method stub
 		
 	}
+
+	// 1.19.4:
+	
+	@Override
+    public void setNoteBlockSound(NamespacedKey noteBlockSound) {
+        this.noteBlockSound = noteBlockSound == null ? null : CraftNamespacedKey.toMinecraft(noteBlockSound);
+    }
+
+	@Override
+    public NamespacedKey getNoteBlockSound() {
+        return this.noteBlockSound == null ? null : CraftNamespacedKey.fromMinecraft(this.noteBlockSound);
+    }
 
 }

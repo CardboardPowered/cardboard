@@ -1,16 +1,23 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
+
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import net.kyori.adventure.text.Component;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.util.CraftLegacy;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.material.MaterialData;
+import org.jetbrains.annotations.Nullable;
 
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
@@ -226,6 +233,25 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
             return CraftLegacy.fromLegacy(new MaterialData(Material.LEGACY_MONSTER_EGG, (byte) spawnedType.getTypeId()));
         }
         return super.updateMaterial(material);
+    }
+
+    @Override
+    public org.bukkit.entity.EntityType getCustomSpawnedType() {
+        return Optional.ofNullable(this.entityTag).map(tag -> tag.getString(CraftMetaSpawnEgg.ENTITY_ID.NBT)).flatMap(net.minecraft.entity.EntityType::get).map(CraftMagicNumbers::getEntityType).orElse(null);
+    }
+
+    @Override
+    public void setCustomSpawnedType(org.bukkit.entity.EntityType type) {
+        if (type == null) {
+            if (this.entityTag != null) {
+                this.entityTag.remove(CraftMetaSpawnEgg.ENTITY_ID.NBT);
+            }
+        } else {
+            if (this.entityTag == null) {
+                this.entityTag = new NbtCompound();
+            }
+            this.entityTag.putString(CraftMetaSpawnEgg.ENTITY_ID.NBT, type.key().toString());
+        }
     }
 
 }

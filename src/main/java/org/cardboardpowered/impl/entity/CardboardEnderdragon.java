@@ -223,4 +223,9 @@ public class CardboardEnderdragon extends CardboardComplexEntity implements Ende
 	public @Nullable Sound getAmbientSound() {
 		return Sound.ENTITY_ENDER_DRAGON_AMBIENT;
 	}
+	
+    public int getPossibleExperienceReward() {
+        return this.getHandle().getXpToDrop();
+    }
+	
 }

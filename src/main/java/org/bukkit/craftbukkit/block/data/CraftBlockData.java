@@ -14,7 +14,10 @@ import org.bukkit.Material;
 import org.bukkit.SoundGroup;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockSupport;
+import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.structure.Mirror;
+import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
@@ -38,6 +41,8 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Property;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
@@ -622,6 +627,41 @@ public class CraftBlockData implements BlockData {
 	        
 	        BlockPos position = CraftLocation.toBlockPosition(location);
 	        return state.canPlaceAt(world.getHandle(), position);
+	    }
+
+		@Override
+		public int getLightEmission() {
+			return this.state.getLuminance();
+		}
+
+		@Override
+	    public Material getPlacementMaterial() {
+	        return CraftMagicNumbers.getMaterial(this.state.getBlock().asItem());
+	    }
+
+		@Override
+	    public boolean isOccluding() {
+	        return this.state.isOpaque();
+	    }
+
+		@Override
+	    public void mirror(Mirror mirror) {
+	        this.state = this.state.mirror(BlockMirror.valueOf(mirror.name()));
+	    }
+
+		@Override
+	    public boolean requiresCorrectToolForDrops() {
+	        return this.state.isToolRequired();
+	    }
+
+		@Override
+	    public void rotate(StructureRotation rotation) {
+	        this.state = this.state.rotate(BlockRotation.valueOf(rotation.name()));
+	    }
+
+		@Override
+	    public PistonMoveReaction getPistonMoveReaction() {
+	        return PistonMoveReaction.getById((int)this.state.getPistonBehavior().ordinal());
 	    }
 
 }
