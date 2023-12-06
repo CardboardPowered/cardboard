@@ -71,7 +71,7 @@ import net.minecraft.world.chunk.ReadableContainer;
 import net.minecraft.world.chunk.light.LightingProvider;
 // TODO 1.18: import net.minecraft.world.gen.ChunkRandom;
 
-import net.minecraft.world.chunk.ReadOnlyChunk; //.WrapperProtoChunk;
+// import net.minecraft.world.chunk.ReadOnlyChunk; //.WrapperProtoChunk;
 import net.minecraft.world.chunk.WorldChunk;
 
 public class CardboardChunk implements Chunk {
