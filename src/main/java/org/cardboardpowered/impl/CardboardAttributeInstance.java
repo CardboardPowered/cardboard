@@ -67,7 +67,7 @@ public class CardboardAttributeInstance implements AttributeInstance {
     }
 
     public static AttributeModifier convert(EntityAttributeModifier nms) {
-        return new AttributeModifier(nms.getId(), nms.getName(), nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+        return new AttributeModifier(nms.getId(), nms.name, nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
     }
 
 }

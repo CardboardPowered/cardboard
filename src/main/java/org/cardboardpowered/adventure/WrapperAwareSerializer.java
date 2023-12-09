@@ -12,12 +12,12 @@ final class WrapperAwareSerializer implements ComponentSerializer<Component, Com
         if (input instanceof CardboardAdventureComponent) {
             return ((CardboardAdventureComponent) input).adventure;
         }
-        return CardboardAdventure.GSON.serializer().fromJson(Text.Serializer.toJsonTree(input), Component.class);
+        return CardboardAdventure.GSON.serializer().fromJson(Text.Serialization.toJsonTree(input), Component.class);
     }
 
     @Override
     public Text serialize(final Component component) {
-        return Text.Serializer.fromJson(CardboardAdventure.GSON.serializer().toJsonTree(component));
+        return Text.Serialization.fromJson(CardboardAdventure.GSON.serializer().toJson(component));
     }
 
 }

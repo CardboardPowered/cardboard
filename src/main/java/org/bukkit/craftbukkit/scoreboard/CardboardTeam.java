@@ -1,10 +1,6 @@
 package org.bukkit.craftbukkit.scoreboard;
 
 import com.google.common.collect.ImmutableSet;
-
-import java.util.Collection;
-import java.util.Set;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -20,6 +16,9 @@ import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class CardboardTeam extends CardboardScoreboardComponent implements Team {
     private final net.minecraft.scoreboard.Team team;
@@ -180,7 +179,7 @@ public class CardboardTeam extends CardboardScoreboardComponent implements Team 
         Validate.notNull(entry, "Entry cannot be null");
         CardboardScoreboard scoreboard = checkState();
 
-        scoreboard.board.addPlayerToTeam(entry, team);
+        scoreboard.board.addScoreHolderToTeam(entry, team);
     }
 
     @Override
@@ -198,7 +197,7 @@ public class CardboardTeam extends CardboardScoreboardComponent implements Team 
             return false;
         }
 
-        scoreboard.board.removePlayerFromTeam(entry, team);
+        scoreboard.board.removeScoreHolderFromTeam(entry, team);
         return true;
     }
 

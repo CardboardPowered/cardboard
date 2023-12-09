@@ -1191,7 +1191,7 @@ public class WorldImpl implements World {
 		Vec3d startPos = new Vec3d(start.getX(), start.getY(), start.getZ());
 		Vec3d endPos = new Vec3d(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
 		HitResult nmsHitResult = this.getHandle().raycast(new RaycastContext(startPos, endPos, ignorePassableBlocks ?
-				RaycastContext.ShapeType.COLLIDER : RaycastContext.ShapeType.OUTLINE, CardboardFluidRaytraceMode.toMc(mode), null));
+				RaycastContext.ShapeType.COLLIDER : RaycastContext.ShapeType.OUTLINE, CardboardFluidRaytraceMode.toMc(mode), (net.minecraft.entity.Entity) null));
 
 		return CardboardRayTraceResult.fromNMS(this, nmsHitResult);
 	}

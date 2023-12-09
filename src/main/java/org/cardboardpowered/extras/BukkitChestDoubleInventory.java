@@ -30,8 +30,8 @@ public class BukkitChestDoubleInventory implements NamedScreenHandlerFactory {
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
         if (this.leftChest.checkUnlocked(player) && this.rightChest.checkUnlocked(player)) {
-            this.leftChest.checkLootInteraction(inv.player);
-            this.rightChest.checkLootInteraction(inv.player);
+            this.leftChest.generateLoot(inv.player);
+            this.rightChest.generateLoot(inv.player);
             return GenericContainerScreenHandler.createGeneric9x6(syncId, inv, this.inventory);
         } else {
             return null;

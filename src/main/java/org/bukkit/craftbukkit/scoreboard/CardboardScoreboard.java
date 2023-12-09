@@ -3,10 +3,8 @@ package org.bukkit.craftbukkit.scoreboard;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import java.util.Collection;
-import java.util.Set;
-
 import net.kyori.adventure.text.Component;
+import net.minecraft.scoreboard.ScoreHolder;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import org.apache.commons.lang.Validate;
@@ -21,6 +19,9 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Set;
 
 public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboard {
 
@@ -51,7 +52,7 @@ public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboa
         Validate.isTrue(board.getNullableObjective(name) == null, "An objective of name '" + name + "' already exists");
 
         CardboardCriteria craftCriteria = CardboardCriteria.getFromBukkit(criteria);
-        ScoreboardObjective objective = board.addObjective(name, craftCriteria.criteria, CraftChatMessage.fromStringOrNull(displayName), CardboardScoreboardTranslations.fromBukkitRender(renderType));
+        ScoreboardObjective objective = board.addObjective(name, craftCriteria.criteria, CraftChatMessage.fromStringOrNull(displayName), CardboardScoreboardTranslations.fromBukkitRender(renderType), true, null);
         return new CardboardObjective(this, objective);
     }
 
@@ -100,8 +101,12 @@ public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboa
     @Override
     public ImmutableSet<Score> getScores(String entry) throws IllegalArgumentException {
         Validate.notNull(entry, "Entry cannot be null");
+        return getScores(() -> entry);
+    }
+
+    private ImmutableSet<Score> getScores(ScoreHolder entry) throws IllegalArgumentException {
         ImmutableSet.Builder<Score> scores = ImmutableSet.builder();
-        for (ScoreboardObjective objective : (Collection<ScoreboardObjective>) this.board.getObjectives())
+        for (ScoreboardObjective objective : this.board.getObjectives())
             scores.add(new CardboardScore(new CardboardObjective(this, objective), entry));
         return scores.build();
     }
@@ -115,22 +120,22 @@ public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboa
     @Override
     public void resetScores(String entry) throws IllegalArgumentException {
         Validate.notNull(entry, "Entry cannot be null");
-        for (ScoreboardObjective objective : (Collection<ScoreboardObjective>) this.board.getObjectives())
-            board.resetPlayerScore(entry, objective);
+        for (ScoreboardObjective objective : this.board.getObjectives())
+            board.removeScore(() -> entry, objective);
     }
 
     @Override
     public Team getPlayerTeam(OfflinePlayer player) throws IllegalArgumentException {
         Validate.notNull(player, "OfflinePlayer cannot be null");
 
-        net.minecraft.scoreboard.Team team = board.getPlayerTeam(player.getName());
+        net.minecraft.scoreboard.Team team = board.getTeam(player.getName());
         return team == null ? null : new CardboardTeam(this, team);
     }
 
     @Override
     public Team getEntryTeam(String entry) throws IllegalArgumentException {
         Validate.notNull(entry, "Entry cannot be null");
-        net.minecraft.scoreboard.Team team = board.getPlayerTeam(entry);
+        net.minecraft.scoreboard.Team team = board.getTeam(entry);
         return team == null ? null : new CardboardTeam(this, team);
     }
 
@@ -162,15 +167,15 @@ public final class CardboardScoreboard implements org.bukkit.scoreboard.Scoreboa
     @Override
     public ImmutableSet<OfflinePlayer> getPlayers() {
         ImmutableSet.Builder<OfflinePlayer> players = ImmutableSet.builder();
-        for (Object playerName : board.getKnownPlayers())
-            players.add(Bukkit.getOfflinePlayer(playerName.toString()));
+        for (ScoreHolder holder : board.getKnownScoreHolders())
+            players.add(Bukkit.getOfflinePlayer(holder.getNameForScoreboard()));
         return players.build();
     }
 
     @Override
     public ImmutableSet<String> getEntries() {
         ImmutableSet.Builder<String> entries = ImmutableSet.builder();
-        for (Object entry : board.getKnownPlayers()) entries.add(entry.toString());
+        for (ScoreHolder entry : board.getKnownScoreHolders()) entries.add(entry.getNameForScoreboard());
         return entries.build();
     }
 

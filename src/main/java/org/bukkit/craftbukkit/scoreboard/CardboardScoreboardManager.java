@@ -2,11 +2,12 @@ package org.bukkit.craftbukkit.scoreboard;
 
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import net.minecraft.network.packet.s2c.play.ScoreboardObjectiveUpdateS2CPacket;
+import net.minecraft.scoreboard.ScoreAccess;
+import net.minecraft.scoreboard.ScoreHolder;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.scoreboard.ScoreboardDisplaySlot;
 import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -94,10 +95,10 @@ public final class CardboardScoreboardManager implements ScoreboardManager {
     }
 
     // CardboardBukkit method
-    public void getScoreboardScores(ScoreboardCriterion criteria, String name, Consumer<ScoreboardPlayerScore> consumer) {
+    public void getScoreboardScores(ScoreboardCriterion criteria, ScoreHolder holder, Consumer<ScoreAccess> consumer) {
         for (CardboardScoreboard scoreboard : scoreboards) {
             Scoreboard board = scoreboard.board;
-            board.forEachScore(criteria, name, (score) -> consumer.accept(score));
+            board.forEachScore(criteria, holder, consumer::accept);
         }
     }
 

@@ -1,9 +1,8 @@
 package org.bukkit.craftbukkit.scoreboard;
 
-import java.util.Map;
+import net.minecraft.scoreboard.ReadableScoreboardScore;
+import net.minecraft.scoreboard.ScoreHolder;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Objective;
@@ -11,22 +10,22 @@ import org.bukkit.scoreboard.Score;
 
 public final class CardboardScore implements Score {
 
-    private final String entry;
+    private final ScoreHolder entry;
     private final CardboardObjective objective;
 
-    public CardboardScore(CardboardObjective objective, String entry) {
+    public CardboardScore(CardboardObjective objective, ScoreHolder entry) {
         this.objective = objective;
         this.entry = entry;
     }
 
     @Override
     public OfflinePlayer getPlayer() {
-        return Bukkit.getOfflinePlayer(entry);
+        return Bukkit.getOfflinePlayer(entry.getNameForScoreboard());
     }
 
     @Override
     public String getEntry() {
-        return entry;
+        return entry.getNameForScoreboard();
     }
 
     @Override
@@ -37,23 +36,27 @@ public final class CardboardScore implements Score {
     @Override
     public int getScore() throws IllegalStateException {
         Scoreboard board = objective.checkState().board;
-        if (board.getKnownPlayers().contains(entry)) {
-            Map<ScoreboardObjective, ScoreboardPlayerScore> scores = board.getPlayerObjectives(entry);
-            ScoreboardPlayerScore score = scores.get(objective.getHandle());
-            if (score != null) return score.getScore();
+
+        if(board.getKnownScoreHolders().contains(entry)) {
+            ReadableScoreboardScore score = board.getScore(entry, objective.getHandle());
+            if(score != null) {
+                return score.getScore();
+            }
         }
+
         return 0;
     }
 
     @Override
     public void setScore(int score) throws IllegalStateException {
-        objective.checkState().board.getPlayerScore(entry, objective.getHandle()).setScore(score);
+        objective.checkState().board.getOrCreateScore(entry, objective.getHandle()).setScore(score);
     }
 
     @Override
     public boolean isScoreSet() throws IllegalStateException {
         Scoreboard board = objective.checkState().board;
-        return board.getKnownPlayers().contains(entry) && board.getPlayerObjectives(entry).containsKey(objective.getHandle());
+        return board.getKnownScoreHolders().contains(entry) &&
+                board.getScore(entry, objective.getHandle()) != null;
     }
 
     @Override

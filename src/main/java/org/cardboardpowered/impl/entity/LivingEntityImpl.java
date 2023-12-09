@@ -181,14 +181,14 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
             ((ThrownEntity) launch).setVelocity(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 1.5F, 1.0F); // ItemEnderPearl
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new ArrowEntity(world, getHandle());
+                launch = new ArrowEntity(world, getHandle(), ArrowEntity.DEFAULT_STACK);
                 ((IMixinArrowEntity)(ArrowEntity) launch).setType(CardboardPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
-                launch = new SpectralArrowEntity(world, getHandle());
+                launch = new SpectralArrowEntity(world, getHandle(), ArrowEntity.DEFAULT_STACK);
             } else if (Trident.class.isAssignableFrom(projectile)) {
                 launch = new TridentEntity(world, getHandle(), new net.minecraft.item.ItemStack(net.minecraft.item.Items.TRIDENT));
             } else {
-                launch = new ArrowEntity(world, getHandle());
+                launch = new ArrowEntity(world, getHandle(), ArrowEntity.DEFAULT_STACK);
             }
             ((PersistentProjectileEntity) launch).setVelocity(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 3.0F, 1.0F); // ItemBow
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {

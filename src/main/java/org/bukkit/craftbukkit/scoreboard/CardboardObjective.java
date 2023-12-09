@@ -113,7 +113,7 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
     public Score getScore(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(player, "Player cannot be null");
         checkState();
-        return new CardboardScore(this, player.getName());
+        return new CardboardScore(this, player::getName);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
         Validate.notNull(entry, "Entry cannot be null");
         Validate.isTrue(entry.length() <= 40, "Score '" + entry + "' is longer than the limit of 40 characters");
         checkState();
-        return new CardboardScore(this, entry);
+        return new CardboardScore(this, () -> entry);
     }
 
     @Override

@@ -11,9 +11,9 @@ import org.bukkit.block.Structure;
 import org.bukkit.block.structure.Mirror;
 import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.block.structure.UsageMode;
-import org.cardboardpowered.impl.entity.LivingEntityImpl;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.BlockVector;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
 
 public class CardboardStructureBlock extends CardboardBlockEntityState<StructureBlockBlockEntity> implements Structure {
 
@@ -49,7 +49,7 @@ public class CardboardStructureBlock extends CardboardBlockEntityState<Structure
 
     @Override
     public void setAuthor(LivingEntity entity) {
-        getSnapshot().author = ((LivingEntityImpl) entity).getHandle().getEntityName();
+        getSnapshot().author = ((LivingEntityImpl) entity).getHandle().getName().getString();
     }
 
     @Override

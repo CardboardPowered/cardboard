@@ -142,7 +142,6 @@
     "network.MixinLegacyQueryHandler",
     "network.MixinPacketByteBuf",
     "network.MixinPlayerManager_ChatEvent",
-    "network.MixinResourcePackStatusC2SPacket",
     "network.MixinServerHandshakeNetworkHandler",
     "network.MixinServerLoginNetworkHandler",
     "network.MixinServerNetworkIo",

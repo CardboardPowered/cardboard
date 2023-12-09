@@ -39,7 +39,7 @@ public class RemapUtils {
     	System.out.println("REMAP UTIL DEBUG");
         jarMapping = new BannerJarMapping();
         // v1_20_R1
-        jarMapping.packages.put("org/bukkit/craftbukkit/v1_20_R2/", "org/bukkit/craftbukkit/");
+        jarMapping.packages.put("org/bukkit/craftbukkit/v1_20_R3/", "org/bukkit/craftbukkit/");
         //jarMapping.packages.put("org/bukkit/craftbukkit/v1_19_R3/", "org/bukkit/craftbukkit/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");

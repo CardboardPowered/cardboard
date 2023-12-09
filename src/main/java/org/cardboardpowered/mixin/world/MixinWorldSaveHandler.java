@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.NbtTagSizeTracker;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.WorldSaveHandler;
 import org.cardboardpowered.impl.entity.PlayerImpl;
@@ -20,7 +21,6 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 
 @Mixin(value = WorldSaveHandler.class, priority = 999)
 public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
@@ -44,7 +44,7 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
         try {
             File file = new File(this.playerDataDir, player.getUuidAsString() + ".dat");
             if (file.exists() && file.isFile()) {
-                lv = NbtIo.readCompressed(file);
+                lv = NbtIo.readCompressed(file.toPath(), NbtTagSizeTracker.ofUnlimitedBytes());
             }
         } catch (Exception exception) {
         	BukkitFabricMod.LOGGER.warning("Failed to load player data for " + player.getName().getString());
@@ -120,7 +120,7 @@ public class MixinWorldSaveHandler implements IMixinWorldSaveHandler {
         try {
             File file1 = new File(this.playerDataDir, s + ".dat");
             if (file1.exists())
-                return NbtIo.readCompressed((InputStream) (new FileInputStream(file1)));
+                return NbtIo.readCompressed(new FileInputStream(file1), NbtTagSizeTracker.ofUnlimitedBytes());
         } catch (Exception exception) {
             BukkitFabricMod.LOGGER.warning("Failed to load player data for " + s);
         }

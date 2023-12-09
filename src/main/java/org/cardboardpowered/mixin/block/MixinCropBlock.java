@@ -1,7 +1,11 @@
 package org.cardboardpowered.mixin.block;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import net.minecraft.block.*;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CropBlock;
+import net.minecraft.block.PlantBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @MixinInfo(events = {"BlockGrowEvent, EntityChangeBlockEvent"})
 @Mixin (CropBlock.class)
-public class MixinCropBlock extends PlantBlock {
+public abstract class MixinCropBlock extends PlantBlock {
 
     protected MixinCropBlock(AbstractBlock.Settings settings) {
         super(settings);

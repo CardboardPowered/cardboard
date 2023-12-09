@@ -45,7 +45,7 @@ public class AdvancementProgressImpl implements AdvancementProgress {
     @Override
     public Date getDateAwarded(String criteria) {
         CriterionProgress criterion = handle.getCriterionProgress(criteria);
-        return (criterion == null) ? null : Date.from(criterion.getObtainedDate());
+        return (criterion == null) ? null : Date.from(criterion.getObtainedTime());
     }
 
     @Override

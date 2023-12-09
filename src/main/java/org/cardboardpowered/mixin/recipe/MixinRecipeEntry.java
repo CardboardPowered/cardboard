@@ -63,9 +63,9 @@ public class MixinRecipeEntry implements IMixinRecipe {
 			CardboardShapedRecipe recipe = new CardboardShapedRecipe(id, result, nms);
 			recipe.setGroup(nms.group);
 
-			switch(nms.height) {
+			switch(nms.getHeight()) {
 				case 1:
-					switch(nms.width) {
+					switch(nms.getWidth()) {
 						case 1:
 							recipe.shape("a");
 							break;
@@ -78,7 +78,7 @@ public class MixinRecipeEntry implements IMixinRecipe {
 					}
 					break;
 				case 2:
-					switch(nms.width) {
+					switch(nms.getWidth()) {
 						case 1:
 							recipe.shape("a", "b");
 							break;
@@ -91,7 +91,7 @@ public class MixinRecipeEntry implements IMixinRecipe {
 					}
 					break;
 				case 3:
-					switch(nms.width) {
+					switch(nms.getWidth()) {
 						case 1:
 							recipe.shape("a", "b", "c");
 							break;

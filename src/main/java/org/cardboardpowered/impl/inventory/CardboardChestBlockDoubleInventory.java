@@ -23,8 +23,8 @@ public class CardboardChestBlockDoubleInventory implements NamedScreenHandlerFac
     @Override
     public ScreenHandler createMenu(int i, PlayerInventory playerinventory, PlayerEntity entityhuman) {
         if (tileentitychest.checkUnlocked(entityhuman) && tileentitychest1.checkUnlocked(entityhuman)) {
-            tileentitychest.checkLootInteraction(playerinventory.player);
-            tileentitychest1.checkLootInteraction(playerinventory.player);
+            tileentitychest.generateLoot(playerinventory.player);
+            tileentitychest1.generateLoot(playerinventory.player);
             return GenericContainerScreenHandler.createGeneric9x6(i, playerinventory, inventorylargechest);
         } else return null;
     }

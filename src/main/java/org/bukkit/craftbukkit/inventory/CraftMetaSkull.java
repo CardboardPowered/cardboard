@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.destroystokyo.paper.profile.CraftPlayerProfile;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
@@ -90,12 +90,13 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
         if (this.profile != null) {
             tag.put(SKULL_OWNER.NBT, this.serializedProfile);
-            SkullBlockEntity.fetchProfileWithTextures(this.profile).thenAccept((optional) -> {
-                optional.ifPresent((filledProfile) -> {
-                    this.setProfile(filledProfile);
-                    tag.put(SKULL_OWNER.NBT, this.serializedProfile);
+            PlayerProfile ownerProfile = new CraftPlayerProfile(profile); // getOwnerProfile may return null
+            if (ownerProfile.getTextures().isEmpty()) {
+                ownerProfile.update().thenAccept((filledProfile) -> {
+                    setOwnerProfile(filledProfile);
+                    tag.put(SKULL_OWNER.NBT, serializedProfile);
                 });
-            });
+            }
         }
     }
 

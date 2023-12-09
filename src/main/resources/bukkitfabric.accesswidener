@@ -200,13 +200,9 @@ mutable	field	net/minecraft/recipe/RecipeManager	errored	Z
 accessible	method	net/minecraft/recipe/RecipeManager	apply	(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V
 accessible	method	net/minecraft/recipe/RecipeManager	getAllOfType	(Lnet/minecraft/recipe/RecipeType;)Ljava/util/Map;
 extendable	class	net/minecraft/recipe/RecipeType$1
-accessible	field	net/minecraft/recipe/ShapedRecipe	width	I
-accessible	field	net/minecraft/recipe/ShapedRecipe	height	I
 accessible	field	net/minecraft/recipe/ShapedRecipe	group	Ljava/lang/String;
 accessible	field	net/minecraft/recipe/ShapelessRecipe	group	Ljava/lang/String;
 mutable	field	net/minecraft/recipe/ShapelessRecipe	group	Ljava/lang/String;
-accessible	class	net/minecraft/recipe/CookingRecipeSerializer$RecipeFactory
-accessible	class	net/minecraft/recipe/CuttingRecipe$Serializer$RecipeFactory
 accessible	field	net/minecraft/recipe/CuttingRecipe	group	Ljava/lang/String;
 mutable	field	net/minecraft/recipe/CuttingRecipe	group	Ljava/lang/String;
 extendable	class	net/minecraft/enchantment/EnchantmentTarget$1
@@ -229,20 +225,6 @@ accessible	field	net/minecraft/world/CommandBlockExecutor	command	Ljava/lang/Str
 mutable	field	net/minecraft/world/CommandBlockExecutor	command	Ljava/lang/String;
 accessible	field	net/minecraft/world/CommandBlockExecutor	customName	Lnet/minecraft/text/Text;
 mutable	field	net/minecraft/world/CommandBlockExecutor	customName	Lnet/minecraft/text/Text;
-accessible	field	net/minecraft/world/MobSpawnerLogic	spawnDelay	I
-mutable	field	net/minecraft/world/MobSpawnerLogic	spawnDelay	I
-accessible	field	net/minecraft/world/MobSpawnerLogic	minSpawnDelay	I
-mutable	field	net/minecraft/world/MobSpawnerLogic	minSpawnDelay	I
-accessible	field	net/minecraft/world/MobSpawnerLogic	maxSpawnDelay	I
-mutable	field	net/minecraft/world/MobSpawnerLogic	maxSpawnDelay	I
-accessible	field	net/minecraft/world/MobSpawnerLogic	spawnCount	I
-mutable	field	net/minecraft/world/MobSpawnerLogic	spawnCount	I
-accessible	field	net/minecraft/world/MobSpawnerLogic	maxNearbyEntities	I
-mutable	field	net/minecraft/world/MobSpawnerLogic	maxNearbyEntities	I
-accessible	field	net/minecraft/world/MobSpawnerLogic	requiredPlayerRange	I
-mutable	field	net/minecraft/world/MobSpawnerLogic	requiredPlayerRange	I
-accessible	field	net/minecraft/world/MobSpawnerLogic	spawnRange	I
-mutable	field	net/minecraft/world/MobSpawnerLogic	spawnRange	I
 extendable	class	net/minecraft/util/math/ChunkPos$1
 accessible	field	net/minecraft/util/math/ChunkPos$1	position	Lnet/minecraft/util/math/ChunkPos;
 mutable	field	net/minecraft/util/math/ChunkPos$1	position	Lnet/minecraft/util/math/ChunkPos;
@@ -404,9 +386,7 @@ accessible	field	net/minecraft/world/PersistentStateManager	directory	Ljava/io/F
 mutable	field	net/minecraft/world/PersistentStateManager	directory	Ljava/io/File;
 accessible	field	net/minecraft/world/level/LevelProperties	time	J
 mutable	field	net/minecraft/world/level/LevelProperties	time	J
-accessible	field	net/minecraft/world/level/LevelProperties	dataFixer	Lcom/mojang/datafixers/DataFixer;
 accessible	field	net/minecraft/world/level/LevelProperties	version	I
-accessible	method	net/minecraft/world/level/LevelProperties	loadPlayerData	()V
 accessible	field	net/minecraft/world/WorldSaveHandler	playerDataDir	Ljava/io/File;
 mutable	field	net/minecraft/world/WorldSaveHandler	playerDataDir	Ljava/io/File;
 accessible	field	net/minecraft/world/WorldSaveHandler	dataFixer	Lcom/mojang/datafixers/DataFixer;
@@ -467,13 +447,10 @@ mutable	field	net/minecraft/server/MinecraftServer	ticks	I
 accessible	field	net/minecraft/server/MinecraftServer	playerIdleTimeout	I
 mutable	field	net/minecraft/server/MinecraftServer	playerIdleTimeout	I
 accessible	field	net/minecraft/server/MinecraftServer	loading	Z
-accessible	field	net/minecraft/server/MinecraftServer	timeReference	J
-mutable	field	net/minecraft/server/MinecraftServer	timeReference	J
 accessible	field	net/minecraft/server/MinecraftServer	dataPackManager	Lnet/minecraft/resource/ResourcePackManager;
 mutable	field	net/minecraft/server/MinecraftServer	dataPackManager	Lnet/minecraft/resource/ResourcePackManager;
 accessible	field	net/minecraft/server/DataPackContents	commandManager	Lnet/minecraft/server/command/CommandManager;
 mutable	field	net/minecraft/server/DataPackContents	commandManager	Lnet/minecraft/server/command/CommandManager;
-accessible	field	net/minecraft/server/MinecraftServer	tickTime	F
 accessible	field	net/minecraft/server/MinecraftServer	workerExecutor	Ljava/util/concurrent/Executor;
 accessible	field	net/minecraft/server/MinecraftServer	serverId	Ljava/lang/String;
 accessible	method	net/minecraft/server/MinecraftServer	shutdown	()V
@@ -565,8 +542,18 @@ accessible field net/minecraft/entity/projectile/FireworkRocketEntity ITEM Lnet/
 accessible field net/minecraft/entity/projectile/FireworkRocketEntity SHOT_AT_ANGLE Lnet/minecraft/entity/data/TrackedData;
 accessible field net/minecraft/entity/projectile/FireworkRocketEntity lifeTime I
 accessible class net/minecraft/server/MinecraftServer$ResourceManagerHolder
-accessible method net/minecraft/block/entity/SkullBlockEntity fetchProfileWithTextures (Lcom/mojang/authlib/GameProfile;)Ljava/util/concurrent/CompletableFuture;
 accessible method net/minecraft/block/DispenserBlock dispense (Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)V
 accessible method net/minecraft/block/DropperBlock dispense (Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)V
 accessible field net/minecraft/block/entity/AbstractFurnaceBlockEntity cookTime I
 accessible field net/minecraft/block/entity/AbstractFurnaceBlockEntity cookTimeTotal I
+accessible field net/minecraft/entity/projectile/ArrowEntity DEFAULT_STACK Lnet/minecraft/item/ItemStack;
+accessible method net/minecraft/text/Text$Serialization toJson (Lnet/minecraft/text/Text;)Lcom/google/gson/JsonElement;
+accessible field net/minecraft/block/spawner/MobSpawnerLogic spawnDelay I
+accessible field net/minecraft/block/spawner/MobSpawnerLogic minSpawnDelay I
+accessible field net/minecraft/block/spawner/MobSpawnerLogic maxNearbyEntities I
+accessible field net/minecraft/block/spawner/MobSpawnerLogic spawnCount I
+accessible field net/minecraft/block/spawner/MobSpawnerLogic requiredPlayerRange I
+accessible field net/minecraft/block/spawner/MobSpawnerLogic spawnRange I
+accessible field net/minecraft/block/spawner/MobSpawnerLogic maxSpawnDelay I
+accessible field net/minecraft/entity/attribute/EntityAttributeModifier name Ljava/lang/String;
+accessible field net/minecraft/entity/ItemEntity throwerUuid Ljava/util/UUID;

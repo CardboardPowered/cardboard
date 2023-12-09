@@ -2,7 +2,6 @@ package org.cardboardpowered.mixin.network;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
-import com.javazilla.bukkitfabric.interfaces.IMixinResourcePackStatusC2SPacket;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
@@ -134,7 +133,8 @@ public abstract class MixinServerPlayNetworkHandler extends ServerCommonNetworkH
      */
     @Override
     public void disconnect(Text reason) {
-        String leaveMessage = Formatting.YELLOW + this.player.getEntityName() + " left the game.";
+        String leaveMessage = Formatting.YELLOW +
+                "" + this.player.getDisplayName() + " left the game.";
 
         PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), reason.getString(), leaveMessage);
 
@@ -661,7 +661,7 @@ public abstract class MixinServerPlayNetworkHandler extends ServerCommonNetworkH
     @Override
     public void onResourcePackStatus(ResourcePackStatusC2SPacket packet) {
         super.onResourcePackStatus(packet);
-        int statusOrdinal = ((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal();
+        int statusOrdinal = packet.status().ordinal();
         PlayerResourcePackStatusEvent event = new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[statusOrdinal]);
         Bukkit.getPluginManager().callEvent(event);
     }

@@ -3,6 +3,16 @@ package org.bukkit.craftbukkit.util;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.gson.JsonParseException;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.ClickEvent.Action;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent.Literal;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
+import net.minecraft.text.TranslatableTextContent;
+import net.minecraft.util.Formatting;
+import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,18 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.ClickEvent.Action;
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.text.MutableText;
-// import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
-import net.minecraft.util.Formatting;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.text.TranslatableTextContent;
-
-import org.bukkit.ChatColor;
 
 public final class CraftChatMessage {
 
@@ -132,7 +130,7 @@ public final class CraftChatMessage {
                         hex.append(c);
 
                         if (hex.length() == 7) {
-                            modifier = RESET.withColor(TextColor.parse(hex.toString()));
+                            modifier = RESET.withColor(TextColor.parse(hex.toString()).result().get());
                             hex = null;
                         }
                     } else if (format.isModifier() && format != Formatting.RESET) {
@@ -220,7 +218,7 @@ public final class CraftChatMessage {
     }
 
     public static String toJSON(Text component) {
-        return Text.Serializer.toJson(component);
+        return Text.Serialization.toJsonString(component);
     }
     
     public static ArrayList<Text> list(Text txt) {
@@ -263,9 +261,9 @@ public final class CraftChatMessage {
     }
 
     private static Text fixComponent(MutableText component, Matcher matcher) {
-        LiteralTextContent text;
+        Literal text;
         String msg;
-        if (component.getContent() instanceof LiteralTextContent && matcher.reset(msg = (text = (LiteralTextContent)component.getContent()).string()).find()) {
+        if (component.getContent() instanceof Literal && matcher.reset(msg = (text = (Literal)component.getContent()).string()).find()) {
             matcher.reset();
             Style modifier = component.getStyle();
             ArrayList<Text> extras = new ArrayList<Text>();
@@ -339,7 +337,6 @@ public final class CraftChatMessage {
         return CraftChatMessage.toJSON(component);
     }
 
-
     public static String fromJSONOrStringToJSON(String message) {
         return fromJSONOrStringToJSON(message, false);
     }
@@ -366,7 +363,7 @@ public final class CraftChatMessage {
     }
 
     public static Text fromJSON(String jsonMessage) throws JsonParseException {
-        return Text.Serializer.fromJson(jsonMessage);
+        return Text.Serialization.fromJson(jsonMessage);
     }
 
     public static String fromJSONOrStringToJSON(String message, boolean nullable, boolean keepNewlines, int maxLength, boolean checkJsonContentLength) {
@@ -378,7 +375,7 @@ public final class CraftChatMessage {
             if (checkJsonContentLength) {
                 String content = fromComponent(component);
                 String trimmedContent = trimMessage(content, maxLength);
-                if (content != trimmedContent) { // identity comparison is fine here
+                if (!content.equals(trimmedContent)) { // identity comparison is fine here
                     // Note: The resulting text has all non-plain text features stripped.
                     return fromStringToJSON(trimmedContent, keepNewlines);
                 }

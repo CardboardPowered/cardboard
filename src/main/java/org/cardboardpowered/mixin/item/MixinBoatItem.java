@@ -4,6 +4,8 @@ import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
+import net.minecraft.item.BoatItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -12,33 +14,26 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.event.GameEvent;
-
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-
-import net.minecraft.item.BoatItem;
-import net.minecraft.item.Item;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
 @MixinInfo(events = {"PlayerInteractEvent"})
 @Mixin(BoatItem.class)
-public class MixinBoatItem extends Item {
+public abstract class MixinBoatItem extends Item {
 
     // TODO: 1.19
     /*@SuppressWarnings({ "deprecation", "rawtypes", "unchecked" })
@@ -60,8 +55,9 @@ public class MixinBoatItem extends Item {
     
     // @formatter:off
     @Shadow @Final private BoatEntity.Type type;
-    @Shadow public BoatEntity createEntity(World world, HitResult hitResult) {return null;}
     // @formatter:on
+
+    @Shadow protected abstract BoatEntity createEntity(World world, HitResult hitResult, ItemStack stack, PlayerEntity player);
 
     public MixinBoatItem(Settings settings) {
         super(settings);
@@ -106,7 +102,7 @@ public class MixinBoatItem extends Item {
                     }
                 }
 
-                BoatEntity boatentity = this.createEntity(worldIn, result);
+                BoatEntity boatentity = this.createEntity(worldIn, result, itemstack, playerIn);
                 boatentity.setVariant(this.type);
                 boatentity.setYaw(playerIn.getYaw());
                 if (!worldIn.isSpaceEmpty(boatentity, boatentity.getBoundingBox().expand(-0.1D))) {

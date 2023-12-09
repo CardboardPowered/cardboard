@@ -45,7 +45,7 @@ public abstract class MixinSPNH_PlayerCommandPreprocessEvent_1_19 implements IMi
 	private void handleCommandExecution(CommandExecutionC2SPacket packet, LastSeenMessageList lastseenmessages) {
 		SignedMessage playerchatmessage;
 		String command = "/" + packet.command();
-		BukkitFabricMod.LOGGER.info(this.player.getEntityName() + " issued server command: " + command);
+		BukkitFabricMod.LOGGER.info(this.player.getGameProfile().getName() + " issued server command: " + command);
 		PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(this.getPlayer(), command, new LazyPlayerSet(CraftServer.server));
 		CraftServer.INSTANCE.getPluginManager().callEvent(event);
 

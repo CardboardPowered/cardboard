@@ -222,7 +222,7 @@ import java.util.logging.Logger;
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.20.2-R0.1-SNAPSHOT"; // "1.19.4-R0.1-SNAPSHOT"; // "1.19.2-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.20.4-R0.1-SNAPSHOT"; // "1.19.4-R0.1-SNAPSHOT"; // "1.19.2-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -859,9 +859,6 @@ public class CraftServer implements Server {
 
 				int result = vanillaCommandManager.dispatcher.execute(theCommand, source);
 				return result != -1;
-			} catch(net.minecraft.command.CommandException var13) {
-				source.sendError(var13.getTextMessage());
-				return false;
 			} catch(CommandSyntaxException e) {
 				if(e.getType() != CommandSyntaxException
 						.BUILT_IN_EXCEPTIONS
@@ -1374,7 +1371,7 @@ public class CraftServer implements Server {
 
     @Override
     public int getViewDistance() {
-        return server instanceof MinecraftDedicatedServer ? ((MinecraftDedicatedServer)getServer()).getProperties().viewDistance : 12;
+        return server != null ? server.getProperties().viewDistance : 12;
     }
 
     @Override
@@ -1805,11 +1802,11 @@ public class CraftServer implements Server {
 
     // PaperAPI - start
     public long[] getTickTimes() {
-        return new long[] {(long) server.tickTime};
+        return new long[] {(long) server.ticks};
     }
 
     public double getAverageTickTime() {
-        return server.tickTime;
+        return server.ticks;
     }
 
     @Override
@@ -1875,7 +1872,7 @@ public class CraftServer implements Server {
 
     @Override
     public double[] getTPS() {
-        return new double[] {server.tickTime};
+        return new double[] {server.ticks};
     }
 
     @Override

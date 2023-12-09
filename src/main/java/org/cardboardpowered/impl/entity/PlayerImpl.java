@@ -109,6 +109,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -296,7 +297,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
 	@Override
 	public String getName() {
-		return nms.getEntityName();
+		return nms.getGameProfile().getName();
 	}
 
 	@Override
@@ -1063,7 +1064,8 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 	}
 
 	private void sendPack(String url, String hash, boolean required, String text) {
-		nms.networkHandler.sendPacket(new ResourcePackSendS2CPacket(url, hash, required, text == null ? null : Text.literal(text)));
+		UUID id = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
+		nms.networkHandler.sendPacket(new ResourcePackSendS2CPacket(id, url, hash, required, text == null ? null : Text.literal(text)));
 	}
 
 	@Override

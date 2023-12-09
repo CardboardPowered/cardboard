@@ -206,7 +206,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
     public void firePlayerQuitEvent(ServerPlayerEntity player, CallbackInfo ci) {
         player.closeHandledScreen();
 
-        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(CraftServer.INSTANCE.getPlayer(player), "\u00A7e" + player.getEntityName() + " left the game");
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(CraftServer.INSTANCE.getPlayer(player), "\u00A7e" + player.getDisplayName().getString() + " left the game");
         CraftServer.INSTANCE.getPluginManager().callEvent(playerQuitEvent);
         player.playerTick();
     }

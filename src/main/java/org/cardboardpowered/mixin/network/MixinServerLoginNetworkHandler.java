@@ -60,8 +60,6 @@ public abstract class MixinServerLoginNetworkHandler implements IMixinServerLogi
 	@Shadow @Nullable private String profileName;
 	@Shadow
 	abstract void startVerify(GameProfile profile);
-	@Shadow
-	protected static GameProfile createOfflineProfile(String name) {return null;}
 	@Shadow private byte[] nonce = new byte[4];
 	@Shadow private MinecraftServer server;
 	@Shadow public ClientConnection connection;
@@ -132,7 +130,7 @@ public abstract class MixinServerLoginNetworkHandler implements IMixinServerLogi
 						fireEvents();
 					} else if(server.isSingleplayer()) {
 						LOGGER_BF.warn("Failed to verify username but will let them in anyway!");
-						profile = createOfflineProfile(name);
+						profile = Uuids.getOfflinePlayerProfile(name);
 						startVerify(profile);
 					} else {
 						disconnect("multiplayer.disconnect.unverified_username");
@@ -141,7 +139,7 @@ public abstract class MixinServerLoginNetworkHandler implements IMixinServerLogi
 				} catch(AuthenticationUnavailableException authenticationunavailableexception) {
 					if(server.isSingleplayer()) {
 						LOGGER_BF.warn("Authentication servers are down but will let them in anyway!");
-						profile = createOfflineProfile(name);
+						profile = Uuids.getOfflinePlayerProfile(name);
 						startVerify(profile);
 					} else {
 						disconnect("multiplayer.disconnect.authservers_down");

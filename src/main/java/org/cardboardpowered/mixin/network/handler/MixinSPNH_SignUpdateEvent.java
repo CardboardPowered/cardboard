@@ -1,5 +1,15 @@
 package org.cardboardpowered.mixin.network.handler;
 
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.PlainTextContent.Literal;
+import net.minecraft.util.Formatting;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
@@ -10,18 +20,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
-
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.util.Formatting;
 
 @MixinInfo(events = {"SignChangeEvent"})
 @Mixin(value = ServerPlayNetworkHandler.class, priority = 800)
@@ -43,7 +41,7 @@ public class MixinSPNH_SignUpdateEvent {
             String[] lines = new String[4];
     
             for (int i = 0; i < astring.length; ++i)
-                lines[i] = Formatting.strip(new LiteralTextContent (Formatting.strip(astring[i])).toString());
+                lines[i] = Formatting.strip(new Literal(Formatting.strip(astring[i])).toString());
     
             ((IMixinMinecraftServer)CraftServer.server).cardboard_runOnMainThread(() -> {
                 try {
