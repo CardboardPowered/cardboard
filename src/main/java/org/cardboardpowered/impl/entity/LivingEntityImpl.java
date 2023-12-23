@@ -809,12 +809,6 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
     }
 
     @Override
-    public @NotNull Set<Player> getTrackedPlayers() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public int getBeeStingerCooldown() {
         // TODO Auto-generated method stub
         return 0;

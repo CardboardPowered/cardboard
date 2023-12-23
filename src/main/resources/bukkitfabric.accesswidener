@@ -557,3 +557,7 @@ accessible field net/minecraft/block/spawner/MobSpawnerLogic spawnRange I
 accessible field net/minecraft/block/spawner/MobSpawnerLogic maxSpawnDelay I
 accessible field net/minecraft/entity/attribute/EntityAttributeModifier name Ljava/lang/String;
 accessible field net/minecraft/entity/ItemEntity throwerUuid Ljava/util/UUID;
+accessible method net/minecraft/entity/Entity isInsideBubbleColumn ()Z
+accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
+accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker listeners Ljava/util/Set;

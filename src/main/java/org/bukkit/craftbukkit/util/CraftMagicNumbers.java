@@ -399,7 +399,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 
     @Deprecated
     public String getMappingsVersion() {
-        return "3478a65bfd04b15b431fe107b3617dfc";
+        return "60a2bb6bf2684dc61c56b90d7c41bddc";
     }
 
     @Override

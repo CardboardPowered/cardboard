@@ -35,7 +35,9 @@ import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 import com.mojang.authlib.GameProfile;
 import me.isaiah.common.GameVersion;
 import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -47,6 +49,7 @@ import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
@@ -110,7 +113,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -1236,17 +1238,17 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 	}
 
 	@Override
-	public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
-		Preconditions.checkArgument(location != null, "location");
-		Preconditions.checkArgument(location.getWorld() != null, "location.world");
-		location.checkFinite();
+	public boolean teleport(Location loc, PlayerTeleportEvent.TeleportCause cause) {
+		Preconditions.checkArgument(loc != null, "location");
+		Preconditions.checkArgument(loc.getWorld() != null, "location.world");
+		loc.checkFinite();
 		ServerPlayerEntity entity = getHandle();
 
 		if(getHealth() == 0 || entity.isRemoved() || entity.networkHandler == null || entity.hasPassengers())
 			return false;
 
 		Location from = this.getLocation();
-		Location to = location;
+		Location to = loc;
 
 		PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
 		Bukkit.getPluginManager().callEvent(event);
@@ -1360,14 +1362,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
 		@Override
 		public void sendMessage(BaseComponent... components) {
-			if(null == getHandle().networkHandler) return;
-
-			// TODO: 1.19
-			// GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.SYSTEM, nms.getUuid());
-			//((IGameMessagePacket)packet).setBungeeComponents(components);
-			// getHandle().networkHandler.sendPacket(packet);
-
-			getHandle().sendMessage(Text.literal(BaseComponent.toLegacyText(components)));
+			sendMessage(ChatMessageType.SYSTEM, components);
 		}
 
 		@Override
@@ -1377,20 +1372,13 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
 		@Override
 		public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent... components) {
-			if(null == getHandle().networkHandler) return;
+			if(getHandle().networkHandler == null) return;
 
-			// TODO: 1.19
-            
-           /* GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.byId((byte) position.ordinal()), nms.getUuid());
-            if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR)
-                components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
-            
-            ((IGameMessagePacket)packet).setBungeeComponents(components);
-            getHandle().networkHandler.sendPacket(packet);*/
-
-			getHandle().sendMessage(Text.literal(BaseComponent.toLegacyText(components)));
-
-			// getHandle().networkHandler.sendPacket(new GameMessageS2CPacket(components, position == ChatMessageType.ACTION_BAR));
+			GameMessageS2CPacket packet = new GameMessageS2CPacket(
+					Text.Serialization.fromJson(ComponentSerializer.toString(components)),
+					position == ChatMessageType.ACTION_BAR
+			);
+			getHandle().networkHandler.sendPacket(packet);
 		}
 	};
 
@@ -1735,11 +1723,6 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 	@Override
 	public int getPing() {
 		return this.getHandle().networkHandler.getLatency();
-	}
-
-	@Override
-	public @NotNull Set<Player> getTrackedPlayers() {
-		return Collections.emptySet();
 	}
 
 	@Override

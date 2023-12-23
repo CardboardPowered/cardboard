@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */
@@ -50,7 +49,8 @@ public class RemapUtils {
 
         try {
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/spigot2srg-1.20.2.srg"))),
+                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader()
+                            .getResourceAsStream("mappings/spigot2srg-1.20.2.srg"))),
                     null,
                     null, false);
         } catch (Exception e) {

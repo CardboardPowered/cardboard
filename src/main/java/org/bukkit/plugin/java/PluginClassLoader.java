@@ -1,6 +1,19 @@
 package org.bukkit.plugin.java;
 
 import com.google.common.base.Preconditions;
+import com.mohistmc.banner.bukkit.nms.ClassLoaderContext;
+import com.mohistmc.banner.bukkit.nms.model.ClassMapping;
+import com.mohistmc.banner.bukkit.nms.utils.RemapUtils;
+import com.mohistmc.bukkit.pluginfix.PluginFixManager;
+import com.mohistmc.dynamicenum.MohistDynamEnum;
+import net.md_5.specialsource.repo.RuntimeRepo;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.SimplePluginManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +21,6 @@ import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.Collection;
@@ -21,20 +33,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
-
-import com.mohistmc.banner.bukkit.nms.ClassLoaderContext;
-import com.mohistmc.banner.bukkit.nms.model.ClassMapping;
-import com.mohistmc.banner.bukkit.nms.utils.RemapUtils;
-import com.mohistmc.bukkit.pluginfix.PluginFixManager;
-import com.mohistmc.dynamicenum.MohistDynamEnum;
-import net.md_5.specialsource.repo.RuntimeRepo;
-
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.plugin.InvalidPluginException;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.SimplePluginManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
@@ -95,6 +93,22 @@ public class PluginClassLoader extends URLClassLoader {
         }
     }
 
+    // private String mapCraftBukkit(String name) {
+    //     if (name.startsWith("org.bukkit.craftbukkit.")) {
+    //         int nameStart = name.indexOf('.', 23);
+    //         if (nameStart != -1) {
+    //             return "org.bukkit.craftbukkit" + name.substring(nameStart);
+    //         }
+    //     } else if(name.startsWith("org/bukkit/craftbukkit")) {
+    //         int nameStart = name.indexOf('/', 23);
+    //         if (nameStart != -1) {
+    //             return "org/bukkit/craftbukkit" + name.substring(nameStart);
+    //         }
+    //     }
+    //
+    //     return name;
+    // }
+
     @Override
     public URL getResource(String name) {
         return findResource(name);
@@ -111,6 +125,8 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     Class<?> loadClass0(@NotNull String name, boolean resolve, boolean checkGlobal, boolean checkLibraries) throws ClassNotFoundException {
+        // name = mapCraftBukkit(name);
+
         try {
             Class<?> result = super.loadClass(name, resolve);
 
@@ -160,6 +176,8 @@ public class PluginClassLoader extends URLClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+        // name = mapCraftBukkit(name);
+
         ClassLoaderContext.put(this);
         Class<?> result;
         try {
@@ -177,10 +195,7 @@ public class PluginClassLoader extends URLClassLoader {
             result = classes.get(name);
             synchronized (name.intern()) {
                 if (result == null) {
-
-                    if (result == null) {
-                        result = remappedFindClass(name);
-                    }
+                    result = remappedFindClass(name);
 
                     if (result != null) {
                         loader.setClass(name, result);
@@ -317,7 +332,8 @@ public class PluginClassLoader extends URLClassLoader {
 
     synchronized void initialize(@NotNull JavaPlugin javaPlugin) {
         Preconditions.checkArgument(javaPlugin != null, "Initializing plugin cannot be null");
-        Preconditions.checkArgument(javaPlugin.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
+        Preconditions.checkArgument(javaPlugin.getClass()
+                .getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
         if (this.plugin != null || this.pluginInit != null) {
             throw new IllegalArgumentException("Plugin already initialized!", pluginState);
         }
@@ -376,6 +392,1246 @@ import org.jetbrains.annotations.Nullable;
 */
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
+ *
+ * A ClassLoader for plugins, to allow shared classes across multiple plugins
+ *
+ * public class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
+ *
+ * private final JavaPluginLoader loader;
+ * private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+ * private final PluginDescriptionFile description;
+ * private final File dataFolder;
+ * private final File file;
+ * public final JarFile jar;
+ * private final Manifest manifest;
+ * private final URL url;
+ * final JavaPlugin plugin;
+ * private JavaPlugin pluginInit;
+ * private IllegalStateException pluginState;
+ * private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+ *
+ * static {
+ * ClassLoader.registerAsParallelCapable();
+ * }
+ *
+ * private ClassLoaderRemapper remapper;
+ *
+ * PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
+ * super(new URL[] {file.toURI().toURL()}, parent);;
+ * //Validate.notNull(loader, "Loader cannot be null");
+ *
+ * this.loader = loader;
+ * this.description = description;
+ * this.dataFolder = dataFolder;
+ * this.file = file;
+ * this.jar = new JarFile(file);
+ * this.manifest = jar.getManifest();
+ * this.url = file.toURI().toURL();
+ *
+ * try {
+ * Class<?> jarClass;
+ * try {
+ * jarClass = Class.forName(description.getMain(), true, this);
+ * } catch (ClassNotFoundException ex) {
+ * throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+ * }
+ *
+ * Class<? extends JavaPlugin> pluginClass;
+ * try {
+ * pluginClass = jarClass.asSubclass(JavaPlugin.class);
+ * } catch (ClassCastException ex) {
+ * throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
+ * }
+ *
+ * plugin = pluginClass.newInstance();
+ * } catch (IllegalAccessException ex) {
+ * throw new InvalidPluginException("No public constructor", ex);
+ * } catch (InstantiationException ex) {
+ * throw new InvalidPluginException("Abnormal plugin type", ex);
+ * }
+ * }
+ * @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+ * return super.loadClass(name);
+ * }
+ * @Override public URL getResource(String name) {
+ * return findResource(name);
+ * }
+ * @Override public Enumeration<URL> getResources(String name) throws IOException {
+ * return findResources(name);
+ * }
+ * @Override protected Class<?> findClass(String name) throws ClassNotFoundException {
+ * return findClass_(name, true);
+ * }
+ *
+ * public Product2<byte[], CodeSource> remapClassold(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
+ * try {
+ * byte[] bytes = byteSource.call();
+ * URL url;
+ * CodeSigner[] signers;
+ * if (connection instanceof JarURLConnection) {
+ * url = ((JarURLConnection) connection).getJarFileURL();
+ * signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+ * } else {
+ * url = connection.getURL();
+ * signers = null;
+ * }
+ * return Product.of(bytes, new CodeSource(url, signers));
+ * } catch (Exception e) {
+ * e.printStackTrace();
+ * throw new ClassNotFoundException(className, e);
+ * }
+ * }
+ *
+ * Class<?> findClass_(String name, boolean checkGlobal) throws ClassNotFoundException {
+ *
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ *
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * String path = name.replace('.', '/').concat(".class");
+ * URL url = this.findResource(path);
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (url != null && entry != null && result == null) {
+ * // System.out.println("REMAP NEED! Debug;");
+ * URLConnection connection;
+ * Callable<byte[]> byteSource;
+ *
+ * /*byte[] classBytes0;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes0 = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes0 = loader.server.getUnsafe().processClass(description, path, classBytes0);
+ * classBytes0 = PluginFixManager.injectPluginFix(name, classBytes0); // Mohist - Inject plugin fix
+ *
+ * byteSource = () -> {
+ * return classBytes0;
+ * };//
+ *
+ * try {
+ * connection = url.openConnection();
+ * connection.connect();
+ * byteSource = () -> {
+ * try (InputStream is = connection.getInputStream()) {
+ * byte[] classBytes = ByteStreams.toByteArray(is);
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ * // classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
+ *
+ * return classBytes;
+ * }
+ * };
+ * } catch (IOException e) {
+ * throw new ClassNotFoundException(name, e);
+ * }
+ *
+ * // Product2<byte[], CodeSource> classBytes = remapClass(name, byteSource, connection);
+ * Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null) {
+ * definePackage(pkgName, manifest, this.url);
+ * } else {
+ * definePackage(pkgName, null, null, null, null, null, null, null);
+ * }
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null) {
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ * }
+ * //this.defineClass
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes._1, 0, classBytes._1.length, source);
+ *
+ * File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
+ * try {
+ * Files.createDirectories(out.toPath().getParent());
+ * Files.write(out.toPath(), classBytes._1);
+ * } catch (IOException e) {
+ * // TODO Auto-generated catch block
+ * e.printStackTrace();
+ * }
+ * }
+ *
+ * if (result == null) {
+ * result = super.findClass(name);
+ * }
+ *
+ * if (result != null) {
+ * loader.setClass(name, result);
+ * classes.put(name, result);
+ * }
+ * }
+ * return result;
+ * }
+ * @SuppressWarnings("deprecation") Class<?> findClass123(String name, boolean checkGlobal) throws ClassNotFoundException {
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * if (result == null) {
+ * String path = name.replace('.', '/').concat(".class");
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (entry != null) {
+ * byte[] classBytes;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null)
+ * definePackage(pkgName, manifest, url);
+ * else definePackage(pkgName, null, null, null, null, null, null, null);
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null)
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ *
+ *
+ * // Product2<byte[], CodeSource> classBytes_ = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes, 0, classBytes.length, source);
+ * }
+ *
+ * try {
+ * if (result == null)
+ * result = super.findClass(name);
+ * } catch (ClassNotFoundException | NoClassDefFoundError e) {return null;}
+ *
+ * if (result != null)
+ * loader.setClass(name, result);
+ *
+ * if (result != null)
+ * classes.put(name, result);
+ * }
+ * }
+ *
+ * return result;
+ * }
+ * @Override public void close() throws IOException {
+ * try {
+ * super.close();
+ * } finally {
+ * jar.close();
+ * }
+ * }
+ *
+ * Set<String> getClasses() {
+ * return classes.keySet();
+ * }
+ *
+ * synchronized void initialize(JavaPlugin javaPlugin) {
+ * //Validate.notNull(javaPlugin, "Initializing plugin cannot be null");
+ * // Validate.isTrue(javaPlugin.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
+ * if (this.plugin != null || this.pluginInit != null)
+ * throw new IllegalArgumentException("Plugin already initialized", pluginState);
+ *
+ * pluginState = new IllegalStateException("Initial initialization");
+ * this.pluginInit = javaPlugin;
+ *
+ * javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
+ * }
+ * @Override public ClassLoaderRemapper getRemapper() {
+ * if (remapper == null) {
+ * MohistRemapper.init(McVersion.v1_19_4);
+ * remapper = MohistRemapper.createClassLoaderRemapper(this);
+ * }
+ * return remapper;
+ * }
+ *
+ * }
+ *
+ * A ClassLoader for plugins, to allow shared classes across multiple plugins
+ *
+ * public class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
+ *
+ * private final JavaPluginLoader loader;
+ * private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+ * private final PluginDescriptionFile description;
+ * private final File dataFolder;
+ * private final File file;
+ * public final JarFile jar;
+ * private final Manifest manifest;
+ * private final URL url;
+ * final JavaPlugin plugin;
+ * private JavaPlugin pluginInit;
+ * private IllegalStateException pluginState;
+ * private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+ *
+ * static {
+ * ClassLoader.registerAsParallelCapable();
+ * }
+ *
+ * private ClassLoaderRemapper remapper;
+ *
+ * PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
+ * super(new URL[] {file.toURI().toURL()}, parent);;
+ * //Validate.notNull(loader, "Loader cannot be null");
+ *
+ * this.loader = loader;
+ * this.description = description;
+ * this.dataFolder = dataFolder;
+ * this.file = file;
+ * this.jar = new JarFile(file);
+ * this.manifest = jar.getManifest();
+ * this.url = file.toURI().toURL();
+ *
+ * try {
+ * Class<?> jarClass;
+ * try {
+ * jarClass = Class.forName(description.getMain(), true, this);
+ * } catch (ClassNotFoundException ex) {
+ * throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+ * }
+ *
+ * Class<? extends JavaPlugin> pluginClass;
+ * try {
+ * pluginClass = jarClass.asSubclass(JavaPlugin.class);
+ * } catch (ClassCastException ex) {
+ * throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
+ * }
+ *
+ * plugin = pluginClass.newInstance();
+ * } catch (IllegalAccessException ex) {
+ * throw new InvalidPluginException("No public constructor", ex);
+ * } catch (InstantiationException ex) {
+ * throw new InvalidPluginException("Abnormal plugin type", ex);
+ * }
+ * }
+ * @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+ * return super.loadClass(name);
+ * }
+ * @Override public URL getResource(String name) {
+ * return findResource(name);
+ * }
+ * @Override public Enumeration<URL> getResources(String name) throws IOException {
+ * return findResources(name);
+ * }
+ * @Override protected Class<?> findClass(String name) throws ClassNotFoundException {
+ * return findClass_(name, true);
+ * }
+ *
+ * public Product2<byte[], CodeSource> remapClassold(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
+ * try {
+ * byte[] bytes = byteSource.call();
+ * URL url;
+ * CodeSigner[] signers;
+ * if (connection instanceof JarURLConnection) {
+ * url = ((JarURLConnection) connection).getJarFileURL();
+ * signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+ * } else {
+ * url = connection.getURL();
+ * signers = null;
+ * }
+ * return Product.of(bytes, new CodeSource(url, signers));
+ * } catch (Exception e) {
+ * e.printStackTrace();
+ * throw new ClassNotFoundException(className, e);
+ * }
+ * }
+ *
+ * Class<?> findClass_(String name, boolean checkGlobal) throws ClassNotFoundException {
+ *
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ *
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * String path = name.replace('.', '/').concat(".class");
+ * URL url = this.findResource(path);
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (url != null && entry != null && result == null) {
+ * // System.out.println("REMAP NEED! Debug;");
+ * URLConnection connection;
+ * Callable<byte[]> byteSource;
+ *
+ * /*byte[] classBytes0;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes0 = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes0 = loader.server.getUnsafe().processClass(description, path, classBytes0);
+ * classBytes0 = PluginFixManager.injectPluginFix(name, classBytes0); // Mohist - Inject plugin fix
+ *
+ * byteSource = () -> {
+ * return classBytes0;
+ * };//
+ *
+ * try {
+ * connection = url.openConnection();
+ * connection.connect();
+ * byteSource = () -> {
+ * try (InputStream is = connection.getInputStream()) {
+ * byte[] classBytes = ByteStreams.toByteArray(is);
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ * // classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
+ *
+ * return classBytes;
+ * }
+ * };
+ * } catch (IOException e) {
+ * throw new ClassNotFoundException(name, e);
+ * }
+ *
+ * // Product2<byte[], CodeSource> classBytes = remapClass(name, byteSource, connection);
+ * Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null) {
+ * definePackage(pkgName, manifest, this.url);
+ * } else {
+ * definePackage(pkgName, null, null, null, null, null, null, null);
+ * }
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null) {
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ * }
+ * //this.defineClass
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes._1, 0, classBytes._1.length, source);
+ *
+ * File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
+ * try {
+ * Files.createDirectories(out.toPath().getParent());
+ * Files.write(out.toPath(), classBytes._1);
+ * } catch (IOException e) {
+ * // TODO Auto-generated catch block
+ * e.printStackTrace();
+ * }
+ * }
+ *
+ * if (result == null) {
+ * result = super.findClass(name);
+ * }
+ *
+ * if (result != null) {
+ * loader.setClass(name, result);
+ * classes.put(name, result);
+ * }
+ * }
+ * return result;
+ * }
+ * @SuppressWarnings("deprecation") Class<?> findClass123(String name, boolean checkGlobal) throws ClassNotFoundException {
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * if (result == null) {
+ * String path = name.replace('.', '/').concat(".class");
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (entry != null) {
+ * byte[] classBytes;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null)
+ * definePackage(pkgName, manifest, url);
+ * else definePackage(pkgName, null, null, null, null, null, null, null);
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null)
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ *
+ *
+ * // Product2<byte[], CodeSource> classBytes_ = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes, 0, classBytes.length, source);
+ * }
+ *
+ * try {
+ * if (result == null)
+ * result = super.findClass(name);
+ * } catch (ClassNotFoundException | NoClassDefFoundError e) {return null;}
+ *
+ * if (result != null)
+ * loader.setClass(name, result);
+ *
+ * if (result != null)
+ * classes.put(name, result);
+ * }
+ * }
+ *
+ * return result;
+ * }
+ * @Override public void close() throws IOException {
+ * try {
+ * super.close();
+ * } finally {
+ * jar.close();
+ * }
+ * }
+ *
+ * Set<String> getClasses() {
+ * return classes.keySet();
+ * }
+ *
+ * synchronized void initialize(JavaPlugin javaPlugin) {
+ * //Validate.notNull(javaPlugin, "Initializing plugin cannot be null");
+ * // Validate.isTrue(javaPlugin.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
+ * if (this.plugin != null || this.pluginInit != null)
+ * throw new IllegalArgumentException("Plugin already initialized", pluginState);
+ *
+ * pluginState = new IllegalStateException("Initial initialization");
+ * this.pluginInit = javaPlugin;
+ *
+ * javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
+ * }
+ * @Override public ClassLoaderRemapper getRemapper() {
+ * if (remapper == null) {
+ * MohistRemapper.init(McVersion.v1_19_4);
+ * remapper = MohistRemapper.createClassLoaderRemapper(this);
+ * }
+ * return remapper;
+ * }
+ *
+ * }
+ *
+ * A ClassLoader for plugins, to allow shared classes across multiple plugins
+ *
+ * public class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
+ *
+ * private final JavaPluginLoader loader;
+ * private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+ * private final PluginDescriptionFile description;
+ * private final File dataFolder;
+ * private final File file;
+ * public final JarFile jar;
+ * private final Manifest manifest;
+ * private final URL url;
+ * final JavaPlugin plugin;
+ * private JavaPlugin pluginInit;
+ * private IllegalStateException pluginState;
+ * private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+ *
+ * static {
+ * ClassLoader.registerAsParallelCapable();
+ * }
+ *
+ * private ClassLoaderRemapper remapper;
+ *
+ * PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
+ * super(new URL[] {file.toURI().toURL()}, parent);;
+ * //Validate.notNull(loader, "Loader cannot be null");
+ *
+ * this.loader = loader;
+ * this.description = description;
+ * this.dataFolder = dataFolder;
+ * this.file = file;
+ * this.jar = new JarFile(file);
+ * this.manifest = jar.getManifest();
+ * this.url = file.toURI().toURL();
+ *
+ * try {
+ * Class<?> jarClass;
+ * try {
+ * jarClass = Class.forName(description.getMain(), true, this);
+ * } catch (ClassNotFoundException ex) {
+ * throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+ * }
+ *
+ * Class<? extends JavaPlugin> pluginClass;
+ * try {
+ * pluginClass = jarClass.asSubclass(JavaPlugin.class);
+ * } catch (ClassCastException ex) {
+ * throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
+ * }
+ *
+ * plugin = pluginClass.newInstance();
+ * } catch (IllegalAccessException ex) {
+ * throw new InvalidPluginException("No public constructor", ex);
+ * } catch (InstantiationException ex) {
+ * throw new InvalidPluginException("Abnormal plugin type", ex);
+ * }
+ * }
+ * @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+ * return super.loadClass(name);
+ * }
+ * @Override public URL getResource(String name) {
+ * return findResource(name);
+ * }
+ * @Override public Enumeration<URL> getResources(String name) throws IOException {
+ * return findResources(name);
+ * }
+ * @Override protected Class<?> findClass(String name) throws ClassNotFoundException {
+ * return findClass_(name, true);
+ * }
+ *
+ * public Product2<byte[], CodeSource> remapClassold(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
+ * try {
+ * byte[] bytes = byteSource.call();
+ * URL url;
+ * CodeSigner[] signers;
+ * if (connection instanceof JarURLConnection) {
+ * url = ((JarURLConnection) connection).getJarFileURL();
+ * signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+ * } else {
+ * url = connection.getURL();
+ * signers = null;
+ * }
+ * return Product.of(bytes, new CodeSource(url, signers));
+ * } catch (Exception e) {
+ * e.printStackTrace();
+ * throw new ClassNotFoundException(className, e);
+ * }
+ * }
+ *
+ * Class<?> findClass_(String name, boolean checkGlobal) throws ClassNotFoundException {
+ *
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ *
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * String path = name.replace('.', '/').concat(".class");
+ * URL url = this.findResource(path);
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (url != null && entry != null && result == null) {
+ * // System.out.println("REMAP NEED! Debug;");
+ * URLConnection connection;
+ * Callable<byte[]> byteSource;
+ *
+ * /*byte[] classBytes0;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes0 = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes0 = loader.server.getUnsafe().processClass(description, path, classBytes0);
+ * classBytes0 = PluginFixManager.injectPluginFix(name, classBytes0); // Mohist - Inject plugin fix
+ *
+ * byteSource = () -> {
+ * return classBytes0;
+ * };//
+ *
+ * try {
+ * connection = url.openConnection();
+ * connection.connect();
+ * byteSource = () -> {
+ * try (InputStream is = connection.getInputStream()) {
+ * byte[] classBytes = ByteStreams.toByteArray(is);
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ * // classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
+ *
+ * return classBytes;
+ * }
+ * };
+ * } catch (IOException e) {
+ * throw new ClassNotFoundException(name, e);
+ * }
+ *
+ * // Product2<byte[], CodeSource> classBytes = remapClass(name, byteSource, connection);
+ * Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null) {
+ * definePackage(pkgName, manifest, this.url);
+ * } else {
+ * definePackage(pkgName, null, null, null, null, null, null, null);
+ * }
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null) {
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ * }
+ * //this.defineClass
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes._1, 0, classBytes._1.length, source);
+ *
+ * File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
+ * try {
+ * Files.createDirectories(out.toPath().getParent());
+ * Files.write(out.toPath(), classBytes._1);
+ * } catch (IOException e) {
+ * // TODO Auto-generated catch block
+ * e.printStackTrace();
+ * }
+ * }
+ *
+ * if (result == null) {
+ * result = super.findClass(name);
+ * }
+ *
+ * if (result != null) {
+ * loader.setClass(name, result);
+ * classes.put(name, result);
+ * }
+ * }
+ * return result;
+ * }
+ * @SuppressWarnings("deprecation") Class<?> findClass123(String name, boolean checkGlobal) throws ClassNotFoundException {
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * if (result == null) {
+ * String path = name.replace('.', '/').concat(".class");
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (entry != null) {
+ * byte[] classBytes;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null)
+ * definePackage(pkgName, manifest, url);
+ * else definePackage(pkgName, null, null, null, null, null, null, null);
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null)
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ *
+ *
+ * // Product2<byte[], CodeSource> classBytes_ = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes, 0, classBytes.length, source);
+ * }
+ *
+ * try {
+ * if (result == null)
+ * result = super.findClass(name);
+ * } catch (ClassNotFoundException | NoClassDefFoundError e) {return null;}
+ *
+ * if (result != null)
+ * loader.setClass(name, result);
+ *
+ * if (result != null)
+ * classes.put(name, result);
+ * }
+ * }
+ *
+ * return result;
+ * }
+ * @Override public void close() throws IOException {
+ * try {
+ * super.close();
+ * } finally {
+ * jar.close();
+ * }
+ * }
+ *
+ * Set<String> getClasses() {
+ * return classes.keySet();
+ * }
+ *
+ * synchronized void initialize(JavaPlugin javaPlugin) {
+ * //Validate.notNull(javaPlugin, "Initializing plugin cannot be null");
+ * // Validate.isTrue(javaPlugin.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
+ * if (this.plugin != null || this.pluginInit != null)
+ * throw new IllegalArgumentException("Plugin already initialized", pluginState);
+ *
+ * pluginState = new IllegalStateException("Initial initialization");
+ * this.pluginInit = javaPlugin;
+ *
+ * javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
+ * }
+ * @Override public ClassLoaderRemapper getRemapper() {
+ * if (remapper == null) {
+ * MohistRemapper.init(McVersion.v1_19_4);
+ * remapper = MohistRemapper.createClassLoaderRemapper(this);
+ * }
+ * return remapper;
+ * }
+ *
+ * }
+ *
+ * A ClassLoader for plugins, to allow shared classes across multiple plugins
+ *
+ * public class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
+ *
+ * private final JavaPluginLoader loader;
+ * private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+ * private final PluginDescriptionFile description;
+ * private final File dataFolder;
+ * private final File file;
+ * public final JarFile jar;
+ * private final Manifest manifest;
+ * private final URL url;
+ * final JavaPlugin plugin;
+ * private JavaPlugin pluginInit;
+ * private IllegalStateException pluginState;
+ * private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+ *
+ * static {
+ * ClassLoader.registerAsParallelCapable();
+ * }
+ *
+ * private ClassLoaderRemapper remapper;
+ *
+ * PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
+ * super(new URL[] {file.toURI().toURL()}, parent);;
+ * //Validate.notNull(loader, "Loader cannot be null");
+ *
+ * this.loader = loader;
+ * this.description = description;
+ * this.dataFolder = dataFolder;
+ * this.file = file;
+ * this.jar = new JarFile(file);
+ * this.manifest = jar.getManifest();
+ * this.url = file.toURI().toURL();
+ *
+ * try {
+ * Class<?> jarClass;
+ * try {
+ * jarClass = Class.forName(description.getMain(), true, this);
+ * } catch (ClassNotFoundException ex) {
+ * throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+ * }
+ *
+ * Class<? extends JavaPlugin> pluginClass;
+ * try {
+ * pluginClass = jarClass.asSubclass(JavaPlugin.class);
+ * } catch (ClassCastException ex) {
+ * throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
+ * }
+ *
+ * plugin = pluginClass.newInstance();
+ * } catch (IllegalAccessException ex) {
+ * throw new InvalidPluginException("No public constructor", ex);
+ * } catch (InstantiationException ex) {
+ * throw new InvalidPluginException("Abnormal plugin type", ex);
+ * }
+ * }
+ * @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+ * return super.loadClass(name);
+ * }
+ * @Override public URL getResource(String name) {
+ * return findResource(name);
+ * }
+ * @Override public Enumeration<URL> getResources(String name) throws IOException {
+ * return findResources(name);
+ * }
+ * @Override protected Class<?> findClass(String name) throws ClassNotFoundException {
+ * return findClass_(name, true);
+ * }
+ *
+ * public Product2<byte[], CodeSource> remapClassold(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
+ * try {
+ * byte[] bytes = byteSource.call();
+ * URL url;
+ * CodeSigner[] signers;
+ * if (connection instanceof JarURLConnection) {
+ * url = ((JarURLConnection) connection).getJarFileURL();
+ * signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+ * } else {
+ * url = connection.getURL();
+ * signers = null;
+ * }
+ * return Product.of(bytes, new CodeSource(url, signers));
+ * } catch (Exception e) {
+ * e.printStackTrace();
+ * throw new ClassNotFoundException(className, e);
+ * }
+ * }
+ *
+ * Class<?> findClass_(String name, boolean checkGlobal) throws ClassNotFoundException {
+ *
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ *
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * String path = name.replace('.', '/').concat(".class");
+ * URL url = this.findResource(path);
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (url != null && entry != null && result == null) {
+ * // System.out.println("REMAP NEED! Debug;");
+ * URLConnection connection;
+ * Callable<byte[]> byteSource;
+ *
+ * /*byte[] classBytes0;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes0 = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes0 = loader.server.getUnsafe().processClass(description, path, classBytes0);
+ * classBytes0 = PluginFixManager.injectPluginFix(name, classBytes0); // Mohist - Inject plugin fix
+ *
+ * byteSource = () -> {
+ * return classBytes0;
+ * };//
+ *
+ * try {
+ * connection = url.openConnection();
+ * connection.connect();
+ * byteSource = () -> {
+ * try (InputStream is = connection.getInputStream()) {
+ * byte[] classBytes = ByteStreams.toByteArray(is);
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ * // classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
+ *
+ * return classBytes;
+ * }
+ * };
+ * } catch (IOException e) {
+ * throw new ClassNotFoundException(name, e);
+ * }
+ *
+ * // Product2<byte[], CodeSource> classBytes = remapClass(name, byteSource, connection);
+ * Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null) {
+ * definePackage(pkgName, manifest, this.url);
+ * } else {
+ * definePackage(pkgName, null, null, null, null, null, null, null);
+ * }
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null) {
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ * }
+ * //this.defineClass
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes._1, 0, classBytes._1.length, source);
+ *
+ * File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
+ * try {
+ * Files.createDirectories(out.toPath().getParent());
+ * Files.write(out.toPath(), classBytes._1);
+ * } catch (IOException e) {
+ * // TODO Auto-generated catch block
+ * e.printStackTrace();
+ * }
+ * }
+ *
+ * if (result == null) {
+ * result = super.findClass(name);
+ * }
+ *
+ * if (result != null) {
+ * loader.setClass(name, result);
+ * classes.put(name, result);
+ * }
+ * }
+ * return result;
+ * }
+ * @SuppressWarnings("deprecation") Class<?> findClass123(String name, boolean checkGlobal) throws ClassNotFoundException {
+ * Class<?> result = classes.get(name);
+ *
+ * if (result == null) {
+ * if (checkGlobal) {
+ * result = loader.getClassByName(name);
+ *
+ * if (result != null) {
+ * PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ *
+ * if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ * && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ *
+ * seenIllegalAccess.add(provider.getName());
+ * if (plugin != null) {
+ * plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ * } else {
+ * // In case the bad access occurs on construction
+ * loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ * }
+ * }
+ * }
+ * }
+ *
+ * if (result == null) {
+ * String path = name.replace('.', '/').concat(".class");
+ * JarEntry entry = jar.getJarEntry(path);
+ *
+ * if (entry != null) {
+ * byte[] classBytes;
+ *
+ * try (InputStream is = jar.getInputStream(entry)) {
+ * classBytes = ByteStreams.toByteArray(is);
+ * } catch (IOException ex) {
+ * throw new ClassNotFoundException(name, ex);
+ * }
+ *
+ * classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ *
+ * int dot = name.lastIndexOf('.');
+ * if (dot != -1) {
+ * String pkgName = name.substring(0, dot);
+ * if (getPackage(pkgName) == null) {
+ * try {
+ * if (manifest != null)
+ * definePackage(pkgName, manifest, url);
+ * else definePackage(pkgName, null, null, null, null, null, null, null);
+ * } catch (IllegalArgumentException ex) {
+ * if (getPackage(pkgName) == null)
+ * throw new IllegalStateException("Cannot find package " + pkgName);
+ * }
+ * }
+ * }
+ *
+ *
+ * // Product2<byte[], CodeSource> classBytes_ = this.getRemapper().remapClass(name, byteSource, connection);
+ *
+ * CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ * result = defineClass(name, classBytes, 0, classBytes.length, source);
+ * }
+ *
+ * try {
+ * if (result == null)
+ * result = super.findClass(name);
+ * } catch (ClassNotFoundException | NoClassDefFoundError e) {return null;}
+ *
+ * if (result != null)
+ * loader.setClass(name, result);
+ *
+ * if (result != null)
+ * classes.put(name, result);
+ * }
+ * }
+ *
+ * return result;
+ * }
+ * @Override public void close() throws IOException {
+ * try {
+ * super.close();
+ * } finally {
+ * jar.close();
+ * }
+ * }
+ *
+ * Set<String> getClasses() {
+ * return classes.keySet();
+ * }
+ *
+ * synchronized void initialize(JavaPlugin javaPlugin) {
+ * //Validate.notNull(javaPlugin, "Initializing plugin cannot be null");
+ * // Validate.isTrue(javaPlugin.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
+ * if (this.plugin != null || this.pluginInit != null)
+ * throw new IllegalArgumentException("Plugin already initialized", pluginState);
+ *
+ * pluginState = new IllegalStateException("Initial initialization");
+ * this.pluginInit = javaPlugin;
+ *
+ * javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
+ * }
+ * @Override public ClassLoaderRemapper getRemapper() {
+ * if (remapper == null) {
+ * MohistRemapper.init(McVersion.v1_19_4);
+ * remapper = MohistRemapper.createClassLoaderRemapper(this);
+ * }
+ * return remapper;
+ * }
+ *
+ * }
  */
 /*
 public final class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
@@ -603,324 +1859,317 @@ public final class PluginClassLoader extends URLClassLoader implements Remapping
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  *
-public class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
+ public class PluginClassLoader extends URLClassLoader implements RemappingClassLoader {
 
-    private final JavaPluginLoader loader;
-    private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
-    private final PluginDescriptionFile description;
-    private final File dataFolder;
-    private final File file;
-    public final JarFile jar;
-    private final Manifest manifest;
-    private final URL url;
-    final JavaPlugin plugin;
-    private JavaPlugin pluginInit;
-    private IllegalStateException pluginState;
-    private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+ private final JavaPluginLoader loader;
+ private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+ private final PluginDescriptionFile description;
+ private final File dataFolder;
+ private final File file;
+ public final JarFile jar;
+ private final Manifest manifest;
+ private final URL url;
+ final JavaPlugin plugin;
+ private JavaPlugin pluginInit;
+ private IllegalStateException pluginState;
+ private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    static {
-        ClassLoader.registerAsParallelCapable();
-    }
-    
-    private ClassLoaderRemapper remapper;
+ static {
+ ClassLoader.registerAsParallelCapable();
+ }
 
-    PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
-        super(new URL[] {file.toURI().toURL()}, parent);;
-        //Validate.notNull(loader, "Loader cannot be null");
+ private ClassLoaderRemapper remapper;
 
-        this.loader = loader;
-        this.description = description;
-        this.dataFolder = dataFolder;
-        this.file = file;
-        this.jar = new JarFile(file);
-        this.manifest = jar.getManifest();
-        this.url = file.toURI().toURL();
+ PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException, MalformedURLException {
+ super(new URL[] {file.toURI().toURL()}, parent);;
+ //Validate.notNull(loader, "Loader cannot be null");
 
-        try {
-            Class<?> jarClass;
-            try {
-                jarClass = Class.forName(description.getMain(), true, this);
-            } catch (ClassNotFoundException ex) {
-                throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
-            }
+ this.loader = loader;
+ this.description = description;
+ this.dataFolder = dataFolder;
+ this.file = file;
+ this.jar = new JarFile(file);
+ this.manifest = jar.getManifest();
+ this.url = file.toURI().toURL();
 
-            Class<? extends JavaPlugin> pluginClass;
-            try {
-                pluginClass = jarClass.asSubclass(JavaPlugin.class);
-            } catch (ClassCastException ex) {
-                throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
-            }
+ try {
+ Class<?> jarClass;
+ try {
+ jarClass = Class.forName(description.getMain(), true, this);
+ } catch (ClassNotFoundException ex) {
+ throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+ }
 
-            plugin = pluginClass.newInstance();
-        } catch (IllegalAccessException ex) {
-            throw new InvalidPluginException("No public constructor", ex);
-        } catch (InstantiationException ex) {
-            throw new InvalidPluginException("Abnormal plugin type", ex);
-        }
-    }
+ Class<? extends JavaPlugin> pluginClass;
+ try {
+ pluginClass = jarClass.asSubclass(JavaPlugin.class);
+ } catch (ClassCastException ex) {
+ throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
+ }
 
-    @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name);
-    }
+ plugin = pluginClass.newInstance();
+ } catch (IllegalAccessException ex) {
+ throw new InvalidPluginException("No public constructor", ex);
+ } catch (InstantiationException ex) {
+ throw new InvalidPluginException("Abnormal plugin type", ex);
+ }
+ }
 
-    @Override
-    public URL getResource(String name) {
-        return findResource(name);
-    }
+ @Override public Class<?> loadClass(String name) throws ClassNotFoundException {
+ return super.loadClass(name);
+ }
 
-    @Override
-    public Enumeration<URL> getResources(String name) throws IOException {
-        return findResources(name);
-    }
+ @Override public URL getResource(String name) {
+ return findResource(name);
+ }
 
-    @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return findClass_(name, true);
-    }
-    
-    public Product2<byte[], CodeSource> remapClassold(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
-        try {
-            byte[] bytes = byteSource.call();
-            URL url;
-            CodeSigner[] signers;
-            if (connection instanceof JarURLConnection) {
-                url = ((JarURLConnection) connection).getJarFileURL();
-                signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
-            } else {
-                url = connection.getURL();
-                signers = null;
-            }
-            return Product.of(bytes, new CodeSource(url, signers));
-        } catch (Exception e) {
-        	e.printStackTrace();
-            throw new ClassNotFoundException(className, e);
-        }
-    }
-    
-    Class<?> findClass_(String name, boolean checkGlobal) throws ClassNotFoundException {
+ @Override public Enumeration<URL> getResources(String name) throws IOException {
+ return findResources(name);
+ }
 
-        Class<?> result = classes.get(name);
+ @Override protected Class<?> findClass(String name) throws ClassNotFoundException {
+ return findClass_(name, true);
+ }
 
-        if (result == null) {
-        	
-        	if (checkGlobal) {
-                result = loader.getClassByName(name);
+ public Product2<byte[], CodeSource> remapClassold(String className, Callable<byte[]> byteSource, URLConnection connection) throws ClassNotFoundException {
+ try {
+ byte[] bytes = byteSource.call();
+ URL url;
+ CodeSigner[] signers;
+ if (connection instanceof JarURLConnection) {
+ url = ((JarURLConnection) connection).getJarFileURL();
+ signers = ((JarURLConnection) connection).getJarEntry().getCodeSigners();
+ } else {
+ url = connection.getURL();
+ signers = null;
+ }
+ return Product.of(bytes, new CodeSource(url, signers));
+ } catch (Exception e) {
+ e.printStackTrace();
+ throw new ClassNotFoundException(className, e);
+ }
+ }
 
-                if (result != null) {
-                    PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ Class<?> findClass_(String name, boolean checkGlobal) throws ClassNotFoundException {
 
-                    if (provider != description && !seenIllegalAccess.contains(provider.getName())
-                            && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ Class<?> result = classes.get(name);
 
-                        seenIllegalAccess.add(provider.getName());
-                        if (plugin != null) {
-                            plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
-                        } else {
-                            // In case the bad access occurs on construction
-                            loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
-                        }
-                    }
-                }
-            }
-        	
-            String path = name.replace('.', '/').concat(".class");
-            URL url = this.findResource(path);
-            JarEntry entry = jar.getJarEntry(path);
+ if (result == null) {
 
-            if (url != null && entry != null && result == null) {
-            	// System.out.println("REMAP NEED! Debug;");
-                URLConnection connection;
-                Callable<byte[]> byteSource;
-                
-                /*byte[] classBytes0;
+ if (checkGlobal) {
+ result = loader.getClassByName(name);
 
-                try (InputStream is = jar.getInputStream(entry)) {
-                    classBytes0 = ByteStreams.toByteArray(is);
-                } catch (IOException ex) {
-                    throw new ClassNotFoundException(name, ex);
-                }
+ if (result != null) {
+ PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
 
-                classBytes0 = loader.server.getUnsafe().processClass(description, path, classBytes0);
-                classBytes0 = PluginFixManager.injectPluginFix(name, classBytes0); // Mohist - Inject plugin fix
-                
-                byteSource = () -> {
-                	return classBytes0;
-                };// 
-                
-                try {
-                    connection = url.openConnection();
-                    connection.connect();
-                    byteSource = () -> {
-                        try (InputStream is = connection.getInputStream()) {
-                            byte[] classBytes = ByteStreams.toByteArray(is);
-                            classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
-                            // classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
+ if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
 
-                            return classBytes;
-                        }
-                    };
-                } catch (IOException e) {
-                    throw new ClassNotFoundException(name, e);
-                }
+ seenIllegalAccess.add(provider.getName());
+ if (plugin != null) {
+ plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ } else {
+ // In case the bad access occurs on construction
+ loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ }
+ }
+ }
+ }
 
-                // Product2<byte[], CodeSource> classBytes = remapClass(name, byteSource, connection);
-                Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
+ String path = name.replace('.', '/').concat(".class");
+ URL url = this.findResource(path);
+ JarEntry entry = jar.getJarEntry(path);
+
+ if (url != null && entry != null && result == null) {
+ // System.out.println("REMAP NEED! Debug;");
+ URLConnection connection;
+ Callable<byte[]> byteSource;
+
+ /*byte[] classBytes0;
+
+ try (InputStream is = jar.getInputStream(entry)) {
+ classBytes0 = ByteStreams.toByteArray(is);
+ } catch (IOException ex) {
+ throw new ClassNotFoundException(name, ex);
+ }
+
+ classBytes0 = loader.server.getUnsafe().processClass(description, path, classBytes0);
+ classBytes0 = PluginFixManager.injectPluginFix(name, classBytes0); // Mohist - Inject plugin fix
+
+ byteSource = () -> {
+ return classBytes0;
+ };//
+
+ try {
+ connection = url.openConnection();
+ connection.connect();
+ byteSource = () -> {
+ try (InputStream is = connection.getInputStream()) {
+ byte[] classBytes = ByteStreams.toByteArray(is);
+ classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ // classBytes = PluginFixManager.injectPluginFix(name, classBytes); // Mohist - Inject plugin fix
+
+ return classBytes;
+ }
+ };
+ } catch (IOException e) {
+ throw new ClassNotFoundException(name, e);
+ }
+
+ // Product2<byte[], CodeSource> classBytes = remapClass(name, byteSource, connection);
+ Product2<byte[], CodeSource> classBytes = this.getRemapper().remapClass(name, byteSource, connection);
 
 
-                int dot = name.lastIndexOf('.');
-                if (dot != -1) {
-                    String pkgName = name.substring(0, dot);
-                    if (getPackage(pkgName) == null) {
-                        try {
-                            if (manifest != null) {
-                                definePackage(pkgName, manifest, this.url);
-                            } else {
-                                definePackage(pkgName, null, null, null, null, null, null, null);
-                            }
-                        } catch (IllegalArgumentException ex) {
-                            if (getPackage(pkgName) == null) {
-                                throw new IllegalStateException("Cannot find package " + pkgName);
-                            }
-                        }
-                    }
-                }
-                //this.defineClass
-                CodeSource source = new CodeSource(url, entry.getCodeSigners());
-                result = defineClass(name, classBytes._1, 0, classBytes._1.length, source);
-                
-                File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
-                try {
-                	Files.createDirectories(out.toPath().getParent());
-					Files.write(out.toPath(), classBytes._1);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-            }
+ int dot = name.lastIndexOf('.');
+ if (dot != -1) {
+ String pkgName = name.substring(0, dot);
+ if (getPackage(pkgName) == null) {
+ try {
+ if (manifest != null) {
+ definePackage(pkgName, manifest, this.url);
+ } else {
+ definePackage(pkgName, null, null, null, null, null, null, null);
+ }
+ } catch (IllegalArgumentException ex) {
+ if (getPackage(pkgName) == null) {
+ throw new IllegalStateException("Cannot find package " + pkgName);
+ }
+ }
+ }
+ }
+ //this.defineClass
+ CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ result = defineClass(name, classBytes._1, 0, classBytes._1.length, source);
 
-            if (result == null) {
-                result = super.findClass(name);
-            }
+ File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
+ try {
+ Files.createDirectories(out.toPath().getParent());
+ Files.write(out.toPath(), classBytes._1);
+ } catch (IOException e) {
+ // TODO Auto-generated catch block
+ e.printStackTrace();
+ }
+ }
 
-            if (result != null) {
-            	loader.setClass(name, result);
-            	classes.put(name, result);
-            }
-        }
-        return result;
-    }
+ if (result == null) {
+ result = super.findClass(name);
+ }
 
-    @SuppressWarnings("deprecation")
-    Class<?> findClass123(String name, boolean checkGlobal) throws ClassNotFoundException {
-        Class<?> result = classes.get(name);
+ if (result != null) {
+ loader.setClass(name, result);
+ classes.put(name, result);
+ }
+ }
+ return result;
+ }
 
-        if (result == null) {
-            if (checkGlobal) {
-                result = loader.getClassByName(name);
+ @SuppressWarnings("deprecation") Class<?> findClass123(String name, boolean checkGlobal) throws ClassNotFoundException {
+ Class<?> result = classes.get(name);
 
-                if (result != null) {
-                    PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
+ if (result == null) {
+ if (checkGlobal) {
+ result = loader.getClassByName(name);
 
-                    if (provider != description && !seenIllegalAccess.contains(provider.getName())
-                            && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
+ if (result != null) {
+ PluginDescriptionFile provider = ((PluginClassLoader) result.getClassLoader()).description;
 
-                        seenIllegalAccess.add(provider.getName());
-                        if (plugin != null) {
-                            plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
-                        } else {
-                            // In case the bad access occurs on construction
-                            loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
-                        }
-                    }
-                }
-            }
+ if (provider != description && !seenIllegalAccess.contains(provider.getName())
+ && !((SimplePluginManager) loader.server.getPluginManager()).isTransitiveDepend(description, provider)) {
 
-            if (result == null) {
-                String path = name.replace('.', '/').concat(".class");
-                JarEntry entry = jar.getJarEntry(path);
+ seenIllegalAccess.add(provider.getName());
+ if (plugin != null) {
+ plugin.getLogger().log(Level.WARNING, "Loaded class " + name + " from " + provider.getFullName() + " which is not a depend, softdepend or loadbefore of this plugin.");
+ } else {
+ // In case the bad access occurs on construction
+ loader.server.getLogger().log(Level.WARNING, "[{0}] Loaded class {1} from {2} which is not a depend, softdepend or loadbefore of this plugin.", new Object[]{description.getName(), name, provider.getFullName()});
+ }
+ }
+ }
+ }
 
-                if (entry != null) {
-                    byte[] classBytes;
+ if (result == null) {
+ String path = name.replace('.', '/').concat(".class");
+ JarEntry entry = jar.getJarEntry(path);
 
-                    try (InputStream is = jar.getInputStream(entry)) {
-                        classBytes = ByteStreams.toByteArray(is);
-                    } catch (IOException ex) {
-                        throw new ClassNotFoundException(name, ex);
-                    }
+ if (entry != null) {
+ byte[] classBytes;
 
-                    classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
+ try (InputStream is = jar.getInputStream(entry)) {
+ classBytes = ByteStreams.toByteArray(is);
+ } catch (IOException ex) {
+ throw new ClassNotFoundException(name, ex);
+ }
 
-                    int dot = name.lastIndexOf('.');
-                    if (dot != -1) {
-                        String pkgName = name.substring(0, dot);
-                        if (getPackage(pkgName) == null) {
-                            try {
-                                if (manifest != null)
-                                    definePackage(pkgName, manifest, url);
-                                else definePackage(pkgName, null, null, null, null, null, null, null);
-                            } catch (IllegalArgumentException ex) {
-                                if (getPackage(pkgName) == null)
-                                    throw new IllegalStateException("Cannot find package " + pkgName);
-                            }
-                        }
-                    }
+ classBytes = loader.server.getUnsafe().processClass(description, path, classBytes);
 
-                    
-                   // Product2<byte[], CodeSource> classBytes_ = this.getRemapper().remapClass(name, byteSource, connection);
-                    
-                    CodeSource source = new CodeSource(url, entry.getCodeSigners());
-                    result = defineClass(name, classBytes, 0, classBytes.length, source);
-                }
+ int dot = name.lastIndexOf('.');
+ if (dot != -1) {
+ String pkgName = name.substring(0, dot);
+ if (getPackage(pkgName) == null) {
+ try {
+ if (manifest != null)
+ definePackage(pkgName, manifest, url);
+ else definePackage(pkgName, null, null, null, null, null, null, null);
+ } catch (IllegalArgumentException ex) {
+ if (getPackage(pkgName) == null)
+ throw new IllegalStateException("Cannot find package " + pkgName);
+ }
+ }
+ }
 
-                try {
-                    if (result == null)
-                        result = super.findClass(name);
-                } catch (ClassNotFoundException | NoClassDefFoundError e) {return null;}
 
-                if (result != null)
-                    loader.setClass(name, result);
+ // Product2<byte[], CodeSource> classBytes_ = this.getRemapper().remapClass(name, byteSource, connection);
 
-                if (result != null)
-                classes.put(name, result);
-            }
-        }
+ CodeSource source = new CodeSource(url, entry.getCodeSigners());
+ result = defineClass(name, classBytes, 0, classBytes.length, source);
+ }
 
-        return result;
-    }
+ try {
+ if (result == null)
+ result = super.findClass(name);
+ } catch (ClassNotFoundException | NoClassDefFoundError e) {return null;}
 
-    @Override
-    public void close() throws IOException {
-        try {
-            super.close();
-        } finally {
-            jar.close();
-        }
-    }
-    
-    Set<String> getClasses() {
-        return classes.keySet();
-    }
+ if (result != null)
+ loader.setClass(name, result);
 
-    synchronized void initialize(JavaPlugin javaPlugin) {
-        //Validate.notNull(javaPlugin, "Initializing plugin cannot be null");
-       // Validate.isTrue(javaPlugin.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
-        if (this.plugin != null || this.pluginInit != null)
-            throw new IllegalArgumentException("Plugin already initialized", pluginState);
+ if (result != null)
+ classes.put(name, result);
+ }
+ }
 
-        pluginState = new IllegalStateException("Initial initialization");
-        this.pluginInit = javaPlugin;
+ return result;
+ }
 
-        javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
-    }
-    
-    @Override
-    public ClassLoaderRemapper getRemapper() {
-        if (remapper == null) {
-            MohistRemapper.init(McVersion.v1_19_4);
-            remapper = MohistRemapper.createClassLoaderRemapper(this);
-        }
-        return remapper;
-    }
+ @Override public void close() throws IOException {
+ try {
+ super.close();
+ } finally {
+ jar.close();
+ }
+ }
 
-}*/
+ Set<String> getClasses() {
+ return classes.keySet();
+ }
+
+ synchronized void initialize(JavaPlugin javaPlugin) {
+ //Validate.notNull(javaPlugin, "Initializing plugin cannot be null");
+ // Validate.isTrue(javaPlugin.getClass().getClassLoader() == this, "Cannot initialize plugin outside of this class loader");
+ if (this.plugin != null || this.pluginInit != null)
+ throw new IllegalArgumentException("Plugin already initialized", pluginState);
+
+ pluginState = new IllegalStateException("Initial initialization");
+ this.pluginInit = javaPlugin;
+
+ javaPlugin.init(loader, loader.server, description, dataFolder, file, this);
+ }
+
+ @Override public ClassLoaderRemapper getRemapper() {
+ if (remapper == null) {
+ MohistRemapper.init(McVersion.v1_19_4);
+ remapper = MohistRemapper.createClassLoaderRemapper(this);
+ }
+ return remapper;
+ }
+
+ }*/

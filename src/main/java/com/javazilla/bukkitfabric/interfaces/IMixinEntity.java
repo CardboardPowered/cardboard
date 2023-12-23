@@ -4,14 +4,13 @@
  */
 package com.javazilla.bukkitfabric.interfaces;
 
-import java.util.ArrayList;
-
+import net.minecraft.world.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 
-import net.minecraft.world.World;
+import java.util.ArrayList;
 
 public interface IMixinEntity {
 
