@@ -630,3 +630,5 @@ accessible field net/minecraft/entity/projectile/FireworkRocketEntity ITEM Lnet/
 accessible field net/minecraft/entity/projectile/FireworkRocketEntity SHOT_AT_ANGLE Lnet/minecraft/entity/data/TrackedData;
 accessible field net/minecraft/entity/projectile/FireworkRocketEntity lifeTime I
 accessible class net/minecraft/server/MinecraftServer$ResourceManagerHolder
+accessible method net/minecraft/entity/Entity unsetRemoved ()V
+accessible method net/minecraft/server/network/ServerPlayerEntity worldChanged (Lnet/minecraft/server/world/ServerWorld;)V

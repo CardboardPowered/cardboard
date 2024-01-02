@@ -301,7 +301,7 @@ public class CraftServer implements Server {
     private final BukkitSchedulerImpl scheduler = new BukkitSchedulerImpl();
     private final ConsoleCommandSender consoleCommandSender = new CardboardConsoleCommandSender();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
-    public final List<PlayerImpl> playerView;
+    public List<PlayerImpl> playerView;
     private WarningState warningState = WarningState.DEFAULT;
     public final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
@@ -335,7 +335,15 @@ public class CraftServer implements Server {
         configuration.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("configurations/bukkit.yml"), Charsets.UTF_8)));
         saveConfig();
 
-        this.playerView = new ArrayList<>();
+        //this.playerView = new ArrayList<>();
+        
+        this.playerView = Collections.unmodifiableList(Lists.transform(server.playerManager.players, new Function<ServerPlayerEntity, PlayerImpl>() {
+            @Override
+            public PlayerImpl apply(ServerPlayerEntity player) {
+                return ((IMixinServerEntityPlayer)player).getBukkit();
+            }
+        }));
+        
         loadIcon();
     }
  
@@ -1162,6 +1170,13 @@ public class CraftServer implements Server {
 
     @Override
     public Collection<? extends Player> getOnlinePlayers() {
+        //return this.playerView;
+        this.playerView = Collections.unmodifiableList(Lists.transform(server.playerManager.players, new Function<ServerPlayerEntity, PlayerImpl>() {
+            @Override
+            public PlayerImpl apply(ServerPlayerEntity player) {
+                return ((IMixinServerEntityPlayer)player).getBukkit();
+            }
+        }));
         return this.playerView;
     }
 

@@ -49,6 +49,100 @@ import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
+import org.cardboardpowered.impl.entity.AbstractVillagerImpl;
+import org.cardboardpowered.impl.entity.AnimalsImpl;
+import org.cardboardpowered.impl.entity.ArmorStandImpl;
+import org.cardboardpowered.impl.entity.ArrowImpl;
+import org.cardboardpowered.impl.entity.CardboardAmbient;
+import org.cardboardpowered.impl.entity.CardboardBat;
+import org.cardboardpowered.impl.entity.CardboardBlaze;
+import org.cardboardpowered.impl.entity.CardboardCat;
+import org.cardboardpowered.impl.entity.CardboardCaveSpider;
+import org.cardboardpowered.impl.entity.CardboardComplexPart;
+import org.cardboardpowered.impl.entity.CardboardDolphin;
+import org.cardboardpowered.impl.entity.CardboardDonkey;
+import org.cardboardpowered.impl.entity.CardboardDragonPart;
+import org.cardboardpowered.impl.entity.CardboardDrowned;
+import org.cardboardpowered.impl.entity.CardboardEnderPearl;
+import org.cardboardpowered.impl.entity.CardboardEnderdragon;
+import org.cardboardpowered.impl.entity.CardboardEvoker;
+import org.cardboardpowered.impl.entity.CardboardFirework;
+import org.cardboardpowered.impl.entity.CardboardFish;
+import org.cardboardpowered.impl.entity.CardboardFishCod;
+import org.cardboardpowered.impl.entity.CardboardFishHook;
+import org.cardboardpowered.impl.entity.CardboardFishPufferfish;
+import org.cardboardpowered.impl.entity.CardboardFishSalmon;
+import org.cardboardpowered.impl.entity.CardboardFishTropical;
+import org.cardboardpowered.impl.entity.CardboardFlying;
+import org.cardboardpowered.impl.entity.CardboardGhast;
+import org.cardboardpowered.impl.entity.CardboardGiant;
+import org.cardboardpowered.impl.entity.CardboardGuardian;
+import org.cardboardpowered.impl.entity.CardboardGuardianElder;
+import org.cardboardpowered.impl.entity.CardboardHanging;
+import org.cardboardpowered.impl.entity.CardboardHorse;
+import org.cardboardpowered.impl.entity.CardboardHusk;
+import org.cardboardpowered.impl.entity.CardboardIllager;
+import org.cardboardpowered.impl.entity.CardboardIllusioner;
+import org.cardboardpowered.impl.entity.CardboardIronGolem;
+import org.cardboardpowered.impl.entity.CardboardLlama;
+import org.cardboardpowered.impl.entity.CardboardLlamaSpit;
+import org.cardboardpowered.impl.entity.CardboardMagmaCube;
+import org.cardboardpowered.impl.entity.CardboardMinecart;
+import org.cardboardpowered.impl.entity.CardboardMinecartChest;
+import org.cardboardpowered.impl.entity.CardboardMinecartFurnace;
+import org.cardboardpowered.impl.entity.CardboardMinecartRideable;
+import org.cardboardpowered.impl.entity.CardboardMule;
+import org.cardboardpowered.impl.entity.CardboardPanda;
+import org.cardboardpowered.impl.entity.CardboardPhantom;
+import org.cardboardpowered.impl.entity.CardboardPig;
+import org.cardboardpowered.impl.entity.CardboardPigZombie;
+import org.cardboardpowered.impl.entity.CardboardPillager;
+import org.cardboardpowered.impl.entity.CardboardShulker;
+import org.cardboardpowered.impl.entity.CardboardSilverfish;
+import org.cardboardpowered.impl.entity.CardboardSnowman;
+import org.cardboardpowered.impl.entity.CardboardSpellcaster;
+import org.cardboardpowered.impl.entity.CardboardSquid;
+import org.cardboardpowered.impl.entity.CardboardThrownExpBottle;
+import org.cardboardpowered.impl.entity.CardboardThrownPotion;
+import org.cardboardpowered.impl.entity.CardboardTntCart;
+import org.cardboardpowered.impl.entity.CardboardVex;
+import org.cardboardpowered.impl.entity.CardboardVindicator;
+import org.cardboardpowered.impl.entity.CardboardWaterMob;
+import org.cardboardpowered.impl.entity.CardboardWitch;
+import org.cardboardpowered.impl.entity.CardboardWither;
+import org.cardboardpowered.impl.entity.ChickenImpl;
+import org.cardboardpowered.impl.entity.CowImpl;
+import org.cardboardpowered.impl.entity.CreatureImpl;
+import org.cardboardpowered.impl.entity.CreeperImpl;
+import org.cardboardpowered.impl.entity.EggImpl;
+import org.cardboardpowered.impl.entity.EndermanImpl;
+import org.cardboardpowered.impl.entity.EndermiteImpl;
+import org.cardboardpowered.impl.entity.ExperienceOrbImpl;
+import org.cardboardpowered.impl.entity.FallingBlockImpl;
+import org.cardboardpowered.impl.entity.ItemEntityImpl;
+import org.cardboardpowered.impl.entity.LightningStrikeImpl;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.impl.entity.MonsterImpl;
+import org.cardboardpowered.impl.entity.MushroomImpl;
+import org.cardboardpowered.impl.entity.OcelotImpl;
+import org.cardboardpowered.impl.entity.ParrotImpl;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.entity.PolarBearImpl;
+import org.cardboardpowered.impl.entity.SkeletonImpl;
+import org.cardboardpowered.impl.entity.SlimeImpl;
+import org.cardboardpowered.impl.entity.SnowballImpl;
+import org.cardboardpowered.impl.entity.SpiderImpl;
+import org.cardboardpowered.impl.entity.StrayImpl;
+import org.cardboardpowered.impl.entity.TntImpl;
+import org.cardboardpowered.impl.entity.TridentImpl;
+import org.cardboardpowered.impl.entity.TurtleImpl;
+import org.cardboardpowered.impl.entity.UnknownEntity;
+import org.cardboardpowered.impl.entity.VillagerImpl;
+import org.cardboardpowered.impl.entity.VillagerZombieImpl;
+import org.cardboardpowered.impl.entity.WanderingTraderImpl;
+import org.cardboardpowered.impl.entity.WitherSkeletonImpl;
+import org.cardboardpowered.impl.entity.WolfImpl;
+import org.cardboardpowered.impl.entity.ZombieImpl;
 import org.cardboardpowered.impl.world.WorldImpl;
 import org.cardboardpowered.interfaces.IWorldChunk;
 import com.mojang.brigadier.LiteralMessage;
@@ -57,10 +151,109 @@ import me.isaiah.common.entity.IEntity;
 import me.isaiah.common.entity.IRemoveReason;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.minecraft.entity.ExperienceOrbEntity;
+import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LightningEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.Entity.RemovalReason;
+import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonPart;
+import net.minecraft.entity.decoration.AbstractDecorationEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.mob.AbstractSkeletonEntity;
+import net.minecraft.entity.mob.AmbientEntity;
+import net.minecraft.entity.mob.BlazeEntity;
+import net.minecraft.entity.mob.CaveSpiderEntity;
+import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.entity.mob.DrownedEntity;
+import net.minecraft.entity.mob.ElderGuardianEntity;
+import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.entity.mob.EndermiteEntity;
+import net.minecraft.entity.mob.EvokerEntity;
+import net.minecraft.entity.mob.FlyingEntity;
+import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.entity.mob.GiantEntity;
+import net.minecraft.entity.mob.GuardianEntity;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.HuskEntity;
+import net.minecraft.entity.mob.IllagerEntity;
+import net.minecraft.entity.mob.IllusionerEntity;
+import net.minecraft.entity.mob.MagmaCubeEntity;
+import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.PhantomEntity;
+import net.minecraft.entity.mob.PillagerEntity;
+import net.minecraft.entity.mob.ShulkerEntity;
+import net.minecraft.entity.mob.SilverfishEntity;
+import net.minecraft.entity.mob.SlimeEntity;
+import net.minecraft.entity.mob.SpellcastingIllagerEntity;
+import net.minecraft.entity.mob.SpiderEntity;
+import net.minecraft.entity.mob.StrayEntity;
+import net.minecraft.entity.mob.VexEntity;
+import net.minecraft.entity.mob.VindicatorEntity;
+import net.minecraft.entity.mob.WaterCreatureEntity;
+import net.minecraft.entity.mob.WitchEntity;
+import net.minecraft.entity.mob.WitherSkeletonEntity;
+import net.minecraft.entity.mob.ZombieEntity;
+import net.minecraft.entity.mob.ZombieVillagerEntity;
+import net.minecraft.entity.mob.ZombifiedPiglinEntity;
+import net.minecraft.entity.passive.AbstractDonkeyEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.entity.passive.CatEntity;
+import net.minecraft.entity.passive.ChickenEntity;
+import net.minecraft.entity.passive.CodEntity;
+import net.minecraft.entity.passive.CowEntity;
+import net.minecraft.entity.passive.DolphinEntity;
+import net.minecraft.entity.passive.DonkeyEntity;
+import net.minecraft.entity.passive.FishEntity;
+import net.minecraft.entity.passive.GolemEntity;
+import net.minecraft.entity.passive.HorseEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
+import net.minecraft.entity.passive.LlamaEntity;
+import net.minecraft.entity.passive.MerchantEntity;
+import net.minecraft.entity.passive.MooshroomEntity;
+import net.minecraft.entity.passive.MuleEntity;
+import net.minecraft.entity.passive.OcelotEntity;
+import net.minecraft.entity.passive.PandaEntity;
+import net.minecraft.entity.passive.ParrotEntity;
+import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.PolarBearEntity;
+import net.minecraft.entity.passive.PufferfishEntity;
+import net.minecraft.entity.passive.SalmonEntity;
+import net.minecraft.entity.passive.SnowGolemEntity;
+import net.minecraft.entity.passive.SquidEntity;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.passive.TropicalFishEntity;
+import net.minecraft.entity.passive.TurtleEntity;
+import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.passive.WanderingTraderEntity;
+import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
+import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.entity.projectile.LlamaSpitEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.TridentEntity;
+import net.minecraft.entity.projectile.thrown.EggEntity;
+import net.minecraft.entity.projectile.thrown.EnderPearlEntity;
+import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
+import net.minecraft.entity.projectile.thrown.PotionEntity;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.entity.projectile.thrown.ThrownEntity;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.entity.vehicle.ChestMinecartEntity;
+import net.minecraft.entity.vehicle.FurnaceMinecartEntity;
+import net.minecraft.entity.vehicle.MinecartEntity;
+import net.minecraft.entity.vehicle.TntMinecartEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.math.Box;
@@ -841,6 +1034,214 @@ public abstract class CraftEntity implements Entity, CommandSender, IMixinComman
 	// @Override
     public void setSneaking(boolean sneak) {
         this.getHandle().setSneaking(sneak);
+    }
+
+    public static CraftEntity getEntity(CraftServer server, net.minecraft.entity.Entity entity) {
+        /*
+         * Order is *EXTREMELY* important -- keep it right! =D
+         */
+        // CHECKSTYLE:OFF
+        if (entity instanceof LivingEntity) {
+            // Players
+            if (entity instanceof PlayerEntity) {
+                if (entity instanceof ServerPlayerEntity) { return new PlayerImpl((ServerPlayerEntity) entity); }
+                else { return new CraftHumanEntity((PlayerEntity) entity); }
+            }
+            // Water Animals
+            else if (entity instanceof WaterCreatureEntity) {
+                if (entity instanceof SquidEntity) { return new CardboardSquid(server, (SquidEntity) entity); }
+                else if (entity instanceof FishEntity) {
+                    if (entity instanceof CodEntity) { return new CardboardFishCod(server, (CodEntity) entity); }
+                    else if (entity instanceof PufferfishEntity) { return new CardboardFishPufferfish(server, (PufferfishEntity) entity); }
+                    else if (entity instanceof SalmonEntity) { return new CardboardFishSalmon(server, (SalmonEntity) entity); }
+                    else if (entity instanceof TropicalFishEntity) { return new CardboardFishTropical(server, (TropicalFishEntity) entity); }
+                    else { return new CardboardFish(server, (FishEntity) entity); }
+                }
+                else if (entity instanceof DolphinEntity) { return new CardboardDolphin(server, (DolphinEntity) entity); }
+                else { return new CardboardWaterMob(server, (WaterCreatureEntity) entity); }
+            }
+            else if (entity instanceof PathAwareEntity) {
+                // Animals
+                if (entity instanceof AnimalEntity) {
+                    if (entity instanceof ChickenEntity) { return new ChickenImpl(server, (ChickenEntity) entity); }
+                    else if (entity instanceof CowEntity) {
+                        if (entity instanceof MooshroomEntity) { return new MushroomImpl(server, (MooshroomEntity) entity); }
+                        else { return new CowImpl(server, (CowEntity) entity); }
+                    }
+                    else if (entity instanceof PigEntity) { return new CardboardPig(server, (PigEntity) entity); }
+                    else if (entity instanceof TameableEntity) {
+                        if (entity instanceof WolfEntity) { return new WolfImpl(server, (WolfEntity) entity); }
+                        else if (entity instanceof CatEntity) { return new CardboardCat(server, (CatEntity) entity); }
+                        else if (entity instanceof ParrotEntity) { return new ParrotImpl(server, (ParrotEntity) entity); }
+                    }
+                    //else if (entity instanceof SheepEntity) { return new CraftSheep(server, (SheepEntity) entity); }
+                    else if (entity instanceof AbstractHorseEntity) {
+                        if (entity instanceof AbstractDonkeyEntity){
+                            if (entity instanceof DonkeyEntity) { return new CardboardDonkey(server, (DonkeyEntity) entity); }
+                            else if (entity instanceof MuleEntity) { return new CardboardMule(server, (MuleEntity) entity); }
+                            //else if (entity instanceof TraderLlamaEntity) { return new CardboardTraderLlama(server, (TraderLlamaEntity) entity); }
+                            else if (entity instanceof LlamaEntity) { return new CardboardLlama(server, (LlamaEntity) entity); }
+                        } else if (entity instanceof HorseEntity) { return new CardboardHorse(server, (HorseEntity) entity); }
+                        //else if (entity instanceof SkeletonHorseEntity) { return new CraftSkeletonHorse(server, (SkeletonHorseEntity) entity); }
+                        //else if (entity instanceof ZombieHorseEntity) { return new CraftZombieHorse(server, (ZombieHorseEntity) entity); }
+                    }
+                    //else if (entity instanceof RabbitEntity) { return new CraftRabbit(server, (RabbitEntity) entity); }
+                    else if (entity instanceof PolarBearEntity) { return new PolarBearImpl(server, (PolarBearEntity) entity); }
+                    else if (entity instanceof TurtleEntity) { return new TurtleImpl(server, (TurtleEntity) entity); }
+                    else if (entity instanceof OcelotEntity) { return new OcelotImpl(server, (OcelotEntity) entity); }
+                    else if (entity instanceof PandaEntity) { return new CardboardPanda(server, (PandaEntity) entity); }
+                    //else if (entity instanceof FoxEntity) { return new CraftFox(server, (FoxEntity) entity); }
+                    //else if (entity instanceof BeeEntity) { return new CraftBee(server, (BeeEntity) entity); }
+                    //else if (entity instanceof HoglinEntity) { return new CraftHoglin(server, (HoglinEntity) entity); }
+                    //else if (entity instanceof StriderEntity) { return new CraftStrider(server, (StriderEntity) entity); }
+                    else  { return new AnimalsImpl(server, (AnimalEntity) entity); }
+                }
+                // Monsters
+                else if (entity instanceof HostileEntity) {
+                    if (entity instanceof ZombieEntity) {
+                        if (entity instanceof ZombifiedPiglinEntity) { return new CardboardPigZombie(server, (ZombifiedPiglinEntity) entity); }
+                        else if (entity instanceof HuskEntity) { return new CardboardHusk(server, (HuskEntity) entity); }
+                        else if (entity instanceof ZombieVillagerEntity) { return new VillagerZombieImpl(server, (ZombieVillagerEntity) entity); }
+                        else if (entity instanceof DrownedEntity) { return new CardboardDrowned(server, (DrownedEntity) entity); }
+                        else { return new ZombieImpl(server, (ZombieEntity) entity); }
+                    }
+                    else if (entity instanceof CreeperEntity) { return new CreeperImpl(server, (CreeperEntity) entity); }
+                    else if (entity instanceof EndermanEntity) { return new EndermanImpl(server, (EndermanEntity) entity); }
+                    else if (entity instanceof SilverfishEntity) { return new CardboardSilverfish(server, (SilverfishEntity) entity); }
+                    else if (entity instanceof GiantEntity) { return new CardboardGiant(server, (GiantEntity) entity); }
+                    else if (entity instanceof AbstractSkeletonEntity) {
+                        if (entity instanceof StrayEntity) { return new StrayImpl(server, (StrayEntity) entity); }
+                        else if (entity instanceof WitherSkeletonEntity) { return new WitherSkeletonImpl(server, (WitherSkeletonEntity) entity); }
+                        else { return new SkeletonImpl(server, (AbstractSkeletonEntity) entity); }
+                    }
+                    else if (entity instanceof BlazeEntity) { return new CardboardBlaze(server, (BlazeEntity) entity); }
+                    else if (entity instanceof WitchEntity) { return new CardboardWitch(server, (WitchEntity) entity); }
+                    else if (entity instanceof WitherEntity) { return new CardboardWither(server, (WitherEntity) entity); }
+                    else if (entity instanceof SpiderEntity) {
+                        if (entity instanceof CaveSpiderEntity) { return new CardboardCaveSpider(server, (CaveSpiderEntity) entity); }
+                        else { return new SpiderImpl(server, (SpiderEntity) entity); }
+                    }
+                    else if (entity instanceof EndermiteEntity) { return new EndermiteImpl(server, (EndermiteEntity) entity); }
+                    else if (entity instanceof GuardianEntity) {
+                        if (entity instanceof ElderGuardianEntity) { return new CardboardGuardianElder(server, (ElderGuardianEntity) entity); }
+                        else { return new CardboardGuardian(server, (GuardianEntity) entity); }
+                    }
+                    else if (entity instanceof VexEntity) { return new CardboardVex(server, (VexEntity) entity); }
+                    else if (entity instanceof IllagerEntity) {
+                        if (entity instanceof SpellcastingIllagerEntity) {;
+                            if (entity instanceof EvokerEntity) { return new CardboardEvoker(server, (EvokerEntity) entity); }
+                            else if (entity instanceof IllusionerEntity) { return new CardboardIllusioner(server, (IllusionerEntity) entity); }
+                            else {  return new CardboardSpellcaster(server, (SpellcastingIllagerEntity) entity); }
+                        }
+                        else if (entity instanceof VindicatorEntity) { return new CardboardVindicator(server, (VindicatorEntity) entity); }
+                        else if (entity instanceof PillagerEntity) { return new CardboardPillager(server, (PillagerEntity) entity); }
+                        else { return new CardboardIllager(server, (IllagerEntity) entity); }
+                    }
+                    //else if (entity instanceof RavagerEntity) { return new CraftRavager(server, (RavagerEntity) entity); }
+                    //else if (entity instanceof AbstractPiglinEntity) {
+                        //if (entity instanceof PiglinEntity) return new CraftPiglin(server, (PiglinEntity) entity);
+                        //else if (entity instanceof PiglinBruteEntity) { return new CraftPiglinBrute(server, (PiglinBruteEntity) entity); }
+                        //else { return new CraftPiglinAbstract(server, (AbstractPiglinEntity) entity); }
+                    //}
+                    //else if (entity instanceof ZoglinEntity) { return new CraftZoglin(server, (ZoglinEntity) entity); }
+
+                    else  { return new MonsterImpl(server, (HostileEntity) entity); }
+                }
+                else if (entity instanceof GolemEntity) {
+                    if (entity instanceof SnowGolemEntity) { return new CardboardSnowman(server, (SnowGolemEntity) entity); }
+                    else if (entity instanceof IronGolemEntity) { return new CardboardIronGolem(server, (IronGolemEntity) entity); }
+                    else if (entity instanceof ShulkerEntity) { return new CardboardShulker(server, (ShulkerEntity) entity); }
+                }
+                else if (entity instanceof MerchantEntity) {
+                    if (entity instanceof VillagerEntity) { return new VillagerImpl(server, (VillagerEntity) entity); }
+                    else if (entity instanceof WanderingTraderEntity) { return new WanderingTraderImpl(server, (WanderingTraderEntity) entity); }
+                    else { return new AbstractVillagerImpl(server, (MerchantEntity) entity); }
+                }
+                else { return new CreatureImpl(server, (PathAwareEntity) entity); }
+            }
+            // Slimes are a special (and broken) case
+            else if (entity instanceof SlimeEntity) {
+                if (entity instanceof MagmaCubeEntity) { return new CardboardMagmaCube(server, (MagmaCubeEntity) entity); }
+                else { return new SlimeImpl(server, (SlimeEntity) entity); }
+            }
+            // Flying
+            else if (entity instanceof FlyingEntity) {
+                if (entity instanceof GhastEntity) { return new CardboardGhast(server, (GhastEntity) entity); }
+                else if (entity instanceof PhantomEntity) { return new CardboardPhantom(server, (PhantomEntity) entity); }
+                else { return new CardboardFlying(server, (FlyingEntity) entity); }
+            }
+            else if (entity instanceof EnderDragonEntity) {
+                return new CardboardEnderdragon(server, (EnderDragonEntity) entity);
+            }
+            // Ambient
+            else if (entity instanceof AmbientEntity) {
+                if (entity instanceof BatEntity) { return new CardboardBat(server, (BatEntity) entity); }
+                else { return new CardboardAmbient(server, (AmbientEntity) entity); }
+            }
+            else if (entity instanceof ArmorStandEntity) { return new ArmorStandImpl(server, (ArmorStandEntity) entity); }
+            else  { return new LivingEntityImpl(server, (LivingEntity) entity); }
+        }
+        else if (entity instanceof EnderDragonPart) {
+            EnderDragonPart part = (EnderDragonPart) entity;
+            if (part.owner instanceof EnderDragonEntity) { return new CardboardDragonPart(server, (EnderDragonPart) entity); }
+            else { return new CardboardComplexPart(server, (EnderDragonPart) entity); }
+        }
+        else if (entity instanceof ExperienceOrbEntity) { return new ExperienceOrbImpl(server, (ExperienceOrbEntity) entity); }
+        //else if (entity instanceof ArrowEntity) { return new CraftTippedArrow(server, (ArrowEntity) entity); }
+        //else if (entity instanceof SpectralArrowEntity) { return new CraftSpectralArrow(server, (SpectralArrowEntity) entity); }
+        else if (entity instanceof PersistentProjectileEntity) {
+            if (entity instanceof TridentEntity) { return new TridentImpl(server, (TridentEntity) entity); }
+            else { return new ArrowImpl(server, (PersistentProjectileEntity) entity); }
+        }
+        //else if (entity instanceof BoatEntity) { return new CraftBoat(server, (BoatEntity) entity); }
+        else if (entity instanceof ThrownEntity) {
+            if (entity instanceof EggEntity) { return new EggImpl(server, (EggEntity) entity); }
+            else if (entity instanceof SnowballEntity) { return new SnowballImpl(server, (SnowballEntity) entity); }
+            else if (entity instanceof PotionEntity) { return new CardboardThrownPotion(server, (PotionEntity) entity); }
+            else if (entity instanceof EnderPearlEntity) { return new CardboardEnderPearl(server, (EnderPearlEntity) entity); }
+            else if (entity instanceof ExperienceBottleEntity) { return new CardboardThrownExpBottle(server, (ExperienceBottleEntity) entity); }
+            
+        }
+        else if (entity instanceof FallingBlockEntity) { return new FallingBlockImpl(server, (FallingBlockEntity) entity); }
+        else if (entity instanceof ExplosiveProjectileEntity) {
+            //if (entity instanceof SmallFireballEntity) { return new CraftSmallFireball(server, (SmallFireballEntity) entity); }
+            //else if (entity instanceof FireballEntity) { return new CraftLargeFireball(server, (FireballEntity) entity); }
+           // else if (entity instanceof WitherSkullEntity) { return new CraftWitherSkull(server, (WitherSkullEntity) entity); }
+           // else if (entity instanceof DragonFireballEntity) { return new CraftDragonFireball(server, (DragonFireballEntity) entity); }
+            //else { return new CraftFireball(server, (ExplosiveProjectileEntity) entity); }
+        }
+        //else if (entity instanceof EyeOfEnderEntity) { return new CraftEnderSignal(server, (EyeOfEnderEntity) entity); }
+        //else if (entity instanceof EndCrystalEntity) { return new CraftEnderCrystal(server, (EndCrystalEntity) entity); }
+        else if (entity instanceof FishingBobberEntity) { return new CardboardFishHook(server, (FishingBobberEntity) entity); }
+        else if (entity instanceof ItemEntity) { return new ItemEntityImpl(server, (ItemEntity) entity); }
+        else if (entity instanceof LightningEntity) { return new LightningStrikeImpl(server, (LightningEntity) entity); }
+        else if (entity instanceof AbstractMinecartEntity) {
+            if (entity instanceof FurnaceMinecartEntity) { return new CardboardMinecartFurnace(server, (FurnaceMinecartEntity) entity); }
+            else if (entity instanceof ChestMinecartEntity) { return new CardboardMinecartChest(server, (ChestMinecartEntity) entity); }
+            else if (entity instanceof TntMinecartEntity) { return new CardboardTntCart(server, (TntMinecartEntity) entity); }
+            //else if (entity instanceof HopperMinecartEntity) { return new CraftMinecartHopper(server, (HopperMinecartEntity) entity); }
+            //else if (entity instanceof SpawnerMinecartEntity) { return new CraftMinecartMobSpawner(server, (SpawnerMinecartEntity) entity); }
+            else if (entity instanceof MinecartEntity) { return new CardboardMinecartRideable(server, (MinecartEntity) entity); }
+            //else if (entity instanceof CommandBlockMinecartEntity) { return new CraftMinecartCommand(server, (CommandBlockMinecartEntity) entity); }*/
+            else return new CardboardMinecart(server, (AbstractMinecartEntity) entity);
+        } else if (entity instanceof AbstractDecorationEntity) {
+            //if (entity instanceof PaintingEntity) { return new CraftPainting(server, (PaintingEntity) entity); }
+            //else if (entity instanceof ItemFrameEntity) { return new CraftItemFrame(server, (ItemFrameEntity) entity); }
+            //else if (entity instanceof LeashKnotEntity) { return new CraftLeash(server, (LeashKnotEntity) entity); }
+            //else { return new CraftHanging(server, (AbstractDecorationEntity) entity); }
+            return new CardboardHanging(server, (AbstractDecorationEntity) entity);
+        }
+        else if (entity instanceof TntEntity) { return new TntImpl(server, (TntEntity) entity); }
+        else if (entity instanceof FireworkRocketEntity) {return new CardboardFirework(server, (FireworkRocketEntity) entity); }
+        //else if (entity instanceof ShulkerBulletEntity) { return new CraftShulkerBullet(server, (ShulkerBulletEntity) entity); }
+        //else if (entity instanceof AreaEffectCloudEntity) { return new CraftAreaEffectCloud(server, (AreaEffectCloudEntity) entity); }
+        //else if (entity instanceof EvokerFangsEntity) { return new CraftEvokerFangs(server, (EvokerFangsEntity) entity); }
+        else if (entity instanceof LlamaSpitEntity) { return new CardboardLlamaSpit(server, (LlamaSpitEntity) entity); }
+        // CHECKSTYLE:ON
+
+        
+        return (entity instanceof net.minecraft.entity.LivingEntity) ? new LivingEntityImpl(entity) : new UnknownEntity(entity); // TODO
+        //throw new AssertionError("Unknown entity " + (entity == null ? null : entity.getClass()));
     }
 
 	// TODO 1.19.4

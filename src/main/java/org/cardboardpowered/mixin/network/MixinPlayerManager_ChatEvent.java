@@ -56,12 +56,12 @@ public class MixinPlayerManager_ChatEvent {
     @Inject(method = "broadcast(Lnet/minecraft/network/message/SignedMessage;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At("HEAD"), cancellable = true)
 	private void onSendChatMessage(SignedMessage message, ServerPlayerEntity sender, MessageType.Parameters params, CallbackInfo ci) {
     	
-		 BukkitFabricMod.LOGGER.info("onSendChatMessage: " + message.getContent().getString());
+		 // BukkitFabricMod.LOGGER.info("onSendChatMessage: " + message.getContent().getString());
 	}
     
     @Overwrite
     public void broadcast(SignedMessage message, Predicate<ServerPlayerEntity> shouldSendFiltered, ServerPlayerEntity sender, MessageSourceProfile sourceProfile, MessageType.Parameters params) {
-        BukkitFabricMod.LOGGER.info("BROADCAST DEBUG: " + message.getContent().getString());
+        // BukkitFabricMod.LOGGER.info("BROADCAST DEBUG: " + message.getContent().getString());
         
     	boolean bl = this.verify(message, sourceProfile);
         this.server.logChatMessage(message.getContent(), params, null);

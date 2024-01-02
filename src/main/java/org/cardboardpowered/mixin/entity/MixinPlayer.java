@@ -28,6 +28,7 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.world.WorldImpl;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
@@ -56,6 +57,7 @@ import net.fabricmc.fabric.impl.screenhandler.Networking;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -81,6 +83,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -112,6 +115,9 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Override
     public CraftEntity getBukkitEntity() {
+    	if (bukkit == null) {
+    		bukkit = (PlayerImpl) CraftEntity.getEntity(CraftServer.INSTANCE, ((ServerPlayerEntity) (Object) this));
+    	}
         return bukkit;
     }
 
@@ -127,7 +133,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 
     @Inject(at = @At("TAIL"), method = "onDisconnect")
     public void onDisconnect(CallbackInfo ci) {
-        CraftServer.INSTANCE.playerView.remove(this.bukkit);
+        // CraftServer.INSTANCE.playerView.remove(this.bukkit);
     }
 
     @Inject(at = @At("HEAD"), method = "teleport", cancellable = true)
@@ -381,6 +387,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
     }
 
     //@Overwrite
+    @Override
     public void copyFrom_unused(ServerPlayerEntity entityplayer, boolean flag) {
         if (flag) {
             ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
@@ -420,5 +427,44 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
         Bukkit.getPluginManager().callEvent(event);
         handler.transferTo(((ServerPlayerEntity)(Object)this).playerScreenHandler, (CraftHumanEntity) getBukkitEntity());
     }
+    
+    public void spawnIn(World world) {
+        /*this.setWorld(world);
+        if (world == null) {
+            this.unsetRemoved();
+            Vec3d position = null;
+            if (this.spawnPointDimension != null && (world = this.server.getWorld(this.spawnPointDimension)) != null && this.getSpawnPointPosition() != null) {
+                position = PlayerEntity.findRespawnPosition((ServerWorld)world, this.getSpawnPointPosition(), this.getSpawnAngle(), false, false).orElse(null);
+            }
+            if (world == null || position == null) {
+                world = ((WorldImpl)Bukkit.getServer().getWorlds().get(0)).getHandle();
+                position = Vec3d.ofCenter(world.getSpawnPos());
+            }
+            this.setWorld(world);
+            this.setPos(position.getX(), position.getY(), position.getZ());
+        }
+        this.interactionManager.setWorld((ServerWorld)world);*/
+    }
+
+	@Override
+	public void spawnIn(ServerWorld world) {
+		ServerPlayerEntity plr = ((ServerPlayerEntity)(Object)this);
+		
+		plr.setWorld(world);
+        if (world == null) {
+        	plr.unsetRemoved();
+            Vec3d position = null;
+            if (plr.getSpawnPointDimension() != null && (world = plr.server.getWorld(plr.getSpawnPointDimension())) != null && plr.getSpawnPointPosition() != null) {
+                position = PlayerEntity.findRespawnPosition((ServerWorld)world, plr.getSpawnPointPosition(), plr.getSpawnAngle(), false, false).orElse(null);
+            }
+            if (world == null || position == null) {
+                world = ((WorldImpl)Bukkit.getServer().getWorlds().get(0)).getHandle();
+                position = Vec3d.ofCenter(world.getSpawnPos());
+            }
+            plr.setWorld(world);
+            plr.setPos(position.getX(), position.getY(), position.getZ());
+        }
+        plr.interactionManager.setWorld((ServerWorld)world);
+	}
 
 }

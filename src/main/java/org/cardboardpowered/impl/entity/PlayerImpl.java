@@ -2100,5 +2100,4 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 		// TODO Auto-generated method stub
 		return this.teleport(arg0, arg1);
 	}
-
 }
