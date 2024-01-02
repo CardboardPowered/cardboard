@@ -363,6 +363,9 @@ public class MixinPlayerManager implements IMixinPlayerManager {
                 worldserver1 = this.server.getWorld(World.OVERWORLD);
                 // blockposition = entityplayer1.getSpawnPoint(worldserver1);
                 blockposition = entityplayer1.getSpawnPointPosition();
+                if (null == blockposition) {
+                	blockposition = worldserver1.getSpawnPos();
+                }
                 
                 banner$loc = CraftLocation.toBukkit(blockposition, ((IMixinWorld)worldserver1).getWorldImpl()).add(0.5F, 0.1F, 0.5F);
             }
