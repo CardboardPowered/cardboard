@@ -77,6 +77,7 @@
     "entity.MixinSlimeEntity",
     "entity.MixinThrownItemEntity",
     "entity.MixinTntEntity",
+    "entity.MixinServerPlayerEntity_DeathEvent",
     "entity.ai.MixinBreakDoorGoal",
     "entity.ai.MixinForgetAttackTargetTask",
     "entity.ai.MixinGoToWorkTask",

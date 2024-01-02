@@ -127,7 +127,7 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Override
     public boolean isDisconnected() {
-    	return false; // TODO
+    	return player.isDisconnected(); // TODO
     }
 
     /**

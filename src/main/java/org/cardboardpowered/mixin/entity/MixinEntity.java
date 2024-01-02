@@ -280,6 +280,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         this.projectileSource = source;
     }
 
+    
+    @Deprecated
     private static CraftEntity getEntity(CraftServer server, Entity entity) {
         /*
          * Order is *EXTREMELY* important -- keep it right! =D

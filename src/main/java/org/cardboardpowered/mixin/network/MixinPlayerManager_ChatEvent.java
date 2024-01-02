@@ -55,7 +55,7 @@ public class MixinPlayerManager_ChatEvent {
     @Inject(method = "broadcast(Lnet/minecraft/network/message/SignedMessage;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/network/message/MessageType$Parameters;)V", at = @At("HEAD"), cancellable = true)
 	private void onSendChatMessage(SignedMessage message, ServerPlayerEntity sender, MessageType.Parameters params, CallbackInfo ci) {
     	
-		 BukkitFabricMod.LOGGER.info("onSendChatMessage: " + message.getContent().getString());
+		 // BukkitFabricMod.LOGGER.info("onSendChatMessage: " + message.getContent().getString());
 	}
     
     //     private void broadcast(SignedMessage message, Predicate<ServerPlayerEntity> shouldSendFiltered, @Nullable ServerPlayerEntity sender, MessageType.Parameters params) {
