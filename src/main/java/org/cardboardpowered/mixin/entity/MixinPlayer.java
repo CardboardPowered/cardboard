@@ -450,7 +450,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
 	public void spawnIn(ServerWorld world) {
 		ServerPlayerEntity plr = ((ServerPlayerEntity)(Object)this);
 		
-		plr.setWorld(world);
+		plr.setServerWorld(world);
         if (world == null) {
         	plr.unsetRemoved();
             Vec3d position = null;
@@ -461,7 +461,7 @@ public class MixinPlayer extends MixinLivingEntity implements IMixinCommandOutpu
                 world = ((WorldImpl)Bukkit.getServer().getWorlds().get(0)).getHandle();
                 position = Vec3d.ofCenter(world.getSpawnPos());
             }
-            plr.setWorld(world);
+            plr.setServerWorld(world);
             plr.setPos(position.getX(), position.getY(), position.getZ());
         }
         plr.interactionManager.setWorld((ServerWorld)world);
