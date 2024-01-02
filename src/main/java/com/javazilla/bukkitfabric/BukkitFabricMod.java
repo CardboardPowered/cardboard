@@ -293,16 +293,25 @@ public class BukkitFabricMod implements ModInitializer {
 
     @EventHandler
     public void onPlayerInit(ServerPlayerInitEvent ev) {
-        ServerPlayerEntity e = (ServerPlayerEntity) ev.getPlayer().getMC();
+    	// Replaced as of 1/24
+        /*ServerPlayerEntity e = (ServerPlayerEntity) ev.getPlayer().getMC();
         IMixinServerEntityPlayer ie = (IMixinServerEntityPlayer) e;
 
-        if (null != Bukkit.getPlayer(e.getUuid())) {
-            ie.setBukkit( (PlayerImpl) Bukkit.getPlayer(e.getUuid()) );
+        System.out.println("ON PLAYER INIT");
+        
+        /*if (null != Bukkit.getPlayer(e.getUuid())) {
+        	System.out.println("NULL != getPlayer");
+        	
+        	PlayerImpl impl = (PlayerImpl) Bukkit.getPlayer(e.getUuid());
+        	//impl.setHandle(e);
+        	
+            ie.setBukkit( impl );
             ie.getBukkit().setHandle(e);
         } else {
+        	System.out.println("NULL == getPlayer");
             ie.setBukkit( new PlayerImpl(e) );
             CraftServer.INSTANCE.playerView.add(ie.getBukkit());
-        }
+        }*/
     }
 
     @EventHandler

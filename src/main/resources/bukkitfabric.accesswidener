@@ -618,3 +618,5 @@ accessible field net/minecraft/block/entity/JukeboxBlockEntity isPlaying Z
 accessible field net/minecraft/block/entity/JukeboxBlockEntity recordStartTick J
 accessible field net/minecraft/block/entity/JukeboxBlockEntity tickCount J
 accessible field net/minecraft/block/entity/SkullBlockEntity noteBlockSound Lnet/minecraft/util/Identifier;
+accessible method net/minecraft/entity/Entity unsetRemoved ()V
+accessible method net/minecraft/server/network/ServerPlayerEntity worldChanged (Lnet/minecraft/server/world/ServerWorld;)V

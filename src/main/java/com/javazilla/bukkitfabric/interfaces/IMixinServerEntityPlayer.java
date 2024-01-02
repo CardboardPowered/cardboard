@@ -21,6 +21,8 @@ package com.javazilla.bukkitfabric.interfaces;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -41,5 +43,9 @@ public interface IMixinServerEntityPlayer extends IMixinEntity {
     void setBukkit(PlayerImpl plr);
 
     PlayerImpl getBukkit();
+
+	void spawnIn(ServerWorld worldserver1);
+
+	void copyFrom_unused(ServerPlayerEntity entityplayer, boolean flag);
 
 }
