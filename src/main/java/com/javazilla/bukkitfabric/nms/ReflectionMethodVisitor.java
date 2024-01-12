@@ -50,7 +50,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     }
     private String pln;
     private MappingResolver mr;
-    private MappingResolver mr2;
+    // private MappingResolver mr2;
     
     public static HashMap<String,String> spigot2obf;
     public static HashMap<String,String> cbm;
@@ -60,7 +60,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         this.pln = pln;
       //  net.fabricmc.loader.impl.FabricLoaderImpl l;
         this.mr = FabricLoader.getInstance().getMappingResolver();
-        this.mr2 = new Testing("official");
+        // this.mr2 = new Testing("official");
         if (null == spigot2obf) {
             spigot2obf = new HashMap<>();
             cbm = new HashMap<>();
@@ -196,7 +196,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                                     if (tt.equalsIgnoreCase(d2)) {
                                         //System.out.println( "\tPossible Match?: " + m.getName() + tt + "");
                                         
-                                        String obfn = mr2.mapMethodName("named", mr2.mapClassName("named", cz.getName()), m.getName(), tt);
+                                       //  String obfn = mr2.mapMethodName("named", mr2.mapClassName("named", cz.getName()), m.getName(), tt);
                                         //System.out.println("OBFN: " + obfn);
                                     }
                                     
