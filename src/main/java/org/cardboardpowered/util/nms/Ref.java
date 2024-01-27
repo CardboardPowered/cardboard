@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.nms;
+package org.cardboardpowered.util.nms;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.AccessibleObject;
@@ -24,12 +24,13 @@ import net.minecraft.util.shape.VoxelShapes;
 import sun.misc.Unsafe;
 
 // protocolsupport.utils.reflection.ReflectionUtils
+@Deprecated
 public class Ref {
 
     private Ref() {
     }
 
-    public static @Nonnull String toStringAllFields(@Nonnull Object obj) {
+    private static @Nonnull String toStringAllFields(@Nonnull Object obj) {
         StringJoiner joiner = new StringJoiner(", ");
         Class<?> clazz = obj.getClass();
         do {

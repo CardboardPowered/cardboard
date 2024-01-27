@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.javazilla.bukkitfabric.nms;
+package org.cardboardpowered.util.nms;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
