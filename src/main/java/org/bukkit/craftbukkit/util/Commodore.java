@@ -19,11 +19,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.nms.Provider;
-import com.javazilla.bukkitfabric.nms.ReflectionMethodVisitor;
-import com.javazilla.bukkitfabric.nms.Remapper;
-
+import org.cardboardpowered.util.nms.ReflectionMethodVisitor;
 import net.fabricmc.loader.api.FabricLoader;
 
 /**
@@ -116,12 +112,12 @@ public class Commodore {
         //SwitchTableFixer.INSTANCE.processClass(node);
 
         boolean skip = false;
-        for (Provider p : Remapper.providers) {
+        /*for (Provider p : Remapper.providers) {
             if (p.shouldReplaceASM()) {
                 cr.accept(p.getClassVisitor(Opcodes.ASM9, cw), 0);
                 skip = true;
             }
-        }
+        }*/
         if (!skip) cr.accept(new ClassVisitor(Opcodes.ASM9, node) {
             // Paper start - Rewrite plugins
             @Override
@@ -137,11 +133,11 @@ public class Commodore {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 
-                for (Provider p : Remapper.providers) {
+                /*for (Provider p : Remapper.providers) {
                     if (p.shouldReplaceASM()) {
                         return p.newMethodVisitor(api, super.visitMethod(access, name, desc, signature, exceptions), aname);
                     }
-                }
+                }*/
                 return new ReflectionMethodVisitor(api, super.visitMethod(access, name, desc, signature, exceptions), aname) {
                     // Paper start - Plugin rewrites
                     @Override

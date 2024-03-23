@@ -47,7 +47,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.nms.MappingsReader;
 
 import me.isaiah.common.event.EventHandler;
 import me.isaiah.common.event.EventRegistery;
@@ -102,11 +101,11 @@ public class BukkitFabricMod implements ModInitializer {
         
        // test();
         
-        try {
+        /*try {
             MappingsReader.main(null);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
         LOGGER.info("Cardboard mod Loaded.");
         new File("plugins").mkdirs();
 

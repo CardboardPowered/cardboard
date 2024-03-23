@@ -103,6 +103,7 @@ import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.cardboardpowered.util.nms.ReflectionRemapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
@@ -112,7 +113,6 @@ import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
 import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-import com.javazilla.bukkitfabric.nms.ReflectionRemapper;
 import com.mojang.authlib.GameProfile;
 
 import io.netty.buffer.Unpooled;
