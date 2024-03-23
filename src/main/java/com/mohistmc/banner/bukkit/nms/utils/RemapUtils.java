@@ -42,8 +42,8 @@ public class RemapUtils {
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
-        // jarMapping.setInheritanceMap(new BannerInheritanceMap());
-        // jarMapping.setFallbackInheritanceProvider(new BannerInheritanceProvider());
+        jarMapping.setInheritanceMap(new BannerInheritanceMap());
+        jarMapping.setFallbackInheritanceProvider(new BannerInheritanceProvider());
 
         try {
             jarMapping.loadMappings(
@@ -51,12 +51,13 @@ public class RemapUtils {
                     null,
                     null, false);
         } catch (Exception e) {
+        	System.out.println("debug: error loading remaputils");
             e.printStackTrace();
         }
         
         JointProvider provider = new JointProvider();
         provider.add(new BannerInheritanceProvider());
-        jarMapping.setInheritanceMap(new InheritanceMap());
+        //jarMapping.setInheritanceMap(new InheritanceMap());
         jarMapping.setFallbackInheritanceProvider(provider);
         jarRemapper = new BannerJarRemapper(jarMapping);
         remappers.add(jarRemapper);

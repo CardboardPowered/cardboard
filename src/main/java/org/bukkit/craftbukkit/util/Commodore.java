@@ -67,7 +67,7 @@ public class Commodore {
         if ( true )
         {
             // unversion incoming calls for pre-relocate debug work
-            final String NMS_REVISION_PACKAGE = "v1_19_R1/";
+            final String NMS_REVISION_PACKAGE = "v1_20_R1/";
 
        //     getAndRemove.put( "net/minecraft/", NMS_REVISION_PACKAGE );
             getAndRemove.put( "org/bukkit/".concat( "craftbukkit/"), NMS_REVISION_PACKAGE );

@@ -215,6 +215,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                     }
                 }
 
+                System.out.println("NAM2!: " + name2);
                 super.visitMethodInsn( opcode, cl.replace('.', '/'), name2, d2.replace('.', '/'), false );
                 return;
             }
