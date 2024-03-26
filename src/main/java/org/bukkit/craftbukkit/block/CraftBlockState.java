@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Chunk;
@@ -12,6 +13,8 @@ import org.bukkit.block.data.BlockData;
 
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.entity.Entity;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -19,6 +22,10 @@ import org.cardboardpowered.impl.world.CardboardChunk;
 
 import com.google.common.base.Preconditions;
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 
 import net.minecraft.server.world.ServerWorld;
@@ -273,5 +280,25 @@ public class CraftBlockState implements BlockState {
         // TODO Auto-generated method stub
         return false;
     }
+    
+    // 1.19.2 paper api:
+
+	@Override
+	public @Unmodifiable @NotNull Collection<ItemStack> getDrops() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @Unmodifiable @NotNull Collection<ItemStack> getDrops(@Nullable ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @Unmodifiable @NotNull Collection<ItemStack> getDrops(@NotNull ItemStack arg0, @Nullable Entity arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

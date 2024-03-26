@@ -35,6 +35,17 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.CraftServer;
+
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import org.bukkit.craftbukkit.inventory.CraftContainer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -43,8 +54,11 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.FishHook;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -66,11 +80,44 @@ import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+
+import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.text.Component;
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CraftingTableBlock;
+import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.LockableContainerBlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerListener;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Arm;
+import net.minecraft.util.math.BlockPos;
+
 
 public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
@@ -704,4 +751,48 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         return CraftItemStack.asBukkitCopy(nms.getActiveItem());
     }
 
+	@Override
+    public Firework fireworkBoost(ItemStack fireworkItemStack) {
+        Preconditions.checkArgument((fireworkItemStack != null ? 1 : 0) != 0, (Object)"fireworkItemStack must not be null");
+        Preconditions.checkArgument((fireworkItemStack.getType() == Material.FIREWORK_ROCKET ? 1 : 0) != 0, (String)"fireworkItemStack must be of type %s", (Object)Material.FIREWORK_ROCKET);
+        FireworkRocketEntity fireworks = new FireworkRocketEntity(this.getHandle().getWorld(), CraftItemStack.asNMSCopy(fireworkItemStack), this.getHandle());
+        boolean success = this.getHandle().getWorld().spawnEntity(fireworks);
+        return success ? (Firework)(((IMixinEntity) fireworks).getBukkitEntity()) : null;
+    }
+
+	@Override
+    public FishHook getFishHook() {
+        if (this.getHandle().fishHook == null) {
+            return null;
+        }
+        return (FishHook)((IMixinEntity)this.getHandle().fishHook).getBukkitEntity();
+    }
+
+	@Override
+	public @Nullable Location getLastDeathLocation() {
+		// TODO Auto-generated method stub
+        return this.getHandle().getLastDeathPos().map(CraftMemoryMapper::fromNms).orElse(null);
+
+	}
+
+	@Override
+    public void setLastDeathLocation(Location location) {
+        if (location == null) {
+            this.getHandle().setLastDeathPos(Optional.empty());
+        } else {
+           //  this.getHandle().setLastDeathPos(Optional.of(CraftMemoryMapper.toNms(location)));
+        }
+    }
+
+	@Override
+	public int getEnchantmentSeed() {
+        return this.getHandle().getEnchantmentTableSeed();
+	}
+
+	@Override
+	public void setEnchantmentSeed(int i2) {
+        this.getHandle().enchantmentTableSeed = i2;
+	}
+
 }
+

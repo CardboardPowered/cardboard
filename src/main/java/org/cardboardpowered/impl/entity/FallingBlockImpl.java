@@ -94,4 +94,32 @@ public class FallingBlockImpl extends CraftEntity implements FallingBlock {
 		
 	}
 
+	@Override
+    public float getDamagePerBlock() {
+        return this.getHandle().fallHurtAmount;
+    }
+
+
+	@Override
+	public int getMaxDamage() {
+        return this.getHandle().fallHurtMax;
+	}
+
+	@Override
+    public void setDamagePerBlock(float damage) {
+        // Preconditions.checkArgument(((double)damage >= 0.0 ? 1 : 0) != 0, (String)"damage must be >= 0.0, given %s", (Object)Float.valueOf(damage));
+        this.getHandle().fallHurtAmount = damage;
+        if ((double)damage > 0.0) {
+            this.setHurtEntities(true);
+        }
+    }
+
+	@Override
+	public void setMaxDamage(int damage) {
+        this.getHandle().fallHurtMax = damage;
+        if (damage > 0) {
+            this.setHurtEntities(true);
+        }
+	}
+
 }

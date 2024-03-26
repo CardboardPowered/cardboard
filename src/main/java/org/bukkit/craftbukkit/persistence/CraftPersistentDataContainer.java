@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.persistence;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -133,7 +134,25 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
 	@Override
 	public boolean has(@NotNull NamespacedKey arg0) {
 		// TODO Auto-generated method stub
-		return false;
+
+        NbtElement value = this.customDataTags.get(arg0.toString());
+        if (value == null) {
+            return false;
+        }
+
+		return true;
+	}
+
+	@Override
+	public void readFromBytes(byte @NotNull [] arg0, boolean arg1) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public byte @NotNull [] serializeToBytes() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -11,6 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.jetbrains.annotations.NotNull;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,6 +26,8 @@ import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
 import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.javazilla.bukkitfabric.interfaces.IMixinArmorStandEntity;
+
+import io.papermc.paper.math.Rotations;
 
 @SuppressWarnings("deprecation")
 public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
@@ -458,5 +461,79 @@ public class ArmorStandImpl extends LivingEntityImpl implements ArmorStand {
     public void setItem(EquipmentSlot slot, ItemStack stack) {
         // TODO Auto-generated method stub
     }
+    
+    // 1.19.2
+
+	@Override
+	public @NotNull Rotations getBodyRotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Rotations getHeadRotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Rotations getLeftArmRotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Rotations getLeftLegRotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Rotations getRightArmRotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull Rotations getRightLegRotations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setBodyRotations(@NotNull Rotations arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setHeadRotations(@NotNull Rotations arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLeftArmRotations(@NotNull Rotations arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLeftLegRotations(@NotNull Rotations arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRightArmRotations(@NotNull Rotations arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRightLegRotations(@NotNull Rotations arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

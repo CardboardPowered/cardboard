@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.javazilla.bukkitfabric.nms;
+package org.cardboardpowered.util.nms;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,10 +58,12 @@ public class MappingsReader {
         return dev(FabricLoader.getInstance().getMappingResolver().mapClassName("official", s));
     }
 
-    public static void main(String[] args) throws IOException {
+    @Deprecated
+    private static void main(String[] args) throws IOException {
         File dir = new File("mappings");
         dir.mkdirs();
-        File f = exportResource("spigot2intermediary.csrg", dir);
+        // File f = exportResource("spigot2intermediary.csrg", dir);
+        File f = exportResource("spigot2srg.srg", dir);
         MAPPINGS = MappingsFormat.COMPACT_SEARGE_FORMAT.parseFile(f);
         METHODS = new HashMap<>();
         METHODS2 = new HashMap<>();

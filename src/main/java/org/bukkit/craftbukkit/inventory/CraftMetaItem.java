@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+//<<<<<<< HEAD
 import com.destroystokyo.paper.Namespaced;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -31,6 +32,37 @@ import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.apache.commons.codec.binary.Base64;
+//=======
+import static org.spigotmc.ValidateUtils.limit;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+// import org.apache.commons.codec.binary.Base64;
+//>>>>>>> upstream/ver/1.20
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.Material;
@@ -92,6 +124,8 @@ import static org.spigotmc.ValidateUtils.limit;
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
+	 private Set<Namespaced> destroyableKeys = Sets.newHashSet();
+	
     static class ItemMetaKey {
 
         @Retention(RetentionPolicy.SOURCE)
@@ -466,7 +500,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
         String internal = SerializableMeta.getString(map, "internal", true);
         if (internal != null) {
-            ByteArrayInputStream buf = new ByteArrayInputStream(Base64.decodeBase64(internal));
+            ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(internal));
             try {
                 internalTag = NbtIo.readCompressed(buf, NbtTagSizeTracker.ofUnlimitedBytes());
                 deserializeInternal(internalTag, map);
@@ -1147,7 +1181,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             try {
                 ByteArrayOutputStream buf = new ByteArrayOutputStream();
                 NbtIo.writeCompressed(internal, buf);
-                builder.put("internal", Base64.encodeBase64String(buf.toByteArray()));
+                builder.put("internal", Base64.getEncoder().encodeToString(buf.toByteArray()));
             } catch (IOException ex) {
                 Logger.getLogger(CraftMetaItem.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1278,8 +1312,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public Set<Material> getCanDestroy() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.emptySet();//!this.hasDestroyableKeys() ? Collections.emptySet() : this.legacyGetMatsFromKeys(this.destroyableKeys);
+
     }
 
     @Override
@@ -1373,7 +1407,8 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     @Override
-    public void lore(@Nullable List<Component> arg0) {
+    public void lore(@Nullable List<? extends Component> arg0) {
+    // 1.19.2: public void lore(@Nullable List<Component> arg0) {
         // TODO Auto-generated method stub
         
     }

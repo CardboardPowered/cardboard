@@ -1,12 +1,9 @@
-package com.javazilla.bukkitfabric.nms;
+package org.cardboardpowered.util.nms;
 
 import com.google.common.base.Joiner;
 import io.netty.channel.ChannelHandler;
 
 /**
- * Some ProtocolLib methods are redirected to this
- * class to avoid our currently trash mapping system.
- *
  * @see https://github.com/dmulloy2/ProtocolLib/issues/1146
  * @see https://github.com/CardboardPowered/cardboard/issues/82
  * @see https://github.com/CardboardPowered/cardboard/issues/120
@@ -15,25 +12,18 @@ import io.netty.channel.ChannelHandler;
 public class ProtocolLibMapper {
 
     /**
-     * ProtocolLib relies solely on the channel's class name containing
-     * "Compressor" or "Decompressor". This causes DecoderExceptions on
-     * Fabric due to the intermediary name not being the same as Spigot.
-     *
      * spigot=PacketDecompressor, intermediary=class_2532, yarn=PacketInflater
      * spigot=PacketCompressor,   intermediary=class_2534, yarn=PacketDeflater
      *
-     * Original Javadoc: Determine if the given object is a compressor or decompressor.
-     *
-     * @see https://mapping.javazilla.com/
      * @see https://github.com/Mohist-Community/Mohist/commit/efe7cbfd7b8d36c4f55bed9f16bedea2797dfa9f
      * @see com.comphenix.protocol.injector.netty.ChannelInjector (Line 423; ProtocolLib v4.6.0)
      */
 	public static boolean guessCompression(ChannelHandler handler) {
 		String className = handler != null ? handler.getClass().getCanonicalName() : "";
         String[] names = {
-            "Inflater", "Deflater",         // Yarn          (Fabric in dev-environment)
-            "class_2532", "class_2534",     // Intermediary  (Fabric in production)
-            "Compressor", "Decompressor"    // Spigot        (for backwards compatibility)
+            "Inflater", "Deflater",      // Yarn
+            "class_2532", "class_2534",  // Intermediary
+            "Compressor", "Decompressor" // Spigot
         };
 		for (String name : names) {
             if (className.contains(name)) {
@@ -45,8 +35,6 @@ public class ProtocolLibMapper {
 
     /**
      * ProtocolLib Reflection
-     * Original Javadoc: 
-     *  Retrieve the class object of a specific CraftBukkit class.
      */
     public static Class<?> getCraftBukkitClass(String className) {
         try {
@@ -58,11 +46,8 @@ public class ProtocolLibMapper {
 
     /**
      * ProtocolLib Reflection
-     * Original Javadoc:
-     *   Retrieve the class object of a specific Minecraft class.
      */
     public static Class<?> getMinecraftClass(String className) {
-    	System.out.println("GET MINECRAFT CLASS!!!");
         try {
             if (className.equals("ServerConnection")) {
                 return Class.forName(ReflectionRemapper.mapClassName("net.minecraft.server.ServerNetworkIo"));
@@ -77,7 +62,6 @@ public class ProtocolLibMapper {
      * ProtocolLib Reflection
      */
     public static Class<?> getMinecraftClass(String className, String... aliases) {
-    	System.out.println("GET MINECRAFT CLASS!!!");
         try {
             // Try the main class first
             return getMinecraftClass(className);

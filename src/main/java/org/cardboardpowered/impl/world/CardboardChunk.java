@@ -34,26 +34,24 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
+import com.javazilla.bukkitfabric.interfaces.IMixinChunk;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import com.mojang.serialization.Codec;
 
-import me.isaiah.common.GameVersion;
+import io.papermc.paper.util.CoordinateUtils;
 import me.isaiah.common.cmixin.IMixinHeightmap;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -64,8 +62,6 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.biome.source.BiomeAccess.Storage;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -74,6 +70,9 @@ import net.minecraft.world.chunk.WrapperProtoChunk;
 import net.minecraft.world.chunk.ReadableContainer;
 import net.minecraft.world.chunk.light.LightingProvider;
 // TODO 1.18: import net.minecraft.world.gen.ChunkRandom;
+
+// import net.minecraft.world.chunk.ReadOnlyChunk; //.WrapperProtoChunk;
+import net.minecraft.world.chunk.WorldChunk;
 
 public class CardboardChunk implements Chunk {
 
@@ -99,12 +98,21 @@ public class CardboardChunk implements Chunk {
         z = getHandle().getPos().z;
     }
 
-    @Override
+    public CardboardChunk(ServerWorld worldServer, int x2, int z2) {
+        this.worldServer = worldServer;
+        this.x = x2;
+        this.z = z2;
+    }
+
+	@Override
     public WorldImpl getWorld() {
         return ((IMixinWorld)worldServer.toServerWorld()).getWorldImpl();
     }
 
-    @Deprecated
+    public WorldImpl getCraftWorld() {
+        return (WorldImpl)this.getWorld();
+    }
+
     public net.minecraft.world.chunk.WorldChunk getHandle() {
         net.minecraft.world.chunk.WorldChunk c = weakChunk.get();
 
@@ -430,6 +438,15 @@ public class CardboardChunk implements Chunk {
         return null;
     }
 
+    /*public net.minecraft.world.chunk.Chunk getHandle(ChunkStatus chunkStatus) {
+        net.minecraft.world.chunk.Chunk chunkAccess = this.worldServer.getChunk(this.x, this.z, chunkStatus);
+        if (chunkAccess instanceof ReadOnlyChunk) {
+        	ReadOnlyChunk extension = (ReadOnlyChunk)chunkAccess;
+            return extension.getWrappedChunk();
+        }
+        return chunkAccess;
+    }*/
+
     static {
         Arrays.fill(emptyLight, (byte) 0xFF);
     }
@@ -443,18 +460,63 @@ public class CardboardChunk implements Chunk {
             bk[i] = CraftBlockState.getBlockState(this.worldServer, e.getPos());
             i++;
         }
-        return null;
+        return bk;
     }
 
     @Override
-    public Collection<BlockState> getTileEntities(Predicate<Block> arg0, boolean arg1) {
-        return null;
+    public Collection<BlockState> getTileEntities(Predicate<Block> blockPredicate, boolean useSnapshot) {
+        Preconditions.checkNotNull(blockPredicate, (Object)"blockPredicate");
+        if (!this.isLoaded()) {
+            this.getWorld().getChunkAt(this.x, this.z);
+        }
+        net.minecraft.world.chunk.Chunk chunk = this.getHandle(ChunkStatus.FULL);
+        ArrayList<BlockState> entities = new ArrayList<BlockState>();
+
+        for (BlockPos position : ((IMixinChunk)chunk).cardboard_getBlockEntities().keySet()) {
+            Block block = ((IMixinWorld)this.worldServer).getWorldImpl().getBlockAt(position.getX(), position.getY(), position.getZ());
+            if (!blockPredicate.test(block)) continue;
+            entities.add(block.getState(useSnapshot));
+        }
+        return entities;
     }
 
     @Override
     public boolean isEntitiesLoaded() {
-        // TODO Auto-generated method stub
-        return true;
+        return this.getCraftWorld().getHandle().isChunkLoaded(CoordinateUtils.getChunkKey(this.x, this.z));
+
+    }
+
+	//@Override
+	public boolean contains(org.bukkit.block.@NotNull Biome biome) {
+        Preconditions.checkArgument((biome != null ? 1 : 0) != 0, (Object)"Biome cannot be null");
+        net.minecraft.world.chunk.Chunk chunk = this.getHandle(ChunkStatus.BIOMES);
+        
+        com.google.common.base.Predicate nms = Predicates.equalTo(CraftBlock.biomeToBiomeBase(((IMixinChunk)chunk).bridge$biomeRegistry(), biome));
+
+        for (ChunkSection section : chunk.getSectionArray()) {
+            if (section == null || !section.getBiomeContainer().hasAny((Predicate<RegistryEntry<net.minecraft.world.biome.Biome>>)nms)) continue;
+            return true;
+        }
+        return false;
+    }
+
+	@Override
+    public Chunk.LoadLevel getLoadLevel() {
+		if (!this.worldServer.isChunkLoaded(this.getX(), this.getZ())) {
+			return Chunk.LoadLevel.UNLOADED;
+		}
+		
+        WorldChunk chunk = this.worldServer.getChunk(this.getX(), this.getZ()); // getChunkIfLoaded
+        if (chunk == null) {
+            return Chunk.LoadLevel.UNLOADED;
+        }
+        return Chunk.LoadLevel.values()[chunk.getLevelType().ordinal()];
+    }
+
+	// @Override
+    public boolean isGenerated() {
+        net.minecraft.world.chunk.Chunk chunk = this.getHandle(ChunkStatus.EMPTY);
+        return chunk.getStatus().isAtLeast(ChunkStatus.FULL);
     }
 
 }

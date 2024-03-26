@@ -127,4 +127,46 @@ public class CardboardFirework extends ProjectileImpl implements Firework {
 	public void setTicksToDetonate(int arg0) {
 		// TODO Auto-generated method stub
 	}
+
+	@Override
+	public @Nullable LivingEntity getAttachedTo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getLife() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMaxLife() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean isDetonated() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setAttachedTo(@Nullable LivingEntity arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setLife(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setMaxLife(int arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

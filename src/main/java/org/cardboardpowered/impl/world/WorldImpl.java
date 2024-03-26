@@ -18,6 +18,100 @@
  */
 package org.cardboardpowered.impl.world;
 
+//<<<<<<< HEAD
+//=======
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.Validate;
+import org.bukkit.BlockChangeDelegate;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
+import org.bukkit.Difficulty;
+import org.bukkit.Effect;
+import org.bukkit.FeatureFlag;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.GameEvent;
+import org.bukkit.GameRule;
+import org.bukkit.HeightMap;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Raid;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.StructureType;
+import org.bukkit.TreeType;
+import org.bukkit.World;
+import org.bukkit.WorldBorder;
+import org.bukkit.WorldType;
+import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.boss.DragonBattle;
+import org.bukkit.craftbukkit.CraftFeatureFlag;
+import org.bukkit.craftbukkit.CraftParticle;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftSound;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.entity.*;
+import org.bukkit.entity.minecart.CommandMinecart;
+import org.bukkit.entity.minecart.ExplosiveMinecart;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
+import org.bukkit.entity.minecart.SpawnerMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.weather.LightningStrikeEvent;
+import org.bukkit.event.world.SpawnChangeEvent;
+import org.bukkit.event.world.TimeSkipEvent;
+import org.bukkit.generator.BiomeProvider;
+import org.bukkit.generator.BlockPopulator;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.structure.Structure;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.bukkit.metadata.MetadataStoreBase;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Consumer;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.StructureSearchResult;
+import org.bukkit.util.Vector;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.util.CardboardFluidRaytraceMode;
+import org.cardboardpowered.impl.util.CardboardRayTraceResult;
+import org.cardboardpowered.interfaces.IServerWorld;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+//>>>>>>> upstream/ver/1.20
 import com.destroystokyo.paper.HeightmapType;
 import com.google.common.base.Preconditions;
 import com.javazilla.bukkitfabric.Utils;
@@ -2487,7 +2581,7 @@ public class WorldImpl implements World {
 	@Override
 	public int getSimulationDistance() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 8;
 	}
 
 	@Override
@@ -2531,6 +2625,56 @@ public class WorldImpl implements World {
 	public void setTicksPerSpawns(@NotNull SpawnCategory arg0, int arg1) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	// 1.19.2
+
+	@Override
+    public boolean hasCollisionsIn(@NotNull BoundingBox boundingBox) {
+        Box aabb = new Box(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        return !this.getHandle().isSpaceEmpty(aabb);
+    }
+
+	@Override
+	public @Nullable StructureSearchResult locateNearestStructure(@NotNull Location arg0,
+			org.bukkit.generator.structure.@NotNull StructureType arg1, int arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @Nullable StructureSearchResult locateNearestStructure(@NotNull Location arg0, @NotNull Structure arg1,
+			int arg2, boolean arg3) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	// 1.19.4
+
+	// @Override
+    public org.bukkit.Chunk getChunkAt(int x2, int z2, boolean generate) {
+        if (generate) {
+            return this.getChunkAt(x2, z2);
+        }
+        return new CardboardChunk(this.getHandle(), x2, z2);
+    }
+
+	// @Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, float arg2, float arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// @Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, @NotNull SoundCategory arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public @NotNull Set<FeatureFlag> getFeatureFlags() {
+        return CraftFeatureFlag.getFromNMS(this.getHandle().getEnabledFeatures()).stream().map(FeatureFlag.class::cast).collect(Collectors.toUnmodifiableSet());
 	}
 
 }

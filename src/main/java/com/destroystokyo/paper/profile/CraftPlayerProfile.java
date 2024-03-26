@@ -315,7 +315,7 @@ public class CraftPlayerProfile implements PlayerProfile {
 	}
 
 	@Override
-    public @NotNull CompletableFuture<org.bukkit.profile.PlayerProfile> update() {
+    public @NotNull CompletableFuture<PlayerProfile> update() {
         return CompletableFuture.supplyAsync(() -> {
             final CraftPlayerProfile clone = clone();
             clone.complete(true);

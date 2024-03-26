@@ -49,7 +49,11 @@ public final class LibraryManager {
     private final Collection<Library> libraries;
 
     // URL to download Paper API
-    private static final String PAPER_URL = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.18/paper-api-1.18.2-167.jar";
+    
+    // private static final String PAPER_URL = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.19/paper-api-1.19.2-307.jar";
+    private static final String PAPER_URL = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.19.4/paper-api-1.19.4-550.jar";
+    
+    // private static final String PAPER_URL = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.18/paper-api-1.18.2-167.jar";
     
     // private static final String PAPER_URL_OLD = "https://github.com/CardboardPowered/PaperAPI-releases/releases/download/1.17/paper-api.jar";
 

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
@@ -13,6 +14,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +24,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.entity.SkullBlockEntity;
+import net.minecraft.util.Identifier;
 
 @SuppressWarnings("deprecation")
 public class CardboardSkull extends CardboardBlockEntityState<SkullBlockEntity> implements Skull {
@@ -179,6 +182,21 @@ public class CardboardSkull extends CardboardBlockEntityState<SkullBlockEntity> 
         } else {
            //  this.profile = CraftPlayerProfile.validateSkullProfile(((CraftPlayerProfile) profile).getGameProfile());
         }
+    }
+
+	@Override
+    public NamespacedKey getNoteBlockSound() {
+        Identifier key = ((SkullBlockEntity)this.getSnapshot()).getNoteBlockSound();
+        return key != null ? CraftNamespacedKey.fromMinecraft(key) : null;
+    }
+
+	@Override
+    public void setNoteBlockSound(@Nullable NamespacedKey namespacedKey) {
+        if (namespacedKey == null) {
+            ((SkullBlockEntity)this.getSnapshot()).noteBlockSound = null;
+            return;
+        }
+        ((SkullBlockEntity)this.getSnapshot()).noteBlockSound = CraftNamespacedKey.toMinecraft(namespacedKey);
     }
 
 }

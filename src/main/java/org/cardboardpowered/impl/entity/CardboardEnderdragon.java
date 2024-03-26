@@ -11,6 +11,7 @@ import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.boss.dragon.phase.PhaseType;
 
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.boss.BossBar;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.CraftServer;
@@ -217,4 +218,14 @@ public class CardboardEnderdragon extends CardboardComplexEntity implements Ende
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public @Nullable Sound getAmbientSound() {
+		return Sound.ENTITY_ENDER_DRAGON_AMBIENT;
+	}
+	
+    public int getPossibleExperienceReward() {
+        return this.getHandle().getXpToDrop();
+    }
+	
 }

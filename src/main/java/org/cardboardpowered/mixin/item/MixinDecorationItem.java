@@ -17,6 +17,7 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -38,7 +39,7 @@ public class MixinDecorationItem {
         org.bukkit.block.Block blockClicked = CraftBlock.at((ServerWorld) world, blockPos);
         org.bukkit.block.BlockFace blockFace = CraftBlock.notchToBlockFace(direction);
 
-        HangingPlaceEvent event = new HangingPlaceEvent((Hanging) ((IMixinEntity) abstractDecorationEntity).getBukkitEntity(), who, blockClicked, blockFace, CraftItemStack.asBukkitCopy(itemStack));
+        HangingPlaceEvent event = new HangingPlaceEvent((Hanging) ((IMixinEntity) abstractDecorationEntity).getBukkitEntity(), who, blockClicked, blockFace, EquipmentSlot.HAND, CraftItemStack.asBukkitCopy(itemStack));
         Bukkit.getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {

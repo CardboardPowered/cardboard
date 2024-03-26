@@ -18,6 +18,7 @@
  */
 package org.cardboardpowered.impl.entity;
 
+//<<<<<<< HEAD
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.Title;
 import com.destroystokyo.paper.profile.PlayerProfile;
@@ -65,11 +66,32 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+//=======
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.logging.Level;
+
+//>>>>>>> upstream/ver/1.20
 import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.sign.Side;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
@@ -89,10 +111,12 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent.Reason;
+import org.bukkit.event.player.PlayerExpCooldownChangeEvent;
 import org.bukkit.event.player.PlayerKickEvent.Cause;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerUnregisterChannelEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
@@ -104,9 +128,23 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.cardboardpowered.impl.AdvancementImpl;
 import org.cardboardpowered.impl.AdvancementProgressImpl;
 import org.cardboardpowered.impl.block.CardboardSign;
+//<<<<<<< HEAD
+//======
+
+import com.destroystokyo.paper.ClientOption;
+import com.destroystokyo.paper.Title;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+
+//>>>>>>> upstream/ver/1.20
 import org.cardboardpowered.impl.world.WorldImpl;
+import org.cardboardpowered.util.nms.ReflectionRemapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+//<<<<<<< HEAD
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -123,6 +161,55 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+///=======
+import com.javazilla.bukkitfabric.interfaces.IMixinClientConnection;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinSignBlockEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.mojang.authlib.GameProfile;
+
+import io.netty.buffer.Unpooled;
+import io.papermc.paper.entity.LookAnchor;
+import io.papermc.paper.math.Position;
+import me.isaiah.common.GameVersion;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.util.TriState;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.minecraft.advancement.PlayerAdvancementTracker;
+import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
+import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.ChatSuggestionsS2CPacket;
+import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.play.DamageTiltS2CPacket;
+import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.network.packet.s2c.play.StopSoundS2CPacket;
+import net.minecraft.network.packet.s2c.play.SubtitleS2CPacket;
+import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
+import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.WhitelistEntry;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.MapUpdateS2CPacket;
+
+import org.bukkit.map.MapCursor;
+import org.bukkit.map.MapView;
+//>>>>>>> upstream/ver/1.20
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class PlayerImpl extends CraftHumanEntity implements Player {
@@ -847,6 +934,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
         MapUpdateS2CPacket packet = new MapUpdateS2CPacket(map.getId(), map.getScale().getValue(), true, map.isLocked(), icons, data.buffer, 0, 0, 128, 128);
         getHandle().networkHandler.sendPacket(packet);*/
+//<<<<<<< HEAD
 	}
 
 	@Override
@@ -1797,6 +1885,959 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
 	// public BlockPos posAtLogin;
 	// public boolean in;
+//=======
+    }
+
+    @Override
+    public void sendRawMessage(String arg0) {
+        if (getHandle().networkHandler == null) return;
+
+        //for (Text component : CraftChatMessage.fromString(arg0))
+        //    getHandle().networkHandler.sendPacket(new GameMessageS2CPacket(component, MessageType.CHAT, Util.NIL_UUID));
+        
+        for (Text component : CraftChatMessage.fromString(arg0)) {
+            this.getHandle().sendMessage(component);
+        }
+    }
+
+    @Override
+    public void sendSignChange(Location loc, String[] lines) {
+       sendSignChange(loc, lines, DyeColor.BLACK);
+    }
+
+    @Override
+    public void sendSignChange(Location loc, String[] lines, DyeColor dyeColor) {
+        if (getHandle().networkHandler == null) return;
+        if (lines == null) lines = new String[4];
+        if (lines.length < 4)
+            throw new IllegalArgumentException("Must have at least 4 lines");
+
+        Text[] components = CardboardSign.sanitizeLines(lines);
+        SignBlockEntity sign = new SignBlockEntity(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), null);
+        //sign.setPos(new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+        sign.getFrontText().withColor(net.minecraft.util.DyeColor.byId(dyeColor.getWoolData()));
+        System.arraycopy(components, 0, ((IMixinSignBlockEntity)sign).getTextBF(), 0, ((IMixinSignBlockEntity)sign).getTextBF().length);
+
+        getHandle().networkHandler.sendPacket(sign.toUpdatePacket());
+    }
+
+    @Override
+    public void sendTitle(String arg0, String arg1) {
+        sendTitle(arg0, arg1, 10, 70, 20);
+    }
+
+    @Override
+    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+        TitleFadeS2CPacket times = new TitleFadeS2CPacket(fadeIn, stay, fadeOut);
+        this.getHandle().networkHandler.sendPacket(times);
+        if (title != null) {
+            TitleS2CPacket packetTitle = new TitleS2CPacket(CraftChatMessage.fromStringOrNull(title));
+            this.getHandle().networkHandler.sendPacket(packetTitle);
+        }
+        if (subtitle != null) {
+            SubtitleS2CPacket packetSubtitle = new SubtitleS2CPacket(CraftChatMessage.fromStringOrNull(subtitle));
+            this.getHandle().networkHandler.sendPacket(packetSubtitle);
+        }
+    }
+
+    @Override
+    public void setAllowFlight(boolean arg0) {
+        if (isFlying() && !arg0)
+            getHandle().getAbilities().flying = false;
+
+        getHandle().getAbilities().allowFlying = arg0;
+        getHandle().sendAbilitiesUpdate();
+    }
+
+    @Override
+    public void setCompassTarget(Location arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setDisplayName(String arg0) {
+        nms.setCustomNameVisible(true);
+        nms.setCustomName(Text.literal(arg0));
+    }
+
+    @Override
+    public void setExhaustion(float arg0) {
+        nms.addExhaustion(arg0);
+    }
+
+    @Override
+    public void setExp(float arg0) {
+        nms.setExperiencePoints((int) arg0);
+    }
+
+    @Override
+    public void setFlySpeed(float arg0) throws IllegalArgumentException {
+        // nms.airStrafingSpeed = arg0;
+        ServerPlayerEntity player = getHandle();
+        player.getAbilities().setFlySpeed(arg0 / 2f);
+        player.sendAbilitiesUpdate();
+    }
+
+    @Override
+    public void setFlying(boolean arg0) {
+        if (!getAllowFlight() && arg0)
+            throw new IllegalArgumentException("getAllowFlight() is false, cannot set player flying");
+
+        getHandle().getAbilities().flying = arg0;
+        getHandle().sendAbilitiesUpdate();
+    }
+
+    @Override
+    public void setFoodLevel(int arg0) {
+        nms.getHungerManager().setFoodLevel(arg0);
+    }
+
+    @Override
+    public void setHealthScale(double arg0) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setHealthScaled(boolean arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setLevel(int level) {
+        nms.setExperienceLevel(level);
+    }
+
+    @Override
+    public void setPlayerListFooter(String arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setPlayerListHeader(String arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(String arg0, String arg1) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setPlayerListName(String arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setPlayerTime(long arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setPlayerWeather(WeatherType arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setResourcePack(String url) {
+        nms.sendResourcePackUrl(url, "null", false, null);
+    }
+
+    @Override
+    public void setResourcePack(String url, byte[] hash) {
+        nms.sendResourcePackUrl(url, new String(hash), false, null);
+    }
+
+    @Override
+    public void setSaturation(float arg0) {
+        nms.getHungerManager().setSaturationLevel(arg0);
+    }
+
+    @Override
+    public void setScoreboard(Scoreboard scoreboard) {
+        ServerPlayNetworkHandler playerConnection = getHandle().networkHandler;
+        if (playerConnection == null) throw new IllegalStateException("Cannot set scoreboard yet");
+        if (((IMixinPlayNetworkHandler)playerConnection).isDisconnected())
+            throw new IllegalStateException("Cannot set scoreboard for invalid PlayerImpl");
+
+        this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);
+    }
+
+    @Override
+    public void setSleepingIgnored(boolean arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setSneaking(boolean arg0) {
+        nms.setSneaking(arg0);
+    }
+
+    @Override
+    public void setSpectatorTarget(Entity arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setSprinting(boolean arg0) {
+        nms.setSprinting(arg0);
+    }
+
+    @Override
+    public void setTexturePack(String arg0) {
+        setResourcePack(arg0);
+    }
+
+    @Override
+    public void setTotalExperience(int arg0) {
+        nms.totalExperience = arg0;
+    }
+
+    @Override
+    public void setWalkSpeed(float arg0) throws IllegalArgumentException {
+        nms.getAbilities().setWalkSpeed(arg0);
+    }
+
+    @Override
+    public void showPlayer(Player arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void showPlayer(Plugin arg0, Player arg1) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void spawnParticle(Particle particle, Location location, int count) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count);
+    }
+
+    @Override
+    public void spawnParticle(Particle particle, double x, double y, double z, int count) {
+        spawnParticle(particle, x, y, z, count, null);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle particle, Location location, int count, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, data);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, T data) {
+        spawnParticle(particle, x, y, z, count, 0, 0, 0, data);
+    }
+
+    @Override
+    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ);
+    }
+
+    @Override
+    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, null);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, data);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, T data) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, 1, data);
+    }
+
+    @Override
+    public void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra);
+    }
+
+    @Override
+    public void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra) {
+        spawnParticle(particle, x, y, z, count, offsetX, offsetY, offsetZ, extra, null);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle particle, Location location, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        spawnParticle(particle, location.getX(), location.getY(), location.getZ(), count, offsetX, offsetY, offsetZ, extra, data);
+    }
+
+    @Override
+    public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data) {
+        if (data != null && !particle.getDataType().isInstance(data))
+            throw new IllegalArgumentException("data should be " + particle.getDataType() + " got " + data.getClass());
+        ParticleS2CPacket packetplayoutworldparticles = new ParticleS2CPacket(CraftParticle.toNMS(particle, data), true, (float) x, (float) y, (float) z, (float) offsetX, (float) offsetY, (float) offsetZ, (float) extra, count);
+        getHandle().networkHandler.sendPacket(packetplayoutworldparticles);
+
+    }
+
+    @Override
+    public void stopSound(Sound sound) {
+        stopSound(sound, null);
+    }
+
+    @Override
+    public void stopSound(String sound) {
+        stopSound(sound, null);
+    }
+
+    @Override
+    public void stopSound(Sound sound, org.bukkit.SoundCategory category) {
+        stopSound(CraftSound.getSound(sound), category);
+    }
+
+    @Override
+    public void stopSound(String sound, org.bukkit.SoundCategory category) {
+        if (getHandle().networkHandler == null) return;
+
+        getHandle().networkHandler.sendPacket(new StopSoundS2CPacket(new Identifier(sound), category == null ? net.minecraft.sound.SoundCategory.MASTER : net.minecraft.sound.SoundCategory.valueOf(category.name())));
+    }
+
+    @Override
+    public void updateCommands() {
+        if (getHandle().networkHandler == null) return;
+
+        nms.server.getCommandManager().sendCommandTree(nms);
+    }
+
+    @Override
+    public void updateInventory() {
+        this.getHandle().currentScreenHandler.syncState();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public GameMode getGameMode() {
+        return GameMode.getByValue(getHandle().interactionManager.getGameMode().getId());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void setGameMode(GameMode mode) {
+        if (getHandle().networkHandler == null) return;
+
+        if (mode == null)
+            throw new IllegalArgumentException("GameMode cannot be null");
+
+        getHandle().changeGameMode(net.minecraft.world.GameMode.byId(mode.getValue()));
+    }
+
+    public GameProfile getProfile() {
+        Optional<GameProfile> opt = CraftServer.getUC().card_getByUuid(getUniqueId());
+
+        // TODO Add a GameProfile API to iCommon
+        return opt.isEmpty() ? null : opt.get();
+    }
+
+    @Override
+    public boolean isOp() {
+        try {
+            return CraftServer.server.getPlayerManager().isOperator(getProfile());
+        } catch (NullPointerException e) {
+            try {
+                return CraftServer.INSTANCE.getOperatorList().contains(getUniqueId().toString());
+            } catch (IOException ex) {
+                GameProfile gp = new GameProfile(super.getUniqueId(), this.getName());
+                return CraftServer.server.getPlayerManager().isOperator(gp);
+            }
+        }
+    }
+
+    @Override
+    public void setOp(boolean value) {
+        if (value == isOp()) return;
+
+        if (value)
+             nms.server.getPlayerManager().addToOperators(nms.getGameProfile());
+        else nms.server.getPlayerManager().removeFromOperators(nms.getGameProfile());
+
+        perm.recalculatePermissions();
+    }
+
+    @Override
+    public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        Preconditions.checkArgument(location != null, "location");
+        Preconditions.checkArgument(location.getWorld() != null, "location.world");
+        location.checkFinite();
+        ServerPlayerEntity entity = getHandle();
+
+        if (getHealth() == 0 || entity.isRemoved() || entity.networkHandler == null || entity.hasPassengers())
+            return false;
+
+        Location from = this.getLocation();
+        Location to = location;
+
+        PlayerTeleportEvent event = new PlayerTeleportEvent(this, from, to, cause);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled())
+            return false;
+
+        entity.stopRiding();
+
+        from = event.getFrom();
+        to = event.getTo();
+
+        ServerWorld toWorld = (ServerWorld) ((WorldImpl) to.getWorld()).getHandle();
+
+        if (getHandle().inventory != getHandle().inventory)
+            getHandle().closeHandledScreen();
+        
+        System.out.println("Hello! " + from.getWorld() + " / " + to.getWorld());
+
+        if (from.getWorld().equals(to.getWorld()))
+             ((IMixinPlayNetworkHandler)(Object)entity.networkHandler).teleport(to);
+        else {
+            //entity.moveToWorld(toWorld);
+            //entity.teleport
+            
+            ((IMixinPlayerManager)(PlayerManager)CraftServer.server.getPlayerManager()).moveToWorld(entity, toWorld, true, to, true);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof OfflinePlayer))
+            return false;
+
+        OfflinePlayer other = (OfflinePlayer) obj;
+        if ((this.getUniqueId() == null) || (other.getUniqueId() == null))
+            return false;
+
+        boolean uuidEquals = this.getUniqueId().equals(other.getUniqueId());
+        boolean idEquals = true;
+
+        if (other instanceof PlayerImpl)
+            idEquals = this.getEntityId() == ((PlayerImpl) other).getEntityId();
+
+        return uuidEquals && idEquals;
+    }
+
+    public InetSocketAddress getRawAddress_BF() {
+        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolSupport")) {
+            System.out.println("PS getRawAddress");
+            try {
+                Class<?> ps = ReflectionRemapper.getClassFromJPL("protocolsupport.zplatform.impl.fabric.FabricMiscUtils");
+                HashMap<InetSocketAddress, InetSocketAddress> map = (HashMap<InetSocketAddress, InetSocketAddress>) ps.getField("rawAddressMap").get(null);
+                return map.get(this.getAddress());
+            } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        IMixinPlayNetworkHandler im = (IMixinPlayNetworkHandler) nms.networkHandler;
+        return (InetSocketAddress) ((IMixinClientConnection) (im.cb_get_connection())).getRawAddress();
+    }
+
+    private final Player.Spigot spigot = new Player.Spigot() {
+
+        int err = 0;
+
+        @Override
+        public InetSocketAddress getRawAddress() {
+            try {
+                return getRawAddress_BF();
+            } catch (NullPointerException ex) {
+                // What is going on?
+                if (err > 3) {
+                    System.exit(0);
+                    return null;
+                } 
+                err++;
+                ex.printStackTrace();
+                return ((java.net.InetSocketAddress)PlayerImpl.this.getAddress());
+            }
+        }
+
+        @Override
+        public boolean getCollidesWithEntities() {
+            return PlayerImpl.this.isCollidable();
+        }
+
+        @Override
+        public void setCollidesWithEntities(boolean collides) {
+            PlayerImpl.this.setCollidable(collides);
+        }
+
+        @Override
+        public void respawn() {
+            if (getHealth() <= 0 && isOnline())
+                nms.getServer().getPlayerManager().respawnPlayer( getHandle(), false );
+        }
+
+        @Override
+        public Set<Player> getHiddenPlayers() {
+            return java.util.Collections.emptySet();
+        }
+
+        @Override
+        public void sendMessage(BaseComponent component) {
+            sendMessage(new BaseComponent[] { component });
+        }
+
+        @Override
+        public void sendMessage(BaseComponent... components) {
+           if (null == getHandle().networkHandler) return;
+
+           	// TODO: 1.19
+            //GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.SYSTEM, nms.getUuid());
+            //((IGameMessagePacket)packet).setBungeeComponents(components);
+            //getHandle().networkHandler.sendPacket(packet);
+            
+            getHandle().sendMessage( Text.literal( BaseComponent.toLegacyText(components) ) );
+        }
+
+        @Override
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent component) {
+            sendMessage( position, new BaseComponent[] { component } );
+        }
+
+        @Override
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, BaseComponent... components) {
+            if (null == getHandle().networkHandler) return;
+
+            // TODO: 1.19
+            
+           /* GameMessageS2CPacket packet = new GameMessageS2CPacket(null, MessageType.byId((byte) position.ordinal()), nms.getUuid());
+            if (position == net.md_5.bungee.api.ChatMessageType.ACTION_BAR)
+                components = new BaseComponent[]{new net.md_5.bungee.api.chat.TextComponent(BaseComponent.toLegacyText(components))};
+            
+            ((IGameMessagePacket)packet).setBungeeComponents(components);
+            getHandle().networkHandler.sendPacket(packet);*/
+            
+            getHandle().sendMessage( Text.literal( BaseComponent.toLegacyText(components) ) );
+
+            //getHandle().networkHandler.sendPacket(new GameMessageS2CPacket(components, position == ChatMessageType.ACTION_BAR));
+        }
+    };
+
+    @Override
+    public org.bukkit.entity.Player.Spigot spigot() {
+        return spigot;
+    }
+
+    @Override
+    public Location getBedSpawnLocation() {
+        World world = ((IMixinWorld)getHandle().server.getWorld(getHandle().getSpawnPointDimension())).getWorldImpl();
+        BlockPos bed = getHandle().getSpawnPointPosition();
+
+        if (world != null && bed != null) {
+            Optional<Vec3d> spawnLoc = PlayerEntity.findRespawnPosition((ServerWorld) ((WorldImpl) world).getHandle(), bed, getHandle().getSpawnAngle(), getHandle().isSpawnForced(), true);
+            if (spawnLoc.isPresent()) {
+                Vec3d vec = spawnLoc.get();
+                return new Location(world, vec.x, vec.y, vec.z);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setBedSpawnLocation(Location location) {
+        setBedSpawnLocation(location, false);
+    }
+
+    @Override
+    public void setBedSpawnLocation(Location location, boolean override) {
+        if (location == null) {
+            getHandle().setSpawnPoint(null, null, 0, override, false);
+        } else getHandle().setSpawnPoint(((WorldImpl) location.getWorld()).getHandle().getRegistryKey(), new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), location.getYaw(), override, false);
+    }
+
+    public void setFirstPlayed(long modified) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public EntityType getType() {
+        return EntityType.PLAYER;
+    }
+
+    public void updateScaledHealth() {
+        // TODO Auto-generated method stub
+    }
+
+    // SPIGOT-759
+    public void sendRawMessage(UUID uuid, String msg) {
+        this.sendRawMessage(msg);
+    }
+
+    public void setHandle(ServerPlayerEntity plr) {
+        this.nms = plr;
+        super.nms = plr;
+    }
+
+    // PaperAPI - START
+    public void setTitleTimes(int fadeInTicks, int stayTicks, int fadeOutTicks) {
+     // TODO 1.17ify getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TIMES, null, 0, 0, 0));
+    }
+
+    public void showTitle(BaseComponent[] title) {
+     // TODO 1.17ify   getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(title)), 0, 0, 0));
+    }
+
+    public void setSubtitle(BaseComponent[] subtitle) {
+     // TODO 1.17ify   getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.SUBTITLE, Text.of(ComponentSerializer.toString(subtitle)), 0, 0, 0));
+    }
+
+    public void showTitle(BaseComponent title) {
+        showTitle(new BaseComponent[]{title});
+    }
+
+    public void setSubtitle(BaseComponent subtitle) {
+        showTitle(new BaseComponent[]{subtitle});
+    }
+
+    public void showTitle(BaseComponent[] title, BaseComponent[] subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        setTitleTimes(fadeInTicks, stayTicks, fadeOutTicks);
+        setSubtitle(subtitle);
+        showTitle(title);
+    }
+
+    public void showTitle(BaseComponent title, BaseComponent subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        setTitleTimes(fadeInTicks, stayTicks, fadeOutTicks);
+        setSubtitle(subtitle);
+        showTitle(title);
+    }
+
+    public void sendTitle(Title title) {
+        Preconditions.checkNotNull(title, "Title is null");
+        setTitleTimes(title.getFadeIn(), title.getStay(), title.getFadeOut());
+        setSubtitle(title.getSubtitle() == null ? new BaseComponent[0] : title.getSubtitle());
+        showTitle(title.getTitle());
+    }
+
+    public void updateTitle(Title title) {
+        Preconditions.checkNotNull(title, "Title is null");
+        setTitleTimes(title.getFadeIn(), title.getStay(), title.getFadeOut());
+        if (title.getSubtitle() != null) {
+            setSubtitle(title.getSubtitle());
+        }
+        showTitle(title.getTitle());
+    }
+
+    public void sendActionBar(BaseComponent[] message) {
+        if (getHandle().networkHandler == null) return;
+     // TODO 1.17ify getHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, Text.of(ComponentSerializer.toString(message)), 0, 0, 0));
+    }
+
+    public void sendActionBar(String message) {
+        if (getHandle().networkHandler == null || message == null || message.isEmpty()) return;
+     // TODO 1.17ifygetHandle().networkHandler.sendPacket(new TitleS2CPacket(TitleS2CPacket.Action.TITLE, CraftChatMessage.fromStringOrNull(message), 0, 0, 0));
+    }
+
+    public void sendActionBar(char alternateChar, String message) {
+        if (message == null || message.isEmpty()) return;
+        sendActionBar(org.bukkit.ChatColor.translateAlternateColorCodes(alternateChar, message));
+    }
+
+    public int getViewDistance() {
+        throw new NotImplementedException("Was Removed from Paper");
+    }
+
+    public void setViewDistance(int viewDistance) {
+        throw new NotImplementedException("Was Removed from Paper");
+    }
+    // PaperAPI - END
+
+    @Override
+    public void closeInventory(Reason arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Location getPotentialBedLocation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openAnvil(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openCartographyTable(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openGrindstone(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openLoom(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void openSign(Sign arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public InventoryView openSmithingTable(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public InventoryView openStonecutter(Location arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity releaseLeftShoulderEntity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Entity releaseRightShoulderEntity() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public long getLastLogin() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public long getLastSeen() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getProtocolVersion() {
+        // TODO Auto-generated method stub
+        return GameVersion.INSTANCE.getProtocolVersion();
+    }
+
+    @Override
+    public InetSocketAddress getVirtualHost() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int applyMending(int arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public Firework boostElytra(ItemStack arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean getAffectsSpawning() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String getClientBrandName() {
+        // TODO Auto-generated method stub
+        return "Vanilla";
+    }
+
+    @Override
+    public <T> T getClientOption(ClientOption<T> arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public float getCooldownPeriod() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public float getCooledAttackStrength(float arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public PlayerProfile getPlayerProfile() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getResourcePackHash() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Status getResourcePackStatus() {
+        // TODO Auto-generated method stub
+        return Status.SUCCESSFULLY_LOADED;
+    }
+
+    @Override
+    public void giveExp(int arg0, boolean arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean hasResourcePack() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void hideTitle() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void resetCooldown() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setAffectsSpawning(boolean arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent[] arg0, BaseComponent[] arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent arg0, BaseComponent arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setPlayerProfile(PlayerProfile arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setResourcePack(String arg0, String arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull Component displayName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void displayName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int getPing() {
+        return this.getHandle().pingMilliseconds;
+    }
+
+    @Override
+    public @NotNull Set<Player> getTrackedPlayers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void kick(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void kick(@Nullable Component arg0, @NotNull Cause arg1) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public @NotNull Locale locale() {
+        // TODO Auto-generated method stub
+        return Locale.ENGLISH;
+    }
+
+    @Override
+    public @Nullable Component playerListFooter() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Component playerListHeader() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @Nullable Component playerListName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void playerListName(@Nullable Component arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void sendBlockDamage(@NotNull Location loc, float progress) {
+        Preconditions.checkArgument(loc != null, "loc must not be null");
+        Preconditions.checkArgument((double)progress >= 0.0 && (double)progress <= 1.0, "progress must be between 0.0 and 1.0 (inclusive)");
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        int stage = (int)(9.0f * progress);
+        BlockBreakingProgressS2CPacket packet = new BlockBreakingProgressS2CPacket(this.getHandle().getId(), new BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), stage);
+        this.getHandle().networkHandler.sendPacket(packet);
+    }
+
+    @Override
+    public void sendOpLevel(byte arg0) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<? extends Component> arg1) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<? extends Component> arg1, @NotNull DyeColor arg2)
+            throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+    }
+
+    //public BlockPos posAtLogin;
+    //public boolean in;
 
     /*
      * Save BlockPos from {@link PlayerManager#onPlayerConnect}
@@ -1825,12 +2866,21 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 		return 0;
 	}
 
-	@Override
-	public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1, @NotNull DyeColor arg2,
-	                           boolean arg3) throws IllegalArgumentException {
+//<<<<<<< HEAD
+//	@Override
+//	public void sendSignChange(@NotNull Location arg0, @Nullable List<Component> arg1, @NotNull DyeColor arg2,
+//	                           boolean arg3) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
+//=======
+    @Override
+    public void sendSignChange(@NotNull Location arg0, @Nullable List<? extends Component> arg1, @NotNull DyeColor arg2,
+            boolean arg3) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
+    }
+//>>>>>>> upstream/ver/1.20
 
-	}
+//	}
 
 	@Override
 	public void sendSignChange(@NotNull Location arg0, @Nullable String[] arg1, @NotNull DyeColor arg2, boolean arg3)
@@ -1944,8 +2994,10 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
 	}
 
-	@Override
-	public void sendMultiBlockChange(@NotNull Map<Location, BlockData> arg0, boolean arg1) {
+	// @Override
+	// public void sendMultiBlockChange(@NotNull Map<Location, BlockData> arg0, boolean arg1) {
+	public void sendMultiBlockChange(@NotNull Map<? extends Position, BlockData> arg0, boolean arg1) {
+
 		// TODO Auto-generated method stub
 
 	}
@@ -1973,5 +3025,210 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 		// TODO Auto-generated method stub
 
 	}
+	
+	// 1.19.2
+
+	@Override
+	public void addAdditionalChatCompletions(@NotNull Collection<String> arg0) {
+		this.getHandle().networkHandler.sendPacket(new ChatSuggestionsS2CPacket(ChatSuggestionsS2CPacket.Action.ADD, new ArrayList<String>(arg0)));
+	}
+
+	@Override
+	public int getWardenTimeSinceLastWarning() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getWardenWarningCooldown() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getWardenWarningLevel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void increaseWardenWarningLevel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lookAt(@NotNull Entity arg0, @NotNull LookAnchor arg1, @NotNull LookAnchor arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lookAt(double arg0, double arg1, double arg2, @NotNull LookAnchor arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeAdditionalChatCompletions(@NotNull Collection<String> arg0) {
+        this.getHandle().networkHandler.sendPacket(new ChatSuggestionsS2CPacket(ChatSuggestionsS2CPacket.Action.REMOVE, new ArrayList<String>(arg0)));
+	}
+
+	@Override
+	public void sendBlockChanges(@NotNull Collection<BlockState> arg0, boolean arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendBlockDamage(@NotNull Location arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWardenTimeSinceLastWarning(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWardenWarningCooldown(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWardenWarningLevel(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showElderGuardian(boolean arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stopSound(@NotNull SoundCategory arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	// 1.19.4:
+
+	@Override
+    public void addCustomChatCompletions(Collection<String> completions) {
+        this.sendCustomChatCompletionPacket(completions, ChatSuggestionsS2CPacket.Action.ADD);
+    }
+
+	@Override
+    public void removeCustomChatCompletions(Collection<String> completions) {
+        this.sendCustomChatCompletionPacket(completions, ChatSuggestionsS2CPacket.Action.REMOVE);
+    }
+
+	@Override
+    public void setCustomChatCompletions(Collection<String> completions) {
+        this.sendCustomChatCompletionPacket(completions, ChatSuggestionsS2CPacket.Action.SET);
+    }
+
+    private void sendCustomChatCompletionPacket(Collection<String> completions, ChatSuggestionsS2CPacket.Action action) {
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        ChatSuggestionsS2CPacket packet = new ChatSuggestionsS2CPacket(action, new ArrayList<String>(completions));
+        this.getHandle().networkHandler.sendPacket(packet);
+    }
+
+	@Override
+	public int getExpCooldown() {
+        return this.getHandle().experiencePickUpDelay;
+	}
+
+	@Override
+	public @NotNull TriState hasFlyingFallDamage() {
+		// TODO Auto-generated method stub
+		return TriState.NOT_SET;
+		//         return this.getHandle().flyingFallDamage;
+	}
+
+	@Override
+	public boolean hasSeenWinScreen() {
+        return this.getHandle().seenCredits;
+	}
+
+	@Override
+	public void openSign(@NotNull Sign arg0, @NotNull Side arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, float arg2, float arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void playSound(@NotNull Entity arg0, @NotNull String arg1, @NotNull SoundCategory arg2, float arg3,
+			float arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendBlockDamage(@NotNull Location arg0, float arg1, @NotNull Entity arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendEquipmentChange(@NotNull LivingEntity arg0, @NotNull Map<EquipmentSlot, ItemStack> arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendHurtAnimation(float yaw) {
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        float actualYaw = yaw + 90.0f;
+        this.getHandle().networkHandler.sendPacket(new DamageTiltS2CPacket(this.getEntityId(), actualYaw));
+	}
+
+	@Override
+    public void setExpCooldown(int ticks) {
+        // TODO
+		// this.getHandle().experiencePickUpDelay = BukkitEventFactory.callPlayerXpCooldownEvent(this.getHandle(), ticks, PlayerExpCooldownChangeEvent.ChangeReason.PLUGIN).getNewCooldown();
+    }
+
+	@Override
+	public void setFlyingFallDamage(@NotNull TriState arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+    public void setHasSeenWinScreen(boolean hasSeenWinScreen) {
+        this.getHandle().seenCredits = hasSeenWinScreen;
+    }
+
+	@Override
+	public void showWinScreen() {
+        if (this.getHandle().networkHandler == null) {
+            return;
+        }
+        GameStateChangeS2CPacket packet = new GameStateChangeS2CPacket(GameStateChangeS2CPacket.GAME_WON, 1.0f);
+        this.getHandle().networkHandler.sendPacket(packet);
+	}
+
+	/*@Override
+	public boolean teleport(@NotNull Location arg0, @NotNull TeleportCause arg1, boolean arg2, boolean arg3,
+			@NotNull RelativeTeleportFlag @NotNull... arg4) {
+		// TODO Auto-generated method stub
+		return this.teleport(arg0, arg1);
+	}*/
 
 }

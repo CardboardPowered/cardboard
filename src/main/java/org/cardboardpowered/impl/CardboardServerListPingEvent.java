@@ -1,8 +1,10 @@
 package org.cardboardpowered.impl;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Iterator;
 
+import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -18,9 +20,11 @@ public class CardboardServerListPingEvent extends ServerListPingEvent {
     
     public final Object[] players;
     public IconCacheImpl icon;
+    
+    //      public ServerListPingEvent(@NotNull InetAddress address, @NotNull String motd, boolean shouldSendChatPreviews, int numPlayers, int maxPlayers) {
 
     public CardboardServerListPingEvent(ClientConnection connection, MinecraftServer server) {
-        super(((InetSocketAddress) connection.getAddress()).getAddress(), server.getServerMotd(), server.getPlayerManager().getCurrentPlayerCount(), server.getPlayerManager().getMaxPlayerCount());
+        super("", ((InetSocketAddress) connection.getAddress()).getAddress(), server.getServerMotd(), server.getPlayerManager().getCurrentPlayerCount(), server.getPlayerManager().getMaxPlayerCount());
         this.players = server.getPlayerManager().players.toArray();
         this.icon = CraftServer.INSTANCE.getServerIcon();
     }

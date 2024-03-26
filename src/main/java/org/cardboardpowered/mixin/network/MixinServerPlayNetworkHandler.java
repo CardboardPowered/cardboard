@@ -124,7 +124,11 @@ public abstract class MixinServerPlayNetworkHandler extends ServerCommonNetworkH
 
     @Override
     public boolean isDisconnected() {
-    	return !connection.isOpen();
+//<<<<<<< HEAD
+//    	return !connection.isOpen();
+//=======
+    	return player.isDisconnected(); // TODO
+//>>>>>>> upstream/ver/1.20
     }
 
     /**

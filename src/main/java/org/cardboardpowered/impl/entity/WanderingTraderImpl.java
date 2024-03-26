@@ -1,9 +1,12 @@
 package org.cardboardpowered.impl.entity;
 
 import net.minecraft.entity.passive.WanderingTraderEntity;
+
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.WanderingTrader;
+import org.jetbrains.annotations.Nullable;
 
 public class WanderingTraderImpl extends AbstractVillagerImpl implements WanderingTrader {
 
@@ -61,5 +64,17 @@ public class WanderingTraderImpl extends AbstractVillagerImpl implements Wanderi
         // TODO Auto-generated method stub
         
     }
+
+	@Override
+	public @Nullable Location getWanderingTowards() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setWanderingTowards(@Nullable Location arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

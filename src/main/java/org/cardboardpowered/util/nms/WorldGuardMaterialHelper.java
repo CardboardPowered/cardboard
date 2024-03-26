@@ -1,4 +1,4 @@
-package com.javazilla.bukkitfabric.nms;
+package org.cardboardpowered.util.nms;
 
 import org.bukkit.Material;
 import org.bukkit.Tag;

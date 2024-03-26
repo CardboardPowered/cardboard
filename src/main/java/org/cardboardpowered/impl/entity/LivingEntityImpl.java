@@ -1,5 +1,69 @@
 package org.cardboardpowered.impl.entity;
 
+//<<<<<<< HEAD
+//=======
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.lang.Validate;
+import org.bukkit.Chunk;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.DragonFireball;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityCategory;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.FishHook;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LingeringPotion;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.LlamaSpit;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ShulkerBullet;
+import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.Snowball;
+import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.ThrownExpBottle;
+import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.TippedArrow;
+import org.bukkit.entity.Trident;
+import org.bukkit.entity.WitherSkull;
+import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Consumer;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
+
+//>>>>>>> upstream/ver/1.20
 import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
 import com.destroystokyo.paper.entity.TargetEntityInfo;
@@ -9,6 +73,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.util.TriState;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -33,6 +98,7 @@ import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
+//<<<<<<< HEAD
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
 import org.apache.commons.lang.Validate;
@@ -73,6 +139,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+//=======
+import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
+//>>>>>>> upstream/ver/1.20
 
 @SuppressWarnings("deprecation")
 public class LivingEntityImpl extends CraftEntity implements LivingEntity {
@@ -719,8 +793,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public BlockFace getTargetBlockFace(int arg0, FluidMode arg1) {
-        // TODO Auto-generated method stub
-        return null;
+    	return this.getTargetBlockFace(arg0, arg1.bukkit);
     }
 
     @Override
@@ -743,8 +816,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean isHandRaised() {
-        // TODO Auto-generated method stub
-        return false;
+    	return this.getHandle().isUsingItem();
     }
 
     @Override
@@ -755,8 +827,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public void setArrowsStuck(int arg0) {
-        // TODO Auto-generated method stub
-        
+    	this.getHandle().setStuckArrowCount(arg0);
     }
 
     @Override
@@ -771,7 +842,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public void setShieldBlockingDelay(int arg0) {
-        // TODO Auto-generated method stub
+    	// this.getHandle().setShieldBlockingDelay(arg0);
     }
     // PaperAPI - end
 
@@ -829,6 +900,162 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
     public void setBeeStingersInBody(int i) {
         // TODO Auto-generated method stub
     }
+    
+    // 1.19.2
+
+	@Override
+	public <T extends Projectile> @NotNull T launchProjectile(@NotNull Class<? extends T> arg0, @Nullable Vector arg1,
+			@Nullable Consumer<T> arg2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public @NotNull TriState getFrictionState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFrictionState(@NotNull TriState arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void broadcastSlotBreak(EquipmentSlot slot) {
+		this.getHandle().sendEquipmentBreakStatus( Utils.getNMS(slot));
+	}
+
+	public void broadcastSlotBreak(EquipmentSlot slot, Collection<Player> players) {
+		if (players.isEmpty()) {
+			return;
+		}
+		// EntityStatusS2CPacket packet = new EntityStatusS2CPacket(this.getHandle(), net.minecraft.entity.LivingEntity.getEquipmentBreakStatus( Utils.getNMS(slot)));
+		// players.forEach(player -> ((PlayerImpl)player).getHandle().networkHandler.sendPacket(packet));
+	}
+
+	@Override
+    public boolean canBreatheUnderwater() {
+        return this.getHandle().canBreatheInWater();
+    }
+
+	@Override
+    public ItemStack damageItemStack(ItemStack stack, int amount) {
+        net.minecraft.item.ItemStack nmsStack;
+        if (stack instanceof CraftItemStack) {
+            CraftItemStack craftItemStack = (CraftItemStack)stack;
+            if (craftItemStack.handle == null || craftItemStack.handle.isEmpty()) {
+                return stack;
+            }
+            nmsStack = craftItemStack.handle;
+        } else {
+            nmsStack = CraftItemStack.asNMSCopy(stack);
+            stack = CraftItemStack.asCraftMirror(nmsStack);
+        }
+        this.damageItemStack0(nmsStack, amount, null);
+        return stack;
+    }
+
+	@Override
+    public void damageItemStack(EquipmentSlot slot, int amount) {
+        net.minecraft.entity.EquipmentSlot nmsSlot = Utils.getNMS(slot);
+        this.damageItemStack0(this.getHandle().getEquippedStack(nmsSlot), amount, nmsSlot);
+    }
+	
+    private void damageItemStack0(net.minecraft.item.ItemStack nmsStack, int amount, net.minecraft.entity.EquipmentSlot slot) {
+        nmsStack.damage(amount, this.getHandle(), livingEntity -> {
+            if (slot != null) {
+                livingEntity.sendEquipmentBreakStatus(slot);
+            }
+        });
+    }
+
+	
+	@Override
+	public @Nullable Sound getDeathSound() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_DEATH;
+	}
+
+	@Override
+	public @NotNull Sound getDrinkingSound(@NotNull ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_DRINK;
+	}
+
+	@Override
+	public @NotNull Sound getEatingSound(@NotNull ItemStack arg0) {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_EAT;
+	}
+
+	@Override
+	public @NotNull Sound getFallDamageSound(int arg0) {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_BIG_FALL;
+	}
+
+	@Override
+	public @NotNull Sound getFallDamageSoundBig() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_BIG_FALL;
+	}
+
+	@Override
+	public @NotNull Sound getFallDamageSoundSmall() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_SMALL_FALL;
+	}
+
+	@Override
+	public @Nullable Sound getHurtSound() {
+		// TODO Auto-generated method stub
+		return Sound.ENTITY_GENERIC_HURT;
+	}
+
+	@Override
+	public void knockback(double arg0, double arg1, double arg2) {
+		 this.getHandle().takeKnockback(arg0, arg2, arg2);
+	}
+	
+	// 1.19.4:
+
+	@Override
+    public float getBodyYaw() {
+        return this.getHandle().getBodyYaw();
+    }
+
+	@Override
+    public BlockFace getTargetBlockFace(int maxDistance, FluidCollisionMode fluidMode) {
+        RayTraceResult result = this.rayTraceBlocks(maxDistance, fluidMode);
+        return result != null ? result.getHitBlockFace() : null;
+    }
+
+	@Override
+    public RayTraceResult rayTraceEntities(int maxDistance, boolean ignoreBlocks) {
+        EntityHitResult rayTrace = this.rayTraceEntity(maxDistance, ignoreBlocks);
+        return null;
+        //return rayTrace == null ? null : new RayTraceResult(CraftVector.toBukkit(rayTrace.getPos()), ((IMixinEntity)rayTrace.getEntity()).getBukkitEntity());
+    }
+	
+    public EntityHitResult rayTraceEntity(int maxDistance, boolean ignoreBlocks) {
+        return null;
+    }
+
+	@Override
+    public void setArrowsInBody(int count, boolean fireEvent) {
+        // Preconditions.checkArgument((count >= 0 ? 1 : 0) != 0, (Object)"New arrow amount must be >= 0");
+        if (!fireEvent) {
+            this.getHandle().getDataTracker().set(net.minecraft.entity.LivingEntity.STUCK_ARROW_COUNT, count);
+        } else {
+            this.getHandle().setStuckArrowCount(count);
+        }
+    }
+
+	@Override
+	public void setBodyYaw(float arg0) {
+        this.getHandle().setBodyYaw(arg0);
+	}
    
 
 }

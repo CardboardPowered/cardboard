@@ -561,3 +561,19 @@ accessible method net/minecraft/entity/Entity isInsideBubbleColumn ()Z
 accessible class net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker
 accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage entityTrackers Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
 accessible field net/minecraft/server/world/ThreadedAnvilChunkStorage$EntityTracker listeners Ljava/util/Set;
+accessible field net/minecraft/resource/featuretoggle/FeatureManager featureFlags Ljava/util/Map;
+accessible field net/minecraft/resource/featuretoggle/FeatureFlag universe Lnet/minecraft/resource/featuretoggle/FeatureUniverse;
+accessible field net/minecraft/resource/ResourcePackProfile packFactory Lnet/minecraft/resource/ResourcePackProfile$PackFactory;
+accessible field net/minecraft/server/world/ServerWorld worldProperties Lnet/minecraft/world/level/ServerWorldProperties;
+accessible field net/minecraft/entity/LivingEntity STUCK_ARROW_COUNT Lnet/minecraft/entity/data/TrackedData;
+accessible field net/minecraft/entity/player/PlayerEntity enchantmentTableSeed I
+accessible field net/minecraft/entity/FallingBlockEntity fallHurtAmount F
+accessible field net/minecraft/entity/FallingBlockEntity fallHurtMax I
+accessible method net/minecraft/entity/vehicle/TntMinecartEntity explode (D)V
+accessible field net/minecraft/block/entity/BellBlockEntity resonating Z
+accessible field net/minecraft/block/entity/JukeboxBlockEntity isPlaying Z
+accessible field net/minecraft/block/entity/JukeboxBlockEntity recordStartTick J
+accessible field net/minecraft/block/entity/JukeboxBlockEntity tickCount J
+accessible field net/minecraft/block/entity/SkullBlockEntity noteBlockSound Lnet/minecraft/util/Identifier;
+accessible method net/minecraft/entity/Entity unsetRemoved ()V
+accessible method net/minecraft/server/network/ServerPlayerEntity worldChanged (Lnet/minecraft/server/world/ServerWorld;)V

@@ -18,6 +18,35 @@
  */
 package org.cardboardpowered.mixin.entity;
 
+//<<<<<<< HEAD
+//=======
+import java.util.OptionalInt;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.world.WorldImpl;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.util.CraftChatMessage;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerChangedMainHandEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.MainHand;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+//>>>>>>> upstream/ver/1.20
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
@@ -26,6 +55,13 @@ import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.fabric.impl.screenhandler.Networking;
+//<<<<<<< HEAD
+//=======
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+//>>>>>>> upstream/ver/1.20
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.network.ClientConnection;
@@ -43,6 +79,11 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+//<<<<<<< HEAD
+//=======
+import net.minecraft.registry.Registries;
+import net.minecraft.util.math.Vec3d;
+//>>>>>>> upstream/ver/1.20
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.bukkit.Bukkit;
@@ -93,7 +134,14 @@ public abstract class MixinPlayer extends MixinLivingEntity implements IMixinCom
     }
 
     @Override
+//<<<<<<< HEAD
     public PlayerImpl getBukkitEntity() {
+//=======
+    public PlayerImpl getBukkitEntity() {
+    	if (bukkit == null) {
+    		bukkit = (PlayerImpl) CraftEntity.getEntity(CraftServer.INSTANCE, ((ServerPlayerEntity) (Object) this));
+    	}
+//>>>>>>> upstream/ver/1.20
         return bukkit;
     }
 
@@ -109,7 +157,7 @@ public abstract class MixinPlayer extends MixinLivingEntity implements IMixinCom
 
     @Inject(at = @At("TAIL"), method = "onDisconnect")
     public void onDisconnect(CallbackInfo ci) {
-        CraftServer.INSTANCE.playerView.remove(this.bukkit);
+        // CraftServer.INSTANCE.playerView.remove(this.bukkit);
     }
 
     @Inject(at = @At("HEAD"), method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", cancellable = true)
@@ -371,6 +419,7 @@ public abstract class MixinPlayer extends MixinLivingEntity implements IMixinCom
     }
 
     //@Overwrite
+    @Override
     public void copyFrom_unused(ServerPlayerEntity entityplayer, boolean flag) {
         if (flag) {
             ((ServerPlayerEntity)(Object)this).inventory.clone(entityplayer.inventory);
@@ -410,5 +459,44 @@ public abstract class MixinPlayer extends MixinLivingEntity implements IMixinCom
         Bukkit.getPluginManager().callEvent(event);
         handler.transferTo(((ServerPlayerEntity)(Object)this).playerScreenHandler, getBukkitEntity());
     }
+    
+    public void spawnIn(World world) {
+        /*this.setWorld(world);
+        if (world == null) {
+            this.unsetRemoved();
+            Vec3d position = null;
+            if (this.spawnPointDimension != null && (world = this.server.getWorld(this.spawnPointDimension)) != null && this.getSpawnPointPosition() != null) {
+                position = PlayerEntity.findRespawnPosition((ServerWorld)world, this.getSpawnPointPosition(), this.getSpawnAngle(), false, false).orElse(null);
+            }
+            if (world == null || position == null) {
+                world = ((WorldImpl)Bukkit.getServer().getWorlds().get(0)).getHandle();
+                position = Vec3d.ofCenter(world.getSpawnPos());
+            }
+            this.setWorld(world);
+            this.setPos(position.getX(), position.getY(), position.getZ());
+        }
+        this.interactionManager.setWorld((ServerWorld)world);*/
+    }
+
+	@Override
+	public void spawnIn(ServerWorld world) {
+		ServerPlayerEntity plr = ((ServerPlayerEntity)(Object)this);
+		
+		plr.setServerWorld(world);
+        if (world == null) {
+        	plr.unsetRemoved();
+            Vec3d position = null;
+            if (plr.getSpawnPointDimension() != null && (world = plr.server.getWorld(plr.getSpawnPointDimension())) != null && plr.getSpawnPointPosition() != null) {
+                position = PlayerEntity.findRespawnPosition((ServerWorld)world, plr.getSpawnPointPosition(), plr.getSpawnAngle(), false, false).orElse(null);
+            }
+            if (world == null || position == null) {
+                world = ((WorldImpl)Bukkit.getServer().getWorlds().get(0)).getHandle();
+                position = Vec3d.ofCenter(world.getSpawnPos());
+            }
+            plr.setServerWorld(world);
+            plr.setPos(position.getX(), position.getY(), position.getZ());
+        }
+        plr.interactionManager.setWorld((ServerWorld)world);
+	}
 
 }

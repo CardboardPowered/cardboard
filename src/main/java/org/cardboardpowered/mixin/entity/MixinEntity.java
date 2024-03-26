@@ -21,6 +21,7 @@ import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import me.isaiah.common.entity.IRemoveReason;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.FallingBlockEntity;
@@ -60,7 +61,11 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+//<<<<<<< HEAD
 import net.minecraft.util.ActionResult;
+//=======
+import net.minecraft.util.math.Box;
+//>>>>>>> upstream/ver/1.20
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
@@ -105,6 +110,11 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     public void cardboard_setDrops(ArrayList<org.bukkit.inventory.ItemStack> drops) {
         this.drops = drops;
     }
+    
+    @Override
+    public Box cardboad_getBoundingBoxAt(double x2, double y2, double z2) {
+        return this.dimensions.getBoxAt(x2, y2, z2);
+    }
 
     @Override
     public boolean cardboard_getForceDrops() {return forceDrops;}
@@ -115,12 +125,15 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
     }
 
     @Shadow
-    private World world;
+    public World world;
     
     @Override
     public World mc_world() {
     	return world;
     }
+
+    @Shadow
+    private EntityDimensions dimensions;
 
     public MixinEntity() {
         this.bukkit = getEntity(CraftServer.INSTANCE, (Entity)(Object)this);
@@ -205,6 +218,8 @@ public class MixinEntity implements IMixinCommandOutput, IMixinEntity {
         this.projectileSource = source;
     }
 
+    
+    @Deprecated
     private static CraftEntity getEntity(CraftServer server, Entity entity) {
         /*
          * Order is *EXTREMELY* important -- keep it right! =D
