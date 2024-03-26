@@ -24,7 +24,7 @@ import net.minecraft.entity.damage.DamageTracker;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardCriterion;
-import net.minecraft.scoreboard.ScoreboardPlayerScore;
+// import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -140,12 +140,16 @@ public abstract class MixinServerPlayerEntity_DeathEvent extends PlayerEntity {
     // Lnet/minecraft/world/entity/LivingEntity;dropAllDeathLoot(Lnet/minecraft/world/damagesource/DamageSource;)V
     // Lnet/minecraft/entity/LivingEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V
 
-    @Redirect(method = "onDeath", at = @At(value = "INVOKE",
+    
+    // TODO: 1.20.4
+    /*@Redirect(method = "onDeath", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/scoreboard/Scoreboard;forEachScore(Lnet/minecraft/scoreboard/ScoreboardCriterion;Ljava/lang/String;Ljava/util/function/Consumer;)V "))
     private void cardboard$use_bukkit_scoreboard(Scoreboard instance, ScoreboardCriterion criteria, String scoreboardName, Consumer<ScoreboardPlayerScore> action) {
     	cb$this().setCameraEntity(((ServerPlayerEntity) (Object) this));
         CraftServer.INSTANCE.getScoreboardManager().getScoreboardScores(ScoreboardCriterion.DEATH_COUNT, cb$this().getEntityName(), ScoreboardPlayerScore::incrementScore);
-    }
+    }*/
+    
+    
 
 	
 }

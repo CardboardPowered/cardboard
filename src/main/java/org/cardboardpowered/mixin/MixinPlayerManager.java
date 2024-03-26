@@ -377,7 +377,7 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         }
 
         ServerWorld worldserver_vanilla_1 = worldserver_vanilla != null && optional_vanilla.isPresent() ? worldserver_vanilla : this.server.getOverworld();
-        entityplayer_vanilla = new ServerPlayerEntity(this.server, worldserver_vanilla_1, playerIn.getGameProfile());
+        entityplayer_vanilla = new ServerPlayerEntity(this.server, worldserver_vanilla_1, playerIn.getGameProfile(), SyncedClientOptions.createDefault());
         // Banner end
 
         ServerPlayerEntity entityplayer1 = playerIn;
@@ -476,9 +476,12 @@ public abstract class MixinPlayerManager implements IMixinPlayerManager {
         int sim = CraftServer.INSTANCE.getSimulationDistance();
         int vd = CraftServer.INSTANCE.getViewDistance();
         
-        entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver1.getDimensionKey(), worldserver1.getRegistryKey(),
-        				BiomeAccess.hashSeed(worldserver1.getSeed()), entityplayer1.interactionManager.getGameMode(), entityplayer1.interactionManager.getPreviousGameMode(),
-        				worldserver1.isDebugWorld(), worldserver1.isFlat(), (byte) (conqueredEnd ? 1 : 0), entityplayer1.getLastDeathPos(), entityplayer1.getPortalCooldown()));
+        entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(entityplayer1.createCommonPlayerSpawnInfo(entityplayer1.getServerWorld()), (byte) (conqueredEnd ? 1 : 0)));
+
+        
+        //entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver1.getDimensionKey(), worldserver1.getRegistryKey(),
+        //				BiomeAccess.hashSeed(worldserver1.getSeed()), entityplayer1.interactionManager.getGameMode(), entityplayer1.interactionManager.getPreviousGameMode(),
+        //				worldserver1.isDebugWorld(), worldserver1.isFlat(), (byte) (conqueredEnd ? 1 : 0), entityplayer1.getLastDeathPos(), entityplayer1.getPortalCooldown()));
         entityplayer1.networkHandler.sendPacket(new ChunkLoadDistanceS2CPacket((vd)));
         entityplayer1.networkHandler.sendPacket(new SimulationDistanceS2CPacket(sim));
         ((IMixinServerEntityPlayer)entityplayer1).spawnIn(worldserver1);

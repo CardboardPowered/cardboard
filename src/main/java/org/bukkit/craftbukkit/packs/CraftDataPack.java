@@ -1,10 +1,15 @@
 package org.bukkit.craftbukkit.packs;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackCompatibility;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourcePackSource;
+import net.minecraft.resource.metadata.PackResourceMetadata;
+
 import org.bukkit.Bukkit;
 import org.bukkit.FeatureFlag;
 import org.bukkit.NamespacedKey;
@@ -16,9 +21,17 @@ import org.bukkit.packs.DataPack;
 public class CraftDataPack
 implements DataPack {
     private final ResourcePackProfile handle;
+    
+    private PackResourceMetadata resourcePackInfo;
 
     public CraftDataPack(ResourcePackProfile handler) {
         this.handle = handler;
+        
+        try (ResourcePack pack = this.handle.packFactory.open(this.handle.getName())) {
+        	this.resourcePackInfo = pack.parseMetadata(PackResourceMetadata.SERIALIZER);
+        } catch (IOException e) { // This is already called in NMS then if in NMS not happen is secure this not throw here
+        	throw new RuntimeException(e);
+        }
     }
 
     public ResourcePackProfile getHandle() {
@@ -38,8 +51,7 @@ implements DataPack {
     }
 
     public int getPackFormat() {
-    	ResourcePackProfile.Metadata info = ResourcePackProfile.loadMetadata(this.getRawId(), this.getHandle().packFactory);
-        return info == null ? 0 : info.format();
+        return resourcePackInfo.packFormat();
     }
 
     public boolean isRequired() {

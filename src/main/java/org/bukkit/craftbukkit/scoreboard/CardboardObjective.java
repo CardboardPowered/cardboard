@@ -170,7 +170,8 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
 	@Override
 	public @NotNull Score getScoreFor(@NotNull Entity arg0) throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
-		return new CardboardScore(this, arg0.getName());
+		// return new CardboardScore(this, arg0.getName());
+		return null; // TODO 1.20.4
 	}
 
 	@Override

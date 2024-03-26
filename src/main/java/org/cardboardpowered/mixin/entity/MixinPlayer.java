@@ -134,14 +134,10 @@ public abstract class MixinPlayer extends MixinLivingEntity implements IMixinCom
     }
 
     @Override
-//<<<<<<< HEAD
-    public PlayerImpl getBukkitEntity() {
-//=======
     public PlayerImpl getBukkitEntity() {
     	if (bukkit == null) {
     		bukkit = (PlayerImpl) CraftEntity.getEntity(CraftServer.INSTANCE, ((ServerPlayerEntity) (Object) this));
     	}
-//>>>>>>> upstream/ver/1.20
         return bukkit;
     }
 

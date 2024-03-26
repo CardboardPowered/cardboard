@@ -31,7 +31,7 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.apache.commons.codec.binary.Base64;
+//import org.apache.commons.codec.binary.Base64;
 //=======
 import static org.spigotmc.ValidateUtils.limit;
 
@@ -501,7 +501,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         String internal = SerializableMeta.getString(map, "internal", true);
         if (internal != null) {
             ByteArrayInputStream buf = new ByteArrayInputStream(Base64.getDecoder().decode(internal));
-            try {
+        	try {
                 internalTag = NbtIo.readCompressed(buf, NbtTagSizeTracker.ofUnlimitedBytes());
                 deserializeInternal(internalTag, map);
                 Set<String> keys = internalTag.getKeys();
@@ -1181,6 +1181,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             try {
                 ByteArrayOutputStream buf = new ByteArrayOutputStream();
                 NbtIo.writeCompressed(internal, buf);
+                
                 builder.put("internal", Base64.getEncoder().encodeToString(buf.toByteArray()));
             } catch (IOException ex) {
                 Logger.getLogger(CraftMetaItem.class.getName()).log(Level.SEVERE, null, ex);

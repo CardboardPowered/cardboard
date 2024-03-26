@@ -1,6 +1,7 @@
 package com.mohistmc.banner.bukkit.nms.utils;
 
 import com.mohistmc.banner.bukkit.nms.model.ClassMapping;
+import com.mohistmc.banner.bukkit.nms.remappers.BannerInheritanceMap;
 import com.mohistmc.banner.bukkit.nms.remappers.BannerInheritanceProvider;
 import com.mohistmc.banner.bukkit.nms.remappers.BannerJarMapping;
 import com.mohistmc.banner.bukkit.nms.remappers.BannerJarRemapper;

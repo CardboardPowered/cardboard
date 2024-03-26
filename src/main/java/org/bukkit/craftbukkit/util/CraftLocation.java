@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.util;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.PositionImpl;
+// import net.minecraft.util.math.PositionImpl;
 import net.minecraft.util.math.Vec3d;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -41,7 +41,7 @@ public final class CraftLocation {
         return new Location(world, BlockPos.getX(), BlockPos.getY(), BlockPos.getZ(), yaw, pitch);
     }
 
-    public static Location toBukkit(PositionImpl position) {
+    /*public static Location toBukkit(PositionImpl position) {
         return toBukkit(position, null, 0.0F, 0.0F);
     }
 
@@ -51,15 +51,20 @@ public final class CraftLocation {
 
     public static Location toBukkit(PositionImpl position, World world, float yaw, float pitch) {
         return new Location(world, position.getX(), position.getY(), position.getZ(), yaw, pitch);
-    }
+    }*/
 
     public static BlockPos toBlockPosition(Location location) {
         return new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
-    public static PositionImpl toPosition(Location location) {
-        return new PositionImpl(location.getX(), location.getY(), location.getZ());
-    }
+   // public static PositionImpl toPosition(Location location) {
+    //    return new PositionImpl(location.getX(), location.getY(), location.getZ());
+    //}
+    
+    // public static PositionImpl toPosition(Location location) {
+    //    return new PositionImpl(location.getX(), location.getY(), location.getZ());
+    //}
+
 
     public static Vec3d toVec3D(Location location) {
         return new Vec3d(location.getX(), location.getY(), location.getZ());
