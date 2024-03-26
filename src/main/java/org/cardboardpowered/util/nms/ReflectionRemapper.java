@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  */
 public class ReflectionRemapper {
 
-    private static final String NMS_VERSION = "v1_20_R2";
+    public static final String NMS_VERSION = "v1_20_R3";
     public static JavaPlugin plugin;
 
     public static String mapClassName(String className) {
@@ -71,18 +71,18 @@ public class ReflectionRemapper {
 
     public static Field getFieldByName(Class<?> calling, String f) throws ClassNotFoundException {
         try {
-            Field field = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+            Field field = calling.getDeclaredField(MappingsReader.getIntermedField_2(calling, f));
             field.setAccessible(true);
             return field;
         } catch (NoSuchFieldException | SecurityException e) {
             try {
-                Field a = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+                Field a = calling.getDeclaredField(MappingsReader.getIntermedField_2(calling, f));
                 a.setAccessible(true);
                 return a;
             } catch (NoSuchFieldException | SecurityException e1) {
                 Class<?> whyIsAsmBroken = getClassFromJPL(getCallerClassName());
                 try {
-                    Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField(whyIsAsmBroken.getName(), f));
+                    Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField_2(whyIsAsmBroken, f));
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchFieldException | SecurityException e2) {
@@ -118,10 +118,10 @@ public class ReflectionRemapper {
 
     public static Field getDeclaredFieldByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchFieldException {
         try {
-            return calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+            return calling.getDeclaredField(MappingsReader.getIntermedField_2(calling, f));
         } catch (NoSuchFieldException | SecurityException e) {
             try {
-                Field a = calling.getDeclaredField(MappingsReader.getIntermedField(calling.getName(), f));
+                Field a = calling.getDeclaredField(MappingsReader.getIntermedField_2(calling, f));
                 a.setAccessible(true);
                 return a;
             } catch (NoSuchFieldException | SecurityException e1) {
@@ -141,7 +141,7 @@ public class ReflectionRemapper {
                         System.out.println("CALLING: " + calling.getName() + ", F: " + f);
                         return null;
                     }
-                    Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField(whyIsAsmBroken.getName(), f));
+                    Field a = whyIsAsmBroken.getDeclaredField(MappingsReader.getIntermedField_2(whyIsAsmBroken, f));
                     a.setAccessible(true);
                     return a;
                 } catch (NoSuchFieldException | SecurityException e2) {
@@ -153,11 +153,11 @@ public class ReflectionRemapper {
         }
     }
 
-    public static Method getMethodByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchMethodException {
+    /*public static Method getMethodByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchMethodException {
         Method m = getDeclaredMethodByName(calling, f);
         m.setAccessible(true);
         return m;
-    }
+    }*/
     
     public static CraftServer getCraftServer() {
         return CraftServer.INSTANCE;
@@ -184,7 +184,7 @@ public class ReflectionRemapper {
         return r;
     }
 
-    @Deprecated
+    /*@Deprecated
     public static Method getDeclaredMethodByName(Class<?> calling, String f) throws ClassNotFoundException, NoSuchMethodException {
         if (calling.getName().endsWith("MinecraftServer") && f.equalsIgnoreCase("getServer")) {
             return BukkitFabricMod.GET_SERVER;
@@ -237,7 +237,7 @@ public class ReflectionRemapper {
                 return getDeclaredMethodByName(calling, f);
             }
         }
-    }
+    }*/
 
     /**
      * Retrieve a class that is from a plugin
@@ -337,10 +337,10 @@ public class ReflectionRemapper {
         return SharedConstants.getGameVersion().getName();
     }
 
-    public static Method getMethodByName(Class<?> calling, String f, Class<?>[] p) throws ClassNotFoundException, NoSuchMethodException {
+    /*public static Method getMethodByName(Class<?> calling, String f, Class<?>[] p) throws ClassNotFoundException, NoSuchMethodException {
         Method m = getDeclaredMethodByName(calling, f, p);
         m.setAccessible(true);
         return m;
-    }
+    }*/
 
 }

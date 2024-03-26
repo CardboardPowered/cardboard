@@ -29,12 +29,12 @@ public class CommandMapImpl extends SimpleCommandMap {
 		}
 //=======
         // Register our commands
-        for (String s : new String[] {"version", "ver", "about"})
+        /*for (String s : new String[] {"version", "ver", "about"})
             register("bukkit", new VersionCommand(s));
         for (String s : new String[] {"fabricmods"})
-            register("cardboard", new ModsCommand(s));
+            register("cardboard", new ModsCommand(s));*/
         
-        setDefaultCommands();	
+        //setDefaultCommands();	
 		return super.register(label, fallbackPrefix, command);
 	}
 //    }
@@ -60,6 +60,7 @@ public class CommandMapImpl extends SimpleCommandMap {
 
 	private void registerCardboardCommands() {
 		register("bukkit", new VersionCommand("version"));
+		this.register("bukkit", new PluginsCommand("plugins"));
 		register("cardboard", new ModsCommand("fabricmods"));
 	}
 

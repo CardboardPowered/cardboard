@@ -21,11 +21,16 @@ package org.cardboardpowered.util.nms;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
+import net.techcable.srglib.JavaType;
+import net.techcable.srglib.MethodSignature;
+
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.util.Commodore;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
+import com.javazilla.bukkitfabric.BukkitFabricMod;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +39,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 // <<<<<<< HEAD:src/main/java/com/javazilla/bukkitfabric/nms/ReflectionMethodVisitor.java
 // =======
@@ -53,7 +59,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     static {
         SKIP.add("vault");
         SKIP.add("worldguard");
-        SKIP.add("worldedit");
+        //SKIP.add("worldedit");
     }
     private String pln;
     private MappingResolver mr;
@@ -109,6 +115,33 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                 return;
             }
         }
+        
+        if (owner.startsWith("net/minecraft") && name.length() <= 2) {
+        	MappingResolver mr = FabricLoader.getInstance().getMappingResolver(); 
+
+        	String owner_official = mr.unmapClassName("official", owner.replace('/', '.'));
+
+        	String sigg = "";
+
+        	JavaType jt  = JavaType.fromDescriptor(desc);
+        	
+        	if (jt.getDescriptor().startsWith("L") || jt.getDescriptor().contains("[[L")) {
+    			String in = jt.getInternalName().replace('/', '.');
+    			String ll = mr.unmapClassName("official", in);
+    			sigg += jt.getDescriptor().replace(jt.getInternalName(), ll).replace('.', '/');
+    		} else {
+    			sigg += jt.getDescriptor();
+    		}
+
+        	String mapped = mr.mapFieldName("official", owner_official, name, sigg);
+        	
+        	if (!mapped.startsWith("field_")) {
+        		System.out.println("TESTINGF: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped);
+        	}
+
+        	 super.visitFieldInsn( opcode, owner, mapped, desc );
+             return;
+        }
 
         super.visitFieldInsn( opcode, owner, name, desc );
     }
@@ -124,12 +157,88 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     public static int fixed = 0; // max so far: 484
     public static int lastF = 484;
 
+    
+    public String do_map(String owner, String name, String desc) {
+    	MappingResolver mr = FabricLoader.getInstance().getMappingResolver(); 
+
+    	String owner_official = mr.unmapClassName("official", owner.replace('/', '.'));
+    	
+    	MethodSignature sig = MethodSignature.fromDescriptor(desc);
+    	
+    	List<JavaType> jts = sig.getParameterTypes();
+    	
+    	String sigg = "(";
+    	
+    	for (JavaType jt : jts) {
+    		if (jt.getDescriptor().startsWith("L") || jt.getDescriptor().contains("[[L")) {
+    			String in = jt.getInternalName().replace('/', '.');
+    			String ll = mr.unmapClassName("official", in);
+    			sigg += jt.getDescriptor().replace(jt.getInternalName(), ll).replace('.', '/');
+    		} else {
+    			sigg += jt.getDescriptor();
+    		}
+    	}
+
+    	sigg += ")";
+    	
+    	JavaType jt  = sig.getReturnType();
+    	
+    	if (jt.getDescriptor().startsWith("L") || jt.getDescriptor().contains("[[L")) {
+			String in = jt.getInternalName().replace('/', '.');
+			String ll = mr.unmapClassName("official", in);
+			sigg += jt.getDescriptor().replace(jt.getInternalName(), ll).replace('.', '/');
+		} else {
+			sigg += jt.getDescriptor();
+		}
+
+    	String mapped = mr.mapMethodName("official", owner_official, name, sigg);
+    	
+    	
+    	if (!mapped.startsWith("method_")) {
+    		
+    		String res = mapped;
+
+    		// Check super class:
+    		try {
+    			Class<?> up = Class.forName(owner.replace('/', '.'));
+    			
+    			if (null != up.getSuperclass()) {
+        			String supn = up.getSuperclass().getName();
+        			res = do_map(supn, name, desc);
+    			}
+    		} catch (ClassNotFoundException e) {
+    			BukkitFabricMod.LOGGER.finest("MISSING CLASS MAPPING FOR: " + owner);
+    			System.out.println(e.getMessage());
+    		} catch (Exception e) {
+    			// Oh no!
+    			e.printStackTrace();
+    		}
+    		
+    		if (!res.startsWith("method_")) {
+    		//	System.out.println("TESTING: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped + " (" + res + ")");
+    		}
+    		mapped = res;
+    		
+    	}
+    	
+    	//if (!mapped.startsWith("method_")) {
+    	//	System.out.println("TESTING: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped);
+    	//}
+    	return mapped;
+    }
+   
+    
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (name.equals("getCraftServer")) {
         	System.out.println(owner + " " + name + " " + desc);
             // super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/cardboardpowered/util/nms/ReflectionRemapper", name, desc, false );
             // return;
+        }
+        
+        if (owner.startsWith("org/bukkit/craftbukkit") && owner.contains(ReflectionRemapper.NMS_VERSION)) {
+        	System.out.println("Stripping version package (" + ReflectionRemapper.NMS_VERSION + ") from org/bukkit/craftbukkit reference.");
+        	owner = owner.replace("org/bukkit/craftbukkit/" + ReflectionRemapper.NMS_VERSION + "/", "org/bukkit/craftbukkit/");
         }
         
         if (owner.startsWith("net/minecraft") && name.equals("getMinecraftServer")) {
@@ -166,6 +275,74 @@ public class ReflectionMethodVisitor extends MethodVisitor {
             name = "getWorldImpl";
             desc = desc.replace("/v1_17_R1", "");
         }*/
+        
+        if (owner.startsWith("net/minecraft") && name.length() <= 2) {
+        	MappingResolver mr = FabricLoader.getInstance().getMappingResolver(); 
+
+        	String owner_official = mr.unmapClassName("official", owner.replace('/', '.'));
+        	
+        	MethodSignature sig = MethodSignature.fromDescriptor(desc);
+        	
+        	List<JavaType> jts = sig.getParameterTypes();
+        	
+        	String sigg = "(";
+        	
+        	for (JavaType jt : jts) {
+        		if (jt.getDescriptor().startsWith("L") || jt.getDescriptor().contains("[[L")) {
+        			String in = jt.getInternalName().replace('/', '.');
+        			String ll = mr.unmapClassName("official", in);
+        			sigg += jt.getDescriptor().replace(jt.getInternalName(), ll).replace('.', '/');
+        		} else {
+        			sigg += jt.getDescriptor();
+        		}
+        	}
+
+        	sigg += ")";
+        	
+        	JavaType jt  = sig.getReturnType();
+        	
+        	if (jt.getDescriptor().startsWith("L") || jt.getDescriptor().contains("[[L")) {
+    			String in = jt.getInternalName().replace('/', '.');
+    			String ll = mr.unmapClassName("official", in);
+    			sigg += jt.getDescriptor().replace(jt.getInternalName(), ll).replace('.', '/');
+    		} else {
+    			sigg += jt.getDescriptor();
+    		}
+
+        	String mapped = mr.mapMethodName("official", owner_official, name, sigg);
+        	
+        	if (!mapped.startsWith("method_")) {
+        		
+        		String res = mapped;
+
+        		// Check super class:
+        		try {
+        			Class<?> up = Class.forName(owner.replace('/', '.'));
+        			
+        			if (null != up.getSuperclass()) {
+	        			String supn = up.getSuperclass().getName();
+	        			res = do_map(supn, name, desc);
+        			}
+        		} catch (ClassNotFoundException e) {
+        			BukkitFabricMod.LOGGER.finest("MISSING CLASS MAPPING FOR: " + owner);
+        			System.out.println(e.getMessage());
+        		} catch (Exception e) {
+        			// Oh no!
+        			e.printStackTrace();
+        		}
+        		
+        		if (!res.startsWith("method_")) {
+        			System.out.println("TESTING: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped + " (" + res + ")");
+        		}
+        		mapped = res;
+        		
+        	}
+        	
+        	
+        	
+        	 super.visitMethodInsn( opcode, owner, mapped, desc, false );
+             return;
+        }
 
         if (owner.startsWith("net/minecraft") && spigot2obf.size() > 1) {
             String own = spigot2obf.getOrDefault(owner, owner);

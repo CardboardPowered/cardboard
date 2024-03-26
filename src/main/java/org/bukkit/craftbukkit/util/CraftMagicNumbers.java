@@ -209,7 +209,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         // TODO: This needs to be kept updated when Spigot updates
         // It is the value of Material.values().length
     	BukkitFabricMod.LOGGER.info("DEB: " + Material.values().length);
-        int MATERIAL_LENGTH = 1525;
+        int MATERIAL_LENGTH = 1837; //1525;
         int i = MATERIAL_LENGTH - 1;
 
         List<String> names = new ArrayList<>();

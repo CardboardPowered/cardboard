@@ -19,6 +19,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.structure.Mirror;
 import org.bukkit.block.structure.StructureRotation;
 import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.CraftBlockType;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
@@ -514,18 +515,65 @@ public class CraftBlockData implements BlockData {
         Preconditions.checkState(MAP.put(nms, bukkit) == null, "Duplicate mapping %s->%s", nms, bukkit);
     }
     
+    
+    
     public static CraftBlockData newData(Material material, String data) {
+        Preconditions.checkArgument(material == null || material.isBlock(), "Cannot get data for not block %s", material);
+
+        BlockState blockData;
+        Block block = CraftBlockType.bukkitToMinecraft(material);
+        
+        if (null == block) {
+        	
+        	if (material == Material.GRASS) {
+        		// Old material
+        		
+        	}
+        	
+        	System.out.println("BLOCK NULL! for " + material + " / " + data);
+        }
+        
+        Map<net.minecraft.state.property.Property<?>, Comparable<?>> parsed = null;
+
+        // Data provided, use it
+        if (data != null) {
+            try {
+                // Material provided, force that material in
+                if (block != null) {
+                    data = Registries.BLOCK.getId(block) + data;
+                }
+
+                StringReader reader = new StringReader(data);
+                BlockArgumentParser.BlockResult arg = BlockArgumentParser.block(Registries.BLOCK.getReadOnlyWrapper(), reader, false);
+                Preconditions.checkArgument(!reader.canRead(), "Spurious trailing data: " + data);
+
+                blockData = arg.blockState();
+                parsed = arg.properties();
+            } catch (CommandSyntaxException ex) {
+                throw new IllegalArgumentException("Could not parse data: " + data, ex);
+            }
+        } else {
+            blockData = block.getDefaultState();
+        }
+
+        CraftBlockData craft = fromData(blockData);
+        craft.parsedStates = parsed;
+        return craft;
+    }
+    
+    @Deprecated
+    public static CraftBlockData newData_old(Material material, String data) {
         net.minecraft.block.Block block;
         Preconditions.checkArgument((material == null || material.isBlock() ? 1 : 0) != 0, (String)"Cannot get data for not block %s", (Object)material);
         if (material != null && (block = CraftMagicNumbers.getBlock(material)) != null) {
             Identifier key = Registries.BLOCK.getId(block);
             data = data == null ? key.toString() : key + (String)data;
         }
-        CraftBlockData cached = stringDataCache.computeIfAbsent((String)data, s2 -> CraftBlockData.createNewData(null, s2));
+        CraftBlockData cached = stringDataCache.computeIfAbsent((String)data, s2 -> CraftBlockData.createNewData_old(null, s2));
         return (CraftBlockData)cached.clone();
     }
     
-    private static CraftBlockData createNewData(Material material, String data) {
+    private static CraftBlockData createNewData_old(Material material, String data) {
         BlockState blockData;
         net.minecraft.block.Block block = CraftMagicNumbers.getBlock(material);
         Map<Property<?>, Comparable<?>> parsed = null;

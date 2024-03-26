@@ -11,6 +11,9 @@ import com.mohistmc.banner.bukkit.nms.remappers.ReflectMethodRemapper;
 import com.mohistmc.banner.bukkit.nms.remappers.ReflectRemapper;
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.provider.JointProvider;
+
+import org.cardboardpowered.impl.world.WorldImpl;
+import org.cardboardpowered.util.nms.MappingsReader;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -19,8 +22,15 @@ import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,29 +45,71 @@ public class RemapUtils {
     public static BannerJarRemapper jarRemapper;
     private static final List<Remapper> remappers = new ArrayList<>();
 
+    public static String NMS_VERSION = "v1_20_R3";
+    
+    public static File exportResource(String res, File folder) {
+        try (InputStream stream = MappingsReader.class.getClassLoader().getResourceAsStream("mappings/" + res)) {
+            if (stream == null) throw new IOException("Null " + res);
+
+            Path p = Paths.get(folder.getAbsolutePath() + File.separator + res);
+            Files.copy(stream, p, StandardCopyOption.REPLACE_EXISTING);
+            return p.toFile();
+        } catch (IOException e) { e.printStackTrace(); return null;}
+    }
+    
     public static void init() {
     	System.out.println("REMAP UTIL DEBUG");
         jarMapping = new BannerJarMapping();
         // v1_20_R1
-        jarMapping.packages.put("org/bukkit/craftbukkit/v1_20_R3/", "org/bukkit/craftbukkit/");
+        jarMapping.packages.put("org/bukkit/craftbukkit/" + NMS_VERSION + "/", "org/bukkit/craftbukkit/");
+        jarMapping.packages.put("org/bukkit/craftbukkit/" + NMS_VERSION, "org/bukkit/craftbukkit");
         //jarMapping.packages.put("org/bukkit/craftbukkit/v1_19_R3/", "org/bukkit/craftbukkit/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/apache/commons/", "org/apache/commons/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/org/objectweb/asm/", "org/objectweb/asm/");
+        
+        
+        //jarMapping.classes.put("org/bukkit/craftbukkit/" + NMS_VERSION + "/CraftServer", "org/bukkit/craftbukkit/CraftServer");
+        //jarMapping.classes.put("org/bukkit/craftbukkit/" + NMS_VERSION + "/CraftWorld", "org/cardboardpowered/impl/world/WorldImpl");
+        
         jarMapping.setInheritanceMap(new BannerInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new BannerInheritanceProvider());
 
         try {
             jarMapping.loadMappings(
                     new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader()
-                            .getResourceAsStream("mappings/spigot2srg-1.20.2.srg"))),
+                            .getResourceAsStream("mappings/spigot2srg-1.20.srg"))),
                     null,
                     null, false);
         } catch (Exception e) {
         	System.out.println("debug: error loading remaputils");
             e.printStackTrace();
         }
+        
+        File dir = new File("mappings");
+        dir.mkdirs();
+        
+        File f = exportResource("bukkit-1.20.4-cl-intermed.csrg", dir);
+        
+        jarMapping.classes.put("org/bukkit/craftbukkit/" + NMS_VERSION + "/CraftWorld", "org/cardboardpowered/impl/world/WorldImpl");
+        
+        try {
+			for (String c : Files.readAllLines(f.toPath())) {
+				if (!(c.startsWith("# "))) {
+					String[] spl = c.split(" ");
+					if (!jarMapping.classes.containsKey(spl[0])) {
+						jarMapping.registerClassMapping(spl[0], spl[1]);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        // bukkit-1.20.4-cl-intermed.csrg
+        
+        
         
         JointProvider provider = new JointProvider();
         provider.add(new BannerInheritanceProvider());
@@ -113,6 +165,11 @@ public class RemapUtils {
     public static String reverseMap(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? ASMUtils.toInternalName(clazz) : mapping.getNmsSrcName();
+    }
+    
+    public static String reverseMap_name(String class_name) {
+        ClassMapping mapping = jarMapping.byMCPName.get(class_name);
+        return mapping == null ? ASMUtils.toInternalName(class_name) : mapping.getNmsSrcName();
     }
 
     public static String mapPackage(String typeName) {

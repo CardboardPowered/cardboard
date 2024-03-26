@@ -21,6 +21,7 @@ import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.Collection;
@@ -218,6 +219,8 @@ public class PluginClassLoader extends URLClassLoader {
         }
         return result;
     }
+    
+    private static File debug_folder = new File("C:\\Users\\isaia\\");
 
     private Class<?> remappedFindClass(String name) {
         Class<?> result = null;
@@ -249,16 +252,18 @@ public class PluginClassLoader extends URLClassLoader {
                         // Resolve it - sets the class loader of the class
                         this.resolveClass(result);
                     }
-                    /*
-                    File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
-                    try {
-                    	Files.createDirectories(out.toPath().getParent());
-    					Files.write(out.toPath(), bytecode);
-    				} catch (IOException e) {
-    					// TODO Auto-generated catch block
-    					e.printStackTrace();
-    				}
-					*/
+                    
+                    if (debug_folder.isDirectory()) {
+	                    File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
+	                    try {
+	                    	Files.createDirectories(out.toPath().getParent());
+	    					Files.write(out.toPath(), bytecode);
+	    				} catch (IOException e) {
+	    					// TODO Auto-generated catch block
+	    					e.printStackTrace();
+	    				}
+                    }
+					
                 }
             }
         } catch (Exception t) {
