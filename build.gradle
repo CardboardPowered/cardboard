@@ -191,9 +191,9 @@ shadowJar {
 modrinth {
     token = System.getenv("MODRINTH") // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = "MLYQ9VGP" // This can be the project ID or the slug. Either will work!
-    versionNumber = "1.20.1-" + System.env.BUILD_NUMBER // You don't need to set this manually. Will fail if Modrinth has this version already
+    versionNumber = "1.20.4-" + System.env.BUILD_NUMBER // You don't need to set this manually. Will fail if Modrinth has this version already
     versionType = "beta" // This is the default -- can also be `beta` or `alpha`
     uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = ["1.20.1"] // Must be an array, even with only one version
+    gameVersions = ["1.20.4"] // Must be an array, even with only one version
     loaders = ["fabric"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
 }
