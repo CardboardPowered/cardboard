@@ -12,6 +12,7 @@ public class CraftBlockType {
     }
 
     public static Block bukkitToMinecraft(Material material) {
+    	System.out.println(material);
         return CraftMagicNumbers.getBlock(material);
     }
 }

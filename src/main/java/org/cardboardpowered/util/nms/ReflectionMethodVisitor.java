@@ -119,6 +119,25 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         if (owner.startsWith("net/minecraft") && name.length() <= 2) {
         	MappingResolver mr = FabricLoader.getInstance().getMappingResolver(); 
 
+        	// TODO: fix "$" support
+        	
+        	if (owner.contains("class_31$a")) {
+        		owner =  owner.replace("class_31$a", "class_31$class_7729");
+        		if (name.equalsIgnoreCase("b")) {
+        			name = "field_40374";
+        		}
+        		if (name.equalsIgnoreCase("a")) {
+        			name = "field_40373";
+        		}
+        		if (name.equalsIgnoreCase("c")) {
+        			name = "field_40375";
+        		}
+        	}
+        	
+        	if (desc.contains("class_31$a")) {
+        		desc = desc.replace("class_31$a", "class_31$class_7729");
+        	}
+        	
         	String owner_official = mr.unmapClassName("official", owner.replace('/', '.'));
 
         	String sigg = "";
@@ -136,13 +155,71 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         	String mapped = mr.mapFieldName("official", owner_official, name, sigg);
         	
         	if (!mapped.startsWith("field_")) {
-        		System.out.println("TESTINGF: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped);
+        		
+        		
+        		String res = mapped;
+        		try {
+        			Class<?> up = Class.forName(owner.replace('/', '.'));
+        			
+        	    	String in = find_in_inheritance_f(up, res, desc, sigg);
+        	    	if (in.startsWith("field_")) {
+        	    		res = in;
+        	    	}
+        			
+        			if (null != up.getSuperclass()) {
+            			//String supn = up.getSuperclass().getName();
+            			//res = do_map(supn, name, desc);
+        			}
+        			
+        			if (!res.startsWith("field_")) {
+        				// Check interface
+        			}
+        			
+        	    	if (!res.startsWith("field_")) {
+        	    		String inn = find_in_inheritance_f(up, res, desc, sigg);
+        	    		if (inn.startsWith("field_")) {
+        	    			res = in;
+        	    		}
+        	    	}
+        			
+        		} catch (ClassNotFoundException e) {
+        			BukkitFabricMod.LOGGER.finest("MISSING CLASS MAPPING FOR: " + owner);
+        			System.out.println(e.getMessage());
+        		} catch (Exception e) {
+        			// Oh no!
+        			e.printStackTrace();
+        		}
+        		
+
+        		// System.out.println("\tFIELD:: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped);
         	}
 
+        	if (mapped.equalsIgnoreCase("field_41255")) {
+        		// Note: Find out why this is being mapped wrong in the worldedit adaptor
+        		mapped = "field_41254";
+        	}
+        	
+        	if (mapped.equalsIgnoreCase("field_41199")) {
+        		mapped = "field_41197";
+        	}
+        	
+        	
         	 super.visitFieldInsn( opcode, owner, mapped, desc );
              return;
         }
+        
+    	if (name.equalsIgnoreCase("field_41255")) {
+    		// Note: Find out why this is being mapped wrong in the worldedit adaptor
+    		name = "field_41254";
+    	}
 
+    	
+    	if (name.equalsIgnoreCase("field_41199")) {
+    		// Note: Find out why this is being mapped wrong in the worldedit adaptor
+    		name = "field_41197";
+    	}
+
+    	
         super.visitFieldInsn( opcode, owner, name, desc );
     }
 
@@ -202,10 +279,27 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     		try {
     			Class<?> up = Class.forName(owner.replace('/', '.'));
     			
+    	    	String in = find_in_inheritance(up, res, desc, sigg);
+    	    	if (in.startsWith("method_")) {
+    	    		return in;
+    	    	}
+    			
     			if (null != up.getSuperclass()) {
         			String supn = up.getSuperclass().getName();
         			res = do_map(supn, name, desc);
     			}
+    			
+    			if (!res.startsWith("method_")) {
+    				// Check interface
+    			}
+    			
+    	    	if (!res.startsWith("method_")) {
+    	    		String inn = find_in_inheritance(up, res, desc, sigg);
+    	    		if (inn.startsWith("method_")) {
+    	    			return in;
+    	    		}
+    	    	}
+    			
     		} catch (ClassNotFoundException e) {
     			BukkitFabricMod.LOGGER.finest("MISSING CLASS MAPPING FOR: " + owner);
     			System.out.println(e.getMessage());
@@ -216,22 +310,95 @@ public class ReflectionMethodVisitor extends MethodVisitor {
     		
     		if (!res.startsWith("method_")) {
     		//	System.out.println("TESTING: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped + " (" + res + ")");
+    			
+    			
+    			
     		}
     		mapped = res;
     		
     	}
+    	
     	
     	//if (!mapped.startsWith("method_")) {
     	//	System.out.println("TESTING: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped);
     	//}
     	return mapped;
     }
+    
+    public static String find_in_inheritance(Class<?> clazz, String obf_name, String desc, String sigg) {
+    	//System.out.println(clazz.getName());
+    	
+    	// for (Method m : clazz.getMethods()){
+    	// }
+    	
+    	MappingResolver mr = FabricLoader.getInstance().getMappingResolver(); 
+    	
+		String owner_official = mr.unmapClassName("official", clazz.getName().replace('/', '.'));
+		
+		String mapped = mr.mapMethodName("official", owner_official, obf_name, desc);
+
+		if (mapped.startsWith("method_")) {
+			//System.out.println("FOUND IN INTERFACES! = " + mapped);
+			return mapped;
+		}
+		
+		String mapped2 = mr.mapMethodName("official", owner_official, obf_name, sigg);
+
+		if (mapped2.startsWith("method_")) {
+			//System.out.println("FOUND IN INTERFACES! = " + mapped2);
+			return mapped2;
+		}
+    	
+    	for (Class<?> ih : clazz.getInterfaces()) {
+    		String in = find_in_inheritance(ih, obf_name, desc, sigg);
+    		if (in.startsWith("method_")) {
+    			return in;
+    		}
+    	}
+    	return obf_name;
+    }
+    
+    public static String find_in_inheritance_f(Class<?> clazz, String obf_name, String desc, String sigg) {
+    	//System.out.println(clazz.getName());
+    	
+    	// for (Method m : clazz.getMethods()){
+    	// }
+    	
+    	MappingResolver mr = FabricLoader.getInstance().getMappingResolver(); 
+    	
+		String owner_official = mr.unmapClassName("official", clazz.getName().replace('/', '.'));
+		
+		String mapped = mr.mapFieldName("official", owner_official, obf_name, desc);
+
+		if (mapped.startsWith("field_")) {
+			//System.out.println("FOUND IN INTERFACES! = " + mapped);
+			return mapped;
+		}
+		
+		String mapped2 = mr.mapFieldName("official", owner_official, obf_name, sigg);
+
+		if (mapped2.startsWith("field_")) {
+			//System.out.println("FOUND IN INTERFACES! = " + mapped2);
+			return mapped2;
+		}
+    	
+    	for (Class<?> ih : clazz.getInterfaces()) {
+    		String in = find_in_inheritance(ih, obf_name, desc, sigg);
+    		if (in.startsWith("field_")) {
+    			return in;
+    		}
+    	}
+    	return obf_name;
+    }
    
+    public void debug(Object o) {
+    	// System.out.println(o);
+    }
     
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (name.equals("getCraftServer")) {
-        	System.out.println(owner + " " + name + " " + desc);
+        	//System.out.println(owner + " " + name + " " + desc);
             // super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/cardboardpowered/util/nms/ReflectionRemapper", name, desc, false );
             // return;
         }
@@ -243,13 +410,13 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         
         if (owner.startsWith("net/minecraft") && name.equals("getMinecraftServer")) {
             super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/cardboardpowered/util/nms/ReflectionRemapper", "getNmsServer", desc, false );
-            System.out.println(owner + " " + name + " " + desc);
+            //System.out.println(owner + " " + name + " " + desc);
             return;
         }
 
         if (owner.startsWith("net/minecraft") && name.equals("getServer")) {
-            super.visitMethodInsn( Opcodes.INVOKESTATIC, "com/javazilla/bukkitfabric/nms/ReflectionRemapper", "getNmsServer", desc, false );
-            System.out.println(owner + " " + name + " " + desc);
+            super.visitMethodInsn( Opcodes.INVOKESTATIC, "org/cardboardpowered/util/nms/ReflectionRemapper", "getNmsServer", desc, false );
+            //System.out.println(owner + " " + name + " " + desc);
             return;
         }
         
@@ -319,7 +486,11 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         		try {
         			Class<?> up = Class.forName(owner.replace('/', '.'));
         			
-        			if (null != up.getSuperclass()) {
+        			
+        	    	String in = find_in_inheritance(up, res, desc, sigg);
+        	    	if (in.startsWith("method_")) {
+        	    		res = in;
+        	    	} else if (null != up.getSuperclass()) {
 	        			String supn = up.getSuperclass().getName();
 	        			res = do_map(supn, name, desc);
         			}
@@ -331,8 +502,17 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         			e.printStackTrace();
         		}
         		
+        		if (res.equalsIgnoreCase("I_") && desc.contains("Liu")) {
+        			// res = "method_30349";
+        		}
+        		
+        		// TODO Support classes with "$"
+        		if (res.equalsIgnoreCase("f") && desc.contains("class_5321") && owner.contains("class_2378")) {
+        			res = "method_40290";
+        		}
+        		
         		if (!res.startsWith("method_")) {
-        			System.out.println("TESTING: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped + " (" + res + ")");
+        			//System.out.println("\tMETHOD: " + owner + " " + name + " " + desc + " (" + sigg + ") " + " === " + mapped + " (" + res + ")");
         		}
         		mapped = res;
         		
@@ -340,7 +520,8 @@ public class ReflectionMethodVisitor extends MethodVisitor {
         	
         	
         	
-        	 super.visitMethodInsn( opcode, owner, mapped, desc, false );
+        	
+        	 super.visitMethodInsn( opcode, owner, mapped, desc, itf );
              return;
         }
 
@@ -404,7 +585,7 @@ public class ReflectionMethodVisitor extends MethodVisitor {
                 }
 
                 System.out.println("NAM2!: " + name2);
-                super.visitMethodInsn( opcode, cl.replace('.', '/'), name2, d2.replace('.', '/'), false );
+                super.visitMethodInsn( opcode, cl.replace('.', '/'), name2, d2.replace('.', '/'), itf );
                 return;
             }
         }

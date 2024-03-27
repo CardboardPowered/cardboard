@@ -500,7 +500,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.WitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkull::new);
         register(net.minecraft.block.WallWitherSkullBlock.class, org.bukkit.craftbukkit.block.impl.CraftWitherSkullWall::new);
         // TODO: 1.19.4: register(net.minecraft.block.WoodenButtonBlock.class, org.bukkit.craftbukkit.block.impl.CraftWoodButton::new);
-        
+          
         stringDataCache = new ConcurrentHashMap<String, CraftBlockData>();
         CraftBlockData.reloadCache();
         // TOODO 1.19: net.minecraft.block.Block.STATE_IDS.iterator().forEachRemaining(AbstractBlock.AbstractBlockState::createCraftBlockData);
@@ -525,10 +525,10 @@ public class CraftBlockData implements BlockData {
         
         if (null == block) {
         	
-        	if (material == Material.GRASS) {
+        	/*if (material == Material.GRASS) {
         		// Old material
         		
-        	}
+        	}*/
         	
         	System.out.println("BLOCK NULL! for " + material + " / " + data);
         }

@@ -59,6 +59,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.datafixer.Schemas;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.item.Item;
@@ -385,10 +386,10 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     }
 
     private static Block getModdedBlock(Material mat) {
-        if (null == mat) return null;
+        if (null == mat) return Blocks.STONE;
         if (!((Object)mat instanceof IMixinMaterial)) {
             // Dev env
-            return null;
+        	return Blocks.STONE;
         }
         IMixinMaterial mm = (IMixinMaterial)(Object) mat;
         if (!mm.isModded()) return null;

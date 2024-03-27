@@ -11,6 +11,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.SimplePluginManager;
+import org.cardboardpowered.util.MyPluginFixManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -233,12 +234,17 @@ public class PluginClassLoader extends URLClassLoader {
                 InputStream stream = url.openStream();
                 if (stream != null) {
                     byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    
+                    //if (path.contains("/worldedit/bukkit/adapter/impl/")) {
+                    //	System.out.println("Debug: Processing class: " + path);
+                    //}
+                    
                     bytecode = loader.server.getUnsafe().processClass(description, path, bytecode);
                     bytecode = RemapUtils.remapFindClass(bytecode);
 
                     bytecode = modifyByteCode(name, bytecode); // Mohist: add entry point for asm or mixin
 
-                    bytecode = PluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
+                    bytecode = MyPluginFixManager.injectPluginFix(name, bytecode); // Mohist - Inject plugin fix
 
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     URL jarURL = jarURLConnection.getJarFileURL();
@@ -253,7 +259,7 @@ public class PluginClassLoader extends URLClassLoader {
                         this.resolveClass(result);
                     }
                     
-                    if (debug_folder.isDirectory()) {
+                    if (debug_folder.isDirectory() && path.contains("worldedit")) {
 	                    File out = new File("C:\\Users\\isaia\\Documents\\fo\\" + name.replace('.', File.separatorChar) + ".class");
 	                    try {
 	                    	Files.createDirectories(out.toPath().getParent());
