@@ -1,21 +1,21 @@
 package org.cardboardpowered.impl.inventory.recipe;
 
-import java.util.Map;
-
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.RawShapedRecipe;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.recipe.CookingBookCategory;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
-
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.util.collection.DefaultedList;
+import java.util.Map;
+import java.util.Optional;
 
 public class CardboardShapedRecipe extends ShapedRecipe implements RecipeInterface {
 
@@ -26,8 +26,8 @@ public class CardboardShapedRecipe extends ShapedRecipe implements RecipeInterfa
         super(key, result);
     }
 
-    public CardboardShapedRecipe(ItemStack result, net.minecraft.recipe.ShapedRecipe recipe) {
-        this(CraftNamespacedKey.fromMinecraft(recipe.getId()), result);
+    public CardboardShapedRecipe(Identifier id, ItemStack result, net.minecraft.recipe.ShapedRecipe recipe) {
+        this(CraftNamespacedKey.fromMinecraft(id), result);
         this.recipe = recipe;
     }
 
@@ -60,7 +60,7 @@ public class CardboardShapedRecipe extends ShapedRecipe implements RecipeInterfa
                 data.set(i * width + j, toNMS(ingred.get(row.charAt(j)), false));
         }
 
-        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), RecipeInterface.getCategory(this.getCategory()), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
+        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(getKey(), new net.minecraft.recipe.ShapedRecipe(this.getGroup(), RecipeInterface.getCategory(this.getCategory()), new RawShapedRecipe(width, shape.length, data, Optional.empty()), CraftItemStack.asNMSCopy(this.getResult())));
     }
     
     // TODO: Update API to 1.19.4

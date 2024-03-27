@@ -1,16 +1,22 @@
 package org.cardboardpowered.mixin.network;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Predicate;
-
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import net.minecraft.network.message.MessageType;
+import net.minecraft.network.message.SentMessage;
+import net.minecraft.network.message.SignedMessage;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.Waitable;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.cardboardpowered.impl.entity.PlayerImpl;
 import org.cardboardpowered.impl.util.LazyPlayerSet;
 import org.cardboardpowered.impl.util.WaitableImpl;
@@ -22,18 +28,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-
-import net.minecraft.network.message.MessageType;
-import net.minecraft.network.message.SentMessage;
-import net.minecraft.network.message.SignedMessage;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralTextContent;
-import net.minecraft.text.Text;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager_ChatEvent {

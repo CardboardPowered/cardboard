@@ -1,8 +1,9 @@
 package org.cardboardpowered.impl.inventory.recipe;
 
-import java.util.List;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -12,8 +13,7 @@ import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.recipe.CraftingBookCategory;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
+import java.util.List;
 
 public class CardboardShapelessRecipe extends ShapelessRecipe implements RecipeInterface {
 
@@ -23,8 +23,8 @@ public class CardboardShapelessRecipe extends ShapelessRecipe implements RecipeI
         super(key, result);
     }
 
-    public CardboardShapelessRecipe(ItemStack result, net.minecraft.recipe.ShapelessRecipe recipe) {
-        this(CraftNamespacedKey.fromMinecraft(recipe.getId()), result);
+    public CardboardShapelessRecipe(Identifier id, ItemStack result, net.minecraft.recipe.ShapelessRecipe recipe) {
+        this(CraftNamespacedKey.fromMinecraft(id), result);
         this.recipe = recipe;
     }
 
@@ -43,7 +43,7 @@ public class CardboardShapelessRecipe extends ShapelessRecipe implements RecipeI
         DefaultedList<Ingredient> data = DefaultedList.ofSize(ingred.size(), Ingredient.EMPTY);
         for (int i = 0; i < ingred.size(); i++) data.set(i, toNMS(ingred.get(i), true));
 
-        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(new net.minecraft.recipe.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), RecipeInterface.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data));
+        ((IMixinRecipeManager)IMixinMinecraftServer.getServer().getRecipeManager()).addRecipe(getKey(), new net.minecraft.recipe.ShapelessRecipe(this.getGroup(), RecipeInterface.getCategory(this.getCategory()), CraftItemStack.asNMSCopy(this.getResult()), data));
     }
     
     // TODO: Update API to 1.19.4

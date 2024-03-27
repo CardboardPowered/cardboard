@@ -1,17 +1,12 @@
 package org.cardboardpowered.impl.inventory;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import com.google.common.base.Preconditions;
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-
-import java.util.HashMap;
-
 import org.apache.commons.lang.Validate;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.jetbrains.annotations.NotNull;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
@@ -19,6 +14,10 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
 
 public class CardboardPlayerInventory extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
 

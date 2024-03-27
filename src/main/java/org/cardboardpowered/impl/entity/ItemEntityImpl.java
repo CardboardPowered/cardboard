@@ -4,9 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-
-import java.util.UUID;
-
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -15,6 +12,8 @@ import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class ItemEntityImpl extends CraftEntity implements Item {
 
@@ -77,14 +76,12 @@ public class ItemEntityImpl extends CraftEntity implements Item {
 
     // Spigot #758
     public void setThrower(UUID uuid) {
-        item.setThrower(uuid);
+        item.throwerUuid = uuid;
     }
 
     // Spigot #758
     public UUID getThrower() {
-        // TODO: 1.19.4 need AW here
-    	// return item.thrower;
-    	return null;
+    	return item.throwerUuid;
     }
 
     @Override

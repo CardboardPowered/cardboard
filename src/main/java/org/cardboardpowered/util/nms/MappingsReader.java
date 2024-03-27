@@ -30,6 +30,8 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mohistmc.banner.bukkit.nms.utils.RemapUtils;
+
 import net.fabricmc.loader.api.FabricLoader;
 import net.techcable.srglib.FieldData;
 import net.techcable.srglib.JavaType;
@@ -94,20 +96,31 @@ public class MappingsReader {
         });
     }
 
-    @Deprecated
+    // TODO
     public static String getIntermedClass(String spigot) {
+        return RemapUtils.map(spigot);
+    }
+    
+    // TODO
+    public static String getIntermedField_2(Class<?> c, String spigot) {
+    	
+    	return RemapUtils.mapFieldName(c, spigot);
+    }
+    
+    @Deprecated
+    public static String getIntermedClass_old(String spigot) {
         return dev(MAPPINGS.getNewClass(spigot).getName());
     }
 
     @Deprecated
-    public static String getIntermedField(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
+    public static String getIntermedField_old(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
         JavaType type = JavaType.fromName(getIntermedClass(c));
         if (c.contains("class_")) type = MAPPINGS.inverted().getNewClass(c);
         return obf(MAPPINGS.getNewField(FieldData.create(type, spigot)).getName());
     }
 
     @Deprecated
-    public static String getIntermedField2(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
+    public static String getIntermedField2_old(String c, String spigot) throws NoSuchFieldException, SecurityException, ClassNotFoundException {
         JavaType type = JavaType.fromName(getIntermedClass(c));
         return obf(MAPPINGS.getNewField(FieldData.create(type, spigot)).getName());
     }
@@ -124,7 +137,7 @@ public class MappingsReader {
     }
 
     @Deprecated
-    public static String getIntermedMethod(String name, String spigot, Class<?>[] parms) {
+    public static String getIntermedMethod_old(String name, String spigot, Class<?>[] parms) {
         String sig = "(";
         for (Class<?> clazz : parms)
             sig += clazz.getName().substring(clazz.getName().lastIndexOf(".")+1) + ",";
@@ -142,11 +155,11 @@ public class MappingsReader {
                 String pname = parent.getName();
                 return obf(METHODS3.getOrDefault((pname + "=" + spigot + sig), spigot));
             } else return obf(spigot);
-        } catch (Exception e) { return getIntermedMethod(name, spigot); }
+        } catch (Exception e) { return getIntermedMethod_old(name, spigot); }
     }
 
     @Deprecated
-    public static String getIntermedMethod(String name, String spigot) {
+    public static String getIntermedMethod_old(String name, String spigot) {
         // TODO This very bad. It doesn't use the method descriptor.
         // TODO There are 44 spigot-named methods that will have duplicates.
 

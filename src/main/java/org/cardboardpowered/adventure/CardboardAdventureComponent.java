@@ -1,25 +1,23 @@
 package org.cardboardpowered.adventure;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
+import net.minecraft.text.PlainTextContent.Literal;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextContent;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 public final class CardboardAdventureComponent implements Text {
 
@@ -50,7 +48,7 @@ public final class CardboardAdventureComponent implements Text {
     @Override
     public TextContent getContent() {
         if (this.adventure instanceof TextComponent) {
-            return new LiteralTextContent(((TextComponent)this.adventure).content());
+            return new Literal(((TextComponent)this.adventure).content());
         }
         return this.deepConverted().getContent();
     }
@@ -87,4 +85,3 @@ public final class CardboardAdventureComponent implements Text {
         }
     }
 }
-

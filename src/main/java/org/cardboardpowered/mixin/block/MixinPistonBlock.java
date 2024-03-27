@@ -1,29 +1,25 @@
 package org.cardboardpowered.mixin.block;
 
-import java.util.AbstractList;
-import java.util.List;
-
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.event.block.BlockPistonEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.cardboardpowered.extras.DualBlockList;
-import org.cardboardpowered.util.MixinInfo;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-
 import net.minecraft.block.Blocks;
 import net.minecraft.block.PistonBlock;
 import net.minecraft.block.piston.PistonHandler;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.event.block.BlockPistonEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.cardboardpowered.extras.DualBlockList;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 //@MixinInfo(events = {"BlockPistonExtendEvent","BlockPistonRetractEvent","BlockPistonEvent"})
 @Mixin(PistonBlock.class)
@@ -31,7 +27,7 @@ public class MixinPistonBlock {
     
     private PistonHandler cardboard_ph;
 
-    @Redirect(at = @At(value = "NEW", target = "Lnet/minecraft/block/piston/PistonHandler;"), method = "move")
+    @Redirect(at = @At(value = "NEW", target = "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/Direction;Z)Lnet/minecraft/block/piston/PistonHandler;"), method = "tryMove")
     public PistonHandler cardboard_storePH(World world, BlockPos pos, Direction dir, boolean retract) {
         return (cardboard_ph = new PistonHandler(world,pos,dir,retract));
     }

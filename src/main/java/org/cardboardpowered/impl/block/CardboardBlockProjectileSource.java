@@ -1,7 +1,7 @@
 package org.cardboardpowered.impl.block;
 
 import net.minecraft.block.entity.DispenserBlockEntity;
-import net.minecraft.util.math.BlockPointerImpl;
+import net.minecraft.util.math.BlockPointer;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Projectile;
@@ -39,6 +39,8 @@ import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
+import net.minecraft.item.Items;
+
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.AbstractArrow;
@@ -84,9 +86,10 @@ public class CardboardBlockProjectileSource implements BlockProjectileSource {
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity, Consumer<T> function) {
         Preconditions.checkArgument((this.getBlock().getType() == Material.DISPENSER ? 1 : 0) != 0, (Object)"Block is no longer dispenser");
-        BlockPointerImpl isourceblock = new BlockPointerImpl((ServerWorld)this.dispenserBlock.getWorld(), this.dispenserBlock.getPos());
+        BlockPointer isourceblock = new BlockPointer((ServerWorld)this.dispenserBlock.getWorld(), this.dispenserBlock.getPos(), this.dispenserBlock.getCachedState(), this.dispenserBlock);
+        
         Position iposition = DispenserBlock.getOutputLocation(isourceblock);
-        Direction enumdirection = isourceblock.getBlockState().get(DispenserBlock.FACING);
+        Direction enumdirection = isourceblock.state().get(DispenserBlock.FACING);
         World world = this.dispenserBlock.getWorld();
         ProjectileEntity launch = null;
         if (Snowball.class.isAssignableFrom(projectile)) {
@@ -108,10 +111,12 @@ public class CardboardBlockProjectileSource implements BlockProjectileSource {
             }
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ(), new net.minecraft.item.ItemStack(Items.ARROW));
                 ((Arrow) ((IMixinEntity)launch).getBukkitEntity() ).setBasePotionData(new PotionData(PotionType.WATER, false, false));
             } else {
-                launch = SpectralArrow.class.isAssignableFrom(projectile) ? new SpectralArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ()) : new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = SpectralArrow.class.isAssignableFrom(projectile) ?
+                		new SpectralArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ(), new net.minecraft.item.ItemStack(Items.SPECTRAL_ARROW)) :
+                		new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ(), new net.minecraft.item.ItemStack(Items.ARROW));
             }
             ((PersistentProjectileEntity)launch).pickupType = PersistentProjectileEntity.PickupPermission.ALLOWED;
             ((IMixinEntity)(PersistentProjectileEntity)launch).setProjectileSourceBukkit(this);

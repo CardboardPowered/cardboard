@@ -1,9 +1,28 @@
 package org.bukkit.craftbukkit.entity;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.javazilla.bukkitfabric.interfaces.IMixinCommandOutput;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.mojang.brigadier.LiteralMessage;
+import me.isaiah.common.entity.IRemoveReason;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.PlayerAssociatedNetworkHandler;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.world.ThreadedAnvilChunkStorage.EntityTracker;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.EntityEffect;
@@ -25,8 +44,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.entity.SpawnCategory;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.PermissibleBase;
@@ -38,8 +57,16 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import org.cardboardpowered.impl.world.WorldImpl;
+import org.cardboardpowered.interfaces.IWorldChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -300,7 +327,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public String getName() {
-        return nms.getEntityName();
+        return nms.getName().getString();
     }
 
     @Override
@@ -647,7 +674,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public boolean removeScoreboardTag(String arg0) {
-        return nms.removeScoreboardTag(arg0);
+        return nms.removeCommandTag(arg0);
     }
 
     @Override
@@ -701,7 +728,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void setPortalCooldown(int arg0) {
-        //nms.netherPortalCooldown = arg0;
+        nms.setPortalCooldown(arg0);
     }
 
     @Override
@@ -743,24 +770,25 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     }
 
     @Override
-    public boolean teleport(Location location, TeleportCause arg1) {
-        location.checkFinite();
+    public boolean teleport(Location loc, TeleportCause arg1) {
+        loc.checkFinite();
 
-        if (nms.hasPassengers() || nms.isRemoved())
+        if (nms.hasPassengers() || !nms.isAlive())
             return false;
 
         nms.stopRiding();
 
-        // TODO: Cross world teleporting
-        //if (!location.getWorld().equals(getWorld())) {
-        //    nms.teleportTo(((WorldImpl) location.getWorld()).getHandle(), new BlockPos(location.getX(), location.getY(), location.getZ()));
-        //    return true;
-        //}
-        nms.teleport(location.getX(), location.getY(), location.getZ());
-
-        nms.updatePositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        nms.setHeadYaw(location.getYaw());
-
+        if(loc.getWorld() == null || loc.getWorld().equals(getWorld())) {
+            nms.updatePositionAndAngles(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+            nms.setHeadYaw(loc.getYaw());
+        } else {
+            nms.teleport(
+		            ((WorldImpl) loc.getWorld()).getHandle(),
+                    loc.getX(), loc.getY(), loc.getZ(),
+                    EnumSet.allOf(PositionFlag.class),
+                    loc.getYaw(), loc.getPitch());
+            return true;
+        }
         return true;
     }
 
@@ -777,7 +805,6 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     public static PermissibleBase getPermissibleBase() {
         if (perm == null) {
             perm = new PermissibleBase(new ServerOperator() {
-
                 @Override
                 public boolean isOp() {
                     return false;
@@ -863,13 +890,13 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     @Override
     public boolean isInBubbleColumn() {
         // TODO Auto-generated method stub
-        return false;
+        return nms.isInsideBubbleColumn();
     }
 
     @Override
     public boolean isInWaterOrBubbleColumn() {
         // TODO Auto-generated method stub
-        return false;
+        return nms.isInsideWaterOrBubbleColumn();
     }
 
     @Override
@@ -898,8 +925,7 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
 
     @Override
     public void customName(@Nullable Component com) {
-        if (com instanceof TextComponent) {
-            TextComponent txt = (TextComponent) com;
+        if (com instanceof TextComponent txt) {
             this.setCustomName(txt.content());
         }
     }
@@ -952,7 +978,19 @@ public class CraftEntity implements Entity, CommandSender, IMixinCommandOutput {
     
     @Override
     public @NotNull Set<Player> getTrackedPlayers() {
-        return null;
+        ImmutableSet.Builder<Player> players = ImmutableSet.builder();
+        ServerWorld world = (ServerWorld) nms.getWorld();
+        EntityTracker entityTracker = world.getChunkManager()
+                .threadedAnvilChunkStorage.entityTrackers
+                .get(this.getEntityId());
+        if (entityTracker != null) {
+
+	        for(PlayerAssociatedNetworkHandler connection : entityTracker.listeners) {
+		        players.add((Player) ((IMixinServerEntityPlayer) connection.getPlayer()).getBukkitEntity());
+	        }
+        }
+
+        return players.build();
     }
 
 	@Override

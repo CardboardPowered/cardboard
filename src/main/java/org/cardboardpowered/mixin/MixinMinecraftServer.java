@@ -18,42 +18,16 @@
  */
 package org.cardboardpowered.mixin;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.Executor;
-import java.util.function.BooleanSupplier;
-
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
-import net.minecraft.world.dimension.DimensionOptions;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.scoreboard.CardboardScoreboardManager;
-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
-import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.event.world.WorldInitEvent;
-import org.cardboardpowered.interfaces.INetworkIo;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import com.javazilla.bukkitfabric.BukkitFabricMod;
 import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
 import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import me.isaiah.common.cmixin.IMixinPersistentStateManager;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.command.DataCommandStorage;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -70,24 +44,48 @@ import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.random.RandomSequencesState;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.world.ForcedChunkState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.border.WorldBorder;
+import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.level.storage.LevelStorage;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.scoreboard.CardboardScoreboardManager;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+import org.bukkit.event.server.ServerLoadEvent;
+import org.bukkit.event.world.WorldInitEvent;
+import org.cardboardpowered.interfaces.INetworkIo;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.Executor;
+import java.util.function.BooleanSupplier;
 
 @Mixin(value=MinecraftServer.class)
 public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<ServerTask> implements IMixinMinecraftServer {
 
+    @Shadow private long tickStartTimeNanos;
     @Shadow @Final protected SaveProperties saveProperties;
     @Shadow public WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory;
 
@@ -108,7 +106,6 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
     @Shadow public Map<RegistryKey<net.minecraft.world.World>, ServerWorld> worlds;
     @Shadow public MinecraftServer.ResourceManagerHolder resourceManagerHolder; // 1.18.1: serverResourceManager
     @Shadow public LevelStorage.Session session;
-    @Shadow private long timeReference;
     @Shadow public DataCommandStorage dataCommandStorage;
  //   @Shadow @Mutable SaveProperties saveProperties;
     @Shadow private int ticks;
@@ -326,7 +323,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
         ServerChunkManager chunkproviderserver = worldserver.getChunkManager();
 
         //chunkproviderserver.getLightingProvider().setTaskBatchSize(500);
-        this.timeReference = Util.getMeasuringTimeMs();
+        this.tickStartTimeNanos = Util.getMeasuringTimeMs();
         chunkproviderserver.addTicket(ChunkTicketType.START, new ChunkPos(blockposition), 11, Unit.INSTANCE);
 
         while (chunkproviderserver.getTotalChunksLoadedCount() != 441)

@@ -1,9 +1,48 @@
 package org.cardboardpowered.mixin.network;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
+import me.isaiah.common.cmixin.IMixinEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.MovementType;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkThreadUtils;
+import net.minecraft.network.PacketCallbacks;
+import net.minecraft.network.packet.c2s.common.ResourcePackStatusC2SPacket;
+import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.network.packet.c2s.play.UpdatePlayerAbilitiesC2SPacket;
+import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
+import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ConnectedClientData;
+import net.minecraft.server.network.ServerCommonNetworkHandler;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameMode;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.WorldView;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
@@ -28,68 +67,26 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
-import com.javazilla.bukkitfabric.interfaces.IMixinResourcePackStatusC2SPacket;
-import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
-import me.isaiah.common.cmixin.IMixinEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.NetworkThreadUtils;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.PacketCallbacks;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInteractItemC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.c2s.play.ResourcePackStatusC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdatePlayerAbilitiesC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.network.packet.s2c.play.UpdateSelectedSlotS2CPacket;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.RaycastContext;
-import net.minecraft.world.WorldView;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 @SuppressWarnings("deprecation")
 @Mixin(value = ServerPlayNetworkHandler.class, priority = 800)
-public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetworkHandler {
+public abstract class MixinServerPlayNetworkHandler extends ServerCommonNetworkHandler implements IMixinPlayNetworkHandler {
 
-	@Shadow
-	private ClientConnection connection;
-	
-	@Override
+    public MixinServerPlayNetworkHandler(MinecraftServer server, ClientConnection connection, ConnectedClientData clientData) {
+        super(server, connection, clientData);
+        throw new AssertionError("nuh uh");
+    }
+
+    @Override
 	public ClientConnection cb_get_connection() {
 		return connection;
 	}
 
     @Shadow 
     public ServerPlayerEntity player;
-
-    @Shadow
-    public abstract void sendPacket(Packet<?> packet);
 
     private volatile int messageCooldownBukkit;
     private static final AtomicIntegerFieldUpdater<ServerPlayNetworkHandler> chatSpamField = AtomicIntegerFieldUpdater.newUpdater(ServerPlayNetworkHandler.class, "messageCooldownBukkit");
@@ -127,16 +124,21 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
 
     @Override
     public boolean isDisconnected() {
+//<<<<<<< HEAD
+//    	return !connection.isOpen();
+//=======
     	return player.isDisconnected(); // TODO
+//>>>>>>> upstream/ver/1.20
     }
 
     /**
      * @author BukkitFabric
      * @reason PlayerKickEvent
      */
-    @Overwrite
+    @Override
     public void disconnect(Text reason) {
-        String leaveMessage = Formatting.YELLOW + this.player.getEntityName() + " left the game.";
+        String leaveMessage = Formatting.YELLOW +
+                "" + this.player.getDisplayName() + " left the game.";
 
         PlayerKickEvent event = new PlayerKickEvent(CraftServer.INSTANCE.getPlayer(this.player), reason.getString(), leaveMessage);
 
@@ -660,10 +662,12 @@ public abstract class MixinServerPlayNetworkHandler implements IMixinPlayNetwork
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "onResourcePackStatus")
-    public void doBukkitEvent_PlayerResourcePackStatusEvent(ResourcePackStatusC2SPacket packet, CallbackInfo ci) {
-        NetworkThreadUtils.forceMainThread(packet, get(), this.player.getServerWorld());
-        Bukkit.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[((IMixinResourcePackStatusC2SPacket)packet).getStatus_Bukkit().ordinal()]));
+    @Override
+    public void onResourcePackStatus(ResourcePackStatusC2SPacket packet) {
+        super.onResourcePackStatus(packet);
+        int statusOrdinal = packet.status().ordinal();
+        PlayerResourcePackStatusEvent event = new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[statusOrdinal]);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     // 1.19.2 = closeScreenHandler

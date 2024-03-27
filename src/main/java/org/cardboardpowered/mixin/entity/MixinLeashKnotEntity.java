@@ -1,14 +1,6 @@
 package org.cardboardpowered.mixin.entity;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.cardboardpowered.util.MixinInfo;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.decoration.LeashKnotEntity;
 import net.minecraft.entity.mob.MobEntity;
@@ -18,6 +10,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
+import org.cardboardpowered.util.MixinInfo;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+
+import java.util.Iterator;
+import java.util.List;
 
 @MixinInfo(events = {"PlayerLeashEntityEvent", "PlayerUnleashEntityEvent"})
 @Mixin(value = LeashKnotEntity.class, priority = 900)

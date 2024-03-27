@@ -1,25 +1,24 @@
 package org.cardboardpowered.mixin.inventory;
 
-import java.util.List;
-
+import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.DefaultedList;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.javazilla.bukkitfabric.interfaces.IMixinInventory;
-
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import java.util.List;
 
 @Mixin(SimpleInventory.class)
 public class MixinSimpleInventory implements IMixinInventory {
 
-    @Shadow
-    public DefaultedList<ItemStack> stacks;
+    @Final @Shadow
+    public DefaultedList<ItemStack> heldStacks;
 
     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
     public int maxStack_BF = MAX_STACK;
@@ -33,7 +32,7 @@ public class MixinSimpleInventory implements IMixinInventory {
 
     @Override
     public List<ItemStack> getContents() {
-        return stacks;
+        return heldStacks;
     }
 
     @Override

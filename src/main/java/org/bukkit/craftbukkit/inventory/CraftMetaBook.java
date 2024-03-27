@@ -2,30 +2,25 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
-import net.minecraft.text.Text.Serializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.craftbukkit.inventory.CraftMetaBook.CraftMetaBookBuilder;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BookMeta;
 
-import static org.spigotmc.ValidateUtils.limit;
 import java.util.AbstractList;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 public class CraftMetaBook extends CraftMetaItem implements BookMeta {
@@ -419,7 +414,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
         @Override
         public BaseComponent[] getPage(final int page) {
-            return ComponentSerializer.parse(Text.Serializer.toJson( CraftChatMessage.fromStringOrNull(pages.get(page - 1))) );
+			return ComponentSerializer.parse(Text.Serialization.toJsonString(CraftChatMessage.fromStringOrNull(pages.get(page - 1))));
         }
 
         @Override
@@ -428,7 +423,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 throw new IllegalArgumentException("Invalid page number " + page + "/" + pages.size());
 
             BaseComponent[] newText = text == null ? new BaseComponent[0] : text;
-            CraftMetaBook.this.pages.set(page - 1, Text.Serializer.fromJson(ComponentSerializer.toString(newText)).getString());
+            CraftMetaBook.this.pages.set(page - 1, Text.Serialization.fromJson(ComponentSerializer.toString(newText)).getString());
         }
 
         @Override
@@ -446,7 +441,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
                 if (page == null)
                     page = new BaseComponent[0];
 
-                CraftMetaBook.this.pages.add(Text.Serializer.fromJson(ComponentSerializer.toString(page)).getString());
+                CraftMetaBook.this.pages.add(Text.Serialization.fromJson(ComponentSerializer.toString(page)).getString());
             }
         }
 
@@ -456,7 +451,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
             return new AbstractList<BaseComponent[]>() {
                 @Override
                 public BaseComponent[] get(int index) {
-                    return ComponentSerializer.parse(Text.Serializer.toJson(CraftChatMessage.fromStringOrNull(copy.get(index))));
+                    return ComponentSerializer.parse(Text.Serialization.toJsonString(CraftChatMessage.fromStringOrNull(copy.get(index))));
                 }
 
                 @Override
@@ -478,8 +473,8 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     public BookMeta.Spigot spigot() {
         return spigot;
     }
-    
-    
+
+
     // Paper start
     @Override
     public net.kyori.adventure.text.Component title() {

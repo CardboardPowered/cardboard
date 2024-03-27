@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -120,16 +121,20 @@ import io.papermc.paper.entity.LookAnchor;
 import io.papermc.paper.math.Position;
 import me.isaiah.common.GameVersion;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.util.TriState;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.ResourcePackSendS2CPacket;
 import net.minecraft.network.packet.s2c.play.BlockBreakingProgressS2CPacket;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.ChatSuggestionsS2CPacket;
 import net.minecraft.network.packet.s2c.play.ClearTitleS2CPacket;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+//import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.DamageTiltS2CPacket;
 import net.minecraft.network.packet.s2c.play.ExperienceBarUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
@@ -329,7 +334,7 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
 
     @Override
     public String getName() {
-        return nms.getEntityName();
+    	return nms.getGameProfile().getName();
     }
 
     @Override
@@ -374,38 +379,53 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
         return ImmutableSet.copyOf(channels);
     }
 
-    public void sendSupportedChannels() {
-        if (getHandle().networkHandler == null) return;
-        Set<String> listening = server.getMessenger().getIncomingChannels();
+	public void sendSupportedChannels() {
+		if(getHandle().networkHandler == null) return;
+		Set<String> listening = server.getMessenger().getIncomingChannels();
 
-        if (!listening.isEmpty()) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		if(!listening.isEmpty()) {
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-            for (String channel : listening) {
-                try {
-                    stream.write(channel.getBytes("UTF8"));
-                    stream.write((byte) 0);
-                } catch (IOException ex) {
-                    BukkitFabricMod.LOGGER.log(Level.SEVERE, "Could not send Plugin Channel REGISTER to " + getName(), ex);
-                }
-            }
+			for(String channel : listening) {
+				try {
+					stream.write(channel.getBytes("UTF8"));
+					stream.write((byte) 0);
+				} catch(IOException ex) {
+					BukkitFabricMod.LOGGER.log(Level.SEVERE, "Could not send Plugin Channel REGISTER to " + getName(), ex);
+				}
+			}
 
-            getHandle().networkHandler.sendPacket(new CustomPayloadS2CPacket(new Identifier("register"), new PacketByteBuf(Unpooled.wrappedBuffer(stream.toByteArray()))));
-        }
-    }
+			sendPayload(new Identifier("register"), stream.toByteArray());
+		}
+	}
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void sendPluginMessage(Plugin source, String channel, byte[] message) {
-        StandardMessenger.validatePluginMessage(Bukkit.getMessenger(), source, channel, message);
-        if (getHandle().networkHandler == null) return;
+	@SuppressWarnings("deprecation")
+	@Override
+	public void sendPluginMessage(Plugin source, String channel, byte[] message) {
+		StandardMessenger.validatePluginMessage(Bukkit.getMessenger(), source, channel, message);
+		if(getHandle().networkHandler == null) return;
 
-        if (channels.contains(channel)) {
-            channel = StandardMessenger.validateAndCorrectChannel(channel);
-            CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(new Identifier(channel), new PacketByteBuf(Unpooled.wrappedBuffer(message)));
-            getHandle().networkHandler.sendPacket(packet);
-        }
-    }
+		if(channels.contains(channel)) {
+			channel = StandardMessenger.validateAndCorrectChannel(channel);
+
+			sendPayload(new Identifier(channel), message);
+		}
+	}
+
+	private void sendPayload(Identifier id, byte[] message) {
+		CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(new CustomPayload() {
+			@Override
+			public void write(PacketByteBuf packetByteBuf) {
+				packetByteBuf.writeBytes(message);
+			}
+			@Override
+			public Identifier id() {
+				return id;
+			}
+		});
+		getHandle().networkHandler.sendPacket(packet);
+	}
+
 
     @Override
     public boolean canSee(Player arg0) {
@@ -1015,14 +1035,18 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public void setResourcePack(String url) {
-        nms.sendResourcePackUrl(url, "null", false, null);
-    }
+	public void setResourcePack(@NotNull String url) {
+		sendPack(url, "null", false, null);
+	}
+	@Override
+	public void setResourcePack(@NotNull String url, @Nullable byte[] hash) {
+		sendPack(url, hash == null ? "null" : new String(hash), false, null);
+	}
 
-    @Override
-    public void setResourcePack(String url, byte[] hash) {
-        nms.sendResourcePackUrl(url, new String(hash), false, null);
-    }
+	private void sendPack(String url, String hash, boolean required, String text) {
+		UUID id = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8));
+		nms.networkHandler.sendPacket(new ResourcePackSendS2CPacket(id, url, hash, required, text == null ? null : Text.literal(text)));
+	}
 
     @Override
     public void setSaturation(float arg0) {
@@ -1724,19 +1748,21 @@ public class PlayerImpl extends CraftHumanEntity implements Player {
     @Override
     public @NotNull Component displayName() {
         // TODO Auto-generated method stub
-        return null;
+        return Component.text(this.getDisplayName());
     }
 
     @Override
     public void displayName(@Nullable Component arg0) {
         // TODO Auto-generated method stub
-        
+    	if (arg0 instanceof TextComponent) {
+    		this.setDisplayName( ((TextComponent)arg0).content() );
+    	}
     }
 
-    @Override
-    public int getPing() {
-        return this.getHandle().pingMilliseconds;
-    }
+	@Override
+	public int getPing() {
+		return this.getHandle().networkHandler.getLatency();
+	}
 
     @Override
     public @NotNull Set<Player> getTrackedPlayers() {

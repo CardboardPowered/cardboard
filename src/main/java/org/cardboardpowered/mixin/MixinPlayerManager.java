@@ -18,6 +18,40 @@
  */
 package org.cardboardpowered.mixin;
 
+//<<<<<<< HEAD
+import com.google.common.collect.Lists;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinPlayerManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerLoginNetworkHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.mojang.authlib.GameProfile;
+import me.isaiah.common.ICommonMod;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.encryption.PlayerPublicKey;
+import net.minecraft.network.packet.c2s.common.SyncedClientOptions;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.scoreboard.ServerScoreboard;
+import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ConnectedClientData;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.World;
+//=======
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +61,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Bukkit;
+//>>>>>>> upstream/ver/1.20
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
@@ -44,11 +79,21 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//<<<<<<< HEAD
+import java.net.SocketAddress;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Function;
+//=======
 import com.google.common.collect.Lists;
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinPlayNetworkHandler;
@@ -88,9 +133,10 @@ import net.minecraft.world.WorldProperties;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.network.packet.s2c.play.EntityStatusEffectS2CPacket;
 import net.minecraft.network.packet.s2c.play.*;
+//>>>>>>> upstream/ver/1.20
 
 @Mixin(PlayerManager.class)
-public class MixinPlayerManager implements IMixinPlayerManager {
+public abstract class MixinPlayerManager implements IMixinPlayerManager {
 
     @Shadow
     public List<ServerPlayerEntity> players;
@@ -167,31 +213,50 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         World fromWorld = player.getWorld();
         player.teleport(worldserver1, location.getX(), location.getY(), location.getZ(), 0, 0);
 
-        if (fromWorld != location.getWorld()) {
+        if (fromWorld != ((WorldImpl) location.getWorld()).getHandle()) {
             PlayerChangedWorldEvent event = new PlayerChangedWorldEvent((Player) ((IMixinServerEntityPlayer)player).getBukkitEntity(), ((IMixinWorld)fromWorld).getWorldImpl());
             CraftServer.INSTANCE.getPluginManager().callEvent(event);
         }
         return player;
     }
 
-    @Inject(at = @At("TAIL"), method = "onPlayerConnect")
-    public void firePlayerJoinEvent(ClientConnection con, ServerPlayerEntity player, CallbackInfo ci) {
-        String joinMessage = Text.translatable("multiplayer.player.joined", new Object[]{player.getDisplayName()}).getString();
+    @Unique private PlayerImpl plr;
 
-        PlayerImpl plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
+    @Inject(method = "onPlayerConnect", at = @At("HEAD"))
+    public void onConnect(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
+        this.plr = (PlayerImpl) CraftServer.INSTANCE.getPlayer(player);
+    }
+
+    @Redirect(method = "onPlayerConnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;broadcast(Lnet/minecraft/text/Text;Z)V"))
+    public void firePlayerJoinEvent(PlayerManager instance, Text message, boolean overlay) {
+        PlayerImpl plr;
+
+        if(this.plr == null) {
+            instance.broadcast(message, overlay);
+            return;
+        } else {
+            plr = this.plr;
+            this.plr = null;
+        }
+
+        String key = "multiplayer.player.joined";
+        Text name = plr.nms.getDisplayName();
+
+        String joinMessage = Formatting.YELLOW + Text.translatable(key, name).getString();
+
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(plr, joinMessage);
         BukkitEventFactory.callEvent(playerJoinEvent);
-        IMixinPlayNetworkHandler ims = (IMixinPlayNetworkHandler)player.networkHandler;
+        IMixinPlayNetworkHandler ims = (IMixinPlayNetworkHandler)plr.nms.networkHandler;
 
-        if (!ims.cb_get_connection().isOpen()) return;
+        if (!ims.cb_get_connection().isOpen()) {
+            return;
+        }
 
         joinMessage = playerJoinEvent.getJoinMessage();
 
-        if (joinMessage != null && joinMessage.length() > 0) {
-            for (Text line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage)) {
-                // 1.18: CraftServer.server.getPlayerManager().sendToAll(new GameMessageS2CPacket(line, MessageType.SYSTEM, Util.NIL_UUID));
-                // TODO: 1.19
-            	CraftServer.server.getPlayerManager().broadcast(line, entityplayer -> line, false);
+        if (joinMessage != null && !joinMessage.isEmpty()) {
+            for (Text line : CraftChatMessage.fromString(joinMessage)) {
+                broadcast(line, entityplayer -> line, false);
             }
         }
 
@@ -201,7 +266,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     public void firePlayerQuitEvent(ServerPlayerEntity player, CallbackInfo ci) {
         player.closeHandledScreen();
 
-        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(CraftServer.INSTANCE.getPlayer(player), "\u00A7e" + player.getEntityName() + " left the game");
+        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(CraftServer.INSTANCE.getPlayer(player), "\u00A7e" + player.getDisplayName().getString() + " left the game");
         CraftServer.INSTANCE.getPluginManager().callEvent(playerQuitEvent);
         player.playerTick();
     }
@@ -237,8 +302,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
 
         me.isaiah.common.cmixin.IMixinPlayerManager imixin = (me.isaiah.common.cmixin.IMixinPlayerManager) (Object)this;
        // ServerPlayerEntity entity = imixin.InewPlayer(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile);
-        ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile);
-        
+        ServerPlayerEntity entity = new ServerPlayerEntity(CraftServer.server, CraftServer.server.getWorld(World.OVERWORLD), profile, SyncedClientOptions.createDefault());
         Player player = (Player) ((IMixinServerEntityPlayer)entity).getBukkitEntity();
         PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) address).getAddress(), ((java.net.InetSocketAddress) ims.cb_get_connection().channel.remoteAddress()).getAddress());
 
@@ -275,6 +339,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
     public void sendScoreboard(ServerScoreboard scoreboardserver, ServerPlayerEntity entityplayer) {
     }
 
+    @Shadow public abstract void broadcast(Text message, Function<ServerPlayerEntity, Text> playerMessageFactory, boolean overlay);
     @Override
     public void sendScoreboardBF(ServerScoreboard newboard, ServerPlayerEntity handle) {
         sendScoreboard(newboard, handle);
@@ -312,7 +377,7 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         }
 
         ServerWorld worldserver_vanilla_1 = worldserver_vanilla != null && optional_vanilla.isPresent() ? worldserver_vanilla : this.server.getOverworld();
-        entityplayer_vanilla = new ServerPlayerEntity(this.server, worldserver_vanilla_1, playerIn.getGameProfile());
+        entityplayer_vanilla = new ServerPlayerEntity(this.server, worldserver_vanilla_1, playerIn.getGameProfile(), SyncedClientOptions.createDefault());
         // Banner end
 
         ServerPlayerEntity entityplayer1 = playerIn;
@@ -411,9 +476,12 @@ public class MixinPlayerManager implements IMixinPlayerManager {
         int sim = CraftServer.INSTANCE.getSimulationDistance();
         int vd = CraftServer.INSTANCE.getViewDistance();
         
-        entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver1.getDimensionKey(), worldserver1.getRegistryKey(),
-        				BiomeAccess.hashSeed(worldserver1.getSeed()), entityplayer1.interactionManager.getGameMode(), entityplayer1.interactionManager.getPreviousGameMode(),
-        				worldserver1.isDebugWorld(), worldserver1.isFlat(), (byte) (conqueredEnd ? 1 : 0), entityplayer1.getLastDeathPos(), entityplayer1.getPortalCooldown()));
+        entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(entityplayer1.createCommonPlayerSpawnInfo(entityplayer1.getServerWorld()), (byte) (conqueredEnd ? 1 : 0)));
+
+        
+        //entityplayer1.networkHandler.sendPacket(new PlayerRespawnS2CPacket(worldserver1.getDimensionKey(), worldserver1.getRegistryKey(),
+        //				BiomeAccess.hashSeed(worldserver1.getSeed()), entityplayer1.interactionManager.getGameMode(), entityplayer1.interactionManager.getPreviousGameMode(),
+        //				worldserver1.isDebugWorld(), worldserver1.isFlat(), (byte) (conqueredEnd ? 1 : 0), entityplayer1.getLastDeathPos(), entityplayer1.getPortalCooldown()));
         entityplayer1.networkHandler.sendPacket(new ChunkLoadDistanceS2CPacket((vd)));
         entityplayer1.networkHandler.sendPacket(new SimulationDistanceS2CPacket(sim));
         ((IMixinServerEntityPlayer)entityplayer1).spawnIn(worldserver1);

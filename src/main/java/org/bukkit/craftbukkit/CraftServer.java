@@ -18,56 +18,91 @@
  */
 package org.bukkit.craftbukkit;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-
+import com.destroystokyo.paper.entity.ai.MobGoals;
+import com.destroystokyo.paper.profile.CraftPlayerProfile;
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
+import com.javazilla.bukkitfabric.BukkitLogger;
+import com.javazilla.bukkitfabric.Utils;
+import com.javazilla.bukkitfabric.impl.MetaDataStoreBase;
+import com.javazilla.bukkitfabric.impl.MetadataStoreImpl;
+import com.javazilla.bukkitfabric.impl.scheduler.BukkitSchedulerImpl;
+import com.javazilla.bukkitfabric.interfaces.IMixinAdvancement;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinMapState;
+import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipe;
+import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
+import com.javazilla.bukkitfabric.interfaces.IUserCache;
+import com.mohistmc.banner.bukkit.nms.utils.RemapUtils;
+import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.datapack.DatapackManager;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.minecraft.SharedConstants;
+import net.minecraft.advancement.AdvancementEntry;
+import net.minecraft.block.Block;
+import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.boss.CommandBossBar;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.FilledMapItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.item.map.MapState;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DefaultedRegistry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.resource.DataPackSettings;
+import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.resource.featuretoggle.FeatureSet;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenTexts;
+import net.minecraft.server.BannedIpEntry;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.dedicated.PendingServerCommand;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.ClickEvent.Action;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.WorldSaveHandler;
+import net.minecraft.world.event.GameEvent;
 import org.apache.commons.lang.Validate;
-import org.bukkit.BanList;
+import org.bukkit.*;
 import org.bukkit.BanList.Type;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Keyed;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.StructureType;
-import org.bukkit.Tag;
-import org.bukkit.UnsafeValues;
 import org.bukkit.Warning.WarningState;
-import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.WorldBorder;
-import org.bukkit.WorldCreator;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.boss.BarColor;
@@ -101,42 +136,23 @@ import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.bukkit.event.world.WorldInitEvent;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.help.HelpMap;
-import org.bukkit.inventory.BlastingRecipe;
-import org.bukkit.inventory.CampfireRecipe;
-import org.bukkit.inventory.ComplexRecipe;
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
-import org.bukkit.inventory.SmithingRecipe;
-import org.bukkit.inventory.SmokingRecipe;
-import org.bukkit.inventory.StonecuttingRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
 import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.packs.DataPackManager;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoadOrder;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.SimpleServicesManager;
-import org.bukkit.plugin.UnknownDependencyException;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
@@ -151,10 +167,11 @@ import org.cardboardpowered.impl.CardboardBossBar;
 import org.cardboardpowered.impl.IpBanList;
 import org.cardboardpowered.impl.ProfileBanList;
 import org.cardboardpowered.impl.command.BukkitCommandWrapper;
-import org.cardboardpowered.impl.command.CommandMapImpl;
 import org.cardboardpowered.impl.command.CardboardConsoleCommandSender;
+import org.cardboardpowered.impl.command.CommandMapImpl;
 import org.cardboardpowered.impl.command.MinecraftCommandWrapper;
 import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.cardboardpowered.impl.inventory.InventoryCreator;
 import org.cardboardpowered.impl.inventory.recipe.CardboardBlastingRecipe;
 import org.cardboardpowered.impl.inventory.recipe.CardboardCampfireRecipe;
 import org.cardboardpowered.impl.inventory.recipe.CardboardFurnaceRecipe;
@@ -165,15 +182,12 @@ import org.cardboardpowered.impl.inventory.recipe.CardboardSmokingRecipe;
 import org.cardboardpowered.impl.inventory.recipe.CardboardStonecuttingRecipe;
 import org.cardboardpowered.impl.inventory.recipe.RecipeInterface;
 import org.cardboardpowered.impl.inventory.recipe.RecipeIterator;
-import org.cardboardpowered.impl.inventory.InventoryCreator;
 import org.cardboardpowered.impl.map.MapViewImpl;
 import org.cardboardpowered.impl.tag.BlockTagImpl;
 import org.cardboardpowered.impl.tag.CraftGameEventTag;
 import org.cardboardpowered.impl.tag.EntityTagImpl;
 import org.cardboardpowered.impl.tag.FluidTagImpl;
 import org.cardboardpowered.impl.tag.ItemTagImpl;
-import org.cardboardpowered.impl.tag.TagImpl;
-import org.cardboardpowered.impl.tag.Tags;
 import org.cardboardpowered.impl.util.CommandPermissions;
 import org.cardboardpowered.impl.util.IconCacheImpl;
 import org.cardboardpowered.impl.util.SimpleHelpMap;
@@ -183,6 +197,30 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spigotmc.SpigotConfig;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.destroystokyo.paper.entity.ai.MobGoals;
 import com.destroystokyo.paper.profile.CraftPlayerProfile;
@@ -290,11 +328,12 @@ import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 //import io.papermc.paper.plugin.manager.PaperPluginManagerImpl;
 
+
 @SuppressWarnings("deprecation")
 public class CraftServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "1.20.1-R0.1-SNAPSHOT"; // "1.19.4-R0.1-SNAPSHOT"; // "1.19.2-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "1.20.4-R0.1-SNAPSHOT"; // "1.19.4-R0.1-SNAPSHOT"; // "1.19.2-R0.1-SNAPSHOT";
     public final String serverVersion;
     public final String shortVersion;
 
@@ -311,12 +350,17 @@ public class CraftServer implements Server {
     private final BukkitSchedulerImpl scheduler = new BukkitSchedulerImpl();
     private final ConsoleCommandSender consoleCommandSender = new CardboardConsoleCommandSender();
     private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
+
+    // public final List<PlayerImpl> playerView;
+    // public final Map<String, World> worlds = new LinkedHashMap<>();
+
     public List<PlayerImpl> playerView;
     private WarningState warningState = WarningState.DEFAULT;
     public final Map<String, World> worlds = new LinkedHashMap<String, World>();
+
     private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
-    private YamlConfiguration configuration;
+    private final YamlConfiguration configuration;
     private IconCacheImpl icon;
 
     public static MinecraftDedicatedServer server;
@@ -551,7 +595,7 @@ public class CraftServer implements Server {
 
     @Override
     public String toString() {
-        return "CraftServer{" + "serverName=" + serverName + ",serverVersion=" + serverVersion + ",minecraftVersion=" + getServer().getVersion() + '}';
+        return "CraftServer{" + "serverName=" + serverName + ",serverVersion=" + serverVersion + ",minecraftVersion=" + SharedConstants.getGameVersion().getName() + '}';
     }
 
     @Override
@@ -586,10 +630,10 @@ public class CraftServer implements Server {
 
     @Override
     public Iterator<Advancement> advancementIterator() {
-        return Iterators.unmodifiableIterator(Iterators.transform(server.getAdvancementLoader().getAdvancements().iterator(), new Function<net.minecraft.advancement.Advancement, org.bukkit.advancement.Advancement>() {
+        return Iterators.unmodifiableIterator(Iterators.transform(server.getAdvancementLoader().getAdvancements().iterator(), new Function<AdvancementEntry, org.bukkit.advancement.Advancement>() {
             @Override
-            public org.bukkit.advancement.Advancement apply(net.minecraft.advancement.Advancement advancement) {
-                return ((IMixinAdvancement)advancement).getBukkitAdvancement();
+            public Advancement apply(AdvancementEntry advancement) {
+                return ((IMixinAdvancement)(Object) advancement).getBukkitAdvancement();
             }
         }));
     }
@@ -934,29 +978,63 @@ public class CraftServer implements Server {
         return result;
     }
 
-    @Override
-    public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
-        if (commandLine.startsWith("minecraft:") && sender instanceof Entity) {
-            try {
-                int result = vanillaCommandManager.dispatcher.execute(commandLine.replace("minecraft:", ""), ((CraftEntity)sender).nms.getCommandSource());
-                return result != -1;
-            } catch (CommandSyntaxException e) {
-                e.printStackTrace();
-                throw new CommandException("Vanilla command syntax error: " + e.getMessage());
-            }
-        }
+	@Override
+	public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
+		if(sender instanceof Entity) {
+			ServerCommandSource source = ((CraftEntity) sender).nms.getCommandSource();
 
-        if (commandMap.dispatch(sender, commandLine))
-            return true;
+			try {
+				String theCommand;
 
-        sender.sendMessage("Unknown command. Type " + (sender instanceof Player ? "\"/help\" for help." : "\"help\" for help."));
-        return false;
-    }
+				if(commandLine.startsWith("minecraft:")) {
+					theCommand = commandLine.substring("minecraft:".length());
+				} else {
+					theCommand = commandLine;
+				}
+
+				int result = vanillaCommandManager.dispatcher.execute(theCommand, source);
+				return result != -1;
+			} catch(CommandSyntaxException e) {
+				if(e.getType() != CommandSyntaxException
+						.BUILT_IN_EXCEPTIONS
+						.dispatcherUnknownCommand()) {
+					source.sendError(Texts.toText(e.getRawMessage()));
+					if (e.getInput() != null && e.getCursor() >= 0) {
+						int i = Math.min(e.getInput().length(), e.getCursor());
+						MutableText mutableText = Text.empty().formatted(Formatting.GRAY).styled((style) -> {
+							return style.withClickEvent(new ClickEvent(Action.SUGGEST_COMMAND, "/" + commandLine));
+						});
+						if (i > 10) {
+							mutableText.append(ScreenTexts.ELLIPSIS);
+						}
+
+						mutableText.append(e.getInput().substring(Math.max(0, i - 10), i));
+						if (i < e.getInput().length()) {
+							Text text = Text.literal(e.getInput().substring(i)).formatted(Formatting.RED, Formatting.UNDERLINE);
+							mutableText.append(text);
+						}
+
+						mutableText.append(Text.translatable("command.context.here").formatted(Formatting.RED, Formatting.ITALIC));
+						source.sendError(mutableText);
+					}
+
+					return false;
+				}
+			}
+		}
+
+		if(commandMap.dispatch(sender, commandLine))
+			return true;
+
+		sender.sendMessage("Unknown command. Type \"/help\" for help.");
+		return false;
+	}
 
     @Override
     public Advancement getAdvancement(NamespacedKey arg0) {
-        net.minecraft.advancement.Advancement advancement = server.getAdvancementLoader().get(CraftNamespacedKey.toMinecraft(arg0));
-        return (advancement == null) ? null : ((IMixinAdvancement)advancement).getBukkitAdvancement();
+        AdvancementEntry advancement = server.getAdvancementLoader().get(CraftNamespacedKey.toMinecraft(arg0));
+        return (advancement == null) ? null : ((IMixinAdvancement)(Object) advancement)
+                .getBukkitAdvancement();
     }
 
     @Override
@@ -1242,7 +1320,7 @@ public class CraftServer implements Server {
     public List<Recipe> getRecipesFor(ItemStack result) {
         Validate.notNull(result, "Result cannot be null");
 
-        List<Recipe> results = new ArrayList<Recipe>();
+        List<Recipe> results = new ArrayList<>();
         Iterator<Recipe> iter = recipeIterator();
         while (iter.hasNext()) {
             Recipe recipe = iter.next();
@@ -1435,12 +1513,12 @@ public class CraftServer implements Server {
 
     @Override
     public int getViewDistance() {
-        return server instanceof MinecraftDedicatedServer ? ((MinecraftDedicatedServer)getServer()).getProperties().viewDistance : 12;
+        return server != null ? server.getProperties().viewDistance : 12;
     }
 
     @Override
     public WarningState getWarningState() {
-        return warningState;
+        return WarningState.DEFAULT;
     }
 
     @Override
@@ -1694,7 +1772,7 @@ public class CraftServer implements Server {
         Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
 
         Identifier mcKey = CraftNamespacedKey.toMinecraft(recipeKey);
-        for (Map<Identifier, net.minecraft.recipe.Recipe<?>> recipes : ((IMixinRecipeManager)getServer().getRecipeManager()).getRecipes().values())
+        for (Map<Identifier, RecipeEntry<?>> recipes : ((IMixinRecipeManager)getServer().getRecipeManager()).getRecipes().values())
             if (recipes.remove(mcKey) != null)
                 return true;
 
@@ -1827,9 +1905,9 @@ public class CraftServer implements Server {
     @Override
     public Recipe getRecipe(NamespacedKey recipeKey) {
         Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
-        Optional<? extends net.minecraft.recipe.Recipe<?>> opt = getServer().getRecipeManager().get(CraftNamespacedKey.toMinecraft(recipeKey));
+        Optional<RecipeEntry<?>> opt = getServer().getRecipeManager().get(CraftNamespacedKey.toMinecraft(recipeKey));
 
-        return !opt.isPresent() ? null : ((IMixinRecipe)opt.get()).toBukkitRecipe();
+        return !opt.isPresent() ? null : ((IMixinRecipe)(Object) opt.get()).toBukkitRecipe();
     }
 
     public boolean dispatchServerCommand(CommandSender sender, PendingServerCommand serverCommand) {
@@ -1866,11 +1944,11 @@ public class CraftServer implements Server {
 
     // PaperAPI - start
     public long[] getTickTimes() {
-        return new long[] {(long) server.tickTime};
+        return new long[] {(long) server.ticks};
     }
 
     public double getAverageTickTime() {
-        return server.tickTime;
+        return server.ticks;
     }
 
     @Override
@@ -1936,7 +2014,7 @@ public class CraftServer implements Server {
 
     @Override
     public double[] getTPS() {
-        return new double[] {server.tickTime};
+        return new double[] {server.ticks};
     }
 
     @Override
@@ -2068,13 +2146,13 @@ public class CraftServer implements Server {
 			}
         };
         CraftingInventory inventoryCrafting = new CraftingInventory(container, 3, 3);
-        Optional<CraftingRecipe> opt = this.getNMSRecipe(craftingMatrix, inventoryCrafting, (WorldImpl)world);
+        Optional<RecipeEntry<CraftingRecipe>> opt = this.getNMSRecipe(craftingMatrix, inventoryCrafting, (WorldImpl)world);
         if (opt.isEmpty()) { return null; }
-        
-        return ((IMixinRecipe)opt.get()).toBukkitRecipe();
+
+        return ((IMixinRecipe)(Object) opt.get()).toBukkitRecipe();
     }
 
-    private Optional<CraftingRecipe> getNMSRecipe(ItemStack[] craftingMatrix, CraftingInventory inventoryCrafting, WorldImpl world) {
+    private Optional<RecipeEntry<CraftingRecipe>> getNMSRecipe(ItemStack[] craftingMatrix, CraftingInventory inventoryCrafting, WorldImpl world) {
         Preconditions.checkArgument(craftingMatrix != null, "craftingMatrix must not be null");
         Preconditions.checkArgument(craftingMatrix.length == 9, "craftingMatrix must be an array of length 9");
         Preconditions.checkArgument(world != null, "world must not be null");

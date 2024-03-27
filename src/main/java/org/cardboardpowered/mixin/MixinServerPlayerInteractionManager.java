@@ -14,35 +14,14 @@
  */
 package org.cardboardpowered.mixin;
 
-import java.util.Objects;
-
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.block.CraftBlock;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerPlayerInteractionManager;
-
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CakeBlock;
 import net.minecraft.block.DoorBlock;
-import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.player.PlayerEntity;
@@ -62,6 +41,23 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(value = ServerPlayerInteractionManager.class, priority = 999)
 public class MixinServerPlayerInteractionManager implements IMixinServerPlayerInteractionManager {
@@ -113,8 +109,8 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
         return f2;
     }
     
-    @Inject(method = "processBlockBreakingAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isAir()Z"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void cb_3(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int sequence, CallbackInfo ci, float i) {
+    @Inject(method = "processBlockBreakingAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isAir()Z"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    private void cb_3(BlockPos pos, PlayerActionC2SPacket.Action action, Direction direction, int worldHeight, int sequence, CallbackInfo ci) {
         // System.out.println("A = " + i);
     
     	if (cb_stat == 1) {
@@ -133,8 +129,7 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
             // System.out.println("INSTA CHECK");
             if (blockEvent.getInstaBreak()) {
                 cb_f2 = 2.0f;
-                i = cb_f2;
-            }	
+            }
     	}
     }
     
@@ -224,6 +219,13 @@ public class MixinServerPlayerInteractionManager implements IMixinServerPlayerIn
 
     @Inject(at = @At("HEAD"), method = "interactBlock", cancellable = true)
     public void interactBlock(ServerPlayerEntity entityplayer, World world, ItemStack itemstack, Hand enumhand, BlockHitResult movingobjectpositionblock, CallbackInfoReturnable<ActionResult> ci) {
+        ActionResult result = UseBlockCallback.EVENT.invoker().interact(entityplayer, world, enumhand, movingobjectpositionblock);
+
+        if(result != null) {
+            ci.setReturnValue(result);
+            return;
+        }
+
         BlockPos blockposition = movingobjectpositionblock.getBlockPos();
         BlockState iblockdata = world.getBlockState(blockposition);
         ActionResult enuminteractionresult = ActionResult.PASS;

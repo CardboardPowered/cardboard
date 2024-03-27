@@ -1,6 +1,4 @@
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
-import com.modrinth.minotaur.TaskModrinthUpload
-import com.modrinth.minotaur.request.VersionType
 
 plugins {
     id 'fabric-loom' version '1.1-SNAPSHOT'
@@ -73,8 +71,8 @@ dependencies {
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation fileTree(dir: 'libs', include: 'MohistRemapper-0.3-1.19.2.jar')
-    extraLibs fileTree(dir: 'libs', include: 'MohistRemapper-0.3-1.19.2.jar')
+    modImplementation fileTree(dir: 'libs', include: 'MohistRemapper-0.3-1.20.x.jar')
+    extraLibs fileTree(dir: 'libs', include: 'MohistRemapper-0.3-1.20.x.jar')
 	
 	modImplementation "io.izzel:tools:1.3.0"
     extraLibs "io.izzel:tools:1.3.0"
@@ -101,7 +99,7 @@ dependencies {
     // NMS Remapping
     // srglib-0.1.2.jar
     extraLibs fileTree(dir: 'libs', include: "srglib-0.1.2.jar")
-    include(modImplementation("com.github.IsaiahPatton:SpecialSource:master-SNAPSHOT"))
+    include(modImplementation("net.md-5:SpecialSource:1.11.2"))
 
     compileOnly fileTree(dir: 'libs', include: "srglib-0.1.2.jar")
 
@@ -120,7 +118,7 @@ dependencies {
 
     configurations.api.extendsFrom( (configurations.extraLibs) )
 
-    annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:0.4.1'
+   //  annotationProcessor 'com.github.bsideup.jabel:jabel-javac-plugin:0.4.1'
 }
 
 configurations.implementation {
@@ -152,7 +150,12 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+	options.deprecation = false
+	options.compilerArgs << '-Xlint:-deprecation'
+	println(options.compilerArgs)
+}
 
 jar {
 	duplicatesStrategy = DuplicatesStrategy.WARN
@@ -193,9 +196,9 @@ shadowJar {
 modrinth {
     token = System.getenv("MODRINTH") // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = "MLYQ9VGP" // This can be the project ID or the slug. Either will work!
-    versionNumber = "1.20.1-" + System.env.BUILD_NUMBER // You don't need to set this manually. Will fail if Modrinth has this version already
+    versionNumber = "1.20.4-" + System.env.BUILD_NUMBER // You don't need to set this manually. Will fail if Modrinth has this version already
     versionType = "beta" // This is the default -- can also be `beta` or `alpha`
     uploadFile = remapJar // With Loom, this MUST be set to `remapJar` instead of `jar`!
-    gameVersions = ["1.20.1"] // Must be an array, even with only one version
+    gameVersions = ["1.20.4"] // Must be an array, even with only one version
     loaders = ["fabric"] // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
 }

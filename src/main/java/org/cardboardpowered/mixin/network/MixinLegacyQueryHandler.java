@@ -1,34 +1,34 @@
 package org.cardboardpowered.mixin.network;
 
-import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-
+import com.javazilla.bukkitfabric.BukkitFabricMod;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.network.handler.LegacyQueryHandler;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.craftbukkit.CraftServer;
 import org.cardboardpowered.util.MixinInfo;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import com.javazilla.bukkitfabric.BukkitFabricMod;
-import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.network.LegacyQueryHandler;
-import net.minecraft.server.MinecraftServer;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 
-@MixinInfo(events = {"ServerListPingEvent"})
+@MixinInfo(events = "ServerListPingEvent")
 @Mixin(value = LegacyQueryHandler.class, priority = 999)
 public class MixinLegacyQueryHandler {
 
-    @Shadow private ByteBuf toBuffer(String s) {return null;}
-    @Shadow private void reply(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf) {}
+    @Shadow private static ByteBuf createBuf(ByteBufAllocator allocator, String string) {return null;}
+    @Shadow private static void reply(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf) {}
 
     /**
      * @reason Add ServerListPingEvent
      * @author bukkit4fabric
      */
     @Overwrite
-    public void channelRead(ChannelHandlerContext channelhandlercontext, Object object) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object object) throws Exception {
         ByteBuf bytebuf = (ByteBuf) object;
 
         bytebuf.markReaderIndex();
@@ -37,7 +37,7 @@ public class MixinLegacyQueryHandler {
         try {
             if (bytebuf.readUnsignedByte() != 254)
                 return;
-            InetSocketAddress inetsocketaddress = (InetSocketAddress) channelhandlercontext.channel().remoteAddress();
+            InetSocketAddress inetsocketaddress = (InetSocketAddress) ctx.channel().remoteAddress();
             MinecraftServer minecraftserver = CraftServer.server;
             int i = bytebuf.readableBytes();
             String s;
@@ -47,7 +47,7 @@ public class MixinLegacyQueryHandler {
                 case 0:
                     BukkitFabricMod.LOGGER.config("Ping: (<1.3.x) from " + inetsocketaddress.getAddress() + ":" + inetsocketaddress.getPort());
                     s = String.format("%s\u00a7%d\u00a7%d", event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
-                    this.reply(channelhandlercontext, this.toBuffer(s));
+                    reply(ctx, createBuf(ctx.alloc(), s));
                     break;
                 case 1:
                     if (bytebuf.readUnsignedByte() != 1)
@@ -55,7 +55,7 @@ public class MixinLegacyQueryHandler {
 
                     BukkitFabricMod.LOGGER.config("Ping: (1.4-1.5.x) from " + inetsocketaddress.getAddress() + ":" + inetsocketaddress.getPort());
                     s = String.format("\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
-                    this.reply(channelhandlercontext, this.toBuffer(s));
+                    reply(ctx, createBuf(ctx.alloc(), s));
                     break;
                 default:
                     boolean flag1 = bytebuf.readUnsignedByte() == 1;
@@ -73,10 +73,10 @@ public class MixinLegacyQueryHandler {
                     BukkitFabricMod.LOGGER.config("Ping: (1.6) from " + inetsocketaddress.getAddress() + ":" + inetsocketaddress.getPort());
                     String s1 = String.format("\u00a71\u0000%d\u0000%s\u0000%s\u0000%d\u0000%d", 127, minecraftserver.getVersion(), event.getMotd(), event.getNumPlayers(), event.getMaxPlayers()); // CraftBukkit
                     System.out.println("DEBUG: " + s1);
-                    ByteBuf bytebuf1 = this.toBuffer(s1);
+                    ByteBuf bytebuf1 = createBuf(ctx.alloc(), s1);
 
                     try {
-                        this.reply(channelhandlercontext, bytebuf1);
+                        reply(ctx, bytebuf1);
                     } finally {
                         bytebuf1.release();
                     }
@@ -89,8 +89,8 @@ public class MixinLegacyQueryHandler {
         } finally {
             if (flag) {
                 bytebuf.resetReaderIndex();
-                channelhandlercontext.channel().pipeline().remove("legacy_query");
-                channelhandlercontext.fireChannelRead(object);
+                ctx.channel().pipeline().remove("legacy_query");
+                ctx.fireChannelRead(object);
             }
 
         }

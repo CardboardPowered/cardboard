@@ -18,10 +18,15 @@
  */
 package org.cardboardpowered.mixin;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-
+import com.google.common.collect.Maps;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.RootCommandNode;
+import net.minecraft.command.CommandSource;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,16 +35,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.collect.Maps;
-import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-import com.mojang.brigadier.tree.CommandNode;
-import com.mojang.brigadier.tree.RootCommandNode;
-
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 @Mixin(CommandManager.class)
 public class MixinCommandManager {

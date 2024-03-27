@@ -63,10 +63,10 @@ public class MixinBlockItem {
      */
     @Inject(at = @At(value = "INVOKE_ASSIGN", target = 
             "Lnet/minecraft/item/BlockItem;getPlacementState(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/block/BlockState;"), 
-            method = "place", cancellable = true)
+            method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;")
     public void bukkitWaterlilyPlacementFix(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> ci) {
         bukkit_state = null;
-        if (((BlockItem)(Object)this) instanceof PlaceableOnWaterItem )
+        if (((BlockItem)(Object)this) instanceof PlaceableOnWaterItem)
             bukkit_state = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(context.getWorld(), context.getBlockPos());
     }
 
@@ -75,7 +75,7 @@ public class MixinBlockItem {
      */
     @Inject(at = @At(value = "INVOKE_ASSIGN", target =
             "Lnet/minecraft/item/BlockItem;postPlacement(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/item/ItemStack;Lnet/minecraft/block/BlockState;)Z"),
-            method = "place", cancellable = true)
+            method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;", cancellable = true)
     public void doBukkitEvent_DoBlockPlaceEventForWaterlilies(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> ci) {
         if (bukkit_state != null) {
             BlockPos pos = context.getBlockPos();
@@ -83,10 +83,9 @@ public class MixinBlockItem {
             PlayerEntity entityhuman = context.getPlayer();
 
             BlockPlaceEvent placeEvent = BukkitEventFactory.callBlockPlaceEvent((ServerWorld) world, entityhuman, context.getHand(), bukkit_state, pos.getX(), pos.getY(), pos.getZ());
-            if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild())) {
+            if (placeEvent.isCancelled() || !placeEvent.canBuild()) {
                 bukkit_state.update(true, false);
                 ci.setReturnValue(ActionResult.FAIL);
-                return;
             }
         }
     }

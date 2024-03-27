@@ -18,26 +18,22 @@
  */
 package org.cardboardpowered.mixin.entity.block;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-
 import com.javazilla.bukkitfabric.interfaces.IMixinWorld;
-
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.BoatDispenserBehavior;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
-import net.minecraft.block.DispenserBlock;
 import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(BoatDispenserBehavior.class)
 public class MixinBoatDispenserBehavior {
@@ -49,12 +45,12 @@ public class MixinBoatDispenserBehavior {
     public BoatEntity.Type boatType;
 
     public ItemStack dispenseSilently(BlockPointer isourceblock, ItemStack itemstack) {
-        Direction enumdirection = (Direction) isourceblock.getBlockState().get(DispenserBlock.FACING);
-        ServerWorld worldserver = isourceblock.getWorld();
-        double d0 = isourceblock.getX() + (double) ((float) enumdirection.getOffsetX() * 1.125F);
-        double d1 = isourceblock.getY() + (double) ((float) enumdirection.getOffsetY() * 1.125F);
-        double d2 = isourceblock.getZ() + (double) ((float) enumdirection.getOffsetZ() * 1.125F);
-        BlockPos blockposition = isourceblock.getPos().offset(enumdirection);
+        Direction enumdirection = (Direction) isourceblock.state().get(DispenserBlock.FACING);
+        ServerWorld worldserver = isourceblock.world();
+        double d0 = isourceblock.pos().getX() + (double) ((float) enumdirection.getOffsetX() * 1.125F);
+        double d1 = isourceblock.pos().getY() + (double) ((float) enumdirection.getOffsetY() * 1.125F);
+        double d2 = isourceblock.pos().getZ() + (double) ((float) enumdirection.getOffsetZ() * 1.125F);
+        BlockPos blockposition = isourceblock.pos().offset(enumdirection);
         double d3;
 
         // FIXME: 1.18.2
@@ -67,7 +63,7 @@ public class MixinBoatDispenserBehavior {
        // }
 
         ItemStack itemstack1 = itemstack.split(1);
-        org.bukkit.block.Block block = ((IMixinWorld)worldserver).getWorldImpl().getBlockAt(isourceblock.getPos().getX(), isourceblock.getPos().getY(), isourceblock.getPos().getZ());
+        org.bukkit.block.Block block = ((IMixinWorld)worldserver).getWorldImpl().getBlockAt(isourceblock.pos().getX(), isourceblock.pos().getY(), isourceblock.pos().getZ());
         CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 
         BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));

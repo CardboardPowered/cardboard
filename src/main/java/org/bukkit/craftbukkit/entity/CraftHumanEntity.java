@@ -1,11 +1,32 @@
 package org.bukkit.craftbukkit.entity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinScreenHandler;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.text.Component;
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.CraftingTableBlock;
+import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.LockableContainerBlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerListener;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Arm;
+import net.minecraft.util.math.BlockPos;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,6 +35,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.CraftServer;
+
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.cardboardpowered.impl.entity.LivingEntityImpl;
@@ -23,6 +45,7 @@ import org.cardboardpowered.impl.inventory.CardboardInventoryView;
 import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import org.bukkit.craftbukkit.inventory.CraftContainer;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -50,6 +73,19 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+import org.cardboardpowered.impl.entity.LivingEntityImpl;
+import org.cardboardpowered.impl.inventory.CardboardDoubleChestInventory;
+import org.cardboardpowered.impl.inventory.CardboardInventoryView;
+import org.cardboardpowered.impl.inventory.CardboardPlayerInventory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
@@ -81,6 +117,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Arm;
 import net.minecraft.util.math.BlockPos;
+
 
 public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 
@@ -120,15 +157,13 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
         return getHandle().unlockRecipes(bukkitKeysToMinecraftRecipes(recipes));
     }
 
-    private Collection<Recipe<?>> bukkitKeysToMinecraftRecipes(Collection<NamespacedKey> recipeKeys) {
-        Collection<Recipe<?>> recipes = new ArrayList<>();
+    private Collection<RecipeEntry<?>> bukkitKeysToMinecraftRecipes(Collection<NamespacedKey> recipeKeys) {
+        Collection<RecipeEntry<?>> recipes = new ArrayList<>();
         RecipeManager manager = getHandle().getWorld().getServer().getRecipeManager();
 
         for (NamespacedKey recipeKey : recipeKeys) {
-            Optional<? extends Recipe<?>> recipe = manager.get(CraftNamespacedKey.toMinecraft(recipeKey));
-            if (!recipe.isPresent())
-                continue;
-            recipes.add(recipe.get());
+            Optional<RecipeEntry<?>> recipe = manager.get(CraftNamespacedKey.toMinecraft(recipeKey));
+	        recipe.ifPresent(recipes::add);
         }
 
         return recipes;
@@ -760,3 +795,4 @@ public class CraftHumanEntity extends LivingEntityImpl implements HumanEntity {
 	}
 
 }
+

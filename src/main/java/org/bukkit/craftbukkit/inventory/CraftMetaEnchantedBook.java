@@ -2,14 +2,16 @@ package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.nbt.NbtCompound;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorageMeta {
@@ -20,14 +22,12 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     CraftMetaEnchantedBook(CraftMetaItem meta) {
         super(meta);
 
-        if (!(meta instanceof CraftMetaEnchantedBook)) {
+        if (!(meta instanceof CraftMetaEnchantedBook that)) {
             return;
         }
 
-        CraftMetaEnchantedBook that = (CraftMetaEnchantedBook) meta;
-
         if (that.hasEnchants()) {
-            this.enchantments = new HashMap<Enchantment, Integer>(that.enchantments);
+            this.enchantments = new HashMap<>(that.enchantments);
         }
     }
 
@@ -56,12 +56,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
 
     @Override
     boolean applicableTo(Material type) {
-        switch (type) {
-            case ENCHANTED_BOOK:
-                return true;
-            default:
-                return false;
-        }
+        return type == Material.ENCHANTED_BOOK;
     }
 
     @Override
@@ -74,9 +69,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
         if (!super.equalsCommon(meta)) {
             return false;
         }
-        if (meta instanceof CraftMetaEnchantedBook) {
-            CraftMetaEnchantedBook that = (CraftMetaEnchantedBook) meta;
-
+        if (meta instanceof CraftMetaEnchantedBook that) {
             return (hasStoredEnchants() ? that.hasStoredEnchants() && this.enchantments.equals(that.enchantments) : !that.hasStoredEnchants());
         }
         return true;
@@ -104,7 +97,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
         CraftMetaEnchantedBook meta = (CraftMetaEnchantedBook) super.clone();
 
         if (this.enchantments != null) {
-            meta.enchantments = new HashMap<Enchantment, Integer>(this.enchantments);
+            meta.enchantments = new HashMap<>(this.enchantments);
         }
 
         return meta;
@@ -139,20 +132,21 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
 
     @Override
     public Map<Enchantment, Integer> getStoredEnchants() {
-        return hasStoredEnchants() ? ImmutableMap.copyOf(enchantments) : ImmutableMap.<Enchantment, Integer>of();
+        return hasStoredEnchants() ? ImmutableMap.copyOf(enchantments) : ImmutableMap.of();
     }
 
     @Override
     public boolean addStoredEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
         if (enchantments == null) {
-            enchantments = new HashMap<Enchantment, Integer>(4);
+            enchantments = new LinkedHashMap<>(4);
         }
 
-        if (ignoreRestrictions || level >= ench.getStartLevel() && level <= ench.getMaxLevel()) {
-            Integer old = enchantments.put(ench, level);
+        if (!ignoreRestrictions && (level < ench.getStartLevel() || level > ench.getMaxLevel())) {
+            return false;
+        } else {
+            Integer old = this.enchantments.put(ench, level);
             return old == null || old != level;
         }
-        return false;
     }
 
     @Override

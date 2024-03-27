@@ -1,8 +1,11 @@
 package org.bukkit.craftbukkit.inventory;
 
+import com.destroystokyo.paper.profile.CraftPlayerProfile;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.authlib.GameProfile;
+//<<<<<<< HEAD
+//=======
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +13,7 @@ import java.util.UUID;
 
 import net.kyori.adventure.text.Component;
 import net.minecraft.block.entity.SkullBlockEntity;
+//>>>>>>> upstream/ver/1.20
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
@@ -20,12 +24,15 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.cardboardpowered.impl.entity.PlayerImpl;
-import org.jetbrains.annotations.Nullable;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.cardboardpowered.impl.entity.PlayerImpl;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.UUID;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
@@ -98,13 +105,15 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     void applyToItem(NbtCompound tag) {
         super.applyToItem(tag);
 
-        if (profile != null) {
-            tag.put(SKULL_OWNER.NBT, serializedProfile);
-            
-            SkullBlockEntity.loadProperties(profile, (filledProfile) -> {
-                setProfile(filledProfile);
-                tag.put(SKULL_OWNER.NBT, serializedProfile);
-            });
+        if (this.profile != null) {
+            tag.put(SKULL_OWNER.NBT, this.serializedProfile);
+            PlayerProfile ownerProfile = new CraftPlayerProfile(profile); // getOwnerProfile may return null
+            if (ownerProfile.getTextures().isEmpty()) {
+                ownerProfile.update().thenAccept((filledProfile) -> {
+                    setOwnerProfile(filledProfile);
+                    tag.put(SKULL_OWNER.NBT, serializedProfile);
+                });
+            }
         }
     }
 
@@ -243,6 +252,9 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 		
 	}
 
+//<<<<<<< HEAD
+//}
+//======
 	// 1.19.4:
 	
 	@Override
@@ -256,3 +268,4 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     }
 
 }
+//>>>>>> upstream/ver/1.20

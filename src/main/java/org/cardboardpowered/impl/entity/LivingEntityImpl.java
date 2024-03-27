@@ -1,5 +1,7 @@
 package org.cardboardpowered.impl.entity;
 
+//<<<<<<< HEAD
+//=======
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -61,21 +63,15 @@ import org.bukkit.util.Consumer;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+//>>>>>>> upstream/ver/1.20
 import com.destroystokyo.paper.block.TargetBlockInfo;
 import com.destroystokyo.paper.block.TargetBlockInfo.FluidMode;
 import com.destroystokyo.paper.entity.TargetEntityInfo;
 import com.google.common.collect.Sets;
 import com.javazilla.bukkitfabric.Utils;
-import org.cardboardpowered.impl.world.WorldImpl;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.cardboardpowered.impl.CardboardPotionUtil;
-import org.cardboardpowered.impl.inventory.CardboardEntityEquipment;
-
 import com.javazilla.bukkitfabric.interfaces.IMixinArrowEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
 import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import net.minecraft.entity.boss.WitherEntity;
@@ -87,7 +83,6 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.DragonFireballEntity;
-import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.LlamaSpitEntity;
@@ -103,12 +98,55 @@ import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
+//<<<<<<< HEAD
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Hand;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Chunk;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.*;
+import org.bukkit.entity.memory.MemoryKey;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
+import org.cardboardpowered.impl.CardboardPotionUtil;
+import org.cardboardpowered.impl.inventory.CardboardEntityEquipment;
+import org.cardboardpowered.impl.world.WorldImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+//=======
 import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
+//>>>>>>> upstream/ver/1.20
 
 @SuppressWarnings("deprecation")
 public class LivingEntityImpl extends CraftEntity implements LivingEntity {
@@ -217,14 +255,14 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
             ((ThrownEntity) launch).setVelocity(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 1.5F, 1.0F); // ItemEnderPearl
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new ArrowEntity(world, getHandle());
+                launch = new ArrowEntity(world, getHandle(), ArrowEntity.DEFAULT_STACK);
                 ((IMixinArrowEntity)(ArrowEntity) launch).setType(CardboardPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
-                launch = new SpectralArrowEntity(world, getHandle());
+                launch = new SpectralArrowEntity(world, getHandle(), ArrowEntity.DEFAULT_STACK);
             } else if (Trident.class.isAssignableFrom(projectile)) {
                 launch = new TridentEntity(world, getHandle(), new net.minecraft.item.ItemStack(net.minecraft.item.Items.TRIDENT));
             } else {
-                launch = new ArrowEntity(world, getHandle());
+                launch = new ArrowEntity(world, getHandle(), ArrowEntity.DEFAULT_STACK);
             }
             ((PersistentProjectileEntity) launch).setVelocity(getHandle(), getHandle().pitch, getHandle().yaw, 0.0F, 3.0F, 1.0F); // ItemBow
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
@@ -297,7 +335,8 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean addPotionEffect(PotionEffect effect, boolean force) {
-        nms.addStatusEffect(new StatusEffectInstance(StatusEffect.byRawId(effect.getType().getId()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles())/*, EntityPotionEffectEvent.Cause.PLUGIN*/);
+        StatusEffect type = Registries.STATUS_EFFECT.get(effect.getType().getId());
+        nms.addStatusEffect(new StatusEffectInstance(type, effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles())/*, EntityPotionEffectEvent.Cause.PLUGIN*/);
         return true;
     }
 
@@ -316,9 +355,9 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public Collection<PotionEffect> getActivePotionEffects() {
-        List<PotionEffect> effects = new ArrayList<PotionEffect>();
+        List<PotionEffect> effects = new ArrayList<>();
         for (StatusEffectInstance handle : nms.activeStatusEffects.values())
-            effects.add(new PotionEffect(PotionEffectType.getById(StatusEffect.getRawId(handle.getEffectType())), handle.getDuration(), handle.getAmplifier(), handle.isAmbient(), handle.shouldShowParticles()));
+                effects.add(new PotionEffect(PotionEffectType.getById(Registries.STATUS_EFFECT.getRawId(handle.getEffectType())), handle.getDuration(), handle.getAmplifier(), handle.isAmbient(), handle.shouldShowParticles()));
         return effects;
     }
 
@@ -420,8 +459,8 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public PotionEffect getPotionEffect(PotionEffectType arg0) {
-        StatusEffectInstance handle = nms.getStatusEffect(StatusEffect.byRawId(arg0.getId()));
-        return (handle == null) ? null : new PotionEffect(PotionEffectType.getById(StatusEffect.getRawId(handle.getEffectType())), handle.getDuration(), handle.getAmplifier(), handle.isAmbient(), handle.shouldShowParticles());
+        StatusEffectInstance handle = nms.getStatusEffect(Registries.STATUS_EFFECT.get(arg0.getId()));
+        return (handle == null) ? null : new PotionEffect(PotionEffectType.getById(Registries.STATUS_EFFECT.getRawId(handle.getEffectType())), handle.getDuration(), handle.getAmplifier(), handle.isAmbient(), handle.shouldShowParticles());
     }
 
     @Override
@@ -464,7 +503,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean hasPotionEffect(PotionEffectType arg0) {
-        return nms.hasStatusEffect(StatusEffect.byRawId(arg0.getId()));
+        return nms.hasStatusEffect(Registries.STATUS_EFFECT.get(arg0.getId()));
     }
 
     @Override
@@ -515,7 +554,7 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
 
     @Override
     public void removePotionEffect(PotionEffectType type) {
-        nms.removeStatusEffect(StatusEffect.byRawId(type.getId())/*, EntityPotionEffectEvent.Cause.PLUGIN*/);
+        nms.removeStatusEffect(Registries.STATUS_EFFECT.get(type.getId())/*, EntityPotionEffectEvent.Cause.PLUGIN*/);
     }
 
     @Override
@@ -838,12 +877,6 @@ public class LivingEntityImpl extends CraftEntity implements LivingEntity {
     @Override
     public boolean isClimbing() {
         return nms.isClimbing();
-    }
-
-    @Override
-    public @NotNull Set<Player> getTrackedPlayers() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override

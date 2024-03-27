@@ -1,19 +1,6 @@
 package org.cardboardpowered.mixin.item;
 
 // import java.util.Random;
-import java.util.function.Consumer;
-
-import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
 import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
@@ -35,11 +22,23 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import java.util.List;
-
-import org.bukkit.block.BlockState;
-import org.bukkit.event.block.BlockPlaceEvent;
 import net.minecraft.util.math.random.Random;
+import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 @Mixin(value = ItemStack.class, priority = 999)
 public class MixinItemStack {
@@ -47,8 +46,8 @@ public class MixinItemStack {
     @Shadow
     private Item item;
 
-    @Inject(at = @At("HEAD"), method = "damage", cancellable = true)
-    public void callPlayerItemDamageEvent(int i, Random random, ServerPlayerEntity entityplayer, CallbackInfoReturnable<Boolean> ci) {
+    @Inject(at = @At("HEAD"), method = "damage(ILnet/minecraft/util/math/random/Random;Lnet/minecraft/server/network/ServerPlayerEntity;)Z", cancellable = true)
+    public void callPlayerItemDamageEvent(int i, Random random, ServerPlayerEntity player, CallbackInfoReturnable<Boolean> ci) {
         if (!((ItemStack)(Object)this).isDamageable()) {
             ci.setReturnValue(false);
             return;
@@ -59,8 +58,8 @@ public class MixinItemStack {
             j = EnchantmentHelper.getLevel(Enchantments.UNBREAKING, ((ItemStack)(Object)this));
             for (int l = 0; j > 0 && l < i; ++l) if (UnbreakingEnchantment.shouldPreventDamage(((ItemStack)(Object)this), j, random)) i--;
 
-            if (entityplayer != null) {
-                PlayerItemDamageEvent event = new PlayerItemDamageEvent((Player) ((IMixinServerEntityPlayer)entityplayer).getBukkitEntity(), CraftItemStack.asCraftMirror((ItemStack)(Object)this), i);
+            if (player != null) {
+                PlayerItemDamageEvent event = new PlayerItemDamageEvent((Player) ((IMixinServerEntityPlayer)player).getBukkitEntity(), CraftItemStack.asCraftMirror((ItemStack)(Object)this), i);
                 event.getPlayer().getServer().getPluginManager().callEvent(event);
 
                 if (i != event.getDamage() || event.isCancelled()) event.getPlayer().updateInventory();
@@ -75,11 +74,10 @@ public class MixinItemStack {
                 return;
             }
         }
-        if (entityplayer != null && i != 0) Criteria.ITEM_DURABILITY_CHANGED.trigger(entityplayer, ((ItemStack)(Object)this), ((ItemStack)(Object)this).getDamage() + i);
+        if (player != null && i != 0) Criteria.ITEM_DURABILITY_CHANGED.trigger(player, ((ItemStack)(Object)this), ((ItemStack)(Object)this).getDamage() + i);
 
         ((ItemStack)(Object)this).setDamage((j = ((ItemStack)(Object)this).getDamage() + i));
         ci.setReturnValue(j >= ((ItemStack)(Object)this).getMaxDamage());
-        return;
     }
 
     @Overwrite

@@ -1,13 +1,14 @@
 package org.cardboardpowered.impl;
 
 import com.google.common.collect.Lists;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.advancement.criterion.CriterionProgress;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 
 public class AdvancementProgressImpl implements AdvancementProgress {
 
@@ -44,7 +45,7 @@ public class AdvancementProgressImpl implements AdvancementProgress {
     @Override
     public Date getDateAwarded(String criteria) {
         CriterionProgress criterion = handle.getCriterionProgress(criteria);
-        return (criterion == null) ? null : criterion.getObtainedDate();
+        return (criterion == null) ? null : Date.from(criterion.getObtainedTime());
     }
 
     @Override

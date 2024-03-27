@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.scoreboard;
 
 import net.kyori.adventure.text.Component;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardDisplaySlot;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import org.apache.commons.lang.Validate;
 import org.bukkit.OfflinePlayer;
@@ -14,6 +15,8 @@ import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class CardboardObjective extends CardboardScoreboardComponent implements Objective {
 
@@ -68,11 +71,15 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
         Scoreboard board = scoreboard.board;
         ScoreboardObjective objective = this.objective;
 
-        for (int i = 0; i < CardboardScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
-            if (board.getObjectiveForSlot(i) == objective) board.setObjectiveSlot(i, null);
+        for(ScoreboardDisplaySlot nmsSlot : ScoreboardDisplaySlot.values()) {
+            if(board.getObjectiveForSlot(nmsSlot) == objective)
+                board.setObjectiveSlot(nmsSlot, null);
+        }
 
-        if (slot != null)
-            board.setObjectiveSlot(CardboardScoreboardTranslations.fromBukkitSlot(slot), getHandle());
+        if (slot != null) {
+            ScoreboardDisplaySlot nmsSlot = CardboardScoreboardTranslations.fromBukkitSlot(slot);
+            board.setObjectiveSlot(nmsSlot, objective);
+        }
     }
 
     @Override
@@ -80,9 +87,13 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
         CardboardScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
         ScoreboardObjective objective = this.objective;
-        for (int i = 0; i < CardboardScoreboardTranslations.MAX_DISPLAY_SLOT; i++)
-            if (board.getObjectiveForSlot(i) == objective)
-                return CardboardScoreboardTranslations.toBukkitSlot(i);
+
+        for(ScoreboardDisplaySlot slot : ScoreboardDisplaySlot.values()) {
+            if(board.getObjectiveForSlot(slot) == objective) {
+                return CardboardScoreboardTranslations.toBukkitSlot(slot);
+            }
+        }
+
         return null;
     }
 
@@ -103,7 +114,7 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
     public Score getScore(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(player, "Player cannot be null");
         checkState();
-        return new CardboardScore(this, player.getName());
+        return new CardboardScore(this, player::getName);
     }
 
     @Override
@@ -111,7 +122,7 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
         Validate.notNull(entry, "Entry cannot be null");
         Validate.isTrue(entry.length() <= 40, "Score '" + entry + "' is longer than the limit of 40 characters");
         checkState();
-        return new CardboardScore(this, entry);
+        return new CardboardScore(this, () -> entry);
     }
 
     @Override
@@ -139,7 +150,7 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
         if (obj == null || getClass() != obj.getClass())
             return false;
         final CardboardObjective other = (CardboardObjective) obj;
-        return !(this.objective != other.objective && (this.objective == null || !this.objective.equals(other.objective)));
+        return Objects.equals(this.objective, other.objective);
     }
 
     // 1.18.2 api:
@@ -159,7 +170,8 @@ public class CardboardObjective extends CardboardScoreboardComponent implements 
 	@Override
 	public @NotNull Score getScoreFor(@NotNull Entity arg0) throws IllegalArgumentException, IllegalStateException {
 		// TODO Auto-generated method stub
-		return new CardboardScore(this, arg0.getName());
+		// return new CardboardScore(this, arg0.getName());
+		return null; // TODO 1.20.4
 	}
 
 	@Override

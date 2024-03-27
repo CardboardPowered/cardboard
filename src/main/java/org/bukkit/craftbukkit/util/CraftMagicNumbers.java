@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.util;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +51,6 @@ import com.javazilla.bukkitfabric.BukkitLogger;
 import com.javazilla.bukkitfabric.interfaces.IMixinMaterial;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
-
 import io.izzel.arclight.api.EnumHelper;
 import io.izzel.arclight.api.Unsafe;
 import io.papermc.paper.inventory.ItemRarity;
@@ -59,6 +59,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.datafixer.Schemas;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.item.Item;
@@ -67,11 +68,45 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registries;
-
+import net.minecraft.util.Identifier;
+import org.bukkit.Bukkit;
+import org.bukkit.Fluid;
+import org.bukkit.Keyed;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.UnsafeValues;
+import org.bukkit.World;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.attribute.Attributable;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.block.data.IMagicNumbers;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.CreativeCategory;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.cardboardpowered.BlockImplUtil;
+import org.cardboardpowered.adventure.CardboardAdventure;
+import org.cardboardpowered.impl.CardboardModdedBlock;
+import org.cardboardpowered.impl.CardboardModdedItem;
+import org.cardboardpowered.util.GameVersion;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Level;
 
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
@@ -175,7 +210,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         // TODO: This needs to be kept updated when Spigot updates
         // It is the value of Material.values().length
     	BukkitFabricMod.LOGGER.info("DEB: " + Material.values().length);
-        int MATERIAL_LENGTH = 1525;
+        int MATERIAL_LENGTH = 1837; //1525;
         int i = MATERIAL_LENGTH - 1;
 
         List<String> names = new ArrayList<>();
@@ -323,17 +358,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     }
 
     public static Material getMaterial(Item item) {
-        for (Item item1 : Registries.ITEM) {
-            Identifier id = Registries.ITEM.getId(item1);
-            if (!id.getNamespace().toLowerCase().contains("minecraft"))
-            ITEM_MATERIAL.put(item1, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
-        }
-
-        Identifier id = Registries.ITEM.getId(item);
-        Material m = ITEM_MATERIAL.getOrDefault(item, Material.getMaterial(id.getNamespace().toUpperCase(Locale.ROOT) + "_" + id.getPath().toUpperCase(Locale.ROOT)));
-        ITEM_MATERIAL.put(item, m);
-        MATERIAL_ITEM.put(m,item);
-        return m;
+        return ITEM_MATERIAL.getOrDefault(item, Material.AIR);
     }
 
     public static Item getItem(Material material) {
@@ -361,10 +386,10 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
     }
 
     private static Block getModdedBlock(Material mat) {
-        if (null == mat) return null;
+        if (null == mat) return Blocks.STONE;
         if (!((Object)mat instanceof IMixinMaterial)) {
             // Dev env
-            return null;
+        	return Blocks.STONE;
         }
         IMixinMaterial mm = (IMixinMaterial)(Object) mat;
         if (!mm.isModded()) return null;
@@ -427,7 +452,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 
     @Deprecated
     public String getMappingsVersion() {
-        return "20b026e774dbf715e40a0b2afe114792";
+        return "60a2bb6bf2684dc61c56b90d7c41bddc";
     }
 
     @Override
@@ -461,7 +486,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
         return false;
     }
 
-    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18", "1.19");
+    private static final List<String> SUPPORTED_API = Arrays.asList("1.13", "1.14", "1.15", "1.16", "1.17", "1.18", "1.19", "1.20");
 
     @Override
     public void checkSupported(PluginDescriptionFile pdf) throws InvalidPluginException {

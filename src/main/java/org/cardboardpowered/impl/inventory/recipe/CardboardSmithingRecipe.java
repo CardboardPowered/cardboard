@@ -1,14 +1,9 @@
 package org.cardboardpowered.impl.inventory.recipe;
 
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.SmithingRecipe;
-
-import com.javazilla.bukkitfabric.interfaces.IMixinMinecraftServer;
-import com.javazilla.bukkitfabric.interfaces.IMixinRecipeManager;
 
 public class CardboardSmithingRecipe extends SmithingRecipe implements RecipeInterface {
 

@@ -2,23 +2,21 @@ package org.cardboardpowered.impl;
 
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.Registries;
-
-import java.util.Map;
-
 import org.bukkit.Color;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class CardboardPotionEffectType extends PotionEffectType {
 
     private final StatusEffect handle;
 
     public CardboardPotionEffectType(StatusEffect handle) {
-        super(StatusEffect.getRawId(handle), CraftNamespacedKey.fromMinecraft(Registries.STATUS_EFFECT.getId(handle)));
+        super(Registries.STATUS_EFFECT.getRawId(handle), CraftNamespacedKey.fromMinecraft(Registries.STATUS_EFFECT.getId(handle)));
         this.handle = handle;
     }
 

@@ -1,17 +1,16 @@
 package org.cardboardpowered.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class CardboardAttributeInstance implements AttributeInstance {
 
@@ -52,7 +51,7 @@ public class CardboardAttributeInstance implements AttributeInstance {
 
     @Override
     public void removeModifier(AttributeModifier modifier) {
-        handle.removeModifier(convert(modifier));
+        handle.removeModifier(modifier.getUniqueId());
     }
 
     @Override
@@ -70,7 +69,7 @@ public class CardboardAttributeInstance implements AttributeInstance {
     }
 
     public static AttributeModifier convert(EntityAttributeModifier nms) {
-        return new AttributeModifier(nms.getId(), nms.getName(), nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+        return new AttributeModifier(nms.getId(), nms.name, nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
     }
 
 	// @Override
@@ -79,7 +78,7 @@ public class CardboardAttributeInstance implements AttributeInstance {
     }
 	
     public static AttributeModifier convert(EntityAttributeModifier nms, EquipmentSlot slot) {
-        return new AttributeModifier(nms.getId(), nms.getName(), nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()], slot);
+        return new AttributeModifier(nms.getId(), nms.name, nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()], slot);
     }
 
 }

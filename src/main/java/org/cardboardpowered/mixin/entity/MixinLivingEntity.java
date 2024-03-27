@@ -1,7 +1,20 @@
 package org.cardboardpowered.mixin.entity;
 
-import java.util.ArrayList;
-
+import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
+import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
+import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.AttributeContainer;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Arm;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -17,24 +30,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.javazilla.bukkitfabric.impl.BukkitEventFactory;
-import com.javazilla.bukkitfabric.interfaces.IMixinEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinLivingEntity;
-import com.javazilla.bukkitfabric.interfaces.IMixinServerEntityPlayer;
-
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import java.util.ArrayList;
 
 @Mixin(LivingEntity.class)
-public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity {
+public abstract class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity {
 
     private transient EntityPotionEffectEvent.Cause bukkitCause;
     private LivingEntity get() {
@@ -128,7 +127,8 @@ public class MixinLivingEntity extends MixinEntity implements IMixinLivingEntity
     public void dropEquipment(DamageSource damagesource, int i, boolean flag) {
     }
 
-    /**
+	@Shadow public abstract Arm getMainArm();
+	/**
      * @reason Bukkit RegainHealthEvent
      */
     @Inject(at = @At("HEAD"), method = "heal", cancellable = true)
