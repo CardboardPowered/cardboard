@@ -2026,16 +2026,33 @@ public class WorldImpl extends CraftRegionAccessor implements World {
 		return unloadChunk0(x, z, save);
 	}
 
-	private boolean unloadChunk0(int x, int z, boolean save) {
-		net.minecraft.world.chunk.WorldChunk chunk = nms.getChunk(x, z);
-
-		// chunk.mustNotSave = !save;
-		unloadChunkRequest(x, z);
-
-		nms.getChunkManager().executeQueuedTasks();
-		return !isChunkLoaded(x, z);
+	public boolean unloadChunk(Chunk chunk) {
+		return unloadChunk0(chunk.getX(), chunk.getZ(), true);
 	}
 
+	private boolean unloadChunk0(int x, int z, boolean save) {
+	    // First check if the chunk is in use - critical safety check
+	    if (isChunkInUse(x, z)) {
+	        return false;
+	    }
+	
+	    net.minecraft.world.chunk.WorldChunk chunk = nms.getChunk(x, z);
+	    if (chunk == null) {
+	        return true; // Already unloaded
+	    }
+	
+	    // Set save flag if needed
+	    // chunk.mustNotSave = !save;
+	    
+	    // Use the request system instead of direct manipulation
+	    unloadChunkRequest(x, z);
+	    
+	    // Wait for pending tasks to complete
+	    nms.getChunkManager().executeQueuedTasks();
+	    
+	    // Verify the chunk was actually unloaded
+	    return !isChunkLoaded(x, z);
+	}
 
 	@Override
 	public boolean unloadChunkRequest(int arg0, int arg1) {
