@@ -52,7 +52,8 @@ configurations.all {
 // Paper-API
 def PAPER_VER_A = "1.21.4-R0.1-SNAPSHOT"
 // def PAPER_VER_B = "1.21.4-R0.1-20250313.115134-207"
-def PAPER_VER_B = "1.21.4-R0.1-20250327.133756-218"
+//paper-api-1.21.4-R0.1-20250511.205801-225
+def PAPER_VER_B = "1.21.4-R0.1-20250511.205801-225"
 
 def PAPER_API_VER = "io.papermc.paper:paper-api:" + PAPER_VER_B
 
@@ -295,7 +296,8 @@ ext.getURLofDependencyArtifact = {
 }
 
 ext.downloadPaperFile = {
-    def fileURL = new URL("https://repo.papermc.io/repository/maven-snapshots/io/papermc/paper/paper-api/" + PAPER_VER_A +"/paper-api-" + PAPER_VER_B + ".jar")
+//    def fileURL = new URL("https://repo.papermc.io/repository/maven-snapshots/io/papermc/paper/paper-api/" + PAPER_VER_A +"/paper-api-" + PAPER_VER_B + ".jar")
+    def fileURL = new URL("https://web.archive.org/web/20250518123011/https://repo.papermc.io/repository/maven-snapshots/io/papermc/paper/paper-api/1.21.4-R0.1-SNAPSHOT/paper-api-1.21.4-R0.1-20250511.205801-225.jar")
     def localFile = file("repos/tempp/paper-api-" + PAPER_VER_B + ".jar")
 
     localFile.getParentFile().mkdirs()
