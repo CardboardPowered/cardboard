@@ -179,6 +179,7 @@ public final class LibraryManager {
                     	
                     	for (String urll : BACKUP) {
 	                    	downloadUrl = new URL(urll);
+                            connection = (HttpsURLConnection) downloadUrl.openConnection();
 	                    	try (
 	                        		ReadableByteChannel input = Channels.newChannel(connection.getInputStream());
 	                        		FileOutputStream output = new FileOutputStream(file)
