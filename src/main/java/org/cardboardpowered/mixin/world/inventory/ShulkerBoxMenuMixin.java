@@ -38,11 +38,6 @@ public class ShulkerBoxMenuMixin extends AbstractContainerMenuMixin {
         return bukkitEntity;
     }
 
-    @Override
-    public void cardboard$startOpen() {
-        this.container.startOpen(this.inventory.player);
-    }
-
     @Inject(method = "stillValid", at = @At("HEAD"), cancellable = true)
     public void stillValidCraftBukkit(Player player, CallbackInfoReturnable<Boolean> cir) {
         if (!this.checkReachable) cir.setReturnValue(true); // CraftBukkit

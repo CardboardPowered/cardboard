@@ -77,6 +77,4 @@ public interface AbstractContainerMenuBridge {
 
     default void cardboard$broadcastCarriedItem() {
     }
-
-    default void cardboard$startOpen() {}
 }

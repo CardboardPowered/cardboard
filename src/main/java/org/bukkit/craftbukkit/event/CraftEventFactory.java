@@ -337,7 +337,6 @@ public class CraftEventFactory {
     }
 
     public static com.mojang.datafixers.util.Pair<net.kyori.adventure.text.@Nullable Component, @Nullable AbstractContainerMenu> callInventoryOpenEventWithTitle(ServerPlayer player, AbstractContainerMenu container, boolean cancelled) {
-        ((AbstractContainerMenuBridge)container).cardboard$startOpen(); // delegate start open logic to before InventoryOpenEvent is fired
         if (player.containerMenu != player.inventoryMenu) { // fire INVENTORY_CLOSE if one already open
             player.connection.handleContainerClose(new ServerboundContainerClosePacket(player.containerMenu.containerId));
         }
