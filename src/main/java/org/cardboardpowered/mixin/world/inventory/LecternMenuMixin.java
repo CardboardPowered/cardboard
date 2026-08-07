@@ -1,7 +1,6 @@
 package org.cardboardpowered.mixin.world.inventory;
 
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.LecternMenu;
@@ -15,13 +14,11 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import org.cardboardpowered.bridge.world.entity.EntityBridge;
+import org.cardboardpowered.bridge.world.inventory.LecternMenuBridge;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LecternMenu.class)
-public class LecternMenuMixin extends AbstractContainerMenuMixin {
+public class LecternMenuMixin extends AbstractContainerMenuMixin implements LecternMenuBridge {
 
     @Shadow
     public Container lectern;
@@ -32,9 +29,9 @@ public class LecternMenuMixin extends AbstractContainerMenuMixin {
     private CraftInventoryView bukkitEntity = null;
     private org.bukkit.entity.Player player;
 
-    @Inject(method = "<init>(ILnet/minecraft/world/Container;Lnet/minecraft/world/inventory/ContainerData;)V", at = @At("TAIL"))
-    public void setPlayerInv(int i, Container iinventory, ContainerData icontainerproperties, CallbackInfo ci) {
-        this.player = (org.bukkit.entity.Player)((EntityBridge)((Inventory)iinventory).player).getBukkitEntity();
+    @Override
+    public void setPlayer(org.bukkit.entity.Player player) {
+        this.player = player;
     }
 
     @Override
