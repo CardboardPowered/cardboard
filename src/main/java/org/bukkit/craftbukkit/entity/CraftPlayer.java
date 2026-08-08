@@ -2717,8 +2717,9 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
     // Paper start
     @Override
     public java.util.Locale locale() {
-        //return getHandle().adventure$locale; // TODO
-        return Locale.ENGLISH;
+        // The client reports its language as "uk_ua"; Adventure parses that shape directly.
+        final Locale locale = net.kyori.adventure.translation.Translator.parseLocale(this.getLocale());
+        return locale != null ? locale : Locale.ENGLISH;
     }
     // Paper end
 
@@ -2818,7 +2819,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
     public void sendMessage(net.kyori.adventure.text.Component message, net.kyori.adventure.chat.ChatType.Bound boundChatType) {
         if (getHandle().connection == null) return;
 
-        net.minecraft.network.chat.Component component = io.papermc.paper.adventure.PaperAdventure.asVanilla(message);
+        net.minecraft.network.chat.Component component = io.papermc.paper.adventure.PaperAdventure.asVanilla(message, this.locale());
         this.getHandle().sendChatMessage(new net.minecraft.network.chat.OutgoingChatMessage.Disguised(component), this.getHandle().isTextFilteringEnabled(), this.toHandle(boundChatType));
     }
 
@@ -2852,7 +2853,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
     public void sendMessage(final net.kyori.adventure.identity.Identity identity, final net.kyori.adventure.text.Component message, final net.kyori.adventure.audience.MessageType type) {
         if (getHandle().connection == null) return;
         final net.minecraft.core.Registry<net.minecraft.network.chat.ChatType> chatTypeRegistry = this.getHandle().level().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.CHAT_TYPE);
-        this.getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(PaperAdventure.asVanilla(message), false));
+        this.getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(PaperAdventure.asVanilla(message, this.locale()), false));
     }
 
     @Override
