@@ -206,6 +206,16 @@ public final class PaperAdventure {
         return WRAPPER_AWARE_SERIALIZER.serialize(component);
     }
 
+    /**
+     * As {@link #asVanilla(Component)}, but resolves translatable components against the
+     * given locale first, so the receiver is shown their own language.
+     */
+    @Contract("null, _ -> null; !null, _ -> !null")
+    public static net.minecraft.network.chat.Component asVanilla(final @Nullable Component component, final @Nullable Locale locale) {
+        if (component == null) return null;
+        return asVanilla(translated(component, locale));
+    }
+
     public static List<net.minecraft.network.chat.Component> asVanilla(final List<? extends Component> adventures) {
         final List<net.minecraft.network.chat.Component> vanillas = new ArrayList<>(adventures.size());
         for (final Component adventure : adventures) {

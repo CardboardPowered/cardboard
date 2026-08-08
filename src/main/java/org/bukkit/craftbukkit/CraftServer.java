@@ -65,6 +65,10 @@ import io.papermc.paper.registry.RegistryAccess;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.translation.GlobalTranslator;
+import org.cardboardpowered.impl.CardboardTranslations;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
@@ -320,6 +324,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
         INSTANCE = this;
         server = nms;
         console = nms;
+        CardboardTranslations.register();
         commandMap = new CommandMapImpl(this);
 
         // Paper start
@@ -2037,8 +2042,11 @@ public class CraftServer extends CardboardAbstractServer implements Server {
     }
 
     @Override
+    @Deprecated
     public String getPermissionMessage() {
-        return "No Permission";
+        // The legacy API has no receiver to localise for, so this is the English text.
+        return LegacyComponentSerializer.legacySection()
+                .serialize(GlobalTranslator.render(this.permissionMessage(), Locale.ENGLISH));
     }
 
     @Override
@@ -2347,8 +2355,14 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 
 	@Override
 	public @NotNull Component permissionMessage() {
-		// TODO Auto-generated method stub
-		return Component.text("todo: permissionMessage");
+		// An admin-supplied message wins, and is read as legacy '&' coloured text the way
+		// the rest of bukkit.yml is. Otherwise use Cardboard's own message, which is
+		// translated into the language of whoever ends up receiving it.
+		String configured = this.configuration.getString("settings.permissions-message");
+		if (configured != null && !configured.isEmpty())
+			return LegacyComponentSerializer.legacyAmpersand().deserialize(configured);
+
+		return Component.translatable(CardboardTranslations.COMMAND_NO_PERMISSION, NamedTextColor.RED);
 	}
 
 	@Override
