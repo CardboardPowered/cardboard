@@ -19,6 +19,19 @@ public record PaperWritableBookContent(
         return this.impl;
     }
 
+    // 26.2: Adventure 5 BookLike
+    @Override
+    public net.kyori.adventure.inventory.Book asBook() {
+        java.util.List<net.kyori.adventure.text.Component> bookPages = new java.util.ArrayList<>();
+        for (Filtered<String> page : this.pages()) {
+            bookPages.add(net.kyori.adventure.text.Component.text(page.raw()));
+        }
+        return net.kyori.adventure.inventory.Book.book(
+                net.kyori.adventure.text.Component.empty(),
+                net.kyori.adventure.text.Component.empty(),
+                bookPages);
+    }
+
     @Override
     public @Unmodifiable List<Filtered<String>> pages() {
         return MCUtil.transformUnmodifiable(this.impl.pages(), input -> Filtered.of(input.raw(), input.filtered().orElse(null)));

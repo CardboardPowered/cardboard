@@ -1,6 +1,6 @@
 package org.cardboardpowered.mixin.world.item;
 
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.craftbukkit.event.CraftEventFactory;

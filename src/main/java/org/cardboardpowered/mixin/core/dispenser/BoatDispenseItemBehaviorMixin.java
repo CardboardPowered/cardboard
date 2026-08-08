@@ -82,7 +82,9 @@ public class BoatDispenseItemBehaviorMixin {
         
         if (null != entityboat) {
         	entityboat.setInitialPos(event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
-        	EntityType.createDefaultStackConfig(worldserver, itemstack, null).accept(entityboat);
+        	// 26.2: PostSpawnProcessor is typed to Entity
+        	// 26.2: PostSpawnProcessor#accept was renamed to apply
+        	EntityType.createDefaultStackConfig(worldserver, itemstack, null).apply((net.minecraft.world.entity.Entity) entityboat);
         	entityboat.setYRot(enumdirection.toYRot());
         }
 

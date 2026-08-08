@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -59,7 +60,7 @@ public class CraftMerchantCustom implements CraftMerchant {
       }
 
       public MinecraftMerchant() {
-         this.title = EntityType.VILLAGER.getDescription();
+         this.title = EntityTypes.VILLAGER.getDescription();
       }
 
       @Override

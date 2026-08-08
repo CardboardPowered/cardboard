@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DripstoneThickness;
+import net.minecraft.world.level.block.state.properties.SpeleothemThickness;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.PointedDripstone;
@@ -18,7 +18,7 @@ import java.util.Set;
 @NullMarked
 @GeneratedClass
 public class CraftPointedDripstone extends CraftBlockData implements PointedDripstone {
-    private static final EnumProperty<DripstoneThickness> THICKNESS = PointedDripstoneBlock.THICKNESS;
+    private static final EnumProperty<SpeleothemThickness> THICKNESS = PointedDripstoneBlock.THICKNESS;
 
     private static final EnumProperty<Direction> TIP_DIRECTION = PointedDripstoneBlock.TIP_DIRECTION;
 

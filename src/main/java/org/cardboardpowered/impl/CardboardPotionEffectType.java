@@ -155,7 +155,7 @@ public class CardboardPotionEffectType extends PotionEffectType implements Handl
 
     @Override
     public boolean isInstant() {
-        return handle.isInstantenous();
+        return handle.isInstantaneous();
     }
 
     @Override

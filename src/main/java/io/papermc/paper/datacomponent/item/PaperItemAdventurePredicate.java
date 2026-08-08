@@ -8,7 +8,7 @@ import io.papermc.paper.util.MCUtil;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.advancements.criterion.DataComponentMatchers;
+import net.minecraft.advancements.predicates.DataComponentMatchers;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.AdventureModePredicate;
 import org.bukkit.craftbukkit.util.Handleable;
@@ -35,12 +35,12 @@ public record PaperItemAdventurePredicate(
 
     static final class BuilderImpl implements ItemAdventurePredicate.Builder {
 
-        private final List<net.minecraft.advancements.criterion.BlockPredicate> predicates = new ObjectArrayList<>();
+        private final List<net.minecraft.advancements.predicates.BlockPredicate> predicates = new ObjectArrayList<>();
         private boolean showInTooltip = true;
 
         @Override
         public ItemAdventurePredicate.Builder addPredicate(BlockPredicate predicate) {
-            this.predicates.add(new net.minecraft.advancements.criterion.BlockPredicate(Optional.ofNullable(predicate.blocks()).map(blocks -> PaperRegistrySets.convertToNms(Registries.BLOCK, Conversions.global().lookup(), blocks)), Optional.empty(), Optional.empty(), DataComponentMatchers.ANY));
+            this.predicates.add(new net.minecraft.advancements.predicates.BlockPredicate(Optional.ofNullable(predicate.blocks()).map(blocks -> PaperRegistrySets.convertToNms(Registries.BLOCK, Conversions.global().lookup(), blocks)), Optional.empty(), Optional.empty(), DataComponentMatchers.ANY));
             return this;
         }
 

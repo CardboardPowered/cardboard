@@ -85,6 +85,16 @@ public class PlayerListMixin_ChatEvent {
         String s = message.decoratedContent().getString();
 		boolean async = false; // TODO: allow async
 
+		// Console and system broadcasts (e.g. /say) have no sending player.
+		// AsyncPlayerChatEvent requires one, so deliver directly instead of
+		// firing a player-chat event with a null player.
+		if (sender == null) {
+			for (ServerPlayer recipient : this.server.getPlayerList().players) {
+				recipient.sendChatMessage(sentMessage, false, params);
+			}
+			return;
+		}
+
 		Player player = getPlayer_0(sender);
         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(CraftServer.server));
         Bukkit.getServer().getPluginManager().callEvent(event);

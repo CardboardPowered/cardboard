@@ -307,4 +307,12 @@ public final class ItemComponentTypesBridgesImpl implements ItemComponentTypesBr
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    // 26.2: new component type bridge
+    @Override
+    public io.papermc.paper.datacomponent.item.SulfurCubeContent sulfurCubeContent(org.bukkit.inventory.ItemStack stack) {
+        return new PaperSulfurCubeContent(net.minecraft.world.item.component.SulfurCubeContent.ofNonEmpty(
+                org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(stack)));
+    }
+
 }

@@ -8,6 +8,13 @@ pluginManagement {
     }
 }
 
+// Auto-provision the JDK 25 toolchain this build requires (build.gradle pins
+// languageVersion 25). Without this, Gradle fails on machines that only have a
+// different JDK installed instead of downloading a matching one.
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
 //include ':iCommon',':iCommon-API',':iCommon-Fabric-1.20.2' 
 //project(':iCommon').projectDir = new File("C:/Users/isaia/mods/iCommonLib")
 //project(':iCommon-API').projectDir = new File("C:/Users/isaia/mods/iCommonLib/iCommon-API")

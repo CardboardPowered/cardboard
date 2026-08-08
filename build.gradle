@@ -49,8 +49,8 @@ configurations.all {
 }
 
 // Paper-API
-def PAPER_VER_A = "26.1.2.build.69-stable" // "1.21.11-R0.1-SNAPSHOT"
-def PAPER_VER_B = "26.1.2.build.69-stable" // "1.21.11-R0.1-20260511.115010-91" // "1.21.11-R0.1-20260120.191825-59"
+def PAPER_VER_A = "26.2.build.110-stable" // "26.1.2.build.69-stable"
+def PAPER_VER_B = "26.2.build.110-stable" // "26.1.2.build.69-stable"
 
 def PAPER_API_VER = "io.papermc.paper:paper-api:" + PAPER_VER_B
 
@@ -75,9 +75,9 @@ dependencies {
     // javax.annotation-api-1.3.2.jar
     // iCommon-Fabric-1.21.11_unobfuscated.jar
 	
-	compileOnly fileTree(dir: 'libs', include: 'iCommon-Fabric-26.1.2.jar')
+	compileOnly fileTree(dir: 'libs', include: 'iCommon-Fabric-26.2.jar')
 
-	implementation fileTree(dir: 'libs', include: 'iCommon-Fabric-26.1.2.jar')
+	implementation fileTree(dir: 'libs', include: 'iCommon-Fabric-26.2.jar')
 	
 	// TODO: Maven repo this
 	compileOnly fileTree(dir: 'libs', include: 'icommon-configuration-1.0.jar')
@@ -102,11 +102,11 @@ dependencies {
 	implementation(PAPER_API_VER)
 	
 	implementation("net.md-5:bungeecord-chat:1.21-R0.2")
-	implementation("net.kyori:adventure-api:4.25.0")
-	implementation("net.kyori:adventure-text-serializer-gson:4.25.0")
-	implementation("net.kyori:adventure-text-serializer-legacy:4.25.0")
-	implementation("net.kyori:adventure-text-serializer-plain:4.25.0")
-	implementation("net.kyori:adventure-text-minimessage:4.25.0")
+	implementation("net.kyori:adventure-api:5.2.0")
+	implementation("net.kyori:adventure-text-serializer-gson:5.2.0")
+	implementation("net.kyori:adventure-text-serializer-legacy:5.2.0")
+	implementation("net.kyori:adventure-text-serializer-plain:5.2.0")
+	implementation("net.kyori:adventure-text-minimessage:5.2.0")
 
     // compileOnly fileTree(dir: 'libs', include: 'commons-lang-2.6.jar')
     // compileOnly group: "org.jetbrains", name: "annotations", version: "18.0.0"
@@ -188,9 +188,9 @@ processResources {
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(sourceSets.main.resources.srcDirs) {
         include "fabric.mod.json"
-        if(System.env.BUILD_NUMBER){
-            expand "version": System.env.BUILD_NUMBER
-        }
+        // Always expand: leaving the literal ${version} in fabric.mod.json makes
+        // Fabric Loader warn that the version is unparseable on every start.
+        expand "version": (System.env.BUILD_NUMBER ?: project.mod_version)
     }
 
     from(sourceSets.main.resources.srcDirs) {
@@ -230,7 +230,7 @@ shadowJar {
 modrinth {
     token = System.getenv("MODRINTH") // This is the default. Remember to have the MODRINTH_TOKEN environment variable set or else this will fail, or set it to whatever you want - just make sure it stays private!
     projectId = "MLYQ9VGP"
-    versionNumber = "26.1-" + System.env.BUILD_NUMBER
+    versionNumber = project.mod_version + "-" + System.env.BUILD_NUMBER
     versionType = "beta"
     uploadFile = jar
     gameVersions = ["26.1.2"]
@@ -261,3 +261,4 @@ publishing {
     //    }
     //}
 }
+

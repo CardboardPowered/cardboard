@@ -18,15 +18,15 @@ public class Libraries {
 	 */
 	public static List<Library> getLibraries() {
         // TODO: Keep Adventure version in check
-        String adventureVersion = "4.25.0";
+        String adventureVersion = "5.2.0"; // 26.2: Paper 26.2 ships Adventure 5
 
         // Paper API
         //Library paperApi = Library.of("io.papermc", "paper-api", "1.21.11-R0.1-20260120.191825-59")
         //		.withSha1("223f4b673a6cefe155849a18d7a82b422bf45335")
         //		.overrideRepo("https://repo.papermc.io/repository/maven-snapshots/");
         
-        Library paperApi = Library.of("io.papermc.paper", "paper-api", "26.1.2.build.69-stable")
-        		.withSha1("0dbcf5b9cdcc6c81776475517a7c86cf64c63783")
+        Library paperApi = Library.of("io.papermc.paper", "paper-api", "26.2.build.110-stable")
+        		.withSha1("c94ea2a3efbe687f70b8135934588c8ca575b75a")
         		.overrideRepo("https://repo.papermc.io/repository/maven-public/");
 
         List<Library> libraries = List.of(
@@ -39,15 +39,15 @@ public class Libraries {
         	Library.of("commons-collections", "commons-collections", "3.2.1", "761ea405b9b37ced573d2df0d1e3a4e0f9edc668"),
         	Library.of("net.md-5", "bungeecord-chat", "1.21-R0.2", "64956ff493786f981a15697ce406fe39a2551692"),
         	// Adventure
-        	Library.of("net.kyori", "adventure-api", adventureVersion, "6bd10494eeb2f8eadce7226db4445e8728985cbb"),
-        	Library.of("net.kyori", "adventure-key", adventureVersion, "eadeff9eeaa46f76de3f31fdff1d8e952273cf04") ,
-        	Library.of("net.kyori", "adventure-text-serializer-gson", adventureVersion, "e312e240fe82f4207ff2232b33ee4433855bdfff") ,
-        	Library.of("net.kyori", "adventure-text-serializer-json", adventureVersion, "ff6b4381dd8be9a40a1127937a4b71b9b010fcd6") ,
-        	Library.of("net.kyori", "adventure-text-serializer-commons", adventureVersion, "58708c96ea4292800f08360ca1ce8a31ef0cdf97") ,
-        	Library.of("net.kyori", "adventure-text-serializer-legacy", adventureVersion, "b12eaaac78d2534b9b1556049a8d95a046b0812d") ,
-        	Library.of("net.kyori", "adventure-text-serializer-plain", adventureVersion, "82f5d4188f3cb6da9654b4ceea8b4093af5f1243") ,
-        	Library.of("net.kyori", "adventure-text-minimessage", adventureVersion, "38f8f778c92f1ea848f79f992c99c4b98f96f23b") ,
-        	Library.of("net.kyori", "adventure-text-logger-slf4j", adventureVersion, "7800e20f422798c0011eadce9bfa6bef159d7ae9") ,
+        	Library.of("net.kyori", "adventure-api", adventureVersion, "3e2ef126f3e3c3456995643aa49767af3b39ac34"),
+        	Library.of("net.kyori", "adventure-key", adventureVersion, "32cf2afc230c0a932c71c30a86762246f23f345d") ,
+        	Library.of("net.kyori", "adventure-text-serializer-gson", adventureVersion, "64921b6da90b2b4aa42e09342e12fd048783749f") ,
+        	Library.of("net.kyori", "adventure-text-serializer-json", adventureVersion, "5afc1c7538e3625fb5d87926c20a96b428881e6d") ,
+        	Library.of("net.kyori", "adventure-text-serializer-commons", adventureVersion, "bd00ab0ec93e5a326a0d9ce48b27c7025ce3a760") ,
+        	Library.of("net.kyori", "adventure-text-serializer-legacy", adventureVersion, "29351ad8bac77a694aec074a63d89c3af08a1ada") ,
+        	Library.of("net.kyori", "adventure-text-serializer-plain", adventureVersion, "eb0d8304dd9457246b6d4cae6c333e0a29375305") ,
+        	Library.of("net.kyori", "adventure-text-minimessage", adventureVersion, "8435e812c70784ba7ccbd46210dccbcc576a18d5") ,
+        	Library.of("net.kyori", "adventure-text-logger-slf4j", adventureVersion, "0efddd8e1faa2edae2d948b5d10be1a8f35c817a") ,
         	Library.of("net.kyori", "option", "1.1.0", "593fecb9c42688eebc7d8da5d6ea127f4d4c92a2"),
         	
         	// Complete Maven & Resolver Stack

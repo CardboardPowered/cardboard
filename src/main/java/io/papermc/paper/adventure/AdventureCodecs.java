@@ -172,15 +172,19 @@ public final class AdventureCodecs {
     }
 
     public static final Function<ClickEvent, ClickEventType> GET_CLICK_EVENT_TYPE =
-            he -> switch (he.action()) {
-                case OPEN_URL -> OPEN_URL_CLICK_EVENT_TYPE;
-                case OPEN_FILE -> OPEN_FILE_CLICK_EVENT_TYPE;
-                case RUN_COMMAND -> RUN_COMMAND_CLICK_EVENT_TYPE;
-                case SUGGEST_COMMAND -> SUGGEST_COMMAND_CLICK_EVENT_TYPE;
-                case CHANGE_PAGE -> CHANGE_PAGE_CLICK_EVENT_TYPE;
-                case COPY_TO_CLIPBOARD -> COPY_TO_CLIPBOARD_CLICK_EVENT_TYPE;
-                case SHOW_DIALOG -> SHOW_DIALOG_CLICK_EVENT_TYPE;
-                case CUSTOM -> CUSTOM_CLICK_EVENT_TYPE;
+            he -> {
+                // 26.2: Adventure 5 turned ClickEvent.Action from an enum into a generic
+                // interface with singleton instances, so this can no longer be a switch.
+                final ClickEvent.Action<?> a = he.action();
+                if (a == ClickEvent.Action.OPEN_URL) return OPEN_URL_CLICK_EVENT_TYPE;
+                if (a == ClickEvent.Action.OPEN_FILE) return OPEN_FILE_CLICK_EVENT_TYPE;
+                if (a == ClickEvent.Action.RUN_COMMAND) return RUN_COMMAND_CLICK_EVENT_TYPE;
+                if (a == ClickEvent.Action.SUGGEST_COMMAND) return SUGGEST_COMMAND_CLICK_EVENT_TYPE;
+                if (a == ClickEvent.Action.CHANGE_PAGE) return CHANGE_PAGE_CLICK_EVENT_TYPE;
+                if (a == ClickEvent.Action.COPY_TO_CLIPBOARD) return COPY_TO_CLIPBOARD_CLICK_EVENT_TYPE;
+                if (a == ClickEvent.Action.SHOW_DIALOG) return SHOW_DIALOG_CLICK_EVENT_TYPE;
+                if (a == ClickEvent.Action.CUSTOM) return CUSTOM_CLICK_EVENT_TYPE;
+                throw new IllegalArgumentException("Unknown ClickEvent.Action: " + a);
             };
 
     static final Codec<ClickEvent> CLICK_EVENT_CODEC = CLICK_EVENT_TYPE_CODEC.dispatch("action", GET_CLICK_EVENT_TYPE, ClickEventType::codec);
@@ -471,7 +475,7 @@ public final class AdventureCodecs {
         }
     }
 
-    static final MapCodec<NBTComponent<?, ?>> NBT_COMPONENT_MAP_CODEC = mapCodec((instance) -> {
+    static final MapCodec<NBTComponent<?>> NBT_COMPONENT_MAP_CODEC = mapCodec((instance) -> {
         return instance.group(
                 Codec.STRING.fieldOf("nbt").forGetter(NBTComponent::nbtPath),
                 Codec.BOOL.lenientOptionalFieldOf("interpret", false).forGetter(NBTComponent::interpret),
@@ -506,7 +510,7 @@ public final class AdventureCodecs {
     static final ComponentType<ObjectComponent> OBJECT = new ComponentType<>(OBJECT_COMPONENT_MAP_CODEC, ObjectComponent.class::isInstance, "object");
     static final ComponentType<ScoreComponent> SCORE = new ComponentType<>(SCORE_COMPONENT_MAP_CODEC, ScoreComponent.class::isInstance, "score");
     static final ComponentType<SelectorComponent> SELECTOR = new ComponentType<>(SELECTOR_COMPONENT_MAP_CODEC, SelectorComponent.class::isInstance, "selector");
-    static final ComponentType<NBTComponent<?, ?>> NBT = new ComponentType<>(NBT_COMPONENT_MAP_CODEC, NBTComponent.class::isInstance, "nbt");
+    static final ComponentType<NBTComponent<?>> NBT = new ComponentType<>(NBT_COMPONENT_MAP_CODEC, NBTComponent.class::isInstance, "nbt");
 
     static Codec<Component> createCodec(final Codec<Component> selfCodec) {
         final ExtraCodecs.LateBoundIdMapper<String, MapCodec<? extends Component>> lateBoundIdMapper = new ExtraCodecs.LateBoundIdMapper<>();

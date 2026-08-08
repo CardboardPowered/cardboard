@@ -453,31 +453,22 @@ public class CraftMetaBookSigned extends CraftMetaItem implements BookMeta {
         this.pages = io.papermc.paper.adventure.PaperAdventure.asVanilla(pages);
     }
 
-    static final class CraftMetaBookSignedBuilder extends CraftMetaBook.CraftMetaBookBuilder {
-        private net.kyori.adventure.text.Component title;
-        private net.kyori.adventure.text.Component author;
-
-        @Override
-        public BookMetaBuilder title(final net.kyori.adventure.text.Component title) {
-            this.title = title;
-            return this;
-        }
-
-        @Override
-        public BookMetaBuilder author(final net.kyori.adventure.text.Component author) {
-            this.author = author;
-            return this;
-        }
-
-        @Override
-        public BookMeta build() {
-            return new CraftMetaBookSigned(this.title, this.author, this.pages);
-        }
-    }
-
+    // 26.2: Paper removed BookMetaBuilder (Adventure 5 replaced it with BookLike/Book.Builder).
     @Override
-    public BookMetaBuilder toBuilder() {
-        return new CraftMetaBookSignedBuilder();
+    public net.kyori.adventure.inventory.Book asBook() {
+        java.util.List<net.kyori.adventure.text.Component> bookPages = new java.util.ArrayList<>();
+        if (this.pages != null) {
+            for (Object page : this.pages) {
+                bookPages.add(io.papermc.paper.adventure.PaperAdventure.asAdventure(
+                        (net.minecraft.network.chat.Component) page));
+            }
+        }
+        return net.kyori.adventure.inventory.Book.book(
+                this.title == null ? net.kyori.adventure.text.Component.empty()
+                        : LEGACY_DOWNSAMPLING_COMPONENT_SERIALIZER.deserialize(this.title),
+                this.author == null ? net.kyori.adventure.text.Component.empty()
+                        : LEGACY_DOWNSAMPLING_COMPONENT_SERIALIZER.deserialize(this.author),
+                bookPages);
     }
 
     @Override

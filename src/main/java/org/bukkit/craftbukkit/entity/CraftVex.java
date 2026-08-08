@@ -21,8 +21,16 @@ public class CraftVex extends CraftMonster implements Vex {
 
 	@Override
 	public org.bukkit.entity.Mob getSummoner() {
-		net.minecraft.world.entity.Mob owner = this.getHandle().getOwner();
-		return owner != null ? (org.bukkit.entity.Mob) owner.getBukkitEntity() : null;
+		// 26.2: Vex#getOwner widened from Mob to LivingEntity
+		net.minecraft.world.entity.LivingEntity owner = this.getHandle().getOwner();
+		return owner instanceof net.minecraft.world.entity.Mob mob
+				? (org.bukkit.entity.Mob) mob.getBukkitEntity() : null;
+	}
+
+	@Override
+	public org.bukkit.entity.LivingEntity getOwner() {
+		net.minecraft.world.entity.LivingEntity owner = this.getHandle().getOwner();
+		return owner != null ? (org.bukkit.entity.LivingEntity) owner.getBukkitEntity() : null;
 	}
 
 	@Override
@@ -93,4 +101,12 @@ public class CraftVex extends CraftMonster implements Vex {
 	public boolean hasLimitedLife() {
 		return this.getHandle().hasLimitedLife;
 	}
+
+    // 26.2: Vex owner widened from Mob to LivingEntity
+    @Override
+    public void setOwner(org.bukkit.entity.LivingEntity owner) {
+        this.getHandle().setOwner(owner == null ? null
+                : (net.minecraft.world.entity.Mob) ((CraftLivingEntity) owner).getHandle());
+    }
+
 }

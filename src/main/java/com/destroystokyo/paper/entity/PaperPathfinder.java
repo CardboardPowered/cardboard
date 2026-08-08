@@ -135,4 +135,23 @@ public class PaperPathfinder implements Pathfinder {
         return path != null ? new PaperPathResult(path) : null;
     }
 
+
+    // 26.2: Pathfinder gained a max-distance overload
+    @Override
+    public PathResult findPath(Location loc, int maxDistance) {
+        Preconditions.checkArgument(loc != null, "Location cant be nil");
+        Path path = this.entity.getNavigation().createPath(
+                new net.minecraft.core.BlockPos(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), maxDistance);
+        return path != null ? new PaperPathResult(path) : null;
+    }
+
+
+    // 26.2: Pathfinder declares max-distance overloads for both Entity and Location
+    @Override
+    public PathResult findPath(Entity target, int maxDistance) {
+        Preconditions.checkArgument(target != null, "Target cant be nil");
+        Path path = this.entity.getNavigation().createPath(((CraftEntity) target).getHandle(), maxDistance);
+        return path != null ? new PaperPathResult(path) : null;
+    }
+
 }

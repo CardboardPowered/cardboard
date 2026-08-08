@@ -185,6 +185,7 @@ public final class DataComponentAdapters {
         register(DataComponents.TOOLTIP_DISPLAY, PaperTooltipDisplay::new);
         register(DataComponents.WEAPON, PaperWeapon::new);
         register(DataComponents.BLOCKS_ATTACKS, PaperBlocksAttacks::new);
+        register(DataComponents.SULFUR_CUBE_CONTENT, io.papermc.paper.datacomponent.item.PaperSulfurCubeContent::new); // 26.2: new component
         register(DataComponents.PIERCING_WEAPON, PaperPiercingWeapon::new);
         register(DataComponents.KINETIC_WEAPON, PaperKineticWeapon::new);
         register(DataComponents.ATTACK_RANGE, PaperAttackRange::new);

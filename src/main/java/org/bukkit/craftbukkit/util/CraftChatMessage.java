@@ -49,6 +49,14 @@ public final class CraftChatMessage {
         return CraftChatMessage.formatMap.get(color.getChar());
     }
 
+    // 26.2: ChatFormatting.isFormat() was removed; these are the style (non-colour) codes.
+    public static boolean isFormat(ChatFormatting format) {
+        return switch (format) {
+            case OBFUSCATED, BOLD, STRIKETHROUGH, UNDERLINE, ITALIC -> true;
+            default -> false;
+        };
+    }
+
     public static ChatColor getColor(ChatFormatting format) {
         return ChatColor.getByChar(format.code);
     }
@@ -105,7 +113,7 @@ public final class CraftChatMessage {
                                 this.modifier = StringMessage.RESET.withColor(TextColor.parseColor(this.hex.toString()).result().orElse(null)); // Paper
                                 this.hex = null;
                             }
-                        } else if (format.isFormat() && format != ChatFormatting.RESET) {
+                        } else if (CraftChatMessage.isFormat(format) && format != ChatFormatting.RESET) {
                             switch (format) {
                                 case BOLD:
                                     this.modifier = this.modifier.withBold(Boolean.TRUE);

@@ -16,14 +16,14 @@ public class CraftEffect {
         int datavalue;
         switch (effect) {
             // Paper start - add missing effects
-            case PARTICLES_SCULK_CHARGE:
+            case SCULK_CHARGE:                        // 26.2: renamed (old name is now an alias field)
             case TRIAL_SPAWNER_DETECT_PLAYER:
             case BEE_GROWTH:
             case TURTLE_EGG_PLACEMENT:
             case SMASH_ATTACK:
             case TRIAL_SPAWNER_DETECT_PLAYER_OMINOUS:
                 // Paper end - add missing effects
-            case VILLAGER_PLANT_GROW:
+                // 26.2: VILLAGER_PLANT_GROW is now an alias for BEE_GROWTH, already handled above
                 datavalue = (Integer) data;
                 break;
             case POTION_BREAK:
@@ -35,13 +35,13 @@ public class CraftEffect {
                 datavalue = Item.getId(CraftItemType.bukkitToMinecraft((Material) data));
                 break;
             // Paper start - handle shoot white smoke event
-            case SHOOT_WHITE_SMOKE:
+            case WHITE_SMOKE_SHOOT:                   // 26.2: renamed
                 final BlockFace face = (BlockFace) data;
                 Preconditions.checkArgument(face.isCartesian(), face + " isn't cartesian");
                 datavalue = org.bukkit.craftbukkit.block.CraftBlock.blockFaceToNotch(face).get3DDataValue();
                 break;
             // Paper end - handle shoot white smoke event
-            case SMOKE:
+            case SMOKE_SHOOT:                         // 26.2: renamed
                 switch ((BlockFace) data) {
                     case DOWN:
                         // SPIGOT-6318: Fallback value for the old directions
@@ -78,7 +78,7 @@ public class CraftEffect {
                     // Paper start - support BlockData
                     break;
                 }
-            case PARTICLES_AND_SOUND_BRUSH_BLOCK_COMPLETE:
+            case BRUSH_BLOCK_COMPLETE:                // 26.2: renamed
                 datavalue = Block.getId(((org.bukkit.craftbukkit.block.data.CraftBlockData) data).getState());
                 // Paper end
                 break;

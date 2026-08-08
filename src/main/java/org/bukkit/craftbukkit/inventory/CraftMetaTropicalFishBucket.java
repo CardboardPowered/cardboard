@@ -218,4 +218,23 @@ class CraftMetaTropicalFishBucket extends CraftMetaItem implements TropicalFishB
 
         return builder;
     }
+
+    // 26.2: new on TropicalFishBucketMeta
+    @Override
+    public boolean hasPatternColor() {
+        return this.hasVariant();
+    }
+
+
+    // 26.2: TropicalFishBucketMeta split the has-* accessors
+    @Override
+    public boolean hasPattern() {
+        return this.hasVariant();
+    }
+
+    @Override
+    public boolean hasBodyColor() {
+        return this.hasVariant();
+    }
+
 }

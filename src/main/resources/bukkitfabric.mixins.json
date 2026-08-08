@@ -62,6 +62,7 @@
     "server.level.WorldGenRegionMixin",
     "server.network.LegacyQueryHandlerMixin",
     "server.network.ServerConfigurationPacketListenerImplMixin",
+    "server.network.ServerCommonPacketListenerImplMixin_Brand",
     "server.network.ServerConnectionListenerMixin",
     "server.network.ServerGamePacketListenerImplMixin",
     "server.network.ServerGamePacketListenerImplMixin_ChatEvent",

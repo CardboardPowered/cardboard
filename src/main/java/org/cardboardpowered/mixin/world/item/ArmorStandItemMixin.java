@@ -1,5 +1,7 @@
 package org.cardboardpowered.mixin.world.item;
 
+import net.minecraft.world.entity.EntityTypes;
+
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ArmorStandItem;
@@ -50,12 +52,12 @@ public class ArmorStandItemMixin {
             BlockPos blockposition = blockactioncontext.getBlockPos();
             ItemStack itemstack = itemactioncontext.getStack();
             Vec3d vec3d = Vec3d.ofBottomCenter((Vec3i) blockposition);
-            Box axisalignedbb = EntityType.ARMOR_STAND.getDimensions().getBoxAt(vec3d.getX(), vec3d.getY(), vec3d.getZ());
+            Box axisalignedbb = EntityTypes.ARMOR_STAND.getDimensions().getBoxAt(vec3d.getX(), vec3d.getY(), vec3d.getZ());
 
             if (world.getOtherEntities((Entity) null, axisalignedbb).isEmpty()) {
                 if (world instanceof ServerWorld) {
                     ServerWorld worldserver = (ServerWorld) world;
-                    ArmorStandEntity entityarmorstand = (ArmorStandEntity) EntityType.ARMOR_STAND.create(worldserver, itemstack.getNbt(), (Text) null, itemactioncontext.getPlayer(), blockposition, SpawnReason.NATURAL, true, true);
+                    ArmorStandEntity entityarmorstand = (ArmorStandEntity) EntityTypes.ARMOR_STAND.create(worldserver, itemstack.getNbt(), (Text) null, itemactioncontext.getPlayer(), blockposition, SpawnReason.NATURAL, true, true);
 
                     if (entityarmorstand == null)  return ActionResult.FAIL;
                     worldserver.spawnEntityAndPassengers(entityarmorstand);

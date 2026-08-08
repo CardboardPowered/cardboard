@@ -19,7 +19,9 @@ public class TextColorMixin implements TextColorBridge {
     @Inject(method = "<init>(ILjava/lang/String;)V", at = @At("RETURN"))
     private void initFormat(int value, String name, CallbackInfo ci) {
         if (name != null) {
-            this.format = ChatFormatting.getByName(name);
+            // 26.2: ChatFormatting.getByName was removed
+            this.format = java.util.Arrays.stream(ChatFormatting.values())
+                    .filter(f -> f.name().equalsIgnoreCase(name)).findFirst().orElse(null);
         } else {
             this.format = null;
         }

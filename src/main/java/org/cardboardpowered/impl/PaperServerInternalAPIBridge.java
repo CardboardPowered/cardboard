@@ -125,4 +125,72 @@ public class PaperServerInternalAPIBridge implements InternalAPIBridge {
 		return null;
 	}
 
+
+    // 26.2: Paper moved the adventure serializer accessors off UnsafeValues onto InternalAPIBridge
+    @Override
+    public net.kyori.adventure.text.flattener.ComponentFlattener componentFlattener() {
+        return io.papermc.paper.adventure.PaperAdventure.FLATTENER;
+    }
+
+
+    // 26.2: Paper split these off UnsafeValues onto InternalAPIBridge.
+    // The implementations still live on CraftMagicNumbers, so delegate rather than duplicate.
+    private static final org.bukkit.craftbukkit.util.CraftMagicNumbers MN =
+            org.bukkit.craftbukkit.util.CraftMagicNumbers.INSTANCE;
+
+    @Override
+    public DamageSource.Builder createDamageSourceBuilder(org.bukkit.damage.DamageType damageType) {
+        return MN.createDamageSourceBuilder(damageType);
+    }
+
+    @Override
+    public String getTranslationKey(org.bukkit.entity.EntityType entityType) {
+        return MN.getTranslationKey(entityType);
+    }
+
+    @Override
+    public org.bukkit.entity.SpawnCategory getSpawnCategory(org.bukkit.entity.EntityType entityType) {
+        return org.bukkit.craftbukkit.util.CraftSpawnCategory.toBukkit(
+                org.bukkit.craftbukkit.entity.CraftEntityType.bukkitToMinecraft(entityType).getCategory());
+    }
+
+    @Override
+    public org.bukkit.inventory.ItemStack deserializeItem(byte[] data) {
+        return MN.deserializeItem(data);
+    }
+
+    @Override
+    public boolean hasDefaultEntityAttributes(org.bukkit.NamespacedKey entityKey) {
+        return MN.hasDefaultEntityAttributes(entityKey);
+    }
+
+    @Override
+    public org.bukkit.attribute.Attributable getDefaultEntityAttributes(org.bukkit.NamespacedKey entityKey) {
+        return MN.getDefaultEntityAttributes(entityKey);
+    }
+
+    @Override
+    public String getStatisticCriteriaKey(org.bukkit.Statistic statistic) {
+        return MN.getStatisticCriteriaKey(statistic);
+    }
+
+    @Override
+    public io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager<org.bukkit.plugin.Plugin>
+            createPluginLifecycleEventManager(org.bukkit.plugin.java.JavaPlugin plugin,
+                                              java.util.function.BooleanSupplier registrationCheck) {
+        return MN.createPluginLifecycleEventManager(plugin, registrationCheck);
+    }
+
+    @Override
+    public org.bukkit.inventory.ItemStack createEmptyStack() {
+        return MN.createEmptyStack();
+    }
+
+    @Override
+    public Component resolveWithContext(Component component, org.bukkit.command.@Nullable CommandSender context,
+                                        org.bukkit.entity.@Nullable Entity scoreboardSubject,
+                                        boolean bypassPermissions) throws java.io.IOException {
+        return MN.resolveWithContext(component, context, scoreboardSubject, bypassPermissions);
+    }
+
 }

@@ -5,6 +5,7 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.component.TypedEntityData;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -90,7 +91,7 @@ public class CraftMetaArmorStand extends CraftMetaItem implements com.destroysto
         super.deserializeInternal(tag, context);
 
         tag.getCompound(CraftMetaArmorStand.ENTITY_TAG.NBT).ifPresent(entityTag -> {
-            if (!entityTag.contains(ENTITY_ID.NBT)) entityTag.putString(ENTITY_ID.NBT, EntityType.getKey(EntityType.ARMOR_STAND).toString()); // fixup legacy armorstand metas that did not include this.
+            if (!entityTag.contains(ENTITY_ID.NBT)) entityTag.putString(ENTITY_ID.NBT, EntityType.getKey(EntityTypes.ARMOR_STAND).toString()); // fixup legacy armorstand metas that did not include this.
             this.entityTag = entityTag;
         });
     }
@@ -177,7 +178,7 @@ public class CraftMetaArmorStand extends CraftMetaItem implements com.destroysto
     private void populateTagIfNull() {
         if (this.entityTag == null) {
             this.entityTag = new CompoundTag();
-            this.entityTag.putString(ENTITY_ID.NBT, EntityType.getKey(EntityType.ARMOR_STAND).toString());
+            this.entityTag.putString(ENTITY_ID.NBT, EntityType.getKey(EntityTypes.ARMOR_STAND).toString());
         }
     }
 

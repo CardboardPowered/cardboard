@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -56,7 +57,7 @@ public interface PaperSharedSpawnerLogic extends Spawner {
 
         try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(() -> getSpawner().toString(), LOGGER)) {
             TagValueOutput tagValueOutput = TagValueOutput.createWithContext(scopedCollector, this.getInternalWorld().registryAccess());
-            tagValueOutput.putString(Entity.TAG_ID, BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.ITEM).toString());
+            tagValueOutput.putString(Entity.TAG_ID, BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.ITEM).toString());
             tagValueOutput.store("Item", net.minecraft.world.item.ItemStack.CODEC, item);
 
             this.setNextSpawnData(

@@ -27,6 +27,19 @@ public record PaperWrittenBookContent(
         return this.impl;
     }
 
+    // 26.2: Adventure 5 BookLike
+    @Override
+    public net.kyori.adventure.inventory.Book asBook() {
+        java.util.List<net.kyori.adventure.text.Component> bookPages = new java.util.ArrayList<>();
+        for (net.minecraft.server.network.Filterable<net.minecraft.network.chat.Component> page : this.impl.pages()) {
+            bookPages.add(io.papermc.paper.adventure.PaperAdventure.asAdventure(page.raw()));
+        }
+        return net.kyori.adventure.inventory.Book.book(
+                net.kyori.adventure.text.Component.text(this.impl.title().raw()),
+                net.kyori.adventure.text.Component.text(this.impl.author()),
+                bookPages);
+    }
+
     @Override
     public Filtered<String> title() {
         return Filtered.of(this.impl.title().raw(), this.impl.title().filtered().orElse(null));

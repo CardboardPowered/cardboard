@@ -813,7 +813,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         } else if (FishHook.class.isAssignableFrom(projectile) && this.getHandle() instanceof net.minecraft.world.entity.player.Player) {
             // launch = new FishingBobberEntity((PlayerEntity)this.getHandle(), world, 0, 0, new net.minecraft.item.ItemStack(Items.FISHING_ROD));
             
-        	launch = net.minecraft.world.entity.EntityType.FISHING_BOBBER.create(world, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+        	launch = net.minecraft.world.entity.EntityTypes.FISHING_BOBBER.create(world, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
         	// launch.refreshPositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
             
         } else if (Fireball.class.isAssignableFrom(projectile)) {
@@ -828,8 +828,8 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
                 launch = new net.minecraft.world.entity.projectile.hurtingprojectile.DragonFireball(world, this.getHandle(), vec);
             } else if (AbstractWindCharge.class.isAssignableFrom(projectile)) {
                 launch = BreezeWindCharge.class.isAssignableFrom(projectile)
-                		? net.minecraft.world.entity.EntityType.BREEZE_WIND_CHARGE.create(world, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED)
-                		: net.minecraft.world.entity.EntityType.WIND_CHARGE.create(world, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+                		? net.minecraft.world.entity.EntityTypes.BREEZE_WIND_CHARGE.create(world, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED)
+                		: net.minecraft.world.entity.EntityTypes.WIND_CHARGE.create(world, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
                 ((net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.AbstractWindCharge)launch).setOwner(this.getHandle());
                 ((net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.AbstractWindCharge)launch).shootFromRotation(this.getHandle(), this.getHandle().getXRot(), this.getHandle().getYRot(), 0.0f, 1.5f, 1.0f);
             } else {
@@ -841,7 +841,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         } else if (LlamaSpit.class.isAssignableFrom(projectile)) {
             Location location = this.getEyeLocation();
             Vector direction = location.getDirection();
-            launch = net.minecraft.world.entity.EntityType.LLAMA_SPIT.create(world, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+            launch = net.minecraft.world.entity.EntityTypes.LLAMA_SPIT.create(world, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
             ((net.minecraft.world.entity.projectile.LlamaSpit)launch).setOwner(this.getHandle());
             ((net.minecraft.world.entity.projectile.LlamaSpit)launch).shoot(direction.getX(), direction.getY(), direction.getZ(), 1.5f, 10.0f);
             launch.snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
@@ -991,8 +991,27 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 	}
 
 	@Override
+	public @Nullable Sound getHurtSound(org.bukkit.damage.DamageSource damageSource) {
+		final DamageSource nms = damageSource instanceof CraftDamageSource craft
+				? craft.getHandle() : this.getHandle().damageSources().generic();
+		final net.minecraft.sounds.SoundEvent sound = this.getHandle().getHurtSound(nms);
+		return sound == null ? null : org.bukkit.craftbukkit.CraftSound.minecraftToBukkit(sound);
+	}
+
+	@Override
+	public float getSoundVolume() {
+		return this.getHandle().getSoundVolume();
+	}
+
+	@Override
+	public float getSoundPitch() {
+		return this.getHandle().getVoicePitch();
+	}
+
+	@Override
 	public void knockback(double arg0, double arg1, double arg2) {
-		 this.getHandle().knockback(arg0, arg2, arg2);
+		 // 26.2: LivingEntity#knockback(double,double,double) was removed
+		 this.getHandle().push(arg0, arg1, arg2);
 	}
 	
 	// 1.19.4:

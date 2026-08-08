@@ -8,12 +8,37 @@ Cardboard is an implementation of the popular Bukkit/Spigot/Paper Modding API fo
 Fabric version chart:
 | Support  | Minecraft        | Git Branch  | Dev Status |
 |----------|------------------|-------------|------------|
-| &#x2705; | Fabric 26.1.2    | ver/26.1    | Active     |
+| &#x2705; | Fabric 26.2      | ver/26.2    | Active     |
+| &#x2705; | Fabric 26.1.2    | ver/26.1    | Low        |
 | &#x2705; | Fabric 1.21.11   | ver/1.21.11 | Low        |
 | &#x2705; | Fabric 1.21.1    | ver/1.21    | Low        |
 | &#x274C; | <= 1.20          |             |            |
 
 See [Supported Versions](https://github.com/CardboardPowered/cardboard/wiki/Supported-Versions) for more details. & [View Downloads](https://cardboardpowered.org/download/)
+
+## Building
+
+Requires JDK 25 (auto-provisioned by the Gradle toolchain resolver) and Java 21+ at runtime.
+
+```
+./gradlew build
+```
+
+The mod jar is produced at `build/libs/Cardboard-<version>.jar`. Drop it into a
+Fabric server's `mods/` folder alongside [Fabric API](https://modrinth.com/mod/fabric-api)
+and iCommonLib; Bukkit plugins then go in `plugins/`.
+
+### 26.2 notes
+
+Minecraft 26.2 moved the entity and block-entity constants out of their type
+classes (`EntityType.X` -> `EntityTypes.X`, `BlockEntityType.X` ->
+`BlockEntityTypes.X`), stripped the colour metadata from `ChatFormatting` in
+favour of `world.scores.TeamColor`, and ships Adventure 5. Cardboard on this
+branch targets Paper-API `26.2.build.110-stable` and Adventure `5.2.0`.
+
+## About this fork
+This repository is derived from [CardboardPowered/cardboard](https://github.com/CardboardPowered/cardboard)
+and carries its history and license. The `ver/26.2` branch adds Minecraft 26.2 support.
 
 ## License
 We inherit the license from Paper. See [Paper's License](https://github.com/PaperMC/Paper/blob/master/LICENSE.md) for full details.

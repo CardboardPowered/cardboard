@@ -115,4 +115,17 @@ public class CraftDamageSource implements DamageSource {
 
         return new CraftDamageSource(new net.minecraft.world.damagesource.DamageSource(holderDamageType, nmsDirectEntity, nmsCausingEntity, sourcePos));
     }
+
+    // 26.2: DamageSource now carries an adventure Pointers context
+    @Override
+    public net.kyori.adventure.pointer.Pointers getDamageContext() {
+        return this.damageContext == null ? net.kyori.adventure.pointer.Pointers.empty() : this.damageContext;
+    }
+
+    public void setDamageContext(net.kyori.adventure.pointer.Pointers damageContext) {
+        this.damageContext = damageContext;
+    }
+
+    private net.kyori.adventure.pointer.Pointers damageContext;
+
 }

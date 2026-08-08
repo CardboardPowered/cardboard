@@ -60,7 +60,7 @@ public class CraftEntitySnapshot implements EntitySnapshot {
 
     private net.minecraft.world.entity.Entity createInternal(World world) {
         net.minecraft.world.level.Level level = ((CraftWorld) world).getHandle();
-        net.minecraft.world.entity.Entity internal = net.minecraft.world.entity.EntityType.loadEntityRecursive(this.data, level, EntitySpawnReason.LOAD, EntityProcessor.NOP);
+        net.minecraft.world.entity.Entity internal = net.minecraft.world.entity.EntityType.loadEntityRecursive(this.data, level, new net.minecraft.world.entity.EntitySpawnRequest(EntitySpawnReason.LOAD, false), EntityProcessor.NOP);
         if (internal == null) { // Try creating by type
             internal = CraftEntityType.bukkitToMinecraft(this.type).create(level, EntitySpawnReason.LOAD);
         }

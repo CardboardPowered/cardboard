@@ -41,7 +41,26 @@ public class CraftDamageSourceBuilder implements DamageSource.Builder {
 
     @Override
     public DamageSource build() {
-        return CraftDamageSource.buildFromBukkit(this.damageType, this.causingEntity, this.directEntity, this.damageLocation);
+        final DamageSource built = CraftDamageSource.buildFromBukkit(
+                this.damageType, this.causingEntity, this.directEntity, this.damageLocation);
+        // 26.2: carry the damage context onto the built source
+        if (this.damageContext != null && built instanceof CraftDamageSource craft) {
+            craft.setDamageContext(this.damageContext);
+        }
+        return built;
     }
+
+
+    // 26.2: DamageSource.Builder gained a damage-context hook
+    @Override
+    public org.bukkit.damage.DamageSource.Builder withDamageContext(
+            java.util.function.Consumer<net.kyori.adventure.pointer.Pointers.Builder> consumer) {
+        final net.kyori.adventure.pointer.Pointers.Builder builder = net.kyori.adventure.pointer.Pointers.builder();
+        consumer.accept(builder);
+        this.damageContext = builder.build();
+        return this;
+    }
+
+    private net.kyori.adventure.pointer.Pointers damageContext;
 
 }

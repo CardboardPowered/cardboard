@@ -1699,7 +1699,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
                 .getRandomItemWith(net.minecraft.world.item.enchantment.EnchantmentEffectComponents.REPAIR_WITH_XP, handle, net.minecraft.world.item.ItemStack::isDamaged);
         final net.minecraft.world.item.ItemStack itemstack = stackEntry.map(net.minecraft.world.item.enchantment.EnchantedItemInUse::itemStack).orElse(net.minecraft.world.item.ItemStack.EMPTY);
         if (!itemstack.isEmpty() && itemstack.getItem().components().has(net.minecraft.core.component.DataComponents.MAX_DAMAGE)) {
-            net.minecraft.world.entity.ExperienceOrb orb = net.minecraft.world.entity.EntityType.EXPERIENCE_ORB.create(handle.level(), net.minecraft.world.entity.EntitySpawnReason.COMMAND);
+            net.minecraft.world.entity.ExperienceOrb orb = net.minecraft.world.entity.EntityTypes.EXPERIENCE_ORB.create(handle.level(), net.minecraft.world.entity.EntitySpawnReason.COMMAND);
             orb.setValue(amount);
             //orb.spawnReason = org.bukkit.entity.ExperienceOrb.SpawnReason.CUSTOM; // TODO
             orb.setPosRaw(handle.getX(), handle.getY(), handle.getZ());
@@ -2847,14 +2847,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
 //
 //        this.getHandle().sendChatMessage(net.minecraft.network.chat.OutgoingChatMessage.create(playerChatMessage), this.getHandle().isTextFilteringEnabled(), this.toHandle(boundChatType));
     }
-
-    @Deprecated(forRemoval = true)
-    @Override
-    public void sendMessage(final net.kyori.adventure.identity.Identity identity, final net.kyori.adventure.text.Component message, final net.kyori.adventure.audience.MessageType type) {
-        if (getHandle().connection == null) return;
-        final net.minecraft.core.Registry<net.minecraft.network.chat.ChatType> chatTypeRegistry = this.getHandle().level().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.CHAT_TYPE);
-        this.getHandle().connection.send(new net.minecraft.network.protocol.game.ClientboundSystemChatPacket(PaperAdventure.asVanilla(message), false));
-    }
+    // 26.2: Adventure 5 removed MessageType; this deprecated overload no longer exists.
 
     @Override
     public void sendActionBar(final net.kyori.adventure.text.Component message) {
@@ -3386,7 +3379,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
                 return net.minecraft.world.entity.EntityType.create(
                         TagValueInput.create(scopedCollector.forChild(() -> ".shoulder"), this.getHandle().registryAccess(), this.getHandle().getShoulderEntityLeft()),
                         this.getHandle().level(),
-                        EntitySpawnReason.LOAD
+                        new net.minecraft.world.entity.EntitySpawnRequest(EntitySpawnReason.LOAD, false)
                 ).map(Entity::getBukkitEntity).orElse(null);
             }
         }
@@ -3412,7 +3405,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
                 return net.minecraft.world.entity.EntityType.create(
                         TagValueInput.create(scopedCollector.forChild(() -> ".shoulder"), this.getHandle().registryAccess(), this.getHandle().getShoulderEntityRight()),
                         this.getHandle().level(),
-                        EntitySpawnReason.LOAD
+                        new net.minecraft.world.entity.EntitySpawnRequest(EntitySpawnReason.LOAD, false)
                 ).map(Entity::getBukkitEntity).orElse(null);
             }
         }
@@ -3430,4 +3423,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
             entity.remove();
         }
     }
+
+    // 26.2: new on Player
+    @Override
+    public void unsetFixedPose() {
+        // Paper's fixed-pose support is a server patch with no vanilla equivalent.
+        // Clearing it is a no-op here, but we resync the pose so clients stay consistent.
+        this.getHandle().refreshDimensions();
+    }
+
+
+    // 26.2: new on Player
+    @Override
+    public void resetFlyingTicks() {
+        // Paper tracks flying ticks in its patched ServerGamePacketListenerImpl;
+        // vanilla has no such counter, so there is nothing to reset.
+    }
+
 }

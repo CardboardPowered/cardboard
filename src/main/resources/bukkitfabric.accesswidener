@@ -81,7 +81,7 @@ accessible	field	net/minecraft/world/entity/LivingEntity	lastDamageStamp	J
 mutable	field	net/minecraft/world/entity/LivingEntity	lastDamageStamp	J
 accessible	field	net/minecraft/world/entity/LivingEntity	brain	Lnet/minecraft/world/entity/ai/Brain;
 accessible	method	net/minecraft/world/entity/LivingEntity	isAlwaysExperienceDropper	()Z
-accessible	method	net/minecraft/world/entity/LivingEntity	blockedByItem	(Lnet/minecraft/world/entity/LivingEntity;)V
+accessible	method	net/minecraft/world/entity/LivingEntity	blockedByItem	(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/damagesource/DamageSource;F)V
 accessible	method	net/minecraft/world/entity/LivingEntity	createWitherRose	(Lnet/minecraft/world/entity/LivingEntity;)V
 accessible	method	net/minecraft/world/entity/LivingEntity	jumpFromGround	()V
 accessible	method	net/minecraft/world/entity/LivingEntity	doAutoAttackOnTouch	(Lnet/minecraft/world/entity/LivingEntity;)V
@@ -199,8 +199,8 @@ accessible	field	net/minecraft/world/level/block/entity/BeaconBlockEntity	levels
 mutable	field	net/minecraft/world/level/block/entity/BeaconBlockEntity	levels	I
 accessible	field	net/minecraft/world/level/block/entity/BeaconBlockEntity	name	Lnet/minecraft/network/chat/Component;
 mutable	field	net/minecraft/world/level/block/entity/BeaconBlockEntity	name	Lnet/minecraft/network/chat/Component;
-accessible	field	net/minecraft/world/level/block/entity/BedBlockEntity	color	Lnet/minecraft/world/item/DyeColor;
-mutable	field	net/minecraft/world/level/block/entity/BedBlockEntity	color	Lnet/minecraft/world/item/DyeColor;
+# 26.2: BedBlockEntity was removed (beds no longer have a block entity)
+# 26.2: BedBlockEntity was removed (beds no longer have a block entity)
 accessible	field	net/minecraft/world/level/block/entity/BlockEntity	type	Lnet/minecraft/world/level/block/entity/BlockEntityType;
 mutable	field	net/minecraft/world/level/block/entity/BlockEntity	type	Lnet/minecraft/world/level/block/entity/BlockEntityType;
 accessible	field	net/minecraft/world/level/block/entity/BlockEntity	level	Lnet/minecraft/world/level/Level;
@@ -288,7 +288,7 @@ extendable	class	net/minecraft/core/Direction
 # mutable	field	net/minecraft/util/math/Direction	name	Ljava/lang/String;
 accessible	field	net/minecraft/core/Direction	BY_2D_DATA	[Lnet/minecraft/core/Direction;
 extendable	class	net/minecraft/ChatFormatting
-accessible	field	net/minecraft/ChatFormatting	name	Ljava/lang/String;
+# 26.2: ChatFormatting#name was renamed to #toString and is unused here
 accessible	field	net/minecraft/ChatFormatting	code	C
 accessible	field	net/minecraft/core/Vec3i	x	I
 mutable	field	net/minecraft/core/Vec3i	x	I
@@ -948,3 +948,12 @@ accessible field net/minecraft/tags/TagEntry tag Z
 accessible field net/minecraft/tags/TagEntry required Z
 accessible field net/minecraft/world/level/Level levelData Lnet/minecraft/world/level/storage/WritableLevelData;
 accessible field net/minecraft/server/level/ServerLevel entityManager Lnet/minecraft/world/level/entity/PersistentEntitySectionManager;
+# 26.2: expose protected sound accessors for the Bukkit LivingEntity API
+accessible	method	net/minecraft/world/entity/LivingEntity	getSoundVolume	()F
+accessible	method	net/minecraft/world/entity/LivingEntity	getHurtSound	(Lnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/sounds/SoundEvent;
+# 26.2: expose the creaking binding for the Bukkit CreakingHeart API
+accessible	field	net/minecraft/world/level/block/entity/CreakingHeartBlockEntity	creakingInfo	Lcom/mojang/datafixers/util/Either;
+# 26.2: expose CombatTracker#lastDamageTime for the Paper CombatTracker API
+accessible	field	net/minecraft/world/damagesource/CombatTracker	lastDamageTime	I
+# 26.2: expose SulfurCube fuse setter for the Bukkit SulfurCube API
+accessible	method	net/minecraft/world/entity/monster/cubemob/SulfurCube	setFuse	(I)V

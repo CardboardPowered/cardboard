@@ -239,7 +239,7 @@ import java.util.logging.Logger;
 public class CraftServer extends CardboardAbstractServer implements Server {
 
     public final String serverName = "Cardboard";
-    public final String bukkitVersion = "26.1.2"; // "1.21.11-R0.1-SNAPSHOT"; // "1.21.10-R0.1-SNAPSHOT"; // "1.21.8-R0.1-SNAPSHOT"; // "1.21.1-R0.1-SNAPSHOT";
+    public final String bukkitVersion = "26.2"; // "26.1.2"; // "1.21.11-R0.1-SNAPSHOT"; // "1.21.10-R0.1-SNAPSHOT"; // "1.21.8-R0.1-SNAPSHOT"; // "1.21.1-R0.1-SNAPSHOT";
 
     private final Logger logger = BukkitLogger.getLogger();
 
@@ -1008,7 +1008,13 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 	public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
 		if(sender instanceof Entity) {
 			ServerLevel world = (ServerLevel) ((CraftEntity) sender).getHandle().level();
-			CommandSourceStack source = ((CraftEntity) sender).getHandle().createCommandSourceStackForNameResolution(world);
+			// A name-resolution source discards all command feedback, so commands whose
+			// only result is text (/list, /help) appeared to do nothing. Players get a
+			// real source that routes success/failure back to them.
+			net.minecraft.world.entity.Entity handle = ((CraftEntity) sender).getHandle();
+			CommandSourceStack source = (handle instanceof net.minecraft.server.level.ServerPlayer serverPlayer)
+					? serverPlayer.createCommandSourceStack()
+					: handle.createCommandSourceStackForNameResolution(world);
 
 			try {
 				String theCommand;
@@ -2036,9 +2042,14 @@ public class CraftServer extends CardboardAbstractServer implements Server {
         return null;
     }
 
+    /** Bukkit's stock permission-denied text, overridable via bukkit.yml. */
+    private static final String DEFAULT_PERMISSION_MESSAGE =
+            "I'm sorry, but you do not have permission to perform this command. "
+            + "Please contact the server administrators if you believe that this is in error.";
+
     @Override
     public String getPermissionMessage() {
-        return "No Permission";
+        return this.configuration.getString("settings.permissions-message", DEFAULT_PERMISSION_MESSAGE);
     }
 
     @Override
@@ -2347,8 +2358,8 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 
 	@Override
 	public @NotNull Component permissionMessage() {
-		// TODO Auto-generated method stub
-		return Component.text("todo: permissionMessage");
+		return net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection()
+				.deserialize(this.getPermissionMessage());
 	}
 
 	@Override

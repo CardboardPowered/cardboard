@@ -11,7 +11,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 
 public abstract class CardboardAbstractServer implements org.bukkit.Server {
 
-	public static final String API_VERSION = "26.1.2";
+	public static final String API_VERSION = "26.2";
 
 	public final String serverName = "Cardboard";
 	

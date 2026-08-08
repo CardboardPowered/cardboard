@@ -12,6 +12,7 @@ import org.cardboardpowered.bridge.server.level.ServerLevelBridge;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -38,6 +39,10 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
         }
     }
 
+    @Unique
+    private static final java.util.concurrent.atomic.AtomicBoolean cardboard$warnedUnknownTarget =
+            new java.util.concurrent.atomic.AtomicBoolean(false);
+
     @Override
     public boolean cardboard$setTarget(@Nullable LivingEntity target, EntityTargetEvent.@Nullable TargetReason reason) {
         if (this.getTarget() == target) {
@@ -47,8 +52,11 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
             if (reason == EntityTargetEvent.TargetReason.UNKNOWN && this.getTarget() != null && target == null) {
                 reason = this.getTarget().isAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
             }
-            if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
-                ((ServerLevelBridge)this.level()).getCraftServer().getLogger().log(java.util.logging.Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
+            if (reason == EntityTargetEvent.TargetReason.UNKNOWN && cardboard$warnedUnknownTarget.compareAndSet(false, true)) {
+                // Fires on every generic setTarget call, i.e. constantly once mobs are active.
+                // Report it once per run so the signal survives without flooding the log.
+                ((ServerLevelBridge)this.level()).getCraftServer().getLogger().log(java.util.logging.Level.WARNING,
+                        "Unknown target reason, please report on the issue tracker (further occurrences suppressed)", new Exception());
             }
             CraftLivingEntity ctarget = null;
             if (target != null) {

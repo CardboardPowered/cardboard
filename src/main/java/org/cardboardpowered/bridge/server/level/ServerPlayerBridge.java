@@ -24,6 +24,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
@@ -79,7 +80,7 @@ public interface ServerPlayerBridge extends EntityBridge {
         if (block instanceof RespawnAnchorBlock
                 && (flag || blockState.getValue(RespawnAnchorBlock.CHARGE) > 0)
                 && RespawnAnchorBlock.canSetSpawn(level, blockPos)) {
-            Optional<Vec3> optional = RespawnAnchorBlock.findStandUpPosition(EntityType.PLAYER, level, blockPos);
+            Optional<Vec3> optional = RespawnAnchorBlock.findStandUpPosition(EntityTypes.PLAYER, level, blockPos);
             Runnable consumeAnchorCharge = null; // Paper - Fix SPIGOT-5989 (don't use charge until after respawn event)
             if (!flag && useCharge && optional.isPresent()) {
                 consumeAnchorCharge = () -> level.setBlock(blockPos, blockState.setValue(RespawnAnchorBlock.CHARGE, blockState.getValue(RespawnAnchorBlock.CHARGE) - 1), Block.UPDATE_ALL); // Paper - Fix SPIGOT-5989 (don't use charge until after respawn event)
@@ -88,7 +89,7 @@ public interface ServerPlayerBridge extends EntityBridge {
 
             return optional.map(pos -> ServerPlayer_RespawnPosAngle.of(pos, blockPos, 0.0F, false, true, finalConsumeAnchorCharge)); // Paper - Fix SPIGOT-5989 (don't use charge until after respawn event)
         } else if (block instanceof BedBlock && level.environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, blockPos).canSetSpawn(level)) {
-            return BedBlock.findStandUpPosition(EntityType.PLAYER, level, blockPos, blockState.getValue(BedBlock.FACING), yaw)
+            return BedBlock.findStandUpPosition(EntityTypes.PLAYER, level, blockPos, blockState.getValue(BedBlock.FACING), yaw)
                     .map(pos -> ServerPlayer_RespawnPosAngle.of(pos, blockPos, 0.0F, true, false, null)); // Paper - Fix SPIGOT-5989
         } else if (!flag) {
             return Optional.empty();

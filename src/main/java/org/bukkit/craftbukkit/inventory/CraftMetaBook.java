@@ -240,46 +240,21 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta, WritableBo
         this.pages = pages.subList(0, Math.min(MAX_PAGES, pages.size())).stream().map(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection()::serialize).collect(java.util.stream.Collectors.toList());
     }
 
-    static class CraftMetaBookBuilder implements BookMetaBuilder {
-        protected final List<net.kyori.adventure.text.Component> pages = new ArrayList<>();
-
-        @Override
-        public BookMetaBuilder title(net.kyori.adventure.text.Component title) {
-            return this;
-        }
-
-        @Override
-        public BookMetaBuilder author(net.kyori.adventure.text.Component author) {
-            return this;
-        }
-
-        @Override
-        public BookMetaBuilder addPage(net.kyori.adventure.text.Component page) {
-            this.pages.add(page);
-            return this;
-        }
-
-        @Override
-        public BookMetaBuilder pages(net.kyori.adventure.text.Component... pages) {
-            java.util.Collections.addAll(this.pages, pages);
-            return this;
-        }
-
-        @Override
-        public BookMetaBuilder pages(java.util.Collection<net.kyori.adventure.text.Component> pages) {
-            this.pages.addAll(pages);
-            return this;
-        }
-
-        @Override
-        public BookMeta build() {
-            return new CraftMetaBook(this.pages);
-        }
-    }
-
+    // 26.2: Paper removed BookMetaBuilder (Adventure 5 replaced it with BookLike/Book.Builder).
     @Override
-    public BookMetaBuilder toBuilder() {
-        return new CraftMetaBookBuilder();
+    public net.kyori.adventure.inventory.Book asBook() {
+        net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer ls =
+                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection();
+        java.util.List<net.kyori.adventure.text.Component> bookPages = new ArrayList<>();
+        if (this.pages != null) {
+            for (String page : this.pages) {
+                bookPages.add(ls.deserialize(page == null ? "" : page));
+            }
+        }
+        return net.kyori.adventure.inventory.Book.book(
+                net.kyori.adventure.text.Component.empty(),
+                net.kyori.adventure.text.Component.empty(),
+                bookPages);
     }
 
     @Override

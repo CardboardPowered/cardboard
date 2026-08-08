@@ -245,4 +245,11 @@ public final class PaperLevelOverrides extends SavedData implements ServerLevelD
             return new RespawnData(respawnData.pos(), respawnData.yaw(), respawnData.pitch()).normalized();
         }
     }
+
+    // 26.2: new on ServerLevelData
+    @Override
+    public void setAllowCommands(boolean allowCommands) {
+        this.rootDataOrThrow().setAllowCommands(allowCommands);
+    }
+
 }

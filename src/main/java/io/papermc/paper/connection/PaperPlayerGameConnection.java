@@ -51,4 +51,12 @@ public class PaperPlayerGameConnection extends PaperCommonConnection<ServerGameP
 		return getPlayer().isConnected();
 	}
 
+
+    // 26.2: new on PlayerCommonConnection
+    @Override
+    public String getClientBrandName() {
+        // captured from the minecraft:brand custom payload by ServerCommonPacketListenerImplMixin_Brand
+        return ((org.cardboardpowered.bridge.server.network.ClientBrandBridge) this.handle).cardboard_getClientBrand();
+    }
+
 }

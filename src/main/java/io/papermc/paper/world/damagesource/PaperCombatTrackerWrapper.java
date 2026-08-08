@@ -113,4 +113,11 @@ public record PaperCombatTrackerWrapper(net.minecraft.world.damagesource.CombatT
         return fallLocationType;
     }
 
+
+    // 26.2: new on CombatTracker
+    @Override
+    public int getLastDamageTime() {
+        return this.handle.lastDamageTime;
+    }
+
 }

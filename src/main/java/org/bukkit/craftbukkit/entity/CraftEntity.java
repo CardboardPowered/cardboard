@@ -267,6 +267,14 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return ((LevelBridge)this.entity.level()).cardboard$getWorld();
     }
 
+    // 26.2: Paper added an Angle-based overload supporting relative rotation
+    @Override
+    public void setRotation(io.papermc.paper.math.Angle yaw, io.papermc.paper.math.Angle pitch) {
+        float y = yaw.relative() ? this.getHandle().getYRot() + yaw.degrees() : yaw.degrees();
+        float p = pitch.relative() ? this.getHandle().getXRot() + pitch.degrees() : pitch.degrees();
+        this.setRotation(y, p);
+    }
+
     @Override
     public void setRotation(float yaw, float pitch) {
         NumberConversions.checkFinite(pitch, "pitch not finite");
@@ -1036,7 +1044,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             final TagValueOutput output = TagValueOutput.createWithContext(problemReporter, level.registryAccess());
             this.getHandle().saveAsPassenger(output);//, false, true, true); // TODO
 
-            return net.minecraft.world.entity.EntityType.loadEntityRecursive(output.buildResult(), level, EntitySpawnReason.LOAD, EntityProcessor.NOP);
+            return net.minecraft.world.entity.EntityType.loadEntityRecursive(output.buildResult(), level, new net.minecraft.world.entity.EntitySpawnRequest(EntitySpawnReason.LOAD, false), EntityProcessor.NOP);
         }
     }
 
@@ -1343,6 +1351,40 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     @Override
     public boolean hasData(final @NotNull DataComponentType type) {
         return this.entity.get(io.papermc.paper.datacomponent.PaperDataComponentType.bukkitToMinecraft(type)) != null;
+    }
+
+    // 26.2: Paper's Entity now extends adventure Sound.Source.Provider
+    @Override
+    public net.kyori.adventure.sound.Sound.Source soundSource() {
+        return net.kyori.adventure.sound.Sound.Source.NAMES
+                .valueOr(this.entity.getSoundSource().getName(), net.kyori.adventure.sound.Sound.Source.NEUTRAL);
+    }
+
+    // 26.2: newly abstract on the Paper Entity interface
+    @Override
+    public org.bukkit.SoundCategory getSoundCategory() {
+        // SoundSource and SoundCategory share their constant names
+        return org.bukkit.SoundCategory.valueOf(this.entity.getSoundSource().name());
+    }
+
+    @Override
+    public io.papermc.paper.entity.RemovalReason getRemovalReason() {
+        final net.minecraft.world.entity.Entity.RemovalReason reason = this.entity.getRemovalReason();
+        // both enums declare the same constants; null while the entity is still alive
+        return reason == null ? null : io.papermc.paper.entity.RemovalReason.valueOf(reason.name());
+    }
+
+    @Override
+    public org.bukkit.event.entity.EntityRemoveEvent.Cause getRemoveEventCause() {
+        final net.minecraft.world.entity.Entity.RemovalReason reason = this.entity.getRemovalReason();
+        if (reason == null) return null;
+        return switch (reason) {
+            case KILLED -> org.bukkit.event.entity.EntityRemoveEvent.Cause.DEATH;
+            case DISCARDED -> org.bukkit.event.entity.EntityRemoveEvent.Cause.DISCARD;
+            case UNLOADED_TO_CHUNK -> org.bukkit.event.entity.EntityRemoveEvent.Cause.UNLOAD;
+            case UNLOADED_WITH_PLAYER, CHANGED_DIMENSION ->
+                    org.bukkit.event.entity.EntityRemoveEvent.Cause.PLAYER_QUIT;
+        };
     }
 
 }
