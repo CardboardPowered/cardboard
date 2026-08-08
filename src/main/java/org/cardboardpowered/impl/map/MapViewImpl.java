@@ -13,6 +13,7 @@ import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
 import org.cardboardpowered.bridge.world.level.LevelBridge;
+import org.cardboardpowered.bridge.world.level.saveddata.maps.MapItemSavedDataBridge;
 
 public final class MapViewImpl implements MapView {
 
@@ -28,14 +29,9 @@ public final class MapViewImpl implements MapView {
 
     @Override
     public int getId() {
-        String text = worldMap.toString();//// TODO: 1.17ify //.getId();
-        if (text.startsWith("map_")) {
-            try {
-                return Integer.parseInt(text.substring("map_".length()));
-            } catch (NumberFormatException ex) {
-                throw new IllegalStateException("Map has non-numeric ID");
-            }
-        } else throw new IllegalStateException("Map has invalid ID");
+        int id = ((MapItemSavedDataBridge) worldMap).getMapIdBF();
+        if (id < 0) throw new IllegalStateException("Map has no ID assigned");
+        return id;
     }
 
     @Override
