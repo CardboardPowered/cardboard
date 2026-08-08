@@ -32,6 +32,8 @@ public class MapItemSavedDataMixin implements MapItemSavedDataBridge {
 
     public MapViewImpl mapView;
 
+    public int mapIdBF = -1;
+
     //@Inject(at = @At("TAIL"), method="<init>*")
     //public void setMapView(String s, CallbackInfo ci) {
     //    mapView = new MapViewImpl((MapState)(Object)this);
@@ -45,7 +47,22 @@ public class MapItemSavedDataMixin implements MapItemSavedDataBridge {
 
     @Override
     public MapViewImpl getMapViewBF() {
+        // Maps deserialized from disk do not go through the constructor injected above,
+        // so build the view on first use instead of handing back null.
+        if (mapView == null) {
+            mapView = new MapViewImpl((MapItemSavedData)(Object)this);
+        }
         return mapView;
+    }
+
+    @Override
+    public int getMapIdBF() {
+        return mapIdBF;
+    }
+
+    @Override
+    public void setMapIdBF(int id) {
+        this.mapIdBF = id;
     }
 
 }

@@ -18,6 +18,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.cardboardpowered.bridge.world.level.saveddata.maps.MapItemSavedDataBridge;
+import net.minecraft.world.level.saveddata.maps.MapId;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import org.cardboardpowered.CardboardMod;
 import com.javazilla.bukkitfabric.Utils;
@@ -73,6 +77,23 @@ public class ServerLevelMixin extends LevelMixin implements ServerLevelBridge {
         
         // TODO: add ServerWorld argument to LoggingChunkLoadProgress constructor
         this.cardboard$levelLoadListener = new LoggingLevelLoadListener(false);
+    }
+
+    /**
+     * Vanilla stores the map id in the saved-data key, not on the data object, but the
+     * Bukkit MapView API exposes it. Stamp it on wherever map data enters or leaves the world.
+     */
+    @Inject(at = @At("RETURN"), method = "getMapData")
+    public void cardboard$stampMapId(MapId id, CallbackInfoReturnable<MapItemSavedData> cir) {
+        MapItemSavedData data = cir.getReturnValue();
+        if (data != null) {
+            ((MapItemSavedDataBridge) data).setMapIdBF(id.id());
+        }
+    }
+
+    @Inject(at = @At("HEAD"), method = "setMapData")
+    public void cardboard$stampMapIdOnStore(MapId id, MapItemSavedData data, CallbackInfo ci) {
+        ((MapItemSavedDataBridge) data).setMapIdBF(id.id());
     }
 
     @Inject(at = @At("HEAD"), method = "save")

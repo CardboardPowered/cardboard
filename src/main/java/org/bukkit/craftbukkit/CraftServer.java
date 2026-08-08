@@ -99,7 +99,8 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -784,9 +785,16 @@ public class CraftServer extends CardboardAbstractServer implements Server {
     public MapView createMap(World world) {
         Validate.notNull(world, "World cannot be null");
 
-        net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(Items.MAP, 1);
-        // MapState worldmap = FilledMapItem.getOrCreateMapState(stack, ((CraftWorld) world).getHandle());
-        MapItemSavedData worldmap = MapItem.getSavedData(stack, ((CraftWorld) world).getHandle());
+        ServerLevel worldServer = ((CraftWorld) world).getHandle();
+
+        // An empty MAP item carries no map id, so it has no saved data to look up.
+        // Allocate a fresh map first, then read the data back off the filled stack.
+        net.minecraft.world.item.ItemStack stack = MapItem.create(worldServer, 0, 0, MapView.Scale.FAR.getValue(), false, false);
+        MapId mapId = stack.get(DataComponents.MAP_ID);
+        MapItemSavedData worldmap = (mapId == null) ? null : MapItem.getSavedData(mapId, worldServer);
+        if (worldmap == null) throw new IllegalStateException("Could not allocate a new map in world " + world.getName());
+
+        ((MapItemSavedDataBridge)worldmap).setMapIdBF(mapId.id());
         return ((MapItemSavedDataBridge)worldmap).getMapViewBF();
     }
 
@@ -1211,6 +1219,8 @@ public class CraftServer extends CardboardAbstractServer implements Server {
         // MapState worldmap = server.getWorld(net.minecraft.world.World.OVERWORLD).getMapState("map_" + arg0);
         if (worldmap == null)
             return null;
+
+        ((MapItemSavedDataBridge)worldmap).setMapIdBF(arg0);
         return ((MapItemSavedDataBridge)worldmap).getMapViewBF();
     }
 
