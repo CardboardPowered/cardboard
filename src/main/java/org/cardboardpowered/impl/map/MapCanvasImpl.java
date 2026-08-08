@@ -10,6 +10,7 @@ import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapFont;
 import org.bukkit.map.MapFont.CharacterSprite;
 import org.bukkit.map.MapPalette;
+import org.cardboardpowered.mixin.world.level.saveddata.maps.MapItemSavedDataAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +51,9 @@ public class MapCanvasImpl implements MapCanvas {
             return;
         if (buffer[y * 128 + x] != color) {
             buffer[y * 128 + x] = color;
-            mapView.worldMap.setDirty();// TODO .markDirty(x, y);
+            // Marks the pixel dirty for every holder as well as the save file, so the
+            // change actually reaches the client on the next map update packet.
+            ((MapItemSavedDataAccessor) mapView.worldMap).cardboard$setColorsDirty(x, y);
         }
     }
 
