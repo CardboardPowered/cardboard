@@ -123,6 +123,7 @@
     "world.inventory.BrewingStandMenuMixin",
     "world.inventory.ChestMenuMixin",
     "world.inventory.ContainerLevelAccessMixin",
+    "world.inventory.CrafterMenuMixin",
     "world.inventory.CraftingMenuMixin",
     "world.inventory.DispenserMenuMixin",
     "world.inventory.EnchantmentMenuMixin",

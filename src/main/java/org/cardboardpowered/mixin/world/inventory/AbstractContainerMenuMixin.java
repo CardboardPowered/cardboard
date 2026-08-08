@@ -72,8 +72,10 @@ public abstract class AbstractContainerMenuMixin implements AbstractContainerMen
     public void transferTo(AbstractContainerMenu other, CraftHumanEntity player) {
         InventoryView source = this.getBukkitView(), destination = ((AbstractContainerMenuBridge)other).getBukkitView();
 
-        if ((source.getTopInventory() instanceof CustomInventoryView) || source.getBottomInventory() instanceof CustomInventoryView ||
-                destination.getTopInventory() instanceof CustomInventoryView || destination.getBottomInventory() instanceof CustomInventoryView) {
+        // Fallback views (CustomInventoryView) have no player attached, so their bottom
+        // inventory can not be resolved - skip them instead of throwing a NullPointerException.
+        if (source instanceof CustomInventoryView || destination instanceof CustomInventoryView
+                || source.getPlayer() == null || destination.getPlayer() == null) {
             return;
         }
 
