@@ -98,7 +98,9 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
 
         boolean flag = get().lastHurtByPlayerMemoryTime > 0;
         this.dropEquipment(world);
-        if (!get().isBaby() && world.getGameRules().get(GameRules.MOB_DROPS)) {
+        // Ask the entity itself: LivingEntity's own answer excludes babies, but Monster overrides
+        // that away, so inlining the base check silently drops all loot from every baby hostile.
+        if (this.shouldDropLoot(world)) {
             this.dropFromLootTable(world, damagesource, flag);
             this.dropCustomDeathLoot((ServerLevel) world, damagesource, flag);
         }
@@ -148,6 +150,9 @@ public abstract class LivingEntityMixin extends EntityMixin implements LivingEnt
     public void pushEffectCause(EntityPotionEffectEvent.Cause cause) {
         bukkitCause = cause;
     }
+
+    @Shadow
+    protected abstract boolean shouldDropLoot(ServerLevel world);
 
     @Shadow
     public void dropFromLootTable(ServerLevel world, DamageSource damagesource, boolean flag) {
