@@ -24,7 +24,11 @@ public interface CommandSourceBridge {
     	}
     	
     	CommandSource output = source.source;
-    	
+
+    	// The console has no entity behind it, so it never reached the branches above.
+    	if (output instanceof net.minecraft.server.MinecraftServer)
+    		return org.bukkit.craftbukkit.CraftServer.INSTANCE.getConsoleSender();
+
     	// Memic Default Error
     	String msg1 = " does not define or inherit an implementation of the resolved method 'org.bukkit.command.CommandSender";
     	String msg2 = " getBukkitSender(net.minecraft.class_2168/ServerCommandSource)' of interface IMixinCommandOutput.";

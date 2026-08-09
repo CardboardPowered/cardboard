@@ -435,6 +435,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
             this.commandMap.setFallbackCommands();
             
             setVanillaCommands();
+            registerPluginBrigadierCommands();
             commandMap.registerServerAliases();
             
             // Spigot end
@@ -463,6 +464,25 @@ public class CraftServer extends CardboardAbstractServer implements Server {
         }
     }
 
+
+    private boolean brigadierCommandsRegistered = false;
+
+    /**
+     * Lets plugins register Brigadier commands through the Paper lifecycle API. Runs once the
+     * vanilla commands are in the command map but before it is synced, so the commands plugins add
+     * here end up in the rebuilt dispatcher along with everything else.
+     */
+    private void registerPluginBrigadierCommands() {
+        io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent.Cause cause = this.brigadierCommandsRegistered
+                ? io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent.Cause.RELOAD
+                : io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent.Cause.INITIAL;
+        this.brigadierCommandsRegistered = true;
+
+        io.papermc.paper.plugin.lifecycle.event.types.CardboardLifecycleEventRunner.fire(
+                io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents.COMMANDS,
+                new org.cardboardpowered.impl.command.CardboardCommandsEvent(
+                        new org.cardboardpowered.impl.command.CardboardCommands(this.vanillaCommandManager), cause));
+    }
 
     @SuppressWarnings("unchecked")
     private void syncCommands() {

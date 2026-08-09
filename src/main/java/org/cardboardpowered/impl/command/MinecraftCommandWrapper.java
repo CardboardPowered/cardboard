@@ -64,8 +64,11 @@ public final class MinecraftCommandWrapper extends BukkitCommand {
     public static CommandSourceStack getCommandSource(CommandSender s) {
         if (s instanceof CraftPlayer)
             return ((CraftPlayer)s).getHandle().createCommandSourceStack();
-        if (s instanceof CraftEntity)
-            return ((CraftEntity)s).getHandle().createCommandSourceStackForNameResolution( (ServerLevel) ((CraftEntity)s).getWorld() );
+        if (s instanceof CraftEntity) {
+            // getWorld() is the Bukkit world, which is not a ServerLevel - take it off the handle.
+            net.minecraft.world.entity.Entity handle = ((CraftEntity) s).getHandle();
+            return handle.createCommandSourceStackForNameResolution((ServerLevel) handle.level());
+        }
         if (s instanceof ConsoleCommandSender)
             return ((CraftServer) s.getServer()).getServer().createCommandSourceStack();
 
