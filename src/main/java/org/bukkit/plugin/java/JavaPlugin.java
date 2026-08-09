@@ -59,6 +59,18 @@ public abstract class JavaPlugin extends PluginBase {
     	return this.description;
     }
 
+    private io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager<org.bukkit.plugin.Plugin> lifecycleEventManager;
+    private boolean allowsLifecycleRegistration = false;
+
+    @Override
+    public final io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager<org.bukkit.plugin.Plugin> getLifecycleManager() {
+        if (this.lifecycleEventManager == null)
+            this.lifecycleEventManager = new io.papermc.paper.plugin.lifecycle.event.PaperLifecycleEventManager<>(
+                    this, () -> !this.isEnabled || this.allowsLifecycleRegistration);
+
+        return this.lifecycleEventManager;
+    }
+
     protected JavaPlugin(final JavaPluginLoader loader, final PluginDescriptionFile description, final File dataFolder, final File file) {
         final ClassLoader classLoader = this.getClass().getClassLoader();
         if (classLoader instanceof PluginClassLoader)
@@ -260,8 +272,18 @@ public abstract class JavaPlugin extends PluginBase {
             isEnabled = enabled;
 
             if (isEnabled) {
-                onEnable();
-            } else onDisable();
+                // Lifecycle handlers may only be registered while loading or enabling, matching Paper.
+                this.allowsLifecycleRegistration = true;
+                try {
+                    onEnable();
+                } finally {
+                    this.allowsLifecycleRegistration = false;
+                }
+            } else {
+                // Drop this plugin's lifecycle handlers so a reload does not run them twice.
+                io.papermc.paper.plugin.lifecycle.event.types.CardboardLifecycleEventRunner.removeOwner(this);
+                onDisable();
+            }
         }
     }
 
