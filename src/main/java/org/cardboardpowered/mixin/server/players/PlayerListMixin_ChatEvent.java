@@ -64,24 +64,26 @@ public class PlayerListMixin_ChatEvent {
      */
     @Overwrite
     public void broadcastChatMessage(PlayerChatMessage message, Predicate<ServerPlayer> shouldSendFiltered, ServerPlayer sender/*, MessageSourceProfile sourceProfile*/, ChatType.Bound params) {
-        CardboardMod.LOGGER.info("BROADCAST DEBUG: " + message.decoratedContent().getString());
-        
     	boolean bl = this.verifyChatTrusted(message);
-        this.server.logChatMessage(message.decoratedContent(), params, null);
-        OutgoingChatMessage sentMessage = OutgoingChatMessage.create(message);
-        boolean bl2 = message.isFullyFiltered();
-        boolean bl3 = false;
-        /*for (ServerPlayerEntity serverPlayerEntity : this.players) {
-            boolean bl4 = shouldSendFiltered.test(serverPlayerEntity);
-            serverPlayerEntity.sendChatMessage(sentMessage, bl4, params);
-            if (sender == serverPlayerEntity) continue;
-            bl3 |= bl2 && bl4;
+        this.server.logChatMessage(message.decoratedContent(), params, bl ? null : "Not Secure");
+
+        // Only real player chat goes through the Bukkit chat events. /say, /me, /msg, command
+        // blocks and mod broadcasts have no chat sender and must keep vanilla delivery, otherwise
+        // they either NPE below or get reformatted with the chat format.
+        if (sender == null || !params.chatType().is(ChatType.CHAT)) {
+            OutgoingChatMessage vanillaMessage = OutgoingChatMessage.create(message);
+            boolean fullyFiltered = message.isFullyFiltered();
+            boolean notifySender = false;
+            for (ServerPlayer recipient : this.players) {
+                boolean filtered = shouldSendFiltered.test(recipient);
+                recipient.sendChatMessage(vanillaMessage, filtered, params);
+                if (sender == recipient) continue;
+                notifySender |= fullyFiltered && filtered;
+            }
+            if (notifySender && sender != null) sender.sendSystemMessage(PlayerList.CHAT_FILTERED_FULL);
+            return;
         }
-        if (bl3 && sender != null) {
-            sender.sendMessage(PlayerManager.FILTERED_FULL_TEXT);
-        }*/
-        
-        
+
         String s = message.decoratedContent().getString();
 		boolean async = false; // TODO: allow async
 
@@ -89,7 +91,6 @@ public class PlayerListMixin_ChatEvent {
         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(CraftServer.server));
         Bukkit.getServer().getPluginManager().callEvent(event);
 
-        CardboardMod.LOGGER.info("Reg: " + PlayerChatEvent.getHandlerList().getRegisteredListeners().length);
         if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0) {
             // Evil plugins still listening to deprecated event
             final PlayerChatEvent queueEvent = new PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
