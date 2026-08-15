@@ -124,19 +124,32 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
     private float lastYaw = Float.MAX_VALUE;
     private boolean justTeleported = false;
 
+    /**
+     * CraftBukkit's guard against the quit handling running more than once. disconnect() calls
+     * onDisconnect() itself so the quit event fires instantly, and then schedules
+     * handleDisconnection(), which calls onDisconnect() a second time. Without this flag a single
+     * kick or keep-alive timeout produced two "lost connection" / "left the game" rounds followed
+     * by Connection's "handleDisconnection() called twice" warning.
+     */
+    @Unique
+    private boolean cardboard$processedDisconnect;
+
     @Override
     public boolean isDisconnected() {
 
-    	return !connection.isConnected();
+    	return !connection.isConnected() || this.cardboard$processedDisconnect;
 
     	// return player.isDisconnected(); // TODO
     }
-    
-    /*
-    public final boolean isDisconnected1() {
-        return !this.player.joining && !this.connection.isOpen() || this.processedDisconnect;
+
+    @Inject(method = "onDisconnect", at = @At("HEAD"), cancellable = true)
+    private void cardboard$guardDoubleDisconnect(DisconnectionDetails details, CallbackInfo ci) {
+        if (this.cardboard$processedDisconnect) {
+            ci.cancel();
+        } else {
+            this.cardboard$processedDisconnect = true;
+        }
     }
-    */
 
     /**
      * @author BukkitFabric
@@ -144,6 +157,8 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
      */
     @Override
     public void disconnect(Component reason) {
+        if (this.cardboard$processedDisconnect) return;
+
         String leaveMessage = ChatFormatting.YELLOW +
                 "" + this.player.getDisplayName() + " left the game.";
 
