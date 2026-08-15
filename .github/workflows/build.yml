@@ -4,27 +4,47 @@
 # against bad commits.
 
 name: build
-on: [pull_request, push]
+on: 
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'docs/**'
+  push:
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'docs/**'
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v6
-      - name: setup jdk
-        uses: actions/setup-java@v5
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: setup jdk and cache gradle
+        uses: actions/setup-java@v4
         with:
           java-version: '25'
           distribution: 'microsoft'
+          cache: 'gradle'
+
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
+
       - name: build
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon --build-cache
+
       - name: capture build artifacts
-        uses: actions/upload-artifact@v7
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
           name: Artifacts
-          path: build/libs/
+          path: build/libs/*.jar
+          if-no-files-found: ignore
