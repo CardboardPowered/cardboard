@@ -7,6 +7,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.craftbukkit.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.cardboardpowered.bridge.world.entity.DamageEventBridge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,12 +19,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Fires EntityDamageEvent / EntityDamageByEntityEvent so plugins can cancel or rescale damage.
  */
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin_DamageEvent {
+public class LivingEntityMixin_DamageEvent implements DamageEventBridge {
 
     @Shadow protected float lastHurt;
 
     // Set while re-entering hurtServer with the damage the event asked for, so the event fires once.
     @Unique private boolean cardboard$applyingEventDamage = false;
+
+    @Override
+    public boolean cardboard$isApplyingEventDamage() {
+        return this.cardboard$applyingEventDamage;
+    }
+
+    @Override
+    public void cardboard$setApplyingEventDamage(boolean applying) {
+        this.cardboard$applyingEventDamage = applying;
+    }
 
     @Inject(at = @At("HEAD"), method = "hurtServer", cancellable = true)
     private void cardboard_doEntityDamageEvent(ServerLevel world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
