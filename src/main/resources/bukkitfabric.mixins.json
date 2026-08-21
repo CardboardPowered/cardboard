@@ -83,6 +83,7 @@
     "world.entity.ExperienceOrbMixin",
     "world.entity.ItemBasedSteeringMixin",
     "world.entity.LivingEntityMixin",
+    "world.entity.LivingEntityMixin_DamageEvent",
     "world.entity.MobMixin",
     "world.entity.ai.attributes.AttributeMapMixin",
     "world.entity.ai.behavior.AssignProfessionFromJobSiteMixin",
