@@ -30,6 +30,7 @@ import org.cardboardpowered.CardboardMod;
 import org.cardboardpowered.extras.PlayerList_LoginResult;
 import org.cardboardpowered.BukkitLogger;
 import org.cardboardpowered.bridge.world.entity.EntityBridge;
+import org.cardboardpowered.bridge.world.damagesource.DamageSourceBridge;
 import org.cardboardpowered.bridge.world.ContainerBridge;
 import org.cardboardpowered.bridge.world.entity.LivingEntityBridge;
 import org.cardboardpowered.bridge.server.MinecraftServerBridge;
@@ -56,6 +57,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
@@ -945,6 +947,75 @@ public class CraftEventFactory {
     	PlayerExpCooldownChangeEvent event = new PlayerExpCooldownChangeEvent(player, newCooldown, changeReason);
     	Bukkit.getPluginManager().callEvent(event);
     	return event;
+    }
+
+    /**
+     * Fires the Bukkit damage event for a Minecraft damage.
+     * Becomes an {@link EntityDamageByEntityEvent} whenever something directly dealt the damage,
+     * so a projectile hit reports the projectile as the damager, like Spigot does.
+     *
+     * The caller must honour the returned event: skip the damage when it is cancelled, and apply
+     * {@link EntityDamageEvent#getDamage()} instead of the amount it was handed.
+     */
+    public static EntityDamageEvent callEntityDamageEvent(Entity victim, DamageSource source, float amount) {
+        CraftEntity damagee = ((EntityBridge) victim).getBukkitEntity();
+        org.bukkit.damage.DamageSource bukkitSource = new CraftDamageSource(source);
+        EntityDamageEvent.DamageCause cause = getDamageCause(source);
+
+        Entity damager = source.getDirectEntity();
+        EntityDamageEvent event = (damager == null)
+                ? new EntityDamageEvent(damagee, cause, bukkitSource, amount)
+                : new EntityDamageByEntityEvent(((EntityBridge) damager).getBukkitEntity(), damagee, cause, bukkitSource, amount);
+
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
+    public static EntityDamageEvent.DamageCause getDamageCause(DamageSource source) {
+        if (source.is(DamageTypes.IN_FIRE)) return EntityDamageEvent.DamageCause.FIRE;
+        if (source.is(DamageTypes.CAMPFIRE)) return EntityDamageEvent.DamageCause.CAMPFIRE;
+        if (source.is(DamageTypes.ON_FIRE)) return EntityDamageEvent.DamageCause.FIRE_TICK;
+        if (source.is(DamageTypes.LAVA)) return EntityDamageEvent.DamageCause.LAVA;
+        if (source.is(DamageTypes.HOT_FLOOR)) return EntityDamageEvent.DamageCause.HOT_FLOOR;
+        if (source.is(DamageTypes.LIGHTNING_BOLT)) return EntityDamageEvent.DamageCause.LIGHTNING;
+        if (source.is(DamageTypes.IN_WALL)) return EntityDamageEvent.DamageCause.SUFFOCATION;
+        if (source.is(DamageTypes.CRAMMING)) return EntityDamageEvent.DamageCause.CRAMMING;
+        if (source.is(DamageTypes.DROWN)) return EntityDamageEvent.DamageCause.DROWNING;
+        if (source.is(DamageTypes.STARVE)) return EntityDamageEvent.DamageCause.STARVATION;
+        if (source.is(DamageTypes.CACTUS) || source.is(DamageTypes.SWEET_BERRY_BUSH) || source.is(DamageTypes.STALAGMITE))
+            return EntityDamageEvent.DamageCause.CONTACT;
+        if (source.is(DamageTypes.FALL) || source.is(DamageTypes.ENDER_PEARL)) return EntityDamageEvent.DamageCause.FALL;
+        if (source.is(DamageTypes.FLY_INTO_WALL)) return EntityDamageEvent.DamageCause.FLY_INTO_WALL;
+        if (source.is(DamageTypes.FELL_OUT_OF_WORLD)) return EntityDamageEvent.DamageCause.VOID;
+        if (source.is(DamageTypes.OUTSIDE_BORDER)) return EntityDamageEvent.DamageCause.WORLD_BORDER;
+        if (source.is(DamageTypes.MAGIC) || source.is(DamageTypes.INDIRECT_MAGIC)) return EntityDamageEvent.DamageCause.MAGIC;
+        if (source.is(DamageTypes.WITHER)) return EntityDamageEvent.DamageCause.WITHER;
+        if (source.is(DamageTypes.DRAGON_BREATH)) return EntityDamageEvent.DamageCause.DRAGON_BREATH;
+        if (source.is(DamageTypes.DRY_OUT)) return EntityDamageEvent.DamageCause.DRYOUT;
+        if (source.is(DamageTypes.FREEZE)) return EntityDamageEvent.DamageCause.FREEZE;
+        if (source.is(DamageTypes.FALLING_BLOCK) || source.is(DamageTypes.FALLING_ANVIL) || source.is(DamageTypes.FALLING_STALACTITE))
+            return EntityDamageEvent.DamageCause.FALLING_BLOCK;
+        if (source.is(DamageTypes.THORNS)) return EntityDamageEvent.DamageCause.THORNS;
+        if (source.is(DamageTypes.SONIC_BOOM)) return EntityDamageEvent.DamageCause.SONIC_BOOM;
+        if (source.is(DamageTypes.GENERIC_KILL)) return EntityDamageEvent.DamageCause.KILL;
+        if (source.is(DamageTypes.BAD_RESPAWN_POINT)) return EntityDamageEvent.DamageCause.BLOCK_EXPLOSION;
+        if (source.is(DamageTypes.FIREWORKS) || source.is(DamageTypes.PLAYER_EXPLOSION)) return EntityDamageEvent.DamageCause.ENTITY_EXPLOSION;
+        if (source.is(DamageTypes.EXPLOSION))
+            return (source.getEntity() == null) ? EntityDamageEvent.DamageCause.BLOCK_EXPLOSION : EntityDamageEvent.DamageCause.ENTITY_EXPLOSION;
+        if (source.is(DamageTypes.ARROW) || source.is(DamageTypes.TRIDENT) || source.is(DamageTypes.MOB_PROJECTILE)
+                || source.is(DamageTypes.SPIT) || source.is(DamageTypes.THROWN) || source.is(DamageTypes.WIND_CHARGE)
+                || source.is(DamageTypes.FIREBALL) || source.is(DamageTypes.UNATTRIBUTED_FIREBALL) || source.is(DamageTypes.WITHER_SKULL))
+            return EntityDamageEvent.DamageCause.PROJECTILE;
+        if (((DamageSourceBridge) source).isSweep_BF()) return EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK;
+        if (source.is(DamageTypes.STING) || source.is(DamageTypes.MOB_ATTACK) || source.is(DamageTypes.MOB_ATTACK_NO_AGGRO)
+                || source.is(DamageTypes.PLAYER_ATTACK) || source.is(DamageTypes.MACE_SMASH) || source.is(DamageTypes.SPEAR))
+            return EntityDamageEvent.DamageCause.ENTITY_ATTACK;
+
+        // Datapack (or otherwise unmapped) damage types: go by what actually dealt the damage.
+        if (source.getDirectEntity() != null && source.getDirectEntity() != source.getEntity())
+            return EntityDamageEvent.DamageCause.PROJECTILE;
+        if (source.getEntity() != null) return EntityDamageEvent.DamageCause.ENTITY_ATTACK;
+        return EntityDamageEvent.DamageCause.CUSTOM;
     }
 
     public static <T> CraftEventFactory.GameRuleSetResult<T> handleGameRuleSet(GameRule<T> rule, T value, ServerLevel level, @Nullable CommandSender sender) {
