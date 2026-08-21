@@ -113,6 +113,7 @@
     "world.entity.npc.villager.AbstractVillagerMixin",
     "world.entity.player.InventoryMixin",
     "world.entity.player.PlayerMixin",
+    "world.entity.player.PlayerMixin_DamageEvent",
     "world.entity.projectile.FireworkRocketEntityMixin",
     "world.entity.vehicle.minecart.AbstractMinecartContainerMixin",
     "world.entity.projectile.ProjectileMixin",

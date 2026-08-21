@@ -30,7 +30,6 @@ import org.cardboardpowered.CardboardMod;
 import org.cardboardpowered.extras.PlayerList_LoginResult;
 import org.cardboardpowered.BukkitLogger;
 import org.cardboardpowered.bridge.world.entity.EntityBridge;
-import org.cardboardpowered.bridge.world.damagesource.DamageSourceBridge;
 import org.cardboardpowered.bridge.world.ContainerBridge;
 import org.cardboardpowered.bridge.world.entity.LivingEntityBridge;
 import org.cardboardpowered.bridge.server.MinecraftServerBridge;
@@ -1006,7 +1005,6 @@ public class CraftEventFactory {
                 || source.is(DamageTypes.SPIT) || source.is(DamageTypes.THROWN) || source.is(DamageTypes.WIND_CHARGE)
                 || source.is(DamageTypes.FIREBALL) || source.is(DamageTypes.UNATTRIBUTED_FIREBALL) || source.is(DamageTypes.WITHER_SKULL))
             return EntityDamageEvent.DamageCause.PROJECTILE;
-        if (((DamageSourceBridge) source).isSweep_BF()) return EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK;
         if (source.is(DamageTypes.STING) || source.is(DamageTypes.MOB_ATTACK) || source.is(DamageTypes.MOB_ATTACK_NO_AGGRO)
                 || source.is(DamageTypes.PLAYER_ATTACK) || source.is(DamageTypes.MACE_SMASH) || source.is(DamageTypes.SPEAR))
             return EntityDamageEvent.DamageCause.ENTITY_ATTACK;
