@@ -37,15 +37,15 @@ public abstract class CompoundContainerMixin implements Container, ContainerBrid
 
     @Override
     public void onOpen(CraftHumanEntity who) {
-        this.container1.startOpen(who.getHandle());
-        this.container2.startOpen(who.getHandle());
+        ((ContainerBridge) this.container1).onOpen(who);
+        ((ContainerBridge) this.container2).onOpen(who);
         transaction.add(who);
     }
 
     @Override
     public void onClose(CraftHumanEntity who) {
-        this.container1.stopOpen(who.getHandle());
-        this.container2.stopOpen(who.getHandle());
+        ((ContainerBridge) this.container1).onClose(who);
+        ((ContainerBridge) this.container2).onClose(who);
         transaction.remove(who);
     }
 
