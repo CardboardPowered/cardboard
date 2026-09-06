@@ -99,6 +99,7 @@
     "world.entity.ai.behavior.VillagerMakeLoveMixin",
     "world.entity.ai.goal.BreakDoorGoalMixin",
     "world.entity.ai.goal.BreedGoalAccessor",
+    "world.entity.ai.goal.target.NearestAttackableTargetGoalMixin",
     "world.entity.ambient.BatMixin",
     "world.entity.animal.AnimalMixin",
     "world.entity.animal.cow.MushroomCowMixin",
