@@ -229,6 +229,7 @@
     "world.level.block.state.MixinBlockBehaviour",
     "world.level.border.WorldBorderMixin",
     "world.level.chunk.LevelChunkMixin",
+    "world.level.material.MapColorAccessor",
     "world.level.saveddata.maps.MapItemSavedDataAccessor",
     "world.level.saveddata.maps.MapItemSavedDataMixin",
     "world.level.saveddata.maps.MapItemSavedData_HoldingPlayerMixin",
