@@ -29,10 +29,28 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
         super(entityType, level);
     }
 
+    // Set by cardboard$setTargetWithReason for the duration of one setTarget call, so a goal can
+    // report why it targeted without bypassing the subclass overrides of setTarget.
+    @org.spongepowered.asm.mixin.Unique
+    private EntityTargetEvent.@Nullable TargetReason cardboard$pendingTargetReason;
+
+    @Override
+    public void cardboard$setTargetWithReason(@Nullable LivingEntity target, EntityTargetEvent.TargetReason reason) {
+        EntityTargetEvent.TargetReason previous = this.cardboard$pendingTargetReason;
+        this.cardboard$pendingTargetReason = reason;
+        try {
+            ((Mob) (Object) this).setTarget(target);
+        } finally {
+            this.cardboard$pendingTargetReason = previous;
+        }
+    }
+
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     public void setTargetCraftBukkit(LivingEntity livingEntity, CallbackInfo ci) {
         // CraftBukkit start - fire event
-        boolean set = this.cardboard$setTarget(target, EntityTargetEvent.TargetReason.UNKNOWN);
+        EntityTargetEvent.TargetReason reason = this.cardboard$pendingTargetReason;
+        this.cardboard$pendingTargetReason = null;
+        boolean set = this.cardboard$setTarget(target, reason == null ? EntityTargetEvent.TargetReason.UNKNOWN : reason);
         if (set) { // Let the other mods call their @Inject if set is false.
             ci.cancel();
         }
