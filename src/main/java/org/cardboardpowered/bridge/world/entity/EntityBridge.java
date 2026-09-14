@@ -57,4 +57,8 @@ public interface EntityBridge {
     boolean cardboard$canCollideWithBukkit(Entity entity);
 
     float cardboard$getBukkitYaw();
+
+    boolean cardboard$isPersistent();
+
+    void cardboard$setPersistent(boolean persistent);
 }
