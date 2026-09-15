@@ -1667,7 +1667,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 	}
 
 	public <T extends Entity> T spawn(Location location, Class<T> clazz, Consumer<T> function, SpawnReason reason) throws IllegalArgumentException {
-		net.minecraft.world.entity.Entity entity = createEntity_Old(location, clazz);
+		net.minecraft.world.entity.Entity entity = createEntity(location, clazz, true);
 
 		return addEntity(entity, reason, function);
 	}
@@ -2856,8 +2856,9 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 	public <T extends Entity> @NotNull T spawn(@NotNull Location location, @NotNull Class<T> clazz,
 			java.util.function.@Nullable Consumer<? super T> function, @NotNull SpawnReason reason)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-        return (T)((LivingEntity)this.spawn(location, clazz, function, reason));
+		// Keep this as super: a this.spawn(..) call with a Consumer<? super T> resolves back
+		// to this same overload rather than the org.bukkit.util.Consumer one above.
+		return super.spawn(location, clazz, function, reason);
 	}
 
 	@Override
