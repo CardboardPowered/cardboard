@@ -174,8 +174,13 @@ configurations.implementation {
 }
 
 configure([tasks.compileJava]) {
+    // -source/-target rather than --release on purpose: io.izzel.arclight.api.Unsafe has to name
+    // sun.misc.Unsafe, and --release makes javac resolve it from ct.sym, where the mandatory
+    // "internal proprietary API" warning cannot be turned off - not by -Xlint:none, not by
+    // @SuppressWarnings. -XDignore.symbol.file below does silence it, but only without --release.
+    // The toolchain is pinned to the same 25 we target, so this compiles against the same API level.
     sourceCompatibility = 25
-    options.release = 25
+    targetCompatibility = 25
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(25)
