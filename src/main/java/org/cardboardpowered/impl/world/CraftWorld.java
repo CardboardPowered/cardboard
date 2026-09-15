@@ -874,7 +874,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 	@Override
 	public Collection<Entity> getNearbyEntities(BoundingBox boundingBox, Predicate<? super Entity> filter) {
 		AABB bb = new AABB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
-		List<net.minecraft.world.entity.Entity> entityList = world.getEntities((net.minecraft.world.entity.Entity) null, bb, null);
+		List<net.minecraft.world.entity.Entity> entityList = world.getEntities((net.minecraft.world.entity.Entity) null, bb, entity -> true);
 		List<Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(entityList.size());
 
 		for(net.minecraft.world.entity.Entity entity : entityList) {
@@ -2315,7 +2315,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
 	@Override
 	public Entity getEntity(UUID arg0) {
-		return ((EntityBridge) world.getEntity(arg0)).getBukkitEntity();
+		net.minecraft.world.entity.Entity entity = world.getEntity(arg0);
+		return entity == null ? null : ((EntityBridge) entity).getBukkitEntity();
 	}
 
 	@Override
