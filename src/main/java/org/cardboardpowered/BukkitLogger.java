@@ -83,19 +83,13 @@ public class BukkitLogger extends Logger {
     @Override
     public void log(LogRecord lr) {
     	org.slf4j.event.Level level = convertLevel1(lr.getLevel());
-    	
-        if (lr.getThrown() == null) {
-        	if (this.doPrefix) {
-        		log4j.atLevel(level).log("[" + this.getName() + "] " + lr.getMessage());
-        	} else {
-        		log4j.atLevel(level).log(lr.getMessage());
-        	}
-            // log4j.log(level, lr.getMessage());
-        } else {
-        	log4j.atLevel(level).log(lr.getMessage(), lr.getThrown());
-        	// log4j.error(lr.getMessage(), lr.getThrown());;
-        	// log4j.log(level, lr.getMessage(), lr.getThrown());
-        }
+    	String message = this.doPrefix ? "[" + this.getName() + "] " + lr.getMessage() : lr.getMessage();
+
+    	org.slf4j.spi.LoggingEventBuilder builder = log4j.atLevel(level);
+    	if (lr.getThrown() != null) {
+    		builder = builder.setCause(lr.getThrown());
+    	}
+    	builder.log(message);
     }
     
     private Level convertLevel(java.util.logging.Level l, LogRecord lr) {
