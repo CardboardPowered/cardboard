@@ -23,7 +23,10 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
     public LivingEntity target;
 
     @Shadow
-    public abstract @Nullable LivingEntity getTarget();
+    public abstract @Nullable LivingEntity getTargetUnchecked();
+
+    @Shadow
+    protected abstract @Nullable LivingEntity asValidTarget(@Nullable LivingEntity target);
 
     protected MobMixin(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -32,7 +35,7 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     public void setTargetCraftBukkit(LivingEntity livingEntity, CallbackInfo ci) {
         // CraftBukkit start - fire event
-        boolean set = this.cardboard$setTarget(target, EntityTargetEvent.TargetReason.UNKNOWN);
+        boolean set = this.cardboard$setTarget(livingEntity, EntityTargetEvent.TargetReason.UNKNOWN);
         if (set) { // Let the other mods call their @Inject if set is false.
             ci.cancel();
         }
@@ -40,12 +43,16 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
 
     @Override
     public boolean cardboard$setTarget(@Nullable LivingEntity target, EntityTargetEvent.@Nullable TargetReason reason) {
-        if (this.getTarget() == target) {
+        // Compare and report against the raw field: getTarget() runs the target through
+        // asValidTarget(), so a stale or dead target reads as null and would both hide a real
+        // change and keep the UNKNOWN reason from being mapped below.
+        LivingEntity oldTarget = this.getTargetUnchecked();
+        if (oldTarget == target) {
             return false;
         }
         if (reason != null) {
-            if (reason == EntityTargetEvent.TargetReason.UNKNOWN && this.getTarget() != null && target == null) {
-                reason = this.getTarget().isAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
+            if (reason == EntityTargetEvent.TargetReason.UNKNOWN && oldTarget != null && target == null) {
+                reason = oldTarget.isAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
             }
             if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
                 cardboard$warnUnknownTargetReason(target);
@@ -65,7 +72,7 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
                 target = null;
             }
         }
-        this.target = target;
+        this.target = this.asValidTarget(target); // vanilla setTarget filters the target the same way
         return true;
         // CraftBukkit end
     }
@@ -95,7 +102,7 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
                 .append(" (uuid=").append(this.getUUID())
                 .append(", world=").append(this.level().dimension().identifier())
                 .append(", pos=").append(this.blockPosition().toShortString())
-                .append("), old target=").append(cardboard$describeTarget(this.getTarget()))
+                .append("), old target=").append(cardboard$describeTarget(this.getTargetUnchecked()))
                 .append(", new target=").append(cardboard$describeTarget(newTarget))
                 .append("\n  called from:");
         for (StackWalker.StackFrame frame : callers) {
