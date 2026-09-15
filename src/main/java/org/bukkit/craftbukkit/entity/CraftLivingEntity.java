@@ -401,8 +401,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public boolean isGliding() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.getHandle().isFallFlying();
     }
 
     @Override

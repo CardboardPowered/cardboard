@@ -447,6 +447,12 @@ public class CraftEventFactory {
         return event;
     }
 
+    public static EntityToggleGlideEvent callToggleGlideEvent(net.minecraft.world.entity.LivingEntity entity, boolean gliding) {
+        EntityToggleGlideEvent event = new EntityToggleGlideEvent((org.bukkit.entity.LivingEntity) ((EntityBridge)entity).getBukkitEntity(), gliding);
+        Bukkit.getPluginManager().callEvent(event);
+        return event;
+    }
+
     public static EntityEnterLoveModeEvent callEntityEnterLoveModeEvent(net.minecraft.world.entity.player.Player entityHuman, Animal entityAnimal, int loveTicks) {
         EntityEnterLoveModeEvent entityEnterLoveModeEvent = new EntityEnterLoveModeEvent((Animals) ((EntityBridge)entityAnimal).getBukkitEntity(), entityHuman != null ? (HumanEntity) ((EntityBridge)entityHuman).getBukkitEntity() : null, loveTicks);
         Bukkit.getPluginManager().callEvent(entityEnterLoveModeEvent);
