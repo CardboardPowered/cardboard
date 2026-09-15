@@ -3,7 +3,6 @@ package com.destroystokyo.paper.profile;
 // import com.destroystokyo.paper.PaperConfig;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
@@ -481,9 +480,7 @@ public class CraftPlayerProfile implements PlayerProfile, SharedPlayerProfile {
 	}
 
     public GameProfile buildGameProfile() {
-        GameProfile profile = new GameProfile(this.profile.id(), this.profile.name());
-        profile.properties().putAll((Multimap)this.profile.properties());
-        return profile;
+        return new GameProfile(this.profile.id(), this.profile.name(), new MutablePropertyMap(this.profile.properties()));
     }
 
     static final String PROPERTY_NAME = "textures";
