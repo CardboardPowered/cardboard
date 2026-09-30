@@ -874,7 +874,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 	@Override
 	public Collection<Entity> getNearbyEntities(BoundingBox boundingBox, Predicate<? super Entity> filter) {
 		AABB bb = new AABB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
-		List<net.minecraft.world.entity.Entity> entityList = world.getEntities((net.minecraft.world.entity.Entity) null, bb, null);
+		List<net.minecraft.world.entity.Entity> entityList = world.getEntities((net.minecraft.world.entity.Entity) null, bb, entity -> true);
 		List<Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(entityList.size());
 
 		for(net.minecraft.world.entity.Entity entity : entityList) {
@@ -1667,7 +1667,7 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 	}
 
 	public <T extends Entity> T spawn(Location location, Class<T> clazz, Consumer<T> function, SpawnReason reason) throws IllegalArgumentException {
-		net.minecraft.world.entity.Entity entity = createEntity_Old(location, clazz);
+		net.minecraft.world.entity.Entity entity = createEntity(location, clazz, true);
 
 		return addEntity(entity, reason, function);
 	}
@@ -2315,7 +2315,8 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 
 	@Override
 	public Entity getEntity(UUID arg0) {
-		return ((EntityBridge) world.getEntity(arg0)).getBukkitEntity();
+		net.minecraft.world.entity.Entity entity = world.getEntity(arg0);
+		return entity == null ? null : ((EntityBridge) entity).getBukkitEntity();
 	}
 
 	@Override
@@ -2856,8 +2857,9 @@ public class CraftWorld extends CraftRegionAccessor implements World {
 	public <T extends Entity> @NotNull T spawn(@NotNull Location location, @NotNull Class<T> clazz,
 			java.util.function.@Nullable Consumer<? super T> function, @NotNull SpawnReason reason)
 			throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-        return (T)((LivingEntity)this.spawn(location, clazz, function, reason));
+		// Keep this as super: a this.spawn(..) call with a Consumer<? super T> resolves back
+		// to this same overload rather than the org.bukkit.util.Consumer one above.
+		return super.spawn(location, clazz, function, reason);
 	}
 
 	@Override

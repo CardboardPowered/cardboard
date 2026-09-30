@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.logging.Level;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -14,8 +15,10 @@ import org.bukkit.map.MapView;
 
 import org.cardboardpowered.bridge.world.level.LevelBridge;
 import org.cardboardpowered.bridge.world.level.saveddata.maps.MapItemSavedDataBridge;
+import org.cardboardpowered.mixin.world.level.material.MapColorAccessor;
 
 public final class MapViewImpl implements MapView {
+    private static final int PACKED_COLOR_ID_COUNT = countPackedColorIds();
 
     private final Map<CraftPlayer, RenderData> renderCache = new HashMap<>();
     private final List<MapRenderer> renderers = new ArrayList<>();
@@ -116,6 +119,15 @@ public final class MapViewImpl implements MapView {
         return false;
     }
 
+    private static int countPackedColorIds() {
+        MapColor[] colors = MapColorAccessor.cardboard$getMaterialColors();
+        int highest = 0;
+        // The table is sized ahead of what is filled in, so the tail is nulls.
+        for (int id = 0; id < colors.length; ++id)
+            if (colors[id] != null) highest = id;
+        return (highest + 1) * 4;
+    }
+
     public RenderData render(CraftPlayer player) {
         boolean context = isContextual();
         RenderData render = renderCache.get(context ? player : null);
@@ -149,8 +161,7 @@ public final class MapViewImpl implements MapView {
             byte[] buf = canvas.getBuffer();
             for (int i = 0; i < buf.length; ++i) {
                 byte color = buf[i];
-                // There are 208 valid color id's, 0 -> 127 and -128 -> -49
-                if (color >= 0 || color <= -21) render.buffer[i] = color;
+                if ((color & 0xFF) < PACKED_COLOR_ID_COUNT) render.buffer[i] = color;
             }
 
             for (int i = 0; i < canvas.getCursors().size(); ++i)
