@@ -238,8 +238,12 @@ modrinth {
     versionNumber = "26.1-" + System.env.BUILD_NUMBER
     versionType = "beta"
     uploadFile = jar
-    gameVersions = ["26.1.2"]
+    gameVersions = [project.minecraft_version]
     loaders = ["fabric"]
+    dependencies {
+        required.project "fabric-api"
+        required.project "icommon"
+    }
 }
 
 
