@@ -30,7 +30,12 @@ public abstract class ThrownEggMixin {
 
     private final Random random = new Random();
 
-    @Inject(at = @At(shift = Shift.AFTER, value = "HEAD"), method = "onHit", cancellable = true)
+    // Injected after the super call, not at HEAD: super.onHit is what dispatches onHitEntity and
+    // onHitBlock, so cancelling before it stops the egg hitting anything at all. Everything after
+    // the super call is what this handler replaces.
+    @Inject(method = "onHit", cancellable = true,
+            at = @At(value = "INVOKE", shift = Shift.AFTER,
+                    target = "Lnet/minecraft/world/entity/projectile/throwableitemprojectile/ThrowableItemProjectile;onHit(Lnet/minecraft/world/phys/HitResult;)V"))
     public void cardboard_doEggThrowEvent(HitResult res, CallbackInfo ci) {
         ThrownEgg egg = (ThrownEgg)(Object)this;
         Level world = egg.level();

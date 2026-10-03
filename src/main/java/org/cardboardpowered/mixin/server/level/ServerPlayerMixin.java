@@ -88,11 +88,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayer.RespawnConfig;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
@@ -339,13 +339,15 @@ public abstract class ServerPlayerMixin extends PlayerMixin implements CommandSo
                 ((AbstractContainerMenuBridge)container).setTitle(factory.getDisplayName());
 
                 boolean cancelled = false;
+                final AbstractContainerMenu created = container;
                 final com.mojang.datafixers.util.Pair<net.kyori.adventure.text.Component, AbstractContainerMenu> result = org.bukkit.craftbukkit.event.CraftEventFactory.callInventoryOpenEventWithTitle(((ServerPlayer)(Object)this), container, cancelled);
                 container = result.getSecond();
                 if (container == null && !cancelled) {
                     if (factory instanceof Container) {
                         ((Container) factory).stopOpen((ServerPlayer)(Object)this);
-                    } else if (factory instanceof CompoundContainer)
-                        ((CompoundContainer) factory).container1.stopOpen((ServerPlayer)(Object)this);
+                    } else if (created instanceof ChestMenu) {
+                        ((ChestMenu) created).getContainer().stopOpen((ServerPlayer)(Object)this);
+                    }
 
                     ci.setReturnValue(OptionalInt.empty());
                 }

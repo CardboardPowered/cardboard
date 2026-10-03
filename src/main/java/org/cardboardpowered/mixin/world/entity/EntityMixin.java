@@ -35,6 +35,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -126,6 +127,42 @@ public abstract class EntityMixin implements CommandSourceBridge, EntityBridge {
     @Override
     public void setOriginBF(Location loc) {
         this.origin_bukkit = loc;
+    }
+
+    public boolean cardboard$persist = true;
+
+    @Override
+    public boolean cardboard$isPersistent() {
+        return this.cardboard$persist;
+    }
+
+    @Override
+    public void cardboard$setPersistent(boolean persistent) {
+        this.cardboard$persist = persistent;
+    }
+
+    // Entity#shouldBeSaved is the filter PersistentEntitySectionManager applies when it writes a
+    // chunk's sections out, so this is where Bukkit's setPersistent(false) has to take effect.
+    @Inject(method = "shouldBeSaved", at = @At("HEAD"), cancellable = true)
+    private void cardboard$skipNonPersistentEntities(CallbackInfoReturnable<Boolean> cir) {
+        if (!this.cardboard$persist) {
+            cir.setReturnValue(false);
+        }
+    }
+
+    // Bukkit's PersistentDataContainer lives on the CraftEntity, so it has to be written into and
+    // read back out of the entity's NBT or it silently disappears whenever the entity is reloaded.
+    @Inject(method = "saveWithoutId", at = @At("TAIL"))
+    private void cardboard$storeBukkitValues(ValueOutput output, CallbackInfo ci) {
+        CraftEntity bukkitEntity = this.getBukkitEntityRaw();
+        if (bukkitEntity != null) {
+            bukkitEntity.storeBukkitValues(output);
+        }
+    }
+
+    @Inject(method = "load", at = @At("TAIL"))
+    private void cardboard$readBukkitValues(ValueInput input, CallbackInfo ci) {
+        this.getBukkitEntity().readBukkitValues(input);
     }
 
     @Override

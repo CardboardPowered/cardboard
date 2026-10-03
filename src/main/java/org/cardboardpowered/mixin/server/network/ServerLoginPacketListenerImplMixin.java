@@ -51,6 +51,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -96,8 +97,7 @@ public abstract class ServerLoginPacketListenerImplMixin implements ServerLoginP
 	}
 
 	public String hostname = ""; // Bukkit - add field
-	private long theid = 0;
-	
+
 	// Cardboard: field added by bukkit
 	private ServerPlayer player;
 	public UUID requestedUuid;
@@ -379,42 +379,61 @@ public abstract class ServerLoginPacketListenerImplMixin implements ServerLoginP
         this.connection.send(new ClientboundLoginFinishedPacket(profile));
     }
 
-	@Inject(at = @At("TAIL"), method = "handleHello")
-	public void spigotHello(ServerboundHelloPacket packetlogininstart, CallbackInfo ci) {
-		if(!(this.server.usesAuthentication() && !this.connection.isMemoryConnection())) {
-			// Spigot start
-			new Thread("User Authenticator #" + theid++) {
-				@Override
-				public void run() {
-					try {
-						initUUID();
-						fireEvents(authenticatedProfile);
-					} catch(Exception ex) {
-						disconnect("Failed to verify username!");
-						CraftServer.INSTANCE.getLogger()
-								.log(java.util.logging.Level.WARNING, "Exception verifying " + authenticatedProfile.name(), ex);
-					}
-				}
-			}.start();
-			// Spigot end
-		}
+	/**
+	 * Offline mode: vanilla calls startClientVerification() straight from handleHello(), which
+	 * immediately puts the state machine into VERIFYING. We must run the Bukkit pre-login events
+	 * off the main thread first, and the profile may still be rewritten by BungeeCord/Velocity
+	 * UUID spoofing, so the verification has to be deferred until that thread is done.
+	 *
+	 * Previously this was a TAIL inject that started the authenticator thread *in addition to*
+	 * vanilla's call, so startClientVerification() ran twice and the state fell back to VERIFYING
+	 * after the login had already finished. tick() then ran verifyLoginAndFinishConnectionSetup()
+	 * a second time and sent a second ClientboundLoginFinishedPacket, which surfaced as random
+	 * "Pipeline has no outbound protocol configured" / "Unexpected login acknowledgement packet"
+	 * kicks and duplicated player entries.
+	 */
+	@Redirect(
+			method = "handleHello",
+			at = @At(
+					value = "INVOKE",
+					ordinal = 1, // 0 is the integrated-server owner shortcut, 1 is the offline-mode branch
+					target = "Lnet/minecraft/server/network/ServerLoginPacketListenerImpl;startClientVerification(Lcom/mojang/authlib/GameProfile;)V"
+			)
+	)
+	private void cardboard$offlineClientVerification(ServerLoginPacketListenerImpl instance, GameProfile profile) {
+		// Mirrors the online-mode path: park the state machine while the authenticator thread runs.
+		this.state = ServerLoginPacketListenerImpl.State.AUTHENTICATING;
+
+		// Spigot start
+		authenticatorPool.execute(() -> {
+			try {
+				fireEvents(initUUID(profile));
+			} catch(Exception ex) {
+				disconnect("Failed to verify username!");
+				CraftServer.INSTANCE.getLogger()
+						.log(java.util.logging.Level.WARNING, "Exception verifying " + profile.name(), ex);
+			}
+		});
+		// Spigot end
 	}
 
 	// Spigot start
-	public void initUUID() {
+	public GameProfile initUUID(GameProfile profile) {
 		UUID uuid;
 		if(((ConnectionBridge) connection).getSpoofedUUID() != null)
 			uuid = ((ConnectionBridge) connection).getSpoofedUUID();
 		else {
 			// Note: PlayerEntity (1.18) -> DynamicSerializableUuid (1.19) -> Uuids (1.19.4)
-			uuid = UUIDUtil.createOfflinePlayerUUID(this.authenticatedProfile.name());
+			uuid = UUIDUtil.createOfflinePlayerUUID(profile.name());
 		}
 
-		this.authenticatedProfile = new GameProfile(uuid, this.authenticatedProfile.name());
+		GameProfile spoofed = new GameProfile(uuid, profile.name());
 
 		if(((ConnectionBridge) connection).getSpoofedProfile() != null)
 			for(com.mojang.authlib.properties.Property property : ((ConnectionBridge) connection).getSpoofedProfile())
-				this.authenticatedProfile.properties().put(property.name(), property);
+				spoofed.properties().put(property.name(), property);
+
+		return spoofed;
 	}
 	// Spigot end
 

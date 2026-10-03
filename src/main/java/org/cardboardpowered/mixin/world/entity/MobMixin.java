@@ -23,7 +23,10 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
     public LivingEntity target;
 
     @Shadow
-    public abstract @Nullable LivingEntity getTarget();
+    public abstract @Nullable LivingEntity getTargetUnchecked();
+
+    @Shadow
+    protected abstract @Nullable LivingEntity asValidTarget(@Nullable LivingEntity target);
 
     protected MobMixin(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -32,7 +35,7 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
     @Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
     public void setTargetCraftBukkit(LivingEntity livingEntity, CallbackInfo ci) {
         // CraftBukkit start - fire event
-        boolean set = this.cardboard$setTarget(target, EntityTargetEvent.TargetReason.UNKNOWN);
+        boolean set = this.cardboard$setTarget(livingEntity, EntityTargetEvent.TargetReason.UNKNOWN);
         if (set) { // Let the other mods call their @Inject if set is false.
             ci.cancel();
         }
@@ -40,15 +43,19 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
 
     @Override
     public boolean cardboard$setTarget(@Nullable LivingEntity target, EntityTargetEvent.@Nullable TargetReason reason) {
-        if (this.getTarget() == target) {
+        // Compare and report against the raw field: getTarget() runs the target through
+        // asValidTarget(), so a stale or dead target reads as null and would both hide a real
+        // change and keep the UNKNOWN reason from being mapped below.
+        LivingEntity oldTarget = this.getTargetUnchecked();
+        if (oldTarget == target) {
             return false;
         }
         if (reason != null) {
-            if (reason == EntityTargetEvent.TargetReason.UNKNOWN && this.getTarget() != null && target == null) {
-                reason = this.getTarget().isAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
+            if (reason == EntityTargetEvent.TargetReason.UNKNOWN && oldTarget != null && target == null) {
+                reason = oldTarget.isAlive() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED;
             }
             if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
-                ((ServerLevelBridge)this.level()).getCraftServer().getLogger().log(java.util.logging.Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
+                cardboard$warnUnknownTargetReason(target);
             }
             CraftLivingEntity ctarget = null;
             if (target != null) {
@@ -65,8 +72,52 @@ public abstract class MobMixin extends LivingEntity implements MobBridge, Entity
                 target = null;
             }
         }
-        this.target = target;
+        this.target = this.asValidTarget(target); // vanilla setTarget filters the target the same way
         return true;
         // CraftBukkit end
     }
+
+    // Cardboard start - the warning below fires from vanilla/mod code paths that have no mapped
+    // TargetReason, which can happen every tick for every mob. Log each distinct call site once.
+    @org.spongepowered.asm.mixin.Unique
+    private static final java.util.Set<String> cardboard$reportedUnknownTargetSites = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    @org.spongepowered.asm.mixin.Unique
+    private void cardboard$warnUnknownTargetReason(@Nullable LivingEntity newTarget) {
+        java.util.List<StackWalker.StackFrame> callers = StackWalker.getInstance().walk(frames -> frames
+                .dropWhile(frame -> frame.getMethodName().startsWith("cardboard$")
+                        || frame.getMethodName().equals("setTargetCraftBukkit")
+                        || frame.getMethodName().equals("setTarget"))
+                .limit(4)
+                .collect(java.util.stream.Collectors.toList()));
+
+        String mobType = EntityType.getKey(this.getType()).toString();
+        String callSite = callers.isEmpty() ? "unknown" : callers.get(0).toString();
+        if (!cardboard$reportedUnknownTargetSites.add(mobType + '@' + callSite)) {
+            return;
+        }
+
+        StringBuilder message = new StringBuilder()
+                .append("Unknown EntityTargetEvent.TargetReason for ").append(mobType)
+                .append(" (uuid=").append(this.getUUID())
+                .append(", world=").append(this.level().dimension().identifier())
+                .append(", pos=").append(this.blockPosition().toShortString())
+                .append("), old target=").append(cardboard$describeTarget(this.getTargetUnchecked()))
+                .append(", new target=").append(cardboard$describeTarget(newTarget))
+                .append("\n  called from:");
+        for (StackWalker.StackFrame frame : callers) {
+            message.append("\n    ").append(frame);
+        }
+        message.append("\n  Only the first occurrence per mob type and call site is logged.")
+                .append(" Please report this on the Cardboard issue tracker.");
+
+        ((ServerLevelBridge) this.level()).getCraftServer().getLogger()
+                .log(java.util.logging.Level.WARNING, message.toString());
+    }
+
+    @org.spongepowered.asm.mixin.Unique
+    private static String cardboard$describeTarget(@Nullable LivingEntity entity) {
+        return entity == null ? "none" : EntityType.getKey(entity.getType()) + "/" + entity.getUUID();
+    }
+    // Cardboard end
 }

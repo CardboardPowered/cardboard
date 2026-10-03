@@ -484,13 +484,12 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public boolean isPersistent() {
-        //return this.entity.persist; // TODO
-        return false;
+        return ((EntityBridge) this.entity).cardboard$isPersistent();
     }
 
     @Override
     public void setPersistent(boolean persistent) {
-        //this.entity.persist = persistent; // TODO
+        ((EntityBridge) this.entity).cardboard$setPersistent(persistent);
     }
 
     @Override

@@ -9,6 +9,7 @@
  */
 package org.cardboardpowered.bridge.world;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
@@ -17,7 +18,26 @@ import org.bukkit.inventory.InventoryHolder;
 public interface ContainerBridge {
 
     default java.util.List<ItemStack> getContents() {
-    	return null;
+    	Container container = (Container) this;
+    	return new java.util.AbstractList<ItemStack>() {
+
+    		@Override
+    		public ItemStack get(int index) {
+    			return container.getItem(index);
+    		}
+
+    		@Override
+    		public ItemStack set(int index, ItemStack element) {
+    			ItemStack previous = container.getItem(index);
+    			container.setItem(index, element);
+    			return previous;
+    		}
+
+    		@Override
+    		public int size() {
+    			return container.getContainerSize();
+    		}
+    	};
     }
 
     default void onOpen(CraftHumanEntity who) {
