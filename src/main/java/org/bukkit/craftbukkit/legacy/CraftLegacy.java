@@ -263,7 +263,7 @@ public final class CraftLegacy {
 
 	static {
 		LOGGER.warn("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!"); // Paper - Improve logging and errors; doesn't need to be an error
-		if (CraftServer.INSTANCE != null && ((DedicatedServerBridge)CraftServer.INSTANCE.getServer()).isDebugging()) {
+		if (CraftServer.INSTANCE != null && CraftServer.INSTANCE.getServer() instanceof DedicatedServerBridge bridge && bridge.isDebugging()) {
 			new Exception().printStackTrace();
 		}
 

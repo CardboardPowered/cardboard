@@ -8,7 +8,7 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.ProfileResult;
 import com.mojang.datafixers.util.Either;
 import io.papermc.paper.profile.MutablePropertyMap;
-import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.component.ResolvableProfile;
@@ -155,7 +155,7 @@ public final class CraftPlayerProfile implements PlayerProfile, com.destroystoky
     }
 
     private CraftPlayerProfile getUpdatedProfile() {
-        DedicatedServer server = ((CraftServer) Bukkit.getServer()).getServer();
+        MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
         GameProfile profile = this.buildGameProfile();
 
         // If missing, look up the uuid by name:

@@ -90,9 +90,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.ConsoleInput;
 import net.minecraft.server.bossevents.CustomBossEvent;
-import net.minecraft.server.dedicated.DedicatedPlayerList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.DedicatedServerProperties;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.IpBanListEntry;
@@ -269,8 +270,11 @@ public class CraftServer extends CardboardAbstractServer implements Server {
     private final StandardMessenger messenger = new StandardMessenger();
     private final YamlConfiguration configuration;
 
-    public static DedicatedServer console;
-    protected final DedicatedPlayerList playerList;
+    public static MinecraftServer console;
+    protected final PlayerList playerList;
+
+    /** The physical client's render thread in singleplayer; null on a dedicated server. */
+    public static Thread clientThread;
 
     public static CraftServer INSTANCE;
     public ApiVersion minimumAPI;
@@ -320,7 +324,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
     }
     // Paper end - Folia reagion threading API
 
-    public CraftServer(DedicatedServer nms) {
+    public CraftServer(MinecraftServer nms) {
     	super(nms);
         INSTANCE = this;
         server = nms;
@@ -353,7 +357,8 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 
         this.dataPackManager = new CraftDataPackManager(this.getServer().getPackRepository());
         this.serverTickManager = new CraftServerTickManager(console.tickRateManager());
-        this.serverLinks = new CraftServerLinks(console);
+        // Only DedicatedServer has a writable serverLinks field; singleplayer keeps plugin-added links locally.
+        this.serverLinks = console instanceof DedicatedServer dedicated ? new CraftServerLinks(dedicated) : new CraftServerLinks(console.serverLinks());
         this.minimumAPI = ApiVersion.getOrCreateVersion(this.configuration.getString("settings.minimum-api"));
         loadIcon();
 
@@ -540,7 +545,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
         }
     }
 
-    public DedicatedServer getServer() {
+    public MinecraftServer getServer() {
         return server;
     }
 
@@ -1124,8 +1129,9 @@ public class CraftServer extends CardboardAbstractServer implements Server {
         // return getServer().isNetherAllowed();
     }
 
-    private DedicatedServerProperties getProperties() {
-        return this.console.getProperties();
+    /** server.properties only exists on a dedicated server; null in singleplayer. */
+    public static DedicatedServerProperties getProperties() {
+        return console instanceof DedicatedServer dedicated ? dedicated.getProperties() : null;
     }
 
     @Override
@@ -1442,7 +1448,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 
     @Override
     public int getSpawnRadius() {
-        return getServer().spawnProtectionRadius();
+        return getServer() instanceof DedicatedServer dedicated ? dedicated.spawnProtectionRadius() : 0;
     }
 
     public <T extends Keyed> Tag<T> getTag(String registry, NamespacedKey tag, Class<T> clazz) {
@@ -1561,7 +1567,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 
     @Override
     public int getViewDistance() {
-        return server != null ? server.getProperties().viewDistance.get() : 12;
+        return getProperties() != null ? getProperties().viewDistance.get() : server.getPlayerList().getViewDistance();
     }
 
     @Override
@@ -1907,7 +1913,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
         return completions;
     }
 
-    public DedicatedPlayerList getHandle() {
+    public PlayerList getHandle() {
         return this.playerList;
     }
 
@@ -2598,7 +2604,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 
     @Override
     public int getPauseWhenEmptyTime() {
-        return this.getProperties().pauseWhenEmptySeconds.get();
+        return getProperties() != null ? getProperties().pauseWhenEmptySeconds.get() : 0;
     }
 
     @Override
@@ -2638,7 +2644,7 @@ public class CraftServer extends CardboardAbstractServer implements Server {
 
 	@Override
 	public boolean forcesDefaultGameMode() {
-		return CraftServer.console.getProperties().forceGameMode.get();
+		return getProperties() != null && getProperties().forceGameMode.get();
 	}
 
 	@Override

@@ -16,10 +16,10 @@ import org.cardboardpowered.CardboardConfig;
 public class CommandMapImpl extends SimpleCommandMap {
 	private static final Class<?> CARDBOARD_VERSION_COMMAND = VersionCommand.class;
 
-	public static HashMap<String, Command> DUMMY_MAP = new HashMap<String, Command>();
-	
 	public CommandMapImpl(Server server) {
-		super(server, DUMMY_MAP);
+		// A fresh table per map: a shared static one kept the first singleplayer world's plugin
+		// commands, so the same commands from a reloaded plugin lost the label to disabled ones.
+		super(server, new HashMap<String, Command>());
 		
 		
 		registerCardboardCommands();
