@@ -12,6 +12,7 @@ import com.mojang.serialization.Lifecycle;
 
 import io.papermc.paper.registry.PaperRegistryAccess;
 import net.minecraft.core.WritableRegistry;
+import net.minecraft.resources.NetworkRegistryLoadTask;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.RegistryLoadTask;
 
@@ -26,8 +27,8 @@ public class RegistryLoadTaskMixin {
 	        at = @At("TAIL")
 	    )
 	    private void onConstructorTail(RegistryDataLoader.RegistryData<?> data, Lifecycle lifecycle, Map<?, ?> loadingErrors, CallbackInfo ci) {
-	        // Your custom logic code goes here
-	        // This runs at the very end of the constructor
+			// The client's copy of registries received from a server; Bukkit only wraps the server's own.
+			if ((Object) this instanceof NetworkRegistryLoadTask) return;
 			PaperRegistryAccess.instance().registerRegistry(this.registry);
 	    }
 	

@@ -671,7 +671,10 @@ public abstract class MinecraftServerMixin extends ReentrantBlockableEventLoop<T
               biomeProvider */
            );
            this.worldData = serverLevelData.data();
-           this.worldData.setGameType(((DedicatedServer)(Object)this).getProperties().gameMode.get());
+           // Singleplayer worlds keep the game mode stored in their level data.
+           if ((Object)this instanceof DedicatedServer dedicated) {
+               this.worldData.setGameType(dedicated.getProperties().gameMode.get());
+           }
            // DimensionDataStorage dataStorage = serverLevel.getDataStorage();
 
            this.getServer().getScoreboard().load(((ScoreboardSaveData)savedDataStorage.computeIfAbsent(ScoreboardSaveData.TYPE)).getData());

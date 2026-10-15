@@ -835,7 +835,7 @@ public final class CraftMagicNumbers implements UnsafeValues, IMagicNumbers {
 
     @Override
     public String getMainLevelName() {
-        return ((net.minecraft.server.dedicated.DedicatedServer) CraftServer.INSTANCE.getServer()).getProperties().levelName;
+        return CraftServer.INSTANCE.getServer().storageSource.getLevelId();
     }
 
     @Override

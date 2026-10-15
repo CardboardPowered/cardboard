@@ -36,6 +36,11 @@ class PaperEventManager {
 
     // SimplePluginManager
     public void callEvent(@NotNull Event event) {
+        // Cardboard - in singleplayer the client's own entity copies run the same mixins on the render
+        // thread. The server copy fires the real event, so drop these instead of throwing.
+        if (!event.isAsynchronous() && Thread.currentThread() == org.bukkit.craftbukkit.CraftServer.clientThread) {
+            return;
+        }
         if (event.isAsynchronous() && this.server.isPrimaryThread()) {
             throw new IllegalStateException(event.getEventName() + " may only be triggered asynchronously.");
         } else if (!event.isAsynchronous() && !this.server.isPrimaryThread() && !this.server.isStopping()) {

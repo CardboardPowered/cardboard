@@ -251,6 +251,9 @@
     "MixinDataFixTypes",
     "server.MixinDataLoadContext"
   ],
+  "client": [
+    "client.IntegratedServerMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

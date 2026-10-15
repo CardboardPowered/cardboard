@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.entity.EntityType;
 
 import org.bukkit.NamespacedKey;
@@ -40,7 +40,12 @@ public class RegistryUtil {
 	 * @see {@link org.bukkit.craftbukkit.CraftRegistry}
 	 * @see {@link io.papermc.paper.registry.PaperRegistries}
 	 */
-	public static void inject_into_bukkit_registry(DedicatedServer server) {
+	private static boolean injected;
+
+	public static void inject_into_bukkit_registry(MinecraftServer server) {
+		// Adds enum constants, so it must run once per JVM; singleplayer builds a new CraftServer per world.
+		if (injected) return;
+		injected = true;
 		register_potions();
 		register_entities();
 	}

@@ -136,6 +136,8 @@ public class CardboardMod implements ModInitializer {
         CardboardEventManager.INSTANCE.callCardboardEvents();
         
         System.out.println("loading PluginInitializerManager");
+        // Only the dedicated server's Main parses command-line options; the client gets the defaults.
+        if (options == null) options = CardboardOptions.parse(new String[0]);
         try {
 			PluginInitializerManager.load(options);
 		} catch (Exception e) {
@@ -178,15 +180,6 @@ public class CardboardMod implements ModInitializer {
     public static void on_world_init_mc(ServerLevel nms) {
         // Check if Server is null
         if (null == CraftServer.INSTANCE) {
-            MinecraftServer mc = nms.getServer();
-            if (!mc.isDedicatedServer()) {
-                LOGGER.info("----------------------------------------");
-                LOGGER.info("Cardboard currently only supports the Dedicated Server.");
-                LOGGER.info("(Although Pull Requests to add support are Welcome :) )");
-                LOGGER.info("Server will now shutdown");
-                LOGGER.info("----------------------------------------");
-                mc.halt(true);
-            }
             return;
         }
 

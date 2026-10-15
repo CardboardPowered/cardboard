@@ -20,10 +20,9 @@ public final class DelayedRegistry<T extends Keyed, R extends Registry<T>> imple
 
     private @Nullable Supplier<? extends R> delegate;
 
+    // Cardboard - singleplayer starts a new server per world in one JVM, and the static Bukkit
+    // Registry fields keep this instance, so a later load must re-point it instead of throwing.
     public void load(final Supplier<? extends R> registry) {
-        if (this.delegate != null) {
-            throw new IllegalStateException("Registry already loaded!");
-        }
         this.delegate = registry;
     }
 

@@ -1,5 +1,6 @@
 package org.cardboardpowered.mixin.world.level.chunk;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.bukkit.Chunk;
 import org.bukkit.craftbukkit.CraftChunk;
@@ -31,7 +32,8 @@ public class LevelChunkMixin implements LevelChunkBridge {
     }
     
     public void cardboard_set() {
-        if (null == bukkit) {
+        // Singleplayer clients build their own LevelChunks on a ClientLevel; Bukkit only models server chunks.
+        if (null == bukkit && ((LevelChunk)(Object)this).getLevel() instanceof ServerLevel) {
             this.bukkit = new CraftChunk((LevelChunk)(Object)this);
         }
     }
