@@ -85,6 +85,8 @@ public class BlockItemMixin implements BlockItemBridge {
             "Lnet/minecraft/world/item/BlockItem;updateCustomBlockEntityTag(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/block/state/BlockState;)Z"),
             method = "place(Lnet/minecraft/world/item/context/BlockPlaceContext;)Lnet/minecraft/world/InteractionResult;", cancellable = true)
     public void doBukkitEvent_DoBlockPlaceEventForWaterlilies(BlockPlaceContext context, CallbackInfoReturnable<InteractionResult> ci) {
+        // Singleplayer: the client predicts placement on its own ClientLevel; only the server fires Bukkit events.
+        if (context.getLevel().isClientSide()) return;
         if (bukkit_state != null) {
             BlockPos pos = context.getClickedPos();
             Level world = context.getLevel();
@@ -103,6 +105,7 @@ public class BlockItemMixin implements BlockItemBridge {
      */
     @Inject(at = @At("RETURN"), method = "canPlace(Lnet/minecraft/world/item/context/BlockPlaceContext;Lnet/minecraft/world/level/block/state/BlockState;)Z", cancellable = true)
     public void doBukkitEvent_BlockCanBuildEvent(BlockPlaceContext blockactioncontext, BlockState iblockdata, CallbackInfoReturnable<Boolean> ci) {
+        if (blockactioncontext.getLevel().isClientSide()) return;
         Player entityhuman = blockactioncontext.getPlayer();
         CollisionContext voxelshapecollision = entityhuman == null ? CollisionContext.empty() : CollisionContext.of((Entity) entityhuman);
 

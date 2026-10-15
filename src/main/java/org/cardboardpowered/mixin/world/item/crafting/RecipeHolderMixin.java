@@ -50,7 +50,7 @@ public class RecipeHolderMixin implements RecipeHolderBridge {
     }
 
 	// SpecialCraftingRecipe
-	public org.bukkit.inventory.Recipe toBukkitRecipe(CustomRecipe thiz, NamespacedKey id) {
+	public org.bukkit.inventory.Recipe toBukkitRecipe(net.minecraft.world.item.crafting.CraftingRecipe thiz, NamespacedKey id) {
         CraftItemStack result = CraftItemStack.asCraftMirror(ItemStack.EMPTY);
         CraftComplexRecipe recipe = new CraftComplexRecipe(id, result, thiz);
         recipe.setGroup(thiz.group());
@@ -221,6 +221,9 @@ public class RecipeHolderMixin implements RecipeHolderBridge {
 		} else if(nmsRecipe instanceof SmithingTrimRecipe nms) {
 			return toBukkitRecipe(nms, CraftNamespacedKey.fromMinecraft(id.identifier()));
 		} else if(nmsRecipe instanceof TransmuteRecipe nms) {
+			return toBukkitRecipe(nms, CraftNamespacedKey.fromMinecraft(id.identifier()));
+		} else if(nmsRecipe instanceof net.minecraft.world.item.crafting.CraftingRecipe nms) {
+			// Crafting recipes with no Bukkit shape (DyeRecipe, ImbueRecipe) are complex recipes.
 			return toBukkitRecipe(nms, CraftNamespacedKey.fromMinecraft(id.identifier()));
 		} else {
 			throw new IllegalArgumentException("Invalid recipe type: " + nmsRecipe.getClass());

@@ -136,6 +136,10 @@ public abstract class ItemStackMixin implements ItemStackBridge {
                 /*&& !((ItemStack)(Object)this).canPlaceOn(context.getWorld().getTagManager(), cachedBlockPosition)*/) {
             return InteractionResult.PASS;
         }
+        // Singleplayer client prediction: plain vanilla use, no block capture or Bukkit place events.
+        if (context.getLevel().isClientSide()) {
+            return ((ItemStack)(Object)this).getItem().useOn(context);
+        }
         ((LevelBridge)context.getLevel()).setCaptureBlockStates_BF(true);
 
         Item item = ((ItemStack)(Object)this).getItem();

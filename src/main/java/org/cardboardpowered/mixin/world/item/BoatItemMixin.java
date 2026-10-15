@@ -95,9 +95,12 @@ public abstract class BoatItemMixin extends Item {
             }
         }
         if (movingobjectpositionblock.getType() == HitResult.Type.BLOCK) {
-            PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent((ServerPlayer)user, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getDirection(), itemstack, false, hand/*, movingobjectpositionblock.getPos()*/);
-            if (event.isCancelled()) {
-                return InteractionResult.PASS;
+            // Singleplayer: the client predicts with a LocalPlayer; only the server fires the event.
+            if (!world.isClientSide()) {
+                PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent((ServerPlayer)user, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.getBlockPos(), movingobjectpositionblock.getDirection(), itemstack, false, hand/*, movingobjectpositionblock.getPos()*/);
+                if (event.isCancelled()) {
+                    return InteractionResult.PASS;
+                }
             }
             AbstractBoat abstractboat = this.getBoat(world, movingobjectpositionblock, itemstack, user);
             if (abstractboat == null) {
