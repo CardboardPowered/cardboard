@@ -18,6 +18,7 @@ public class BellBlockMixin {
     @Inject(method = "attemptToRing(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;)Z",
             cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/BellBlockEntity;onHit(Lnet/minecraft/core/Direction;)V"))
     private void bellRing(Entity entity, Level world, BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
+        if (world.isClientSide()) return;
         if (!CraftEventFactory.handleBellRingEvent((ServerLevel) world, pos, direction, entity)) {
             cir.setReturnValue(false);
         }

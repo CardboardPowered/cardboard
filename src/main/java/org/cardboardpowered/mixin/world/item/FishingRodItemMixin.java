@@ -25,6 +25,8 @@ public class FishingRodItemMixin {
 
     @Inject(at = @At("HEAD"), method = "use", cancellable = true)
     public void cardboard$fishingRodUse_PlayerFishEvent(Level world, Player entityhuman, InteractionHand enumhand, CallbackInfoReturnable<InteractionResult> ci) {
+        // Leave the client's prediction to vanilla; the server copy spawns the hook and fires PlayerFishEvent.
+        if (world.isClientSide()) return;
         if (null == entityhuman.fishing) {
             ItemStack itemstack = entityhuman.getItemInHand(enumhand);
 

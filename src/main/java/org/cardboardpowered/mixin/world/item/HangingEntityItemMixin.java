@@ -32,6 +32,7 @@ public class HangingEntityItemMixin {
     @Inject(method = "useOn", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/decoration/HangingEntity;playPlacementSound()V"))
     private void bukkitUseOnBlock(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir, BlockPos blockPos, Direction direction, BlockPos blockPos2, net.minecraft.world.entity.player.Player playerEntity, ItemStack itemStack, Level world, HangingEntity abstractDecorationEntity) {
+        if (world.isClientSide()) return;
         Player who = (context.getPlayer() == null) ? null : (Player) ((ServerPlayerBridge) context.getPlayer()).getBukkitEntity();
         org.bukkit.block.Block blockClicked = CraftBlock.at((ServerLevel) world, blockPos);
         org.bukkit.block.BlockFace blockFace = CraftBlock.notchToBlockFace(direction);

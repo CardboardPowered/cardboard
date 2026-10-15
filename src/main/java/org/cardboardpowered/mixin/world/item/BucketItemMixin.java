@@ -60,6 +60,8 @@ public class BucketItemMixin extends Item {
 
     @Inject(method = "emptyContents", at = @At("HEAD"), cancellable = true)
     public void placeFluid_BF(LivingEntity player, Level world, BlockPos blockposition, BlockHitResult movingobjectpositionblock, CallbackInfoReturnable<Boolean> ci) {
+        // Singleplayer client prediction: vanilla only; the server fires PlayerBucketEmptyEvent.
+        if (world.isClientSide()) return;
         if (this.content instanceof FlowingFluid) {
             BlockState iblockdata = world.getBlockState(blockposition);
             Block block = iblockdata.getBlock();
