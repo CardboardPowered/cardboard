@@ -49,6 +49,7 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
@@ -110,9 +111,28 @@ public abstract class PlayerListMixin implements PlayerListBridge {
 
     @Unique private CraftPlayer plr;
 
-    @Inject(method = "placeNewPlayer", at = @At("HEAD"))
+    @Inject(method = "placeNewPlayer", at = @At("HEAD"), cancellable = true)
     public void onConnect(Connection connection, ServerPlayer player, CommonListenerCookie clientData, CallbackInfo ci) {
         this.plr = (CraftPlayer) CraftServer.INSTANCE.getPlayer(player);
+
+        // PlayerLoginEvent was never fired (the Paper login hack is still a TODO), so plugins that attach
+        // state there got nothing: LuckPerms injects its Permissible in this event, and without it saved
+        // permissions never applied. Fired here because this is the first point the CraftPlayer exists.
+        // The hostname is not kept past the login phase, so it is passed empty.
+        if (this.plr == null) return;
+        java.net.InetAddress address = connection.getRemoteAddress() instanceof java.net.InetSocketAddress inet
+                ? inet.getAddress() : java.net.InetAddress.getLoopbackAddress();
+        PlayerLoginEvent loginEvent = new PlayerLoginEvent(this.plr, "", address);
+        CraftEventFactory.callEvent(loginEvent);
+
+        if (loginEvent.getResult() != PlayerLoginEvent.Result.ALLOWED) {
+            net.kyori.adventure.text.Component reason = loginEvent.kickMessage();
+            connection.disconnect(reason == null
+                    ? Component.translatable("multiplayer.disconnect.generic")
+                    : io.papermc.paper.adventure.PaperAdventure.asVanilla(reason));
+            this.plr = null;
+            ci.cancel();
+        }
     }
 
     @Redirect(method = "placeNewPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"))

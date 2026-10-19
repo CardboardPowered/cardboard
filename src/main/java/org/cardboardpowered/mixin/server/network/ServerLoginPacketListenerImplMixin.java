@@ -417,6 +417,34 @@ public abstract class ServerLoginPacketListenerImplMixin implements ServerLoginP
 		// Spigot end
 	}
 
+	/**
+	 * Integrated-server owner: vanilla lets the singleplayer host straight in, so without this no
+	 * plugin ever sees AsyncPlayerPreLoginEvent for them. LuckPerms loads user data in that event,
+	 * so the host ended up with no LuckPerms user at all. The owner's profile is already the real
+	 * one, so unlike the offline branch it is passed through without initUUID().
+	 */
+	@Redirect(
+			method = "handleHello",
+			at = @At(
+					value = "INVOKE",
+					ordinal = 0,
+					target = "Lnet/minecraft/server/network/ServerLoginPacketListenerImpl;startClientVerification(Lcom/mojang/authlib/GameProfile;)V"
+			)
+	)
+	private void cardboard$ownerClientVerification(ServerLoginPacketListenerImpl instance, GameProfile profile) {
+		this.state = ServerLoginPacketListenerImpl.State.AUTHENTICATING;
+
+		authenticatorPool.execute(() -> {
+			try {
+				fireEvents(profile);
+			} catch(Exception ex) {
+				disconnect("Failed to verify username!");
+				CraftServer.INSTANCE.getLogger()
+						.log(java.util.logging.Level.WARNING, "Exception verifying " + profile.name(), ex);
+			}
+		});
+	}
+
 	// Spigot start
 	public GameProfile initUUID(GameProfile profile) {
 		UUID uuid;
