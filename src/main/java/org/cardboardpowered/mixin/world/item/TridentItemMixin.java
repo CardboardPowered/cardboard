@@ -28,6 +28,8 @@ public class TridentItemMixin {
     		method =
     		"releaseUsing(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;I)Z")
     public void doBukkitEvent_PlayerRiptideEvent(ItemStack itemstack, Level world, LivingEntity entity, int i, CallbackInfoReturnable<Boolean> ci) {
+        // The riptide branch also runs as client prediction with a LocalPlayer
+        if (world.isClientSide()) return;
         float k = EnchantmentHelper.getTridentSpinAttackStrength(itemstack, entity);
         if (k > 0.0f) {
             PlayerRiptideEvent event = new PlayerRiptideEvent((Player)((EntityBridge)entity).getBukkitEntity(), CraftItemStack.asCraftMirror(itemstack));

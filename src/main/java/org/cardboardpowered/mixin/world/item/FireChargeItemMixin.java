@@ -21,6 +21,8 @@ public class FireChargeItemMixin {
     @Inject(method = "useOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/FireChargeItem;playSound(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
     public void cardboard$fireChargeItem_BlockIgniteEvent(UseOnContext context, CallbackInfoReturnable<InteractionResult> ci) {
         Level world = context.getLevel();
+        // Client prediction: vanilla only; the server fires BlockIgniteEvent.
+        if (world.isClientSide()) return;
         BlockPos blockpos = context.getClickedPos();
         BlockState state = world.getBlockState(blockpos);
 

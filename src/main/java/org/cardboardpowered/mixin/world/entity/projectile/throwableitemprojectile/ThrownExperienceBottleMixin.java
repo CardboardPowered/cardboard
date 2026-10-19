@@ -20,6 +20,8 @@ public class ThrownExperienceBottleMixin extends ProjectileMixin {
 
     @Inject(at = @At("HEAD"), method = "onHit", cancellable = true)
     public void doBukkitEvent(HitResult movingobjectposition, CallbackInfo ci) {
+        // Client copies also hit things; leave them to vanilla, which only spawns orbs server side
+        if (this.mc_world().isClientSide()) return;
         HitResult.Type type = movingobjectposition.getType();
         if (type == HitResult.Type.ENTITY) {
             ((ThrownExperienceBottle)(Object)this).onHitEntity((EntityHitResult)movingobjectposition);

@@ -28,7 +28,10 @@ public class StonecutterMenuMixin extends AbstractContainerMenuMixin {
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, Inventory playerinventory, final ContainerLevelAccess containeraccess, CallbackInfo ci) {
-        this.player = (org.bukkit.entity.Player)((ServerPlayerBridge)playerinventory.player).getBukkitEntity();
+        // Client menus (screens, JEI's fake menu) carry a LocalPlayer with no Bukkit entity
+        if (playerinventory.player instanceof ServerPlayerBridge bridge) {
+            this.player = (org.bukkit.entity.Player) bridge.getBukkitEntity();
+        }
     }
 
     @Override
