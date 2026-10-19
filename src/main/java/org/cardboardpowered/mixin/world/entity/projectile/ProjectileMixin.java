@@ -21,11 +21,15 @@ public class ProjectileMixin extends EntityMixin {
 
     @Inject(at = @At("TAIL"), method = "setOwner")
     public void setProjectileSource(EntityReference<Entity> entity, CallbackInfo ci) {
+        // recreateFromPacket sets the owner on client projectiles, which have no Bukkit side
+        if (((Projectile)(Object)this).level().isClientSide()) return;
     	cb$refreshProjectileSource(false);
     }
 
     @Inject(at = @At("HEAD"), method = "onHit")
     public void fireProjectileHitEvent(HitResult hitResult, CallbackInfo ci) {
+        // ThrowableProjectile.tick runs hit detection on the client too
+        if (((Projectile)(Object)this).level().isClientSide()) return;
         CraftEventFactory.callProjectileHitEvent((Projectile)(Object)this, hitResult);
     }
 

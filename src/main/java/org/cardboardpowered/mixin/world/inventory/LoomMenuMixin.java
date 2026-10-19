@@ -27,7 +27,10 @@ public class LoomMenuMixin extends AbstractContainerMenuMixin {
 
     @Inject(method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V", at = @At("TAIL"))
     public void setPlayerInv(int i, Inventory playerinventory, ContainerLevelAccess containeraccesss, CallbackInfo ci) {
-        this.player = (org.bukkit.entity.Player)((EntityBridge)playerinventory.player).getBukkitEntity();
+        // Client menus carry a LocalPlayer with no Bukkit entity
+        if (playerinventory.player instanceof net.minecraft.server.level.ServerPlayer) {
+            this.player = (org.bukkit.entity.Player)((EntityBridge)playerinventory.player).getBukkitEntity();
+        }
     }
 
     @Override

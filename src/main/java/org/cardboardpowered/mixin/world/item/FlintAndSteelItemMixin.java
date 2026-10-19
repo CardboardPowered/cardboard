@@ -24,6 +24,8 @@ public class FlintAndSteelItemMixin {
     public void useOnBlock_BF(UseOnContext context, CallbackInfoReturnable<InteractionResult> ci) {
         Player plr = context.getPlayer();
         Level world = context.getLevel();
+        // Client prediction: vanilla only; the server fires BlockIgniteEvent.
+        if (world.isClientSide()) return;
         BlockPos blockposition = context.getClickedPos().relative(context.getClickedFace());
 
         if (CraftEventFactory.callBlockIgniteEvent(world, blockposition, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, plr).isCancelled()) {

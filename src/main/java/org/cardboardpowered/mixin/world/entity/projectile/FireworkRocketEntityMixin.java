@@ -18,6 +18,8 @@ public class FireworkRocketEntityMixin extends EntityMixin {
 
     @Inject(method = "tick", cancellable = true, at = @At("HEAD"))
     private void bukkitFireworksExplode(CallbackInfo ci) {
+        // Client entities have no Bukkit side; on a remote server CraftServer.console is null
+        if (((FireworkRocketEntity) (Object) this).level().isClientSide()) return;
         InteractionResult result = CardboardFireworkExplodeEvent.EVENT.invoker().interact((FireworkRocketEntity) (Object) this);
 
         if (result == InteractionResult.FAIL) {

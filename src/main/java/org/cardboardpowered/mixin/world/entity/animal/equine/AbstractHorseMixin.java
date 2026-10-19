@@ -92,6 +92,8 @@ public abstract class AbstractHorseMixin extends Animal implements AbstractHorse
     
     @Inject(method = "createInventory", at = @At("TAIL"))
     public void cardboard$setInvOwner(CallbackInfo ci) {
+        // Client entities have no Bukkit side; on a remote server CraftServer.console is null
+        if (((net.minecraft.world.entity.Entity) (Object) this).level().isClientSide()) return;
         ((ContainerBridge)inventory).cardboard$setOwner((org.bukkit.entity.AbstractHorse)this.getBukkitEntity());
     }
 

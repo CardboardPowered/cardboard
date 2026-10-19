@@ -38,6 +38,8 @@ public class PistonBaseBlockMixin {
             method = "moveBlocks", cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     public void cardboard_doPistonEvents(Level world, BlockPos pos, Direction dir, boolean retract, CallbackInfoReturnable<Boolean> ci,
     		BlockPos blockPos, PistonStructureResolver helper) {
+        // Block events replay moveBlocks on the client, where ClientLevel has no CraftWorld
+        if (world.isClientSide()) return;
 
         final org.bukkit.block.Block bblock = ((LevelBridge)world).cardboard$getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
 

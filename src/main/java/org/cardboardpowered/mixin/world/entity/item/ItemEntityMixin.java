@@ -79,7 +79,8 @@ public class ItemEntityMixin extends EntityMixin implements ItemEntityBridge {
 
     @Inject(at = @At(value = "HEAD"), method = "tick()V")
     public void setBukkitEntity(CallbackInfo callbackInfo) {
-        if (null == bukkitEntity)
+        // Client entities have no Bukkit side; on a remote server CraftServer.console is null
+        if (null == bukkitEntity && !((ItemEntity) (Object) this).level().isClientSide())
             this.bukkitEntity = new CraftItem(CraftServer.INSTANCE, (ItemEntity) (Object) this);
     }
 
